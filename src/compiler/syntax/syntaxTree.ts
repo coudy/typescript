@@ -610,7 +610,7 @@ module TypeScript {
                 switch (token.valueText()) {
                     case "any":
                     case "number":
-                    case "bool":
+                    case "boolean":
                     case "string":
                     case "void":
                         this.pushDiagnostic(tokenFullStart + token.leadingTriviaWidth(), token.width(), diagnosticKey, [token.valueText()]);

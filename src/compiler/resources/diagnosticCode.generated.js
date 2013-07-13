@@ -179,7 +179,6 @@ var TypeScript;
         Could_not_find_symbol_0: "Could not find symbol '{0}'.",
         get_and_set_accessor_must_have_the_same_type: "'get' and 'set' accessor must have the same type.",
         this_cannot_be_referenced_in_current_location: "'this' cannot be referenced in current location.",
-        Use_of_deprecated_type_bool_Use_boolean_instead: "Use of deprecated type 'bool'. Use 'boolean' instead.",
         Static_methods_cannot_reference_class_type_parameters: "Static methods cannot reference class type parameters.",
         Class_0_is_recursively_referenced_as_a_base_type_of_itself: "Class '{0}' is recursively referenced as a base type of itself.",
         Interface_0_is_recursively_referenced_as_a_base_type_of_itself: "Interface '{0}' is recursively referenced as a base type of itself.",

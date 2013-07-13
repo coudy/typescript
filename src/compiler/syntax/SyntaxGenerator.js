@@ -183,7 +183,6 @@ var TypeScript;
         Could_not_find_symbol_0: "Could not find symbol '{0}'.",
         get_and_set_accessor_must_have_the_same_type: "'get' and 'set' accessor must have the same type.",
         this_cannot_be_referenced_in_current_location: "'this' cannot be referenced in current location.",
-        Use_of_deprecated_type_bool_Use_boolean_instead: "Use of deprecated type 'bool'. Use 'boolean' instead.",
         Static_methods_cannot_reference_class_type_parameters: "Static methods cannot reference class type parameters.",
         Class_0_is_recursively_referenced_as_a_base_type_of_itself: "Class '{0}' is recursively referenced as a base type of itself.",
         Interface_0_is_recursively_referenced_as_a_base_type_of_itself: "Interface '{0}' is recursively referenced as a base type of itself.",
@@ -1108,10 +1107,6 @@ var TypeScript;
         "'this' cannot be referenced in current location.": {
             "code": 2097,
             "category": 1 /* Error */
-        },
-        "Use of deprecated type 'bool'. Use 'boolean' instead.": {
-            "code": 2098,
-            "category": 0 /* Warning */
         },
         "Static methods cannot reference class type parameters.": {
             "code": 2099,
@@ -3973,7 +3968,6 @@ var TypeScript;
         // TypeScript keywords.
         SyntaxKind[SyntaxKind["AnyKeyword"] = 60] = "AnyKeyword";
         SyntaxKind[SyntaxKind["BooleanKeyword"] = 61] = "BooleanKeyword";
-        SyntaxKind[SyntaxKind["BoolKeyword"] = 62] = "BoolKeyword";
         SyntaxKind[SyntaxKind["ConstructorKeyword"] = 63] = "ConstructorKeyword";
         SyntaxKind[SyntaxKind["DeclareKeyword"] = 64] = "DeclareKeyword";
         SyntaxKind[SyntaxKind["GetKeyword"] = 65] = "GetKeyword";
@@ -4222,7 +4216,6 @@ var TypeScript;
     (function (SyntaxFacts) {
         var textToKeywordKind = {
             "any": 60 /* AnyKeyword */,
-            "bool": 62 /* BoolKeyword */,
             "boolean": 61 /* BooleanKeyword */,
             "break": 15 /* BreakKeyword */,
             "case": 16 /* CaseKeyword */,

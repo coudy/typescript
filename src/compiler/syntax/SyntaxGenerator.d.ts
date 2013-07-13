@@ -1101,10 +1101,6 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Use of deprecated type 'bool'. Use 'boolean' instead.": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
         "Static methods cannot reference class type parameters.": {
             "code": number;
             "category": DiagnosticCategory;
@@ -2128,7 +2124,6 @@ declare module TypeScript {
         YieldKeyword,
         AnyKeyword,
         BooleanKeyword,
-        BoolKeyword,
         ConstructorKeyword,
         DeclareKeyword,
         GetKeyword,

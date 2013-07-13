@@ -40,8 +40,6 @@ module TypeScript {
         private syntaxElementSymbolMap: DataMap = new DataMap();
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
-        private properties = new SemanticInfoProperties();
-
         private hasBeenTypeChecked = false;
 
         constructor(compilationUnitPath: string) {
@@ -150,17 +148,6 @@ module TypeScript {
             }
         }
         
-        public getProperties() {
-            return this.properties;
-        }
-    }
-
-    /**
-     * This class will contain any miscellaneous flags that pertain to the semantic status of the file.
-     * This is for properties that are not tied to a specific AST, decl, symbol or syntax element, but are global to the file.
-     */
-    export class SemanticInfoProperties {
-        public unitContainsBool = false;
     }
 
     export class SemanticInfoChain {

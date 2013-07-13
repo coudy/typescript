@@ -4798,7 +4798,6 @@ module TypeScript.Parser {
                 case SyntaxKind.AnyKeyword:
                 case SyntaxKind.NumberKeyword:
                 case SyntaxKind.BooleanKeyword:
-                case SyntaxKind.BoolKeyword:
                 case SyntaxKind.StringKeyword:
                 case SyntaxKind.VoidKeyword:
                     return true;

@@ -722,10 +722,6 @@ module TypeScript {
     "code": 2097,
     "category": DiagnosticCategory.Error
   },
-  "Use of deprecated type 'bool'. Use 'boolean' instead.": {
-    "code": 2098,
-    "category": DiagnosticCategory.Warning
-  },
   "Static methods cannot reference class type parameters.": {
     "code": 2099,
     "category": DiagnosticCategory.Error
@@ -1294,24 +1290,12 @@ module TypeScript {
     "code": 6005,
     "category": DiagnosticCategory.Message
   },
-  "Execute the script after compilation": {
-    "code": 6006,
-    "category": DiagnosticCategory.Message
-  },
-  "Minimize whitespace": {
-    "code": 6007,
-    "category": DiagnosticCategory.Message
-  },
   "Do not emit comments to output": {
     "code": 6009,
     "category": DiagnosticCategory.Message
   },
   "Skip resolution and preprocessing": {
     "code": 6010,
-    "category": DiagnosticCategory.Message
-  },
-  "Print debug output": {
-    "code": 6011,
     "category": DiagnosticCategory.Message
   },
   "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
@@ -1328,10 +1312,6 @@ module TypeScript {
   },
   "Print the compiler's version: {0}": {
     "code": 6019,
-    "category": DiagnosticCategory.Message
-  },
-  "Allow use of deprecated \"{0}\" type": {
-    "code": 6020,
     "category": DiagnosticCategory.Message
   },
   "Allow use of deprecated \"{0}\" keyword when referencing an external module": {

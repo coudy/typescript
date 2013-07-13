@@ -2,7 +2,6 @@
 // reserved ES5 future in strict mode
 var constructor = 0;
 var any = 0;
-var bool = 0;
 var boolean = 0;
 var implements = 0;
 var interface = 0;
@@ -20,13 +19,12 @@ var get = 0;
 var yield = 0;
 var declare = 0;
 
-function bigGeneric(c, a, b, b2, i, i2, l, m, n, p, p2, p3, p4, s, s2, s3, g, y, d) {
+function bigGeneric(c, a, b2, i, i2, l, m, n, p, p2, p3, p4, s, s2, s3, g, y, d) {
 }
 
 var bigObject = {
     constructor: 0,
     any: 0,
-    bool: 0,
     boolean: 0,
     implements: 0,
     interface: 0,
@@ -85,7 +83,6 @@ var bigClass = (function () {
     function bigClass() {
         this.constructor = 0;
         this.any = 0;
-        this.bool = 0;
         this.boolean = 0;
         this.implements = 0;
         this.interface = 0;
@@ -146,61 +143,60 @@ var bigEnum;
 (function (bigEnum) {
     bigEnum[bigEnum["constructor"] = 0] = "constructor";
     bigEnum[bigEnum["any"] = 1] = "any";
-    bigEnum[bigEnum["bool"] = 2] = "bool";
-    bigEnum[bigEnum["boolean"] = 3] = "boolean";
-    bigEnum[bigEnum["implements"] = 4] = "implements";
-    bigEnum[bigEnum["interface"] = 5] = "interface";
-    bigEnum[bigEnum["let"] = 6] = "let";
-    bigEnum[bigEnum["module"] = 7] = "module";
-    bigEnum[bigEnum["number"] = 8] = "number";
-    bigEnum[bigEnum["package"] = 9] = "package";
-    bigEnum[bigEnum["private"] = 10] = "private";
-    bigEnum[bigEnum["protected"] = 11] = "protected";
-    bigEnum[bigEnum["public"] = 12] = "public";
-    bigEnum[bigEnum["set"] = 13] = "set";
-    bigEnum[bigEnum["static"] = 14] = "static";
-    bigEnum[bigEnum["string"] = 15] = "string";
-    bigEnum[bigEnum["get"] = 16] = "get";
-    bigEnum[bigEnum["yield"] = 17] = "yield";
-    bigEnum[bigEnum["break"] = 18] = "break";
-    bigEnum[bigEnum["case"] = 19] = "case";
-    bigEnum[bigEnum["catch"] = 20] = "catch";
-    bigEnum[bigEnum["class"] = 21] = "class";
-    bigEnum[bigEnum["continue"] = 22] = "continue";
-    bigEnum[bigEnum["const"] = 23] = "const";
+    bigEnum[bigEnum["boolean"] = 2] = "boolean";
+    bigEnum[bigEnum["implements"] = 3] = "implements";
+    bigEnum[bigEnum["interface"] = 4] = "interface";
+    bigEnum[bigEnum["let"] = 5] = "let";
+    bigEnum[bigEnum["module"] = 6] = "module";
+    bigEnum[bigEnum["number"] = 7] = "number";
+    bigEnum[bigEnum["package"] = 8] = "package";
+    bigEnum[bigEnum["private"] = 9] = "private";
+    bigEnum[bigEnum["protected"] = 10] = "protected";
+    bigEnum[bigEnum["public"] = 11] = "public";
+    bigEnum[bigEnum["set"] = 12] = "set";
+    bigEnum[bigEnum["static"] = 13] = "static";
+    bigEnum[bigEnum["string"] = 14] = "string";
+    bigEnum[bigEnum["get"] = 15] = "get";
+    bigEnum[bigEnum["yield"] = 16] = "yield";
+    bigEnum[bigEnum["break"] = 17] = "break";
+    bigEnum[bigEnum["case"] = 18] = "case";
+    bigEnum[bigEnum["catch"] = 19] = "catch";
+    bigEnum[bigEnum["class"] = 20] = "class";
+    bigEnum[bigEnum["continue"] = 21] = "continue";
+    bigEnum[bigEnum["const"] = 22] = "const";
 
-    bigEnum[bigEnum["debugger"] = 24] = "debugger";
-    bigEnum[bigEnum["declare"] = 25] = "declare";
-    bigEnum[bigEnum["default"] = 26] = "default";
-    bigEnum[bigEnum["delete"] = 27] = "delete";
-    bigEnum[bigEnum["do"] = 28] = "do";
-    bigEnum[bigEnum["else"] = 29] = "else";
-    bigEnum[bigEnum["enum"] = 30] = "enum";
-    bigEnum[bigEnum["export"] = 31] = "export";
-    bigEnum[bigEnum["extends"] = 32] = "extends";
-    bigEnum[bigEnum["false"] = 33] = "false";
-    bigEnum[bigEnum["finally"] = 34] = "finally";
-    bigEnum[bigEnum["for"] = 35] = "for";
-    bigEnum[bigEnum["function"] = 36] = "function";
-    bigEnum[bigEnum["if"] = 37] = "if";
+    bigEnum[bigEnum["debugger"] = 23] = "debugger";
+    bigEnum[bigEnum["declare"] = 24] = "declare";
+    bigEnum[bigEnum["default"] = 25] = "default";
+    bigEnum[bigEnum["delete"] = 26] = "delete";
+    bigEnum[bigEnum["do"] = 27] = "do";
+    bigEnum[bigEnum["else"] = 28] = "else";
+    bigEnum[bigEnum["enum"] = 29] = "enum";
+    bigEnum[bigEnum["export"] = 30] = "export";
+    bigEnum[bigEnum["extends"] = 31] = "extends";
+    bigEnum[bigEnum["false"] = 32] = "false";
+    bigEnum[bigEnum["finally"] = 33] = "finally";
+    bigEnum[bigEnum["for"] = 34] = "for";
+    bigEnum[bigEnum["function"] = 35] = "function";
+    bigEnum[bigEnum["if"] = 36] = "if";
 
-    bigEnum[bigEnum["import"] = 38] = "import";
-    bigEnum[bigEnum["in"] = 39] = "in";
-    bigEnum[bigEnum["instanceof"] = 40] = "instanceof";
-    bigEnum[bigEnum["new"] = 41] = "new";
-    bigEnum[bigEnum["null"] = 42] = "null";
-    bigEnum[bigEnum["return"] = 43] = "return";
-    bigEnum[bigEnum["super"] = 44] = "super";
-    bigEnum[bigEnum["switch"] = 45] = "switch";
-    bigEnum[bigEnum["this"] = 46] = "this";
-    bigEnum[bigEnum["throw"] = 47] = "throw";
-    bigEnum[bigEnum["true"] = 48] = "true";
-    bigEnum[bigEnum["try"] = 49] = "try";
-    bigEnum[bigEnum["typeof"] = 50] = "typeof";
-    bigEnum[bigEnum["var"] = 51] = "var";
-    bigEnum[bigEnum["void"] = 52] = "void";
-    bigEnum[bigEnum["while"] = 53] = "while";
-    bigEnum[bigEnum["with"] = 54] = "with";
+    bigEnum[bigEnum["import"] = 37] = "import";
+    bigEnum[bigEnum["in"] = 38] = "in";
+    bigEnum[bigEnum["instanceof"] = 39] = "instanceof";
+    bigEnum[bigEnum["new"] = 40] = "new";
+    bigEnum[bigEnum["null"] = 41] = "null";
+    bigEnum[bigEnum["return"] = 42] = "return";
+    bigEnum[bigEnum["super"] = 43] = "super";
+    bigEnum[bigEnum["switch"] = 44] = "switch";
+    bigEnum[bigEnum["this"] = 45] = "this";
+    bigEnum[bigEnum["throw"] = 46] = "throw";
+    bigEnum[bigEnum["true"] = 47] = "true";
+    bigEnum[bigEnum["try"] = 48] = "try";
+    bigEnum[bigEnum["typeof"] = 49] = "typeof";
+    bigEnum[bigEnum["var"] = 50] = "var";
+    bigEnum[bigEnum["void"] = 51] = "void";
+    bigEnum[bigEnum["while"] = 52] = "while";
+    bigEnum[bigEnum["with"] = 53] = "with";
 })(bigEnum || (bigEnum = {}));
 
 var bigModule;
@@ -214,11 +210,6 @@ var bigModule;
         function any() {
         }
         return any;
-    })();
-    var bool = (function () {
-        function bool() {
-        }
-        return bool;
     })();
     var boolean = (function () {
         function boolean() {

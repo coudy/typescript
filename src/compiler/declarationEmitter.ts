@@ -122,12 +122,7 @@ module TypeScript {
         }
 
         private getIndentString(declIndent = false) {
-            if (this.emitOptions.compilationSettings.minWhitespace) {
-                return "";
-            }
-            else {
-                return this.indenter.getIndent();
-            }
+            return this.indenter.getIndent();
         }
 
         private emitIndent() {

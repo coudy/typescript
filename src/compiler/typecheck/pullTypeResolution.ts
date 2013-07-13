@@ -4508,17 +4508,6 @@ module TypeScript {
             else if (id === "number") {
                 return this.semanticInfoChain.numberTypeSymbol;
             }
-            else if (id === "bool") {
-                // Warn for using bool
-                if (!this.compilationSettings.allowBool && !this.currentUnit.getProperties().unitContainsBool) {
-                    this.currentUnit.getProperties().unitContainsBool = true;
-                    context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated_type_bool_Use_boolean_instead, null, enclosingDecl);
-                    return this.semanticInfoChain.booleanTypeSymbol;
-                }
-                else {
-                    return this.semanticInfoChain.booleanTypeSymbol;
-                }
-            }
             else if (id === "boolean") {
                 return this.semanticInfoChain.booleanTypeSymbol;
             }

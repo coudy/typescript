@@ -113,12 +113,6 @@ module TypeScript {
                 else {
                     this.updateCompile();
                 }
-
-                if (!this.hasErrors) {
-                    if (this.compilationSettings.exec) {
-                        this.run();
-                    }
-                }
             }
 
             // Exit with the appropriate error code
@@ -325,29 +319,6 @@ module TypeScript {
             return false;
         }
 
-        // Execute the provided inputs
-        private run() {
-            for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
-                var outputFileName: string = this.inputFileNameToOutputFileName.lookup(this.resolvedFiles[i].path);
-                if (outputFileName && this.ioHost.fileExists(outputFileName)) {
-                    var outputFileInformation = this.ioHost.readFile(outputFileName);
-
-                    try {
-                        this.ioHost.run(outputFileInformation.contents, outputFileName);
-                    }
-                    catch (e) {
-                        this.hasErrors = true;
-                        this.ioHost.stderr.WriteLine(getDiagnosticMessage(DiagnosticCode.Error_while_executing_file_0, [outputFileName]));
-                        if (e.stack) {
-                            this.ioHost.stderr.WriteLine(e.stack);
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-
         // Parse command line options
         private parseOptions() {
             var opts = new OptionsParser(this.ioHost, this.compilerVersion);
@@ -417,25 +388,6 @@ module TypeScript {
                 }, 'w');
             }
 
-            opts.flag('exec', {
-                usage: {
-                    locCode: DiagnosticCode.Execute_the_script_after_compilation,
-                    args: null
-                },
-                set: () => {
-                    this.compilationSettings.exec = true;
-                }
-            }, 'e');
-
-            opts.flag('minw', {
-                usage: {
-                    locCode: DiagnosticCode.Minimize_whitespace,
-                    args: null
-                },
-                experimental: true,
-                set: () => { this.compilationSettings.minWhitespace = true; }
-            }, 'mw');
-
             opts.flag('propagateEnumConstants', {
                 experimental: true,
                 set: () => { this.compilationSettings.propagateEnumConstants = true; }
@@ -458,17 +410,6 @@ module TypeScript {
                 },
                 set: () => {
                     this.compilationSettings.noResolve = true;
-                }
-            });
-
-            opts.flag('debug', {
-                usage: {
-                    locCode: DiagnosticCode.Print_debug_output,
-                    args: null
-                },
-                experimental: true,
-                set: () => {
-                    CompilerDiagnostics.debug = true;
                 }
             });
 
@@ -564,16 +505,6 @@ module TypeScript {
                     shouldPrintVersionOnly = true;
                 }
             }, 'v');
-
-            opts.flag('allowbool', {
-                usage: {
-                    locCode: DiagnosticCode.Allow_use_of_deprecated_0_type,
-                    args: ['bool']
-                },
-                set: () => {
-                    this.compilationSettings.allowBool = true;
-                }
-            }, 'b');
 
             var locale: string = null;
             opts.option('locale', {
@@ -753,11 +684,6 @@ module TypeScript {
                 // Trigger a new compilation
                 this.compile();
 
-                if (!this.hasErrors) {
-                    if (this.compilationSettings.exec) {
-                        this.run();
-                    }
-                }
             };
 
             // Switch to using stdout for all error messages

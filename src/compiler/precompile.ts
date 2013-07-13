@@ -20,12 +20,9 @@ module TypeScript {
     /// Compiler settings
     export class CompilationSettings {
         public propagateEnumConstants = false;
-        public minWhitespace = false;
         public removeComments = false;
         public watch = false;
-        public exec = false;
         public noResolve = false;
-        public allowBool = false;
         public allowAutomaticSemicolonInsertion = true;
         public noImplicitAny = false;
 
@@ -46,8 +43,6 @@ module TypeScript {
         public gatherDiagnostics = false;
 
         public updateTC = false;
-
-        public implicitAny = false;
     }
 
     ///

@@ -3,7 +3,6 @@
 
 var constructor = 0;
 var any = 0;
-var bool = 0;
 var boolean = 0;
 var implements = 0;
 var interface = 0;
@@ -24,7 +23,6 @@ var declare = 0;
 function bigGeneric<
     constructor,
     any,
-    bool,
     boolean,
     implements ,
     interface ,
@@ -43,7 +41,6 @@ function bigGeneric<
     declare
     >(c: constructor,
     a: any,
-    b: bool,
     b2: boolean,
     i: implements ,
     i2: interface ,
@@ -64,7 +61,6 @@ function bigGeneric<
 var bigObject = {
     constructor: 0,
     any: 0,
-    bool: 0,
     boolean: 0,
     implements: 0,
     interface: 0,
@@ -124,7 +120,6 @@ var bigObject = {
 interface bigInterface {
     constructor;
     any;
-    bool;
     boolean;
     implements;
     interface;
@@ -184,7 +179,6 @@ interface bigInterface {
 class bigClass {
     public constructor = 0;
     public any = 0;
-    public bool = 0;
     public boolean = 0;
     public implements = 0;
     public interface = 0;
@@ -242,7 +236,6 @@ class bigClass {
 enum bigEnum {
     constructor,
     any,
-    bool,
     boolean,
     implements,
     interface,
@@ -302,7 +295,6 @@ enum bigEnum {
 module bigModule {
     class constructor { }
     class any { }
-    class bool { }
     class boolean { }
     class implements { }
     class interface { }

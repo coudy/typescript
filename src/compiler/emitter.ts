@@ -251,26 +251,14 @@ module TypeScript {
         }
 
         public writeToOutputTrimmable(s: string) {
-            if (this.emitOptions.compilationSettings.minWhitespace) {
-                s = s.replace(/[\s]*/g, '');
-            }
             this.writeToOutput(s);
         }
 
         public writeLineToOutput(s: string) {
-            if (this.emitOptions.compilationSettings.minWhitespace) {
-                this.writeToOutput(s);
-                var c = s.charCodeAt(s.length - 1);
-                if (!((c === CharacterCodes.space) || (c === CharacterCodes.semicolon) || (c === CharacterCodes.openBracket))) {
-                    this.writeToOutput(' ');
-                }
-            }
-            else {
-                this.outfile.WriteLine(s);
-                this.updateLineAndColumn(s);
-                this.emitState.column = 0;
-                this.emitState.line++;
-            }
+            this.outfile.WriteLine(s);
+            this.updateLineAndColumn(s);
+            this.emitState.column = 0;
+            this.emitState.line++;
         }
 
         public writeCaptureThisStatement(ast: AST) {
@@ -292,12 +280,7 @@ module TypeScript {
         }
 
         private getIndentString() {
-            if (this.emitOptions.compilationSettings.minWhitespace) {
-                return "";
-            }
-            else {
-                return this.indenter.getIndent();
-            }
+            return this.indenter.getIndent();
         }
 
         public emitIndent() {
