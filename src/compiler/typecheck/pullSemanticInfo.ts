@@ -323,6 +323,39 @@ module TypeScript {
             return cacheID + "#" + declKind.toString();
         }
 
+        public findTopLevelSymbol(name: string, kind: PullElementKind, stopAtFile: string): PullSymbol {
+            var cacheID = this.getDeclPathCacheID([name], kind);
+
+            var symbol = this.symbolCache[name];
+
+            if (!symbol) {
+                var topLevelDecls = this.collectAllTopLevelDecls();
+                var foundDecls: PullDecl[] = null;
+
+                for (var i = 0; i < topLevelDecls.length; i++) {
+
+                    foundDecls = topLevelDecls[i].searchChildDecls(name, kind);
+
+                    if (foundDecls.length) {
+                        symbol = foundDecls[0].getSymbol();
+                        break;
+                    }
+
+                    if (topLevelDecls[i].name == stopAtFile) {
+                        break;
+                    }
+                }
+
+                if (symbol) {
+                    this.symbolCache[cacheID] = symbol;
+
+                    symbol.addCacheID(cacheID);
+                }
+            }
+
+            return symbol;
+        }
+
         // a decl path is a list of decls that reference the components of a declaration from the global scope down
         // E.g., string would be "['string']" and "A.B.C" would be "['A','B','C']"
         public findDecls(declPath: string[], declKind: PullElementKind): PullDecl[] {

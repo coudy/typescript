@@ -36,46 +36,6 @@ module TypeScript {
         return decls;
     }
 
-    export function findSymbolInContext(name: string, declKind: PullElementKind, startingDecl: PullDecl): PullSymbol {
-        var startTime = new Date().getTime();
-        var contextSymbolPath: PullDecl[] = getPathToDecl(startingDecl);
-        var copyOfContextSymbolPath: string[] = [];
-        var symbol: PullSymbol = null;
-
-        var endTime = 0;
-
-        // next, link back up to the enclosing context
-        if (contextSymbolPath.length) {
-
-            for (var i = 0; i < contextSymbolPath.length; i++) {
-                copyOfContextSymbolPath[copyOfContextSymbolPath.length] = contextSymbolPath[i].name;
-            }
-
-            copyOfContextSymbolPath[copyOfContextSymbolPath.length] = name;
-
-            while (copyOfContextSymbolPath.length >= 2) {
-                symbol = globalSemanticInfoChain.findSymbol(copyOfContextSymbolPath, declKind);
-
-                if (symbol) {
-                    endTime = new Date().getTime();
-                    time_in_findSymbol += endTime - startTime;
-
-                    return symbol;
-                }
-                copyOfContextSymbolPath.length -= 2;
-                copyOfContextSymbolPath[copyOfContextSymbolPath.length] = name;
-            }
-        }
-
-        // finally, try searching globally
-        symbol = globalSemanticInfoChain.findSymbol([name], declKind);
-
-        endTime = new Date().getTime();
-        time_in_findSymbol += endTime - startTime;
-
-        return symbol;
-    }
-
     export class PullSymbolBinder {
 
         private functionTypeParameterCache: any = new BlockIntrinsics();
@@ -211,7 +171,7 @@ module TypeScript {
                 }
             }
             else if (!isExported || moduleContainerDecl.kind === PullElementKind.DynamicModule) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>findSymbolInContext(modName, searchKind, moduleContainerDecl);
+                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(modName, searchKind, this.semanticInfo.getPath());
             }
 
             if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.kind !== moduleKind) {
@@ -423,7 +383,7 @@ module TypeScript {
                 }
             }
             else if (!(importDeclaration.flags & PullElementFlags.Exported)) {
-                importSymbol = <PullTypeAliasSymbol>findSymbolInContext(declName, PullElementKind.SomeContainer, importDeclaration);
+                importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.semanticInfo.getPath());
             }
 
             if (importSymbol) {
@@ -506,7 +466,7 @@ module TypeScript {
                 }
             }
             else {
-                classSymbol = <PullTypeSymbol>findSymbolInContext(className, PullElementKind.Class, classDecl);
+                classSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(className, PullElementKind.Class, this.semanticInfo.getPath());
             }
 
             if (classSymbol) {
@@ -610,7 +570,7 @@ module TypeScript {
             // 1. Test for existing decl - if it exists, use its symbol
             // 2. If no other decl exists, create a new symbol and use that one
             var interfaceName = interfaceDecl.name;
-            var interfaceSymbol: PullTypeSymbol = <PullTypeSymbol>findSymbolInContext(interfaceName, PullElementKind.SomeType, interfaceDecl);
+            var interfaceSymbol: PullTypeSymbol = null;
 
             var interfaceAST = <TypeDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
@@ -623,7 +583,7 @@ module TypeScript {
                 interfaceSymbol = parent.findNestedType(interfaceName, PullElementKind.SomeType);
             }
             else if (!(interfaceDecl.flags & PullElementFlags.Exported)) {
-                interfaceSymbol = <PullTypeSymbol>findSymbolInContext(interfaceName, acceptableSharedKind, interfaceDecl);
+                interfaceSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(interfaceName, PullElementKind.Interface, this.semanticInfo.getPath());
             }
 
             if (interfaceSymbol && !(interfaceSymbol.kind & acceptableSharedKind)) {
@@ -848,7 +808,7 @@ module TypeScript {
                 }
             }
             else if (!(variableDeclaration.flags & PullElementFlags.Exported)) {
-                variableSymbol = findSymbolInContext(declName, PullElementKind.SomeValue, variableDeclaration);
+                variableSymbol = this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeValue, this.semanticInfo.getPath());
             }
 
             if (variableSymbol && !variableSymbol.isType()) {
@@ -961,7 +921,7 @@ module TypeScript {
                         }
 
                         if (!classTypeSymbol) {
-                            classTypeSymbol = <PullTypeSymbol>findSymbolInContext(declName, PullElementKind.SomeType, variableDeclaration);
+                            classTypeSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeType, this.semanticInfo.getPath());
                         }
                     }
 
@@ -1036,10 +996,10 @@ module TypeScript {
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>findSymbolInContext(declName, PullElementKind.SomeContainer, variableDeclaration);
+                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.semanticInfo.getPath());
 
                             if (!moduleContainerTypeSymbol) {
-                                moduleContainerTypeSymbol = <PullContainerTypeSymbol>findSymbolInContext(declName, PullElementKind.Enum, variableDeclaration);
+                                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, this.semanticInfo.getPath());
                             }
                         }
                     }
@@ -1262,7 +1222,7 @@ module TypeScript {
                 }
             }
             else if (!(functionDeclaration.flags & PullElementFlags.Exported)) {
-                functionSymbol = findSymbolInContext(funcName, PullElementKind.SomeValue, functionDeclaration);
+                functionSymbol = this.semanticInfoChain.findTopLevelSymbol(funcName, PullElementKind.SomeValue, this.semanticInfo.getPath());
             }
 
             if (functionSymbol &&
