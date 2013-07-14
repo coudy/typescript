@@ -190,6 +190,7 @@ module TypeScript {
         private declCache = <any>new BlockIntrinsics();
         private symbolCache = <any>new BlockIntrinsics();
         private unitCache = <any>new BlockIntrinsics();
+        private topLevelDecls: PullDecl[] = [];
 
         public anyTypeSymbol: PullTypeSymbol = null;
         public booleanTypeSymbol: PullTypeSymbol = null;
@@ -266,14 +267,7 @@ module TypeScript {
         }
 
         public getUnit(compilationUnitPath: string) {
-            // PULLTODO: Replace this with a hash so we don't have a linear walk going on here.
-            for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i].getPath() === compilationUnitPath) {
-                    return this.units[i];
-                }
-            }
-
-            return null;
+            return this.unitCache[compilationUnitPath];
         }
 
         // PULLTODO: compilationUnitPath is only really there for debug purposes
@@ -288,17 +282,21 @@ module TypeScript {
         }
 
         private collectAllTopLevelDecls() {
-            var decls: PullDecl[] = [];
+
+            if (this.topLevelDecls.length) {
+                return this.topLevelDecls;
+            }
+
             var unitDecls: PullDecl[];
 
             for (var i = 0; i < this.units.length; i++) {
                 unitDecls = this.units[i].getTopLevelDecls();
                 for (var j = 0; j < unitDecls.length; j++) {
-                    decls[decls.length] = unitDecls[j];
+                    this.topLevelDecls[this.topLevelDecls.length] = unitDecls[j];
                 }
             }
 
-            return decls;
+            return this.topLevelDecls;
         }
 
         private collectAllSynthesizedDecls() {
@@ -508,6 +506,7 @@ module TypeScript {
             }
 
             this.cleanAllSynthesizedDecls();
+            this.topLevelDecls = [];
         }
 
         private cleanAllSynthesizedDecls() {

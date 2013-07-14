@@ -841,9 +841,69 @@ module TypeScript {
             return (type.isArray() && type.getElementType()) || type == this.cachedArrayInterfaceType();
         }
 
+        private lastExternalModulePath = "";
+
         private findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) => PullTypeSymbol): PullTypeSymbol {
             var originalIdText = idText;
-            var symbol = search(idText);
+            var symbol: PullTypeSymbol = null;
+
+            // If the literal path doesn't work, begin the search
+            if (!isRelative(originalIdText)) {
+                // check the full path first, as this is the most likely scenario
+                idText = originalIdText;
+
+                var strippedIdText = stripQuotes(idText);
+
+                // Check to see if the previously resolved external module shares this path
+                if (this.lastExternalModulePath != "") {
+                    idText = normalizePath(this.lastExternalModulePath + strippedIdText + ".ts");
+                    symbol = search(idText);
+
+                    if (symbol) {
+                        return symbol;
+                    }
+
+                    if (symbol === null) {
+                        idText = normalizePath(this.lastExternalModulePath + strippedIdText + ".d.ts");
+                        symbol = search(idText);
+                    }
+
+                    if (symbol) {
+                        return symbol;
+                    }
+                }
+
+                // REVIEW: Technically, we shouldn't have to normalize here - we should normalize in addUnit.
+                // Still, normalizing here alows any language services to be free of assumptions
+                var path = getRootFilePath(switchToForwardSlashes(currentFileName));
+
+                while (symbol === null && path != "") {
+                    // Check for .d.ts
+                    idText = normalizePath(path + strippedIdText + ".d.ts");
+                    symbol = search(idText);
+
+                    // check for .ts
+                    if (symbol === null) {
+                        idText = normalizePath(path + strippedIdText + ".ts");
+                        symbol = search(idText);
+                    }
+
+                    if (symbol === null) {
+                        if (path === '/') {
+                            path = '';
+                        } else {
+                            path = normalizePath(path + "..");
+                            path = path && path != '/' ? path + '/' : path;
+                        }
+                    }
+
+                    if (symbol) {
+                        this.lastExternalModulePath = path;
+                    }
+                }
+            }   
+
+            symbol = search(originalIdText);
 
             if (symbol === null) {
                 // perhaps it's a dynamic module?
@@ -861,39 +921,6 @@ module TypeScript {
                 if (!symbol) {
                     idText = stripQuotes(originalIdText) + ".ts";
                     symbol = search(idText);
-                }
-
-                // If the literal path doesn't work, begin the search
-                if (!symbol && !isRelative(originalIdText)) {
-                    // check the full path first, as this is the most likely scenario
-                    idText = originalIdText;
-
-                    var strippedIdText = stripQuotes(idText);
-
-                    // REVIEW: Technically, we shouldn't have to normalize here - we should normalize in addUnit.
-                    // Still, normalizing here alows any language services to be free of assumptions
-                    var path = getRootFilePath(switchToForwardSlashes(currentFileName));
-
-                    while (symbol === null && path != "") {
-                        // Check for .d.ts
-                        idText = normalizePath(path + strippedIdText + ".d.ts");
-                        symbol = search(idText);
-
-                        // check for .ts
-                        if (symbol === null) {
-                            idText = normalizePath(path + strippedIdText + ".ts");
-                            symbol = search(idText);
-                        }
-
-                        if (symbol === null) {
-                            if (path === '/') {
-                                path = '';
-                            } else {
-                                path = normalizePath(path + "..");
-                                path = path && path != '/' ? path + '/' : path;
-                            }
-                        }
-                    }
                 }
             }
 
