@@ -38,6 +38,8 @@ module TypeScript {
 
         PropertyParameter = 1 << 23,
 
+        IsAnnotatedWithAny = 1 << 24,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule | InitializedEnum,
         SomeInitializedModule = InitializedModule | InitializedDynamicModule | InitializedEnum,
     }

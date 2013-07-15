@@ -2190,6 +2190,10 @@ module TypeScript {
                     }
                 }
                 else {
+                    if (typeExprSymbol == this.semanticInfoChain.anyTypeSymbol) {
+                        decl.setFlag(PullElementFlags.IsAnnotatedWithAny);
+                    }
+
                     if (typeExprSymbol.isNamedTypeSymbol() &&
                         typeExprSymbol.isGeneric() &&
                         !typeExprSymbol.isTypeParameter() &&
@@ -4212,7 +4216,7 @@ module TypeScript {
             }
 
             // We don't want to capture an intermediate 'any' from a recursive resolution
-            if (nameSymbol && nameSymbol.type != this.semanticInfoChain.anyTypeSymbol/*&& !nameSymbol.inResolution*/) {
+            if (nameSymbol && (nameSymbol.type != this.semanticInfoChain.anyTypeSymbol || nameSymbol.hasFlag(PullElementFlags.IsAnnotatedWithAny))/*&& !nameSymbol.inResolution*/) {
                 this.setSymbolForAST(nameAST, nameSymbol, context);
             }
 
@@ -4295,7 +4299,7 @@ module TypeScript {
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
             }
 
-            if (symbol && symbol.type != this.semanticInfoChain.anyTypeSymbol/*&& !symbol.inResolution*/) {
+            if (symbol && (symbol.type != this.semanticInfoChain.anyTypeSymbol || symbol.hasFlag(PullElementFlags.IsAnnotatedWithAny))/*&& !symbol.inResolution*/) {
                 this.setSymbolForAST(dottedNameAST, symbol, context);
                 this.setSymbolForAST(dottedNameAST.operand2, symbol, context);
             }
