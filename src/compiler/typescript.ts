@@ -247,7 +247,7 @@ module TypeScript {
     export var globalBinder: PullSymbolBinder = null;
     export var globalLogger: ILogger = null;
 
-    export var inBatchCompilation = false;
+    export var useDirectTypeStorage = false;
 
     export class TypeScriptCompiler {
         public pullTypeChecker: PullTypeChecker = null;

@@ -50152,7 +50152,7 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.getDeclForAST = function (ast) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return ast.decl;
             }
 
@@ -50160,7 +50160,7 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.setDeclForAST = function (ast, decl) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 ast.decl = decl;
                 return;
             }
@@ -50169,7 +50169,7 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.getASTForDecl = function (decl) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return decl.ast;
             }
 
@@ -50177,7 +50177,7 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.setASTForDecl = function (decl, ast) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 decl.ast = ast;
                 return;
             }
@@ -50186,7 +50186,7 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.setSymbolForAST = function (ast, symbol) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 ast.symbol = symbol;
                 symbol.ast = ast;
                 return;
@@ -50197,21 +50197,21 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.getSymbolForAST = function (ast) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return (ast).symbol;
             }
             return this.astSymbolMap.read(ast.astIDString);
         };
 
         SemanticInfo.prototype.getASTForSymbol = function (symbol) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return symbol.ast;
             }
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         };
 
         SemanticInfo.prototype.setAliasSymbolForAST = function (ast, symbol) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 ast.aliasSymbol = symbol;
                 return;
             }
@@ -50219,14 +50219,14 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.getAliasSymbolForAST = function (ast) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return (ast).aliasSymbol;
             }
             return this.astAliasSymbolMap.read(ast.astIDString);
         };
 
         SemanticInfo.prototype.getCallResolutionDataForAST = function (ast) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return (ast).callResolutionData;
             }
             return this.astCallResolutionDataMap.get(ast.astID);
@@ -50234,7 +50234,7 @@ var TypeScript;
 
         SemanticInfo.prototype.setCallResolutionDataForAST = function (ast, callResolutionData) {
             if (callResolutionData) {
-                if (TypeScript.inBatchCompilation) {
+                if (TypeScript.useDirectTypeStorage) {
                     (ast).callResolutionData = callResolutionData;
                     return;
                 }
@@ -50671,7 +50671,7 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.getSymbolForAST = function (ast, unitPath) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return (ast).symbol;
             }
 
@@ -50685,7 +50685,7 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.getASTForSymbol = function (symbol, unitPath) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return symbol.ast;
             }
 
@@ -50699,7 +50699,7 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.setSymbolForAST = function (ast, symbol, unitPath) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 ast.symbol = symbol;
                 return;
             }
@@ -50712,7 +50712,7 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.getAliasSymbolForAST = function (ast, unitPath) {
-            if (TypeScript.inBatchCompilation) {
+            if (TypeScript.useDirectTypeStorage) {
                 return (ast).aliasSymbol;
             }
 
@@ -57118,7 +57118,7 @@ var TypeScript;
     TypeScript.globalBinder = null;
     TypeScript.globalLogger = null;
 
-    TypeScript.inBatchCompilation = false;
+    TypeScript.useDirectTypeStorage = false;
 
     var TypeScriptCompiler = (function () {
         function TypeScriptCompiler(logger, settings) {

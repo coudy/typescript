@@ -84,7 +84,7 @@ module TypeScript {
 
         public getDeclForAST(ast: AST): PullDecl {
 
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return ast.decl;
             }
 
@@ -93,7 +93,7 @@ module TypeScript {
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
 
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 ast.decl = decl;
                 return;
             }
@@ -102,7 +102,7 @@ module TypeScript {
         }
 
         public getASTForDecl(decl: PullDecl): AST {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return decl.ast;
             }
 
@@ -111,7 +111,7 @@ module TypeScript {
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
 
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 decl.ast = ast;
                 return;
             }
@@ -121,7 +121,7 @@ module TypeScript {
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
 
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 ast.symbol = symbol;
                 symbol.ast = ast;
                 return;
@@ -132,21 +132,21 @@ module TypeScript {
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return (<AST>ast).symbol;
             }
             return <PullSymbol>this.astSymbolMap.read(ast.astIDString);
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return symbol.ast;
             }
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 ast.aliasSymbol = symbol;
                 return;
             }
@@ -154,14 +154,14 @@ module TypeScript {
         }
 
         public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
             }
             return <PullTypeAliasSymbol>this.astAliasSymbolMap.read(ast.astIDString);
         }
 
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return (<InvocationExpression>ast).callResolutionData;
             }
             return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
@@ -169,7 +169,7 @@ module TypeScript {
 
         public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
             if (callResolutionData) {
-                if (inBatchCompilation) {
+                if (useDirectTypeStorage) {
                     (<InvocationExpression>ast).callResolutionData = callResolutionData;
                     return;
                 }
@@ -627,7 +627,7 @@ module TypeScript {
 
         public getSymbolForAST(ast: IAST, unitPath: string): PullSymbol {
 
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return (<AST>ast).symbol;
             }
 
@@ -642,7 +642,7 @@ module TypeScript {
 
         public getASTForSymbol(symbol: PullSymbol, unitPath: string) {
 
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return symbol.ast;
             }
 
@@ -656,7 +656,7 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol, unitPath: string): void {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 ast.symbol = symbol;
                 return;
             }
@@ -669,7 +669,7 @@ module TypeScript {
         }
 
         public getAliasSymbolForAST(ast: IAST, unitPath: string): PullTypeAliasSymbol {
-            if (inBatchCompilation) {
+            if (useDirectTypeStorage) {
                 return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
             }
 
