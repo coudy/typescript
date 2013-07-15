@@ -87,14 +87,15 @@ module TypeScript {
             return this.kind === PullElementKind.Property;
         }
 
+        public isAlias() { return false; }
+        public isContainer() { return false; }
+
+
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
             this.kind = declKind;
             this.pullSymbolIDString = this.pullSymbolID.toString();
         }
-
-        public isAlias() { return false; }
-        public isContainer() { return false; }
 
         public setAccessorSymbol(accessor: PullSymbol) {
             this._parentAccessorSymbol = accessor;
@@ -242,10 +243,6 @@ module TypeScript {
             }
 
             return this._container;
-        }
-
-        public isTyped() {
-            return this.type != null;
         }
 
         public setResolved() {

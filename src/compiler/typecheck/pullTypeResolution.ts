@@ -300,9 +300,10 @@ module TypeScript {
         private getExportedMemberSymbol(symbol: PullSymbol, parent: PullTypeSymbol): PullSymbol {
 
             if (!(symbol.kind & (PullElementKind.Method | PullElementKind.Property))) {
-                var containerType = !parent.isContainer() ? parent.getAssociatedContainerType() : parent;
+                var isContainer = (parent.kind & (PullElementKind.Container | PullElementKind.DynamicModule)) != 0;
+                var containerType = !isContainer ? parent.getAssociatedContainerType() : parent;
 
-                if (containerType && containerType.isContainer() && !PullHelpers.symbolIsEnum(parent)) {
+                if (isContainer && containerType) {
                     if (symbol.hasFlag(PullElementFlags.Exported)) {
                         return symbol;
                     }
@@ -404,28 +405,8 @@ module TypeScript {
 
                     if (declSearchKind & PullElementKind.SomeValue) {
 
-                        childDecls = decl.searchChildDecls(symbolName, declSearchKind);
-
-                        if (childDecls.length) {
-                            valDecl = childDecls[0];
-
-                            if (valDecl) {
-                                return valDecl.getSymbol();
-                            }
-                        }
-
                         // search "split" exported members
                         instanceSymbol = (<PullContainerTypeSymbol>decl.getSymbol()).getInstanceSymbol();
-
-                        if (instanceSymbol) {
-                            instanceType = instanceSymbol.type;
-
-                            childSymbol = this.getMemberSymbol(symbolName, declSearchKind, instanceType);
-
-                            if (childSymbol && (childSymbol.kind & declSearchKind)) {
-                                return childSymbol;
-                            }
-                        }
 
                         // Maybe there's an import statement aliasing an initalized value?
                         childDecls = decl.searchChildDecls(symbolName, PullElementKind.TypeAlias);
@@ -435,6 +416,16 @@ module TypeScript {
 
                             if (sym.isAlias()) {
                                 return sym;
+                            }
+                        }
+
+                        if (instanceSymbol) {
+                            instanceType = instanceSymbol.type;
+
+                            childSymbol = this.getMemberSymbol(symbolName, declSearchKind, instanceType);
+
+                            if (childSymbol && (childSymbol.kind & declSearchKind)) {
+                                return childSymbol;
                             }
                         }
 

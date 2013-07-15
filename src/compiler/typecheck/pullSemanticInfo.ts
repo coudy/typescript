@@ -323,6 +323,33 @@ module TypeScript {
             return cacheID + "#" + declKind.toString();
         }
 
+        //public findExternalModuleSymbol(name) {
+        //    var cacheID = this.getDeclPathCacheID([name], PullElementKind.DynamicModule);
+
+        //    var symbol = this.symbolCache[name];
+
+        //    if (!symbol) {
+        //        var unit = <SemanticInfo>this.unitCache[name];
+        //        var symbol: PullContainerTypeSymbol = null;
+        //        if (unit) {
+        //            // the dynamic module will be the only child
+        //            var decl = unit.getTopLevelDecls()[0].getChildDecls()[0];
+
+        //            if (decl.kind == PullElementKind.DynamicModule) {
+        //                symbol = decl.getSymbol();
+        //            }
+        //        }
+        //    }
+
+        //    if (symbol) {
+        //        this.symbolCache[cacheID] = symbol;
+
+        //        symbol.addCacheID(cacheID);
+        //    }
+
+        //    return symbol;
+        //}
+
         public findTopLevelSymbol(name: string, kind: PullElementKind, stopAtFile: string): PullSymbol {
             var cacheID = this.getDeclPathCacheID([name], kind);
 
