@@ -54,6 +54,8 @@ module TypeScript {
 
         public hashCode = -1;
 
+        // This is used to store the AST directly on the decl, rather than in a data map,
+        // if the useDirectTypeStorage flag is set
         public ast: AST = null;
 
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {

@@ -322,7 +322,8 @@ module TypeScript {
 
             return cacheID + "#" + declKind.toString();
         }
-
+        
+        // REVIEW: The method below is part of an experiment on how to speed up up dynamic module lookup
         //public findExternalModuleSymbol(name) {
         //    var cacheID = this.getDeclPathCacheID([name], PullElementKind.DynamicModule);
 

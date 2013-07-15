@@ -34202,6 +34202,8 @@ var TypeScript;
             // edits and updates we don't leak the val decl or symbol
             this.synthesizedValDecl = null;
             this.hashCode = -1;
+            // This is used to store the AST directly on the decl, rather than in a data map,
+            // if the useDirectTypeStorage flag is set
             this.ast = null;
             this.name = declName;
             this.kind = kind;
@@ -34521,6 +34523,8 @@ var TypeScript;
             this._enclosingSignature = null;
             this.docComments = null;
             this.isPrinting = false;
+            // This is used to store the AST directly on the symbol, rather than using a data map,
+            // if the useDirectTypeStorage flag is set
             this.ast = null;
             this.name = name;
             this.kind = declKind;
@@ -58508,6 +58512,8 @@ var TypeScript;
             this.typeCheckPhase = -1;
             this.astIDString = astID.toString();
             this.astID = astID++;
+            // These are used to store type resolution information directly on the AST, rather than
+            // within a data map, if the useDirectTypeStorage flag is set
             this.symbol = null;
             this.aliasSymbol = null;
             this.decl = null;

@@ -49,6 +49,8 @@ module TypeScript {
 
         public isPrinting = false;
 
+        // This is used to store the AST directly on the symbol, rather than using a data map,
+        // if the useDirectTypeStorage flag is set
         public ast: AST = null;
 
         public isType() {
