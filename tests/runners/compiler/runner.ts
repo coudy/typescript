@@ -46,6 +46,7 @@ class CompilerBaselineRunner extends RunnerBase {
             var errorDescriptionLocal = '';
             var createNewInstance = false;
 
+            // Find out why this is necessary
             for (var i = 0; i < tcSettings.length; ++i) {
                 if (tcSettings[i].flag == "disallowimplicitany") {
                     Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
@@ -54,6 +55,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     break;
                 }
             }
+
             // compile as CommonJS module                    
             Harness.Compiler.compileUnits(Harness.Compiler.CompilerInstance.RunTime, units, function (result) {
                 var jsResult = result.commonJSResult;
