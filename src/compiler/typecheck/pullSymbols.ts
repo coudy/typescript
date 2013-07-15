@@ -2070,6 +2070,10 @@ module TypeScript {
 
             return false;
         }
+
+        public getInstanceType() {
+            return this.instanceSymbol ? this.instanceSymbol.type : null;
+        }
     }
 
     export class PullTypeAliasSymbol extends PullTypeSymbol {

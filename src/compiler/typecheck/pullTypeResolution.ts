@@ -2392,43 +2392,25 @@ module TypeScript {
 
                 if (typeExprSymbol && typeExprSymbol.isContainer()) {
 
-                    if (typeExprSymbol.isAlias()) {
-                        typeExprSymbol = (<PullTypeAliasSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
-                    }
-
                     var exportedTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
 
                     if (exportedTypeSymbol) {
                         typeExprSymbol = exportedTypeSymbol;
                     }
                     else {
-                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol.type).getInstanceSymbol().type;
+                        var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceType();
 
                         if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [typeExprSymbol.toString()], enclosingDecl);
                             typeExprSymbol = null;
                         }
                         else {
-                            typeExprSymbol = instanceTypeSymbol.type;
+                            typeExprSymbol = instanceTypeSymbol;
                         }
                     }
                 }
 
-                if (initTypeSymbol && initTypeSymbol.isAlias()) {
-                    initTypeSymbol = (<PullTypeAliasSymbol>initTypeSymbol).getExportAssignedTypeSymbol();
-                }
-
-                if (initTypeSymbol && initTypeSymbol.isContainer()) {
-                    instanceTypeSymbol = (<PullContainerTypeSymbol>initTypeSymbol).getInstanceSymbol().type;
-
-                    if (!instanceTypeSymbol) {
-                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [initTypeSymbol.toString()], enclosingDecl);
-                        initTypeSymbol = null;
-                    }
-                    else {
-                        initTypeSymbol = instanceTypeSymbol.type;
-                    }
-                }
+                initTypeSymbol = this.getInstanceTypeForAssignment(varDecl, initTypeSymbol, enclosingDecl, context);
 
                 if (initTypeSymbol && typeExprSymbol) {
                     var comparisonInfo = new TypeComparisonInfo();
@@ -6542,6 +6524,8 @@ module TypeScript {
             var rightType = this.widenType(this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type);
             context.popContextualType();
 
+            rightType = this.getInstanceTypeForAssignment(binaryExpression.operand1, rightType, enclosingDecl, context);
+
             // Check if LHS is a valid target
             if (context.typeCheck()) {
                 if (!this.isValidLHS(binaryExpression.operand1, leftExpr)) {
@@ -6561,6 +6545,27 @@ module TypeScript {
             context.popContextualType();
 
             return leftType;
+        }
+
+        private getInstanceTypeForAssignment(lhs: AST, type: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            var typeToReturn = type;
+            if (typeToReturn && typeToReturn.isAlias()) {
+                typeToReturn = (<PullTypeAliasSymbol>typeToReturn).getExportAssignedTypeSymbol();
+            }
+
+            if (typeToReturn && typeToReturn.isContainer()) {
+                var instanceTypeSymbol = (<PullContainerTypeSymbol>typeToReturn).getInstanceType();
+
+                if (!instanceTypeSymbol) {
+                    context.postError(this.unitPath, lhs.minChar, lhs.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [type.toString()], enclosingDecl);
+                    typeToReturn = null;
+                }
+                else {
+                    typeToReturn = instanceTypeSymbol;
+                }
+            }
+
+            return typeToReturn;
         }
 
         public resolveBoundDecls(decl: PullDecl, context: PullTypeResolutionContext): void {
