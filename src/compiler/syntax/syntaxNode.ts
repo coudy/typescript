@@ -84,7 +84,7 @@ module TypeScript {
             return this.lastToken().trailingTrivia();
         }
 
-        public toJSON(key) {
+        public toJSON(key: any): any {
             var result: any = {
                 kind: SyntaxKind[this.kind()],
                 fullWidth: this.fullWidth()

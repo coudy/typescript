@@ -1,18 +1,18 @@
 /*! JSON v3.2.4 | http://bestiejs.github.com/json3 | Copyright 2012, Kit Cambridge | http://kit.mit-license.org */
 
 module JSON3 {
-    declare var define;
-    declare var exports;
+    declare var define: any;
+    declare var exports: any;
 
     // Convenience aliases.
-    var getClass = {}.toString, isProperty, forEach, undef;
+    var getClass = {}.toString, isProperty: any, forEach: any, undef: any;
 
     // Local variables.
-    var Escapes, toPaddedString, quote, serialize;
-    var fromCharCode, Unescapes, abort, lex, get, walk, update, Index, Source;
+    var Escapes: any, toPaddedString: any, quote: any, serialize: any;
+    var fromCharCode: any, Unescapes: any, abort: any, lex: any, get: any, walk: any, update: any, Index: any, Source: any;
 
     // Test the `Date#getUTC*` methods. Based on work by @Yaffle.
-    var isExtended: any = new Date(-3509827334573292), floor, Months, getDay;
+    var isExtended: any = new Date(-3509827334573292), floor: any, Months: any, getDay: any;
 
     try {
         // The `getUTCFullYear`, `Month`, and `Date` methods return nonsensical
@@ -32,7 +32,7 @@ module JSON3 {
         Months = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
         // Internal: Calculates the number of days between the Unix epoch and the
         // first day of the given month.
-        getDay = function (year, month) {
+        getDay = function (year: number, month: number): any {
             return Months[month] + 365 * (year - 1970) + floor((year - 1969 + (month = +(month > 1))) / 4) - floor((year - 1901 + month) / 100) + floor((year - 1601 + month) / 400);
         };
     }
@@ -40,8 +40,8 @@ module JSON3 {
     // Internal: Determines if a property is a direct property of the given
     // object. Delegates to the native `Object#hasOwnProperty` method.
     if (!(isProperty = {}.hasOwnProperty)) {
-        isProperty = function (property) {
-            var members: any = {}, constructor;
+        isProperty = function (property: any): any {
+            var members: any = {}, constructor: any;
             if ((members.__proto__ = null, members.__proto__ = {
                 // The *proto* property cannot be set multiple times in recent
                 // versions of Firefox and SeaMonkey.
@@ -49,11 +49,11 @@ module JSON3 {
             }, members).toString != getClass) {
                 // Safari <= 2.0.3 doesn't implement `Object#hasOwnProperty`, but
                 // supports the mutable *proto* property.
-                isProperty = function (property) {
+                isProperty = function (property: any): any {
                     // Capture and break the object's prototype chain (see section 8.6.2
                     // of the ES 5.1 spec). The parenthesized expression prevents an
                     // unsafe transformation by the Closure Compiler.
-                    var original = this.__proto__, result = property in (this.__proto__ = null, this);
+                    var original: any = this.__proto__, result = property in (this.__proto__ = null, this);
                     // Restore the original prototype chain.
                     this.__proto__ = original;
                     return result;
@@ -63,8 +63,8 @@ module JSON3 {
                 constructor = members.constructor;
                 // Use the `constructor` property to simulate `Object#hasOwnProperty` in
                 // other environments.
-                isProperty = function (property) {
-                    var parent = (this.constructor || constructor).prototype;
+                isProperty = function (property: any): any {
+                    var parent: any = (this.constructor || constructor).prototype;
                     return property in this && !(property in parent && this[property] === parent[property]);
                 };
             }
@@ -75,8 +75,8 @@ module JSON3 {
 
     // Internal: Normalizes the `for...in` iteration algorithm across
     // environments. Each enumerated key is yielded to a `callback` function.
-    forEach = function (object, callback) {
-        var size = 0, Properties, members, property, forEach;
+    forEach = function (object: any, callback: any): any {
+        var size = 0, Properties: any, members: any, property: any, forEach: any;
 
         // Tests for bugs in the current environment's `for...in` algorithm. The
         // `valueOf` property inherits the non-enumerable flag from
@@ -101,8 +101,8 @@ module JSON3 {
             members = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
             // IE <= 8, Mozilla 1.0, and Netscape 6.2 ignore shadowed non-enumerable
             // properties.
-            forEach = function (object, callback) {
-                var isFunction = getClass.call(object) == "[object Function]", property, length;
+            forEach = function (object: any, callback: any): any {
+                var isFunction = getClass.call(object) == "[object Function]", property: any, length: number;
                 for (property in object) {
                     // Gecko <= 1.0 enumerates the `prototype` property of functions under
                     // certain conditions; IE does not.
@@ -115,9 +115,9 @@ module JSON3 {
             };
         } else if (size == 2) {
             // Safari <= 2.0.4 enumerates shadowed properties twice.
-            forEach = function (object, callback) {
+            forEach = function (object: any, callback: any) {
                 // Create a set of iterated properties.
-                var members = {}, isFunction = getClass.call(object) == "[object Function]", property;
+                var members = {}, isFunction = getClass.call(object) == "[object Function]", property: any;
                 for (property in object) {
                     // Store each property name to prevent double enumeration. The
                     // `prototype` property of functions is not enumerated due to cross-
@@ -129,8 +129,8 @@ module JSON3 {
             };
         } else {
             // No bugs detected; use the standard `for...in` algorithm.
-            forEach = function (object, callback) {
-                var isFunction = getClass.call(object) == "[object Function]", property, isConstructor;
+            forEach = function (object: any, callback: any) {
+                var isFunction = getClass.call(object) == "[object Function]", property: any, isConstructor: any;
                 for (property in object) {
                     if (!(isFunction && property == "prototype") && isProperty.call(object, property) && !(isConstructor = property === "constructor")) {
                         callback(property);
@@ -165,7 +165,7 @@ module JSON3 {
 
     // Internal: Converts `value` into a zero-padded string such that its
     // length is at least equal to `width`. The `width` must be <= 6.
-    toPaddedString = function (width, value) {
+    toPaddedString = function (width: any, value: any): any {
         // The `|| 0` expression is necessary to work around a bug in
         // Opera <= 7.54u2 where `0 == -0`, but `String(-0) !== "0"`.
         return ("000000" + (value || 0)).slice(-width);
@@ -175,8 +175,8 @@ module JSON3 {
     // characters (characters with code unit values between 0 and 31) with
     // their escaped equivalents. This is an implementation of the
     // `Quote(value)` operation defined in ES 5.1 section 15.12.3.
-    quote = function (value) {
-        var result = '"', index = 0, symbol;
+    quote = function (value: any): any {
+        var result = '"', index = 0, symbol: any;
         for (; symbol = value.charAt(index); index++) {
             // Escape the reverse solidus, double quote, backspace, form feed, line
             // feed, carriage return, and tab characters.
@@ -190,8 +190,8 @@ module JSON3 {
 
     // Internal: Recursively serializes an object. Implements the
     // `Str(key, holder)`, `JO(value)`, and `JA(value)` operations.
-    serialize = function (property, object, callback, properties, whitespace, indentation, stack) {
-        var value = object[property], className, year, month, date, time, hours, minutes, seconds, milliseconds, results, element, index, length, prefix, any, result;
+    serialize = function (property: any, object: any, callback: any, properties: any, whitespace: any, indentation: any, stack: any): any {
+        var value = object[property], className: any, year: any, month: any, date: any, time: any, hours: any, minutes: any, seconds: any, milliseconds: any, results: any, element: any, index: any, length: any, prefix: any, any: any, result: any;
         if (typeof value == "object" && value) {
             className = getClass.call(value);
             if (className == "[object Date]" && !isProperty.call(value, "toJSON")) {
@@ -293,7 +293,7 @@ module JSON3 {
                 // Recursively serialize object members. Members are selected from
                 // either a user-specified list of property names, or the object
                 // itself.
-                forEach(properties || value, function (property) {
+                forEach(properties || value, function (property: any): any {
                     var element = serialize(property, value, callback, properties, whitespace, indentation, stack);
                     if (element !== undef) {
                         // According to ES 5.1 section 15.12.3: "If `gap` {whitespace}
@@ -315,8 +315,8 @@ module JSON3 {
     };
 
     // Public: `JSON.stringify`. See ES 5.1 section 15.12.3.
-    export function stringify(source, filter?, width?) {
-        var whitespace, callback, properties, index, length, value;
+    export function stringify(source: any, filter?: any, width?: any): any {
+        var whitespace: any, callback: any, properties: any, index: number, length: number, value: any;
         if (typeof filter == "function" || typeof filter == "object" && filter) {
             if (getClass.call(filter) == "[object Function]") {
                 callback = filter;
@@ -340,7 +340,7 @@ module JSON3 {
         // Opera <= 7.54u2 discards the values associated with empty string keys
         // (`""`) only if they are used directly within an object member list
         // (e.g., `!("" in { "": 1})`).
-        return serialize("", (value = {}, value[""] = source, value), callback, properties, whitespace, "", []);
+        return serialize("", (value = {}, value[""] = source, value), callback, properties, whitespace, "", <any[]>[]);
     };
 
     // Public: Parses a JSON source string.
@@ -367,8 +367,8 @@ module JSON3 {
     // Internal: Returns the next token, or `"$"` if the parser has reached
     // the end of the source string. A token may be a string, number, `null`
     // literal, or Boolean literal.
-    lex = function () {
-        var source = Source, length = source.length, symbol, value, begin, position, sign;
+    lex = function (): any {
+        var source = Source, length = source.length, symbol: any, value: any, begin: any, position: any, sign: any;
         while (Index < length) {
             symbol = source.charAt(Index);
             if ("\t\r\n ".indexOf(symbol) > -1) {
@@ -509,8 +509,8 @@ module JSON3 {
     };
 
     // Internal: Parses a JSON `value` token.
-    get = function (value) {
-        var results, any, key;
+    get = function (value: any): any {
+        var results: any, any: any, key: any;
         if (value == "$") {
             // Unexpected end of input.
             abort();
@@ -524,7 +524,7 @@ module JSON3 {
             if (value == "[") {
                 // Parses a JSON array, returning a new JavaScript array.
                 results = [];
-                for (;; any || (any = true)) {
+                for (; ; any || (any = true)) {
                     value = lex();
                     // A closing square bracket marks the end of the array literal.
                     if (value == "]") {
@@ -555,7 +555,7 @@ module JSON3 {
             } else if (value == "{") {
                 // Parses a JSON object, returning a new JavaScript object.
                 results = {};
-                for (;; any || (any = true)) {
+                for (; ; any || (any = true)) {
                     value = lex();
                     // A closing curly brace marks the end of the object literal.
                     if (value == "}") {
@@ -592,7 +592,7 @@ module JSON3 {
     };
 
     // Internal: Updates a traversed object member.
-    update = function (source, property, callback) {
+    update = function (source: any, property: any, callback: any) {
         var element = walk(source, property, callback);
         if (element === undef) {
             delete source[property];
@@ -604,8 +604,8 @@ module JSON3 {
     // Internal: Recursively traverses a parsed JSON object, invoking the
     // `callback` function for each value. This is an implementation of the
     // `Walk(holder, name)` operation defined in ES 5.1 section 15.12.2.
-    walk = function (source, property, callback) {
-        var value = source[property], length;
+    walk = function (source: any, property: any, callback: any): any {
+        var value = source[property], length: any;
         if (typeof value == "object" && value) {
             if (getClass.call(value) == "[object Array]") {
                 for (length = value.length; length--;) {
@@ -615,7 +615,7 @@ module JSON3 {
                 // `forEach` can't be used to traverse an array in Opera <= 8.54,
                 // as `Object#hasOwnProperty` returns `false` for array indices
                 // (e.g., `![1, 2, 3].hasOwnProperty("0")`).
-                forEach(value, function (property) {
+                forEach(value, function (property: any) {
                     update(value, property, callback);
                 });
             }
@@ -624,8 +624,8 @@ module JSON3 {
     };
 
     // Public: `JSON.parse`. See ES 5.1 section 15.12.2.
-    export function parse(source: string, callback = undefined) {
-        var result, value;
+    export function parse(source: string, callback: any = undefined): any {
+        var result: any, value: any;
         Index = 0;
         Source = source;
         result = get(lex());

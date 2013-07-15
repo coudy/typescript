@@ -15,7 +15,7 @@ module TypeScript {
             this.map[id] = undefined;
         }
 
-        public read(id: string) {
+        public read(id: string): any {
             return this.map[id];
         }
     }

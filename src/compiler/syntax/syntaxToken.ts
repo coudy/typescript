@@ -51,7 +51,7 @@ module TypeScript.Syntax {
             token.leadingTrivia(), token.text(), token.text(), token.text(), token.trailingTrivia());
     }
 
-    export function tokenToJSON(token: ISyntaxToken) {
+    export function tokenToJSON(token: ISyntaxToken): any {
         var result: any = {};
 
         for (var name in SyntaxKind) {
@@ -306,7 +306,7 @@ module TypeScript.Syntax {
             throw Errors.argumentOutOfRange("index");
         }
 
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }
 
         private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {
@@ -324,7 +324,7 @@ module TypeScript.Syntax {
         public width() { return 0; }
         public text() { return ""; }
         public fullText(): string { return ""; }
-        public value() { return null; }
+        public value(): any { return null; }
         public valueText() { return ""; }
 
         public hasLeadingTrivia() { return false; }
@@ -386,7 +386,7 @@ module TypeScript.Syntax {
         }
 
         public kind(): SyntaxKind { return this.tokenKind; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken() { return this; }
         public lastToken() { return this; }
         public isTypeScriptSpecific() { return false; }

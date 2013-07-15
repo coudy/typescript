@@ -6,7 +6,7 @@ module TypeScript {
             return Object.prototype.toString.apply(value, []) === '[object Array]';
         }
 
-        public static sequenceEquals(array1: any[], array2: any[], equals: (v1, v2) => boolean) {
+        public static sequenceEquals(array1: any[], array2: any[], equals: (v1: any, v2: any) => boolean) {
             if (array1 === array2) {
                 return true;
             }
@@ -42,10 +42,10 @@ module TypeScript {
             var result = {};
 
             for (var i = 0, n = array.length; i < n; i++) {
-                var v = array[i];
+                var v: any = array[i];
                 var k = func(v);
 
-                var list = result[k] || [];
+                var list: any[] = result[k] || [];
                 list.push(v);
                 result[k] = list;
             }
@@ -111,9 +111,9 @@ module TypeScript {
         }
 
         public static whereNotNull<T>(array: T[]): T[] {
-            var result = [];
+            var result: T[] = [];
             for (var i = 0; i < array.length; i++) {
-                var value = array[i];
+                var value: T = array[i];
                 if (value !== null) {
                     result.push(value);
                 }

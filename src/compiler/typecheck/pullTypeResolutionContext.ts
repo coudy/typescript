@@ -69,7 +69,7 @@ module TypeScript {
         public getInferenceCandidates(): any[] {
             var inferenceCandidates: any[] = [];
             var info: CandidateInferenceInfo;
-            var val;
+            var val: any;
 
             for (var infoKey in this.candidateCache) {
                 info = <CandidateInferenceInfo>this.candidateCache[infoKey];
@@ -181,6 +181,7 @@ module TypeScript {
         public inConstructorArguments = false;
         public inImportDeclaration = false;
         public isInStaticInitializer = false;
+        public isInInvocationExpression = false;
 
         constructor(public inTypeCheck = false) { }
 
@@ -267,7 +268,7 @@ module TypeScript {
             }
         }
 
-        public pushTypeSpecializationCache(cache) {
+        public pushTypeSpecializationCache(cache: any) {
             this.typeSpecializationStack[this.typeSpecializationStack.length] = cache;
         }
 

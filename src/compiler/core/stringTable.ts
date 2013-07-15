@@ -29,7 +29,7 @@ module TypeScript.Collections {
         private entries: StringTableEntry[];
         private count: number = 0;
 
-        constructor(capacity) {
+        constructor(capacity: number) {
             var size = Hash.getPrime(capacity);
             this.entries = ArrayUtilities.createArray(size, null);
         }

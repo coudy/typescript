@@ -30,7 +30,7 @@ module TypeScript.Syntax {
             this._textOrToken = textOrToken;
         }
 
-        public toJSON(key) {
+        public toJSON(key: any): any {
             var result: any = {};
             result.kind = SyntaxKind[this._kind];
 

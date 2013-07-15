@@ -21,7 +21,7 @@ module TypeScript.TextUtilities {
         // and non-line breaks.
         while (index < length) {
             var c = text.charCodeAt(index);
-            var lineBreakLength;
+            var lineBreakLength: number;
 
             // common case - ASCII & not a line break
             if (c > CharacterCodes.carriageReturn && c <= 127) {

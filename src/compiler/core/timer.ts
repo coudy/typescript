@@ -1,6 +1,6 @@
 ///<reference path='references.ts' />
 
-var global = <any>Function("return this").call(null);
+var global: any = <any>Function("return this").call(null);
 
 module TypeScript {
     module Clock {
@@ -8,7 +8,7 @@ module TypeScript {
         export var resolution: number;
 
         declare module WScript {
-            export function InitializeProjection();
+            export function InitializeProjection(): any;
         }
 
         declare module TestUtilities {
@@ -35,7 +35,7 @@ module TypeScript {
     }
 
     export class Timer {
-        public startTime;
+        public startTime: number;
         public time = 0;
 
         public start() {

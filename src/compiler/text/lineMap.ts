@@ -7,7 +7,7 @@ module TypeScript {
         constructor(private _lineStarts: number[], private length: number) {
         }
 
-        public toJSON(key) {
+        public toJSON(key: any) {
             return { lineStarts: this._lineStarts, length: this.length };
         }
 

@@ -21,13 +21,13 @@ module TypeScript {
     }
 
     export class BlockIntrinsics {
-        public prototype = undefined;
-        public toString = undefined;
-        public toLocaleString = undefined;
-        public valueOf = undefined;
-        public hasOwnProperty = undefined;
-        public propertyIsEnumerable = undefined;
-        public isPrototypeOf = undefined;
+        public prototype: any = undefined;
+        public toString: any = undefined;
+        public toLocaleString: any = undefined;
+        public valueOf: any = undefined;
+        public hasOwnProperty: any = undefined;
+        public propertyIsEnumerable: any = undefined;
+        public isPrototypeOf: any = undefined;
 
         constructor () {
             // initialize the 'constructor' field

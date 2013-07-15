@@ -45,7 +45,7 @@ module TypeScript.Syntax {
         hasNewLine: (): boolean => false,
         hasSkippedToken: (): boolean => false,
 
-        toJSON: (key) => [],
+        toJSON: (key: any): any => [],
 
         collectTextElements: (elements: string[]): void => { },
 
@@ -118,7 +118,7 @@ module TypeScript.Syntax {
             return this.item.kind() === SyntaxKind.SkippedTokenTrivia;
         }
 
-        public toJSON(key) {
+        public toJSON(key: any): ISyntaxTrivia[] {
             return [this.item];
         }
 
@@ -204,7 +204,7 @@ module TypeScript.Syntax {
             return false;
         }
 
-        public toJSON(key) {
+        public toJSON(key: any): ISyntaxTrivia[] {
             return this.trivia;
         }
 

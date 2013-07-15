@@ -45,7 +45,7 @@ module TypeScript.Collections {
         }
 
         private computeHashCode(key: TKey): number {
-            var hashCode = this.hash === null
+            var hashCode: number = this.hash === null
                 ? (<any>key).hashCode
                 : this.hash(key);
 
@@ -55,7 +55,7 @@ module TypeScript.Collections {
             return hashCode;
         }
 
-        private addOrSet(key: TKey, value: TValue, throwOnExistingEntry: boolean) {
+        private addOrSet(key: TKey, value: TValue, throwOnExistingEntry: boolean): any {
             // Compute the hash for this key.  Also ensure that it's non negative.
             var hashCode = this.computeHashCode(key);
 

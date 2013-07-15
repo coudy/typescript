@@ -2,7 +2,55 @@
 ///<reference path='..\enumerator.ts' />
 ///<reference path='..\process.ts' />
 
-declare function Buffer(subject, encoding): void;
+// Buffer class
+interface NodeBuffer {
+    [index: number]: number;
+    write(string: string, offset?: number, length?: number, encoding?: string): number;
+    toString(encoding?: string, start?: number, end?: number): string;
+    length: number;
+    copy(targetBuffer: NodeBuffer, targetStart?: number, sourceStart?: number, sourceEnd?: number): void;
+    slice(start?: number, end?: number): NodeBuffer;
+    readUInt8(offset: number, noAsset?: boolean): number;
+    readUInt16LE(offset: number, noAssert?: boolean): number;
+    readUInt16BE(offset: number, noAssert?: boolean): number;
+    readUInt32LE(offset: number, noAssert?: boolean): number;
+    readUInt32BE(offset: number, noAssert?: boolean): number;
+    readInt8(offset: number, noAssert?: boolean): number;
+    readInt16LE(offset: number, noAssert?: boolean): number;
+    readInt16BE(offset: number, noAssert?: boolean): number;
+    readInt32LE(offset: number, noAssert?: boolean): number;
+    readInt32BE(offset: number, noAssert?: boolean): number;
+    readFloatLE(offset: number, noAssert?: boolean): number;
+    readFloatBE(offset: number, noAssert?: boolean): number;
+    readDoubleLE(offset: number, noAssert?: boolean): number;
+    readDoubleBE(offset: number, noAssert?: boolean): number;
+    writeUInt8(value: number, offset: number, noAssert?: boolean): void;
+    writeUInt16LE(value: number, offset: number, noAssert?: boolean): void;
+    writeUInt16BE(value: number, offset: number, noAssert?: boolean): void;
+    writeUInt32LE(value: number, offset: number, noAssert?: boolean): void;
+    writeUInt32BE(value: number, offset: number, noAssert?: boolean): void;
+    writeInt8(value: number, offset: number, noAssert?: boolean): void;
+    writeInt16LE(value: number, offset: number, noAssert?: boolean): void;
+    writeInt16BE(value: number, offset: number, noAssert?: boolean): void;
+    writeInt32LE(value: number, offset: number, noAssert?: boolean): void;
+    writeInt32BE(value: number, offset: number, noAssert?: boolean): void;
+    writeFloatLE(value: number, offset: number, noAssert?: boolean): void;
+    writeFloatBE(value: number, offset: number, noAssert?: boolean): void;
+    writeDoubleLE(value: number, offset: number, noAssert?: boolean): void;
+    writeDoubleBE(value: number, offset: number, noAssert?: boolean): void;
+    fill(value: any, offset?: number, end?: number): void;
+    INSPECT_MAX_BYTES: number;
+}
+
+declare var Buffer: {
+    new (str: string, encoding?: string): NodeBuffer;
+    new (size: number): NodeBuffer;
+    new (array: any[]): NodeBuffer;
+    prototype: NodeBuffer;
+    isBuffer(obj: any): boolean;
+    byteLength(string: string, encoding?: string): number;
+    concat(list: NodeBuffer[], totalLength?: number): NodeBuffer;
+}
 
 module TypeScript {
     export var nodeMakeDirectoryTime = 0;
@@ -47,7 +95,7 @@ var Environment = (function () {
             return null;
         }
 
-        var streamObjectPool = [];
+        var streamObjectPool: any[] = [];
 
         function getStreamObject(): any {
             if (streamObjectPool.length > 0) {
@@ -61,7 +109,7 @@ var Environment = (function () {
             streamObjectPool.push(obj);
         }
 
-        var args = [];
+        var args: string[] = [];
         for (var i = 0; i < WScript.Arguments.length; i++) {
             args[i] = WScript.Arguments.Item(i);
         }
@@ -74,10 +122,10 @@ var Environment = (function () {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
 
-            readFile: function (path): FileInformation {
+            readFile: function (path: string): FileInformation {
                 try {
                     // Initially just read the first two bytes of the file to see if there's a bom.
-                    var streamObj = getStreamObject();
+                    var streamObj: any = getStreamObject();
                     streamObj.Open();
                     streamObj.Type = 2; // Text data
 
@@ -130,9 +178,9 @@ var Environment = (function () {
                 }
             },
 
-            writeFile: function (path, contents, writeByteOrderMark: boolean) {
+            writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
                 // First, convert the text contents passed in to binary in UTF8 format.
-                var textStream = getStreamObject();
+                var textStream: any = getStreamObject();
                 textStream.Charset = 'utf-8';
                 textStream.Open();
                 textStream.WriteText(contents, 0 /*do not add newline*/);
@@ -147,7 +195,7 @@ var Environment = (function () {
                 }
 
                 // Now, write all those bytes out to a file.
-                var fileStream = getStreamObject();
+                var fileStream: any = getStreamObject();
                 fileStream.Type = 1; //binary data.
                 fileStream.Open();
 
@@ -178,8 +226,8 @@ var Environment = (function () {
 
             listFiles: function (path, spec?, options?) {
                 options = options || <{ recursive?: boolean; }>{};
-                function filesInFolder(folder, root): string[] {
-                    var paths = [];
+                function filesInFolder(folder: any, root: string): string[] {
+                    var paths: string[] = [];
                     var fc: Enumerator;
 
                     if (options.recursive) {
@@ -201,8 +249,8 @@ var Environment = (function () {
                     return paths;
                 }
 
-                var folder = fso.GetFolder(path);
-                var paths = [];
+                var folder: any = fso.GetFolder(path);
+                var paths: string[] = [];
 
                 return filesInFolder(folder, path);
             },
@@ -228,7 +276,7 @@ var Environment = (function () {
             },
 
             readFile: function (file: string): FileInformation {
-                var buffer = _fs.readFileSync(file);
+                var buffer: any = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:
                         if (buffer[1] === 0xFF) {
@@ -236,7 +284,7 @@ var Environment = (function () {
                             // Little Endian first
                             var i = 0;
                             while ((i + 1) < buffer.length) {
-                                var temp = buffer[i];
+                                var temp: number = buffer[i];
                                 buffer[i] = buffer[i + 1];
                                 buffer[i + 1] = temp;
                                 i += 2;
@@ -262,7 +310,7 @@ var Environment = (function () {
             },
 
             writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
-                function mkdirRecursiveSync(path) {
+                function mkdirRecursiveSync(path: string) {
                     var stats = _fs.statSync(path);
                     if (stats.isFile()) {
                         throw "\"" + path + "\" exists but isn't a directory.";
@@ -301,7 +349,7 @@ var Environment = (function () {
                 TypeScript.nodeWriteFileSyncTime += new Date().getTime() - start;
             },
 
-            fileExists: function (path): boolean {
+            fileExists: function (path: string): boolean {
                 return _fs.existsSync(path);
             },
 
@@ -320,7 +368,7 @@ var Environment = (function () {
                 options = options || <{ recursive?: boolean; }>{};
 
                 function filesInFolder(folder: string): string[] {
-                    var paths = [];
+                    var paths: string[] = [];
 
                     var files = _fs.readdirSync(folder);
                     for (var i = 0; i < files.length; i++) {

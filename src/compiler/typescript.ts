@@ -53,7 +53,7 @@
 
 module TypeScript {
 
-    declare var IO;
+    declare var IO: any;
 
     export var fileResolutionTime = 0;
     export var sourceCharactersCompiled = 0;
@@ -225,7 +225,7 @@ module TypeScript {
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
         }
 
-        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: string[], compilationSettings): Document {
+        public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: string[], compilationSettings: CompilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
             var start = new Date().getTime();
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), getParseOptions(compilationSettings));
@@ -1578,8 +1578,6 @@ module TypeScript {
             if (!context) {
                 return null;
             }
-
-            var symbols = null;
 
             return this.pullTypeChecker.resolver.getVisibleDecls(context.enclosingDecl, context.resolutionContext);
         }

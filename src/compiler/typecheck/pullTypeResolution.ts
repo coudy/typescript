@@ -279,7 +279,7 @@ module TypeScript {
             return this.semanticInfoChain.getASTForDecl(decl);
         }
 
-        public getNewErrorTypeSymbol(diagnostic: Diagnostic, data?): PullErrorTypeSymbol {
+        public getNewErrorTypeSymbol(diagnostic: Diagnostic, data?: any): PullErrorTypeSymbol {
             return new PullErrorTypeSymbol(diagnostic, this.semanticInfoChain.anyTypeSymbol, data);
         }
 
@@ -618,7 +618,7 @@ module TypeScript {
 
         public getVisibleDecls(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullDecl[] {
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -1714,7 +1714,7 @@ module TypeScript {
             // The Identifier of an export assignment must name a variable, function, class, interface, 
             // enum, or internal module declared at the top level in the external module.
             // So look for the id only from this dynamic module
-            var declPath: PullDecl[] = enclosingDecl !== null ? [enclosingDecl] : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? [enclosingDecl] : <PullDecl[]>[];
 
             containerSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeContainer);
 
@@ -1896,7 +1896,7 @@ module TypeScript {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
 
                     // if the noImplicitAny flag is set to be true, report an error 
-                    if (this.compilationSettings.noImplicitAny) {
+                    if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
                         context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
                             [argDeclAST.id.actualText], enclosingDecl)
                     }
@@ -1934,6 +1934,22 @@ module TypeScript {
                 }
                 else {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+
+                    // if the disallowimplicitany flag is set to be true, report an error
+                    if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+
+                        // there is a name for function expression then use the function expression name otherwise use "lambda"
+                        var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
+                        if (functionExpressionName != "") {
+                            context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
+                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [argDeclAST.id.actualText, functionExpressionName], enclosingDecl, true);
+                        }
+                        else {
+                            context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
+                                DiagnosticCode.Parameter_0_of_lambda_function_implicitly_has_an_any_type,
+                                [argDeclAST.id.actualText], enclosingDecl, true);
+                        }
+                    }
                 }
             }
 
@@ -2393,7 +2409,7 @@ module TypeScript {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                 // if the noImplicitAny flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny) {
+                if (this.compilationSettings.noImplicitAny && !wrapperDecl.isDeclaredInForInStatement) {
                     // Check what enclosingDecl the varDecl is in and report an appropriate error message
                     // varDecl is a function/method/constructor/constructor signature parameter
                     if (wrapperDecl.kind == TypeScript.PullElementKind.Function ||
@@ -2409,7 +2425,7 @@ module TypeScript {
                             DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
                     }
                     // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
-                    else if (wrapperDecl.kind != TypeScript.PullElementKind.CatchBlock && !wrapperDecl.isDeclaredInForInStatement ) {
+                    else if (wrapperDecl.kind != TypeScript.PullElementKind.CatchBlock) {
                         context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
                             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
                     }
@@ -4243,7 +4259,7 @@ module TypeScript {
 
             var id = nameAST.text();
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -4550,7 +4566,7 @@ module TypeScript {
                 return this.semanticInfoChain.voidTypeSymbol;
             }
             else {
-                var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+                var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
 
                 if (enclosingDecl && !declPath.length) {
                     declPath = [enclosingDecl];
@@ -4913,7 +4929,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if disallowimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.disallowImplicitAny) {
+                        if (this.compilationSettings.disallowImplicitAny && !context.isInInvocationExpression) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
@@ -5059,7 +5075,7 @@ module TypeScript {
         }
 
         private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
 
             if (declPath.length) {
                 for (var i = declPath.length - 1; i >= 0; i--) {
@@ -5079,7 +5095,7 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
             var classSymbol: PullTypeSymbol = null;
             var superType = this.semanticInfoChain.anyTypeSymbol;
 
@@ -5311,7 +5327,7 @@ module TypeScript {
             return typeSymbol;
         }
 
-        private resolveArrayLiteralExpression(arrayLit: UnaryExpression, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveArrayLiteralExpression(arrayLit: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var symbol = this.getSymbolForAST(arrayLit);
             if (!symbol) {
                 symbol = this.computeArrayLiteralExpressionSymbol(arrayLit, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -5321,7 +5337,7 @@ module TypeScript {
             return symbol;
         }
 
-        private computeArrayLiteralExpressionSymbol(arrayLit: UnaryExpression, inContextuallyTypedAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private computeArrayLiteralExpressionSymbol(arrayLit: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var elements = <ASTList>arrayLit.operand;
             var elementType = this.semanticInfoChain.anyTypeSymbol;
             var elementTypes: PullTypeSymbol[] = [];
@@ -5368,11 +5384,12 @@ module TypeScript {
                 }
             }
 
-            // if disallowimplicitany flag is set to be true, report an error
-            if (this.compilationSettings.disallowImplicitAny) {
+            // if disallowimplicitany flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+            if (this.compilationSettings.disallowImplicitAny && !context.isInInvocationExpression) {
                 // if it is an empty array and there is no contextual type
                 if (!inContextuallyTypedAssignment && elements.members.length == 0) {
                     context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
+   
                 }
             }
 
@@ -5422,8 +5439,8 @@ module TypeScript {
                 if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
-                    // if disallowimplicitany flag is set to be true, report an error
-                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment) {
+                    // if disallowimplicitany flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
                     }
                 }
@@ -5431,8 +5448,8 @@ module TypeScript {
                 if (!elementType) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
-                    // if disallowimplicitany flag is set to be true, report an error
-                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment) {
+                    // if disallowimplicitany flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
                     }
                 }
@@ -7199,7 +7216,7 @@ module TypeScript {
             return this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public typeIsSubtypeOfFunction(source: PullTypeSymbol, context): boolean {
+        public typeIsSubtypeOfFunction(source: PullTypeSymbol, context: PullTypeResolutionContext): boolean {
 
             var callSignatures = source.getCallSignatures();
 
@@ -7968,11 +7985,15 @@ module TypeScript {
 
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
+                    var originalIsInInvocationExpression = context.isInInvocationExpression;
+                    context.isInInvocationExpression = true;
 
                     for (var i = 0; i < len; i++) {
                         var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
                         actuals[i] = argSym.type;
                     }
+                    context.isInInvocationExpression = originalIsInInvocationExpression;
+
                 }
             }
             else if (application.nodeType() === NodeType.ElementAccessExpression) {
@@ -9931,7 +9952,7 @@ module TypeScript {
             return result;
         }
 
-        public addMessage(message) {
+        public addMessage(message: string) {
             if (!this.onlyCaptureFirstError && this.message) {
                 this.message = this.message + TypeScript.newLine() + this.indentString() + message;
             }
@@ -9940,7 +9961,7 @@ module TypeScript {
             }
         }
 
-        public setMessage(message) {
+        public setMessage(message: string) {
             this.message = this.indentString() + message;
         }
     }

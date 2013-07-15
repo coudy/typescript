@@ -506,11 +506,11 @@ module TypeScript.Syntax {
         return false;
     }
 
-    function isInteger(text): boolean {
+    function isInteger(text: string): boolean {
         return /^[0-9]+$/.test(text);
     }
 
-    export function isHexInteger(text): boolean {
+    export function isHexInteger(text: string): boolean {
         return /^0(x|X)[0-9a-fA-F]+$/.test(text);
     }
 }

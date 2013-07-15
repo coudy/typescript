@@ -1580,7 +1580,7 @@ module TypeScript {
             }
 
             this.emitComments(list, true);
-            var lastEmittedNode = null;
+            var lastEmittedNode: any = null;
 
             for (var i = 0, n = list.members.length; i < n; i++) {
                 var node = list.members[i];
@@ -1706,7 +1706,7 @@ module TypeScript {
 
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script);
-            var lastEmittedNode = null;
+            var lastEmittedNode: any = null;
 
                 // Now emit the rest of the script elements
             for (; i < n; i++) {
@@ -1734,7 +1734,7 @@ module TypeScript {
 
             var emitPropertyAssignmentsAfterSuperCall = this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
             var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
-            var lastEmittedNode = null;
+            var lastEmittedNode: any = null;
 
             for (var i = 0, n = list.members.length; i < n; i++) {
                 // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
@@ -1941,7 +1941,7 @@ module TypeScript {
 
         private emitClassMembers(classDecl: ClassDeclaration): void {
             // First, emit all the functions.
-            var lastEmittedMember = null;
+            var lastEmittedMember: any = null;
 
             for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
                 var memberDecl = classDecl.members.members[i];

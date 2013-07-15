@@ -70,7 +70,7 @@ module TypeScript {
             return result;
         }
 
-        export function symbolIsEnum(source: PullSymbol) {
+        export function symbolIsEnum(source: PullSymbol): boolean {
             return source && ((source.kind & (PullElementKind.Enum | PullElementKind.EnumMember)) || source.hasFlag(PullElementFlags.InitializedEnum));
         }
 

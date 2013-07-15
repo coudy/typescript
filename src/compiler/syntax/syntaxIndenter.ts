@@ -29,7 +29,7 @@ module TypeScript {
         }
 
         public indentTriviaList(triviaList: ISyntaxTriviaList): ISyntaxTriviaList {
-            var result = [];
+            var result: ISyntaxTrivia[] = [];
 
             // First, update any existing trivia with the indent amount.  For example, combine the
             // indent with any whitespace trivia, or prepend any comments with the trivia.
@@ -156,7 +156,7 @@ module TypeScript {
             // with a newline.  The indenter will track that for us.
 
             var indenter = new SyntaxIndenter(indentFirstToken, indentAmount, options);
-            var result = ArrayUtilities.select(nodes, n => n.accept(indenter));
+            var result: SyntaxNode[] = ArrayUtilities.select(nodes, n => n.accept(indenter));
 
             return result;
         }

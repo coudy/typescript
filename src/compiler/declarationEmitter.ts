@@ -317,9 +317,9 @@ module TypeScript {
             }
         }
 
-        private emitDeclarationComments(ast: AST, endLine?: boolean);
-        private emitDeclarationComments(astOrSymbol, endLine = true) {
-            if (this.emitOptions.compilationSettings.removeComments) {
+        private emitDeclarationComments(ast: AST, endLine?: boolean): void;
+        private emitDeclarationComments(astOrSymbol: any, endLine = true) {
+            if (!this.emitOptions.compilationSettings.emitComments) {
                 return;
             }
 

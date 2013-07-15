@@ -25,14 +25,14 @@ module TypeScript {
             this._length = length;
         }
 
-        public toJSON(key) {
+        public toJSON(key: any): any {
             var result: any = {};
             result.start = this.start();
             result.length = this.length();
 
             result.diagnosticCode = this._diagnosticKey;
 
-            var arguments = (<any>this).arguments();
+            var arguments: any[] = (<any>this).arguments();
             if (arguments && arguments.length > 0) {
                 result.arguments = arguments;
             }
@@ -88,7 +88,7 @@ module TypeScript {
                 diagnostic1._start === diagnostic2._start &&
                 diagnostic1._length === diagnostic2._length &&
                 diagnostic1._diagnosticKey === diagnostic2._diagnosticKey &&
-                ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
+                ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1: any, v2: any) => v1 === v2);
         }
     }
 
@@ -96,7 +96,7 @@ module TypeScript {
         var largest = -1;
         var regex = /\{(\d+)\}/g;
 
-        var match;
+        var match: RegExpExecArray;
         while ((match = regex.exec(diagnostic)) != null) {
             var val = parseInt(match[1]);
             if (!isNaN(val) && val > largest) {
@@ -108,7 +108,7 @@ module TypeScript {
     }
 
     export function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
-        var result = diagnosticInformationMap[diagnosticKey];
+        var result: DiagnosticInfo = diagnosticInformationMap[diagnosticKey];
         Debug.assert(result !== undefined && result !== null);
         return result;
     }
@@ -118,7 +118,7 @@ module TypeScript {
             Debug.assert(LocalizedDiagnosticMessages.hasOwnProperty(diagnosticKey));
         }
 
-        var diagnosticMessageText = LocalizedDiagnosticMessages ? LocalizedDiagnosticMessages[diagnosticKey] : diagnosticKey;
+        var diagnosticMessageText: string = LocalizedDiagnosticMessages ? LocalizedDiagnosticMessages[diagnosticKey] : diagnosticKey;
         Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
 
         var actualCount = args ? args.length : 0;

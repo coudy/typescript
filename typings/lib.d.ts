@@ -990,7 +990,7 @@ interface ArrayBuffer {
 }
 declare var ArrayBuffer: {
     prototype: ArrayBuffer;
-    new (byteLength: number);
+    new (byteLength: number): ArrayBuffer;
 }
 
 interface ArrayBufferView {
@@ -9066,10 +9066,10 @@ interface ITextWriter {
 }
 
 declare var WScript : {
-    Echo(s: any);
+    Echo(s: any): void;
     StdErr: ITextWriter;
     StdOut: ITextWriter;
     Arguments: { length: number; Item(n: number): string; };
     ScriptFullName: string;
-    Quit(exitCode?: number);
+    Quit(exitCode?: number): number;
 }

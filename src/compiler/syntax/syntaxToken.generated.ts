@@ -80,7 +80,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -184,7 +184,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -288,7 +288,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -395,7 +395,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -461,7 +461,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -539,7 +539,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Syntax.emptyTriviaList; }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -617,7 +617,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }
@@ -698,7 +698,7 @@ module TypeScript.Syntax {
         public trailingTrivia(): ISyntaxTriviaList { return Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true); }
 
         public hasSkippedToken(): boolean { return false; }
-        public toJSON(key) { return tokenToJSON(this); }
+        public toJSON(key: any): any { return tokenToJSON(this); }
         public firstToken(): ISyntaxToken { return this; }
         public lastToken(): ISyntaxToken { return this; }
         public isTypeScriptSpecific(): boolean { return false; }

@@ -102,7 +102,7 @@ module TypeScript {
     }
 
     var scannerWindow = ArrayUtilities.createArray(2048, 0);
-    var scannerDiagnostics = [];
+    var scannerDiagnostics: any[] = [];
 
     function processImports(lineMap: LineMap, scanner: Scanner, token: ISyntaxToken, importedFiles: IFileReference[]): void {
         var position = 0;

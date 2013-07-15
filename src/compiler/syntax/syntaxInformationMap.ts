@@ -10,7 +10,7 @@ module TypeScript {
         private tokenToInformation = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
         private elementToPosition = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);
 
-        private _previousToken = null;
+        private _previousToken: any = null;
         private _previousTokenInformation: ITokenInformation = null;
         private _currentPosition = 0;
         private _elementToParent = Collections.createHashTable(Collections.DefaultHashTableCapacity, Collections.identityHashCode);

@@ -48,7 +48,7 @@ module TypeScript {
                ast1.structuralEquals(ast2, includingPosition);
     }
 
-    function astArrayStructuralEquals(array1: AST[], array2: AST[], includingPosition): boolean {
+    function astArrayStructuralEquals(array1: AST[], array2: AST[], includingPosition: boolean): boolean {
         return ArrayUtilities.sequenceEquals(array1, array2,
             includingPosition ? structuralEqualsIncludingPosition : structuralEqualsNotIncludingPosition);
     }
@@ -849,7 +849,7 @@ module TypeScript {
             return NodeType.Parameter;
         }
 
-        public isOptionalArg() { return this.isOptional || this.init; }
+        public isOptionalArg(): boolean { return this.isOptional || this.init; }
 
         public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(this.id.actualText);
@@ -1595,7 +1595,7 @@ module TypeScript {
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
 
-            var lastEmittedNode = null;
+            var lastEmittedNode: any = null;
             for (var i = 0, n = this.caseList.members.length; i < n; i++) {
                 var caseExpr = this.caseList.members[i];
 
@@ -1840,7 +1840,7 @@ module TypeScript {
 
         constructor(public content: string,
                     public isBlockComment: boolean,
-                    public endsLine) {
+                    public endsLine: any) {
             super();
         }
 

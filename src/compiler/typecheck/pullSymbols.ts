@@ -6,7 +6,7 @@
 module TypeScript {
     export var pullSymbolID = 0;
     export var globalTyvarID = 0;
-    export var sentinelEmptyArray = [];
+    export var sentinelEmptyArray: any[] = [];
 
     export class PullSymbol {
 
@@ -399,7 +399,7 @@ module TypeScript {
             return this.getDisplayName(null, true);
         }
 
-        public fullName(scopeSymbol?: PullSymbol) {
+        public fullName(scopeSymbol?: PullSymbol): string {
             var path = this.pathToRoot();
             var fullName = "";
             var aliasedSymbol = this.getScopedDynamicModuleAlias(scopeSymbol);
@@ -433,7 +433,7 @@ module TypeScript {
             return fullName;
         }
 
-        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
             var aliasedSymbol = this.getScopedDynamicModuleAlias(scopeSymbol);
@@ -677,7 +677,7 @@ module TypeScript {
             }
         }
 
-        public getSpecialization(typeArguments): PullSignatureSymbol {
+        public getSpecialization(typeArguments: PullTypeSymbol[]): PullSignatureSymbol {
 
             if (typeArguments) {
                 var sig = <PullSignatureSymbol>this.specializationCache[getIDForTypeSubstitutions(typeArguments)];
@@ -1610,7 +1610,7 @@ module TypeScript {
             return this._typesThatExplicitlyImplementThisType;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, origin=null) {
+        public hasBase(potentialBase: PullTypeSymbol, origin: any=null) {
             if (this === potentialBase) {
                 return true;
             }
@@ -1979,7 +1979,7 @@ module TypeScript {
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
 
-        constructor(private diagnostic: Diagnostic, public delegateType: PullTypeSymbol, private _data = null) {
+        constructor(private diagnostic: Diagnostic, public delegateType: PullTypeSymbol, private _data: any = null) {
             super("error");
 
             this.isResolved = true;
@@ -2009,7 +2009,7 @@ module TypeScript {
             this._data = data;
         }
 
-        public getData() {
+        public getData(): any {
             return this._data;
         }
     }
@@ -2074,7 +2074,7 @@ module TypeScript {
             this.assignedContainer = null;
         }
 
-        static usedAsSymbol(containerSymbol: PullSymbol, symbol: PullSymbol) {
+        static usedAsSymbol(containerSymbol: PullSymbol, symbol: PullSymbol): boolean {
             if (!containerSymbol || !containerSymbol.isContainer()) {
                 return false;
             }
@@ -2267,7 +2267,7 @@ module TypeScript {
     export class PullTypeParameterSymbol extends PullTypeSymbol {
         private _constraint: PullTypeSymbol = null;
 
-        constructor(name: string, private _isFunctionTypeParameter) {
+        constructor(name: string, private _isFunctionTypeParameter: boolean) {
             super(name, PullElementKind.TypeParameter);
         }
 

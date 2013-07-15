@@ -129,7 +129,7 @@ module TypeScript {
             }
         }
 
-        private static triviaWindow = ArrayUtilities.createArray(2048, 0);
+        private static triviaWindow: any[] = ArrayUtilities.createArray(2048, 0);
 
         // Scans a subsection of 'text' as trivia.
         public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: boolean): ISyntaxTriviaList {
@@ -587,7 +587,7 @@ module TypeScript {
                     var endIndex = this.slidingWindow.absoluteIndex();
 
                     // Also check if it a keyword if it started with a lowercase letter.
-                    var kind;
+                    var kind: SyntaxKind;
                     if (isKeywordStartCharacter[firstCharacter]) {
                         var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
                         kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);

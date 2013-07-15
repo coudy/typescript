@@ -24,7 +24,7 @@ module TypeScript {
             this._parseOptions = parseOtions;
         }
 
-        public toJSON(key) {
+        public toJSON(key: any): any {
             var result: any = {};
 
             result.isDeclaration = this._isDeclaration;

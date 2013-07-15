@@ -318,7 +318,6 @@ module TypeScript {
 
         public visitSourceUnit(node: SourceUnitSyntax): Script {
             var start = this.position;
-            var members;
 
             var bod = this.visitSyntaxList(node.moduleElements);
 

@@ -6,7 +6,7 @@
 module TypeScript {
     export var pullDeclID = 0;
     export var lastBoundPullDeclId = 0;
-    var sentinelEmptyPullDeclArray = [];
+    var sentinelEmptyPullDeclArray: any[] = [];
 
     export class PullDecl {
         public kind: PullElementKind;
@@ -33,7 +33,7 @@ module TypeScript {
         public childDeclTypeParameterCache: any = new BlockIntrinsics();
 
         public declID = pullDeclID++;
-        public declIDString = null;
+        public declIDString: any = null;
 
         public flags: PullElementFlags = PullElementFlags.None;
 
@@ -57,6 +57,7 @@ module TypeScript {
         // This is used to store the AST directly on the decl, rather than in a data map,
         // if the useDirectTypeStorage flag is set
         public ast: AST = null;
+
 
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
             this.name = declName;
@@ -306,7 +307,7 @@ module TypeScript {
             this._parentPath = path;
         }
 
-        public setIsBound(isBinding) {
+        public setIsBound(isBinding: boolean) {
             this._isBound = isBinding;
         }
 

@@ -7,10 +7,10 @@ module TypeScript {
         toArray(): ISyntaxNodeOrToken[];
         toNonSeparatorArray(): ISyntaxNodeOrToken[];
 
-        separatorCount();
+        separatorCount(): number;
         separatorAt(index: number): ISyntaxToken;
 
-        nonSeparatorCount();
+        nonSeparatorCount(): number;
         nonSeparatorAt(index: number): ISyntaxNodeOrToken;
 
         insertChildrenInto(array: ISyntaxElement[], index: number): void;
@@ -39,7 +39,7 @@ module TypeScript.Syntax {
             return true;
         }
 
-        toJSON(key) {
+        toJSON(key: any): any[] {
             return [];
         }
 
@@ -141,7 +141,7 @@ module TypeScript.Syntax {
             this.item = item;
         }
 
-        public toJSON(key) {
+        public toJSON(key: any) {
             return [this.item];
         }
 
@@ -252,7 +252,7 @@ module TypeScript.Syntax {
         public isNode(): boolean { return false; }
         public isList(): boolean { return false; }
         public isSeparatedList(): boolean { return true; }
-        public toJSON(key) { return this.elements; }
+        public toJSON(key: any) { return this.elements; }
 
         public childCount() { return this.elements.length; }
         public nonSeparatorCount() { return IntegerUtilities.integerDivide(this.elements.length + 1, 2); }
@@ -296,7 +296,7 @@ module TypeScript.Syntax {
         }
 
         public firstToken(): ISyntaxToken {
-            var token;
+            var token: ISyntaxToken;
             for (var i = 0, n = this.elements.length; i < n; i++) {
                 if (i % 2 === 0) {
                     var nodeOrToken = this.elements[i];
@@ -317,7 +317,7 @@ module TypeScript.Syntax {
         }
 
         public lastToken(): ISyntaxToken {
-            var token;
+            var token: ISyntaxToken;
             for (var i = this.elements.length - 1; i >= 0; i--) {
                 if (i % 2 === 0) {
                     var nodeOrToken = this.elements[i];
