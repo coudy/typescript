@@ -1016,17 +1016,6 @@ module TypeScript {
             super.visitImportDeclaration(node);
         }
 
-        public visitExportAssignment(node: ExportAssignmentSyntax): any {
-            if (this.moduleTargetIsUnspecified()) {
-                this.pushDiagnostic1(this.position(), node,
-                    DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
-                this.skip(node);
-                return;
-            }
-
-            super.visitExportAssignment(node);
-        }
-
         private moduleTargetIsUnspecified(): boolean {
             return this.syntaxTree.parseOptions().moduleGenTarget() === ModuleGenTarget.Unspecified;
         }
