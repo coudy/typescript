@@ -10,7 +10,7 @@ module TypeScript {
         public containingModuleHasExportAssignmentArray: boolean[] = [false];
         public isParsingAmbientModuleArray: boolean[] = [false];
 
-        constructor(public semanticInfo: SemanticInfo, public scriptName) {
+        constructor(public semanticInfo: SemanticInfo, public scriptName: any) {
         }
 
         public getParent() { return this.parentChain ? this.parentChain[this.parentChain.length - 1] : null; }

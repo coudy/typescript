@@ -1547,7 +1547,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
             var aliasExpr = importStatementAST.alias.nodeType() == NodeType.TypeRef ? (<TypeReference>importStatementAST.alias).term : importStatementAST.alias;
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : [];
+            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
             var aliasedType: PullTypeSymbol = null;
 
             if (aliasExpr.nodeType() == NodeType.Name) {
@@ -1935,7 +1935,7 @@ module TypeScript {
                 else {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
 
-                    // if the disallowimplicitany flag is set to be true, report an error
+                    // if the noImplicitAny flag is set to be true, report an error
                     if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
 
                         // there is a name for function expression then use the function expression name otherwise use "lambda"
@@ -2409,7 +2409,7 @@ module TypeScript {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                 // if the noImplicitAny flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny && !wrapperDecl.isDeclaredInForInStatement) {
+                if (this.compilationSettings.noImplicitAny && ((varDecl.getVarFlags() & VariableFlags.ForInVariable) === 0)) {
                     // Check what enclosingDecl the varDecl is in and report an appropriate error message
                     // varDecl is a function/method/constructor/constructor signature parameter
                     if (wrapperDecl.kind == TypeScript.PullElementKind.Function ||
@@ -2667,7 +2667,7 @@ module TypeScript {
                         var newReturnType = this.widenType(returnType);
                         signature.returnType = newReturnType;
 
-                        // if disallowimplicitany flag is set to be true and return statements are not cast expressions, report an error
+                        // if noImplicitAny flag is set to be true and return statements are not cast expressions, report an error
                         if (this.compilationSettings.noImplicitAny) {
                             // if the returnType got widen to Any
                             if (previousReturnType != newReturnType) {
@@ -2845,6 +2845,12 @@ module TypeScript {
                 } else if (funcDeclAST.isConstructMember()) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+
+                        // if the noImplicitAny flag is set to be true, report an error
+                        if (this.compilationSettings.noImplicitAny) {
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
+                                [], funcDecl);
+                        }
                     }
                 }
 
@@ -3551,9 +3557,7 @@ module TypeScript {
                     }
                 }
 
-                enclosingDecl.isDeclaredInForInStatement = true;
                 var varSym = this.resolveAST(forInStatement.lval, false, enclosingDecl, context);
-                enclosingDecl.isDeclaredInForInStatement = false;
 
                 if (lval.nodeType() === NodeType.VariableDeclaration) {
                     varSym = this.getSymbolForAST((<VariableDeclaration>forInStatement.lval).declarators.members[0]);
@@ -4929,7 +4933,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if disallowimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.disallowImplicitAny && !context.isInInvocationExpression) {
+                        if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
@@ -5384,8 +5388,8 @@ module TypeScript {
                 }
             }
 
-            // if disallowimplicitany flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-            if (this.compilationSettings.disallowImplicitAny && !context.isInInvocationExpression) {
+            // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+            if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
                 // if it is an empty array and there is no contextual type
                 if (!inContextuallyTypedAssignment && elements.members.length == 0) {
                     context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
@@ -5439,8 +5443,8 @@ module TypeScript {
                 if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
-                    // if disallowimplicitany flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
+                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
                     }
                 }
@@ -5448,8 +5452,8 @@ module TypeScript {
                 if (!elementType) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
-                    // if disallowimplicitany flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                    if (this.compilationSettings.disallowImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
+                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
                     }
                 }
@@ -6255,8 +6259,8 @@ module TypeScript {
                 constructSignatures = targetTypeSymbol.getCallSignatures();
                 usedCallSignaturesInstead = true;
 
-                // if disallowimplicitany flag is set to be true, report an error
-                if (this.compilationSettings.disallowImplicitAny) {
+                // if noImplicitAny flag is set to be true, report an error
+                if (this.compilationSettings.noImplicitAny) {
                     context.postError(this.unitPath, callEx.minChar, callEx.getLength(),
                         DiagnosticCode.New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type, [], enclosingDecl);
                 }

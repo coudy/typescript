@@ -5,10 +5,10 @@
 class CompilerBaselineRunner extends RunnerBase {
 
     private basePath = 'tests/cases';
-    private errors;
-    private emit;
-    private decl;
-    private output;
+    private errors: boolean;
+    private emit: boolean;
+    private decl: boolean;
+    private output: boolean;
 
     public options: string;
 
@@ -51,7 +51,7 @@ class CompilerBaselineRunner extends RunnerBase {
             // a fresh compiler instance for themselves and then create a fresh one for the next test. Would be nice to get dev fixes
             // eventually to remove this limitation.
             for (var i = 0; i < tcSettings.length; ++i) {
-                if (tcSettings[i].flag == "disallowimplicitany" || tcSettings[i].flag === "target") {
+                if (tcSettings[i].flag == "noimplicitany" || tcSettings[i].flag === "target") {
                     Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, true /*noImplicitAny*/);
                     harnessCompiler.setCompilerSettings(tcSettings);
                     createNewInstance = true;

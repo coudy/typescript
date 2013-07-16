@@ -15,7 +15,7 @@
 
 // Allows for executing a program with command-line arguments and reading the result
 interface IExec {
-    exec: (fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) => void;
+    exec: (fileName: string, cmdLineArgs: string[], handleResult: (ExecResult: ExecResult) => void) => void;
 }
 
 class ExecResult {
@@ -25,7 +25,7 @@ class ExecResult {
 }
 
 class WindowsScriptHostExec implements IExec {
-    public exec(fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
+    public exec(fileName: string, cmdLineArgs: string[], handleResult: (ExecResult: ExecResult) => void) : void {
         var result = new ExecResult();
         var shell = new ActiveXObject('WScript.Shell');
         try {
@@ -49,13 +49,13 @@ class WindowsScriptHostExec implements IExec {
 }
 
 class NodeExec implements IExec {
-    public exec(fileName: string, cmdLineArgs: string[], handleResult: (ExecResult) => void) : void {
+    public exec(fileName: string, cmdLineArgs: string[], handleResult: (ExecResult: ExecResult) => void) : void {
         var nodeExec = require('child_process').exec;
 
         var result = new ExecResult();
         result.exitCode = null;
         var cmdLine = fileName + ' ' + cmdLineArgs.join(' ');
-        var process = nodeExec(cmdLine, function(error, stdout, stderr) {
+        var process = nodeExec(cmdLine, function(error: any, stdout: string, stderr: string) {
             result.stdout = stdout;
             result.stderr = stderr;
             result.exitCode = error ? error.code : 0;

@@ -222,7 +222,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
 
 class ProjectRunner extends RunnerBase {
     public initializeTests() {
-        describe("Compiling a project", function (done) {
+        describe("Compiling a project", function (done: any) {
             var rPath = Harness.userSpecifiedroot + 'tests\\cases\\projects\\r.js';
             var testExec = true;
 
@@ -235,8 +235,8 @@ class ProjectRunner extends RunnerBase {
                     }
                 }
             }
-
-            function assertRelativePathsInArray(arr, relativePaths) {
+            
+            function assertRelativePathsInArray(arr: string[], relativePaths: string[]) {
                 for (var i = 0; i < relativePaths.length; i++) {
                     var expectedPath = TypeScript.switchToForwardSlashes(relativePaths[i]);
                     var expectedPathMatchingRegEx = new RegExp(expectedPath + "$");
@@ -255,7 +255,7 @@ class ProjectRunner extends RunnerBase {
                 }
             }
 
-            function assertAllFilesExist(files) {
+            function assertAllFilesExist(files: string[]) {
                 for (var i = 0; i < files.length; i++) {
                     if (!IO.fileExists(files[i])) {
                         throw new Error("Expected the file " + files[i] + " to exist.");
@@ -264,19 +264,19 @@ class ProjectRunner extends RunnerBase {
             }
 
             function createTest(spec: any) {
-                var inputFiles = [];
+                var inputFiles: string[] = [];
                 for (var i = 0; i < spec.inputFiles.length; i++) {
                     inputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.inputFiles[i]);
                 }
 
-                var outputFiles = [];
+                var outputFiles: string[] = [];
                 if (spec.outputFiles) {
                     for (var j = 0; j < spec.outputFiles.length; j++) {
                         outputFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.outputFiles[j]);
                     }
                 }
 
-                var declareFiles = [];
+                var declareFiles: string[] = [];
                 if (spec.declareFiles) {
                     for (var j = 0; j < spec.declareFiles.length; j++) {
                         declareFiles.push(Harness.userSpecifiedroot + spec.projectRoot + "/" + spec.declareFiles[j]);
@@ -450,7 +450,7 @@ class ProjectRunner extends RunnerBase {
                     }
 
                     if (testExec && !spec.skipRun && !spec.skipNodeRun) {
-                        it("runs without error", function (done) {
+                        it("runs without error", function (done: any) {
                             Exec.exec("node.exe", ['"' + outputFiles[0] + '"'], function (res) {
                                 Harness.Assert.equal(res.stdout, "");
                                 Harness.Assert.equal(res.stderr, "");
@@ -523,7 +523,7 @@ class ProjectRunner extends RunnerBase {
                         var moduleName = spec.outputFiles[0].replace(/\.js$/, "");
                         IO.writeFile(spec.projectRoot + '/driver.js', amdDriverTemplate.replace(/\{0}/g, moduleName), /*writeByteOrderMark:*/false);
 
-                        it("runs without error", function (done) {
+                        it("runs without error", function (done: any) {
                             Exec.exec("node.exe", ['"' + spec.projectRoot + '/driver.js"'], function (res) {
                                 Harness.Assert.equal(res.stdout, "");
                                 Harness.Assert.equal(res.stderr, "");
@@ -547,7 +547,7 @@ class ProjectRunner extends RunnerBase {
                 });
             }
 
-            var tests = [];
+            var tests: any[] = [];
 
             tests.push({
                 scenario: 'module identifier'

@@ -417,7 +417,7 @@ module Services {
                 version, isOpen, textChangeRange);
         }
 
-        private getDocCommentsOfDecl(decl: TypeScript.PullDecl) {
+        private getDocCommentsOfDecl(decl: TypeScript.PullDecl): TypeScript.Comment[] {
             var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
 
             if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration ||

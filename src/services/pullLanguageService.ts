@@ -209,7 +209,7 @@ module Services {
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
                     if (searchSymbolInfoAtPosition !== null) {
                         
-                        var normalizedSymbol;
+                        var normalizedSymbol: TypeScript.PullSymbol;
                         if (symbol.kind === TypeScript.PullElementKind.Class || symbol.kind === TypeScript.PullElementKind.Interface) {
                             normalizedSymbol = searchSymbolInfoAtPosition.symbol.type;
                         }
@@ -586,7 +586,7 @@ module Services {
         }
 
         private getScriptElementKindModifiersFromDecl(decl: TypeScript.PullDecl): string {
-            var result = [];
+            var result: string[] = [];
             var flags = decl.flags;
 
             if (flags & TypeScript.PullElementFlags.Exported) {
@@ -1052,7 +1052,7 @@ module Services {
             }
         }
 
-        private getCompletionEntriesForKeywords(keywords: CompletionEntry[], result): void {
+        private getCompletionEntriesForKeywords(keywords: CompletionEntry[], result: any): void {
             for (var i = 0, n = keywords.length; i < n; i++) {
                 var keyword = keywords[i];
                 result.addOrUpdate(keyword.name, keyword); 
@@ -1245,7 +1245,7 @@ module Services {
         }
 
         private getScriptElementKindModifiers(symbol: TypeScript.PullSymbol): string {
-            var result = [];
+            var result: string[] = [];
 
             if (symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
                 result.push(ScriptElementKindModifier.exportedModifier);
@@ -1267,7 +1267,7 @@ module Services {
         }
 
         private getScriptElementKindModifiersFromFlgas(flags: TypeScript.PullElementFlags): string {
-            var result = [];
+            var result: string[] = [];
 
             if (flags & TypeScript.PullElementFlags.Exported) {
                 result.push(ScriptElementKindModifier.exportedModifier);

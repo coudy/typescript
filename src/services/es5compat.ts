@@ -95,7 +95,7 @@ if (!String.prototype.trim) {
 
 // Compatibility with non ES5 compliant engines
 if (!Array.prototype.indexOf) {
-    (<any>Array.prototype.indexOf) = function (searchElement, fromIndex?) {
+    (<any>Array.prototype.indexOf) = function (searchElement: any, fromIndex?: any) {
         "use strict";
         if (this == null) {
             throw new TypeError();
@@ -129,7 +129,7 @@ if (!Array.prototype.indexOf) {
 
 if (!Array.prototype.filter)
 {
-  (<any>Array.prototype.filter) = function(fun, thisp?)
+  (<any>Array.prototype.filter) = function(fun: any, thisp?: any)
   {
     "use strict";
  
@@ -141,7 +141,7 @@ if (!Array.prototype.filter)
     if (typeof fun != "function")
       throw new TypeError();
  
-    var res = [];
+    var res: any[] = [];
     for (var i = 0; i < len; i++)
     {
       if (<any>i in t)
@@ -159,9 +159,9 @@ if (!Array.prototype.filter)
 // Production steps of ECMA-262, Edition 5, 15.4.4.19
 // Reference: http://es5.github.com/#x15.4.4.19
 if (!Array.prototype.map) {
-  (<any>Array.prototype.map) = function(callback, thisArg?) {
+  (<any>Array.prototype.map) = function(callback: any, thisArg?: any) {
  
-    var T = undefined, A, k;
+    var T: any = undefined, A: any, k: any;
  
     if (this == null) {
       throw new TypeError(" this is null or not defined");
@@ -195,7 +195,7 @@ if (!Array.prototype.map) {
     // 8. Repeat, while k < len
     while(k < len) {
  
-      var kValue, mappedValue;
+      var kValue: any, mappedValue: any;
  
       // a. Let Pk be ToString(k).
       //   This is implicit for LHS operands of the in operator
@@ -231,9 +231,9 @@ if (!Array.prototype.map) {
 }
 
 if (!Array.prototype.reduce) {
-  (<any>Array.prototype.reduce) = function reduce(accumulator){
+  (<any>Array.prototype.reduce) = function reduce(accumulator: any){
     if (this===null || this===undefined) throw new TypeError("Object is null or undefined");
-    var i = 0, l = this.length >> 0, curr;
+    var i = 0, l = this.length >> 0, curr: any;
  
     if(typeof accumulator !== "function") // ES5 : "If IsCallable(callbackfn) is false, throw a TypeError exception."
       throw new TypeError("First argument is not callable");
@@ -260,9 +260,9 @@ if (!Array.prototype.reduce) {
 // Reference: http://es5.github.com/#x15.4.4.18
 if (!Array.prototype.forEach) {
 
-    (<any>Array.prototype.forEach) = function(callback, thisArg?) {
+    (<any>Array.prototype.forEach) = function(callback: any, thisArg?: any) {
 
-      var T, k;
+      var T: any, k: any;
 
         if (this == null) {
             throw new TypeError(" this is null or not defined");
@@ -295,7 +295,7 @@ if (!Array.prototype.forEach) {
         // 7. Repeat, while k < len
         while (k < len) {
 
-            var kValue;
+            var kValue: any;
 
             // a. Let Pk be ToString(k).
             //   This is implicit for LHS operands of the in operator
@@ -329,7 +329,7 @@ if (!Date.now) {
 // Production steps of ECMA-262, Edition 5.1, 15.4.4.17
 if (!Array.prototype.some)
 {
-  (<any>Array.prototype.some) = function(fun /*, thisp */)
+  (<any>Array.prototype.some) = function(fun: any /*, thisp */)
   {
     "use strict";
  

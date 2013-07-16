@@ -16,7 +16,7 @@ module TypeScript {
     export var symbolCacheHit = 0;
     export var symbolCacheMiss = 0;
 
-    var sentinalEmptyArray = [];
+    var sentinalEmptyArray: any[] = [];
 
     export class SemanticInfo {
         private compilationUnitPath: string;  // the "file" this is associated with

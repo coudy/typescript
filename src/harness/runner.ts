@@ -26,7 +26,7 @@
 ///<reference path='..\..\tests\runners\projects\runner.ts' />
 ///<reference path='..\..\tests\runners\unittest\unittestrunner.ts' />
 
-declare var _inheritsFrom; // reference base inheritsFrom in child contexts.
+declare var _inheritsFrom: any; // reference base inheritsFrom in child contexts.
 
 class ConsoleLogger extends Harness.Logger {
     private descriptionStack: string[] = [];
@@ -143,7 +143,7 @@ class ConsoleLogger extends Harness.Logger {
 }
 
 class JSONLogger extends Harness.Logger {
-    private root = [];
+    private root: any[] = [];
     private scenarioStack: Harness.IScenarioMetadata[] = [];
 
     constructor(public path: string) {

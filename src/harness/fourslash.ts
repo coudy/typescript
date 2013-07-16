@@ -168,8 +168,8 @@ module FourSlash {
         }
 
         // Opens a file given its 0-based index or fileName
-        public openFile(index: number);
-        public openFile(name: string);
+        public openFile(index: number): void;
+        public openFile(name: string): void;
         public openFile(indexOrName: any) {
             var fileToOpen: FourSlashFile = this.findFile(indexOrName);
             this.activeFile = fileToOpen;
@@ -964,7 +964,7 @@ module FourSlash {
 
         public verifyCurrentFileContent(text: string) {
             var actual = this.getCurrentFileContent();
-            var replaceNewlines = str => str.replace(/\r\n/g, "\n");
+            var replaceNewlines = (str: string) => str.replace(/\r\n/g, "\n");
             if (replaceNewlines(actual) !== replaceNewlines(text)) {
                 throw new Error('verifyCurrentFileContent\n' +
                     '\tExpected: "' + text + '"\n' +
@@ -1285,7 +1285,7 @@ module FourSlash {
                 }
             } else if (typeof indexOrName === 'string') {
                 var name = <string>indexOrName;
-                var availableNames = [];
+                var availableNames: string[] = [];
                 var foundIt = false;
                 for (var i = 0; i < this.testData.files.length; i++) {
                     var fn = this.testData.files[i].fileName;
@@ -1325,7 +1325,7 @@ module FourSlash {
         private getMarkerByName(markerName: string) {
             var markerPos = this.testData.markerPositions[markerName];
             if (markerPos === undefined) {
-                var markerNames = [];
+                var markerNames: any[] = [];
                 for (var m in this.testData.markerPositions) markerNames.push(m);
                 throw new Error('Unknown marker "' + markerName + '" Available markers: ' + markerNames.map(m => '"' + m + '"').join(', '));
             } else {
@@ -1521,7 +1521,7 @@ module FourSlash {
     //}
 
     function recordObjectMarker(fileName: string, location: ILocationInformation, text: string, markerMap: MarkerMap, markers: Marker[]): Marker {
-        var markerValue = undefined;
+        var markerValue: any = undefined;
         try {
             // Attempt to parse the marker value as JSON
             markerValue = JSON.parse("{ " + text + " }");

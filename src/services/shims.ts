@@ -86,8 +86,8 @@ module Services {
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
-        getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean);
-        getCompletionEntryDetails(fileName: string, position: number, entryName: string);
+        getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): any;
+        getCompletionEntryDetails(fileName: string, position: number, entryName: string): any;
 
         getTypeAtPosition(fileName: string, position: number): string;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;
@@ -316,7 +316,7 @@ module Services {
                 "refresh(" + throwOnError + ")",
                 () => {
                     this.languageService.refresh();
-                    return null;
+                    return <any>null;
                 });
         }
 

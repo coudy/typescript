@@ -51,7 +51,7 @@ module Services {
             return this.hasBeenResolved;
         }
 
-        public resolve(type, fullSymbolName, docComments) {
+        public resolve(type: string, fullSymbolName: string, docComments: string) {
             this.type = type;
             this.fullSymbolName = fullSymbolName;
             this.docComment = docComments;

@@ -153,7 +153,7 @@ module TypeScript.Formatting {
             var parent = this._parent.node();
             // We need to get the parent's indentation, which could be one of 2 things. If first token of the parent is in the span, use the parent's computed indentation.
             // If the parent was outside the span, use the actual indentation of the parent.
-            var parentIndentationAmount;
+            var parentIndentationAmount: number;
             if (this._textSpan.containsPosition(this._parent.start())) {
                 parentIndentationAmount = this._parent.indentationAmount();
             }
@@ -165,10 +165,10 @@ module TypeScript.Formatting {
             var parentIndentationAmountDelta = this._parent.childIndentationAmountDelta();
 
             // The indentation level of the node
-            var indentationAmount;
+            var indentationAmount: number;
 
             // The delta it adds to its children. 
-            var indentationAmountDelta;
+            var indentationAmountDelta: number;
 
             switch (node.kind()) {
                 default:

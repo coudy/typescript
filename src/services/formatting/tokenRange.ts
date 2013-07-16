@@ -53,7 +53,7 @@ module TypeScript.Formatting {
             private tokens: SyntaxKind[];
 
             constructor(tks: SyntaxKind[]) {
-                this.tokens = tks && tks.length ? tks : [];
+                this.tokens = tks && tks.length ? tks : <SyntaxKind[]>[];
             }
 
             public GetTokens(): SyntaxKind[] {
@@ -84,7 +84,7 @@ module TypeScript.Formatting {
 
         export class TokenAllAccess implements ITokenAccess {
             public GetTokens(): SyntaxKind[] {
-                var result = [];
+                var result: SyntaxKind[] = [];
                 for (var token = SyntaxKind.FirstToken; token <= SyntaxKind.LastToken; token++) {
                     result.push(token);
                 }

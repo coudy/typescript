@@ -334,7 +334,7 @@ module Services {
             } else if (typeof object === 'boolean') {
                 returnString = object;
             } else if (typeof object !== 'function') {
-                var properties = [];
+                var properties: any[] = [];
 
                 for (var key in object) {
                     if (object.hasOwnProperty(key) && typeof object[key] !== 'function') {

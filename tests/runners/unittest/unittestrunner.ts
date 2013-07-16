@@ -50,7 +50,7 @@ class UnitTestRunner extends RunnerBase {
         var stdout = new Harness.Compiler.EmitterIOHost();
         var emitDiagnostics = harnessCompiler.emitAll(stdout);
         var results = stdout.toArray();
-        var lines = [];
+        var lines: string[] = [];
         results.forEach(v => lines = lines.concat(v.file.lines));
         var code = lines.join("\n")
 

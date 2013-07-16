@@ -91,7 +91,7 @@ module DumpAST {
             return cur;
         };
 
-        var post = (cur, parent) => {
+        var post = (cur: any, parent: any) => {
             entries.pop();
             return cur;
         };
@@ -106,7 +106,7 @@ module DumpAST {
         entry.minChar = ast.minChar;
         entry.limChar = ast.limChar;
 
-        var lineMap = null; //script.locationInfo.lineMap;
+        var lineMap: any = null; //script.locationInfo.lineMap;
         entry.startLine = lineMap.getLineAndCharacterFromPosition(ast.minChar).line();
         entry.startCol = lineMap.getLineAndCharacterFromPosition(ast.minChar).character();
         entry.endLine = lineMap.getLineAndCharacterFromPosition(ast.limChar).line();
@@ -133,7 +133,7 @@ module DumpAST {
     }
 
     function verifyAstNodePositions(script: TypeScript.Script, ast: TypeScript.AST): void {
-        var fileName = null;  //script.locationInfo.fileName;
+        var fileName: any = null;  //script.locationInfo.fileName;
         var maxLimChar = script.limChar;
 
         var minChar = ast.minChar;
@@ -223,7 +223,7 @@ module DumpAST {
         text += addKey("sourceText");
         text += ": [\r\n";
 
-        var lineStarts = null;// script.locationInfo.lineMap.lineStarts();
+        var lineStarts: any = null;// script.locationInfo.lineMap.lineStarts();
         for (var i = 0; i < lineStarts.length; i++) {
             if (i > 0) {
                 text += ",\r\n";
@@ -253,7 +253,7 @@ module DumpAST {
             var fileName = switchToForwardSlashes(fileNames[i]);
             var nameOnly = fileName.substr(fileName.lastIndexOf('/') + 1);
             
-            var run = (fn) => {
+            var run = (fn: string) => {
                 Harness.Baseline.runBaseline('AST data for ' + fn, nameOnly.replace(/\.ts/, '.ast'),
                     function () {
                         return createDumpContentForFile(typescriptLS, fn);

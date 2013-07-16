@@ -18,10 +18,10 @@
 ///<reference path='..\services\typescriptServices.ts' />
 ///<reference path='diff.ts'/>
 
-declare var it;
-declare var describe;
-declare var run;
-declare var __dirname; // Node-specific
+declare var it: any;
+declare var describe: any;
+declare var run: any;
+declare var __dirname: any; // Node-specific
 
 function switchToForwardSlashes(path: string) {
     return path.replace(/\\/g, "/");
@@ -47,7 +47,7 @@ if (typeof ActiveXObject === "function") {
 
 declare module process {
     export function nextTick(callback: () => any): void;
-    export function on(event: string, listener: Function);
+    export function on(event: string, listener: Function): any;
 }
 
 module Harness {
@@ -115,19 +115,19 @@ module Harness {
             }
         }
 
-        export function equal(actual, expected) {
+        export function equal(actual: any, expected: any) {
             if (actual !== expected) {
                 throwAssertError(new Error("Expected " + actual + " to equal " + expected));
             }
         }
 
-        export function notEqual(actual, expected) {
+        export function notEqual(actual: any, expected: any) {
             if (actual === expected) {
                 throwAssertError(new Error("Expected " + actual + " to *not* equal " + expected));
             }
         }
 
-        export function notNull(result) {
+        export function notNull(result: any) {
             if (result === null) {
                 throwAssertError(new Error("Expected " + result + " to *not* be null"));
             }
@@ -164,7 +164,7 @@ module Harness {
         }
 
         export function arrayContains(arr: any[], contains: any[]) {
-            var found;
+            var found: boolean;
 
             for (var i = 0; i < contains.length; i++) {
                 found = false;
@@ -282,7 +282,7 @@ module Harness {
         public error: Error = null;
 
         // Whether or not this object has any failures (including in its descendants)
-        public passed = null;
+        public passed: any = null;
 
         // A list of bugs impacting this object
         public bugs: string[] = [];
@@ -362,7 +362,7 @@ module Harness {
     }
     export class TestCase extends Runnable {
         public description: string;
-        public block;
+        public block: any;
 
         constructor(description: string, block: any) {
             super(description, block);
@@ -405,7 +405,7 @@ module Harness {
 
     export class Scenario extends Runnable {
         public description: string;
-        public block;
+        public block: any;
 
         constructor(description: string, block: any) {
             super(description, block);
@@ -508,7 +508,7 @@ module Harness {
             export var resolution: number;
 
             declare module WScript {
-                export function InitializeProjection();
+                export function InitializeProjection(): any;
             }
 
             declare module TestUtilities {
@@ -535,7 +535,7 @@ module Harness {
         }
 
         export class Timer {
-            public startTime;
+            public startTime: number;
             public time = 0;
 
             public start() {
@@ -630,13 +630,13 @@ module Harness {
             benchmark: Benchmark,
             description: string = benchmark.description,
             name: string = '',
-            f = benchmark.bench
+            f: any = benchmark.bench
             ): void {
 
             var t = new Timer();
             t.start();
 
-            var subBenchmark = function (name, f): void {
+            var subBenchmark = function (name: string, f: (bench?: () => void) => void): void {
                 timeFunction(benchmark, description, name, f);
             }
 
@@ -695,11 +695,11 @@ module Harness {
             public lines: string[] = [];
             public currentLine = "";
 
-            public Write(str) {
+            public Write(str: string) {
                 this.currentLine += str;
             }
 
-            public WriteLine(str) {
+            public WriteLine(str: string) {
                 this.lines.push(this.currentLine + str);
                 this.currentLine = "";
             }
@@ -1293,7 +1293,7 @@ module Harness {
 
         // Types
         export class Type {
-            constructor(public type, public code, public identifier) { }
+            constructor(public type: any, public code: any, public identifier: any) { }
 
             public normalizeToArray(arg: any) {
                 if ((Array.isArray && Array.isArray(arg)) || arg instanceof Array)
@@ -1303,7 +1303,7 @@ module Harness {
             }
 
             public compilesOk(testCode: string): boolean {
-                var errors = null;
+                var errors: any = null;
                 var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
                 harnessCompiler.compileString(testCode, '0.ts', function (compilerResult) {
                     errors = compilerResult.errors;
@@ -1463,7 +1463,7 @@ module Harness {
                     throw new Error("Expected string or number not " + (typeof target));
                 }
 
-                var errors = null;
+                var errors: any = null;
                 var harnessCompiler = getCompiler(CompilerInstance.RunTime);
                 harnessCompiler.compileString(code, 'test.ts', function (compilerResult) {
                     errors = compilerResult.errors;
@@ -1542,7 +1542,7 @@ module Harness {
 
             /** @param fileResults an array of strings for the fileName and an ITextWriter with its code */
             constructor(public fileResults: { fileName: string; file: WriterAggregator; }[], errorLines: string[]) {
-                var lines = [];
+                var lines: string[] = [];
                 fileResults.forEach(v => lines = lines.concat(v.file.lines));
                 this.code = lines.join("\r\n")
 
@@ -1580,7 +1580,7 @@ module Harness {
             public toString() {
                 return this.file + "(" + this.line + "," + this.column + "): " + this.message;
             }
-        }      
+        }
     }
 
     /** Parses the test cases files 
@@ -1606,13 +1606,13 @@ module Harness {
         var optionRegex = /^[\/]{2}\s*@(\w+)\s*:\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
-        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "disallowimplicitany"];
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "noimplicitany"];
 
         function extractCompilerSettings(content: string): CompilerSetting[] {
 
-            var opts = [];
+            var opts: CompilerSetting[] = [];
 
-            var match;
+            var match: RegExpExecArray;
             while ((match = optionRegex.exec(content)) != null) {
                 opts.push({ flag: match[1], value: match[2] });
             }
@@ -1633,7 +1633,7 @@ module Harness {
             // Stuff related to the subfile we're parsing
             var currentFileContent: string = null;
             var currentFileOptions = {};
-            var currentFileName = null;
+            var currentFileName: any = null;
             var refs: string[] = [];
 
             for (var i = 0; i < lines.length; i++) {
@@ -1987,7 +1987,7 @@ module Harness {
             var result: Services.TextEdit[] = [];
 
             function mapEdits(edits: Services.TextEdit[]): { edit: Services.TextEdit; index: number; }[] {
-                var result = [];
+                var result:{ edit: Services.TextEdit; index: number; }[]  = [];
                 for (var i = 0; i < edits.length; i++) {
                     result.push({ edit: edits[i], index: i });
                 }

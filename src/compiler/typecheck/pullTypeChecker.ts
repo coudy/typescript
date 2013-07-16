@@ -127,7 +127,7 @@ module TypeScript {
 
         // declarations
 
-        private typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
+        private typeCheckAST(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
 
             if (!ast) {
                 return null;
@@ -407,7 +407,7 @@ module TypeScript {
         }
 
         // lists
-        private typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext) {
+        private typeCheckList(list: ASTList, typeCheckContext: PullTypeCheckContext): any {
             if (!list) {
                 return null;
             }
@@ -551,7 +551,7 @@ module TypeScript {
         //  - getters return a value
         //  - setters return no value
         // PULLTODO: split up into separate functions for constructors, indexers, expressions, signatures, etc.
-        private typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
+        private typeCheckFunction(funcDeclAST: FunctionDeclaration, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
             if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
                 return this.typeCheckConstructor(funcDeclAST, typeCheckContext, inContextuallyTypedAssignment);
             }
@@ -751,7 +751,7 @@ module TypeScript {
             return <PullTypeSymbol>this.resolveSymbolAndReportDiagnostics(typeParameter, /*inContextuallyTypedAssignment:*/false, typeCheckContext.getEnclosingDecl());
         }
 
-        private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
+        private typeCheckAccessor(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
             var funcDeclAST = <FunctionDeclaration>ast;
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
@@ -873,7 +873,7 @@ module TypeScript {
             return functionSymbol ? functionSymbol.type : null;
         }
 
-        private typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
+        private typeCheckIndexer(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
 
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -1437,7 +1437,7 @@ module TypeScript {
         // Object literals
         // validate:
         //
-        private typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
+        private typeCheckObjectLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
             var objectLitAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 
@@ -1491,7 +1491,7 @@ module TypeScript {
         // Array literals
         // validate:
         //  - incompatible types in expression
-        private typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment): PullTypeSymbol {
+        private typeCheckArrayLiteral(ast: AST, typeCheckContext: PullTypeCheckContext, inContextuallyTypedAssignment: boolean): PullTypeSymbol {
             var arrayLiteralAST = <UnaryExpression>ast;
             var enclosingDecl = typeCheckContext.getEnclosingDecl();
 

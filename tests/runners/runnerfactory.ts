@@ -25,7 +25,7 @@ class RunnerFactory {
     }
 
     public getRunners() {
-        var runners = [];
+        var runners: any[] = [];
         for (var p in this.runners) {
             runners.push(this.runners[p]);
         }
