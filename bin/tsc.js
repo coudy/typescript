@@ -366,16 +366,17 @@ var TypeScript;
         Unknown_rule: "Unknown rule",
         Invalid_line_number_0: "Invalid line number ({0})",
         Warn_on_expressions_and_declarations_with_an_implied_any_type: "Warn on expressions and declarations with an implied 'any' type.",
-        Variable_0_implicitly_has_an_any_type: "Variable '{0}' implicitly has an any type.",
-        Parameter_0_of_1_implicitly_has_an_any_type: "Parameter '{0}' of '{1}' implicitly has an any type.",
-        Parameter_0_of_function_type_implicitly_has_an_any_type: "Parameter '{0}' of function type implicitly has an any type.",
-        Member_0_of_object_type_implicitly_has_an_any_type: "Member '{0}' of object type implicitly has an any type.",
-        New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type: "\"New\" expression, which lacks a constructor signature, implicitly has an any type.",
-        _0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "'{0}', which lacks return-type annotation, implicitly has an any return type.",
-        Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Function expression, which lacks return-type annotation, implicitly has an any return type.",
-        Parameter_0_of_lambda_function_implicitly_has_an_any_type: "Parameter '{0}' of lambda function implicitly has an any type.",
-        Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Constructor signature, which lacks return-type annotation, implicitly has an any return type.",
-        Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Lambda Function, which lacks return-type annotation, implicitly has an any return type."
+        Variable_0_implicitly_has_an_any_type: "Variable '{0}' implicitly has an 'any' type.",
+        Parameter_0_of_1_implicitly_has_an_any_type: "Parameter '{0}' of '{1}' implicitly has an 'any' type.",
+        Parameter_0_of_function_type_implicitly_has_an_any_type: "Parameter '{0}' of function type implicitly has an 'any' type.",
+        Member_0_of_object_type_implicitly_has_an_any_type: "Member '{0}' of object type implicitly has an 'any' type.",
+        New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type: "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.",
+        _0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "'{0}', which lacks return-type annotation, implicitly has an 'any' return type.",
+        Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Function expression, which lacks return-type annotation, implicitly has an 'any' return type.",
+        Parameter_0_of_lambda_function_implicitly_has_an_any_type: "Parameter '{0}' of lambda function implicitly has an 'any' type.",
+        Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.",
+        Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.",
+        Array_Literal_implicitly_has_an_any_type_from_widening: "Array Literal implicitly has an 'any' type from widening."
     };
 })(TypeScript || (TypeScript = {}));
 /*! JSON v3.2.4 | http://bestiejs.github.com/json3 | Copyright 2012, Kit Cambridge | http://kit.mit-license.org */
@@ -3832,43 +3833,47 @@ var TypeScript;
             "code": 7004,
             "category": 2 /* Message */
         },
-        "Variable '{0}' implicitly has an any type.": {
+        "Variable '{0}' implicitly has an 'any' type.": {
             "code": 7005,
             "category": 1 /* Error */
         },
-        "Parameter '{0}' of '{1}' implicitly has an any type.": {
+        "Parameter '{0}' of '{1}' implicitly has an 'any' type.": {
             "code": 7006,
             "category": 1 /* Error */
         },
-        "Parameter '{0}' of function type implicitly has an any type.": {
+        "Parameter '{0}' of function type implicitly has an 'any' type.": {
             "code": 7007,
             "category": 1 /* Error */
         },
-        "Member '{0}' of object type implicitly has an any type.": {
+        "Member '{0}' of object type implicitly has an 'any' type.": {
             "code": 7008,
             "category": 1 /* Error */
         },
-        "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+        "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.": {
             "code": 7009,
             "category": 1 /* Error */
         },
-        "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+        "'{0}', which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": 7010,
             "category": 1 /* Error */
         },
-        "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+        "Function expression, which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": 7011,
             "category": 1 /* Error */
         },
-        "Parameter '{0}' of lambda function implicitly has an any type.": {
+        "Parameter '{0}' of lambda function implicitly has an 'any' type.": {
             "code": 7012,
             "category": 1 /* Error */
         },
-        "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+        "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": 7013,
             "category": 1 /* Error */
         },
-        "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
+        "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.": {
+            "code": 7014,
+            "category": 1 /* Error */
+        },
+        "Array Literal implicitly has an 'any' type from widening.": {
             "code": 7014,
             "category": 1 /* Error */
         }
@@ -28592,6 +28597,7 @@ var TypeScript;
         VariableFlags[VariableFlags["Property"] = 1 << 8] = "Property";
         VariableFlags[VariableFlags["ClassProperty"] = 1 << 11] = "ClassProperty";
         VariableFlags[VariableFlags["EnumElement"] = 1 << 13] = "EnumElement";
+        VariableFlags[VariableFlags["ForInVariable"] = 1 << 14] = "ForInVariable";
     })(TypeScript.VariableFlags || (TypeScript.VariableFlags = {}));
     var VariableFlags = TypeScript.VariableFlags;
 
@@ -37770,6 +37776,7 @@ var TypeScript;
             this.inConstructorArguments = false;
             this.inImportDeclaration = false;
             this.isInStaticInitializer = false;
+            this.isInInvocationExpression = false;
             this.inSpecialization = false;
             this.suppressErrors = false;
             this.inBaseTypeResolution = false;
@@ -39567,8 +39574,6 @@ var TypeScript;
                         funcDeclSymbol.type.setHasGenericSignature();
                     }
                 }
-            } else {
-                signature.returnType = this.semanticInfoChain.anyTypeSymbol;
             }
 
             if (funcDeclAST.arguments) {
@@ -39620,6 +39625,10 @@ var TypeScript;
                     }
                 } else {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+
+                    if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+                        context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), TypeScript.DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type, [argDeclAST.id.actualText], enclosingDecl);
+                    }
                 }
             }
 
@@ -39649,7 +39658,9 @@ var TypeScript;
                 } else if (contextParam) {
                     context.setTypeInContext(paramSymbol, contextParam.type);
                 } else {
-                    if (this.compilationSettings.noImplicitAny) {
+                    context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+
+                    if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
                         // there is a name for function expression then use the function expression name otherwise use "lambda"
                         var functionExpressionName = (paramDecl.getParentDecl()).getFunctionExpressionName();
                         if (functionExpressionName != "") {
@@ -39658,8 +39669,6 @@ var TypeScript;
                             context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), TypeScript.DiagnosticCode.Parameter_0_of_lambda_function_implicitly_has_an_any_type, [argDeclAST.id.actualText], enclosingDecl, true);
                         }
                     }
-
-                    context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
                 }
             }
 
@@ -39918,9 +39927,6 @@ var TypeScript;
             var wrapperDecl = this.getEnclosingDecl(decl);
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
-            var diagnostic = null;
-            var diagnostics = [];
-
             var typeExprSymbol = null;
             var initExprSymbol = null;
             var initTypeSymbol = null;
@@ -40040,21 +40046,12 @@ var TypeScript;
                         if (declParameterSymbol) {
                             context.setTypeInContext(declParameterSymbol, initTypeSymbol);
                         }
-                        // MERGETODO
-                        // context.setTypeInContext(declSymbol, this.widenType(initExprSymbol.getType()));
-                        // initExprSymbol.addOutgoingLink(declSymbol, SymbolLinkKind.ProvidesInferredType);
-                        // // if the disallowimplicitany flag is set to be true, report an error
-                        // if (this.compilationSettings.disallowImplicitAny) {
-                        //     // initializer is resolved to any type from widening
-                        //     if ((declSymbol.getType() != initExprSymbol.getType()) && (declSymbol.getType() == this.semanticInfoChain.anyTypeSymbol)) {
-                        //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Variable_0_implicitly_has_an_any_type,
-                        //             [varDecl.id.actualText], enclosingDecl, true);
-                        //         diagnostics = this.addDiagnostic(diagnostics, diagnostic);
-                        //     }
-                        // }
-                        // if (declParameterSymbol) {
-                        //     context.setTypeInContext(declParameterSymbol, initExprSymbol.getType());
-                        //     initExprSymbol.addOutgoingLink(declParameterSymbol, SymbolLinkKind.ProvidesInferredType);
+
+                        if (this.compilationSettings.noImplicitAny) {
+                            if ((declSymbol.type != initTypeSymbol) && (declSymbol.type == this.semanticInfoChain.anyTypeSymbol)) {
+                                context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), TypeScript.DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
+                            }
+                        }
                     }
                 }
             }
@@ -40062,38 +40059,17 @@ var TypeScript;
             if (!(varDecl.typeExpr || varDecl.init)) {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
+                if (this.compilationSettings.noImplicitAny && ((varDecl.getVarFlags() & 16384 /* ForInVariable */) === 0)) {
+                    if (wrapperDecl.kind == 16384 /* Function */ || wrapperDecl.kind == 65536 /* Method */ || wrapperDecl.kind == 32768 /* ConstructorMethod */ || wrapperDecl.kind == 2097152 /* ConstructSignature */) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), TypeScript.DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name], enclosingDecl);
+                    } else if (wrapperDecl.kind == 8388608 /* ObjectType */) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), TypeScript.DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
+                    } else if (wrapperDecl.kind != 1073741824 /* CatchBlock */) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), TypeScript.DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
+                    }
+                }
+
                 if (declSymbol.isVarArg) {
-                    // MERGETODO
-                    // // If the disallowimplicitany flag is set to be true, report an error
-                    // if (this.compilationSettings.disallowImplicitAny) {
-                    //     // Check what enclosingDecl the varDecl is in and report an appropriate error message
-                    //     // varDecl is a function/method/constructor/constructor signature parameter
-                    //     if (enclosingDecl.getKind() == TypeScript.PullElementKind.Function ||
-                    //         enclosingDecl.getKind() == TypeScript.PullElementKind.Method ||
-                    //         enclosingDecl.getKind() == TypeScript.PullElementKind.ConstructorMethod ||
-                    //         enclosingDecl.getKind() == TypeScript.PullElementKind.ConstructSignature) {
-                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                    //             DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type,
-                    //             [varDecl.id.actualText, enclosingDecl.getName()], enclosingDecl, true);
-                    //     }
-                    //     // varDecl is a property in object type
-                    //     else if (enclosingDecl.getKind() == TypeScript.PullElementKind.ObjectType) {
-                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                    //             DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl, true);
-                    //     }
-                    //     // varDecl is a parameter in function type
-                    //     else if (enclosingDecl.getKind() == TypeScript.PullElementKind.FunctionType) {
-                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                    //             DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl, true);
-                    //     }
-                    //     // varDecl is a variable declartion or class/interface property
-                    //     else {
-                    //         diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                    //             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl, true);
-                    //     }
-                    //     diagnostics = this.addDiagnostic(diagnostics, diagnostic);
-                    // }
-                    // if (declSymbol.getIsVarArg()) {
                     defaultType = TypeScript.specializeType(this.cachedArrayInterfaceType(), [defaultType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
                 }
 
@@ -40321,7 +40297,27 @@ var TypeScript;
                         // If recursive typing, use return type as any
                         returnType = this.semanticInfoChain.anyTypeSymbol;
                     }
-                    signature.returnType = returnType ? this.widenType(returnType) : this.semanticInfoChain.anyTypeSymbol;
+
+                    if (returnType) {
+                        var previousReturnType = returnType;
+                        var newReturnType = this.widenType(returnType);
+                        signature.returnType = newReturnType;
+
+                        if (this.compilationSettings.noImplicitAny) {
+                            if (previousReturnType != newReturnType) {
+                                var functionName = enclosingDecl.name;
+                                if (functionName == "") {
+                                    functionName = (enclosingDecl).getFunctionExpressionName();
+                                }
+
+                                if (functionName != "") {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [functionName], enclosingDecl);
+                                } else {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode.Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], enclosingDecl);
+                                }
+                            }
+                        }
+                    }
 
                     if (this.isTypeArgumentOrWrapper(returnType) && functionSymbol) {
                         functionSymbol.type.setHasGenericSignature();
@@ -40445,39 +40441,24 @@ var TypeScript;
                 } else if (!funcDeclAST.isConstructor && !funcDeclAST.isConstructMember()) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
-                        // MERGETODO
-                        // // if the disallowimplicitany flag is set to be true, report an error
-                        // if (this.compilationSettings.disallowImplicitAny) {
-                        //     var funcDeclASTName = funcDeclAST.name;
-                        //     if (funcDeclASTName) {
-                        //         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
-                        //             [funcDeclASTName.actualText], funcDecl, true);
-                        //     }
-                        //     else {
-                        //         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
-                        //             DiagnosticCode.Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
-                        //     }
-                        // }
-                    } else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
 
                         if (this.compilationSettings.noImplicitAny) {
-                            if (signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
-                                var funcDeclASTName = funcDeclAST.name;
-                                if (funcDeclASTName) {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclASTName.actualText], funcDecl, true);
-                                } else {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode.Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
-                                }
+                            var funcDeclASTName = funcDeclAST.name;
+                            if (funcDeclASTName) {
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclASTName.actualText], funcDecl);
+                            } else {
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode.Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl);
                             }
                         }
+                    } else {
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
                     }
                 } else if (funcDeclAST.isConstructMember()) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         if (this.compilationSettings.noImplicitAny) {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl, true);
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], funcDecl);
                         }
                     }
                 }
@@ -40667,11 +40648,6 @@ var TypeScript;
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                     } else {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
-
-                        if (this.compilationSettings.noImplicitAny && signature.returnType == this.semanticInfoChain.anyTypeSymbol) {
-                            diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText], this.getEnclosingDecl(funcDecl), true);
-                            accessorSymbol.type = this.getNewErrorTypeSymbol(diagnostic);
-                        }
                     }
                 }
 
@@ -40833,18 +40809,12 @@ var TypeScript;
                 }
             } else {
                 accessorSymbol.type = accessorType;
-                // MERGETODO
-                // Only report disallowimplicitany error message on setter if there is no getter
-                // if the disallowimplicitany flag is set to be true, report an error
-                // if (this.compilationSettings.disallowImplicitAny) {
-                //     // if setter has an any type, it must be implicit any
-                //     if (accessorSymbol.getType() == this.semanticInfoChain.anyTypeSymbol) {
-                //         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
-                //             DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText],
-                //             this.getEnclosingDecl(funcDecl), true);
-                //         accessorSymbol.setType(this.getNewErrorTypeSymbol(diagnostic));
-                //     }
-                // }
+
+                if (this.compilationSettings.noImplicitAny) {
+                    if (accessorSymbol.type == this.semanticInfoChain.anyTypeSymbol) {
+                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText], this.getEnclosingDecl(funcDecl));
+                    }
+                }
             }
 
             if (context.typeCheck()) {
@@ -42374,6 +42344,16 @@ var TypeScript;
                         context.popContextualType();
                     } else {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+
+                        if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+                            var functionExpressionName = (functionDecl).getFunctionExpressionName();
+
+                            if (functionExpressionName != "") {
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [functionExpressionName], functionDecl);
+                            } else {
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), TypeScript.DiagnosticCode.Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [], functionDecl);
+                            }
+                        }
                     }
                 } else {
                     this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, functionDecl, context);
@@ -42778,6 +42758,12 @@ var TypeScript;
                 }
             }
 
+            if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+                if (!inContextuallyTypedAssignment && elements.members.length == 0) {
+                    context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), TypeScript.DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
+                }
+            }
+
             if (contextualElementType && !contextualElementType.isTypeParameter()) {
                 // If there is a contextual type, assume the elemet type is the contextual type, this also applies for zero-length array litrals
                 elementType = contextualElementType;
@@ -42821,10 +42807,18 @@ var TypeScript;
 
                 if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
+
+                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
+                        context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), TypeScript.DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
+                    }
                 }
 
                 if (!elementType) {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
+
+                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
+                        context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), TypeScript.DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, [], enclosingDecl);
+                    }
                 } else if (contextualElementType && !contextualElementType.isTypeParameter()) {
                     if (this.sourceIsAssignableToTarget(elementType, contextualElementType, context)) {
                         elementType = contextualType;
@@ -43542,6 +43536,10 @@ var TypeScript;
             if (!constructSignatures.length) {
                 constructSignatures = targetTypeSymbol.getCallSignatures();
                 usedCallSignaturesInstead = true;
+
+                if (this.compilationSettings.noImplicitAny) {
+                    context.postError(this.unitPath, callEx.minChar, callEx.getLength(), TypeScript.DiagnosticCode.New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type, [], enclosingDecl);
+                }
             }
 
             if (constructSignatures.length) {
@@ -45059,11 +45057,14 @@ var TypeScript;
 
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
+                    var originalIsInInvocationExpression = context.isInInvocationExpression;
+                    context.isInInvocationExpression = true;
 
                     for (var i = 0; i < len; i++) {
                         var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
                         actuals[i] = argSym.type;
                     }
+                    context.isInInvocationExpression = originalIsInInvocationExpression;
                 }
             } else if (application.nodeType() === 36 /* ElementAccessExpression */) {
                 var binExp = application;
@@ -47344,12 +47345,6 @@ var TypeScript;
                         initTypeSymbol = null;
                     } else {
                         initTypeSymbol = instanceTypeSymbol;
-                    }
-                }
-
-                if (this.compilationSettings.noImplicitAny) {
-                    if (!typeExprSymbol && (initTypeSymbol.type == this.semanticInfoChain.anyTypeSymbol || initTypeSymbol.getElementType() == this.semanticInfoChain.anyTypeSymbol)) {
-                        this.postError(boundDeclAST.minChar, boundDeclAST.getLength(), typeCheckContext.scriptName, TypeScript.DiagnosticCode.Variable_0_implicitly_has_an_any_type, [boundDeclAST.id.actualText], enclosingDecl);
                     }
                 }
 
@@ -50303,6 +50298,7 @@ var TypeScript;
             return cacheID + "#" + declKind.toString();
         };
 
+        // REVIEW: The method below is part of an experiment on how to speed up up dynamic module lookup
         //public findExternalModuleSymbol(name) {
         //    var cacheID = this.getDeclPathCacheID([name], PullElementKind.DynamicModule);
         //    var symbol = this.symbolCache[name];
@@ -54147,7 +54143,6 @@ var TypeScript;
 
         SyntaxTreeToAstVisitor.prototype.visitSourceUnit = function (node) {
             var start = this.position;
-            var members;
 
             var bod = this.visitSyntaxList(node.moduleElements);
 
@@ -55726,6 +55721,14 @@ var TypeScript;
             this.movePast(node.forKeyword);
             this.movePast(node.openParenToken);
             var init = node.variableDeclaration ? node.variableDeclaration.accept(this) : node.left.accept(this);
+            if (node.variableDeclaration) {
+                var variableDeclaration = init;
+                for (var i = 0, n = variableDeclaration.declarators.members.length; i < n; i++) {
+                    var boundDecl = variableDeclaration.declarators.members[i];
+                    boundDecl.setVarFlags(boundDecl.getVarFlags() | 16384 /* ForInVariable */);
+                }
+            }
+
             this.movePast(node.inKeyword);
             var expression = node.expression.accept(this);
             this.movePast(node.closeParenToken);
@@ -58289,8 +58292,6 @@ var TypeScript;
             if (!context) {
                 return null;
             }
-
-            var symbols = null;
 
             return this.pullTypeChecker.resolver.getVisibleDecls(context.enclosingDecl, context.resolutionContext);
         };
