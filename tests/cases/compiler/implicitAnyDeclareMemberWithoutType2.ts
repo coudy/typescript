@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 // this should be an error
 class C {
     public x = null;// error at "x"

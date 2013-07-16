@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 var x = function () {
     return <any>0;  // this should not be an error
 }

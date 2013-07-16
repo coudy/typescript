@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 // these should be errors
 function foo(x) { };
 function bar(x: number, y) { };  // error at "y"; no error at "x"

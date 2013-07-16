@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 // this should be an error
 var x;                 // error at "x"
 declare var foo;       // error at "foo"

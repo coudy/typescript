@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 class C {
     constructor() { }
 }

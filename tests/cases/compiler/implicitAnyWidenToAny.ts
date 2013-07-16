@@ -1,4 +1,4 @@
-//@disallowimplicitany: true
+//@noimplicitany: true
 // these should be errors
 var x = null;                        // error at "x"
 var x1 = undefined;		             // error at "x1"

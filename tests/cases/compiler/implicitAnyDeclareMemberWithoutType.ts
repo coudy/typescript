@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 // this should be an error
 interface IFace {
     member1;  // error at "member1"

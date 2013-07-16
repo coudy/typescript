@@ -1,4 +1,4 @@
-// @disallowimplicitany: true
+// @noimplicitany: true
 // these should be errors for implicit any parameter
 var lambda = (l1) => { };       // Error at "l1"
 var lambd2 = (ll1, ll2: string) => { }  // Error at "ll1"

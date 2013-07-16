@@ -1,4 +1,4 @@
-//@disallowimplicitany: true
+//@noimplicitany: true
 // these should be errors
 class GetAndSet {
     getAndSet = null;             // error at "getAndSet"
