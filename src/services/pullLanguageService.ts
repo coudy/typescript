@@ -984,35 +984,44 @@ module Services {
             for (var i = 0, n = symbolInfo.symbols.length; i < n; i++) {
                 var symbol = symbolInfo.symbols[i];
 
-                var symboDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
-                if (!symboDisplaylName) {
+                var symbolDisplayName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
+                if (!symbolDisplayName) {
                     continue;
                 }
 
                 var symbolKind = symbol.kind;
 
-                var exitingEntry = result.lookup(symboDisplaylName);
+                var exitingEntry = result.lookup(symbolDisplayName);
 
                 if (exitingEntry && (symbolKind & TypeScript.PullElementKind.SomeValue)) {
                     // We have two decls with the same name. Do not overwrite types and containers with thier variable delcs.
                     continue;
                 }
 
-                var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
+                var entry: CachedCompletionEntryDetails;
                 var kindName = this.mapPullElementKind(symbolKind, symbol, true);
                 var kindModifiersName = this.getScriptElementKindModifiers(symbol);
-                var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
-                var type = symbol.type;
-                var symbolForDocComments = symbol;
-                if (type && type.hasOnlyOverloadCallSignatures()) {
-                    symbolForDocComments = type.getCallSignatures()[0];
+                if (symbol.isResolved) {
+                    // If the symbol has already been resolved, cache the needed information for completion details.
+                    var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, true);
+                    var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
+
+                    var type = symbol.type;
+                    var symbolForDocComments = symbol;
+                    if (type && type.hasOnlyOverloadCallSignatures()) {
+                        symbolForDocComments = type.getCallSignatures()[0];
+                    }
+
+                    var docComments = this.compilerState.getDocComments(symbolForDocComments, true);
+
+                    entry = new ResolvedCompletionEntry(symbolDisplayName, kindName, kindModifiersName, typeName, fullSymbolName, docComments);
+                }
+                else {
+                    entry = new DeclReferenceCompletionEntry(symbolDisplayName, kindName, kindModifiersName, symbol.getDeclarations()[0]);
                 }
 
-                var docComments = this.compilerState.getDocComments(symbolForDocComments, true);
-
-                var entry = new ResolvedCompletionEntry(symboDisplaylName, kindName, kindModifiersName, typeName, fullSymbolName, docComments);
-                result.addOrUpdate(symboDisplaylName, entry);
+                result.addOrUpdate(symbolDisplayName, entry);
             }
         }
 

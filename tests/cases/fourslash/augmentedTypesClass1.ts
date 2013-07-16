@@ -7,7 +7,7 @@
 ////r./*2*/
 
 goTo.marker('1');
-verify.completionListContains('prototype', '');
+verify.completionListContains('prototype', 'c5b');
 // BUG 696913
 //edit.insert('y;');
 //goTo.marker('2');

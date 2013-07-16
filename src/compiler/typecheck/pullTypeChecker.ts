@@ -799,9 +799,6 @@ module TypeScript {
 
             var functionSignature = functionDecl.getSignatureSymbol();
 
-            // check for optionality
-            var parameters = functionSignature.parameters;
-
             var returnType = functionSignature.returnType;
 
             this.checkForResolutionError(returnType, enclosingDecl);

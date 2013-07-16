@@ -754,7 +754,8 @@ module TypeScript {
                     this.currentUnit.addSynthesizedDecl(prototypeDecl);
                     prototypeDecl.setParentDecl(parentDecl);
                     prototypeSymbol.addDeclaration(prototypeDecl);
-                    // prototypeSymbol.setType(lhsType);
+                    prototypeSymbol.type = lhsType.getAssociatedContainerType();
+                    prototypeSymbol.isResolved = true;
                     members.push(prototypeSymbol);
                 }
                 else {
@@ -773,13 +774,6 @@ module TypeScript {
             // could be a function symbol
             if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType()) {
                 members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, /*includePrivate*/ false));
-            }
-
-            for (var i = 0; i < members.length; i++) {
-                if (!members[i].isResolved) {
-                    this.resolveDeclaredSymbol(members[i], enclosingDecl, context);
-                }
-                members[i].setUnresolved();
             }
 
             return members;
@@ -1036,6 +1030,7 @@ module TypeScript {
                     childDecls[j].ensureSymbolIsBound();
                 }
             }
+
             var members = ast.members.members;
 
             if (containerDecl.kind != PullElementKind.Enum) {
@@ -1246,10 +1241,11 @@ module TypeScript {
                         this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
                     }
 
-                    this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
+                    if (context.typeCheck()) {
+                        this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
+                    }
                 }
             }
-
 
             this.setSymbolForAST(typeDeclAST.name, typeDeclSymbol, context);
             this.setSymbolForAST(typeDeclAST, typeDeclSymbol, context);
@@ -1336,12 +1332,14 @@ module TypeScript {
                     return classDeclSymbol;
                 }
 
-                var constructorMembers = constructorTypeSymbol.getMembers();
+                if (context.typeCheck()) {
+                    var constructorMembers = constructorTypeSymbol.getMembers();
 
-                this.resolveDeclaredSymbol(constructorMethod, classDecl, context); 
+                    this.resolveDeclaredSymbol(constructorMethod, classDecl, context);
 
-                for (var i = 0; i < constructorMembers.length; i++) {
-                    this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                    for (var i = 0; i < constructorMembers.length; i++) {
+                        this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                    }
                 }
             }
 
@@ -1354,9 +1352,11 @@ module TypeScript {
                 }
             }
 
-            this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
-            if (classDeclSymbol.isResolved && !classDeclSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
+            if (context.typeCheck()) {
+                this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
+                if (classDeclSymbol.isResolved && !classDeclSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
+                }
             }
 
             return classDeclSymbol;
@@ -1367,9 +1367,13 @@ module TypeScript {
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
             this.resolveReferenceTypeDeclaration(interfaceDeclAST, context);
-            if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
+
+            if (context.typeCheck()) {
+                if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
+                }
             }
+
             return interfaceDeclSymbol;
         }
 
@@ -1783,7 +1787,9 @@ module TypeScript {
 
             funcDeclSymbol.setResolved();
 
-            this.typeCheckFunctionOverloads(funcDeclAST, context);
+            if (context.typeCheck()) {
+                this.typeCheckFunctionOverloads(funcDeclAST, context);
+            }
 
             return funcDeclSymbol;
         }
@@ -1923,8 +1929,10 @@ module TypeScript {
 
             interfaceSymbol.setResolved();
 
-            if (!interfaceSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+            if (context.typeCheck()) {
+                if (!interfaceSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+                }
             }
 
             return interfaceSymbol;
@@ -2434,7 +2442,6 @@ module TypeScript {
             }
 
             if (context.typeCheck()) {
-
                 if (varDecl.init && varDecl.nodeType() === NodeType.Parameter) {
                     var containerSignature = enclosingDecl.getSignatureSymbol();
                     if (containerSignature && !containerSignature.isDefinition()) {
@@ -2686,6 +2693,7 @@ module TypeScript {
                 }
 
                 // resolve parameter type annotations as necessary
+
                 if (funcDeclAST.arguments) {
                     var prevInConstructorArguments = context.inConstructorArguments;
                     context.inConstructorArguments = isConstructor;
@@ -3070,15 +3078,11 @@ module TypeScript {
 
                 var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                var parameters = signature.parameters;
-
                 var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
                 var isSetter = !isGetter;
 
                 var getter = accessorSymbol.getGetter();
                 var setter = accessorSymbol.getSetter();
-
-                var parameters = signature.parameters;
 
                 var funcNameAST = funcDeclAST.name;
 
@@ -3219,15 +3223,11 @@ module TypeScript {
 
                 var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                var parameters = signature.parameters;
-
                 var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
                 var isSetter = !isGetter;
 
                 var getter = accessorSymbol.getGetter();
                 var setter = accessorSymbol.getSetter();
-
-                var parameters = signature.parameters;
 
                 var funcNameAST = funcDeclAST.name;
 
@@ -3597,7 +3597,7 @@ module TypeScript {
         }
         
         private resolveWithStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            if (context.typeCheck) {
+            if (context.typeCheck()) {
                 var withStatement = <WithStatement>ast;
                 context.postError(this.unitPath, withStatement.expr.minChar, withStatement.expr.getLength(), DiagnosticCode.All_symbols_within_a_with_block_will_be_resolved_to_any, null, enclosingDecl);
             }
