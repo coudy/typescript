@@ -231,17 +231,6 @@ module TypeScript {
                     return true;
                 }
 
-                var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                    this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-                };
-
-                // TODO: if there are any emit diagnostics.  Don't proceed.
-                var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
-                compiler.reportDiagnostics(emitDiagnostics, this);
-                if (emitDiagnostics.length > 0) {
-                    return true;
-                }
-
                 var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
                 compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
                 if (emitDeclarationsDiagnostics.length > 0) {
