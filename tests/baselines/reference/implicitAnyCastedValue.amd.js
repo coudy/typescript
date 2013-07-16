@@ -85,6 +85,7 @@ function multipleRets2(x) {
     }
 }
 
+// this should not be an error
 var bar1 = null;
 var bar2 = undefined;
 var bar3 = 0;
