@@ -79,14 +79,15 @@ define(["require", "exports"], function(require, exports) {
 define(["require", "exports", "comments_ExternalModules_0"], function(require, exports, __extMod__) {
     /**This is on import declaration*/
     var extMod = __extMod__;
-    extMod.m1.fooExport();
-    exports.newVar = new extMod.m1.m2.c();
-    extMod.m4.fooExport();
-    exports.newVar2 = new extMod.m4.m2.c();
+    exports.extMod = extMod;
+    exports.extMod.m1.fooExport();
+    exports.newVar = new exports.extMod.m1.m2.c();
+    exports.extMod.m4.fooExport();
+    exports.newVar2 = new exports.extMod.m4.m2.c();
 });
 
 ////[comments_ExternalModules_1.d.ts]
 /**This is on import declaration*/
-import extMod = require("comments_ExternalModules_0");
+export import extMod = require("comments_ExternalModules_0");
 export declare var newVar: extMod.m1.m2.c;
 export declare var newVar2: extMod.m4.m2.c;

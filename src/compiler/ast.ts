@@ -710,6 +710,7 @@ module TypeScript {
     }
 
     export class ImportDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
         constructor(public id: Identifier, public alias: AST) {
             super();
         }
@@ -719,6 +720,15 @@ module TypeScript {
         }
 
         public isDeclaration() { return true; }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
 
         public isExternalImportDeclaration() {
             if (this.alias.nodeType() == NodeType.Name) {
@@ -730,31 +740,14 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            // REVIEW: Only modules may be aliased for now, though there's no real
-            // restriction on what the type symbol may be
-            if (emitter.importStatementShouldBeEmitted(this)) {
-                var prevModAliasId = emitter.modAliasId;
-                var prevFirstModAlias = emitter.firstModAlias;
-
-                emitter.recordSourceMappingStart(this);
-                emitter.emitComments(this, true);
-                emitter.writeToOutput("var " + this.id.actualText + " = ");
-                emitter.modAliasId = this.id.actualText;
-                emitter.firstModAlias = this.firstAliasedModToString();
-                var aliasAST = this.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>this.alias).term : this.alias;
-
-                emitter.emitJavascript(aliasAST, false);
-                emitter.writeToOutput(";");
-
-                emitter.emitComments(this, false);
-                emitter.recordSourceMappingEnd(this);
-
-                emitter.modAliasId = prevModAliasId;
-                emitter.firstModAlias = prevFirstModAlias;
-            }
+            emitter.emitImportDeclaration(this);
         }
 
         public getAliasName(aliasAST: AST = this.alias): string {
+            if (aliasAST.nodeType() == NodeType.TypeRef) {
+                aliasAST = (<TypeReference>aliasAST).term;
+            }
+
             if (aliasAST.nodeType() === NodeType.Name) {
                 return (<Identifier>aliasAST).actualText;
             } else {
@@ -776,8 +769,9 @@ module TypeScript {
 
         public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.id, ast.id, includingPosition) &&
-                   structuralEquals(this.alias, ast.alias, includingPosition);
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.id, ast.id, includingPosition) &&
+                structuralEquals(this.alias, ast.alias, includingPosition);
         }
     }
 

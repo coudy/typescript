@@ -1030,6 +1030,26 @@ module TypeScript {
     "code": 2180,
     "category": DiagnosticCategory.Error
   },
+  "Exported import declaration '{0}' is assigned value with type that has or is using private type '{1}'.": {
+    "code": 2181,
+    "category": DiagnosticCategory.Error
+  },
+  "Exported import declaration '{0}' is assigned value with type that is using inaccessible module '{1}'.": {
+    "code": 2182,
+    "category": DiagnosticCategory.Error
+  },
+  "Exported import declaration '{0}' is assigned type that has or is using private type '{1}'.": {
+    "code": 2183,
+    "category": DiagnosticCategory.Error
+  },
+  "Exported import declaration '{0}' is assigned type that is using inaccessible module '{1}'.": {
+    "code": 2184,
+    "category": DiagnosticCategory.Error
+  },
+  "Exported import declaration '{0}' is assigned container that is or is using inaccessible module '{1}'.": {
+    "code": 2185,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

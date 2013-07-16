@@ -74,7 +74,9 @@ var m1;
 
     // Parse error to export module
     var m1_im1_public = m1_M1_public;
+    m1.m1_im1_public = m1_im1_public;
     var m1_im2_public = m1_M2_private;
+    m1.m1_im2_public = m1_im2_public;
     
     
 })(m1 || (m1 = {}));

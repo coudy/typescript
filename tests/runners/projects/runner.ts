@@ -735,24 +735,18 @@ class ProjectRunner extends RunnerBase {
 
             tests.push({
                 scenario: "privacy Check on imported module - simple reference"
-                    , projectRoot: 'tests/cases/projects/privacyCheck-SimpleReference'
-                    , inputFiles: ['test.ts']
-                    , collectedFiles: ['test.ts', 'mExported.ts', 'mNonExported.ts']
-                    , outputFiles: ['mExported.js', 'mNonExported.js']
-                    , negative: true
-                    , skipRun: true
-                    , errors: []
-            });
-
-            tests.push({
-                scenario: "privacy Check on imported module - declarations inside module"
-                    , projectRoot: 'tests/cases/projects/privacyCheck-InsideModule'
-                    , inputFiles: ['testGlo.ts']
-                    , collectedFiles: ['testGlo.ts', 'mExported.ts', 'mNonExported.ts']
-                    , outputFiles: ['mExported.js', 'mNonExported.js']
-                    , negative: false
-                    , skipRun: true
-                    , errors: []
+                , projectRoot: 'tests/cases/projects/privacyCheck-SimpleReference'
+                , inputFiles: ['test.ts']
+                , collectedFiles: ['test.ts', 'mExported.ts', 'mNonExported.ts']
+                , outputFiles: ['mExported.js', 'mNonExported.js']
+                , negative: true
+                , skipRun: true
+                , errors: [
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(21,12): error TS2031: Exported variable 'c3' is using inaccessible module 'mNonExported'.",
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(25,12): error TS2031: Exported variable 'x3' is using inaccessible module 'mNonExported'.",
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(27,29): error TS2021: Exported class 'class3' extends class from inaccessible module 'mNonExported'.",
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(23,5): error TS2067: Return type of exported function is using inaccessible module 'mNonExported'."
+                ]
             });
 
             Harness.Assert.bug('No error for importing an external module in illegal scope');
@@ -2344,12 +2338,17 @@ class ProjectRunner extends RunnerBase {
             Harness.Assert.bug("Not emitting a JS file for a TS file whose JS would be 'empty'")
             tests.push({
                 scenario: "Visibility of type used across modules"
-                    , projectRoot: 'tests/cases/projects/VisibilityOfCrosssModuleTypeUsage'
-                    , inputFiles: ['commands.ts']
-                    , collectedFiles: ['fs.ts', 'server.ts', 'commands.ts']
-                    , outputFiles: ['fs.js', 'server.js', 'commands.js']
-                    , verifyEmitFiles: true
-                    , skipRun: true
+                , projectRoot: 'tests/cases/projects/VisibilityOfCrosssModuleTypeUsage'
+                , inputFiles: ['commands.ts']
+                , collectedFiles: ['fs.ts', 'server.ts', 'commands.ts']
+                , outputFiles: ['fs.js', 'server.js', 'commands.js']
+                , verifyEmitFiles: true
+                , skipRun: true
+                , negative: true
+                , errors: [
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/VisibilityOfCrosssModuleTypeUsage/commands.ts(5,5): error TS2030: Property 'workspace' of exported interface is using inaccessible module 'server'.",
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/VisibilityOfCrosssModuleTypeUsage/commands.ts(6,5): error TS2030: Property 'server' of exported interface is using inaccessible module 'server'."
+                ]
             });
 
 

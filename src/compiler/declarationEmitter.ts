@@ -203,8 +203,8 @@ module TypeScript {
                         emitDeclare = true;
                     }
 
-                    // Emit declare if not interface declaration && is not from module
-                    if (emitDeclare && typeString !== "interface") {
+                    // Emit declare if not interface declaration or import declaration && is not from module
+                    if (emitDeclare && typeString !== "interface" && typeString != "import") {
                         result += "declare ";
                     }
 
@@ -792,25 +792,18 @@ module TypeScript {
         }
 
         private importDeclarationCallback(pre: boolean, importDeclAST: ImportDeclaration): boolean {
-            if (pre) {
-                var start = new Date().getTime();
+            if (pre && this.canEmitSignature(ToDeclFlags(importDeclAST.getVarFlags()), importDeclAST)) {
+                this.emitDeclarationComments(importDeclAST);
                 var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
-                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-                TypeScript.declarationEmitGetImportDeclarationSymbolTime += new Date().getTime() - start;
-
-                if (importSymbol.getTypeUsedExternally() || PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
-                    this.emitDeclarationComments(importDeclAST);
-                    this.emitIndent();
-                    this.declFile.Write("import ");
-
-                    this.declFile.Write(importDeclAST.id.actualText + " = ");
-                    if (importDeclAST.isExternalImportDeclaration()) {
-                        this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
-                    }
-                    else {
-                        this.declFile.WriteLine(importDeclAST.getAliasName() + ";");
-                    }
+                this.emitDeclFlags(ToDeclFlags(importDeclAST.getVarFlags()), importDecl, "import");
+                this.declFile.Write(importDeclAST.id.actualText + " = ");
+                if (importDeclAST.isExternalImportDeclaration()) {
+                    this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
                 }
+                else {
+                    this.declFile.WriteLine(importDeclAST.getAliasName() + ";");
+                }
+
             }
 
             return false;

@@ -1,4 +1,4 @@
-import m1 = require("ref/m1");
+export import m1 = require("ref/m1");
 export declare var a1: number;
 export declare class c1 {
     public p1: number;

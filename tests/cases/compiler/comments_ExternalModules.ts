@@ -55,7 +55,7 @@ var myvar2 = new m4.m2.c();
 
 // @Filename: comments_ExternalModules_1.ts
 /**This is on import declaration*/
-import extMod = require("comments_ExternalModules_0");
+export import extMod = require("comments_ExternalModules_0");
 extMod.m1.fooExport();
 export var newVar = new extMod.m1.m2.c();
 extMod.m4.fooExport();

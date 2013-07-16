@@ -39,6 +39,10 @@ module TypeScript {
 
         var parent = context.getParent();
 
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(importDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
+            declFlags |= PullElementFlags.Exported;
+        }
+
         if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }

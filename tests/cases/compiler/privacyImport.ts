@@ -19,7 +19,7 @@ export module m1 {
         export var v2: c1;
     }
 
-    declare export module "m1_M3_public" {
+    export declare module "m1_M3_public" {
         export function f1();
         export class c1 {
         }
@@ -76,7 +76,6 @@ export module m1 {
     var m1_im4_private_v3_private = m1_im4_private.f1;
     var m1_im4_private_v4_private = m1_im4_private.f1();
 
-    // Parse error to export module
     export import m1_im1_public = m1_M1_public;
     export import m1_im2_public = m1_M2_private;
     export import m1_im3_public = require("m1_M3_public");
@@ -104,7 +103,7 @@ module m2 {
         export var v2: c1;
     }
 
-    declare export module "m2_M3_public" {
+    export declare module "m2_M3_public" {
         export function f1();
         export class c1 {
         }
@@ -253,7 +252,7 @@ export import glo_im3_public = require("glo_M2_public");
 export import glo_im4_public = require("glo_M4_private");
 
 
-declare export module "use_glo_M1_public" {
+export declare module "use_glo_M1_public" {
     import use_glo_M1_public = glo_M1_public;
     export var use_glo_M1_public_v1_public: { new (): use_glo_M1_public.c1; };
     export var use_glo_M1_public_v2_public: use_glo_M1_public;

@@ -4,7 +4,7 @@ import http = require("http")
 import url = require("url")
 import routes = require("./routes/index")
 import db = require("./db")
-import express = require("express")
+export import express = require("express")
 
 var app = express.createServer();
 

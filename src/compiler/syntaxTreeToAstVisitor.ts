@@ -780,6 +780,12 @@ module TypeScript {
             var result = new ImportDeclaration(name, alias);
             this.setCommentsAndSpan(result, start, node);
 
+            var flags = result.getVarFlags();
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
+                flags = flags | VariableFlags.Exported;
+            }
+            result.setVarFlags(flags);
+
             return result;
         }
 

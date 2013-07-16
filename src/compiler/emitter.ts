@@ -217,6 +217,82 @@ module TypeScript {
             return pullSymbol.getIsUsedAsValue();
         }
 
+        public emitImportDeclaration(importDeclAST: ImportDeclaration) {
+            if (this.importStatementShouldBeEmitted(importDeclAST)) {
+                var prevModAliasId = this.modAliasId;
+                var prevFirstModAlias = this.firstModAlias;
+
+                this.emitComments(importDeclAST, true);
+
+                var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
+                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+
+                var parentSymbol = importSymbol.getContainer();
+                var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
+                var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+                var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.kind : PullElementKind.None;
+
+                var needsPropertyAssignment = false;
+                var usePropertyAssignmentInsteadOfVarDecl = false;
+                var moduleNamePrefix: string;
+
+                if (hasFlag(importDecl.flags, PullElementFlags.Exported) &&
+                    (parentKind == PullElementKind.Container ||
+                    parentKind === PullElementKind.DynamicModule ||
+                    associatedParentSymbolKind === PullElementKind.Container ||
+                    associatedParentSymbolKind === PullElementKind.DynamicModule)) {
+                    if (importSymbol.getExportAssignedTypeSymbol() || importSymbol.getExportAssignedContainerSymbol()) {
+                        // Type or container assignment that is exported
+                        needsPropertyAssignment = true;
+                    } else {
+                        var valueSymbol = importSymbol.getExportAssignedValueSymbol();
+                        if (valueSymbol &&
+                            (valueSymbol.kind == PullElementKind.Method || valueSymbol.kind == PullElementKind.Function)) {
+                            needsPropertyAssignment = true;
+                        } else {
+                            usePropertyAssignmentInsteadOfVarDecl = true;
+                        }
+                    }
+
+                    // Calculate what name prefix to use
+                    if (this.emitState.container === EmitContainer.DynamicModule) {
+                        moduleNamePrefix = "exports."
+                        }
+                    else {
+                        moduleNamePrefix = this.moduleName + ".";
+                    }
+                }
+
+                this.recordSourceMappingStart(importDeclAST);
+                if (usePropertyAssignmentInsteadOfVarDecl) {
+                    this.writeToOutput(moduleNamePrefix);
+                } else {
+                    this.writeToOutput("var ");
+                }
+                this.writeToOutput(importDeclAST.id.actualText + " = ");
+                this.modAliasId = importDeclAST.id.actualText;
+                this.firstModAlias = importDeclAST.firstAliasedModToString();
+                var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
+
+                this.emitJavascript(aliasAST, false);
+                this.recordSourceMappingEnd(importDeclAST);
+                this.writeToOutput(";");
+
+                if (needsPropertyAssignment) {
+                    this.writeLineToOutput("");
+                    this.emitIndent();
+                    this.recordSourceMappingStart(importDeclAST);
+                    this.writeToOutput(moduleNamePrefix + importDeclAST.id.actualText + " = " + importDeclAST.id.actualText);
+                    this.recordSourceMappingEnd(importDeclAST);
+                    this.writeToOutput(";");
+                }
+                this.emitComments(importDeclAST, false);
+
+                this.modAliasId = prevModAliasId;
+                this.firstModAlias = prevFirstModAlias;
+            }
+        }
+
         public setSourceMappings(mapper: SourceMapper) {
             this.allSourceMappers.push(mapper);
             this.sourceMapper = mapper;
