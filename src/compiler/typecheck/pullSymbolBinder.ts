@@ -776,7 +776,7 @@ module TypeScript {
             var parentDecl = variableDeclaration.getParentDecl();
 
             var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) !== 0;
-            var isModuleValue = (declFlags & (PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule | PullElementFlags.InitializedEnum)) != 0;
+            var isModuleValue = (declFlags & (PullElementFlags.SomeInitializedModule)) != 0;
             var isEnumValue = (declFlags & PullElementFlags.InitializedEnum) != 0;
             var isClassConstructorVariable = (declFlags & PullElementFlags.ClassConstructorVariable) != 0;
 
@@ -827,11 +827,11 @@ module TypeScript {
                 var prevKind = variableSymbol.kind;
                 var prevIsAmbient = variableSymbol.hasFlag(PullElementFlags.Ambient);
                 var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.InitializedEnum);
-                var prevIsClass = prevKind == PullElementKind.ConstructorMethod;
-                var prevIsContainer = variableSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedDynamicModule);
+                var prevIsClassConstructorVariable = variableSymbol.hasFlag(PullElementFlags.ClassConstructorVariable);
+                var prevIsModuleValue = variableSymbol.hasFlag(PullElementFlags.SomeInitializedModule);
+                var prevIsImplicit = variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
                 var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
                 var isAmbient = (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
-                var isClass = variableDeclaration.kind == PullElementKind.ConstructorMethod;
                 var prevDecl = variableSymbol.getDeclarations()[0];
                 var bothAreGlobal = prevKind == PullElementKind.Script && declKind == prevKind;
                 var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
@@ -840,20 +840,22 @@ module TypeScript {
                 var acceptableRedeclaration = (!shareParent || prevIsParam) ||
                     (isImplicit &&
                     ((!isEnumValue && !isClassConstructorVariable && prevKind == PullElementKind.Function) || // Enums can't mix with functions
-                    (!isModuleValue && prevIsContainer && isAmbient) || // an ambient class can be declared after a module
-                    (!isModuleValue && prevIsClass) || // the module instance variable can't come after the class instance variable
-                    variableSymbol.hasFlag(PullElementFlags.ImplicitVariable)));
+                    (isModuleValue && prevIsModuleValue) || // modules and enums can mix freely
+                    (isClassConstructorVariable && prevIsModuleValue && isAmbient) || // an ambient class can be declared after a module
+                    (isModuleValue && prevIsClassConstructorVariable))); // the module variable can come after the class constructor variable
 
                 // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
-                if (acceptableRedeclaration && prevIsClass && !prevIsAmbient) {
+                if (acceptableRedeclaration && prevIsClassConstructorVariable && !prevIsAmbient) {
                     if (prevDecl.getScriptName() != variableDeclaration.getScriptName()) {
                         acceptableRedeclaration = false;
                     }
                 }
 
-                if ((shareParent && !prevIsParam) && ((!isModuleValue && !isClass && !isAmbient) || !acceptableRedeclaration || onlyOneIsEnum)) {
-                    span = variableDeclaration.getSpan();
-                    if (!parent || variableSymbol.getIsSynthesized()) {
+                if (shareParent && !prevIsParam && (!acceptableRedeclaration || onlyOneIsEnum)) {
+                    // If neither of them are implicit (both explicitly declared as vars), we won't error now. We'll check that the types match during type check.
+                    // However, we will error when a variable clobbers a function.
+                    if (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0) {
+                        span = variableDeclaration.getSpan();
                         var errorDecl = isImplicit ? variableSymbol.getDeclarations()[0] : variableDeclaration;
                         errorDecl.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]));
                     }

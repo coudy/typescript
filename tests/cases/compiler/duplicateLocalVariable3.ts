@@ -1,5 +1,4 @@
 var x = 1;
-// BUG 733914
 var x = 2; 
 
 function f() {
