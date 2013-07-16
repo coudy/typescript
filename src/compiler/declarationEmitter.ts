@@ -42,7 +42,7 @@ module TypeScript {
             }
         }
     }
-    
+
     export class DeclarationEmitter {
         public fileName: string = null;
         private declFile: TextWriter = null;
@@ -137,7 +137,7 @@ module TypeScript {
             else {
                 container = this.declarationContainerStack[this.declarationContainerStack.length - 2];
             }
-            
+
             var pullDecl = this.semanticInfoChain.getDeclForAST(declAST, this.fileName);
             if (container.nodeType() === NodeType.ModuleDeclaration) {
                 if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
@@ -300,7 +300,7 @@ module TypeScript {
                 this.declFile.WriteLine("");
                 this.emitIndent();
             }
-            
+
             this.declFile.Write(text[0]);
 
             for (var i = 1; i < text.length; i++) {
@@ -319,7 +319,7 @@ module TypeScript {
 
         private emitDeclarationComments(ast: AST, endLine?: boolean): void;
         private emitDeclarationComments(astOrSymbol: any, endLine = true) {
-            if (!this.emitOptions.compilationSettings.emitComments) {
+            if (this.emitOptions.compilationSettings.removeComments) {
                 return;
             }
 
@@ -438,7 +438,7 @@ module TypeScript {
             if (argDecl.isOptionalArg()) {
                 this.declFile.Write("?");
             }
-            
+
             this.indenter.decreaseIndent();
 
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
@@ -942,7 +942,7 @@ module TypeScript {
                 this.declFile.Write("export = ");
                 this.declFile.Write(ast.id.actualText);
                 this.declFile.WriteLine(";");
-            } 
+            }
 
             return false;
         }

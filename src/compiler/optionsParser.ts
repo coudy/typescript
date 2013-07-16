@@ -70,7 +70,7 @@ module TypeScript {
             this.host.printLine("");
             this.host.printLine(getLocalizedText(DiagnosticCode.Options, null));
 
-            var output = [];
+            var output: string[][] = [];
             var maxLength = 0;
             var i = 0;
 
@@ -228,7 +228,7 @@ module TypeScript {
             while (position < args.length) {
                 var current = consume();
                 var match = current.match(/^(--?|@)(.*)/);
-                var value = null;
+                var value: any = null;
 
                 if (match) {
                     if (match[1] === '@') {

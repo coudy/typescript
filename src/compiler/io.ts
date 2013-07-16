@@ -45,7 +45,7 @@ interface IIO {
     watchFile(fileName: string, callback: (x:string) => void ): IFileWatcher;
     run(source: string, fileName: string): void;
     getExecutingFilePath(): string;
-    quit(exitCode?: number);
+    quit(exitCode?: number): any;
 }
 
 module IOUtils {
@@ -97,14 +97,14 @@ module IOUtils {
         public buffer = "";
         // Inner writer does not need a WriteLine method, since the BufferedTextWriter wraps it itself
         constructor(public writer: { Write: (str: string) => void; Close: () => void; }, public capacity = 1024) { }
-        Write(str) {
+        Write(str: string) {
             this.buffer += str;
             if (this.buffer.length >= this.capacity) {
                 this.writer.Write(this.buffer);
                 this.buffer = "";
             }
         }
-        WriteLine(str) {
+        WriteLine(str: string) {
             this.Write(str + '\r\n');
         }
         Close() {
@@ -116,7 +116,7 @@ module IOUtils {
 }
 
 // Declare dependencies needed for all supported hosts
-declare function setTimeout(callback: () =>void , ms?: number);
+declare function setTimeout(callback: () =>void , ms?: number): any;
 
 var IO = (function() {
 
@@ -124,7 +124,7 @@ var IO = (function() {
     // Depends on WSCript and FileSystemObject
     function getWindowsScriptHostIO(): IIO {
         var fso = new ActiveXObject("Scripting.FileSystemObject");        
-        var streamObjectPool = [];
+        var streamObjectPool: any[] = [];
 
         function getStreamObject(): any { 
             if (streamObjectPool.length > 0) {
@@ -138,13 +138,13 @@ var IO = (function() {
             streamObjectPool.push(obj);
         }
 
-        var args = [];
+        var args: any[] = [];
         for (var i = 0; i < WScript.Arguments.length; i++) {
             args[i] = WScript.Arguments.Item(i);
         }
 
         return {
-            readFile: function (path): FileInformation {
+            readFile: function (path: string): FileInformation {
                 return Environment.readFile(path);
             },
 
@@ -210,8 +210,8 @@ var IO = (function() {
 
             dir: function (path, spec?, options?) {
                 options = options || <{ recursive?: boolean; }>{};
-                function filesInFolder(folder, root): string[] {
-                    var paths = [];
+                function filesInFolder(folder: any, root: string): string[] {
+                    var paths: string[] = [];
                     var fc: Enumerator;
 
                     if (options.recursive) {
@@ -234,7 +234,7 @@ var IO = (function() {
                 }
 
                 var folder = fso.GetFolder(path);
-                var paths = [];
+                var paths: string[] = [];
 
                 return filesInFolder(folder, path);
             },
@@ -280,7 +280,7 @@ var IO = (function() {
         var _module = require('module');
 
         return {
-            readFile: function (file): FileInformation {
+            readFile: function (file: string): FileInformation {
                 return Environment.readFile(file);
             },
 
@@ -295,7 +295,7 @@ var IO = (function() {
                     IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_delete_file_0, [path]), e);
                 }
             },
-            fileExists: function(path): boolean {
+            fileExists: function(path: string): boolean {
                 return _fs.existsSync(path);
             },
 
@@ -303,7 +303,7 @@ var IO = (function() {
                 options = options || <{ recursive?: boolean; }>{};
 
                 function filesInFolder(folder: string): string[]{
-                    var paths = [];
+                    var paths: string[] = [];
 
                     try {
                         var files = _fs.readdirSync(folder);
@@ -352,7 +352,7 @@ var IO = (function() {
 
                 return dirPath;
             },
-            findFile: function(rootPath: string, partialFilePath): IResolvedFile {
+            findFile: function(rootPath: string, partialFilePath: string): IResolvedFile {
                 var path = rootPath + "/" + partialFilePath;
 
                 while (true) {
@@ -390,7 +390,7 @@ var IO = (function() {
                 var firstRun = true;
                 var processingChange = false;
 
-                var fileChanged: any = function(curr, prev) {
+                var fileChanged: any = function(curr: any, prev: any) {
                     if (!firstRun) {
                         if (curr.mtime < prev.mtime) {
                             return;
