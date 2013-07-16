@@ -159,7 +159,7 @@ module TypeScript {
             TypeScript.astTranslationTime += new Date().getTime() - start;
         }
 
-        public diagnostics(): Diagnostic[]{
+        public diagnostics(): Diagnostic[] {
             if (this._diagnostics === null) {
                 this._diagnostics = this._syntaxTree.diagnostics();
             }
@@ -176,7 +176,6 @@ module TypeScript {
                 this.fileName,
                 SimpleText.fromScriptSnapshot(this.scriptSnapshot),
                 TypeScript.isDTSFile(this.fileName),
-                this.compilationSettings.codeGenTarget,
                 getParseOptions(this.compilationSettings));
         }
 
@@ -220,7 +219,7 @@ module TypeScript {
             // If we don't have a text change, or we don't have an old syntax tree, then do a full
             // parse.  Otherwise, do an incremental parse.
             var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null
-                ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), settings.codeGenTarget, getParseOptions(this.compilationSettings))
+                ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), getParseOptions(this.compilationSettings))
                 : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
@@ -229,7 +228,7 @@ module TypeScript {
         public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: string[], compilationSettings): Document {
             // for an open file, make a syntax tree and a script, and store both around.
             var start = new Date().getTime();
-            var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, getParseOptions(compilationSettings));
+            var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), getParseOptions(compilationSettings));
             TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
 
             var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);

@@ -8,7 +8,6 @@ module TypeScript {
         private _allDiagnostics: Diagnostic[] = null;
         private _fileName: string;
         private _lineMap: LineMap;
-        private _languageVersion: LanguageVersion;
         private _parseOptions: ParseOptions;
 
         constructor(sourceUnit: SourceUnitSyntax,
@@ -16,14 +15,12 @@ module TypeScript {
                     diagnostics: Diagnostic[],
                     fileName: string,
                     lineMap: LineMap,
-                    languageVersion: LanguageVersion,
                     parseOtions: ParseOptions) {
             this._sourceUnit = sourceUnit;
             this._isDeclaration = isDeclaration;
             this._parserDiagnostics = diagnostics;
             this._fileName = fileName;
             this._lineMap = lineMap;
-            this._languageVersion = languageVersion;
             this._parseOptions = parseOtions;
         }
 
@@ -31,7 +28,7 @@ module TypeScript {
             var result: any = {};
 
             result.isDeclaration = this._isDeclaration;
-            result.languageVersion = LanguageVersion[this._languageVersion];
+            result.languageVersion = LanguageVersion[this._parseOptions.languageVersion()];
             result.parseOptions = this._parseOptions;
 
             if (this.diagnostics().length > 0) {
@@ -52,7 +49,7 @@ module TypeScript {
             return this._isDeclaration;
         }
 
-        private computeDiagnostics(): Diagnostic[]{
+        private computeDiagnostics(): Diagnostic[] {
             if (this._parserDiagnostics.length > 0) {
                 return this._parserDiagnostics;
             }
@@ -78,10 +75,6 @@ module TypeScript {
 
         public lineMap(): LineMap {
             return this._lineMap;
-        }
-
-        public languageVersion(): LanguageVersion {
-            return this._languageVersion;
         }
 
         public parseOptions(): ParseOptions {
@@ -777,7 +770,7 @@ module TypeScript {
         }
 
         private checkEcmaScriptVersionIsAtLeast(parent: ISyntaxElement, node: ISyntaxElement, languageVersion: LanguageVersion, diagnosticKey: string): boolean {
-            if (this.syntaxTree.languageVersion() < languageVersion) {
+            if (this.syntaxTree.parseOptions().languageVersion() < languageVersion) {
                 var nodeFullStart = this.childFullStart(parent, node);
                 this.pushDiagnostic1(nodeFullStart, node, diagnosticKey);
                 return true;
@@ -1023,6 +1016,31 @@ module TypeScript {
             super.visitImportDeclaration(node);
         }
 
+        public visitExportAssignment(node: ExportAssignmentSyntax): any {
+            if (this.moduleTargetIsUnspecified()) {
+                this.pushDiagnostic1(this.position(), node,
+                    DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
+                this.skip(node);
+                return;
+            }
+
+            super.visitExportAssignment(node);
+        }
+
+        private moduleTargetIsUnspecified(): boolean {
+            return this.syntaxTree.parseOptions().moduleGenTarget() === ModuleGenTarget.Unspecified;
+        }
+
+        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
+            if (this.moduleTargetIsUnspecified()) {
+                this.pushDiagnostic1(this.position(), node, DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
+                this.skip(node);
+                return;
+            }
+
+            super.visitExternalModuleReference(node);
+        }
+
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForReservedName(node, node.moduleName, DiagnosticCode.Module_name_cannot_be_0) ||
                 this.checkForDisallowedDeclareModifier(node.modifiers) ||
@@ -1041,12 +1059,21 @@ module TypeScript {
                 return;
             }
 
-            if (node.stringLiteral && !this.inAmbientDeclaration && !SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
-                var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
-                this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
-                    DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
-                this.skip(node);
-                return;
+            if (node.stringLiteral) {
+                if (!this.inAmbientDeclaration && !SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
+                    var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
+                    this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
+                        DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
+                    this.skip(node);
+                    return;
+                }
+
+                if (this.moduleTargetIsUnspecified()) {
+                    this.pushDiagnostic1(this.childFullStart(node, node.stringLiteral), node.stringLiteral,
+                        DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
+                    this.skip(node);
+                    return;
+                }
             }
 
             if (!node.stringLiteral &&
@@ -1415,12 +1442,43 @@ module TypeScript {
         public visitSourceUnit(node: SourceUnitSyntax): void {
             if (this.checkFunctionOverloads(node, node.moduleElements) ||
                 this.checkForDisallowedExports(node, node.moduleElements) ||
-                this.checkForMultipleExportAssignments(node, node.moduleElements)) {
+                this.checkForMultipleExportAssignments(node, node.moduleElements) ||
+                this.checkForExportWithoutModuleGenTarget(node)) {
+                
                 this.skip(node);
                 return;
             }
 
             super.visitSourceUnit(node);
+        }
+
+        private checkForExportWithoutModuleGenTarget(node: SourceUnitSyntax): boolean {
+            if (this.moduleTargetIsUnspecified()) {
+                var currentElementFullStart = this.childFullStart(node, node.moduleElements);
+
+                for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+                    var child = node.moduleElements.childAt(i);
+                    if (child.kind() === SyntaxKind.ExportAssignment) {
+                        this.pushDiagnostic1(currentElementFullStart, child,
+                            DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
+                        return true;
+                    }
+                    else {
+                        var exportKeyword = SyntaxUtilities.getExportKeyword(child);
+                        if (exportKeyword) {
+                            var exportPosition = currentElementFullStart + Syntax.childOffset((<any>child).modifiers, exportKeyword);
+
+                            this.pushDiagnostic1(exportPosition, exportKeyword,
+                                DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
+                            return true;
+                        }
+                    }
+
+                    currentElementFullStart += child.fullWidth();
+                }
+            }
+
+            return false;
         }
     }
 }

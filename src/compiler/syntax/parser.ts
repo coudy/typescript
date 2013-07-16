@@ -400,8 +400,6 @@ module TypeScript.Parser {
         // Retrieves the diagnostics generated while the source was producing nodes or tokens. 
         // Should generally only be called after the document has been completely parsed.
         tokenDiagnostics(): Diagnostic[];
-        
-        languageVersion(): LanguageVersion;
     }
 
     // Parser source used in batch scenarios.  Directly calls into an underlying text scanner and
@@ -435,10 +433,6 @@ module TypeScript.Parser {
                     languageVersion: LanguageVersion) {
             this.slidingWindow = new SlidingWindow(this, ArrayUtilities.createArray(/*defaultWindowSize:*/ 32, null), null);
             this.scanner = new Scanner(fileName, text, languageVersion);
-        }
-
-        public languageVersion(): LanguageVersion {
-            return this.scanner.languageVersion();
         }
 
         public currentNode(): SyntaxNode {
@@ -657,7 +651,7 @@ module TypeScript.Parser {
             // Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
 
             // Set up a scanner so that we can scan tokens out of the new text.
-            this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.languageVersion());
+            this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.parseOptions().languageVersion());
         }
 
         private static extendToAffectedRange(changeRange:TextChangeRange,
@@ -702,10 +696,6 @@ module TypeScript.Parser {
             var finalLength = changeRange.newLength() + (changeRange.span().start() - start);
 
             return new TextChangeRange(finalSpan, finalLength);
-        }
-
-        public languageVersion(): LanguageVersion {
-            return this._normalParserSource.languageVersion();
         }
 
         public absolutePosition() {
@@ -1592,7 +1582,7 @@ module TypeScript.Parser {
             var allDiagnostics = this.source.tokenDiagnostics().concat(this.diagnostics);
             allDiagnostics.sort((a: Diagnostic, b: Diagnostic) => a.start() - b.start());
 
-            return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
+            return new SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.parseOptions);
         }
 
         private setStrictMode(isInStrictMode: boolean) {
@@ -5620,9 +5610,8 @@ module TypeScript.Parser {
     export function parse(fileName: string,
                           text: ISimpleText,
                           isDeclaration: boolean,
-                          languageVersion: LanguageVersion,
                           options: ParseOptions): SyntaxTree {
-        var source = new NormalParserSource(fileName, text, languageVersion);
+        var source = new NormalParserSource(fileName, text, options.languageVersion());
 
         return new ParserImpl(fileName, text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
     }

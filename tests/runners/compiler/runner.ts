@@ -48,7 +48,7 @@ class CompilerBaselineRunner extends RunnerBase {
 
             // Find out why this is necessary
             for (var i = 0; i < tcSettings.length; ++i) {
-                if (tcSettings[i].flag == "disallowimplicitany") {
+                if (tcSettings[i].flag == "disallowimplicitany" || tcSettings[i].flag === "target") {
                     Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
                     Harness.Compiler.setCompilerSettings(tcSettings, Harness.Compiler.CompilerInstance.RunTime);
                     createNewInstance = true;

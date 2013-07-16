@@ -145,7 +145,7 @@ class BatchCompiler implements Services.ILanguageServiceHost {
     }
 
     public newParse(): TypeScript.SyntaxTree {
-        return TypeScript.Parser.parse(compilerFileName, this.simpleText, false, TypeScript.LanguageVersion.EcmaScript5,
+        return TypeScript.Parser.parse(compilerFileName, this.simpleText, false,
             TypeScript.getParseOptions(new TypeScript.CompilationSettings()));
     }
 

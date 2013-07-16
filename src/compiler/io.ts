@@ -190,7 +190,7 @@ var IO = (function() {
                         fso.DeleteFile(path, true); // true: delete read-only files
                     }
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_delete_file_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_delete_file_0, [path]), e);
                 }
             },
 
@@ -204,7 +204,7 @@ var IO = (function() {
                         fso.CreateFolder(path);
                     }
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_create_directory_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_create_directory_0, [path]), e);
                 }
             },
 
@@ -292,7 +292,7 @@ var IO = (function() {
                 try {
                     _fs.unlinkSync(path);
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_delete_file_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_delete_file_0, [path]), e);
                 }
             },
             fileExists: function(path): boolean {
@@ -332,7 +332,7 @@ var IO = (function() {
                         _fs.mkdirSync(path);
                     }
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_create_directory_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_create_directory_0, [path]), e);
                 }
             },
 

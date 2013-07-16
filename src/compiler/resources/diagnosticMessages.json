@@ -699,7 +699,7 @@
         "category": "Error",
         "code": 2092
     },
-	"Could not find enclosing symbol for dotted name '{0}'.": {
+    "Could not find enclosing symbol for dotted name '{0}'.": {
         "category": "Error",
         "code": 2093
     },
@@ -1139,7 +1139,7 @@
         "category": "Warning",
         "code": 5002
     },
-    "Module code generation '{0}' not supported.  Using default '{1}' code generation.": {
+    "Module code generation '{0}' not supported.": {
         "category": "Warning",
         "code": 5003
     },
@@ -1255,11 +1255,11 @@
         "category": "Error",
         "code": 5033
     },
-    "Couldn't delete file '{0}'": {
+    "Could not delete file '{0}'": {
         "category": "Error",
         "code": 5034
     },
-    "Couldn't create directory '{0}'": {
+    "Could not create directory '{0}'": {
         "category": "Error",
         "code": 5035
     },
@@ -1267,6 +1267,13 @@
         "category": "Error",
         "code": 5036
     },
+    "Use of an external module requires the '--module' flag to be supplied to the compiler.": {
+        "category": "Error",
+        "code": 5037
+    },
+
+
+
     "Concatenate and emit output to single file | Redirect output structure to the directory": {
         "category": "Message",
         "code": 6001
@@ -1299,7 +1306,7 @@
         "category": "Message",
         "code": 6015
     },
-    "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+    "Specify module code generation: \"{0}\" or \"{1}\"": {
         "category": "Message",
         "code": 6016
     },
@@ -1375,11 +1382,11 @@
         "category": "Message",
         "code": 6036
     },
-	"LOCATION": {
+    "LOCATION": {
         "category": "Message",
         "code": 6037
-	},
-    "This version of the Javascript runtime doesn't support the '{0}' function.": {
+    },
+    "This version of the Javascript runtime does not support the '{0}' function.": {
         "category": "Error",
         "code": 7000
     },
@@ -1399,45 +1406,44 @@
         "category": "Message",
         "code": 7004
     },
-	"Variable '{0}' implicitly has an any type.": {
-		"category": "Error",
-		"code": 7005
-	},
-	"Parameter '{0}' of '{1}' implicitly has an any type.": {
-		"category": "Error",
-		"code": 7006
-	},
-	"Parameter '{0}' of function type implicitly has an any type.": {
-		"category": "Error",
-		"code": 7007
-	},
-	"Member '{0}' of object type implicitly has an any type.": {
-		"category": "Error",
-		"code": 7008
-	},
-	"\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
-		"category": "Error",
-		"code": 7009
-	},
-	"'{0}', which lacks return-type annotation, implicitly has an any return type.":{
-		"category": "Error",
-		"code": 7010
-	},
-	"Function expression, which lacks return-type annotation, implicitly has an any return type.":{
-		"category": "Error",
-		"code": 7011
-	},
-	"Parameter '{0}' of lambda function implicitly has an any type.":{
-		"category": "Error",
-		"code": 7012
-	},
-	"Constructor signature, which lacks return-type annotation, implicitly has an any return type.":{
-		"category": "Error",
-		"code": 7013	
-	},
-	"Lambda Function, which lacks return-type annotation, implicitly has an any return type.":{
-		"category": "Error",
-		"code": 7014
-	},
-
+    "Variable '{0}' implicitly has an any type.": {
+        "category": "Error",
+        "code": 7005
+    },
+    "Parameter '{0}' of '{1}' implicitly has an any type.": {
+        "category": "Error",
+        "code": 7006
+    },
+    "Parameter '{0}' of function type implicitly has an any type.": {
+        "category": "Error",
+        "code": 7007
+    },
+    "Member '{0}' of object type implicitly has an any type.": {
+        "category": "Error",
+        "code": 7008
+    },
+    "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+        "category": "Error",
+        "code": 7009
+    },
+    "'{0}', which lacks return-type annotation, implicitly has an any return type.":{
+        "category": "Error",
+        "code": 7010
+    },
+    "Function expression, which lacks return-type annotation, implicitly has an any return type.":{
+        "category": "Error",
+        "code": 7011
+    },
+    "Parameter '{0}' of lambda function implicitly has an any type.":{
+        "category": "Error",
+        "code": 7012
+    },
+    "Constructor signature, which lacks return-type annotation, implicitly has an any return type.":{
+        "category": "Error",
+        "code": 7013    
+    },
+    "Lambda Function, which lacks return-type annotation, implicitly has an any return type.":{
+        "category": "Error",
+        "code": 7014
+    },
 }

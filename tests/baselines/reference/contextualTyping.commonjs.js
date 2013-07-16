@@ -231,23 +231,3 @@ window.onmousedown = function (ev) {
 
 var x = {};
 //# sourceMappingURL=0.js.map
-
-////[comments_ExternalModules_0.js.map]
-{"version":3,"file":"comments_ExternalModules_0.js","sourceRoot":"","sources":["file:///comments_ExternalModules_0.ts"],"names":[],"mappings":""}
-////[comments_ExternalModules_0.js]
-//# sourceMappingURL=comments_ExternalModules_0.js.map
-
-////[comments_ExternalModules_1.js.map]
-{"version":3,"file":"comments_ExternalModules_1.js","sourceRoot":"","sources":["file:///comments_ExternalModules_1.ts"],"names":[],"mappings":""}
-////[comments_ExternalModules_1.js]
-//# sourceMappingURL=comments_ExternalModules_1.js.map
-
-////[comments_MultiModule_MultiFile_0.js.map]
-{"version":3,"file":"comments_MultiModule_MultiFile_0.js","sourceRoot":"","sources":["file:///comments_MultiModule_MultiFile_0.ts"],"names":[],"mappings":""}
-////[comments_MultiModule_MultiFile_0.js]
-//# sourceMappingURL=comments_MultiModule_MultiFile_0.js.map
-
-////[comments_MultiModule_MultiFile_1.js.map]
-{"version":3,"file":"comments_MultiModule_MultiFile_1.js","sourceRoot":"","sources":["file:///comments_MultiModule_MultiFile_1.ts"],"names":[],"mappings":""}
-////[comments_MultiModule_MultiFile_1.js]
-//# sourceMappingURL=comments_MultiModule_MultiFile_1.js.map

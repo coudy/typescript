@@ -47,7 +47,7 @@ module Services {
 
         public dumpMemory(): string {
             if (!debugObjectHost || !debugObjectHost.Debug || !debugObjectHost.Debug.dumpHeap) {
-                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function, ['Debug.dumpHeap()']));
+                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.This_version_of_the_Javascript_runtime_does_not_support_the_0_function, ['Debug.dumpHeap()']));
             }
 
             var objects = debugObjectHost.Debug.dumpHeap(2);
@@ -61,7 +61,7 @@ module Services {
 
         public getMemoryInfo(): any[] {
             if (!debugObjectHost || !debugObjectHost.Debug || !debugObjectHost.Debug.getMemoryInfo) {
-                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function, ['Debug.getMemoryInfo()']));
+                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.This_version_of_the_Javascript_runtime_does_not_support_the_0_function, ['Debug.getMemoryInfo()']));
             }
 
             return debugObjectHost.Debug.getMemoryInfo();
@@ -69,7 +69,7 @@ module Services {
 
         public collectGarbage(): void {
             if (!debugObjectHost || !debugObjectHost.CollectGarbage) {
-                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function, ['collectGarbage()']));
+                throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.This_version_of_the_Javascript_runtime_does_not_support_the_0_function, ['collectGarbage()']));
             }
 
             debugObjectHost.CollectGarbage();

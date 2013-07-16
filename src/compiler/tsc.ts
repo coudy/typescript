@@ -219,7 +219,6 @@ module TypeScript {
                     this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
                 };
 
-
                 // TODO: if there are any emit diagnostics.  Don't proceed.
                 var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
                 compiler.reportDiagnostics(emitDiagnostics, this);
@@ -460,14 +459,14 @@ module TypeScript {
 
             opts.option('module', {
                 usage: {
-                    locCode: DiagnosticCode.Specify_module_code_generation_0_default_or_1,
+                    locCode: DiagnosticCode.Specify_module_code_generation_0_or_1,
                     args: ['commonjs', 'amd']
                 },
                 type: DiagnosticCode.KIND,
                 set: (type) => {
                     type = type.toLowerCase();
 
-                    if (type === 'commonjs' || type === 'node') {
+                    if (type === 'commonjs') {
                         this.compilationSettings.moduleGenTarget = ModuleGenTarget.Synchronous;
                     }
                     else if (type === 'amd') {
@@ -475,7 +474,7 @@ module TypeScript {
                     }
                     else {
                         this.addDiagnostic(
-                            new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation_0_not_supported_Using_default_1_code_generation, [type, "commonjs"]));
+                            new Diagnostic(null, 0, 0, DiagnosticCode.Module_code_generation_0_not_supported, [type]));
                     }
                 }
             }, 'm');
@@ -551,7 +550,7 @@ module TypeScript {
                 opts.printVersion();
             }
 
-            return true;
+            return !this.hasErrors;
         }
 
         private setLocale(locale: string): boolean {

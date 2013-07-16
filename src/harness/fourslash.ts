@@ -785,10 +785,12 @@ module FourSlash {
 
             // Check syntactic structure
             var compilationSettings = new TypeScript.CompilationSettings();
+            compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+
             var parseOptions = TypeScript.getParseOptions(compilationSettings);
             var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
             var content = snapshot.getText(0, snapshot.getLength());
-            var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), TypeScript.LanguageVersion.EcmaScript5, parseOptions);
+            var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), parseOptions);
             var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
             var compiler = new TypeScript.TypeScriptCompiler();

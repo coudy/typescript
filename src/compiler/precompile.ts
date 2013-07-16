@@ -29,7 +29,7 @@ module TypeScript {
         public noLib = false;
 
         public codeGenTarget = LanguageVersion.EcmaScript3;
-        public moduleGenTarget = ModuleGenTarget.Synchronous;
+        public moduleGenTarget = ModuleGenTarget.Unspecified;
 
         // --out option passed. 
         // Default is the "" which leads to multiple files generated next to the.ts files
@@ -217,7 +217,7 @@ module TypeScript {
     }
 
     export function getParseOptions(settings: CompilationSettings): ParseOptions {
-        return new ParseOptions(settings.allowAutomaticSemicolonInsertion);
+        return new ParseOptions(settings.codeGenTarget, settings.moduleGenTarget, settings.allowAutomaticSemicolonInsertion);
     }
 
 } // Tools

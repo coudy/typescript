@@ -1142,7 +1142,7 @@ module TypeScript {
     "code": 5002,
     "category": DiagnosticCategory.Warning
   },
-  "Module code generation '{0}' not supported.  Using default '{1}' code generation.": {
+  "Module code generation '{0}' not supported.": {
     "code": 5003,
     "category": DiagnosticCategory.Warning
   },
@@ -1258,16 +1258,20 @@ module TypeScript {
     "code": 5033,
     "category": DiagnosticCategory.Error
   },
-  "Couldn't delete file '{0}'": {
+  "Could not delete file '{0}'": {
     "code": 5034,
     "category": DiagnosticCategory.Error
   },
-  "Couldn't create directory '{0}'": {
+  "Could not create directory '{0}'": {
     "code": 5035,
     "category": DiagnosticCategory.Error
   },
   "Error while executing file '{0}': ": {
     "code": 5036,
+    "category": DiagnosticCategory.Error
+  },
+  "Use of an external module requires the '--module' flag to be supplied to the compiler.": {
+    "code": 5037,
     "category": DiagnosticCategory.Error
   },
   "Concatenate and emit output to single file | Redirect output structure to the directory": {
@@ -1302,7 +1306,7 @@ module TypeScript {
     "code": 6015,
     "category": DiagnosticCategory.Message
   },
-  "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+  "Specify module code generation: \"{0}\" or \"{1}\"": {
     "code": 6016,
     "category": DiagnosticCategory.Message
   },
@@ -1378,7 +1382,7 @@ module TypeScript {
     "code": 6037,
     "category": DiagnosticCategory.Message
   },
-  "This version of the Javascript runtime doesn't support the '{0}' function.": {
+  "This version of the Javascript runtime does not support the '{0}' function.": {
     "code": 7000,
     "category": DiagnosticCategory.Error
   },

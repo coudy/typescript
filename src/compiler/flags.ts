@@ -104,7 +104,8 @@ module TypeScript {
     }
 
     export enum ModuleGenTarget {
-        Synchronous = 0,
-        Asynchronous = 1,
+        Unspecified = 0,
+        Synchronous = 1,
+        Asynchronous = 2,
     }
 }
