@@ -348,6 +348,14 @@ module FourSlashInterface {
         public disableFormatting() {
             FourSlash.currentTestState.enableFormatting = false;
         }
+
+        public enableIncrementalUpdateValidation() {
+            FourSlash.currentTestState.enableIncrementalUpdateValidation = true;
+        }
+
+        public disableIncrementalUpdateValidation() {
+            FourSlash.currentTestState.enableIncrementalUpdateValidation = false;
+        }
     }
 
     export class debug {

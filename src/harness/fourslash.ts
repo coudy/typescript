@@ -116,6 +116,8 @@ module FourSlash {
         // Whether or not we should format on keystrokes
         public enableFormatting = true;
 
+        public enableIncrementalUpdateValidation = true;
+
         public formatCodeOptions: Services.FormatCodeOptions = null;
 
         constructor(public testData: FourSlashData) {
@@ -365,13 +367,11 @@ module FourSlash {
         }
 
         public verifyCompletionListContains(symbol: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
-            this.getAllDiagnostics();
             var completions = this.getCompletionListAtCaret();
             this.assertItemInCompletionList(completions.entries, symbol, type, docComment, fullSymbolName, kind);
         }
 
         public verifyCompletionListDoesNotContain(symbol: string) {
-            this.getAllDiagnostics();
             var completions = this.getCompletionListAtCaret();
             if (completions && completions.entries && completions.entries.filter(e => e.name === symbol).length !== 0) {
                 throw new Error('Completion list did contain ' + symbol);
@@ -379,7 +379,6 @@ module FourSlash {
         }
 
         public verifyReferencesCountIs(count: number, localFilesOnly: boolean = true) {
-            this.getAllDiagnostics();
             var references = this.getReferencesAtCaret();
             var referencesCount = 0;
 
@@ -419,7 +418,6 @@ module FourSlash {
         }
 
         public verifyQuickInfo(negative: boolean, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
-            this.getAllDiagnostics();
             var actualQuickInfo = this.languageService.getTypeAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var actualQuickInfoMemberName = actualQuickInfo ? actualQuickInfo.memberName.toString() : "";
             var actualQuickInfoDocComment = actualQuickInfo ? actualQuickInfo.docComment : "";
@@ -538,7 +536,6 @@ module FourSlash {
         }
 
         private getActiveSignatureHelp() {
-            this.getAllDiagnostics();
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             var activeFormal = help.activeFormal;
 
@@ -584,7 +581,6 @@ module FourSlash {
         }
 
         public baselineCurrentFileBreakpointLocations() {
-            this.getAllDiagnostics();
             Harness.Baseline.runBaseline(
                 "Breakpoint Locations for " + this.activeFile.fileName,
                 this.testData.globalOptions['BaselineFile'],
@@ -780,48 +776,50 @@ module FourSlash {
         }
 
         private checkPostEditInvariants() {
-            // Get syntactic errors (to force a refresh)
-            var incrSyntaxErrs = JSON.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
+            if (this.enableIncrementalUpdateValidation) {
+                // Get syntactic errors (to force a refresh)
+                var incrSyntaxErrs = JSON.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
 
-            // Check syntactic structure
-            var compilationSettings = new TypeScript.CompilationSettings();
-            compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+                // Check syntactic structure
+                var compilationSettings = new TypeScript.CompilationSettings();
+                compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
 
-            var parseOptions = TypeScript.getParseOptions(compilationSettings);
-            var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
-            var content = snapshot.getText(0, snapshot.getLength());
-            var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), parseOptions);
-            var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
-            var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
-            var compiler = new TypeScript.TypeScriptCompiler();
+                var parseOptions = TypeScript.getParseOptions(compilationSettings);
+                var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
+                var content = snapshot.getText(0, snapshot.getLength());
+                var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), parseOptions);
+                var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
+                var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
+                var compiler = new TypeScript.TypeScriptCompiler();
 
-            for (var i = 0; i < this.testData.files.length; i++) {
-                snapshot = this.languageServiceShimHost.getScriptSnapshot(this.testData.files[i].fileName);
-                compiler.addSourceUnit(this.testData.files[i].fileName, TypeScript.ScriptSnapshot.fromString(snapshot.getText(0, snapshot.getLength())), ByteOrderMark.None, 0, true);
-            }
-
-            compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
-
-            compiler.pullTypeCheck();
-
-            if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
-                throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
-            }
-
-            if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
-                throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
-            }
-
-            for (var i = 0; i < this.testData.files.length; i++) {
-                var refSemanticErrs = JSON.stringify(compiler.getSemanticDiagnostics(this.testData.files[i].fileName));
-                var incrSemanticErrs = JSON.stringify(this.languageService.getSemanticDiagnostics(this.testData.files[i].fileName));
-
-                if (incrSyntaxErrs !== fullSyntaxErrs) {
-                    throw new Error('Mismatched incremental/full syntactic errors for file ' + this.testData.files[i].fileName + '.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
+                for (var i = 0; i < this.testData.files.length; i++) {
+                    snapshot = this.languageServiceShimHost.getScriptSnapshot(this.testData.files[i].fileName);
+                    compiler.addSourceUnit(this.testData.files[i].fileName, TypeScript.ScriptSnapshot.fromString(snapshot.getText(0, snapshot.getLength())), ByteOrderMark.None, 0, true);
                 }
 
-                if (incrSemanticErrs !== refSemanticErrs) {
-                    throw new Error('Mismatched incremental/full semantic errors for file ' + this.testData.files[i].fileName + '\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
+                compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
+
+                compiler.pullTypeCheck();
+
+                if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
+                    throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
+                }
+
+                if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
+                    throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
+                }
+
+                for (var i = 0; i < this.testData.files.length; i++) {
+                    var refSemanticErrs = JSON.stringify(compiler.getSemanticDiagnostics(this.testData.files[i].fileName));
+                    var incrSemanticErrs = JSON.stringify(this.languageService.getSemanticDiagnostics(this.testData.files[i].fileName));
+
+                    if (incrSyntaxErrs !== fullSyntaxErrs) {
+                        throw new Error('Mismatched incremental/full syntactic errors for file ' + this.testData.files[i].fileName + '.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
+                    }
+
+                    if (incrSemanticErrs !== refSemanticErrs) {
+                        throw new Error('Mismatched incremental/full semantic errors for file ' + this.testData.files[i].fileName + '\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);
+                    }
                 }
             }
         }
@@ -903,9 +901,6 @@ module FourSlash {
         }
 
         public goToDefinition(definitionIndex: number) {
-            this.languageService.refresh();
-            this.getAllDiagnostics(); // trigger a full type check to ensure all symbols are resolved
-
             var definitions = this.languageService.getDefinitionAtPosition(this.activeFile.fileName, this.currentCaretPosition);
             if (!definitions || !definitions.length) {
                 throw new Error('goToDefinition failed - expected to at least one defintion location but got 0');

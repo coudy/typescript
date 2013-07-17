@@ -1186,10 +1186,9 @@ module TypeScript {
 
                 switch (current.nodeType()) {
                     case NodeType.FunctionDeclaration:
-                        if (propagateContextualTypes) {
-                            if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                                this.pullTypeChecker.resolver.resolveAST((<FunctionDeclaration>current), true, enclosingDecl, resolutionContext);
-                            }
+                        // A function expression does not have a decl, so we need to resolve it first to get the decl created.
+                        if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
+                            this.pullTypeChecker.resolver.resolveAST((<FunctionDeclaration>current), true, enclosingDecl, resolutionContext);
                         }
 
                         break;
