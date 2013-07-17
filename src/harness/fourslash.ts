@@ -1325,7 +1325,7 @@ module FourSlash {
         private getMarkerByName(markerName: string) {
             var markerPos = this.testData.markerPositions[markerName];
             if (markerPos === undefined) {
-                var markerNames: any[] = [];
+                var markerNames: string[] = [];
                 for (var m in this.testData.markerPositions) markerNames.push(m);
                 throw new Error('Unknown marker "' + markerName + '" Available markers: ' + markerNames.map(m => '"' + m + '"').join(', '));
             } else {

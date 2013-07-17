@@ -88,7 +88,7 @@ module TypeScript {
                 diagnostic1._start === diagnostic2._start &&
                 diagnostic1._length === diagnostic2._length &&
                 diagnostic1._diagnosticKey === diagnostic2._diagnosticKey &&
-                ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1: any, v2: any) => v1 === v2);
+                ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
         }
     }
 

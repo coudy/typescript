@@ -7996,8 +7996,8 @@ module TypeScript {
                         var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
                         actuals[i] = argSym.type;
                     }
-                    context.isInInvocationExpression = originalIsInInvocationExpression;
 
+                    context.isInInvocationExpression = originalIsInInvocationExpression;
                 }
             }
             else if (application.nodeType() === NodeType.ElementAccessExpression) {

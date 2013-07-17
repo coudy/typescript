@@ -8,7 +8,7 @@ module TypeScript {
         export var resolution: number;
 
         declare module WScript {
-            export function InitializeProjection(): any;
+            export function InitializeProjection(): void;
         }
 
         declare module TestUtilities {

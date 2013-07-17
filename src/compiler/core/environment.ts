@@ -2,54 +2,8 @@
 ///<reference path='..\enumerator.ts' />
 ///<reference path='..\process.ts' />
 
-// Buffer class
-interface NodeBuffer {
-    [index: number]: number;
-    write(string: string, offset?: number, length?: number, encoding?: string): number;
-    toString(encoding?: string, start?: number, end?: number): string;
-    length: number;
-    copy(targetBuffer: NodeBuffer, targetStart?: number, sourceStart?: number, sourceEnd?: number): void;
-    slice(start?: number, end?: number): NodeBuffer;
-    readUInt8(offset: number, noAsset?: boolean): number;
-    readUInt16LE(offset: number, noAssert?: boolean): number;
-    readUInt16BE(offset: number, noAssert?: boolean): number;
-    readUInt32LE(offset: number, noAssert?: boolean): number;
-    readUInt32BE(offset: number, noAssert?: boolean): number;
-    readInt8(offset: number, noAssert?: boolean): number;
-    readInt16LE(offset: number, noAssert?: boolean): number;
-    readInt16BE(offset: number, noAssert?: boolean): number;
-    readInt32LE(offset: number, noAssert?: boolean): number;
-    readInt32BE(offset: number, noAssert?: boolean): number;
-    readFloatLE(offset: number, noAssert?: boolean): number;
-    readFloatBE(offset: number, noAssert?: boolean): number;
-    readDoubleLE(offset: number, noAssert?: boolean): number;
-    readDoubleBE(offset: number, noAssert?: boolean): number;
-    writeUInt8(value: number, offset: number, noAssert?: boolean): void;
-    writeUInt16LE(value: number, offset: number, noAssert?: boolean): void;
-    writeUInt16BE(value: number, offset: number, noAssert?: boolean): void;
-    writeUInt32LE(value: number, offset: number, noAssert?: boolean): void;
-    writeUInt32BE(value: number, offset: number, noAssert?: boolean): void;
-    writeInt8(value: number, offset: number, noAssert?: boolean): void;
-    writeInt16LE(value: number, offset: number, noAssert?: boolean): void;
-    writeInt16BE(value: number, offset: number, noAssert?: boolean): void;
-    writeInt32LE(value: number, offset: number, noAssert?: boolean): void;
-    writeInt32BE(value: number, offset: number, noAssert?: boolean): void;
-    writeFloatLE(value: number, offset: number, noAssert?: boolean): void;
-    writeFloatBE(value: number, offset: number, noAssert?: boolean): void;
-    writeDoubleLE(value: number, offset: number, noAssert?: boolean): void;
-    writeDoubleBE(value: number, offset: number, noAssert?: boolean): void;
-    fill(value: any, offset?: number, end?: number): void;
-    INSPECT_MAX_BYTES: number;
-}
-
 declare var Buffer: {
-    new (str: string, encoding?: string): NodeBuffer;
-    new (size: number): NodeBuffer;
-    new (array: any[]): NodeBuffer;
-    prototype: NodeBuffer;
-    isBuffer(obj: any): boolean;
-    byteLength(string: string, encoding?: string): number;
-    concat(list: NodeBuffer[], totalLength?: number): NodeBuffer;
+    new (str: string, encoding?: string): any;
 }
 
 module TypeScript {
@@ -125,7 +79,7 @@ var Environment = (function () {
             readFile: function (path: string): FileInformation {
                 try {
                     // Initially just read the first two bytes of the file to see if there's a bom.
-                    var streamObj: any = getStreamObject();
+                    var streamObj = getStreamObject();
                     streamObj.Open();
                     streamObj.Type = 2; // Text data
 
@@ -180,7 +134,7 @@ var Environment = (function () {
 
             writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
                 // First, convert the text contents passed in to binary in UTF8 format.
-                var textStream: any = getStreamObject();
+                var textStream = getStreamObject();
                 textStream.Charset = 'utf-8';
                 textStream.Open();
                 textStream.WriteText(contents, 0 /*do not add newline*/);
@@ -195,7 +149,7 @@ var Environment = (function () {
                 }
 
                 // Now, write all those bytes out to a file.
-                var fileStream: any = getStreamObject();
+                var fileStream = getStreamObject();
                 fileStream.Type = 1; //binary data.
                 fileStream.Open();
 
@@ -276,7 +230,7 @@ var Environment = (function () {
             },
 
             readFile: function (file: string): FileInformation {
-                var buffer: any = _fs.readFileSync(file);
+                var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:
                         if (buffer[1] === 0xFF) {
@@ -284,7 +238,7 @@ var Environment = (function () {
                             // Little Endian first
                             var i = 0;
                             while ((i + 1) < buffer.length) {
-                                var temp: number = buffer[i];
+                                var temp = buffer[i];
                                 buffer[i] = buffer[i + 1];
                                 buffer[i + 1] = temp;
                                 i += 2;

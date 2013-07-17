@@ -457,7 +457,7 @@ module TypeScript.SimpleText {
         public substr(start: number, length: number, intern: boolean): string {
             if (intern) {
                 // use a shared array instance of the length of this substring isn't too large.
-                var array: any[] = length <= SimpleStringText.charArray.length
+                var array: number[] = length <= SimpleStringText.charArray.length
                     ? SimpleStringText.charArray
                     : ArrayUtilities.createArray(length, /*defaultValue:*/0);
                 this.copyTo(start, array, 0, length);

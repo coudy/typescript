@@ -55,7 +55,7 @@ module TypeScript.Collections {
             return hashCode;
         }
 
-        private addOrSet(key: TKey, value: TValue, throwOnExistingEntry: boolean): any {
+        private addOrSet(key: TKey, value: TValue, throwOnExistingEntry: boolean): TKey {
             // Compute the hash for this key.  Also ensure that it's non negative.
             var hashCode = this.computeHashCode(key);
 
@@ -85,7 +85,7 @@ module TypeScript.Collections {
             return null;
         }
 
-        private addEntry(key: TKey, value: TValue, hashCode: number): any {
+        private addEntry(key: TKey, value: TValue, hashCode: number): TKey {
             var index = hashCode % this.entries.length;
 
             var e = new HashTableEntry<TKey,TValue>(key, value, hashCode, this.entries[index]);

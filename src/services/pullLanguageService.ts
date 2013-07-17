@@ -1052,7 +1052,7 @@ module Services {
             }
         }
 
-        private getCompletionEntriesForKeywords(keywords: CompletionEntry[], result: any): void {
+        private getCompletionEntriesForKeywords(keywords: ResolvedCompletionEntry[], result: TypeScript.IdentiferNameHashTable<CompletionEntryDetails>): void {
             for (var i = 0, n = keywords.length; i < n; i++) {
                 var keyword = keywords[i];
                 result.addOrUpdate(keyword.name, keyword); 

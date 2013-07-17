@@ -180,7 +180,7 @@ module TypeScript {
 
         public static dedentNode(node: ISyntaxNode, dedentFirstToken: boolean, dedentAmount: number, minimumIndent: number, options: FormattingOptions): ISyntaxNode {
             var dedenter = new SyntaxDedenter(dedentFirstToken, dedentAmount, minimumIndent, options);
-            var result: ISyntaxNode = node.accept(dedenter);
+            var result = node.accept(dedenter);
 
             if (dedenter.isAborted()) {
                 // We failed to dedent a token in this node.  Return the original node as is.

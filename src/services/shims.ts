@@ -86,8 +86,8 @@ module Services {
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
-        getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): any;
-        getCompletionEntryDetails(fileName: string, position: number, entryName: string): any;
+        getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): string;
+        getCompletionEntryDetails(fileName: string, position: number, entryName: string): string;
 
         getTypeAtPosition(fileName: string, position: number): string;
         getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): string;

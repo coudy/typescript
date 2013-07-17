@@ -1610,7 +1610,7 @@ module TypeScript {
             return this._typesThatExplicitlyImplementThisType;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, origin: any=null) {
+        public hasBase(potentialBase: PullTypeSymbol, origin: PullSymbol = null) {
             if (this === potentialBase) {
                 return true;
             }

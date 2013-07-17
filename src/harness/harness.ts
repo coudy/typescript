@@ -282,7 +282,7 @@ module Harness {
         public error: Error = null;
 
         // Whether or not this object has any failures (including in its descendants)
-        public passed: any = null;
+        public passed: boolean = null;
 
         // A list of bugs impacting this object
         public bugs: string[] = [];

@@ -1595,7 +1595,7 @@ module TypeScript {
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
 
-            var lastEmittedNode: any = null;
+            var lastEmittedNode: AST = null;
             for (var i = 0, n = this.caseList.members.length; i < n; i++) {
                 var caseExpr = this.caseList.members[i];
 
@@ -1840,7 +1840,7 @@ module TypeScript {
 
         constructor(public content: string,
                     public isBlockComment: boolean,
-                    public endsLine: any) {
+                    public endsLine: boolean) {
             super();
         }
 

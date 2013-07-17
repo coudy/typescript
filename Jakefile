@@ -128,6 +128,7 @@ var compilerSources = [
 	"typecheck/pullSymbolBinder.ts",
 	"typecheck/pullSymbolBindingContext.ts",
 	"typecheck/pullSymbols.ts",
+	"typecheck/pullTypeChecker.ts",
 	"typecheck/pullTypeResolution.ts",
 	"typecheck/pullTypeResolutionContext.ts",
 	"typecheck/SemanticDiagnostic.ts",

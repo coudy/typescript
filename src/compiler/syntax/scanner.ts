@@ -129,7 +129,7 @@ module TypeScript {
             }
         }
 
-        private static triviaWindow: any[] = ArrayUtilities.createArray(2048, 0);
+        private static triviaWindow: number[] = ArrayUtilities.createArray(2048, 0);
 
         // Scans a subsection of 'text' as trivia.
         public static scanTrivia(text: ISimpleText, start: number, length: number, isTrailing: boolean): ISyntaxTriviaList {

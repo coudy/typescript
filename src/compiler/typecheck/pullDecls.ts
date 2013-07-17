@@ -33,7 +33,7 @@ module TypeScript {
         public childDeclTypeParameterCache: any = new BlockIntrinsics();
 
         public declID = pullDeclID++;
-        public declIDString: any = null;
+        public declIDString: string = null;
 
         public flags: PullElementFlags = PullElementFlags.None;
 
