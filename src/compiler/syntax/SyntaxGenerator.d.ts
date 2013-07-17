@@ -63,7 +63,6 @@ declare module TypeScript {
         Enum_name_cannot_be_0: string;
         Module_name_cannot_be_0: string;
         Enum_member_must_have_initializer: string;
-        module_is_deprecated_Use_require_instead: string;
         Export_assignment_cannot_be_used_in_internal_modules: string;
         Export_assignment_not_allowed_in_module_with_exported_element: string;
         Module_cannot_have_multiple_export_assignments: string;
@@ -181,7 +180,6 @@ declare module TypeScript {
         Could_not_find_symbol_0: string;
         get_and_set_accessor_must_have_the_same_type: string;
         this_cannot_be_referenced_in_current_location: string;
-        Use_of_deprecated_type_bool_Use_boolean_instead: string;
         Static_methods_cannot_reference_class_type_parameters: string;
         Class_0_is_recursively_referenced_as_a_base_type_of_itself: string;
         Interface_0_is_recursively_referenced_as_a_base_type_of_itself: string;
@@ -287,7 +285,7 @@ declare module TypeScript {
         _0_overload_s: string;
         Current_host_does_not_support_0_option: string;
         ECMAScript_target_version_0_not_supported_Using_default_1_code_generation: string;
-        Module_code_generation_0_not_supported_Using_default_1_code_generation: string;
+        Module_code_generation_0_not_supported: string;
         Could_not_find_file_0: string;
         A_file_cannot_have_a_reference_to_itself: string;
         Cannot_resolve_referenced_file_0: string;
@@ -316,24 +314,21 @@ declare module TypeScript {
         Not_yet_implemented: string;
         Invalid_operation_0: string;
         Invalid_operation: string;
-        Couldn_t_delete_file_0: string;
-        Couldn_t_create_directory_0: string;
+        Could_not_delete_file_0: string;
+        Could_not_create_directory_0: string;
         Error_while_executing_file_0: string;
+        Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler: string;
         Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory: string;
         Generates_corresponding_0_file: string;
         Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations: string;
         Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations: string;
         Watch_input_files: string;
-        Execute_the_script_after_compilation: string;
-        Minimize_whitespace: string;
         Do_not_emit_comments_to_output: string;
         Skip_resolution_and_preprocessing: string;
-        Print_debug_output: string;
         Specify_ECMAScript_target_version_0_default_or_1: string;
-        Specify_module_code_generation_0_default_or_1: string;
+        Specify_module_code_generation_0_or_1: string;
         Print_this_message: string;
         Print_the_compiler_s_version_0: string;
-        Allow_use_of_deprecated_0_type: string;
         Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module: string;
         Specify_locale_for_errors_and_messages_For_example_0_or_1: string;
         Syntax_0: string;
@@ -350,7 +345,7 @@ declare module TypeScript {
         FILE_DIRECTORY: string;
         VERSION: string;
         LOCATION: string;
-        This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function: string;
+        This_version_of_the_Javascript_runtime_does_not_support_the_0_function: string;
         Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: string;
         Unknown_rule: string;
         Invalid_line_number_0: string;
@@ -365,6 +360,7 @@ declare module TypeScript {
         Parameter_0_of_lambda_function_implicitly_has_an_any_type: string;
         Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: string;
         Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: string;
+        Array_Literal_implicitly_has_an_any_type_from_widening: string;
     };
 }
 declare module TypeScript {
@@ -626,10 +622,6 @@ declare module TypeScript {
             "category": DiagnosticCategory;
         };
         "Enum member must have initializer.": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "'module(...)' is deprecated. Use 'require(...)' instead.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1521,7 +1513,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Module code generation '{0}' not supported.  Using default '{1}' code generation.": {
+        "Module code generation '{0}' not supported.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1637,15 +1629,19 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Couldn't delete file '{0}'": {
+        "Could not delete file '{0}'": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Couldn't create directory '{0}'": {
+        "Could not create directory '{0}'": {
             "code": number;
             "category": DiagnosticCategory;
         };
         "Error while executing file '{0}': ": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Use of an external module requires the '--module' flag to be supplied to the compiler.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1669,14 +1665,6 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Execute the script after compilation": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Minimize whitespace": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
         "Do not emit comments to output": {
             "code": number;
             "category": DiagnosticCategory;
@@ -1685,15 +1673,11 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Print debug output": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
         "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+        "Specify module code generation: \"{0}\" or \"{1}\"": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1702,10 +1686,6 @@ declare module TypeScript {
             "category": DiagnosticCategory;
         };
         "Print the compiler's version: {0}": {
-            "code": number;
-            "category": DiagnosticCategory;
-        };
-        "Allow use of deprecated \"{0}\" type": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1773,7 +1753,7 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "This version of the Javascript runtime doesn't support the '{0}' function.": {
+        "This version of the Javascript runtime does not support the '{0}' function.": {
             "code": number;
             "category": DiagnosticCategory;
         };
@@ -1793,51 +1773,55 @@ declare module TypeScript {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Variable '{0}' implicitly has an any type.": {
+        "Variable '{0}' implicitly has an 'any' type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Parameter '{0}' of '{1}' implicitly has an any type.": {
+        "Parameter '{0}' of '{1}' implicitly has an 'any' type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Parameter '{0}' of function type implicitly has an any type.": {
+        "Parameter '{0}' of function type implicitly has an 'any' type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Member '{0}' of object type implicitly has an any type.": {
+        "Member '{0}' of object type implicitly has an 'any' type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+        "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+        "'{0}', which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+        "Function expression, which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Parameter '{0}' of lambda function implicitly has an any type.": {
+        "Parameter '{0}' of lambda function implicitly has an 'any' type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+        "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": number;
             "category": DiagnosticCategory;
         };
-        "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
+        "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.": {
+            "code": number;
+            "category": DiagnosticCategory;
+        };
+        "Array Literal implicitly has an 'any' type from widening.": {
             "code": number;
             "category": DiagnosticCategory;
         };
     };
 }
 declare module JSON3 {
-    function stringify(source, filter?, width?);
-    function parse(source: string, callback?);
+    function stringify(source: any, filter?: any, width?: any): any;
+    function parse(source: string, callback?: any): any;
 }
 declare module TypeScript {
     class ArrayUtilities {
@@ -1933,7 +1917,7 @@ declare module TypeScript {
         private _diagnosticKey;
         private _arguments;
         constructor(fileName: string, start: number, length: number, diagnosticKey: string, arguments?: any[]);
-        public toJSON(key);
+        public toJSON(key: any): any;
         public fileName(): string;
         public start(): number;
         public length(): number;
@@ -1961,26 +1945,26 @@ declare module TypeScript {
 }
 declare class Enumerator {
     public atEnd(): boolean;
-    public moveNext();
+    public moveNext(): boolean;
     public item(): any;
     constructor(o: any);
 }
 declare module process {
     var argv: string[];
     var platform: string;
-    function on(event: string, handler: (any: any) => void): void;
+    function on(event: string, handler: (arg: any) => void): void;
     module stdout {
-        function write(str: string);
-        function on(event: string, action: () => void);
+        function write(str: string): any;
+        function on(event: string, action: () => void): void;
     }
     module stderr {
-        function write(str: string);
-        function on(event: string, action: () => void);
+        function write(str: string): any;
+        function on(event: string, action: () => void): void;
     }
     module mainModule {
         var filename: string;
     }
-    function exit(exitCode?: number);
+    function exit(exitCode?: number): any;
 }
 declare module TypeScript {
     var nodeMakeDirectoryTime: number;
@@ -2031,7 +2015,7 @@ declare module TypeScript.Collections {
     class StringTable {
         private entries;
         private count;
-        constructor(capacity);
+        constructor(capacity: number);
         public addCharArray(key: number[], start: number, len: number): string;
         private findCharArrayEntry(key, start, len, hashCode);
         private addEntry(text, hashCode);
@@ -2051,10 +2035,10 @@ declare module TypeScript {
         static stringEquals(val1: string, val2: string): boolean;
     }
 }
-declare var global;
+declare var global: any;
 declare module TypeScript {
     class Timer {
-        public startTime;
+        public startTime: number;
         public time: number;
         public start(): void;
         public end(): void;

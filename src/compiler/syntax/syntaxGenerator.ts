@@ -52,7 +52,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IModuleReferenceSyntax'],
         isAbstract: true,
-        children: [],
+        children: <any>[],
         isTypeScriptSpecific: true
     },
     <any>{
@@ -226,7 +226,7 @@ var definitions:ITypeDefinition[] = [
         name: 'OmittedExpressionSyntax',
         baseType: 'SyntaxNode',
         interfaces: ['IExpressionSyntax'],
-        children: []
+        children: <any>[]
     },
     <any>{
         name: 'ParenthesizedExpressionSyntax',
@@ -243,7 +243,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IUnaryExpressionSyntax'],
         isAbstract: true,
-        children: [],
+        children: <any>[],
         isTypeScriptSpecific: true
     },
     <any>{
@@ -619,7 +619,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IMemberDeclarationSyntax'],
         isAbstract: true,
-        children: [],
+        children: <any>[],
         isTypeScriptSpecific: true
     },
     <any>{
@@ -707,7 +707,7 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['ISwitchClauseSyntax'],
         isAbstract: true,
-        children: []
+        children: <any>[]
     },
     <any>{
         name: 'CaseSwitchClauseSyntax',
@@ -753,13 +753,13 @@ var definitions:ITypeDefinition[] = [
         baseType: 'SyntaxNode',
         interfaces: ['IStatementSyntax'],
         isAbstract: true,
-        children: []
+        children: <any>[]
     },
     <any>{
         name: 'BaseForStatementSyntax',
         baseType: 'IterationStatementSyntax',
         isAbstract: true,
-        children: []
+        children: <any>[]
     },
     <any>{
         name: 'ForStatementSyntax',
@@ -862,7 +862,7 @@ var definitions:ITypeDefinition[] = [
         name: 'PropertyAssignmentSyntax',
         baseType: 'SyntaxNode',
         isAbstract: true,
-        children: []
+        children: <any>[]
     },
     <any>{
         name: 'SimplePropertyAssignmentSyntax',
@@ -886,7 +886,7 @@ var definitions:ITypeDefinition[] = [
         name: 'AccessorPropertyAssignmentSyntax',
         baseType: 'PropertyAssignmentSyntax',
         isAbstract: true,
-        children: []
+        children: <any>[]
     },
     <any>{
         name: 'GetAccessorPropertyAssignmentSyntax',
@@ -1766,7 +1766,7 @@ function contains(definition: ITypeDefinition, child: IMemberDefinition) {
 }
 
 function childrenInAllSubclasses(definition: ITypeDefinition): IMemberDefinition[]{
-    var result = [];
+    var result: IMemberDefinition[] = [];
 
     if (definition !== null && definition.isAbstract) {
         var subclasses = TypeScript.ArrayUtilities.where(definitions, d => !d.isAbstract && derivesFrom(d, definition));
@@ -2445,7 +2445,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     result += "        public hasSkippedToken(): boolean { return false; }\r\n";
 
     result +=
-"        public toJSON(key) { return tokenToJSON(this); }\r\n" +
+"        public toJSON(key: any): any { return tokenToJSON(this); }\r\n" +
 "        public firstToken(): ISyntaxToken { return this; }\r\n" +
 "        public lastToken(): ISyntaxToken { return this; }\r\n" +
 "        public isTypeScriptSpecific(): boolean { return false; }\r\n" +

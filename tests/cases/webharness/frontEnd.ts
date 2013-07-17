@@ -53,9 +53,9 @@ class BatchCompiler implements Services.ILanguageServiceHost {
 
         var emitterIOHost = {
             writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => { },
-            directoryExists: (a: any) => false,
-            fileExists: (a: any) => true,
-            resolvePath: (a: any) => a,
+            directoryExists: (a: string) => false,
+            fileExists: (a: string) => true,
+            resolvePath: (a: string) => a,
         };
 
         var mapInputToOutput = (inputFile: string, outputFile: string): void => { };

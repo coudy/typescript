@@ -25,6 +25,7 @@
 ///<reference path='astWalker.ts' />
 ///<reference path='astPath.ts' />
 ///<reference path='base64.ts' />
+///<reference path='io.ts' />
 ///<reference path='sourceMapping.ts' />
 ///<reference path='emitter.ts' />
 ///<reference path='types.ts' />
@@ -53,7 +54,7 @@
 
 module TypeScript {
 
-    declare var IO: any;
+    declare var IO: IIO;
 
     export var fileResolutionTime = 0;
     export var sourceCharactersCompiled = 0;

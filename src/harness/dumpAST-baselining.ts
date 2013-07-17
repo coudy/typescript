@@ -91,7 +91,7 @@ module DumpAST {
             return cur;
         };
 
-        var post = (cur: AST, parent: AST) => {
+        var post = (cur: TypeScript.AST, parent: TypeScript.AST) => {
             entries.pop();
             return cur;
         };
@@ -106,7 +106,7 @@ module DumpAST {
         entry.minChar = ast.minChar;
         entry.limChar = ast.limChar;
 
-        var lineMap: number[] = null; //script.locationInfo.lineMap;
+        var lineMap: TypeScript.LineMap  = null; //script.locationInfo.lineMap;
         entry.startLine = lineMap.getLineAndCharacterFromPosition(ast.minChar).line();
         entry.startCol = lineMap.getLineAndCharacterFromPosition(ast.minChar).character();
         entry.endLine = lineMap.getLineAndCharacterFromPosition(ast.limChar).line();

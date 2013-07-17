@@ -59,7 +59,7 @@ module TypeScript {
             }
 
             case 4:
-                // case, else, null, this, true, void, with, enum, bool
+                // case, else, null, this, true, void, with, enum
             switch(array[startIndex]) {
             case CharacterCodes.c:
                 // case

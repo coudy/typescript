@@ -45,7 +45,7 @@ interface IIO {
     watchFile(fileName: string, callback: (x:string) => void ): IFileWatcher;
     run(source: string, fileName: string): void;
     getExecutingFilePath(): string;
-    quit(exitCode?: number): any;
+    quit(exitCode?: number): void;
 }
 
 module IOUtils {

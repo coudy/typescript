@@ -65,7 +65,6 @@ var TypeScript;
         Enum_name_cannot_be_0: "Enum name cannot be '{0}'.",
         Module_name_cannot_be_0: "Module name cannot be '{0}'.",
         Enum_member_must_have_initializer: "Enum member must have initializer.",
-        module_is_deprecated_Use_require_instead: "'module(...)' is deprecated. Use 'require(...)' instead.",
         Export_assignment_cannot_be_used_in_internal_modules: "Export assignment cannot be used in internal modules.",
         Export_assignment_not_allowed_in_module_with_exported_element: "Export assignment not allowed in module with exported element.",
         Module_cannot_have_multiple_export_assignments: "Module cannot have multiple export assignments.",
@@ -288,7 +287,7 @@ var TypeScript;
         _0_overload_s: " (+ {0} overload(s))",
         Current_host_does_not_support_0_option: "Current host does not support '{0}' option.",
         ECMAScript_target_version_0_not_supported_Using_default_1_code_generation: "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.",
-        Module_code_generation_0_not_supported_Using_default_1_code_generation: "Module code generation '{0}' not supported.  Using default '{1}' code generation.",
+        Module_code_generation_0_not_supported: "Module code generation '{0}' not supported.",
         Could_not_find_file_0: "Could not find file: '{0}'.",
         A_file_cannot_have_a_reference_to_itself: "A file cannot have a reference to itself.",
         Cannot_resolve_referenced_file_0: "Cannot resolve referenced file: '{0}'.",
@@ -317,24 +316,21 @@ var TypeScript;
         Not_yet_implemented: "Not yet implemented.",
         Invalid_operation_0: "Invalid operation: {0}",
         Invalid_operation: "Invalid operation.",
-        Couldn_t_delete_file_0: "Couldn't delete file '{0}'",
-        Couldn_t_create_directory_0: "Couldn't create directory '{0}'",
+        Could_not_delete_file_0: "Could not delete file '{0}'",
+        Could_not_create_directory_0: "Could not create directory '{0}'",
         Error_while_executing_file_0: "Error while executing file '{0}': ",
+        Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler: "Use of an external module requires the '--module' flag to be supplied to the compiler.",
         Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory: "Concatenate and emit output to single file | Redirect output structure to the directory",
         Generates_corresponding_0_file: "Generates corresponding {0} file",
         Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations: "Specifies the location where debugger should locate map files instead of generated locations.",
         Specifies_the_location_where_debugger_should_locate_TypeScript_files_instead_of_source_locations: "Specifies the location where debugger should locate TypeScript files instead of source locations.",
         Watch_input_files: "Watch input files",
-        Execute_the_script_after_compilation: "Execute the script after compilation",
-        Minimize_whitespace: "Minimize whitespace",
         Do_not_emit_comments_to_output: "Do not emit comments to output",
         Skip_resolution_and_preprocessing: "Skip resolution and preprocessing",
-        Print_debug_output: "Print debug output",
         Specify_ECMAScript_target_version_0_default_or_1: "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"",
-        Specify_module_code_generation_0_default_or_1: "Specify module code generation: \"{0}\" (default) or \"{1}\"",
+        Specify_module_code_generation_0_or_1: "Specify module code generation: \"{0}\" or \"{1}\"",
         Print_this_message: "Print this message",
         Print_the_compiler_s_version_0: "Print the compiler's version: {0}",
-        Allow_use_of_deprecated_0_type: "Allow use of deprecated \"{0}\" type",
         Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module: "Allow use of deprecated \"{0}\" keyword when referencing an external module",
         Specify_locale_for_errors_and_messages_For_example_0_or_1: "Specify locale for errors and messages. For example '{0}' or '{1}'",
         Syntax_0: "Syntax:   {0}",
@@ -351,21 +347,22 @@ var TypeScript;
         FILE_DIRECTORY: "FILE|DIRECTORY",
         VERSION: "VERSION",
         LOCATION: "LOCATION",
-        This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function: "This version of the Javascript runtime doesn't support the '{0}' function.",
+        This_version_of_the_Javascript_runtime_does_not_support_the_0_function: "This version of the Javascript runtime does not support the '{0}' function.",
         Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: "Looking up path for identifier token did not result in an identifer.",
         Unknown_rule: "Unknown rule",
         Invalid_line_number_0: "Invalid line number ({0})",
         Warn_on_expressions_and_declarations_with_an_implied_any_type: "Warn on expressions and declarations with an implied 'any' type.",
-        Variable_0_implicitly_has_an_any_type: "Variable '{0}' implicitly has an any type.",
-        Parameter_0_of_1_implicitly_has_an_any_type: "Parameter '{0}' of '{1}' implicitly has an any type.",
-        Parameter_0_of_function_type_implicitly_has_an_any_type: "Parameter '{0}' of function type implicitly has an any type.",
-        Member_0_of_object_type_implicitly_has_an_any_type: "Member '{0}' of object type implicitly has an any type.",
-        New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type: "\"New\" expression, which lacks a constructor signature, implicitly has an any type.",
-        _0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "'{0}', which lacks return-type annotation, implicitly has an any return type.",
-        Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Function expression, which lacks return-type annotation, implicitly has an any return type.",
-        Parameter_0_of_lambda_function_implicitly_has_an_any_type: "Parameter '{0}' of lambda function implicitly has an any type.",
-        Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Constructor signature, which lacks return-type annotation, implicitly has an any return type.",
-        Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Lambda Function, which lacks return-type annotation, implicitly has an any return type."
+        Variable_0_implicitly_has_an_any_type: "Variable '{0}' implicitly has an 'any' type.",
+        Parameter_0_of_1_implicitly_has_an_any_type: "Parameter '{0}' of '{1}' implicitly has an 'any' type.",
+        Parameter_0_of_function_type_implicitly_has_an_any_type: "Parameter '{0}' of function type implicitly has an 'any' type.",
+        Member_0_of_object_type_implicitly_has_an_any_type: "Member '{0}' of object type implicitly has an 'any' type.",
+        New_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type: "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.",
+        _0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "'{0}', which lacks return-type annotation, implicitly has an 'any' return type.",
+        Function_expression_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Function expression, which lacks return-type annotation, implicitly has an 'any' return type.",
+        Parameter_0_of_lambda_function_implicitly_has_an_any_type: "Parameter '{0}' of lambda function implicitly has an 'any' type.",
+        Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.",
+        Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.",
+        Array_Literal_implicitly_has_an_any_type_from_widening: "Array Literal implicitly has an 'any' type from widening."
     };
 })(TypeScript || (TypeScript = {}));
 ///<reference path='references.ts' />
@@ -635,10 +632,6 @@ var TypeScript;
         "Enum member must have initializer.": {
             "code": 1061,
             "category": 1 /* Error */
-        },
-        "'module(...)' is deprecated. Use 'require(...)' instead.": {
-            "code": 1062,
-            "category": 0 /* Warning */
         },
         "Export assignment cannot be used in internal modules.": {
             "code": 1063,
@@ -1528,7 +1521,7 @@ var TypeScript;
             "code": 5002,
             "category": 0 /* Warning */
         },
-        "Module code generation '{0}' not supported.  Using default '{1}' code generation.": {
+        "Module code generation '{0}' not supported.": {
             "code": 5003,
             "category": 0 /* Warning */
         },
@@ -1644,16 +1637,20 @@ var TypeScript;
             "code": 5033,
             "category": 1 /* Error */
         },
-        "Couldn't delete file '{0}'": {
+        "Could not delete file '{0}'": {
             "code": 5034,
             "category": 1 /* Error */
         },
-        "Couldn't create directory '{0}'": {
+        "Could not create directory '{0}'": {
             "code": 5035,
             "category": 1 /* Error */
         },
         "Error while executing file '{0}': ": {
             "code": 5036,
+            "category": 1 /* Error */
+        },
+        "Use of an external module requires the '--module' flag to be supplied to the compiler.": {
+            "code": 5037,
             "category": 1 /* Error */
         },
         "Concatenate and emit output to single file | Redirect output structure to the directory": {
@@ -1676,14 +1673,6 @@ var TypeScript;
             "code": 6005,
             "category": 2 /* Message */
         },
-        "Execute the script after compilation": {
-            "code": 6006,
-            "category": 2 /* Message */
-        },
-        "Minimize whitespace": {
-            "code": 6007,
-            "category": 2 /* Message */
-        },
         "Do not emit comments to output": {
             "code": 6009,
             "category": 2 /* Message */
@@ -1692,15 +1681,11 @@ var TypeScript;
             "code": 6010,
             "category": 2 /* Message */
         },
-        "Print debug output": {
-            "code": 6011,
-            "category": 2 /* Message */
-        },
         "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
             "code": 6015,
             "category": 2 /* Message */
         },
-        "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+        "Specify module code generation: \"{0}\" or \"{1}\"": {
             "code": 6016,
             "category": 2 /* Message */
         },
@@ -1710,10 +1695,6 @@ var TypeScript;
         },
         "Print the compiler's version: {0}": {
             "code": 6019,
-            "category": 2 /* Message */
-        },
-        "Allow use of deprecated \"{0}\" type": {
-            "code": 6020,
             "category": 2 /* Message */
         },
         "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
@@ -1780,7 +1761,7 @@ var TypeScript;
             "code": 6037,
             "category": 2 /* Message */
         },
-        "This version of the Javascript runtime doesn't support the '{0}' function.": {
+        "This version of the Javascript runtime does not support the '{0}' function.": {
             "code": 7000,
             "category": 1 /* Error */
         },
@@ -1800,43 +1781,47 @@ var TypeScript;
             "code": 7004,
             "category": 2 /* Message */
         },
-        "Variable '{0}' implicitly has an any type.": {
+        "Variable '{0}' implicitly has an 'any' type.": {
             "code": 7005,
             "category": 1 /* Error */
         },
-        "Parameter '{0}' of '{1}' implicitly has an any type.": {
+        "Parameter '{0}' of '{1}' implicitly has an 'any' type.": {
             "code": 7006,
             "category": 1 /* Error */
         },
-        "Parameter '{0}' of function type implicitly has an any type.": {
+        "Parameter '{0}' of function type implicitly has an 'any' type.": {
             "code": 7007,
             "category": 1 /* Error */
         },
-        "Member '{0}' of object type implicitly has an any type.": {
+        "Member '{0}' of object type implicitly has an 'any' type.": {
             "code": 7008,
             "category": 1 /* Error */
         },
-        "\"New\" expression, which lacks a constructor signature, implicitly has an any type.": {
+        "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.": {
             "code": 7009,
             "category": 1 /* Error */
         },
-        "'{0}', which lacks return-type annotation, implicitly has an any return type.": {
+        "'{0}', which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": 7010,
             "category": 1 /* Error */
         },
-        "Function expression, which lacks return-type annotation, implicitly has an any return type.": {
+        "Function expression, which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": 7011,
             "category": 1 /* Error */
         },
-        "Parameter '{0}' of lambda function implicitly has an any type.": {
+        "Parameter '{0}' of lambda function implicitly has an 'any' type.": {
             "code": 7012,
             "category": 1 /* Error */
         },
-        "Constructor signature, which lacks return-type annotation, implicitly has an any return type.": {
+        "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.": {
             "code": 7013,
             "category": 1 /* Error */
         },
-        "Lambda Function, which lacks return-type annotation, implicitly has an any return type.": {
+        "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.": {
+            "code": 7014,
+            "category": 1 /* Error */
+        },
+        "Array Literal implicitly has an 'any' type from widening.": {
             "code": 7014,
             "category": 1 /* Error */
         }
@@ -3273,9 +3258,6 @@ var TypeScript;
     }
     TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
-///<reference path='references.ts' />
-///<reference path='..\enumerator.ts' />
-///<reference path='..\process.ts' />
 var TypeScript;
 (function (TypeScript) {
     TypeScript.nodeMakeDirectoryTime = 0;
@@ -3968,221 +3950,221 @@ var TypeScript;
         // TypeScript keywords.
         SyntaxKind[SyntaxKind["AnyKeyword"] = 60] = "AnyKeyword";
         SyntaxKind[SyntaxKind["BooleanKeyword"] = 61] = "BooleanKeyword";
-        SyntaxKind[SyntaxKind["ConstructorKeyword"] = 63] = "ConstructorKeyword";
-        SyntaxKind[SyntaxKind["DeclareKeyword"] = 64] = "DeclareKeyword";
-        SyntaxKind[SyntaxKind["GetKeyword"] = 65] = "GetKeyword";
-        SyntaxKind[SyntaxKind["ModuleKeyword"] = 66] = "ModuleKeyword";
-        SyntaxKind[SyntaxKind["RequireKeyword"] = 67] = "RequireKeyword";
-        SyntaxKind[SyntaxKind["NumberKeyword"] = 68] = "NumberKeyword";
-        SyntaxKind[SyntaxKind["SetKeyword"] = 69] = "SetKeyword";
-        SyntaxKind[SyntaxKind["StringKeyword"] = 70] = "StringKeyword";
+        SyntaxKind[SyntaxKind["ConstructorKeyword"] = 62] = "ConstructorKeyword";
+        SyntaxKind[SyntaxKind["DeclareKeyword"] = 63] = "DeclareKeyword";
+        SyntaxKind[SyntaxKind["GetKeyword"] = 64] = "GetKeyword";
+        SyntaxKind[SyntaxKind["ModuleKeyword"] = 65] = "ModuleKeyword";
+        SyntaxKind[SyntaxKind["RequireKeyword"] = 66] = "RequireKeyword";
+        SyntaxKind[SyntaxKind["NumberKeyword"] = 67] = "NumberKeyword";
+        SyntaxKind[SyntaxKind["SetKeyword"] = 68] = "SetKeyword";
+        SyntaxKind[SyntaxKind["StringKeyword"] = 69] = "StringKeyword";
 
         // Punctuators
-        SyntaxKind[SyntaxKind["OpenBraceToken"] = 71] = "OpenBraceToken";
-        SyntaxKind[SyntaxKind["CloseBraceToken"] = 72] = "CloseBraceToken";
-        SyntaxKind[SyntaxKind["OpenParenToken"] = 73] = "OpenParenToken";
-        SyntaxKind[SyntaxKind["CloseParenToken"] = 74] = "CloseParenToken";
-        SyntaxKind[SyntaxKind["OpenBracketToken"] = 75] = "OpenBracketToken";
-        SyntaxKind[SyntaxKind["CloseBracketToken"] = 76] = "CloseBracketToken";
-        SyntaxKind[SyntaxKind["DotToken"] = 77] = "DotToken";
-        SyntaxKind[SyntaxKind["DotDotDotToken"] = 78] = "DotDotDotToken";
-        SyntaxKind[SyntaxKind["SemicolonToken"] = 79] = "SemicolonToken";
-        SyntaxKind[SyntaxKind["CommaToken"] = 80] = "CommaToken";
-        SyntaxKind[SyntaxKind["LessThanToken"] = 81] = "LessThanToken";
-        SyntaxKind[SyntaxKind["GreaterThanToken"] = 82] = "GreaterThanToken";
-        SyntaxKind[SyntaxKind["LessThanEqualsToken"] = 83] = "LessThanEqualsToken";
-        SyntaxKind[SyntaxKind["GreaterThanEqualsToken"] = 84] = "GreaterThanEqualsToken";
-        SyntaxKind[SyntaxKind["EqualsEqualsToken"] = 85] = "EqualsEqualsToken";
-        SyntaxKind[SyntaxKind["EqualsGreaterThanToken"] = 86] = "EqualsGreaterThanToken";
-        SyntaxKind[SyntaxKind["ExclamationEqualsToken"] = 87] = "ExclamationEqualsToken";
-        SyntaxKind[SyntaxKind["EqualsEqualsEqualsToken"] = 88] = "EqualsEqualsEqualsToken";
-        SyntaxKind[SyntaxKind["ExclamationEqualsEqualsToken"] = 89] = "ExclamationEqualsEqualsToken";
-        SyntaxKind[SyntaxKind["PlusToken"] = 90] = "PlusToken";
-        SyntaxKind[SyntaxKind["MinusToken"] = 91] = "MinusToken";
-        SyntaxKind[SyntaxKind["AsteriskToken"] = 92] = "AsteriskToken";
-        SyntaxKind[SyntaxKind["PercentToken"] = 93] = "PercentToken";
-        SyntaxKind[SyntaxKind["PlusPlusToken"] = 94] = "PlusPlusToken";
-        SyntaxKind[SyntaxKind["MinusMinusToken"] = 95] = "MinusMinusToken";
-        SyntaxKind[SyntaxKind["LessThanLessThanToken"] = 96] = "LessThanLessThanToken";
-        SyntaxKind[SyntaxKind["GreaterThanGreaterThanToken"] = 97] = "GreaterThanGreaterThanToken";
-        SyntaxKind[SyntaxKind["GreaterThanGreaterThanGreaterThanToken"] = 98] = "GreaterThanGreaterThanGreaterThanToken";
-        SyntaxKind[SyntaxKind["AmpersandToken"] = 99] = "AmpersandToken";
-        SyntaxKind[SyntaxKind["BarToken"] = 100] = "BarToken";
-        SyntaxKind[SyntaxKind["CaretToken"] = 101] = "CaretToken";
-        SyntaxKind[SyntaxKind["ExclamationToken"] = 102] = "ExclamationToken";
-        SyntaxKind[SyntaxKind["TildeToken"] = 103] = "TildeToken";
-        SyntaxKind[SyntaxKind["AmpersandAmpersandToken"] = 104] = "AmpersandAmpersandToken";
-        SyntaxKind[SyntaxKind["BarBarToken"] = 105] = "BarBarToken";
-        SyntaxKind[SyntaxKind["QuestionToken"] = 106] = "QuestionToken";
-        SyntaxKind[SyntaxKind["ColonToken"] = 107] = "ColonToken";
-        SyntaxKind[SyntaxKind["EqualsToken"] = 108] = "EqualsToken";
-        SyntaxKind[SyntaxKind["PlusEqualsToken"] = 109] = "PlusEqualsToken";
-        SyntaxKind[SyntaxKind["MinusEqualsToken"] = 110] = "MinusEqualsToken";
-        SyntaxKind[SyntaxKind["AsteriskEqualsToken"] = 111] = "AsteriskEqualsToken";
-        SyntaxKind[SyntaxKind["PercentEqualsToken"] = 112] = "PercentEqualsToken";
-        SyntaxKind[SyntaxKind["LessThanLessThanEqualsToken"] = 113] = "LessThanLessThanEqualsToken";
-        SyntaxKind[SyntaxKind["GreaterThanGreaterThanEqualsToken"] = 114] = "GreaterThanGreaterThanEqualsToken";
-        SyntaxKind[SyntaxKind["GreaterThanGreaterThanGreaterThanEqualsToken"] = 115] = "GreaterThanGreaterThanGreaterThanEqualsToken";
-        SyntaxKind[SyntaxKind["AmpersandEqualsToken"] = 116] = "AmpersandEqualsToken";
-        SyntaxKind[SyntaxKind["BarEqualsToken"] = 117] = "BarEqualsToken";
-        SyntaxKind[SyntaxKind["CaretEqualsToken"] = 118] = "CaretEqualsToken";
-        SyntaxKind[SyntaxKind["SlashToken"] = 119] = "SlashToken";
-        SyntaxKind[SyntaxKind["SlashEqualsToken"] = 120] = "SlashEqualsToken";
+        SyntaxKind[SyntaxKind["OpenBraceToken"] = 70] = "OpenBraceToken";
+        SyntaxKind[SyntaxKind["CloseBraceToken"] = 71] = "CloseBraceToken";
+        SyntaxKind[SyntaxKind["OpenParenToken"] = 72] = "OpenParenToken";
+        SyntaxKind[SyntaxKind["CloseParenToken"] = 73] = "CloseParenToken";
+        SyntaxKind[SyntaxKind["OpenBracketToken"] = 74] = "OpenBracketToken";
+        SyntaxKind[SyntaxKind["CloseBracketToken"] = 75] = "CloseBracketToken";
+        SyntaxKind[SyntaxKind["DotToken"] = 76] = "DotToken";
+        SyntaxKind[SyntaxKind["DotDotDotToken"] = 77] = "DotDotDotToken";
+        SyntaxKind[SyntaxKind["SemicolonToken"] = 78] = "SemicolonToken";
+        SyntaxKind[SyntaxKind["CommaToken"] = 79] = "CommaToken";
+        SyntaxKind[SyntaxKind["LessThanToken"] = 80] = "LessThanToken";
+        SyntaxKind[SyntaxKind["GreaterThanToken"] = 81] = "GreaterThanToken";
+        SyntaxKind[SyntaxKind["LessThanEqualsToken"] = 82] = "LessThanEqualsToken";
+        SyntaxKind[SyntaxKind["GreaterThanEqualsToken"] = 83] = "GreaterThanEqualsToken";
+        SyntaxKind[SyntaxKind["EqualsEqualsToken"] = 84] = "EqualsEqualsToken";
+        SyntaxKind[SyntaxKind["EqualsGreaterThanToken"] = 85] = "EqualsGreaterThanToken";
+        SyntaxKind[SyntaxKind["ExclamationEqualsToken"] = 86] = "ExclamationEqualsToken";
+        SyntaxKind[SyntaxKind["EqualsEqualsEqualsToken"] = 87] = "EqualsEqualsEqualsToken";
+        SyntaxKind[SyntaxKind["ExclamationEqualsEqualsToken"] = 88] = "ExclamationEqualsEqualsToken";
+        SyntaxKind[SyntaxKind["PlusToken"] = 89] = "PlusToken";
+        SyntaxKind[SyntaxKind["MinusToken"] = 90] = "MinusToken";
+        SyntaxKind[SyntaxKind["AsteriskToken"] = 91] = "AsteriskToken";
+        SyntaxKind[SyntaxKind["PercentToken"] = 92] = "PercentToken";
+        SyntaxKind[SyntaxKind["PlusPlusToken"] = 93] = "PlusPlusToken";
+        SyntaxKind[SyntaxKind["MinusMinusToken"] = 94] = "MinusMinusToken";
+        SyntaxKind[SyntaxKind["LessThanLessThanToken"] = 95] = "LessThanLessThanToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanToken"] = 96] = "GreaterThanGreaterThanToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanGreaterThanToken"] = 97] = "GreaterThanGreaterThanGreaterThanToken";
+        SyntaxKind[SyntaxKind["AmpersandToken"] = 98] = "AmpersandToken";
+        SyntaxKind[SyntaxKind["BarToken"] = 99] = "BarToken";
+        SyntaxKind[SyntaxKind["CaretToken"] = 100] = "CaretToken";
+        SyntaxKind[SyntaxKind["ExclamationToken"] = 101] = "ExclamationToken";
+        SyntaxKind[SyntaxKind["TildeToken"] = 102] = "TildeToken";
+        SyntaxKind[SyntaxKind["AmpersandAmpersandToken"] = 103] = "AmpersandAmpersandToken";
+        SyntaxKind[SyntaxKind["BarBarToken"] = 104] = "BarBarToken";
+        SyntaxKind[SyntaxKind["QuestionToken"] = 105] = "QuestionToken";
+        SyntaxKind[SyntaxKind["ColonToken"] = 106] = "ColonToken";
+        SyntaxKind[SyntaxKind["EqualsToken"] = 107] = "EqualsToken";
+        SyntaxKind[SyntaxKind["PlusEqualsToken"] = 108] = "PlusEqualsToken";
+        SyntaxKind[SyntaxKind["MinusEqualsToken"] = 109] = "MinusEqualsToken";
+        SyntaxKind[SyntaxKind["AsteriskEqualsToken"] = 110] = "AsteriskEqualsToken";
+        SyntaxKind[SyntaxKind["PercentEqualsToken"] = 111] = "PercentEqualsToken";
+        SyntaxKind[SyntaxKind["LessThanLessThanEqualsToken"] = 112] = "LessThanLessThanEqualsToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanEqualsToken"] = 113] = "GreaterThanGreaterThanEqualsToken";
+        SyntaxKind[SyntaxKind["GreaterThanGreaterThanGreaterThanEqualsToken"] = 114] = "GreaterThanGreaterThanGreaterThanEqualsToken";
+        SyntaxKind[SyntaxKind["AmpersandEqualsToken"] = 115] = "AmpersandEqualsToken";
+        SyntaxKind[SyntaxKind["BarEqualsToken"] = 116] = "BarEqualsToken";
+        SyntaxKind[SyntaxKind["CaretEqualsToken"] = 117] = "CaretEqualsToken";
+        SyntaxKind[SyntaxKind["SlashToken"] = 118] = "SlashToken";
+        SyntaxKind[SyntaxKind["SlashEqualsToken"] = 119] = "SlashEqualsToken";
 
         // SyntaxNodes
-        SyntaxKind[SyntaxKind["SourceUnit"] = 121] = "SourceUnit";
+        SyntaxKind[SyntaxKind["SourceUnit"] = 120] = "SourceUnit";
 
         // Names
-        SyntaxKind[SyntaxKind["QualifiedName"] = 122] = "QualifiedName";
+        SyntaxKind[SyntaxKind["QualifiedName"] = 121] = "QualifiedName";
 
         // Types
-        SyntaxKind[SyntaxKind["ObjectType"] = 123] = "ObjectType";
-        SyntaxKind[SyntaxKind["FunctionType"] = 124] = "FunctionType";
-        SyntaxKind[SyntaxKind["ArrayType"] = 125] = "ArrayType";
-        SyntaxKind[SyntaxKind["ConstructorType"] = 126] = "ConstructorType";
-        SyntaxKind[SyntaxKind["GenericType"] = 127] = "GenericType";
-        SyntaxKind[SyntaxKind["TypeQuery"] = 128] = "TypeQuery";
+        SyntaxKind[SyntaxKind["ObjectType"] = 122] = "ObjectType";
+        SyntaxKind[SyntaxKind["FunctionType"] = 123] = "FunctionType";
+        SyntaxKind[SyntaxKind["ArrayType"] = 124] = "ArrayType";
+        SyntaxKind[SyntaxKind["ConstructorType"] = 125] = "ConstructorType";
+        SyntaxKind[SyntaxKind["GenericType"] = 126] = "GenericType";
+        SyntaxKind[SyntaxKind["TypeQuery"] = 127] = "TypeQuery";
 
         // Module elements.
-        SyntaxKind[SyntaxKind["InterfaceDeclaration"] = 129] = "InterfaceDeclaration";
-        SyntaxKind[SyntaxKind["FunctionDeclaration"] = 130] = "FunctionDeclaration";
-        SyntaxKind[SyntaxKind["ModuleDeclaration"] = 131] = "ModuleDeclaration";
-        SyntaxKind[SyntaxKind["ClassDeclaration"] = 132] = "ClassDeclaration";
-        SyntaxKind[SyntaxKind["EnumDeclaration"] = 133] = "EnumDeclaration";
-        SyntaxKind[SyntaxKind["ImportDeclaration"] = 134] = "ImportDeclaration";
-        SyntaxKind[SyntaxKind["ExportAssignment"] = 135] = "ExportAssignment";
+        SyntaxKind[SyntaxKind["InterfaceDeclaration"] = 128] = "InterfaceDeclaration";
+        SyntaxKind[SyntaxKind["FunctionDeclaration"] = 129] = "FunctionDeclaration";
+        SyntaxKind[SyntaxKind["ModuleDeclaration"] = 130] = "ModuleDeclaration";
+        SyntaxKind[SyntaxKind["ClassDeclaration"] = 131] = "ClassDeclaration";
+        SyntaxKind[SyntaxKind["EnumDeclaration"] = 132] = "EnumDeclaration";
+        SyntaxKind[SyntaxKind["ImportDeclaration"] = 133] = "ImportDeclaration";
+        SyntaxKind[SyntaxKind["ExportAssignment"] = 134] = "ExportAssignment";
 
         // ClassElements
-        SyntaxKind[SyntaxKind["MemberFunctionDeclaration"] = 136] = "MemberFunctionDeclaration";
-        SyntaxKind[SyntaxKind["MemberVariableDeclaration"] = 137] = "MemberVariableDeclaration";
-        SyntaxKind[SyntaxKind["ConstructorDeclaration"] = 138] = "ConstructorDeclaration";
-        SyntaxKind[SyntaxKind["GetMemberAccessorDeclaration"] = 139] = "GetMemberAccessorDeclaration";
-        SyntaxKind[SyntaxKind["SetMemberAccessorDeclaration"] = 140] = "SetMemberAccessorDeclaration";
+        SyntaxKind[SyntaxKind["MemberFunctionDeclaration"] = 135] = "MemberFunctionDeclaration";
+        SyntaxKind[SyntaxKind["MemberVariableDeclaration"] = 136] = "MemberVariableDeclaration";
+        SyntaxKind[SyntaxKind["ConstructorDeclaration"] = 137] = "ConstructorDeclaration";
+        SyntaxKind[SyntaxKind["GetMemberAccessorDeclaration"] = 138] = "GetMemberAccessorDeclaration";
+        SyntaxKind[SyntaxKind["SetMemberAccessorDeclaration"] = 139] = "SetMemberAccessorDeclaration";
 
         // Type members.
-        SyntaxKind[SyntaxKind["PropertySignature"] = 141] = "PropertySignature";
-        SyntaxKind[SyntaxKind["CallSignature"] = 142] = "CallSignature";
-        SyntaxKind[SyntaxKind["ConstructSignature"] = 143] = "ConstructSignature";
-        SyntaxKind[SyntaxKind["IndexSignature"] = 144] = "IndexSignature";
-        SyntaxKind[SyntaxKind["MethodSignature"] = 145] = "MethodSignature";
+        SyntaxKind[SyntaxKind["PropertySignature"] = 140] = "PropertySignature";
+        SyntaxKind[SyntaxKind["CallSignature"] = 141] = "CallSignature";
+        SyntaxKind[SyntaxKind["ConstructSignature"] = 142] = "ConstructSignature";
+        SyntaxKind[SyntaxKind["IndexSignature"] = 143] = "IndexSignature";
+        SyntaxKind[SyntaxKind["MethodSignature"] = 144] = "MethodSignature";
 
         // Statements
-        SyntaxKind[SyntaxKind["Block"] = 146] = "Block";
-        SyntaxKind[SyntaxKind["IfStatement"] = 147] = "IfStatement";
-        SyntaxKind[SyntaxKind["VariableStatement"] = 148] = "VariableStatement";
-        SyntaxKind[SyntaxKind["ExpressionStatement"] = 149] = "ExpressionStatement";
-        SyntaxKind[SyntaxKind["ReturnStatement"] = 150] = "ReturnStatement";
-        SyntaxKind[SyntaxKind["SwitchStatement"] = 151] = "SwitchStatement";
-        SyntaxKind[SyntaxKind["BreakStatement"] = 152] = "BreakStatement";
-        SyntaxKind[SyntaxKind["ContinueStatement"] = 153] = "ContinueStatement";
-        SyntaxKind[SyntaxKind["ForStatement"] = 154] = "ForStatement";
-        SyntaxKind[SyntaxKind["ForInStatement"] = 155] = "ForInStatement";
-        SyntaxKind[SyntaxKind["EmptyStatement"] = 156] = "EmptyStatement";
-        SyntaxKind[SyntaxKind["ThrowStatement"] = 157] = "ThrowStatement";
-        SyntaxKind[SyntaxKind["WhileStatement"] = 158] = "WhileStatement";
-        SyntaxKind[SyntaxKind["TryStatement"] = 159] = "TryStatement";
-        SyntaxKind[SyntaxKind["LabeledStatement"] = 160] = "LabeledStatement";
-        SyntaxKind[SyntaxKind["DoStatement"] = 161] = "DoStatement";
-        SyntaxKind[SyntaxKind["DebuggerStatement"] = 162] = "DebuggerStatement";
-        SyntaxKind[SyntaxKind["WithStatement"] = 163] = "WithStatement";
+        SyntaxKind[SyntaxKind["Block"] = 145] = "Block";
+        SyntaxKind[SyntaxKind["IfStatement"] = 146] = "IfStatement";
+        SyntaxKind[SyntaxKind["VariableStatement"] = 147] = "VariableStatement";
+        SyntaxKind[SyntaxKind["ExpressionStatement"] = 148] = "ExpressionStatement";
+        SyntaxKind[SyntaxKind["ReturnStatement"] = 149] = "ReturnStatement";
+        SyntaxKind[SyntaxKind["SwitchStatement"] = 150] = "SwitchStatement";
+        SyntaxKind[SyntaxKind["BreakStatement"] = 151] = "BreakStatement";
+        SyntaxKind[SyntaxKind["ContinueStatement"] = 152] = "ContinueStatement";
+        SyntaxKind[SyntaxKind["ForStatement"] = 153] = "ForStatement";
+        SyntaxKind[SyntaxKind["ForInStatement"] = 154] = "ForInStatement";
+        SyntaxKind[SyntaxKind["EmptyStatement"] = 155] = "EmptyStatement";
+        SyntaxKind[SyntaxKind["ThrowStatement"] = 156] = "ThrowStatement";
+        SyntaxKind[SyntaxKind["WhileStatement"] = 157] = "WhileStatement";
+        SyntaxKind[SyntaxKind["TryStatement"] = 158] = "TryStatement";
+        SyntaxKind[SyntaxKind["LabeledStatement"] = 159] = "LabeledStatement";
+        SyntaxKind[SyntaxKind["DoStatement"] = 160] = "DoStatement";
+        SyntaxKind[SyntaxKind["DebuggerStatement"] = 161] = "DebuggerStatement";
+        SyntaxKind[SyntaxKind["WithStatement"] = 162] = "WithStatement";
 
         // Expressions
-        SyntaxKind[SyntaxKind["PlusExpression"] = 164] = "PlusExpression";
-        SyntaxKind[SyntaxKind["NegateExpression"] = 165] = "NegateExpression";
-        SyntaxKind[SyntaxKind["BitwiseNotExpression"] = 166] = "BitwiseNotExpression";
-        SyntaxKind[SyntaxKind["LogicalNotExpression"] = 167] = "LogicalNotExpression";
-        SyntaxKind[SyntaxKind["PreIncrementExpression"] = 168] = "PreIncrementExpression";
-        SyntaxKind[SyntaxKind["PreDecrementExpression"] = 169] = "PreDecrementExpression";
-        SyntaxKind[SyntaxKind["DeleteExpression"] = 170] = "DeleteExpression";
-        SyntaxKind[SyntaxKind["TypeOfExpression"] = 171] = "TypeOfExpression";
-        SyntaxKind[SyntaxKind["VoidExpression"] = 172] = "VoidExpression";
-        SyntaxKind[SyntaxKind["CommaExpression"] = 173] = "CommaExpression";
-        SyntaxKind[SyntaxKind["AssignmentExpression"] = 174] = "AssignmentExpression";
-        SyntaxKind[SyntaxKind["AddAssignmentExpression"] = 175] = "AddAssignmentExpression";
-        SyntaxKind[SyntaxKind["SubtractAssignmentExpression"] = 176] = "SubtractAssignmentExpression";
-        SyntaxKind[SyntaxKind["MultiplyAssignmentExpression"] = 177] = "MultiplyAssignmentExpression";
-        SyntaxKind[SyntaxKind["DivideAssignmentExpression"] = 178] = "DivideAssignmentExpression";
-        SyntaxKind[SyntaxKind["ModuloAssignmentExpression"] = 179] = "ModuloAssignmentExpression";
-        SyntaxKind[SyntaxKind["AndAssignmentExpression"] = 180] = "AndAssignmentExpression";
-        SyntaxKind[SyntaxKind["ExclusiveOrAssignmentExpression"] = 181] = "ExclusiveOrAssignmentExpression";
-        SyntaxKind[SyntaxKind["OrAssignmentExpression"] = 182] = "OrAssignmentExpression";
-        SyntaxKind[SyntaxKind["LeftShiftAssignmentExpression"] = 183] = "LeftShiftAssignmentExpression";
-        SyntaxKind[SyntaxKind["SignedRightShiftAssignmentExpression"] = 184] = "SignedRightShiftAssignmentExpression";
-        SyntaxKind[SyntaxKind["UnsignedRightShiftAssignmentExpression"] = 185] = "UnsignedRightShiftAssignmentExpression";
-        SyntaxKind[SyntaxKind["ConditionalExpression"] = 186] = "ConditionalExpression";
-        SyntaxKind[SyntaxKind["LogicalOrExpression"] = 187] = "LogicalOrExpression";
-        SyntaxKind[SyntaxKind["LogicalAndExpression"] = 188] = "LogicalAndExpression";
-        SyntaxKind[SyntaxKind["BitwiseOrExpression"] = 189] = "BitwiseOrExpression";
-        SyntaxKind[SyntaxKind["BitwiseExclusiveOrExpression"] = 190] = "BitwiseExclusiveOrExpression";
-        SyntaxKind[SyntaxKind["BitwiseAndExpression"] = 191] = "BitwiseAndExpression";
-        SyntaxKind[SyntaxKind["EqualsWithTypeConversionExpression"] = 192] = "EqualsWithTypeConversionExpression";
-        SyntaxKind[SyntaxKind["NotEqualsWithTypeConversionExpression"] = 193] = "NotEqualsWithTypeConversionExpression";
-        SyntaxKind[SyntaxKind["EqualsExpression"] = 194] = "EqualsExpression";
-        SyntaxKind[SyntaxKind["NotEqualsExpression"] = 195] = "NotEqualsExpression";
-        SyntaxKind[SyntaxKind["LessThanExpression"] = 196] = "LessThanExpression";
-        SyntaxKind[SyntaxKind["GreaterThanExpression"] = 197] = "GreaterThanExpression";
-        SyntaxKind[SyntaxKind["LessThanOrEqualExpression"] = 198] = "LessThanOrEqualExpression";
-        SyntaxKind[SyntaxKind["GreaterThanOrEqualExpression"] = 199] = "GreaterThanOrEqualExpression";
-        SyntaxKind[SyntaxKind["InstanceOfExpression"] = 200] = "InstanceOfExpression";
-        SyntaxKind[SyntaxKind["InExpression"] = 201] = "InExpression";
-        SyntaxKind[SyntaxKind["LeftShiftExpression"] = 202] = "LeftShiftExpression";
-        SyntaxKind[SyntaxKind["SignedRightShiftExpression"] = 203] = "SignedRightShiftExpression";
-        SyntaxKind[SyntaxKind["UnsignedRightShiftExpression"] = 204] = "UnsignedRightShiftExpression";
-        SyntaxKind[SyntaxKind["MultiplyExpression"] = 205] = "MultiplyExpression";
-        SyntaxKind[SyntaxKind["DivideExpression"] = 206] = "DivideExpression";
-        SyntaxKind[SyntaxKind["ModuloExpression"] = 207] = "ModuloExpression";
-        SyntaxKind[SyntaxKind["AddExpression"] = 208] = "AddExpression";
-        SyntaxKind[SyntaxKind["SubtractExpression"] = 209] = "SubtractExpression";
-        SyntaxKind[SyntaxKind["PostIncrementExpression"] = 210] = "PostIncrementExpression";
-        SyntaxKind[SyntaxKind["PostDecrementExpression"] = 211] = "PostDecrementExpression";
-        SyntaxKind[SyntaxKind["MemberAccessExpression"] = 212] = "MemberAccessExpression";
-        SyntaxKind[SyntaxKind["InvocationExpression"] = 213] = "InvocationExpression";
-        SyntaxKind[SyntaxKind["ArrayLiteralExpression"] = 214] = "ArrayLiteralExpression";
-        SyntaxKind[SyntaxKind["ObjectLiteralExpression"] = 215] = "ObjectLiteralExpression";
-        SyntaxKind[SyntaxKind["ObjectCreationExpression"] = 216] = "ObjectCreationExpression";
-        SyntaxKind[SyntaxKind["ParenthesizedExpression"] = 217] = "ParenthesizedExpression";
-        SyntaxKind[SyntaxKind["ParenthesizedArrowFunctionExpression"] = 218] = "ParenthesizedArrowFunctionExpression";
-        SyntaxKind[SyntaxKind["SimpleArrowFunctionExpression"] = 219] = "SimpleArrowFunctionExpression";
-        SyntaxKind[SyntaxKind["CastExpression"] = 220] = "CastExpression";
-        SyntaxKind[SyntaxKind["ElementAccessExpression"] = 221] = "ElementAccessExpression";
-        SyntaxKind[SyntaxKind["FunctionExpression"] = 222] = "FunctionExpression";
-        SyntaxKind[SyntaxKind["OmittedExpression"] = 223] = "OmittedExpression";
+        SyntaxKind[SyntaxKind["PlusExpression"] = 163] = "PlusExpression";
+        SyntaxKind[SyntaxKind["NegateExpression"] = 164] = "NegateExpression";
+        SyntaxKind[SyntaxKind["BitwiseNotExpression"] = 165] = "BitwiseNotExpression";
+        SyntaxKind[SyntaxKind["LogicalNotExpression"] = 166] = "LogicalNotExpression";
+        SyntaxKind[SyntaxKind["PreIncrementExpression"] = 167] = "PreIncrementExpression";
+        SyntaxKind[SyntaxKind["PreDecrementExpression"] = 168] = "PreDecrementExpression";
+        SyntaxKind[SyntaxKind["DeleteExpression"] = 169] = "DeleteExpression";
+        SyntaxKind[SyntaxKind["TypeOfExpression"] = 170] = "TypeOfExpression";
+        SyntaxKind[SyntaxKind["VoidExpression"] = 171] = "VoidExpression";
+        SyntaxKind[SyntaxKind["CommaExpression"] = 172] = "CommaExpression";
+        SyntaxKind[SyntaxKind["AssignmentExpression"] = 173] = "AssignmentExpression";
+        SyntaxKind[SyntaxKind["AddAssignmentExpression"] = 174] = "AddAssignmentExpression";
+        SyntaxKind[SyntaxKind["SubtractAssignmentExpression"] = 175] = "SubtractAssignmentExpression";
+        SyntaxKind[SyntaxKind["MultiplyAssignmentExpression"] = 176] = "MultiplyAssignmentExpression";
+        SyntaxKind[SyntaxKind["DivideAssignmentExpression"] = 177] = "DivideAssignmentExpression";
+        SyntaxKind[SyntaxKind["ModuloAssignmentExpression"] = 178] = "ModuloAssignmentExpression";
+        SyntaxKind[SyntaxKind["AndAssignmentExpression"] = 179] = "AndAssignmentExpression";
+        SyntaxKind[SyntaxKind["ExclusiveOrAssignmentExpression"] = 180] = "ExclusiveOrAssignmentExpression";
+        SyntaxKind[SyntaxKind["OrAssignmentExpression"] = 181] = "OrAssignmentExpression";
+        SyntaxKind[SyntaxKind["LeftShiftAssignmentExpression"] = 182] = "LeftShiftAssignmentExpression";
+        SyntaxKind[SyntaxKind["SignedRightShiftAssignmentExpression"] = 183] = "SignedRightShiftAssignmentExpression";
+        SyntaxKind[SyntaxKind["UnsignedRightShiftAssignmentExpression"] = 184] = "UnsignedRightShiftAssignmentExpression";
+        SyntaxKind[SyntaxKind["ConditionalExpression"] = 185] = "ConditionalExpression";
+        SyntaxKind[SyntaxKind["LogicalOrExpression"] = 186] = "LogicalOrExpression";
+        SyntaxKind[SyntaxKind["LogicalAndExpression"] = 187] = "LogicalAndExpression";
+        SyntaxKind[SyntaxKind["BitwiseOrExpression"] = 188] = "BitwiseOrExpression";
+        SyntaxKind[SyntaxKind["BitwiseExclusiveOrExpression"] = 189] = "BitwiseExclusiveOrExpression";
+        SyntaxKind[SyntaxKind["BitwiseAndExpression"] = 190] = "BitwiseAndExpression";
+        SyntaxKind[SyntaxKind["EqualsWithTypeConversionExpression"] = 191] = "EqualsWithTypeConversionExpression";
+        SyntaxKind[SyntaxKind["NotEqualsWithTypeConversionExpression"] = 192] = "NotEqualsWithTypeConversionExpression";
+        SyntaxKind[SyntaxKind["EqualsExpression"] = 193] = "EqualsExpression";
+        SyntaxKind[SyntaxKind["NotEqualsExpression"] = 194] = "NotEqualsExpression";
+        SyntaxKind[SyntaxKind["LessThanExpression"] = 195] = "LessThanExpression";
+        SyntaxKind[SyntaxKind["GreaterThanExpression"] = 196] = "GreaterThanExpression";
+        SyntaxKind[SyntaxKind["LessThanOrEqualExpression"] = 197] = "LessThanOrEqualExpression";
+        SyntaxKind[SyntaxKind["GreaterThanOrEqualExpression"] = 198] = "GreaterThanOrEqualExpression";
+        SyntaxKind[SyntaxKind["InstanceOfExpression"] = 199] = "InstanceOfExpression";
+        SyntaxKind[SyntaxKind["InExpression"] = 200] = "InExpression";
+        SyntaxKind[SyntaxKind["LeftShiftExpression"] = 201] = "LeftShiftExpression";
+        SyntaxKind[SyntaxKind["SignedRightShiftExpression"] = 202] = "SignedRightShiftExpression";
+        SyntaxKind[SyntaxKind["UnsignedRightShiftExpression"] = 203] = "UnsignedRightShiftExpression";
+        SyntaxKind[SyntaxKind["MultiplyExpression"] = 204] = "MultiplyExpression";
+        SyntaxKind[SyntaxKind["DivideExpression"] = 205] = "DivideExpression";
+        SyntaxKind[SyntaxKind["ModuloExpression"] = 206] = "ModuloExpression";
+        SyntaxKind[SyntaxKind["AddExpression"] = 207] = "AddExpression";
+        SyntaxKind[SyntaxKind["SubtractExpression"] = 208] = "SubtractExpression";
+        SyntaxKind[SyntaxKind["PostIncrementExpression"] = 209] = "PostIncrementExpression";
+        SyntaxKind[SyntaxKind["PostDecrementExpression"] = 210] = "PostDecrementExpression";
+        SyntaxKind[SyntaxKind["MemberAccessExpression"] = 211] = "MemberAccessExpression";
+        SyntaxKind[SyntaxKind["InvocationExpression"] = 212] = "InvocationExpression";
+        SyntaxKind[SyntaxKind["ArrayLiteralExpression"] = 213] = "ArrayLiteralExpression";
+        SyntaxKind[SyntaxKind["ObjectLiteralExpression"] = 214] = "ObjectLiteralExpression";
+        SyntaxKind[SyntaxKind["ObjectCreationExpression"] = 215] = "ObjectCreationExpression";
+        SyntaxKind[SyntaxKind["ParenthesizedExpression"] = 216] = "ParenthesizedExpression";
+        SyntaxKind[SyntaxKind["ParenthesizedArrowFunctionExpression"] = 217] = "ParenthesizedArrowFunctionExpression";
+        SyntaxKind[SyntaxKind["SimpleArrowFunctionExpression"] = 218] = "SimpleArrowFunctionExpression";
+        SyntaxKind[SyntaxKind["CastExpression"] = 219] = "CastExpression";
+        SyntaxKind[SyntaxKind["ElementAccessExpression"] = 220] = "ElementAccessExpression";
+        SyntaxKind[SyntaxKind["FunctionExpression"] = 221] = "FunctionExpression";
+        SyntaxKind[SyntaxKind["OmittedExpression"] = 222] = "OmittedExpression";
 
         // Variable declarations
-        SyntaxKind[SyntaxKind["VariableDeclaration"] = 224] = "VariableDeclaration";
-        SyntaxKind[SyntaxKind["VariableDeclarator"] = 225] = "VariableDeclarator";
+        SyntaxKind[SyntaxKind["VariableDeclaration"] = 223] = "VariableDeclaration";
+        SyntaxKind[SyntaxKind["VariableDeclarator"] = 224] = "VariableDeclarator";
 
         // Lists
-        SyntaxKind[SyntaxKind["ArgumentList"] = 226] = "ArgumentList";
-        SyntaxKind[SyntaxKind["ParameterList"] = 227] = "ParameterList";
-        SyntaxKind[SyntaxKind["TypeArgumentList"] = 228] = "TypeArgumentList";
-        SyntaxKind[SyntaxKind["TypeParameterList"] = 229] = "TypeParameterList";
+        SyntaxKind[SyntaxKind["ArgumentList"] = 225] = "ArgumentList";
+        SyntaxKind[SyntaxKind["ParameterList"] = 226] = "ParameterList";
+        SyntaxKind[SyntaxKind["TypeArgumentList"] = 227] = "TypeArgumentList";
+        SyntaxKind[SyntaxKind["TypeParameterList"] = 228] = "TypeParameterList";
 
         // Clauses
-        SyntaxKind[SyntaxKind["HeritageClause"] = 230] = "HeritageClause";
-        SyntaxKind[SyntaxKind["EqualsValueClause"] = 231] = "EqualsValueClause";
-        SyntaxKind[SyntaxKind["CaseSwitchClause"] = 232] = "CaseSwitchClause";
-        SyntaxKind[SyntaxKind["DefaultSwitchClause"] = 233] = "DefaultSwitchClause";
-        SyntaxKind[SyntaxKind["ElseClause"] = 234] = "ElseClause";
-        SyntaxKind[SyntaxKind["CatchClause"] = 235] = "CatchClause";
-        SyntaxKind[SyntaxKind["FinallyClause"] = 236] = "FinallyClause";
+        SyntaxKind[SyntaxKind["HeritageClause"] = 229] = "HeritageClause";
+        SyntaxKind[SyntaxKind["EqualsValueClause"] = 230] = "EqualsValueClause";
+        SyntaxKind[SyntaxKind["CaseSwitchClause"] = 231] = "CaseSwitchClause";
+        SyntaxKind[SyntaxKind["DefaultSwitchClause"] = 232] = "DefaultSwitchClause";
+        SyntaxKind[SyntaxKind["ElseClause"] = 233] = "ElseClause";
+        SyntaxKind[SyntaxKind["CatchClause"] = 234] = "CatchClause";
+        SyntaxKind[SyntaxKind["FinallyClause"] = 235] = "FinallyClause";
 
         // Generics
-        SyntaxKind[SyntaxKind["TypeParameter"] = 237] = "TypeParameter";
-        SyntaxKind[SyntaxKind["Constraint"] = 238] = "Constraint";
+        SyntaxKind[SyntaxKind["TypeParameter"] = 236] = "TypeParameter";
+        SyntaxKind[SyntaxKind["Constraint"] = 237] = "Constraint";
 
         // Property Assignment
-        SyntaxKind[SyntaxKind["SimplePropertyAssignment"] = 239] = "SimplePropertyAssignment";
-        SyntaxKind[SyntaxKind["GetAccessorPropertyAssignment"] = 240] = "GetAccessorPropertyAssignment";
-        SyntaxKind[SyntaxKind["SetAccessorPropertyAssignment"] = 241] = "SetAccessorPropertyAssignment";
-        SyntaxKind[SyntaxKind["FunctionPropertyAssignment"] = 242] = "FunctionPropertyAssignment";
+        SyntaxKind[SyntaxKind["SimplePropertyAssignment"] = 238] = "SimplePropertyAssignment";
+        SyntaxKind[SyntaxKind["GetAccessorPropertyAssignment"] = 239] = "GetAccessorPropertyAssignment";
+        SyntaxKind[SyntaxKind["SetAccessorPropertyAssignment"] = 240] = "SetAccessorPropertyAssignment";
+        SyntaxKind[SyntaxKind["FunctionPropertyAssignment"] = 241] = "FunctionPropertyAssignment";
 
         // Misc.
-        SyntaxKind[SyntaxKind["Parameter"] = 243] = "Parameter";
-        SyntaxKind[SyntaxKind["EnumElement"] = 244] = "EnumElement";
-        SyntaxKind[SyntaxKind["TypeAnnotation"] = 245] = "TypeAnnotation";
-        SyntaxKind[SyntaxKind["ExternalModuleReference"] = 246] = "ExternalModuleReference";
-        SyntaxKind[SyntaxKind["ModuleNameModuleReference"] = 247] = "ModuleNameModuleReference";
+        SyntaxKind[SyntaxKind["Parameter"] = 242] = "Parameter";
+        SyntaxKind[SyntaxKind["EnumElement"] = 243] = "EnumElement";
+        SyntaxKind[SyntaxKind["TypeAnnotation"] = 244] = "TypeAnnotation";
+        SyntaxKind[SyntaxKind["ExternalModuleReference"] = 245] = "ExternalModuleReference";
+        SyntaxKind[SyntaxKind["ModuleNameModuleReference"] = 246] = "ModuleNameModuleReference";
 
         SyntaxKind[SyntaxKind["FirstStandardKeyword"] = SyntaxKind.BreakKeyword] = "FirstStandardKeyword";
         SyntaxKind[SyntaxKind["LastStandardKeyword"] = SyntaxKind.WithKeyword] = "LastStandardKeyword";
@@ -4223,9 +4205,9 @@ var TypeScript;
             "class": 44 /* ClassKeyword */,
             "continue": 18 /* ContinueKeyword */,
             "const": 45 /* ConstKeyword */,
-            "constructor": 63 /* ConstructorKeyword */,
+            "constructor": 62 /* ConstructorKeyword */,
             "debugger": 19 /* DebuggerKeyword */,
-            "declare": 64 /* DeclareKeyword */,
+            "declare": 63 /* DeclareKeyword */,
             "default": 20 /* DefaultKeyword */,
             "delete": 21 /* DeleteKeyword */,
             "do": 22 /* DoKeyword */,
@@ -4237,7 +4219,7 @@ var TypeScript;
             "finally": 25 /* FinallyKeyword */,
             "for": 26 /* ForKeyword */,
             "function": 27 /* FunctionKeyword */,
-            "get": 65 /* GetKeyword */,
+            "get": 64 /* GetKeyword */,
             "if": 28 /* IfKeyword */,
             "implements": 51 /* ImplementsKeyword */,
             "import": 49 /* ImportKeyword */,
@@ -4245,19 +4227,19 @@ var TypeScript;
             "instanceof": 30 /* InstanceOfKeyword */,
             "interface": 52 /* InterfaceKeyword */,
             "let": 53 /* LetKeyword */,
-            "module": 66 /* ModuleKeyword */,
+            "module": 65 /* ModuleKeyword */,
             "new": 31 /* NewKeyword */,
             "null": 32 /* NullKeyword */,
-            "number": 68 /* NumberKeyword */,
+            "number": 67 /* NumberKeyword */,
             "package": 54 /* PackageKeyword */,
             "private": 55 /* PrivateKeyword */,
             "protected": 56 /* ProtectedKeyword */,
             "public": 57 /* PublicKeyword */,
-            "require": 67 /* RequireKeyword */,
+            "require": 66 /* RequireKeyword */,
             "return": 33 /* ReturnKeyword */,
-            "set": 69 /* SetKeyword */,
+            "set": 68 /* SetKeyword */,
             "static": 58 /* StaticKeyword */,
-            "string": 70 /* StringKeyword */,
+            "string": 69 /* StringKeyword */,
             "super": 50 /* SuperKeyword */,
             "switch": 34 /* SwitchKeyword */,
             "this": 35 /* ThisKeyword */,
@@ -4270,56 +4252,56 @@ var TypeScript;
             "while": 42 /* WhileKeyword */,
             "with": 43 /* WithKeyword */,
             "yield": 59 /* YieldKeyword */,
-            "{": 71 /* OpenBraceToken */,
-            "}": 72 /* CloseBraceToken */,
-            "(": 73 /* OpenParenToken */,
-            ")": 74 /* CloseParenToken */,
-            "[": 75 /* OpenBracketToken */,
-            "]": 76 /* CloseBracketToken */,
-            ".": 77 /* DotToken */,
-            "...": 78 /* DotDotDotToken */,
-            ";": 79 /* SemicolonToken */,
-            ",": 80 /* CommaToken */,
-            "<": 81 /* LessThanToken */,
-            ">": 82 /* GreaterThanToken */,
-            "<=": 83 /* LessThanEqualsToken */,
-            ">=": 84 /* GreaterThanEqualsToken */,
-            "==": 85 /* EqualsEqualsToken */,
-            "=>": 86 /* EqualsGreaterThanToken */,
-            "!=": 87 /* ExclamationEqualsToken */,
-            "===": 88 /* EqualsEqualsEqualsToken */,
-            "!==": 89 /* ExclamationEqualsEqualsToken */,
-            "+": 90 /* PlusToken */,
-            "-": 91 /* MinusToken */,
-            "*": 92 /* AsteriskToken */,
-            "%": 93 /* PercentToken */,
-            "++": 94 /* PlusPlusToken */,
-            "--": 95 /* MinusMinusToken */,
-            "<<": 96 /* LessThanLessThanToken */,
-            ">>": 97 /* GreaterThanGreaterThanToken */,
-            ">>>": 98 /* GreaterThanGreaterThanGreaterThanToken */,
-            "&": 99 /* AmpersandToken */,
-            "|": 100 /* BarToken */,
-            "^": 101 /* CaretToken */,
-            "!": 102 /* ExclamationToken */,
-            "~": 103 /* TildeToken */,
-            "&&": 104 /* AmpersandAmpersandToken */,
-            "||": 105 /* BarBarToken */,
-            "?": 106 /* QuestionToken */,
-            ":": 107 /* ColonToken */,
-            "=": 108 /* EqualsToken */,
-            "+=": 109 /* PlusEqualsToken */,
-            "-=": 110 /* MinusEqualsToken */,
-            "*=": 111 /* AsteriskEqualsToken */,
-            "%=": 112 /* PercentEqualsToken */,
-            "<<=": 113 /* LessThanLessThanEqualsToken */,
-            ">>=": 114 /* GreaterThanGreaterThanEqualsToken */,
-            ">>>=": 115 /* GreaterThanGreaterThanGreaterThanEqualsToken */,
-            "&=": 116 /* AmpersandEqualsToken */,
-            "|=": 117 /* BarEqualsToken */,
-            "^=": 118 /* CaretEqualsToken */,
-            "/": 119 /* SlashToken */,
-            "/=": 120 /* SlashEqualsToken */
+            "{": 70 /* OpenBraceToken */,
+            "}": 71 /* CloseBraceToken */,
+            "(": 72 /* OpenParenToken */,
+            ")": 73 /* CloseParenToken */,
+            "[": 74 /* OpenBracketToken */,
+            "]": 75 /* CloseBracketToken */,
+            ".": 76 /* DotToken */,
+            "...": 77 /* DotDotDotToken */,
+            ";": 78 /* SemicolonToken */,
+            ",": 79 /* CommaToken */,
+            "<": 80 /* LessThanToken */,
+            ">": 81 /* GreaterThanToken */,
+            "<=": 82 /* LessThanEqualsToken */,
+            ">=": 83 /* GreaterThanEqualsToken */,
+            "==": 84 /* EqualsEqualsToken */,
+            "=>": 85 /* EqualsGreaterThanToken */,
+            "!=": 86 /* ExclamationEqualsToken */,
+            "===": 87 /* EqualsEqualsEqualsToken */,
+            "!==": 88 /* ExclamationEqualsEqualsToken */,
+            "+": 89 /* PlusToken */,
+            "-": 90 /* MinusToken */,
+            "*": 91 /* AsteriskToken */,
+            "%": 92 /* PercentToken */,
+            "++": 93 /* PlusPlusToken */,
+            "--": 94 /* MinusMinusToken */,
+            "<<": 95 /* LessThanLessThanToken */,
+            ">>": 96 /* GreaterThanGreaterThanToken */,
+            ">>>": 97 /* GreaterThanGreaterThanGreaterThanToken */,
+            "&": 98 /* AmpersandToken */,
+            "|": 99 /* BarToken */,
+            "^": 100 /* CaretToken */,
+            "!": 101 /* ExclamationToken */,
+            "~": 102 /* TildeToken */,
+            "&&": 103 /* AmpersandAmpersandToken */,
+            "||": 104 /* BarBarToken */,
+            "?": 105 /* QuestionToken */,
+            ":": 106 /* ColonToken */,
+            "=": 107 /* EqualsToken */,
+            "+=": 108 /* PlusEqualsToken */,
+            "-=": 109 /* MinusEqualsToken */,
+            "*=": 110 /* AsteriskEqualsToken */,
+            "%=": 111 /* PercentEqualsToken */,
+            "<<=": 112 /* LessThanLessThanEqualsToken */,
+            ">>=": 113 /* GreaterThanGreaterThanEqualsToken */,
+            ">>>=": 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */,
+            "&=": 115 /* AmpersandEqualsToken */,
+            "|=": 116 /* BarEqualsToken */,
+            "^=": 117 /* CaretEqualsToken */,
+            "/": 118 /* SlashToken */,
+            "/=": 119 /* SlashEqualsToken */
         };
 
         var kindToText = new Array();
@@ -4334,7 +4316,7 @@ var TypeScript;
         // Manually work around a bug in the CScript 5.8 runtime where 'constructor' is not
         // listed when SyntaxFacts.textToKeywordKind is enumerated because it is the name of
         // the constructor function.
-        kindToText[63 /* ConstructorKeyword */] = "constructor";
+        kindToText[62 /* ConstructorKeyword */] = "constructor";
 
         function getTokenKind(text) {
             if (textToKeywordKind.hasOwnProperty(text)) {
@@ -4352,12 +4334,12 @@ var TypeScript;
         SyntaxFacts.getText = getText;
 
         function isTokenKind(kind) {
-            return kind >= 9 /* FirstToken */ && kind <= 120 /* LastToken */;
+            return kind >= 9 /* FirstToken */ && kind <= 119 /* LastToken */;
         }
         SyntaxFacts.isTokenKind = isTokenKind;
 
         function isAnyKeyword(kind) {
-            return kind >= 15 /* FirstKeyword */ && kind <= 70 /* LastKeyword */;
+            return kind >= 15 /* FirstKeyword */ && kind <= 69 /* LastKeyword */;
         }
         SyntaxFacts.isAnyKeyword = isAnyKeyword;
 
@@ -4377,7 +4359,7 @@ var TypeScript;
         SyntaxFacts.isFutureReservedStrictKeyword = isFutureReservedStrictKeyword;
 
         function isAnyPunctuation(kind) {
-            return kind >= 71 /* FirstPunctuation */ && kind <= 120 /* LastPunctuation */;
+            return kind >= 70 /* FirstPunctuation */ && kind <= 119 /* LastPunctuation */;
         }
         SyntaxFacts.isAnyPunctuation = isAnyPunctuation;
 
@@ -4393,18 +4375,18 @@ var TypeScript;
 
         function getPrefixUnaryExpressionFromOperatorToken(tokenKind) {
             switch (tokenKind) {
-                case 90 /* PlusToken */:
-                    return 164 /* PlusExpression */;
-                case 91 /* MinusToken */:
-                    return 165 /* NegateExpression */;
-                case 103 /* TildeToken */:
-                    return 166 /* BitwiseNotExpression */;
-                case 102 /* ExclamationToken */:
-                    return 167 /* LogicalNotExpression */;
-                case 94 /* PlusPlusToken */:
-                    return 168 /* PreIncrementExpression */;
-                case 95 /* MinusMinusToken */:
-                    return 169 /* PreDecrementExpression */;
+                case 89 /* PlusToken */:
+                    return 163 /* PlusExpression */;
+                case 90 /* MinusToken */:
+                    return 164 /* NegateExpression */;
+                case 102 /* TildeToken */:
+                    return 165 /* BitwiseNotExpression */;
+                case 101 /* ExclamationToken */:
+                    return 166 /* LogicalNotExpression */;
+                case 93 /* PlusPlusToken */:
+                    return 167 /* PreIncrementExpression */;
+                case 94 /* MinusMinusToken */:
+                    return 168 /* PreDecrementExpression */;
 
                 default:
                     return 0 /* None */;
@@ -4414,10 +4396,10 @@ var TypeScript;
 
         function getPostfixUnaryExpressionFromOperatorToken(tokenKind) {
             switch (tokenKind) {
-                case 94 /* PlusPlusToken */:
-                    return 210 /* PostIncrementExpression */;
-                case 95 /* MinusMinusToken */:
-                    return 211 /* PostDecrementExpression */;
+                case 93 /* PlusPlusToken */:
+                    return 209 /* PostIncrementExpression */;
+                case 94 /* MinusMinusToken */:
+                    return 210 /* PostDecrementExpression */;
                 default:
                     return 0 /* None */;
             }
@@ -4426,113 +4408,113 @@ var TypeScript;
 
         function getBinaryExpressionFromOperatorToken(tokenKind) {
             switch (tokenKind) {
-                case 92 /* AsteriskToken */:
-                    return 205 /* MultiplyExpression */;
+                case 91 /* AsteriskToken */:
+                    return 204 /* MultiplyExpression */;
 
-                case 119 /* SlashToken */:
-                    return 206 /* DivideExpression */;
+                case 118 /* SlashToken */:
+                    return 205 /* DivideExpression */;
 
-                case 93 /* PercentToken */:
-                    return 207 /* ModuloExpression */;
+                case 92 /* PercentToken */:
+                    return 206 /* ModuloExpression */;
 
-                case 90 /* PlusToken */:
-                    return 208 /* AddExpression */;
+                case 89 /* PlusToken */:
+                    return 207 /* AddExpression */;
 
-                case 91 /* MinusToken */:
-                    return 209 /* SubtractExpression */;
+                case 90 /* MinusToken */:
+                    return 208 /* SubtractExpression */;
 
-                case 96 /* LessThanLessThanToken */:
-                    return 202 /* LeftShiftExpression */;
+                case 95 /* LessThanLessThanToken */:
+                    return 201 /* LeftShiftExpression */;
 
-                case 97 /* GreaterThanGreaterThanToken */:
-                    return 203 /* SignedRightShiftExpression */;
+                case 96 /* GreaterThanGreaterThanToken */:
+                    return 202 /* SignedRightShiftExpression */;
 
-                case 98 /* GreaterThanGreaterThanGreaterThanToken */:
-                    return 204 /* UnsignedRightShiftExpression */;
+                case 97 /* GreaterThanGreaterThanGreaterThanToken */:
+                    return 203 /* UnsignedRightShiftExpression */;
 
-                case 81 /* LessThanToken */:
-                    return 196 /* LessThanExpression */;
+                case 80 /* LessThanToken */:
+                    return 195 /* LessThanExpression */;
 
-                case 82 /* GreaterThanToken */:
-                    return 197 /* GreaterThanExpression */;
+                case 81 /* GreaterThanToken */:
+                    return 196 /* GreaterThanExpression */;
 
-                case 83 /* LessThanEqualsToken */:
-                    return 198 /* LessThanOrEqualExpression */;
+                case 82 /* LessThanEqualsToken */:
+                    return 197 /* LessThanOrEqualExpression */;
 
-                case 84 /* GreaterThanEqualsToken */:
-                    return 199 /* GreaterThanOrEqualExpression */;
+                case 83 /* GreaterThanEqualsToken */:
+                    return 198 /* GreaterThanOrEqualExpression */;
 
                 case 30 /* InstanceOfKeyword */:
-                    return 200 /* InstanceOfExpression */;
+                    return 199 /* InstanceOfExpression */;
 
                 case 29 /* InKeyword */:
-                    return 201 /* InExpression */;
+                    return 200 /* InExpression */;
 
-                case 85 /* EqualsEqualsToken */:
-                    return 192 /* EqualsWithTypeConversionExpression */;
+                case 84 /* EqualsEqualsToken */:
+                    return 191 /* EqualsWithTypeConversionExpression */;
 
-                case 87 /* ExclamationEqualsToken */:
-                    return 193 /* NotEqualsWithTypeConversionExpression */;
+                case 86 /* ExclamationEqualsToken */:
+                    return 192 /* NotEqualsWithTypeConversionExpression */;
 
-                case 88 /* EqualsEqualsEqualsToken */:
-                    return 194 /* EqualsExpression */;
+                case 87 /* EqualsEqualsEqualsToken */:
+                    return 193 /* EqualsExpression */;
 
-                case 89 /* ExclamationEqualsEqualsToken */:
-                    return 195 /* NotEqualsExpression */;
+                case 88 /* ExclamationEqualsEqualsToken */:
+                    return 194 /* NotEqualsExpression */;
 
-                case 99 /* AmpersandToken */:
-                    return 191 /* BitwiseAndExpression */;
+                case 98 /* AmpersandToken */:
+                    return 190 /* BitwiseAndExpression */;
 
-                case 101 /* CaretToken */:
-                    return 190 /* BitwiseExclusiveOrExpression */;
+                case 100 /* CaretToken */:
+                    return 189 /* BitwiseExclusiveOrExpression */;
 
-                case 100 /* BarToken */:
-                    return 189 /* BitwiseOrExpression */;
+                case 99 /* BarToken */:
+                    return 188 /* BitwiseOrExpression */;
 
-                case 104 /* AmpersandAmpersandToken */:
-                    return 188 /* LogicalAndExpression */;
+                case 103 /* AmpersandAmpersandToken */:
+                    return 187 /* LogicalAndExpression */;
 
-                case 105 /* BarBarToken */:
-                    return 187 /* LogicalOrExpression */;
+                case 104 /* BarBarToken */:
+                    return 186 /* LogicalOrExpression */;
 
-                case 117 /* BarEqualsToken */:
-                    return 182 /* OrAssignmentExpression */;
+                case 116 /* BarEqualsToken */:
+                    return 181 /* OrAssignmentExpression */;
 
-                case 116 /* AmpersandEqualsToken */:
-                    return 180 /* AndAssignmentExpression */;
+                case 115 /* AmpersandEqualsToken */:
+                    return 179 /* AndAssignmentExpression */;
 
-                case 118 /* CaretEqualsToken */:
-                    return 181 /* ExclusiveOrAssignmentExpression */;
+                case 117 /* CaretEqualsToken */:
+                    return 180 /* ExclusiveOrAssignmentExpression */;
 
-                case 113 /* LessThanLessThanEqualsToken */:
-                    return 183 /* LeftShiftAssignmentExpression */;
+                case 112 /* LessThanLessThanEqualsToken */:
+                    return 182 /* LeftShiftAssignmentExpression */;
 
-                case 114 /* GreaterThanGreaterThanEqualsToken */:
-                    return 184 /* SignedRightShiftAssignmentExpression */;
+                case 113 /* GreaterThanGreaterThanEqualsToken */:
+                    return 183 /* SignedRightShiftAssignmentExpression */;
 
-                case 115 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
-                    return 185 /* UnsignedRightShiftAssignmentExpression */;
+                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
+                    return 184 /* UnsignedRightShiftAssignmentExpression */;
 
-                case 109 /* PlusEqualsToken */:
-                    return 175 /* AddAssignmentExpression */;
+                case 108 /* PlusEqualsToken */:
+                    return 174 /* AddAssignmentExpression */;
 
-                case 110 /* MinusEqualsToken */:
-                    return 176 /* SubtractAssignmentExpression */;
+                case 109 /* MinusEqualsToken */:
+                    return 175 /* SubtractAssignmentExpression */;
 
-                case 111 /* AsteriskEqualsToken */:
-                    return 177 /* MultiplyAssignmentExpression */;
+                case 110 /* AsteriskEqualsToken */:
+                    return 176 /* MultiplyAssignmentExpression */;
 
-                case 120 /* SlashEqualsToken */:
-                    return 178 /* DivideAssignmentExpression */;
+                case 119 /* SlashEqualsToken */:
+                    return 177 /* DivideAssignmentExpression */;
 
-                case 112 /* PercentEqualsToken */:
-                    return 179 /* ModuloAssignmentExpression */;
+                case 111 /* PercentEqualsToken */:
+                    return 178 /* ModuloAssignmentExpression */;
 
-                case 108 /* EqualsToken */:
-                    return 174 /* AssignmentExpression */;
+                case 107 /* EqualsToken */:
+                    return 173 /* AssignmentExpression */;
 
-                case 80 /* CommaToken */:
-                    return 173 /* CommaExpression */;
+                case 79 /* CommaToken */:
+                    return 172 /* CommaExpression */;
 
                 default:
                     return 0 /* None */;
@@ -4542,8 +4524,8 @@ var TypeScript;
 
         function isAnyDivideToken(kind) {
             switch (kind) {
-                case 119 /* SlashToken */:
-                case 120 /* SlashEqualsToken */:
+                case 118 /* SlashToken */:
+                case 119 /* SlashEqualsToken */:
                     return true;
                 default:
                     return false;
@@ -4553,8 +4535,8 @@ var TypeScript;
 
         function isAnyDivideOrRegularExpressionToken(kind) {
             switch (kind) {
-                case 119 /* SlashToken */:
-                case 120 /* SlashEqualsToken */:
+                case 118 /* SlashToken */:
+                case 119 /* SlashEqualsToken */:
                 case 12 /* RegularExpressionLiteral */:
                     return true;
                 default:
@@ -4565,11 +4547,11 @@ var TypeScript;
 
         function isParserGenerated(kind) {
             switch (kind) {
-                case 97 /* GreaterThanGreaterThanToken */:
-                case 98 /* GreaterThanGreaterThanGreaterThanToken */:
-                case 84 /* GreaterThanEqualsToken */:
-                case 114 /* GreaterThanGreaterThanEqualsToken */:
-                case 115 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
+                case 96 /* GreaterThanGreaterThanToken */:
+                case 97 /* GreaterThanGreaterThanGreaterThanToken */:
+                case 83 /* GreaterThanEqualsToken */:
+                case 113 /* GreaterThanGreaterThanEqualsToken */:
+                case 114 /* GreaterThanGreaterThanGreaterThanEqualsToken */:
                     return true;
                 default:
                     return false;
@@ -4579,42 +4561,42 @@ var TypeScript;
 
         function isAnyBinaryExpression(kind) {
             switch (kind) {
-                case 173 /* CommaExpression */:
-                case 174 /* AssignmentExpression */:
-                case 175 /* AddAssignmentExpression */:
-                case 176 /* SubtractAssignmentExpression */:
-                case 177 /* MultiplyAssignmentExpression */:
-                case 178 /* DivideAssignmentExpression */:
-                case 179 /* ModuloAssignmentExpression */:
-                case 180 /* AndAssignmentExpression */:
-                case 181 /* ExclusiveOrAssignmentExpression */:
-                case 182 /* OrAssignmentExpression */:
-                case 183 /* LeftShiftAssignmentExpression */:
-                case 184 /* SignedRightShiftAssignmentExpression */:
-                case 185 /* UnsignedRightShiftAssignmentExpression */:
-                case 187 /* LogicalOrExpression */:
-                case 188 /* LogicalAndExpression */:
-                case 189 /* BitwiseOrExpression */:
-                case 190 /* BitwiseExclusiveOrExpression */:
-                case 191 /* BitwiseAndExpression */:
-                case 192 /* EqualsWithTypeConversionExpression */:
-                case 193 /* NotEqualsWithTypeConversionExpression */:
-                case 194 /* EqualsExpression */:
-                case 195 /* NotEqualsExpression */:
-                case 196 /* LessThanExpression */:
-                case 197 /* GreaterThanExpression */:
-                case 198 /* LessThanOrEqualExpression */:
-                case 199 /* GreaterThanOrEqualExpression */:
-                case 200 /* InstanceOfExpression */:
-                case 201 /* InExpression */:
-                case 202 /* LeftShiftExpression */:
-                case 203 /* SignedRightShiftExpression */:
-                case 204 /* UnsignedRightShiftExpression */:
-                case 205 /* MultiplyExpression */:
-                case 206 /* DivideExpression */:
-                case 207 /* ModuloExpression */:
-                case 208 /* AddExpression */:
-                case 209 /* SubtractExpression */:
+                case 172 /* CommaExpression */:
+                case 173 /* AssignmentExpression */:
+                case 174 /* AddAssignmentExpression */:
+                case 175 /* SubtractAssignmentExpression */:
+                case 176 /* MultiplyAssignmentExpression */:
+                case 177 /* DivideAssignmentExpression */:
+                case 178 /* ModuloAssignmentExpression */:
+                case 179 /* AndAssignmentExpression */:
+                case 180 /* ExclusiveOrAssignmentExpression */:
+                case 181 /* OrAssignmentExpression */:
+                case 182 /* LeftShiftAssignmentExpression */:
+                case 183 /* SignedRightShiftAssignmentExpression */:
+                case 184 /* UnsignedRightShiftAssignmentExpression */:
+                case 186 /* LogicalOrExpression */:
+                case 187 /* LogicalAndExpression */:
+                case 188 /* BitwiseOrExpression */:
+                case 189 /* BitwiseExclusiveOrExpression */:
+                case 190 /* BitwiseAndExpression */:
+                case 191 /* EqualsWithTypeConversionExpression */:
+                case 192 /* NotEqualsWithTypeConversionExpression */:
+                case 193 /* EqualsExpression */:
+                case 194 /* NotEqualsExpression */:
+                case 195 /* LessThanExpression */:
+                case 196 /* GreaterThanExpression */:
+                case 197 /* LessThanOrEqualExpression */:
+                case 198 /* GreaterThanOrEqualExpression */:
+                case 199 /* InstanceOfExpression */:
+                case 200 /* InExpression */:
+                case 201 /* LeftShiftExpression */:
+                case 202 /* SignedRightShiftExpression */:
+                case 203 /* UnsignedRightShiftExpression */:
+                case 204 /* MultiplyExpression */:
+                case 205 /* DivideExpression */:
+                case 206 /* ModuloExpression */:
+                case 207 /* AddExpression */:
+                case 208 /* SubtractExpression */:
                     return true;
             }
 
@@ -6959,7 +6941,7 @@ function generateToken(isFixedWidth, leading, trailing) {
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)" : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedToken(): boolean { return false; }\r\n";
 
-    result += "        public toJSON(key) { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): boolean { return false; }\r\n" + "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
+    result += "        public toJSON(key: any): any { return tokenToJSON(this); }\r\n" + "        public firstToken(): ISyntaxToken { return this; }\r\n" + "        public lastToken(): ISyntaxToken { return this; }\r\n" + "        public isTypeScriptSpecific(): boolean { return false; }\r\n" + "        public isIncrementallyUnusable(): boolean { return this.fullWidth() === 0 || SyntaxFacts.isAnyDivideOrRegularExpressionToken(this.tokenKind); }\r\n" + "        public accept(visitor: ISyntaxVisitor): any { return visitor.visitToken(this); }\r\n" + "        private realize(): ISyntaxToken { return realizeToken(this); }\r\n" + "        public collectTextElements(elements: string[]): void { collectTokenTextElements(this, elements); }\r\n\r\n";
 
     result += "        private findTokenInternal(parent: PositionedElement, position: number, fullStart: number): PositionedToken {\r\n" + "            return new PositionedToken(parent, this, fullStart);\r\n" + "        }\r\n\r\n";
 
@@ -7116,7 +7098,7 @@ function generateScannerUtilities() {
     var i;
     var keywords = [];
 
-    for (i = 15 /* FirstKeyword */; i <= 70 /* LastKeyword */; i++) {
+    for (i = 15 /* FirstKeyword */; i <= 69 /* LastKeyword */; i++) {
         keywords.push({ kind: i, text: TypeScript.SyntaxFacts.getText(i) });
     }
 
