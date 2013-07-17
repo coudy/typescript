@@ -21,7 +21,7 @@ var Foo = (function () {
 })();
 var foo;
 
-////[0.d.ts]
+////[intrinsics.d.ts]
 declare var hasOwnProperty: any;
 declare module m1 {
     var __proto__;

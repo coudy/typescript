@@ -16,7 +16,7 @@ var bar = (function () {
     return bar;
 })();
 
-////[0.d.ts]
+////[declInput.d.ts]
 interface bar {
 }
 declare class bar {

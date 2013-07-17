@@ -26,7 +26,7 @@ define(["require", "exports"], function(require, exports) {
     exports.d = new m2.m3.c();
 });
 
-////[0.d.ts]
+////[internalAliasClassInsideLocalModuleWithExport.d.ts]
 export declare module x {
     class c {
         public foo(a: number): number;

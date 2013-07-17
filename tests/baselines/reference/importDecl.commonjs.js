@@ -48,7 +48,7 @@ exports.useMultiImport_m4_d4 = exports.multiImport_m4.d;
 exports.useMultiImport_m4_f4 = exports.multiImport_m4.foo();
 
 
-////[0.d.ts]
+////[importDecl.d.ts]
 export declare module "m4" {
     class d {
     }

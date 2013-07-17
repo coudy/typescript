@@ -14,7 +14,7 @@ var A;
     var B = A.B;
 })(A || (A = {}));
 
-////[0.d.ts]
+////[declFileModuleContinuation.d.ts]
 declare module A.C {
     interface Z {
     }

@@ -1,4 +1,3 @@
-////[externalModuleAssignToVar_ext.js]
 define(["require", "exports"], function(require, exports) {
     var D = (function () {
         function D() {
@@ -9,7 +8,6 @@ define(["require", "exports"], function(require, exports) {
     return D;
 });
 
-////[externalModuleAssignToVar_core.js]
 define(["require", "exports", 'ext', 'ext2', 'externalModuleAssignToVar_ext'], function(require, exports, __ext__, __ext2__, __ext3__) {
     var ext = __ext__;
     var y1 = ext;

@@ -8,7 +8,7 @@ define(["require", "exports"], function(require, exports) {
     exports.bVal = exports.b;
 });
 
-////[0.d.ts]
+////[internalAliasVarInsideTopLevelModuleWithExport.d.ts]
 export declare module a {
     var x: number;
 }

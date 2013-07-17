@@ -4,7 +4,7 @@ var c;
     c.x;
 })(c || (c = {}));
 
-////[0.d.ts]
+////[internalAliasInterface.d.ts]
 declare module a {
     interface I {
     }

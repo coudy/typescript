@@ -1,12 +1,12 @@
-// @Filename: exportEqualsInterface_A.ts
+// @Filename: exportAssignmentInterface_A.ts
 interface A {
 	p1: number;
 }
 
 export = A;
 
-// @Filename: exportEqualsInterface_B.ts
-import I1 = require("exportEqualsInterface_A");
+// @Filename: exportAssignmentInterface_B.ts
+import I1 = require("exportAssignmentInterface_A");
 
 var i: I1;
 

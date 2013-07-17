@@ -14,7 +14,7 @@ var point = makePoint(2);
 var x = point.x;
 point.x = 30;
 
-////[0.d.ts]
+////[declFileObjectLiteralWithAccessors.d.ts]
 declare function makePoint(x: number): {
     b: number;
     x: number;

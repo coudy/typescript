@@ -3,7 +3,7 @@ exports.x;
 exports.x.foo();
 
 
-////[0.d.ts]
+////[internalAliasUninitializedModuleInsideTopLevelModuleWithExport.d.ts]
 export declare module a.b {
     interface I {
         foo();

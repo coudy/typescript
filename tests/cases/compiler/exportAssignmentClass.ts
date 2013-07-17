@@ -1,10 +1,10 @@
-// @Filename: exportEqualsClass_A.ts
+// @Filename: exportAssignmentClass_A.ts
 class C { public p = 0; }
 
 export = C;
 
-// @Filename: exportEqualsClass_B.ts
-import D = require("exportEqualsClass_A");
+// @Filename: exportAssignmentClass_B.ts
+import D = require("exportAssignmentClass_A");
 
 var d = new D();
 var x = d.p;

@@ -13,7 +13,7 @@ var c;
     c.bVal2 = b;
 })(c || (c = {}));
 
-////[0.d.ts]
+////[internalAliasFunction.d.ts]
 declare module a {
     function foo(x: number): number;
 }

@@ -1,3 +1,2 @@
-////[0.js.map]
-{"version":3,"file":"0.js","sourceRoot":"","sources":["file:///0.ts"],"names":[],"mappings":""}
-//# sourceMappingURL=0.js.map
+{"version":3,"file":"emptyFile-souremap.js","sourceRoot":"","sources":["file:///C:/VSClient_1/src/typescript/public/tests/cases/compiler/emptyFile-souremap.ts"],"names":[],"mappings":""}
+//# sourceMappingURL=emptyFile-souremap.js.map

@@ -13,7 +13,7 @@ define(["require", "exports"], function(require, exports) {
     exports.bVal = b.Sunday;
 });
 
-////[0.d.ts]
+////[internalAliasEnumInsideTopLevelModuleWithoutExport.d.ts]
 export declare module a {
     enum weekend {
         Friday,

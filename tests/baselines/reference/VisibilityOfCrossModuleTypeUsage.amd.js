@@ -1,10 +1,3 @@
-////[commands.js]
-define(["require", "exports"], function(require, exports) {
-    
-    
-});
-
-////[fs.js]
 define(["require", "exports"], function(require, exports) {
     
     function run(configuration) {

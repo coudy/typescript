@@ -1,5 +1,4 @@
-////[0.js.map]
-{"version":3,"file":"0.js","sourceRoot":"","sources":["file:///0.ts"],"names":["A","A.constructor","A.B"],"mappings":"AACA;IAEIA;IAGAC,CAACA;IAEDD,gBAAAA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;IACLF;AAACA,CAAAA,IAAA"}
+{"version":3,"file":"es3-sourcemap-amd.js","sourceRoot":"","sources":["file:///C:/VSClient_1/src/typescript/public/tests/cases/compiler/es3-sourcemap-amd.ts"],"names":["A","A.constructor","A.B"],"mappings":"AACA;IAEIA;IAGAC,CAACA;IAEDD,gBAAAA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;IACLF;AAACA,CAAAA,IAAA"}
 var A = (function () {
     function A() {
     }
@@ -8,4 +7,4 @@ var A = (function () {
     };
     return A;
 })();
-//# sourceMappingURL=0.js.map
+//# sourceMappingURL=es3-sourcemap-amd.js.map

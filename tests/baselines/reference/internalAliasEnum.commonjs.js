@@ -14,7 +14,7 @@ var c;
     c.bVal = b.Sunday;
 })(c || (c = {}));
 
-////[0.d.ts]
+////[internalAliasEnum.d.ts]
 declare module a {
     enum weekend {
         Friday,

@@ -8,7 +8,7 @@ var m = m3;
 module.exports = m;
 
 
-////[0.d.ts]
+////[declFileExportAssignmentImportInternalModule.d.ts]
 declare module m3 {
     module m2 {
         interface connectModule {

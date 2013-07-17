@@ -554,7 +554,7 @@ define(["require", "exports"], function(require, exports) {
     ;
 });
 
-////[0.d.ts]
+////[giant.d.ts]
 export declare var eV;
 export declare function eF(): void;
 export declare class eC {

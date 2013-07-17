@@ -4,3 +4,4 @@ function makePoint(x: number) {
  } 
 }; 
 var x = makePoint(2).x;
+var y: number = makePoint(2).x;

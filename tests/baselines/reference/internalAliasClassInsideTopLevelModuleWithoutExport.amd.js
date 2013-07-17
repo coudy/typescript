@@ -17,7 +17,7 @@ define(["require", "exports"], function(require, exports) {
     var cReturnVal = exports.cProp.foo(10);
 });
 
-////[0.d.ts]
+////[internalAliasClassInsideTopLevelModuleWithoutExport.d.ts]
 export declare module x {
     class c {
         public foo(a: number): number;

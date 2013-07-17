@@ -1,17 +1,18 @@
-// @FileName: duplicateIdentifierShouldNotShorCircuitBaseTypeBindingA.ts
-interface IPoint {}
+// @FileName: duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_0.ts
+export interface IPoint {}
 
-module Shapes {
-
-    export class Point implements IPoint {}
-
-}
-
-// @FileName: duplicateIdentifierShouldNotShorCircuitBaseTypeBindingB.ts
-interface IPoint {}
-
-module Shapes {
+export module Shapes {
 
     export class Point implements IPoint {}
 
 }
+
+// @FileName: duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_1.ts
+//var x = new Shapes.Point();
+//interface IPoint {}
+
+//module Shapes {
+
+//    export class Point implements IPoint {}
+
+//}

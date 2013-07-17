@@ -13,7 +13,7 @@ exports.b = b;
 exports.bVal = exports.b.Sunday;
 
 
-////[0.d.ts]
+////[internalAliasEnumInsideTopLevelModuleWithExport.d.ts]
 export declare module a {
     enum weekend {
         Friday,

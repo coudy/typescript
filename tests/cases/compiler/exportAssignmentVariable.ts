@@ -1,9 +1,9 @@
-// @Filename: exportEqualsVar_A.ts
+// @Filename: exportAssignmentVariable_A.ts
 var x = 0;
 
 export = x;
 
-// @Filename: exportEqualsVar_B.ts
-import y = require("exportEqualsVar_A");
+// @Filename: exportAssignmentVariable_B.ts
+import y = require("exportAssignmentVariable_A");
 
 var n: number = y;

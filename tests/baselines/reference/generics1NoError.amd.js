@@ -3,7 +3,7 @@ var v2;
 var v4;
 var v5;
 
-////[0.d.ts]
+////[generics1NoError.d.ts]
 interface A {
     a: string;
 }

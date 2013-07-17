@@ -10,7 +10,7 @@ var y = v1.x;
 var w = v1.y.a;
 var z = v1.z.a;
 
-////[0.d.ts]
+////[genericClasses2.d.ts]
 interface Foo<T> {
     a: T;
 }

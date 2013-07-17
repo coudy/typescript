@@ -25,7 +25,7 @@ var m2 = exports.m2;
 exports.d = new m2.m3.c();
 
 
-////[0.d.ts]
+////[internalAliasClassInsideLocalModuleWithExport.d.ts]
 export declare module x {
     class c {
         public foo(a: number): number;

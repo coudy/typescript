@@ -9,7 +9,7 @@ var c;
     c.bVal = b;
 })(c || (c = {}));
 
-////[0.d.ts]
+////[internalAliasVar.d.ts]
 declare module a {
     var x: number;
 }

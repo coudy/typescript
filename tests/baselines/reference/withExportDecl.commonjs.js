@@ -50,7 +50,7 @@ var eVar22;
 exports.eVar3 = 10, exports.eVar4, exports.eVar5;
 
 
-////[0.d.ts]
+////[withExportDecl.d.ts]
 export declare var exportedSimpleVar;
 export declare var exportedVarWithInitialValue: number;
 export declare var exportedWithComplicatedValue: {

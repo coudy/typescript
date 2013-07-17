@@ -7,7 +7,7 @@ define(["require", "exports"], function(require, exports) {
     var c = exports.c;
 });
 
-////[0.d.ts]
+////[internalAliasUninitializedModuleInsideLocalModuleWithoutExport.d.ts]
 export declare module a.b {
     interface I {
         foo();

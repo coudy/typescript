@@ -1,6 +1,4 @@
-////[bin/0.js.map]
-{"version":3,"file":"0.js","sourceRoot":"","sources":["file:///0.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;;AAYCA,IATGA,uBADuBA;8BACvBA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;;IAEDF,6BAAAA,UAAgBA,KAAaA;QAEzBG,EAAEA;IACNA,CAACA;IACLH;AAACA,CAAAA,IAAA"}
-////[bin/0.js]
+{"version":3,"file":"out-flag.js","sourceRoot":"","sources":["file:///C:/VSClient_1/src/typescript/public/tests/cases/compiler/out-flag.ts"],"names":["MyClass","MyClass.constructor","MyClass.Count","MyClass.SetCount"],"mappings":"AACA,oBAAoB;AACpB;IAAAA;;AAYCA,IATGA,uBADuBA;8BACvBA;QAEIE,OAAOA,EAAEA,CAACA;IACdA,CAACA;;IAEDF,6BAAAA,UAAgBA,KAAaA;QAEzBG,EAAEA;IACNA,CAACA;IACLH;AAACA,CAAAA,IAAA"}
 // my class comments
 var MyClass = (function () {
     function MyClass() {
@@ -15,4 +13,10 @@ var MyClass = (function () {
     };
     return MyClass;
 })();
-//# sourceMappingURL=0.js.map
+//# sourceMappingURL=out-flag.js.map
+
+////[out-flag.d.ts]
+declare class MyClass {
+    public Count(): number;
+    public SetCount(value: number): void;
+}

@@ -1,4 +1,3 @@
-////[exportEqualsModule_A.js]
 define(["require", "exports"], function(require, exports) {
     var M;
     (function (M) {
@@ -9,8 +8,7 @@ define(["require", "exports"], function(require, exports) {
     return M;
 });
 
-////[exportEqualsModule_B.js]
-define(["require", "exports", "exportEqualsModule_A"], function(require, exports, __modM__) {
+define(["require", "exports", "exportAssignmentInternalModule_A"], function(require, exports, __modM__) {
     var modM = __modM__;
 
     var n = modM.x;

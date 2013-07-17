@@ -10,7 +10,7 @@ function makePoint(x) {
 var point = makePoint(2);
 point.x = 30;
 
-////[0.d.ts]
+////[declFileObjectLiteralWithOnlySetter.d.ts]
 declare function makePoint(x: number): {
     b: number;
     x: number;

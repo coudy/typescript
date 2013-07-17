@@ -2,7 +2,7 @@
 exports.x;
 
 
-////[0.d.ts]
+////[internalAliasInterfaceInsideTopLevelModuleWithoutExport.d.ts]
 export declare module a {
     interface I {
     }

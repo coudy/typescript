@@ -19,7 +19,7 @@ define(["require", "exports"], function(require, exports) {
     var c = exports.c;
 });
 
-////[0.d.ts]
+////[internalAliasInitializedModuleInsideLocalModuleWithoutExport.d.ts]
 export declare module a.b {
     class c {
     }

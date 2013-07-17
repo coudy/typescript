@@ -17,7 +17,7 @@ var c;
     c.x = new b.c();
 })(c || (c = {}));
 
-////[0.d.ts]
+////[internalAliasInitializedModule.d.ts]
 declare module a.b {
     class c {
     }

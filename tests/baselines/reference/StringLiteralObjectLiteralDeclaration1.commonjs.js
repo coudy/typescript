@@ -3,7 +3,7 @@ var m1;
     m1.n = { 'foo bar': 4 };
 })(m1 || (m1 = {}));
 
-////[0.d.ts]
+////[stringLiteralObjectLiteralDeclaration1.d.ts]
 declare module m1 {
     var n: {
         'foo bar': number;

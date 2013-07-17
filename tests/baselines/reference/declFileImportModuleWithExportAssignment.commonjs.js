@@ -1,10 +1,8 @@
-////[declFileImportModuleWithExportAssignment_0.js]
 var m2;
 
 module.exports = m2;
 
 
-////[declFileImportModuleWithExportAssignment_1.js]
 /**This is on import declaration*/
 var a1 = require("./declFileImportModuleWithExportAssignment_0");
 exports.a1 = a1;
@@ -29,7 +27,7 @@ declare var m2: {
 };
 export = m2;
 
-////[declFileImportModuleWithExportAssignment_1.d.ts]
+////[declFileImportModuleWithExportAssignment.d.ts]
 /**This is on import declaration*/
 export import a1 = require("declFileImportModuleWithExportAssignment_0");
 export declare var a: {

@@ -36,7 +36,7 @@ var e5;
     e5[e5["Weekend days"] = 3] = "Weekend days";
 })(e5 || (e5 = {}));
 
-////[0.d.ts]
+////[declFileEnums.d.ts]
 declare enum e1 {
     a,
     b,

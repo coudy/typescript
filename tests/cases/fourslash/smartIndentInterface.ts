@@ -9,7 +9,6 @@
 ////}
 ////{| "indentation" : 0 |}
 
-
 test.markers().forEach((marker) => {
     verify.indentationAtPositionIs(marker.fileName, marker.position, marker.data.indentation);
 });

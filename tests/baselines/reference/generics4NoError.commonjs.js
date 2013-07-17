@@ -7,7 +7,7 @@ var C = (function () {
 var a;
 var b;
 
-////[0.d.ts]
+////[generics4NoError.d.ts]
 declare class C<T> {
     private x;
 }

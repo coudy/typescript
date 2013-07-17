@@ -8,7 +8,7 @@ var bar;
     bar.Foo = Foo;
 })(bar || (bar = {}));
 
-////[0.d.ts]
+////[genericClassImplementingGenericInterfaceFromAnotherModule.d.ts]
 declare module foo {
     interface IFoo<T> {
     }

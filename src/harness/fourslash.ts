@@ -1372,9 +1372,12 @@ module FourSlash {
         fsOutput.reset();
         fsErrors.reset();
 
-        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, IO.readFile(tsFn).contents, tsFn);
-        Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
-        Harness.Compiler.compile(Harness.Compiler.CompilerInstance.RunTime, content, mockFilename);
+        var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
+        harnessCompiler.reset();
+
+        harnessCompiler.addInputFile(tsFn);
+        harnessCompiler.addInputFile(fileName);
+        harnessCompiler.compile();
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
             writeFile: (path: string, contents: string, writeByteOrderMark: boolean) => fsOutput.Write(contents),
@@ -1383,7 +1386,7 @@ module FourSlash {
             resolvePath: (s: string) => s
         }
 
-        Harness.Compiler.emitAll(Harness.Compiler.CompilerInstance.RunTime, emitterIOHost);
+        harnessCompiler.emitAll(emitterIOHost);
         fsOutput.Close();
         fsErrors.Close();
 

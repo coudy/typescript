@@ -5,7 +5,7 @@ define(["require", "exports"], function(require, exports) {
     return m2;
 });
 
-////[0.d.ts]
+////[declareFileExportAssignment.d.ts]
 declare module m2 {
     interface connectModule {
         (res, req, next): void;

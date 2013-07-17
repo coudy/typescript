@@ -1,7 +1,5 @@
 /// <reference path='fourslash.ts'/>
 
-debugger;
-
 ////class Bar {
 ////    {| "indentation": 4|}
 ////    private foo: string = "";

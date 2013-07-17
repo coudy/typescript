@@ -1,4 +1,3 @@
-////[exportEqualsEnum_A.js]
 var E;
 (function (E) {
     E[E["A"] = 0] = "A";
@@ -10,8 +9,7 @@ var E;
 module.exports = E;
 
 
-////[exportEqualsEnum_B.js]
-var EnumE = require("./exportEqualsEnum_A");
+var EnumE = require("./exportAssignmentEnum_A");
 
 var a = EnumE.A;
 var b = EnumE.B;

@@ -1,11 +1,11 @@
-// @Filename: exportEqualsModule_A.ts
+// @Filename: exportAssignmentInternalModule_A.ts
 module M {
 	export var x;
 }
 
 export = M;
 
-// @Filename: exportEqualsModule_B.ts
-import modM = require("exportEqualsModule_A");
+// @Filename: exportAssignmentInternalModule_B.ts
+import modM = require("exportAssignmentInternalModule_A");
 
 var n: number = modM.x;

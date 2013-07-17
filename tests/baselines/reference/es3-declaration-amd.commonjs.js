@@ -7,7 +7,7 @@ var A = (function () {
     return A;
 })();
 
-////[0.d.ts]
+////[es3-declaration-amd.d.ts]
 declare class A {
     constructor();
     public B(): number;

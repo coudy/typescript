@@ -5,7 +5,7 @@ var c1 = (function () {
 })();
 var instance2 = new c1();
 
-////[0.d.ts]
+////[interfacedecl.d.ts]
 interface a0 {
     (): string;
     (a, b, c?: string): number;

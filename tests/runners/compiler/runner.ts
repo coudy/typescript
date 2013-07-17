@@ -25,7 +25,7 @@ class CompilerBaselineRunner extends RunnerBase {
         // strips the fileName from the path.
         var justName = fileName.replace(/^.*[\\\/]/, '');
         var content = IO.readFile(fileName).contents;
-        var testCaseContent = Harness.TestCaseParser.makeUnitsFromTest(content, justName);
+        var testCaseContent = Harness.TestCaseParser.makeUnitsFromTest(content, fileName);
 
         var units = testCaseContent.testUnitData;
         var tcSettings = testCaseContent.settings;
@@ -46,21 +46,24 @@ class CompilerBaselineRunner extends RunnerBase {
             var errorDescriptionLocal = '';
             var createNewInstance = false;
 
-            // Find out why this is necessary
+            var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
+            // The compiler doesn't handle certain flags flipping during a single compilation setting. Tests on these flags will need 
+            // a fresh compiler instance for themselves and then create a fresh one for the next test. Would be nice to get dev fixes
+            // eventually to remove this limitation.
             for (var i = 0; i < tcSettings.length; ++i) {
                 if (tcSettings[i].flag == "disallowimplicitany" || tcSettings[i].flag === "target") {
-                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-                    Harness.Compiler.setCompilerSettings(tcSettings, Harness.Compiler.CompilerInstance.RunTime);
+                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false /*minimalDefaultLife */, true /*noImplicitAny*/);
+                    harnessCompiler.setCompilerSettings(tcSettings);
                     createNewInstance = true;
                     break;
                 }
             }
-
-            // compile as CommonJS module                    
-            Harness.Compiler.compileUnits(Harness.Compiler.CompilerInstance.RunTime, units, function (result) {
+            
+            // compile as CommonJS module        
+            harnessCompiler.compileUnit(fileName, function (result) {
                 var jsResult = result.commonJSResult;
                 for (var i = 0; i < jsResult.errors.length; i++) {
-                    errorDescriptionLocal += jsResult.errors[i].file + ' line ' + jsResult.errors[i].line + ' col ' + jsResult.errors[i].column + ': ' + jsResult.errors[i].message + '\r\n';
+                    errorDescriptionLocal += Harness.getFileName(jsResult.errors[i].file) + ' line ' + jsResult.errors[i].line + ' col ' + jsResult.errors[i].column + ': ' + jsResult.errors[i].message + '\r\n';
                 }
                 jsOutputSync = jsResult.code;
 
@@ -74,19 +77,12 @@ class CompilerBaselineRunner extends RunnerBase {
                 // AMD output
                 var amdResult = result.amdResult;
                 for (var i = 0; i < amdResult.errors.length; i++) {
-                    errorDescriptionAsync += amdResult.errors[i].file + ' line ' + amdResult.errors[i].line + ' col ' + amdResult.errors[i].column + ': ' + amdResult.errors[i].message + '\r\n';
+                    errorDescriptionAsync += Harness.getFileName(amdResult.errors[i].file) + ' line ' + amdResult.errors[i].line + ' col ' + amdResult.errors[i].column + ': ' + amdResult.errors[i].message + '\r\n';
                 }
                 jsOutputAsync = amdResult.code;
-                if (declFileCode) {
-                    // this isn't adding any real test value, just avoids having to rebaseline a bunch of AMD tests for now
-                    // not sufficient for multi file tests that had .d.ts but the commonjs baseline already has this baselined properly
-                    jsOutputAsync += '\r\n' + declFileCode;
-                }
-
-
             }, function (settings?: TypeScript.CompilationSettings) {
                 tcSettings.push({ flag: "module", value: "commonjs" });
-                Harness.Compiler.setCompilerSettings(tcSettings, Harness.Compiler.CompilerInstance.RunTime);
+                harnessCompiler.setCompilerSettings(tcSettings);
             });
 
             // check errors
@@ -104,18 +100,8 @@ class CompilerBaselineRunner extends RunnerBase {
             if (this.decl && declFileCode) {
                 var declErrors = '';
                 // For single file tests we don't want the baseline file to be named 0.d.ts
-                var realDeclName = (lastUnit.name === '0.ts') ? justName.replace('.ts', '.d.ts') : declFileName;
-                // For multi-file tests we need to include their dependencies in case the .d.ts has an import so just fix up a new lastUnit
-                var newLastUnit = {
-                    content: declFileCode,
-                    name: realDeclName,
-                    fileOptions: lastUnit.fileOptions,
-                    originalFilePath: lastUnit.originalFilePath,
-                    references: lastUnit.references
-                };
-                var newUnits = units.slice(0, units.length - 1).concat([newLastUnit]);
-                
-                Harness.Compiler.compileUnits(Harness.Compiler.CompilerInstance.RunTime, newUnits, function (result) {
+                var realDeclName = (lastUnit.name === '0.ts') ? justName.replace('.ts', '.d.ts') : declFileName;               
+                harnessCompiler.compileUnit(realDeclName, function (result) {
                     var jsOutputSync = result.commonJSResult;
                     for (var i = 0; i < jsOutputSync.errors.length; i++) {
                         declErrors += jsOutputSync.errors[i].file + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';

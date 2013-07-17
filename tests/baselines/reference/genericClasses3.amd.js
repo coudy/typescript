@@ -25,7 +25,7 @@ var u = v2.a;
 
 var z = v2.b;
 
-////[0.d.ts]
+////[genericClasses3.d.ts]
 declare class B<T> {
     public a: T;
     public b: T;

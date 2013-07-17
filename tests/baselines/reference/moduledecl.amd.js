@@ -193,7 +193,7 @@ var m3aVar = mAmbient.m3.aVar;
 var m3bB;
 var m3eVar;
 
-////[0.d.ts]
+////[moduledecl.d.ts]
 declare module a {
 }
 declare module b.a {

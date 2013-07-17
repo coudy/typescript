@@ -7,7 +7,7 @@ exports.b = a.x;
 exports.bVal = exports.b;
 
 
-////[0.d.ts]
+////[internalAliasVarInsideTopLevelModuleWithExport.d.ts]
 export declare module a {
     var x: number;
 }

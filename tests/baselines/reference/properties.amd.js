@@ -1,5 +1,4 @@
-////[0.js.map]
-{"version":3,"file":"0.js","sourceRoot":"","sources":["file:///0.ts"],"names":["MyClass","MyClass.constructor","MyClass.get_Count","MyClass.set_Count"],"mappings":"AACA;IAAAA;;AAWCA,IATGA;QAAAA,KAAAA;YAEIE,OAAOA,EAAEA,CAACA;QACdA,CAACA;QAEDF,KAAAA,UAAiBA,KAAaA;YAE1BG,EAAEA;QACNA,CAACA;;;;AALAH;IAMLA;AAACA,CAAAA,IAAA"}
+{"version":3,"file":"properties.js","sourceRoot":"","sources":["file:///C:/VSClient_1/src/typescript/public/tests/cases/compiler/properties.ts"],"names":["MyClass","MyClass.constructor","MyClass.get_Count","MyClass.set_Count"],"mappings":"AACA;IAAAA;;AAWCA,IATGA;QAAAA,KAAAA;YAEIE,OAAOA,EAAEA,CAACA;QACdA,CAACA;QAEDF,KAAAA,UAAiBA,KAAaA;YAE1BG,EAAEA;QACNA,CAACA;;;;AALAH;IAMLA;AAACA,CAAAA,IAAA"}
 var MyClass = (function () {
     function MyClass() {
     }
@@ -16,9 +15,9 @@ var MyClass = (function () {
 
     return MyClass;
 })();
-//# sourceMappingURL=0.js.map
+//# sourceMappingURL=properties.js.map
 
-////[0.d.ts]
+////[properties.d.ts]
 declare class MyClass {
     public Count : number;
 }

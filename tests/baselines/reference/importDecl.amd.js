@@ -49,7 +49,7 @@ define(["require", "exports", "m4", "glo_m4", "fncOnly_m4", "private_m4", "m5", 
     exports.useMultiImport_m4_f4 = exports.multiImport_m4.foo();
 });
 
-////[0.d.ts]
+////[importDecl.d.ts]
 export declare module "m4" {
     class d {
     }

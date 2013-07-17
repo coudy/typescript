@@ -9,7 +9,7 @@ define(["require", "exports"], function(require, exports) {
     return m;
 });
 
-////[0.d.ts]
+////[declFileExportAssignmentImportInternalModule.d.ts]
 declare module m3 {
     module m2 {
         interface connectModule {

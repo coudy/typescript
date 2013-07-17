@@ -5,7 +5,7 @@ var c;
     c.x.foo();
 })(c || (c = {}));
 
-////[0.d.ts]
+////[internalAliasUninitializedModule.d.ts]
 declare module a.b {
     interface I {
         foo();

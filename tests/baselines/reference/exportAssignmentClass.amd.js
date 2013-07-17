@@ -1,4 +1,3 @@
-////[exportEqualsClass_A.js]
 define(["require", "exports"], function(require, exports) {
     var C = (function () {
         function C() {
@@ -11,8 +10,7 @@ define(["require", "exports"], function(require, exports) {
     return C;
 });
 
-////[exportEqualsClass_B.js]
-define(["require", "exports", "exportEqualsClass_A"], function(require, exports, __D__) {
+define(["require", "exports", "exportAssignmentClass_A"], function(require, exports, __D__) {
     var D = __D__;
 
     var d = new D();

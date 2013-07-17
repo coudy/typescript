@@ -70,7 +70,7 @@ var f2 = function () {
     return "string";
 };
 
-////[0.d.ts]
+////[funcdecl.d.ts]
 declare function simpleFunc(): string;
 declare var simpleFuncVar: () => string;
 declare function anotherFuncNoReturn(): void;

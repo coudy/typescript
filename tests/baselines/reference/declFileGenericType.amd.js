@@ -83,7 +83,7 @@ define(["require", "exports"], function(require, exports) {
     exports.j = C.F6;
 });
 
-////[0.d.ts]
+////[declFileGenericType.d.ts]
 export declare module C {
     class A<T> {
     }

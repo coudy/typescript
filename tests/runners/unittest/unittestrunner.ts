@@ -33,10 +33,11 @@ class UnitTestRunner extends RunnerBase {
 
         var outfile = new Harness.Compiler.WriterAggregator()
         var outerr = new Harness.Compiler.WriterAggregator();
+        var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.DesignTime);
 
         for (var i = 0; i < this.tests.length; i++) {
             try {
-                Harness.Compiler.addUnit(Harness.Compiler.CompilerInstance.DesignTime, IO.readFile(this.tests[i]).contents, this.tests[i]);
+                harnessCompiler.addInputFile(this.tests[i]);
             }
             catch (e) {
                 IO.printLine('FATAL ERROR COMPILING TEST: ' + this.tests[i]);
@@ -44,10 +45,10 @@ class UnitTestRunner extends RunnerBase {
             }
         }
 
-        Harness.Compiler.compile(Harness.Compiler.CompilerInstance.DesignTime);
+        harnessCompiler.compile(false);
         
         var stdout = new Harness.Compiler.EmitterIOHost();
-        var emitDiagnostics = Harness.Compiler.emitAll(Harness.Compiler.CompilerInstance.DesignTime, stdout);
+        var emitDiagnostics = harnessCompiler.emitAll(stdout);
         var results = stdout.toArray();
         var lines = [];
         results.forEach(v => lines = lines.concat(v.file.lines));
@@ -57,7 +58,7 @@ class UnitTestRunner extends RunnerBase {
             var useMinimalDefaultLib = this.testType !== 'samples'
             Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, useMinimalDefaultLib);
         });
-
+        
         if (typeof require !== "undefined") {
             var vm = require('vm');
             vm.runInNewContext(code,

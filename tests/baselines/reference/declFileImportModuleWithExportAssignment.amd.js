@@ -1,11 +1,9 @@
-////[declFileImportModuleWithExportAssignment_0.js]
 define(["require", "exports"], function(require, exports) {
     var m2;
     
     return m2;
 });
 
-////[declFileImportModuleWithExportAssignment_1.js]
 define(["require", "exports", "declFileImportModuleWithExportAssignment_0"], function(require, exports, __a1__) {
     /**This is on import declaration*/
     var a1 = __a1__;
@@ -14,7 +12,24 @@ define(["require", "exports", "declFileImportModuleWithExportAssignment_0"], fun
     exports.a.test1(null, null, null);
 });
 
-////[declFileImportModuleWithExportAssignment_1.d.ts]
+////[declFileImportModuleWithExportAssignment_0.d.ts]
+declare module m2 {
+    interface connectModule {
+        (res, req, next): void;
+    }
+    interface connectExport {
+        use: (mod: connectModule) => connectExport;
+        listen: (port: number) => void;
+    }
+}
+declare var m2: {
+    test1: m2.connectModule;
+    test2(): m2.connectModule;
+    (): m2.connectExport;
+};
+export = m2;
+
+////[declFileImportModuleWithExportAssignment.d.ts]
 /**This is on import declaration*/
 export import a1 = require("declFileImportModuleWithExportAssignment_0");
 export declare var a: {

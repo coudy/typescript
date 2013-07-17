@@ -8,7 +8,7 @@ var List = (function () {
     return List;
 })();
 
-////[0.d.ts]
+////[genericConstraintDeclaration.d.ts]
 declare class List<T extends {}> {
     static empty<T extends {}>(): List<T>;
 }

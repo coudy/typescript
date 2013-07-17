@@ -1,4 +1,4 @@
-// @Filename: exportEqualsEnum_A.ts
+// @Filename: exportAssignmentEnum_A.ts
 enum E {
 	A,
 	B,
@@ -7,8 +7,8 @@ enum E {
 
 export = E;
 
-// @Filename: exportEqualsEnum_B.ts
-import EnumE = require("exportEqualsEnum_A");
+// @Filename: exportAssignmentEnum_B.ts
+import EnumE = require("exportAssignmentEnum_A");
 
 var a = EnumE.A;
 var b = EnumE.B;

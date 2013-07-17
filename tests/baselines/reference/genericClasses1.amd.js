@@ -8,7 +8,7 @@ var v1 = new C();
 
 var y = v1.x;
 
-////[0.d.ts]
+////[genericClasses1.d.ts]
 declare class C<T> {
     public x: T;
 }

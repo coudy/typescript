@@ -80,7 +80,7 @@ for (var k = 0; k < 30; k++) {
 }
 var b = 10;
 
-////[0.d.ts]
+////[vardecl.d.ts]
 declare var simpleVar;
 declare var anotherVar: any;
 declare var varWithSimpleType: number;

@@ -2,5 +2,5 @@ function somefn() {
     return somefn;
 }
 
-////[0.d.ts]
+////[functionReturningItself.d.ts]
 declare function somefn();

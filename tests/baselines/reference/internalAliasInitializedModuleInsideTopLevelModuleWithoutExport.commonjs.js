@@ -15,7 +15,7 @@ var b = a.b;
 exports.x = new b.c();
 
 
-////[0.d.ts]
+////[internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.d.ts]
 export declare module a.b {
     class c {
     }

@@ -1,4 +1,3 @@
-////[externalModuleAssignToVar_ext.js]
 var D = (function () {
     function D() {
     }
@@ -8,7 +7,6 @@ var D = (function () {
 module.exports = D;
 
 
-////[externalModuleAssignToVar_core.js]
 var ext = require('ext');
 var y1 = ext;
 y1 = ext;

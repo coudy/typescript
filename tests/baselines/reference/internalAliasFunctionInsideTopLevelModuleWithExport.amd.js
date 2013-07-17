@@ -13,7 +13,7 @@ define(["require", "exports"], function(require, exports) {
     exports.bVal2 = exports.b;
 });
 
-////[0.d.ts]
+////[internalAliasFunctionInsideTopLevelModuleWithExport.d.ts]
 export declare module a {
     function foo(x: number): number;
 }

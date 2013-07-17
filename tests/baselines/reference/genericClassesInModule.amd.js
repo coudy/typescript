@@ -18,7 +18,7 @@ var Foo;
 
 var a = new Foo.B();
 
-////[0.d.ts]
+////[genericClassesInModule.d.ts]
 declare module Foo {
     class B<T> {
     }

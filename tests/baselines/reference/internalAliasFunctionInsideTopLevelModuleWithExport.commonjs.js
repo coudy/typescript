@@ -12,7 +12,7 @@ exports.bVal = exports.b(10);
 exports.bVal2 = exports.b;
 
 
-////[0.d.ts]
+////[internalAliasFunctionInsideTopLevelModuleWithExport.d.ts]
 export declare module a {
     function foo(x: number): number;
 }

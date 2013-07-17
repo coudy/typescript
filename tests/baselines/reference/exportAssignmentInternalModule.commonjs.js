@@ -1,4 +1,3 @@
-////[exportEqualsModule_A.js]
 var M;
 (function (M) {
     M.x;
@@ -8,8 +7,7 @@ var M;
 module.exports = M;
 
 
-////[exportEqualsModule_B.js]
-var modM = require("./exportEqualsModule_A");
+var modM = require("./exportAssignmentInternalModule_A");
 
 var n = modM.x;
 

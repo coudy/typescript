@@ -1,3 +1,2 @@
-////[0.js.map]
-{"version":3,"file":"0.js","sourceRoot":"","sources":["file:///0.ts"],"names":[],"mappings":""}
-//# sourceMappingURL=0.js.map
+{"version":3,"file":"sourceMap-EmptyFile1.js","sourceRoot":"","sources":["file:///C:/VSClient_1/src/typescript/public/tests/cases/compiler/sourceMap-EmptyFile1.ts"],"names":[],"mappings":""}
+//# sourceMappingURL=sourceMap-EmptyFile1.js.map
