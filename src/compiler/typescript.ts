@@ -378,6 +378,18 @@ module TypeScript {
 
         public setEmitOptions(ioHost: EmitterIOHost): Diagnostic {
             this.emitOptions.ioHost = ioHost;
+            if (!this.emitOptions.compilationSettings.mapSourceFiles) {
+                // Error to specify --mapRoot or --sourceRoot without mapSourceFiles
+                if (this.emitOptions.compilationSettings.mapRoot) {
+                    if (this.emitOptions.compilationSettings.sourceRoot) {
+                        return new Diagnostic(null, 0, 0, DiagnosticCode.Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                    } else {
+                        return new Diagnostic(null, 0, 0, DiagnosticCode.Option_mapRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                    }
+                } else if (this.emitOptions.compilationSettings.sourceRoot) {
+                    return new Diagnostic(null, 0, 0, DiagnosticCode.Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                }
+            }
 
             this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
             this.emitOptions.compilationSettings.sourceRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));

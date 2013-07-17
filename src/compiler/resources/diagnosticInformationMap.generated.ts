@@ -1294,6 +1294,18 @@ module TypeScript {
     "code": 5037,
     "category": DiagnosticCategory.Error
   },
+  "Option mapRoot cannot be specified without specifying sourcemap option.": {
+    "code": 5038,
+    "category": DiagnosticCategory.Error
+  },
+  "Option sourceRoot cannot be specified without specifying sourcemap option.": {
+    "code": 5039,
+    "category": DiagnosticCategory.Error
+  },
+  "Options mapRoot and sourceRoot cannot be specified without specifying sourcemap option.": {
+    "code": 5040,
+    "category": DiagnosticCategory.Error
+  },
   "Concatenate and emit output to single file | Redirect output structure to the directory": {
     "code": 6001,
     "category": DiagnosticCategory.Message
