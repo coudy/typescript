@@ -1016,20 +1016,6 @@ module TypeScript {
             super.visitImportDeclaration(node);
         }
 
-        private moduleTargetIsUnspecified(): boolean {
-            return this.syntaxTree.parseOptions().moduleGenTarget() === ModuleGenTarget.Unspecified;
-        }
-
-        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
-            if (this.moduleTargetIsUnspecified()) {
-                this.pushDiagnostic1(this.position(), node, DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
-                this.skip(node);
-                return;
-            }
-
-            super.visitExternalModuleReference(node);
-        }
-
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): void {
             if (this.checkForReservedName(node, node.moduleName, DiagnosticCode.Module_name_cannot_be_0) ||
                 this.checkForDisallowedDeclareModifier(node.modifiers) ||
@@ -1053,13 +1039,6 @@ module TypeScript {
                     var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
                     this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral,
                         DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
-                    this.skip(node);
-                    return;
-                }
-
-                if (this.moduleTargetIsUnspecified()) {
-                    this.pushDiagnostic1(this.childFullStart(node, node.stringLiteral), node.stringLiteral,
-                        DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
                     this.skip(node);
                     return;
                 }
@@ -1431,43 +1410,13 @@ module TypeScript {
         public visitSourceUnit(node: SourceUnitSyntax): void {
             if (this.checkFunctionOverloads(node, node.moduleElements) ||
                 this.checkForDisallowedExports(node, node.moduleElements) ||
-                this.checkForMultipleExportAssignments(node, node.moduleElements) ||
-                this.checkForExportWithoutModuleGenTarget(node)) {
+                this.checkForMultipleExportAssignments(node, node.moduleElements)) {
                 
                 this.skip(node);
                 return;
             }
 
             super.visitSourceUnit(node);
-        }
-
-        private checkForExportWithoutModuleGenTarget(node: SourceUnitSyntax): boolean {
-            if (this.moduleTargetIsUnspecified()) {
-                var currentElementFullStart = this.childFullStart(node, node.moduleElements);
-
-                for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
-                    var child = node.moduleElements.childAt(i);
-                    if (child.kind() === SyntaxKind.ExportAssignment) {
-                        this.pushDiagnostic1(currentElementFullStart, child,
-                            DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
-                        return true;
-                    }
-                    else {
-                        var exportKeyword = SyntaxUtilities.getExportKeyword(child);
-                        if (exportKeyword) {
-                            var exportPosition = currentElementFullStart + Syntax.childOffset((<any>child).modifiers, exportKeyword);
-
-                            this.pushDiagnostic1(exportPosition, exportKeyword,
-                                DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler);
-                            return true;
-                        }
-                    }
-
-                    currentElementFullStart += child.fullWidth();
-                }
-            }
-
-            return false;
         }
     }
 }

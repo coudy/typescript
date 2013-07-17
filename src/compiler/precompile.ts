@@ -217,7 +217,7 @@ module TypeScript {
     }
 
     export function getParseOptions(settings: CompilationSettings): ParseOptions {
-        return new ParseOptions(settings.codeGenTarget, settings.moduleGenTarget, settings.allowAutomaticSemicolonInsertion);
+        return new ParseOptions(settings.codeGenTarget, settings.allowAutomaticSemicolonInsertion);
     }
 
 } // Tools

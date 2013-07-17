@@ -373,7 +373,7 @@ module TypeScript {
             return dirPath;
         }
 
-        public parseEmitOption(ioHost: EmitterIOHost): Diagnostic {
+        public setEmitOptions(ioHost: EmitterIOHost): Diagnostic {
             this.emitOptions.ioHost = ioHost;
 
             this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
@@ -413,7 +413,48 @@ module TypeScript {
                 return this.updateCommonDirectoryPath();
             }
 
+            if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Unspecified) {
+                var externalModuleDiagnostic = this.checkCompilerForExternalModule();
+                if (externalModuleDiagnostic) {
+                    return externalModuleDiagnostic;
+                }
+            }
+
             return null;
+        }
+
+        private checkCompilerForExternalModule(): Diagnostic {
+            var fileNames = this.fileNameToDocument.getAllKeys();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileName[i];
+                var document = this.getDocument(fileName);
+                var script = document.script;
+                if (this.scriptContainsExternalModule(script)) {
+                    return new Diagnostic(fileName, 0, 0, DiagnosticCode.Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler, null);
+                }
+            }
+
+            return null;
+        }
+
+        private scriptContainsExternalModule(script: Script): boolean {
+            if (script.topLevelMod) {
+                // There was a top level export or 'import ... = require' in the file.  This script 
+                // has an external module.
+                return true;
+            }
+
+            for (var i = 0, n = script.moduleElements.members.length; i < n; i++) {
+                var moduleElement = script.moduleElements.members[i];
+                if (moduleElement.nodeType() === NodeType.ModuleDeclaration) {
+                    var moduleDeclaration = <ModuleDeclaration>moduleElement;
+                    if (isQuoted(moduleDeclaration.name.actualText)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public getScripts(): Script[] {
@@ -608,7 +649,7 @@ module TypeScript {
         public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): Diagnostic[] {
             var start = new Date().getTime();
 
-            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            var optionsDiagnostic = this.setEmitOptions(ioHost);
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
             }
@@ -659,7 +700,7 @@ module TypeScript {
         // Emit single file if outputMany is specified, else emit all
         // Will not throw exceptions.
         public emitUnit(fileName: string, ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): Diagnostic[] {
-            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            var optionsDiagnostic = this.setEmitOptions(ioHost);
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
             }

@@ -766,7 +766,7 @@ module Harness {
             compiler.settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
             compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
 
-            var diagnostic = compiler.parseEmitOption(stdout);
+            var diagnostic = compiler.setEmitOptions(stdout);
             if (diagnostic) {
                 throw new Error(diagnostic.message());
             }

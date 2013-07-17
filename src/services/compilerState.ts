@@ -303,7 +303,7 @@ module Services {
             var diagnostics: TypeScript.Diagnostic[];
 
             // Parse the emit options
-            diagnostics = this.compiler.parseEmitOption(emitterIOHost) || [];
+            diagnostics = this.compiler.setEmitOptions(emitterIOHost) || [];
             result.diagnostics = result.diagnostics.concat(diagnostics);
             if (this.containErrors(diagnostics)) {
                 return result;
