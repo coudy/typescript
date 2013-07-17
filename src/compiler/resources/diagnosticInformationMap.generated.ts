@@ -1290,7 +1290,7 @@ module TypeScript {
     "code": 5036,
     "category": DiagnosticCategory.Error
   },
-  "Use of an external module requires the '--module' flag to be supplied to the compiler.": {
+  "Cannot compile external modules unless the '--module' flag is provided.": {
     "code": 5037,
     "category": DiagnosticCategory.Error
   },

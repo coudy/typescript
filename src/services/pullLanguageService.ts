@@ -678,7 +678,7 @@ module Services {
             return this.compilerState.getSemanticDiagnostics(fileName);
         }
 
-        public getEmitOutput(fileName: string): EmitOutput{
+        public getEmitOutput(fileName: string): EmitOutput {
             this.compilerState.refresh();
             return this.compilerState.getEmitOutput(fileName);
         }

@@ -323,7 +323,7 @@ module TypeScript {
         Could_not_delete_file_0: "Could not delete file '{0}'",
         Could_not_create_directory_0: "Could not create directory '{0}'",
         Error_while_executing_file_0: "Error while executing file '{0}': ",
-        Use_of_an_external_module_requires_the_module_flag_to_be_supplied_to_the_compiler: "Use of an external module requires the '--module' flag to be supplied to the compiler.",
+        Cannot_compile_external_modules_unless_the_module_flag_is_provided: "Cannot compile external modules unless the '--module' flag is provided.",
         Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory: "Concatenate and emit output to single file | Redirect output structure to the directory",
         Generates_corresponding_0_file: "Generates corresponding {0} file",
         Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations: "Specifies the location where debugger should locate map files instead of generated locations.",
