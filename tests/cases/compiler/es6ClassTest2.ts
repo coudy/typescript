@@ -44,7 +44,7 @@ var m3 = new BasicMonster("1", 100);
 var m4 = new BasicMonster("2", 100);
 m3.attack(m4);
 m3.health = 0;
-console.log((<any>m5.isAlive).toString());
+//console.log((<any>m5.isAlive).toString());
 
 class OverloadedMonster {
     constructor(name: string);
@@ -55,7 +55,7 @@ class OverloadedMonster {
     attack();
     attack(a: any);
     attack(target?) {
-        WScript.Echo("Attacks " + target);
+        //WScript.Echo("Attacks " + target);
     }
 
     isAlive = true;
@@ -65,7 +65,7 @@ var m5 = new OverloadedMonster("1");
 var m6 = new OverloadedMonster("2");
 m5.attack(m6);
 m5.health = 0;
-console.log((<any>m5.isAlive).toString());
+//console.log((<any>m5.isAlive).toString());
 
 class SplatMonster {
     constructor(...args: string[]) { }

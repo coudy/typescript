@@ -3,7 +3,6 @@ class BaseClass {
         this._init();
     }
     private _init() {
-        alert("base init called");
     }
 }
 class DerivedClass extends BaseClass {
@@ -11,7 +10,6 @@ class DerivedClass extends BaseClass {
         super();
     }
     private _init() {
-        alert("derived init called");
     }
 }
 new DerivedClass();

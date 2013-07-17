@@ -1,4 +1,3 @@
-//bug #655547
 class Comment {
 
     public getDocCommentText()

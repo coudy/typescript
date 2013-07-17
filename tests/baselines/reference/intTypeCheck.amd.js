@@ -1,3 +1,11 @@
+var Base = (function () {
+    function Base() {
+    }
+    Base.prototype.foo = function () {
+    };
+    return Base;
+})();
+
 var anyVar;
 
 //
@@ -18,7 +26,7 @@ var obj1 = {
 };
 var obj2 = new Object();
 var obj3 = new obj0();
-var obj4 = new Image();
+var obj4 = new Base();
 var obj5 = null;
 var obj6 = function () {
 };
@@ -35,7 +43,7 @@ var obj11;
 var obj12 = {};
 var obj13 = new Object();
 var obj14 = new obj11();
-var obj15 = new Image();
+var obj15 = new Base();
 var obj16 = null;
 var obj17 = function () {
     return 0;
@@ -53,7 +61,7 @@ var obj22;
 var obj23 = {};
 var obj24 = new Object();
 var obj25 = new obj22();
-var obj26 = new Image();
+var obj26 = new Base();
 var obj27 = null;
 var obj28 = function () {
 };
@@ -70,7 +78,7 @@ var obj33;
 var obj34 = {};
 var obj35 = new Object();
 var obj36 = new obj33();
-var obj37 = new Image();
+var obj37 = new Base();
 var obj38 = null;
 var obj39 = function () {
 };
@@ -87,7 +95,7 @@ var obj44;
 var obj45 = {};
 var obj46 = new Object();
 var obj47 = new obj44();
-var obj48 = new Image();
+var obj48 = new Base();
 var obj49 = null;
 var obj50 = function () {
 };
@@ -104,7 +112,7 @@ var obj55;
 var obj56 = {};
 var obj57 = new Object();
 var obj58 = new obj55();
-var obj59 = new Image();
+var obj59 = new Base();
 var obj60 = null;
 var obj61 = function () {
 };
@@ -121,7 +129,7 @@ var obj66;
 var obj67 = {};
 var obj68 = new Object();
 var obj69 = new obj66();
-var obj70 = new Image();
+var obj70 = new Base();
 var obj71 = null;
 var obj72 = function () {
 };
@@ -138,7 +146,7 @@ var obj77;
 var obj78 = {};
 var obj79 = new Object();
 var obj80 = new obj77();
-var obj81 = new Image();
+var obj81 = new Base();
 var obj82 = null;
 var obj83 = function () {
 };

@@ -23,13 +23,11 @@ export class TestRunner {
     }
     public run() {
         var success = true;
-        console.log("Running tests...");
         for (var test in this.tests) {
             var exception = false;
             var testcase = <TestCase>this.tests[test]
             var testResult: boolean = false;
             try {
-                console.log("Executing test: " + testcase.name);
                 testResult = testcase.test();
             }
             catch (e) {
@@ -44,21 +42,17 @@ export class TestRunner {
                     }
                 } 
                 if (testResult === false) {
-                    console.log(e.message);
+                    //console.log(e.message);
                 }
             }
             if ((testcase.errorMessageRegEx !== undefined) && !exception) {
-                console.log("*** Expected exception and none occurred! ***");
                 success = false;
             } else if (!testResult) {
-                console.log("*** TEST FAILED ***");
                 success = false;
             }
         }
         if (success) {
-            console.log("Test run completed successfully.");
         } else {
-            console.log("!!!Test run completed with FAILURES!!!");
         }
     }
 }

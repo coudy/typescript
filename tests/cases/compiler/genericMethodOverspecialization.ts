@@ -1,5 +1,14 @@
 var names = ["list", "table1", "table2", "table3", "summary"];
 
+interface HTMLElement {
+    clientWidth: number;
+}
+
+declare var document: Document;
+interface Document {
+    getElementById(elementId: string): HTMLElement;
+}
+
 var elements = names.map(function (name) {
     return document.getElementById(name);
 });

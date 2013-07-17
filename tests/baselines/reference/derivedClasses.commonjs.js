@@ -49,7 +49,7 @@ var Blue = (function (_super) {
 var r = new Red();
 var b = new Blue();
 
-WScript.Echo(r.shade());
-WScript.Echo(r.hue());
-WScript.Echo(b.shade());
-WScript.Echo(b.hue());
+r.shade();
+r.hue();
+b.shade();
+b.hue();

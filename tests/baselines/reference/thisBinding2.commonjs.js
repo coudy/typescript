@@ -18,7 +18,7 @@ var messenger = {
     start: function () {
         var _this = this;
         return setTimeout(function () {
-            alert(_this.message);
+            var x = _this.message;
         }, 3000);
     }
 };

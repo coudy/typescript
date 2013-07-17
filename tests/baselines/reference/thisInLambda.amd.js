@@ -19,7 +19,7 @@ var myCls = (function () {
         var _this = this;
         myFn(function () {
             myFn(function () {
-                console.log(_this);
+                var x = _this;
             });
         });
     }

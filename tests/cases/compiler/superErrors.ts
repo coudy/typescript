@@ -8,7 +8,7 @@ function foo() {
 class User {
     name: string = "Bob";
     sayHello(): void {
-        console.log("Hello, " + this.name);
+        //console.log("Hello, " + this.name);
     }
 }
 

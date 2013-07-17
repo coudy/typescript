@@ -226,11 +226,6 @@ Point.prototype = {
     }
 };
 
-// contextually typing library methods
-window.onmousedown = function(ev) {
-    ev.bubbles;
-}
-
 interface A { x: string; }
 interface B extends A { }
 var x: B = { };

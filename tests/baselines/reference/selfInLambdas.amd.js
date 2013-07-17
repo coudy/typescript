@@ -3,8 +3,7 @@ var o = {
     start: function () {
         var _this = this;
         window.onmousemove = function () {
-            console.log("iteration: " + _this.counter++);
-
+            //console.log("iteration: " + this.counter++);
             var f = function () {
                 return _this.counter;
             };
@@ -17,12 +16,10 @@ var X = (function () {
         this.value = "value";
     }
     X.prototype.foo = function () {
-        var _this = this;
         var outer = function () {
-            console.log(_this.value);
-
+            //console.log(this.value); // works as expected
             var inner = function () {
-                console.log(_this.value);
+                //console.log(this.value); // is undefined
             };
 
             inner();

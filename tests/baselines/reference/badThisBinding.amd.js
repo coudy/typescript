@@ -3,7 +3,7 @@ var Greeter = (function () {
         var _this = this;
         foo(function () {
             bar(function () {
-                console.log(_this);
+                var x = _this;
             });
         });
     }

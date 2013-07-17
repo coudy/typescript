@@ -1,3 +1,11 @@
+var Base = (function () {
+    function Base() {
+    }
+    Base.prototype.foo = function () {
+    };
+    return Base;
+})();
+
 function each(collection, callback) {
     return null;
 }

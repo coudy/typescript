@@ -69,6 +69,10 @@ class AbstractMode implements IMode { public getInitialState(): IState { return 
 
 interface IState {}
 
+interface Window {
+    opener: Window;
+}
+declare var self: Window;
 
 module Sample.Thing.Languages.PlainText {
 	

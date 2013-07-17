@@ -9,7 +9,7 @@ var User = (function () {
         this.name = "Bob";
     }
     User.prototype.sayHello = function () {
-        console.log("Hello, " + this.name);
+        //console.log("Hello, " + this.name);
     };
     return User;
 })();

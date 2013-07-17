@@ -1,4 +1,3 @@
-//bug #655547
 var Comment = (function () {
     function Comment() {
     }

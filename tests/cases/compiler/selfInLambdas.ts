@@ -1,4 +1,13 @@
+interface MouseEvent {
+    x: number;
+    y: number;
+}
 
+declare var window: Window;
+interface Window {
+    onmousemove: (ev: MouseEvent) => any;
+    
+}
 var o = {
 
     counter: 0,
@@ -7,7 +16,7 @@ var o = {
 
         window.onmousemove = () => {
 
-            console.log("iteration: " + this.counter++);
+            //console.log("iteration: " + this.counter++);
 
             var f = () => this.counter;
 
@@ -24,10 +33,10 @@ class X {
 
 	public foo() {
 		var outer= () => {
-			console.log(this.value); // works as expected
+			//console.log(this.value); // works as expected
 
 			var inner= () => {
-				console.log(this.value); // is undefined
+				//console.log(this.value); // is undefined
 			}
 
 			inner();

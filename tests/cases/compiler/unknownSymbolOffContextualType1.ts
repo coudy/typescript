@@ -1,3 +1,10 @@
+declare var document: Document;
+interface Document {
+    getElementById(elementId: string): HTMLElement;
+}
+interface HTMLElement {
+    isDisabled: boolean;
+}
 function getMaxWidth(elementNames: string[]) {
     var elements = elementNames.map(function (name) {
         return document.getElementById(name);

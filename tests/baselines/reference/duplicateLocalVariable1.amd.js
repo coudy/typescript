@@ -25,13 +25,11 @@ define(["require", "exports"], function(require, exports) {
         };
         TestRunner.prototype.run = function () {
             var success = true;
-            console.log("Running tests...");
             for (var test in this.tests) {
                 var exception = false;
                 var testcase = this.tests[test];
                 var testResult = false;
                 try  {
-                    console.log("Executing test: " + testcase.name);
                     testResult = testcase.test();
                 } catch (e) {
                     exception = true;
@@ -45,21 +43,17 @@ define(["require", "exports"], function(require, exports) {
                         }
                     }
                     if (testResult === false) {
-                        console.log(e.message);
+                        //console.log(e.message);
                     }
                 }
                 if ((testcase.errorMessageRegEx !== undefined) && !exception) {
-                    console.log("*** Expected exception and none occurred! ***");
                     success = false;
                 } else if (!testResult) {
-                    console.log("*** TEST FAILED ***");
                     success = false;
                 }
             }
             if (success) {
-                console.log("Test run completed successfully.");
             } else {
-                console.log("!!!Test run completed with FAILURES!!!");
             }
         };
         return TestRunner;

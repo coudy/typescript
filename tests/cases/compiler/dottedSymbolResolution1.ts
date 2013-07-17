@@ -8,8 +8,10 @@ interface JQueryStatic {
     (object: JQuery): JQuery;
 }
 
+class Base { foo() { } }
+
 function each(collection: string, callback: (indexInArray: any, valueOfElement: any) => any): any;
-function each(collection: JQuery, callback: (indexInArray: number, valueOfElement: HTMLElement) => any): any;
+function each(collection: JQuery, callback: (indexInArray: number, valueOfElement: Base) => any): any;
 function each(collection: any, callback: (indexInArray: any, valueOfElement: any) => any): any {
     return null;
 }

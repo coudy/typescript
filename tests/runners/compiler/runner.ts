@@ -52,7 +52,7 @@ class CompilerBaselineRunner extends RunnerBase {
             // eventually to remove this limitation.
             for (var i = 0; i < tcSettings.length; ++i) {
                 if (tcSettings[i].flag == "disallowimplicitany" || tcSettings[i].flag === "target") {
-                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false /*minimalDefaultLife */, true /*noImplicitAny*/);
+                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, true /*noImplicitAny*/);
                     harnessCompiler.setCompilerSettings(tcSettings);
                     createNewInstance = true;
                     break;
@@ -126,7 +126,7 @@ class CompilerBaselineRunner extends RunnerBase {
                 }
             }
             if (createNewInstance) {
-                Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+                Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true);
                 createNewInstance = false;
             }
         });
@@ -135,7 +135,7 @@ class CompilerBaselineRunner extends RunnerBase {
     public initializeTests() {       
         describe("Setup compiler for compiler baselines", () => {
             // REVIEW: would like to use the minimal lib.d.ts but a bunch of tests need to be converted to use non-DOM APIs
-            Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+            Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true);
             this.parseOptions();
         });
 

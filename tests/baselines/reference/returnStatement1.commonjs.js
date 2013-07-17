@@ -1,6 +1,6 @@
 function f() {
     return function (s) {
-        console.log(s);
+        var x = null;
     };
     ("harmless extra line");
 }

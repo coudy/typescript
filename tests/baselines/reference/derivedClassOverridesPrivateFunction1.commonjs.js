@@ -9,7 +9,6 @@ var BaseClass = (function () {
         this._init();
     }
     BaseClass.prototype._init = function () {
-        alert("base init called");
     };
     return BaseClass;
 })();
@@ -19,7 +18,6 @@ var DerivedClass = (function (_super) {
         _super.call(this);
     }
     DerivedClass.prototype._init = function () {
-        alert("derived init called");
     };
     return DerivedClass;
 })(BaseClass);

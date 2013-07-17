@@ -1,20 +1,25 @@
+class Base { foo() { } }
+class Derived1 extends Base { bar() { } }
+class Derived2 extends Base { baz() { } }
+class Derived3 extends Base { biz() { } }
+
 interface Document2 {
-    createElement(tagName: string): HTMLElement;
-    createElement(tagName: 'canvas'): HTMLCanvasElement;
-    createElement(tagName: 'div'): HTMLDivElement;
-    createElement(tagName: 'span'): HTMLSpanElement;
+    createElement(tagName: string): Base;
+    createElement(tagName: 'canvas'): Derived1;
+    createElement(tagName: 'div'): Derived2;
+    createElement(tagName: 'span'): Derived3;
 }
 
 var d2: Document2;
 
 // these are ok
-var htmlElement: HTMLElement = d2.createElement("yo")
-var htmlCanvasElement: HTMLCanvasElement = d2.createElement("canvas");
-var htmlDivElement: HTMLDivElement = d2.createElement("div");
-var htmlSpanElement: HTMLSpanElement = d2.createElement("span");
+var htmlElement: Base = d2.createElement("yo")
+var htmlCanvasElement: Derived1 = d2.createElement("canvas");
+var htmlDivElement: Derived2 = d2.createElement("div");
+var htmlSpanElement: Derived3 = d2.createElement("span");
 
 // these are errors
-var htmlElement2: HTMLCanvasElement = d2.createElement("yo")
-var htmlCanvasElement2: HTMLSpanElement = d2.createElement("canvas");
-var htmlDivElement2: HTMLCanvasElement = d2.createElement("div");
-var htmlSpanElement2: HTMLCanvasElement = d2.createElement("span");
+var htmlElement2: Derived1 = d2.createElement("yo")
+var htmlCanvasElement2: Derived3 = d2.createElement("canvas");
+var htmlDivElement2: Derived1 = d2.createElement("div");
+var htmlSpanElement2: Derived1 = d2.createElement("span");

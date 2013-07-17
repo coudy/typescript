@@ -1,3 +1,5 @@
+declare function setTimeout(expression: any, msec?: number, language?: any): number;
+
 var messenger = {
     message: "Hello World",
     start: function() {

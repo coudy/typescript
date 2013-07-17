@@ -11,7 +11,7 @@ class myCls {
     constructor () {
         myFn(() => {
             myFn(() => {
-                console.log(this);
+                var x = this;
             });
         });
     }

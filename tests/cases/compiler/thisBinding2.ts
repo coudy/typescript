@@ -11,10 +11,10 @@ class C {
   }();
     }  
 }
-
+declare function setTimeout(expression: any, msec?: number, language?: any): number;
 var messenger = {
     message: "Hello World",
     start: function () {
-        return setTimeout(() => { alert(this.message); }, 3000);
+        return setTimeout(() => { var x = this.message; }, 3000);
     }
 };
