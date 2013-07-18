@@ -23,7 +23,7 @@ module Services {
         private _sourceText: TypeScript.IScriptSnapshot;
 
         constructor(
-            private fileName: string,
+            public fileName: string,
             private host: ILanguageServiceHost,
             public version: number,
             public isOpen: boolean,
@@ -55,13 +55,21 @@ module Services {
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
-                this.map.add(fileName, new HostCacheEntry(
+                this.map.add(TypeScript.switchToForwardSlashes(fileName), new HostCacheEntry(
                     fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName), this.host.getScriptByteOrderMark(fileName)));
             }
         }
 
         public contains(fileName: string): boolean {
-            return this.map.lookup(fileName) !== null;
+            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)) !== null;
+        }
+
+        public getHostFileName(fileName: string) {
+            var hostCacheEntry = this.map.lookup(TypeScript.switchToForwardSlashes(fileName));
+            if (hostCacheEntry) {
+                return hostCacheEntry.fileName;
+            }
+            return fileName;
         }
 
         public getFileNames(): string[]{
@@ -69,19 +77,19 @@ module Services {
         }
 
         public getVersion(fileName: string): number {
-            return this.map.lookup(fileName).version;
+            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).version;
         }
 
         public isOpen(fileName: string): boolean {
-            return this.map.lookup(fileName).isOpen;
+            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).isOpen;
         }
 
         public getByteOrderMark(fileName: string): ByteOrderMark {
-            return this.map.lookup(fileName).byteOrderMark;
+            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).byteOrderMark;
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-            return this.map.lookup(fileName).getScriptSnapshot();
+            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).getScriptSnapshot();
         }
     }
 
@@ -107,6 +115,10 @@ module Services {
 
         public compilationSettings() {
             return this._compilationSettings;
+        }
+
+        public getHostFileName(fileName: string) {
+            return this.hostCache.getHostFileName(fileName);
         }
 
         public getFileNames(): string[] {
@@ -255,11 +267,11 @@ module Services {
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
-            return this.compiler.getSyntacticDiagnostics(fileName);
+            return this.compiler.getSyntacticDiagnostics(TypeScript.switchToForwardSlashes(fileName));
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
-            return this.compiler.getSemanticDiagnostics(fileName);
+            return this.compiler.getSemanticDiagnostics(TypeScript.switchToForwardSlashes(fileName));
         }
 
         private getAllSyntacticDiagnostics(): TypeScript.Diagnostic[]{

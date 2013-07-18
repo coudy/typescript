@@ -222,7 +222,7 @@ module Services {
                             var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
                             var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
 
-                            result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
+                            result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), referenceAST.minChar, referenceAST.limChar, isWriteAccess));
 
                         }
                     }
@@ -253,7 +253,7 @@ module Services {
                         // Compare the length so we filter out strict superstrings of the symbol we are looking for
                         if (referenceAST.limChar - referenceAST.minChar === symbolName.length && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
                             var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
-                            result.push(new ReferenceEntry(fileName, referenceAST.minChar, referenceAST.limChar, isWriteAccess));
+                            result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), referenceAST.minChar, referenceAST.limChar, isWriteAccess));
                         }
                     }
                 });
@@ -515,7 +515,7 @@ module Services {
                     lastAddedSingature = { isDefinition: signature.isDefinition(), index: nextEntryIndex };
                 }
 
-                result[nextEntryIndex] = new DefinitionInfo(declaration.getScriptName(), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName);
+                result[nextEntryIndex] = new DefinitionInfo(this.compilerState.getHostFileName(declaration.getScriptName()), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName);
             }
 
             return result;
@@ -528,7 +528,7 @@ module Services {
         public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
             this.refresh();
 
-            var declarations = this.compilerState.getTopLevelDeclarations(fileName);
+            var declarations = this.compilerState.getTopLevelDeclarations(TypeScript.switchToForwardSlashes(fileName));
             if (!declarations) {
                 return null;
             }
@@ -552,7 +552,7 @@ module Services {
                     item.matchKind = MatchKind.exact;
                     item.kind = kindName;
                     item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
-                    item.fileName = fileName;
+                    item.fileName = this.compilerState.getHostFileName(fileName);
                     item.minChar = declaration.getSpan().start();
                     item.limChar = declaration.getSpan().end();
                     item.containerName = parentName || "";

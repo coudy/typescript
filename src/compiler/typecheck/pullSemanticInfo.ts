@@ -413,7 +413,7 @@ module TypeScript {
                         var decl = unit.getTopLevelDecls()[0].getChildDecls()[0];
 
                         if (decl.kind == PullElementKind.DynamicModule) {
-                            return decl;
+                            return [decl];
                         }
                     }
 

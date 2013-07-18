@@ -264,7 +264,7 @@ module TypeScript {
         }
 
         public getDocument(fileName: string): Document {
-            return this.fileNameToDocument.lookup(fileName);
+            return this.fileNameToDocument.lookup(TypeScript.switchToForwardSlashes(fileName));
         }
 
         public timeFunction(funcDescription: string, func: () => any): any {
@@ -272,11 +272,13 @@ module TypeScript {
         }
 
         public addSourceUnit(fileName: string,
-                             scriptSnapshot: IScriptSnapshot,
-                             byteOrderMark: ByteOrderMark,
-                             version: number,
-                             isOpen: boolean,
-                             referencedFiles: string[]= []): Document {
+            scriptSnapshot: IScriptSnapshot,
+            byteOrderMark: ByteOrderMark,
+            version: number,
+            isOpen: boolean,
+            referencedFiles: string[]= []): Document {
+
+            fileName = TypeScript.switchToForwardSlashes(fileName);
 
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
@@ -287,6 +289,7 @@ module TypeScript {
         }
 
         public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var document = this.getDocument(fileName);
                 var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);

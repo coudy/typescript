@@ -4303,6 +4303,14 @@ module TypeScript {
                     this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
                 }
 
+                if (aliasSymbol.assignedValue) {
+                    if (!aliasSymbol.assignedValue.isResolved) {
+                        this.resolveDeclaredSymbol(aliasSymbol.assignedValue, enclosingDecl, context);
+                    }
+                } else if (aliasSymbol.assignedContainer && !aliasSymbol.assignedContainer.isResolved) {
+                    this.resolveDeclaredSymbol(aliasSymbol.assignedContainer, enclosingDecl, context);
+                }
+
                 var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedValueSymbol();
 
                 if (exportAssignmentSymbol) {
