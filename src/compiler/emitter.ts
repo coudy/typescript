@@ -1225,11 +1225,12 @@ module TypeScript {
                         }
                     }
                 }
-                else if (parentKind === PullElementKind.Enum ||
+                else if (PullHelpers.symbolIsModule(parentSymbol) || 
+                    PullHelpers.symbolIsEnum(parentSymbol) || 
+                    PullHelpers.symbolIsModule(associatedParentSymbol) || 
+                    PullHelpers.symbolIsEnum(associatedParentSymbol) ||
                     parentKind === PullElementKind.DynamicModule ||
-                    associatedParentSymbolKind === PullElementKind.Container ||
-                    associatedParentSymbolKind === PullElementKind.DynamicModule ||
-                    associatedParentSymbolKind === PullElementKind.Enum) {
+                    associatedParentSymbolKind === PullElementKind.DynamicModule) {
                     // module
                         if (!hasFlag(pullDecl.flags, PullElementFlags.Exported) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();

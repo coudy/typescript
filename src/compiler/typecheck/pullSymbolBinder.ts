@@ -274,7 +274,9 @@ module TypeScript {
 
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
 
-                moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
+                if (!moduleInstanceTypeSymbol.getAssociatedContainerType()) {
+                    moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
+                }
 
                 // The instance symbol is further set up in bindVariableDeclaration
                 // (We add the declaration there, invalidate previous decls on edit and add the instance symbol to the parent)

@@ -2024,6 +2024,16 @@ module TypeScript {
             if (!type) {
                 type = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
 
+                if (type.kind == PullElementKind.Container) {
+                    var containerType = <PullContainerTypeSymbol>type;
+                    var instanceSymbol = containerType.getInstanceSymbol();
+                    // check if it is actually merged with class
+                    if (instanceSymbol &&
+                        (instanceSymbol.hasFlag(PullElementFlags.ClassConstructorVariable) || instanceSymbol.kind == PullElementKind.ConstructorMethod)) {
+                        type = instanceSymbol.type.getAssociatedContainerType();
+                    }
+                }
+
                 if (type && type.isAlias()) {
                     aliasType = <PullTypeAliasSymbol>type;
                     type = aliasType.getExportAssignedTypeSymbol();
@@ -2043,8 +2053,7 @@ module TypeScript {
                     if (type.kind & PullElementKind.SomeContainer) {
                         context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
                             DiagnosticCode.Type_reference_cannot_refer_to_container_0, [aliasType ? aliasType.toString() : type.toString()], enclosingDecl);
-                    }
-                    else {
+                    } else {
                         context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
                             DiagnosticCode.Type_reference_must_refer_to_type, null, enclosingDecl);
                     }
