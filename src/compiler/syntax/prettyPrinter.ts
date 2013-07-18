@@ -161,7 +161,7 @@ module TypeScript.PrettyPrinter {
         }
 
         private appendModuleElements(list: ISyntaxList): void {
-            var lastModuleElement = null;
+            var lastModuleElement: IModuleElementSyntax = null;
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 var moduleElement = <IModuleElementSyntax>list.childAt(i);
                 var newLineCount = this.newLineCountBetweenModuleElements(lastModuleElement, moduleElement);

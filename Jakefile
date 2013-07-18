@@ -371,6 +371,11 @@ var frontEndPath = "tests/cases/webharness/frontEnd.ts";
 var perfCompilerPath = "tests/cases/webharness/perfCompiler.js";
 compileFile(perfCompilerPath, [frontEndPath], [tscFile], [], true);
 
+// Fidelity Tests
+var fidelityTestsOutFile = "tests/Fidelity/program.js";
+var fidelityTestsInFile = "tests/Fidelity/Program.ts";
+compileFile(fidelityTestsOutFile, [fidelityTestsInFile], [tscFile], [], true);
+
 desc("Builds the web harness front end");
 task("test-harness", [perfCompilerPath]);
 
@@ -378,7 +383,7 @@ var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 
 desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile, perfCompilerPath].concat(libraryTargets), function() {	
+task("tests", [run, serviceFile, perfCompilerPath, fidelityTestsOutFile].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);	
@@ -419,11 +424,6 @@ task("baseline-accept", function() {
 	jake.rmRf(refBaseline);
 	fs.renameSync(localBaseline, refBaseline);
 });
-
-// Fidelity Tests
-var fidelityTestsOutFile = "tests/Fidelity/program.js";
-var fidelityTestsInFile = "tests/Fidelity/Program.ts";
-compileFile(fidelityTestsOutFile, [fidelityTestsInFile], [tscFile], [], true);
 
 // Syntax Generator
 var syntaxGeneratorOutFile = compilerDirectory + "syntax/SyntaxGenerator.js";

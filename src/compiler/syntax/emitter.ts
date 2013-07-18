@@ -777,7 +777,7 @@ module TypeScript.Emitter1 {
                 Syntax.token(SyntaxKind.CommaToken).withTrailingTrivia(this.space)
             ];
 
-            var propertyAssignments = [];
+            var propertyAssignments: ISyntaxNodeOrToken[] = [];
             for (i = 0; i < accessors.length; i++) {
                 var converted = this.convertMemberAccessor(accessors[i]);
                 converted = <PropertyAssignmentSyntax>this.changeIndentation(
@@ -883,7 +883,7 @@ module TypeScript.Emitter1 {
                 Syntax.list(statements),
                 Syntax.token(SyntaxKind.CloseBraceToken).withLeadingTrivia(this.indentationTriviaForStartOfNode(node)));
 
-            var callParameters = [];
+            var callParameters: ParameterSyntax[] = [];
             if (node.heritageClauses.childCount() > 0) {
                 callParameters.push(ParameterSyntax.create(Syntax.identifier("_super")));
             }
@@ -892,7 +892,7 @@ module TypeScript.Emitter1 {
                 ParameterListSyntax.create1().withParameters(
                     Syntax.separatedList(callParameters))).withTrailingTrivia(this.space);
 
-            var invocationParameters = [];
+            var invocationParameters: ISyntaxNodeOrToken[] = [];
             if (node.heritageClauses.childCount() > 0) {
                 var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(0);
                 if (heritageClause.typeNames.nonSeparatorCount() > 0) {
