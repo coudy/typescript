@@ -1166,7 +1166,7 @@ module Harness {
                             var units = TestCaseParser.makeUnitsFromTest(code, realFile);
                             for (var i = 0; i < units.testUnitData.length; i++) {
                                 var currentUnit = units.testUnitData[i];
-                                if (currentUnit.name = justName) {
+                                if (currentUnit.name === justName) {
                                     fileContents = currentUnit.content;
                                     break;
                                 }
