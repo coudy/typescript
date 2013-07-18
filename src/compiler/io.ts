@@ -445,7 +445,7 @@ var IO = (function() {
         }
     };
 
-    if (typeof ActiveXObject === "function")
+    if (typeof WScript !== "undefined" && typeof ActiveXObject === "function")
         return getWindowsScriptHostIO();
     else if (typeof module !== 'undefined' && module.exports)
         return getNodeIO();
