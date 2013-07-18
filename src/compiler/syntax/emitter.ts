@@ -811,7 +811,7 @@ module TypeScript.Emitter1 {
                 this.factory.invocationExpression(
                     MemberAccessExpressionSyntax.create1(Syntax.identifierName("Object"), Syntax.identifierName("defineProperty")),
                     ArgumentListSyntax.create1().withArguments(Syntax.separatedList(arguments))))
-                        .withLeadingTrivia(memberAccessor.leadingTrivia()).withTrailingTrivia(this.newLine);
+                .withLeadingTrivia(memberAccessor.leadingTrivia()).withTrailingTrivia(this.newLine);
         }
 
         private convertClassElements(classDeclaration: ClassDeclarationSyntax): IStatementSyntax[] {

@@ -439,7 +439,7 @@ class Program {
     }
 
     runIncremental(fileName: string,
-        languageVersion: TypeScript.LanguageVersion): void {
+                   languageVersion: TypeScript.LanguageVersion): void {
         if (!TypeScript.StringUtilities.endsWith(fileName, ".ts") && !TypeScript.StringUtilities.endsWith(fileName, ".js")) {
             return;
         }
