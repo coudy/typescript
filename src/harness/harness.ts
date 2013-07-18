@@ -636,7 +636,7 @@ module Harness {
             var t = new Timer();
             t.start();
 
-            var subBenchmark = function (name: string, f: (bench?: () => void) => void): void {
+            var subBenchmark = function (name: string, f: (bench?: () => void ) => void): void {
                 timeFunction(benchmark, description, name, f);
             }
 
@@ -992,7 +992,7 @@ module Harness {
 
             /** Reports all compilation errors except resolution specific errors */
             public reportCompilationErrors(errAggregator?: WriterAggregator) {
-                var units = [];
+                var units: string[] = [];
 
                 var files = this.getAllFilesInCompiler();
                 files.forEach(file => {
@@ -1115,7 +1115,7 @@ module Harness {
                 { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
                 { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
                 { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
-                { flag: 'disallowimplicitany', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noImplicitAny = value.toLowerCase() === 'true' ? true : false; } }, 
+                { flag: 'noimplicitany', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noImplicitAny = value.toLowerCase() === 'true' ? true : false; } }, 
             ];
 
             /** Does a deep copy of the given compiler's settings and emit options and returns
@@ -1143,7 +1143,7 @@ module Harness {
             getScriptSnapshot(filename: string): TypeScript.IScriptSnapshot {
                 var snapshot = this.fileNameToScriptSnapshot.lookup(filename);
                 if (!snapshot) {
-                    var fileContents = null;
+                    var fileContents: any = null;
                     try {
                         /* Cases we could be in:
                            1. filename = a single file test, there will only be 1 unit made from the test
@@ -1298,7 +1298,7 @@ module Harness {
             public normalizeToArray(arg: any) {
                 if ((Array.isArray && Array.isArray(arg)) || arg instanceof Array)
                     return arg;
-
+                
                 return [arg];
             }
 
@@ -1580,7 +1580,7 @@ module Harness {
             public toString() {
                 return this.file + "(" + this.line + "," + this.column + "): " + this.message;
             }
-        }
+        }      
     }
 
     /** Parses the test cases files 
@@ -1987,7 +1987,7 @@ module Harness {
             var result: Services.TextEdit[] = [];
 
             function mapEdits(edits: Services.TextEdit[]): { edit: Services.TextEdit; index: number; }[] {
-                var result:{ edit: Services.TextEdit; index: number; }[]  = [];
+                var result: { edit: Services.TextEdit; index: number; }[] = [];
                 for (var i = 0; i < edits.length; i++) {
                     result.push({ edit: edits[i], index: i });
                 }

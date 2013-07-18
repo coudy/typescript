@@ -24,7 +24,7 @@ class C {
 }
 
 class C1 {
-    getValue = null;
+    getValue = null;  // this should be an error
 
     public get castedGet() {
         return <any>this.getValue;  // this should not be an error

@@ -14,3 +14,5 @@ var x3;
 // this should not be an error
 var bar;
 var foo;
+var x4;
+var x5;

@@ -9,7 +9,7 @@
 ////var r2/*2*/ = x2[0];
 
 goTo.marker('1');
-verify.quickInfoIs('any');
+verify.quickInfoIs('string');
 
 goTo.marker('2');
-verify.quickInfoIs('any');
+verify.quickInfoIs('string');

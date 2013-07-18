@@ -83,7 +83,7 @@ module FourSlash {
         sourceColumn: number;
     }
 
-    interface IRangeLocationInformation  extends ILocationInformation {
+    interface IRangeLocationInformation extends ILocationInformation {
         marker?: Marker;
     }
 
@@ -121,7 +121,7 @@ module FourSlash {
         public formatCodeOptions: Services.FormatCodeOptions = null;
 
         constructor(public testData: FourSlashData) {
-            
+
             // Initialize the language service with all the scripts
             this.languageServiceShimHost = new Harness.TypeScriptLS();
 
@@ -459,8 +459,7 @@ module FourSlash {
                     throw new Error('verifyQuickInfoExists failed. Expected quick info NOT to exist');
                 }
             }
-            else
-            {
+            else {
                 if (!actualQuickInfo) {
                     throw new Error('verifyQuickInfoExists failed. Expected quick info to exist');
                 }
