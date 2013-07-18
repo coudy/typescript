@@ -1,4 +1,4 @@
-export import express = require("express")
+import express = require("express")
 import db = require("../db")
 
 export function index(req: express.ExpressServerRequest, res: express.ExpressServerResponse){

@@ -16,6 +16,6 @@ export declare module a {
     var x: number;
 }
 export declare module c {
-    import b = a.x;
+    export import b = a.x;
     var bVal: number;
 }

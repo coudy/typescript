@@ -21,7 +21,7 @@ export declare module a {
     function foo(x: number): number;
 }
 export declare module c {
-    import b = a.foo;
+    export import b = a.foo;
     var bVal: number;
     var bVal2: (x: number) => number;
 }

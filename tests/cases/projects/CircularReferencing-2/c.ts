@@ -1,4 +1,4 @@
-export import B = require("b");
+import B = require("b");
  
 export class C extends B.B { 
     constructor () { 

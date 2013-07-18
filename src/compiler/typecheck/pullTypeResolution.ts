@@ -1568,7 +1568,7 @@ module TypeScript {
                         importDeclSymbol.setAssignedTypeSymbol(identifierResolution.typeSymbol);
                         importDeclSymbol.setAssignedContainerSymbol(identifierResolution.containerSymbol);
                         if (identifierResolution.valueSymbol) {
-                            importDeclSymbol.setIsUsedAsValue();
+                            importDeclSymbol.isUsedAsValue = true;
                         }
                         this.semanticInfoChain.setSymbolForAST(importStatementAST.alias, importDeclSymbol, this.unitPath);
                         return null;
@@ -1628,7 +1628,7 @@ module TypeScript {
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
                 else if ((<PullContainerTypeSymbol>aliasedType).getExportAssignedValueSymbol()) {
-                    importDeclSymbol.setIsUsedAsValue();
+                    importDeclSymbol.isUsedAsValue = true;
                 }
 
                 if (aliasedType.isContainer()) {
@@ -4318,7 +4318,7 @@ module TypeScript {
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
-                aliasSymbol.setIsUsedAsValue();
+                aliasSymbol.isUsedAsValue = true;
 
                 if (!nameSymbol.isResolved) {
                     this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
@@ -4408,7 +4408,7 @@ module TypeScript {
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
-                (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
+                (<PullTypeAliasSymbol>lhs).isUsedAsValue = true;
                 lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
             }
 
@@ -4788,7 +4788,7 @@ module TypeScript {
 
             if (context.isResolvingClassExtendedType) {
                 if (lhs.isAlias()) {
-                    (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
+                    (<PullTypeAliasSymbol>lhs).isUsedAsValue = true;
                 }
             }
 
@@ -9039,15 +9039,32 @@ module TypeScript {
                     if (symbolPath.length && symbolPath[symbolPath.length - 1].kind === PullElementKind.DynamicModule) {
                         // Type from the dynamic module
                         var declSymbolPath = declSymbol.pathToRoot();
-                        if (declSymbolPath.length && declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
+                        var verifyAlias = false;
+                        if (declSymbolPath.length) {
+                            // From different dynamic module 
+                            if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
+                                verifyAlias = true;
+                            } else if (symbolPath.length > 1 &&
+                                symbolPath[symbolPath.length - 2].kind == PullElementKind.DynamicModule) {
+
+                                // declSymbol and symbol are from same dynamic module but symbol is from ambient module declaration
+                                if (declSymbolPath.length < 2 ||
+                                    declSymbolPath[declSymbolPath.length - 2] != symbolPath[symbolPath.length - 2]) {
+                                    verifyAlias = true;
+                                }
+                            }
+                        }
+
+                        if (verifyAlias) {
                             // Declaration symbol is from different unit
                             // Type may not be visible without import statement
                             symbolIsVisible = false;
                             for (var i = symbolPath.length - 1; i >= 0; i--) {
-                                var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol, true);
+                                var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
                                 if (aliasSymbol) {
                                     // Visible type.
                                     symbolIsVisible = true;
+                                    aliasSymbol.typeUsedExternally = true;
                                     break;
                                 }
                             }

@@ -741,11 +741,19 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['mExported.js', 'mNonExported.js']
                 , negative: true
                 , skipRun: true
+                , errors: []
+            });
+
+            tests.push({
+                scenario: "privacy Check on indirect type from the external type"
+                , projectRoot: 'tests/cases/projects/privacyCheck-IndirectReference'
+                , inputFiles: ['test.ts']
+                , collectedFiles: ['test.ts', 'indirectExternalModule.ts', 'externalModule.ts']
+                , outputFiles: ['indirectExternalModule.js', 'externalModule.js']
+                , negative: true
+                , skipRun: true
                 , errors: [
-                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(21,12): error TS2031: Exported variable 'c3' is using inaccessible module 'mNonExported'.",
-                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(25,12): error TS2031: Exported variable 'x3' is using inaccessible module 'mNonExported'.",
-                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(27,29): error TS2021: Exported class 'class3' extends class from inaccessible module 'mNonExported'.",
-                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-SimpleReference/test.ts(23,5): error TS2067: Return type of exported function is using inaccessible module 'mNonExported'."
+                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-IndirectReference/test.ts(2,12): error TS2031: Exported variable 'x' is using inaccessible module '" + TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/privacyCheck-IndirectReference/indirectExternalModule.ts'.",
                 ]
             });
 
@@ -2345,10 +2353,7 @@ class ProjectRunner extends RunnerBase {
                 , verifyEmitFiles: true
                 , skipRun: true
                 , negative: true
-                , errors: [
-                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/VisibilityOfCrosssModuleTypeUsage/commands.ts(5,5): error TS2030: Property 'workspace' of exported interface is using inaccessible module 'server'.",
-                    TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/VisibilityOfCrosssModuleTypeUsage/commands.ts(6,5): error TS2030: Property 'server' of exported interface is using inaccessible module 'server'."
-                ]
+                , errors: []
             });
 
 

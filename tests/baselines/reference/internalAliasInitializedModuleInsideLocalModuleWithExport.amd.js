@@ -26,6 +26,6 @@ export declare module a.b {
     }
 }
 export declare module c {
-    import b = a.b;
+    export import b = a.b;
     var x: a.b.c;
 }

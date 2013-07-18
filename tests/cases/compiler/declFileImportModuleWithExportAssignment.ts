@@ -20,6 +20,6 @@ export = m2;
 
 // @Filename: declFileImportModuleWithExportAssignment_1.ts
 /**This is on import declaration*/
-export import a1 = require("declFileImportModuleWithExportAssignment_0");
+import a1 = require("declFileImportModuleWithExportAssignment_0");
 export var a = a1;
 a.test1(null, null, null);

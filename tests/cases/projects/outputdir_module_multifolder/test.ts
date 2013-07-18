@@ -1,5 +1,5 @@
-export import m1 = require("ref/m1");
-export import m2 = require("../outputdir_module_multifolder_ref/m2");
+import m1 = require("ref/m1");
+import m2 = require("../outputdir_module_multifolder_ref/m2");
 export var a1 = 10;
 export class c1 {
     public p1: number;

@@ -1,5 +1,4 @@
 var m1 = require("./m1");
-exports.m1 = m1;
 exports.a1 = 10;
 var c1 = (function () {
     function c1() {
@@ -14,6 +13,6 @@ function f1() {
 }
 exports.f1 = f1;
 
-exports.a2 = exports.m1.m1_c1;
+exports.a2 = m1.m1_c1;
 
 //# sourceMappingURL=http://www.typescriptlang.org/test.js.map

@@ -792,18 +792,26 @@ module TypeScript {
         }
 
         private importDeclarationCallback(pre: boolean, importDeclAST: ImportDeclaration): boolean {
-            if (pre && this.canEmitSignature(ToDeclFlags(importDeclAST.getVarFlags()), importDeclAST)) {
-                this.emitDeclarationComments(importDeclAST);
+            if (pre) {
                 var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
-                this.emitDeclFlags(ToDeclFlags(importDeclAST.getVarFlags()), importDecl, "import");
-                this.declFile.Write(importDeclAST.id.actualText + " = ");
-                if (importDeclAST.isExternalImportDeclaration()) {
-                    this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
-                }
-                else {
-                    this.declFile.WriteLine(importDeclAST.getAliasName() + ";");
-                }
+                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+                var isExportedImportDecl = hasFlag(importDeclAST.getVarFlags(), VariableFlags.Exported);
 
+                if (isExportedImportDecl || importSymbol.typeUsedExternally || PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
+                    this.emitDeclarationComments(importDeclAST);
+                    this.emitIndent();
+                    if (isExportedImportDecl) {
+                        this.declFile.Write("export ");
+                    }
+                    this.declFile.Write("import ");
+                    this.declFile.Write(importDeclAST.id.actualText + " = ");
+                    if (importDeclAST.isExternalImportDeclaration()) {
+                        this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
+                    }
+                    else {
+                        this.declFile.WriteLine(importDeclAST.getAliasName() + ";");
+                    }
+                }
             }
 
             return false;

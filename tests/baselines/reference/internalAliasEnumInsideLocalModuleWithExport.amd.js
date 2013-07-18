@@ -26,6 +26,6 @@ export declare module a {
     }
 }
 export declare module c {
-    import b = a.weekend;
+    export import b = a.weekend;
     var bVal: a.weekend;
 }

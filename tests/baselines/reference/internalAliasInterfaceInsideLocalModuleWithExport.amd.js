@@ -12,6 +12,6 @@ export declare module a {
     }
 }
 export declare module c {
-    import b = a.I;
+    export import b = a.I;
     var x: a.I;
 }

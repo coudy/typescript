@@ -107,14 +107,13 @@ module TypeScript {
             return this._parentAccessorSymbol;
         }
 
-        private findAliasedType(decls: PullDecl[], getExportedSymbol: boolean) {
+        private findAliasedType(decls: PullDecl[]) {
             for (var i = 0; i < decls.length; i++) {
                 var childDecls = decls[i].getChildDecls();
                 for (var j = 0; j < childDecls.length; j++) {
                     if (childDecls[j].kind === PullElementKind.TypeAlias) {
                         var symbol = <PullTypeAliasSymbol>childDecls[j].getSymbol();
-                        if ((!getExportedSymbol || symbol.hasFlag(PullElementFlags.Exported)) && // If acceptable symbol
-                            PullContainerTypeSymbol.usedAsSymbol(symbol, this)) {
+                        if (PullContainerTypeSymbol.usedAsSymbol(symbol, this)) {
                             return symbol;
                         }
                     }
@@ -124,7 +123,7 @@ module TypeScript {
             return null;
         }
 
-        public getAliasedSymbol(scopeSymbol: PullSymbol, getExportedSymbol: boolean) {
+        public getAliasedSymbol(scopeSymbol: PullSymbol) {
             if (!scopeSymbol) {
                 return null;
             }
@@ -132,7 +131,7 @@ module TypeScript {
             var scopePath = scopeSymbol.pathToRoot();
             if (scopePath.length && scopePath[scopePath.length - 1].kind === PullElementKind.DynamicModule) {
                 var decls = scopePath[scopePath.length - 1].getDeclarations();
-                var symbol = this.findAliasedType(decls, getExportedSymbol);
+                var symbol = this.findAliasedType(decls);
                 return symbol;
             }
 
@@ -140,7 +139,7 @@ module TypeScript {
         }
 
         public getScopedDynamicModuleAlias(scopeSymbol: PullSymbol) {
-            var aliasSymbol = this.getAliasedSymbol(scopeSymbol, false);
+            var aliasSymbol = this.getAliasedSymbol(scopeSymbol);
             // Use only alias symbols to the dynamic module
             if (aliasSymbol) {
                 // Has value symbol
@@ -2104,7 +2103,8 @@ module TypeScript {
         public assignedType: PullTypeSymbol = null;
         public assignedContainer: PullContainerTypeSymbol = null;
 
-        private isUsedAsValue = false;
+        public isUsedAsValue = false;
+        public typeUsedExternally = false;
         private retrievingExportAssignment = false;
 
         constructor(name: string) {
@@ -2189,15 +2189,7 @@ module TypeScript {
             return this.assignedContainer;
         }
 
-        public setIsUsedAsValue() {
-            this.isUsedAsValue = true;
-        }
-
-        public getIsUsedAsValue() {
-            return this.isUsedAsValue;
-        }
-
-        public getMembers(): PullSymbol[] {
+        public getMembers(): PullSymbol[]{
             if (this.assignedType) {
                 return this.assignedType.getMembers();
             }

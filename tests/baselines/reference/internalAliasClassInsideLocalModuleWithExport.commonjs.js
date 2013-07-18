@@ -32,7 +32,7 @@ export declare module x {
     }
 }
 export declare module m2.m3 {
-    import c = x.c;
+    export import c = x.c;
     var cProp: x.c;
 }
 export declare var d: x.c;
