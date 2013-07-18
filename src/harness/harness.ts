@@ -786,8 +786,7 @@ module Harness {
                     var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compiler.settings);
                     resolvedFiles = resolutionResults.resolvedFiles;
 
-                    // TODO: Populate any diagnostic messages generated during resolution, the harness has never done this in the past
-                    // HarnessCompiler needs to be an IDiagnosticLogger
+                    // TODO: make HarnessCompiler implement TypeScript.IDiagnosticReporter so resolution errors are reported here
                     for (var i = 0, n = resolutionResults.diagnostics.length; i < n; i++) {
                         //this.compiler.addDiagnostic(resolutionResults.diagnostics[i]);
                     }
@@ -1205,12 +1204,22 @@ module Harness {
             }
 
             resolveRelativePath(path: string, directory: string): string {
-                if (TypeScript.isRooted(path) || !directory) {
-                    return IO.resolvePath(path);
+                var unQuotedPath = TypeScript.stripQuotes(path);
+                var normalizedPath: string;
+
+                if (TypeScript.isRooted(unQuotedPath) || !directory) {
+                    normalizedPath = unQuotedPath;
+                } else {
+                    normalizedPath = IOUtils.combine(directory, unQuotedPath);
                 }
-                else {
-                    return IO.resolvePath(IOUtils.combine(directory, path));
-                }
+
+                // get the absolute path
+                normalizedPath = IO.resolvePath(normalizedPath);
+
+                // Switch to forward slashes
+                normalizedPath = TypeScript.switchToForwardSlashes(normalizedPath);
+
+                return normalizedPath;
             }
 
             fileExists(path: string): boolean {
@@ -1243,7 +1252,6 @@ module Harness {
             getParentDirectory(path: string): string {
                 return IO.dirName(path);
             }
-
         }
 
         var stdout = new EmitterIOHost();
@@ -1256,7 +1264,6 @@ module Harness {
             settings.noLib = useMinimalDefaultLib;
             settings.noResolve = false;
             settings.noImplicitAny = noImplicitAny;
-            settings.sourceRoot = 'Z:\\';
             return settings;
         }
 

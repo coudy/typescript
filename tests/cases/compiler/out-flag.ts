@@ -2,7 +2,7 @@
 // @sourcemap: true
 // @declaration: true
 // @module: local
-// @out: bin\
+//// @out: bin\
 // @comments: true
 
 // my class comments
