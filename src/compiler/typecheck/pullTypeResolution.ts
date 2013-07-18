@@ -2666,10 +2666,6 @@ module TypeScript {
 
                     var functionDecl = this.getDeclForAST(funcDeclAST);
                     var functionSymbol = functionDecl.getSymbol();
-                    if (functionSymbol && functionSymbol.type == returnType) {
-                        // If recursive typing, use return type as any
-                        returnType = this.semanticInfoChain.anyTypeSymbol;
-                    }
 
                     if (returnType) {
                         var previousReturnType = returnType;
@@ -2736,6 +2732,8 @@ module TypeScript {
                 }
 
                 var diagnostic: Diagnostic;
+                // Save this in case we had set the function type to any because of a recursive reference.
+                var functionTypeSymbol = funcSymbol && funcSymbol.type;
 
                 if (signature.inResolution) {
 
@@ -2764,10 +2762,19 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                     }
 
+                    if (funcSymbol) {
+                        funcSymbol.setUnresolved();
+                        if (funcSymbol.type === this.semanticInfoChain.anyTypeSymbol) {
+                            funcSymbol.type = functionTypeSymbol;
+                        }
+                    }
                     signature.setResolved();
                     return funcSymbol;
                 }
 
+                if (funcSymbol) {
+                    funcSymbol.startResolving();
+                }
                 signature.startResolving();
 
                 if (funcDeclAST.typeArguments) {
@@ -2864,6 +2871,12 @@ module TypeScript {
                 }
 
                 if (!hadError) {
+                    if (funcSymbol) {
+                        funcSymbol.setUnresolved();
+                        if (funcSymbol.type === this.semanticInfoChain.anyTypeSymbol) {
+                            funcSymbol.type = functionTypeSymbol;
+                        }
+                    }
                     signature.setResolved();
                 }
             }
@@ -3677,8 +3690,7 @@ module TypeScript {
 
         private resolveCatchClause(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
-            if (context.typeCheck()) {;
-
+            if (context.typeCheck()) {
                 this.resolveAST((<CatchClause>ast).body, false, this.getDeclForAST(ast), context);
             }
 
@@ -8966,7 +8978,7 @@ module TypeScript {
                 signatureForVisibilityCheck = allSignatures[0];
             }
 
-            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != signatureForVisibilityCheck) {
+            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
                 var errorCode: string;
                 // verify it satisfies all the properties of first signature
                 if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) != signature.hasFlag(PullElementFlags.Private)) {
