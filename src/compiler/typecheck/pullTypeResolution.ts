@@ -2670,7 +2670,7 @@ module TypeScript {
                         // if noImplicitAny flag is set to be true and return statements are not cast expressions, report an error
                         if (this.compilationSettings.noImplicitAny) {
                             // if the returnType got widen to Any
-                            if (previousReturnType != newReturnType) {
+                            if (previousReturnType !== newReturnType && newReturnType === this.semanticInfoChain.anyTypeSymbol) {
                                 var functionName = enclosingDecl.name;
                                 if (functionName == "" ) {
                                     functionName= (<PullFunctionExpressionDecl>enclosingDecl).getFunctionExpressionName();
