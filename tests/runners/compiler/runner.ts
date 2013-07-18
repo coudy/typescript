@@ -91,6 +91,17 @@ class CompilerBaselineRunner extends RunnerBase {
                     if (errorDescriptionLocal === '') {
                         return null;
                     } else {
+                        // Certain errors result in full paths being reported, namely when types of external modules are involved
+                        // we'll strip the full path and just report the filename
+                        var fullPath = /\w+:(\/|\\)(\w+|\/)*\.ts/g;
+                        var hasFullPath = errorDescriptionLocal.match(fullPath);
+                        if (hasFullPath) {
+                            hasFullPath.forEach(match => {
+                                var filename = Harness.getFileName(match);
+                                errorDescriptionLocal = errorDescriptionLocal.replace(match, filename);
+                                errorDescriptionAsync = errorDescriptionAsync.replace(match, filename); // should be the same errors
+                            });
+                        }
                         return errorDescriptionLocal;
                     }
                 });
