@@ -160,10 +160,8 @@ describe('Runtime behavior tests', function () {
         var jq: RT_JQuery = { 0: { id: "a" }, 1: { id: "b" } };
         Harness.Assert.equal(jq[0].id, 'a');
     });
-    debugger;
     it('Calls static methods properly', function () {
-        // Bug 713955
-        //Harness.Assert.equal(RT_StaticModule.f(), '25wow: 17wow: 66');
+        Harness.Assert.equal(RT_StaticModule.f(), '25wow: 17wow: 66');
     });
     
     it('Generates string indices properly', function () {
@@ -176,13 +174,11 @@ describe('Runtime behavior tests', function () {
     });
 
     it('Calls super methods correctly (#1)', function () {
-        // Bug 713955
-        //Harness.Assert.equal(RT_SuperCalls.result, 'sub1basebasebarsubsub1sub1basebasebar');
+        Harness.Assert.equal(RT_SuperCalls.result, 'sub1basebasebarsubsub1sub1basebasebar');
     });
 
     it('Calls super methods correctly (#2)', function () {
-        // Bug 713955
-        //Harness.Assert.equal(RT_SuperCalls2.result, 'SubXBaseYSubY');
+        Harness.Assert.equal(RT_SuperCalls2.result, 'SubXBaseYSubY');
     });
 
     it('Calls methods on primitives correctly', function () {
