@@ -1256,6 +1256,7 @@ module Harness {
             settings.noLib = useMinimalDefaultLib;
             settings.noResolve = false;
             settings.noImplicitAny = noImplicitAny;
+            settings.sourceRoot = 'Z:\\';
             return settings;
         }
 
