@@ -1671,7 +1671,7 @@ module TypeScript {
 
                     if (typeSymbol != containerSymbol) {
                         this.checkSymbolPrivacy(importDeclSymbol, typeSymbol, context, (symbol: PullSymbol) => {
-                            var messageCode = symbol.isContainer() ?
+                            var messageCode = symbol.isContainer() && !(<PullTypeSymbol>symbol).isEnum() ?
                                 DiagnosticCode.Exported_import_declaration_0_is_assigned_type_that_is_using_inaccessible_module_1 :
                                 DiagnosticCode.Exported_import_declaration_0_is_assigned_type_that_has_or_is_using_private_type_1;
 
@@ -1682,7 +1682,7 @@ module TypeScript {
 
                     if (valueSymbol) {
                         this.checkSymbolPrivacy(importDeclSymbol, valueSymbol.type, context, (symbol: PullSymbol) => {
-                            var messageCode = symbol.isContainer() ?
+                            var messageCode = symbol.isContainer() && !(<PullTypeSymbol>symbol).isEnum() ?
                                 DiagnosticCode.Exported_import_declaration_0_is_assigned_value_with_type_that_is_using_inaccessible_module_1:
                                 DiagnosticCode.Exported_import_declaration_0_is_assigned_value_with_type_that_has_or_is_using_private_type_1;
                             var messageArguments = [importDeclSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null), symbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null)];
@@ -2140,7 +2140,7 @@ module TypeScript {
                         valueSymbol = (<PullTypeAliasSymbol>valueSymbol).assignedValue;
                     } else {
                         var containerSymbol = (<PullTypeAliasSymbol>valueSymbol).getExportAssignedContainerSymbol();
-                        valueSymbol = (containerSymbol && containerSymbol.isContainer()) ? containerSymbol.getInstanceSymbol() : null;
+                        valueSymbol = (containerSymbol && containerSymbol.isContainer() && !containerSymbol.isEnum()) ? containerSymbol.getInstanceSymbol() : null;
                     }
                 }
 
@@ -2316,17 +2316,15 @@ module TypeScript {
                                 typeExprSymbol = (<PullTypeAliasSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
                             }
 
-                            if (typeExprSymbol && typeExprSymbol.isContainer()) {
+                            if (typeExprSymbol && typeExprSymbol.isContainer() && !typeExprSymbol.isEnum()) {
                                 // aliased type could still be 'any' as the result of an error
-                                if (typeExprSymbol.isContainer()) {
-                                    var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
+                                var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
 
-                                    if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
-                                        typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
-                                    }
-                                    else {
-                                        typeExprSymbol = instanceSymbol.type;
-                                    }
+                                if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
+                                    typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                                }
+                                else {
+                                    typeExprSymbol = instanceSymbol.type;
                                 }
                             }
                         }
@@ -9014,6 +9012,12 @@ module TypeScript {
                 }
 
                 if (!typeSymbol.isNamedTypeSymbol()) {
+                    if (typeSymbol.inSymbolPrivacyCheck) {
+                        return;
+                    }
+
+                    typeSymbol.inSymbolPrivacyCheck = true;
+
                     // Check the privacy of members, constructors, calls, index signatures
                     var members = typeSymbol.getMembers();
                     for (var i = 0; i < members.length; i++) {
@@ -9023,6 +9027,8 @@ module TypeScript {
                     this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
                     this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
                     this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+
+                    typeSymbol.inSymbolPrivacyCheck = false;
 
                     return;
                 }
@@ -9110,7 +9116,7 @@ module TypeScript {
 
             var typeSymbol = <PullTypeSymbol>symbol;
             var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
-            if (typeSymbol.isContainer()) {
+            if (typeSymbol.isContainer() && !typeSymbol.isEnum()) {
                 if (!isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
@@ -9158,7 +9164,7 @@ module TypeScript {
 
             var messageCode: string;
             var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
-            if (typeSymbol.isContainer()) {
+            if (typeSymbol.isContainer() && !typeSymbol.isEnum()) {
                 if (!isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
@@ -9261,7 +9267,7 @@ module TypeScript {
             var typeSymbol = <PullTypeSymbol>symbol;
             var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
             var messageCode: string;
-            if (typeSymbol.isContainer()) {
+            if (typeSymbol.isContainer() && !typeSymbol.isEnum()) {
                 if (!isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
@@ -9338,7 +9344,7 @@ module TypeScript {
             var messageCode: string = null;
             var typeSymbol = <PullTypeSymbol>symbol;
             var typeSymbolName = typeSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null);
-            if (typeSymbol.isContainer()) {
+            if (typeSymbol.isContainer() && !typeSymbol.isEnum()) {
                 if (!isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }

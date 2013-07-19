@@ -179,7 +179,8 @@ module TypeScript {
             }
 
             // Get the actual name associated with a declaration for this symbol
-            return this.getDeclarations()[0].getDisplayName();
+            var decls = this.getDeclarations();
+            return decls.length ? this.getDeclarations()[0].getDisplayName() : this.name;
         }
 
         public setIsSpecialized() { this.isSpecialized = true; this.isBeingSpecialized = false; }
@@ -1018,6 +1019,9 @@ module TypeScript {
         // TODO: Really only used to track doc comments...
         private _functionSymbol: PullSymbol = null;
 
+        private inMemberTypeNameEx = false;
+        public inSymbolPrivacyCheck = false;
+
         constructor(name: string, kind: PullElementKind) {
             super(name, kind);
             this.type = this;
@@ -1032,6 +1036,7 @@ module TypeScript {
         public isTypeParameter() { return false; }
         public isTypeVariable() { return false; }
         public isError() { return false; }
+        public isEnum() { return this.kind == PullElementKind.Enum; }
 
         public getKnownBaseTypeCount() { return this._knownBaseTypeCount; }
         public resetKnownBaseTypeCount() { this._knownBaseTypeCount = 0; }
@@ -1794,6 +1799,10 @@ module TypeScript {
         }
 
         public isNamedTypeSymbol() {
+            if (this.isArray()) {
+                return false;
+            }
+
             var kind = this.kind;
             if (kind === PullElementKind.Primitive || // primitives
             kind === PullElementKind.Class || // class
@@ -1849,19 +1858,26 @@ module TypeScript {
             return members.length === 0 && constructSignatures.length === 0 && callSignatures.length > 1;
         }
 
-        public getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
-
-            if (this.isArray()) {
-                var elementMemberName = this._elementType ? this._elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName) : MemberName.create("any");
-                return MemberName.create(elementMemberName, "", "[]");
-            }
-
+        private getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
             var constructSignatures = this.getConstructSignatures();
             var indexSignatures = this.getIndexSignatures();
 
             if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
+                if (this.inMemberTypeNameEx) {
+                    var associatedContainerType = this.getAssociatedContainerType();
+                    if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
+                        var nameForTypeOf = associatedContainerType.getScopedNameEx(scopeSymbol);
+                        return MemberName.create(nameForTypeOf, "typeof ", "");
+                    } else {
+                        // If recursive without type name(possible?) default to any
+                        return MemberName.create("any");
+                    }
+                }
+
+                this.inMemberTypeNameEx = true;
+
                 var allMemberNames = new MemberNameArray();
                 var curlies = !topLevel || indexSignatures.length != 0;
                 var delim = "; ";
@@ -1887,38 +1903,39 @@ module TypeScript {
                 var getPrettyFunctionOverload = getPrettyTypeName && !curlies && this.hasOnlyOverloadCallSignatures();
 
                 var signatureCount = callSignatures.length + constructSignatures.length + indexSignatures.length;
-                if (signatureCount != 0 || members.length != 0) {
-                    var useShortFormSignature = !curlies && (signatureCount === 1);
-                    var signatureMemberName: MemberName[];
+                var useShortFormSignature = !curlies && (signatureCount === 1);
+                var signatureMemberName: MemberName[];
 
-                    if (callSignatures.length > 0) {
-                        signatureMemberName =
-                        PullSignatureSymbol.getSignaturesTypeNameEx(callSignatures, "", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
-                        allMemberNames.addAll(signatureMemberName);
-                    }
-
-                    if (constructSignatures.length > 0) {
-                        signatureMemberName =
-                        PullSignatureSymbol.getSignaturesTypeNameEx(constructSignatures, "new", useShortFormSignature, false, scopeSymbol);
-                        allMemberNames.addAll(signatureMemberName);
-                    }
-
-                    if (indexSignatures.length > 0) {
-                        signatureMemberName =
-                        PullSignatureSymbol.getSignaturesTypeNameEx(indexSignatures, "", useShortFormSignature, true, scopeSymbol);
-                        allMemberNames.addAll(signatureMemberName);
-                    }
-
-                    if ((curlies) || (!getPrettyFunctionOverload && (signatureCount > 1) && topLevel)) {
-                        allMemberNames.prefix = "{ ";
-                        allMemberNames.suffix = "}";
-                        allMemberNames.delim = delim;
-                    } else if (allMemberNames.entries.length > 1) {
-                        allMemberNames.delim = delim;
-                    }
-
-                    return allMemberNames;
+                if (callSignatures.length > 0) {
+                    signatureMemberName =
+                    PullSignatureSymbol.getSignaturesTypeNameEx(callSignatures, "", useShortFormSignature, false, scopeSymbol, getPrettyFunctionOverload);
+                    allMemberNames.addAll(signatureMemberName);
                 }
+
+                if (constructSignatures.length > 0) {
+                    signatureMemberName =
+                    PullSignatureSymbol.getSignaturesTypeNameEx(constructSignatures, "new", useShortFormSignature, false, scopeSymbol);
+                    allMemberNames.addAll(signatureMemberName);
+                }
+
+                if (indexSignatures.length > 0) {
+                    signatureMemberName =
+                    PullSignatureSymbol.getSignaturesTypeNameEx(indexSignatures, "", useShortFormSignature, true, scopeSymbol);
+                    allMemberNames.addAll(signatureMemberName);
+                }
+
+                if ((curlies) || (!getPrettyFunctionOverload && (signatureCount > 1) && topLevel)) {
+                    allMemberNames.prefix = "{ ";
+                    allMemberNames.suffix = "}";
+                    allMemberNames.delim = delim;
+                } else if (allMemberNames.entries.length > 1) {
+                    allMemberNames.delim = delim;
+                }
+
+                this.inMemberTypeNameEx = false;
+
+                return allMemberNames;
+
             }
 
             return MemberName.create("{}");

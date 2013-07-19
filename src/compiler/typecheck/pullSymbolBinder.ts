@@ -269,7 +269,7 @@ module TypeScript {
                 }
 
                 if (!moduleInstanceTypeSymbol) {
-                    moduleInstanceTypeSymbol = new PullTypeSymbol(modName, PullElementKind.ObjectType);
+                    moduleInstanceTypeSymbol = new PullTypeSymbol("", PullElementKind.ObjectType);
                 }
 
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
