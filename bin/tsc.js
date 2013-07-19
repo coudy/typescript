@@ -274,6 +274,11 @@ var TypeScript;
         Could_not_find_symbol_0_in_module_1: "Could not find symbol '{0}' in module '{1}'.",
         Unable_to_resolve_module_reference_0: "Unable to resolve module reference '{0}'.",
         Could_not_find_module_0_in_module_1: "Could not find module '{0}' in module '{1}'.",
+        Exported_import_declaration_0_is_assigned_value_with_type_that_has_or_is_using_private_type_1: "Exported import declaration '{0}' is assigned value with type that has or is using private type '{1}'.",
+        Exported_import_declaration_0_is_assigned_value_with_type_that_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned value with type that is using inaccessible module '{1}'.",
+        Exported_import_declaration_0_is_assigned_type_that_has_or_is_using_private_type_1: "Exported import declaration '{0}' is assigned type that has or is using private type '{1}'.",
+        Exported_import_declaration_0_is_assigned_type_that_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned type that is using inaccessible module '{1}'.",
+        Exported_import_declaration_0_is_assigned_container_that_is_or_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned container that is or is using inaccessible module '{1}'.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
@@ -302,7 +307,7 @@ var TypeScript;
         _0_overload_s: " (+ {0} overload(s))",
         Current_host_does_not_support_0_option: "Current host does not support '{0}' option.",
         ECMAScript_target_version_0_not_supported_Using_default_1_code_generation: "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.",
-        Module_code_generation_0_not_supported_Using_default_1_code_generation: "Module code generation '{0}' not supported.  Using default '{1}' code generation.",
+        Module_code_generation_0_not_supported: "Module code generation '{0}' not supported.",
         Could_not_find_file_0: "Could not find file: '{0}'.",
         A_file_cannot_have_a_reference_to_itself: "A file cannot have a reference to itself.",
         Cannot_resolve_referenced_file_0: "Cannot resolve referenced file: '{0}'.",
@@ -331,9 +336,13 @@ var TypeScript;
         Not_yet_implemented: "Not yet implemented.",
         Invalid_operation_0: "Invalid operation: {0}",
         Invalid_operation: "Invalid operation.",
-        Couldn_t_delete_file_0: "Couldn't delete file '{0}'",
-        Couldn_t_create_directory_0: "Couldn't create directory '{0}'",
+        Could_not_delete_file_0: "Could not delete file '{0}'",
+        Could_not_create_directory_0: "Could not create directory '{0}'",
         Error_while_executing_file_0: "Error while executing file '{0}': ",
+        Cannot_compile_external_modules_unless_the_module_flag_is_provided: "Cannot compile external modules unless the '--module' flag is provided.",
+        Option_mapRoot_cannot_be_specified_without_specifying_sourcemap_option: "Option mapRoot cannot be specified without specifying sourcemap option.",
+        Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option: "Option sourceRoot cannot be specified without specifying sourcemap option.",
+        Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option: "Options mapRoot and sourceRoot cannot be specified without specifying sourcemap option.",
         Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory: "Concatenate and emit output to single file | Redirect output structure to the directory",
         Generates_corresponding_0_file: "Generates corresponding {0} file",
         Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations: "Specifies the location where debugger should locate map files instead of generated locations.",
@@ -342,7 +351,7 @@ var TypeScript;
         Do_not_emit_comments_to_output: "Do not emit comments to output",
         Skip_resolution_and_preprocessing: "Skip resolution and preprocessing",
         Specify_ECMAScript_target_version_0_default_or_1: "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"",
-        Specify_module_code_generation_0_default_or_1: "Specify module code generation: \"{0}\" (default) or \"{1}\"",
+        Specify_module_code_generation_0_or_1: "Specify module code generation: \"{0}\" or \"{1}\"",
         Print_this_message: "Print this message",
         Print_the_compiler_s_version_0: "Print the compiler's version: {0}",
         Allow_use_of_deprecated_0_keyword_when_referencing_an_external_module: "Allow use of deprecated \"{0}\" keyword when referencing an external module",
@@ -361,7 +370,7 @@ var TypeScript;
         FILE_DIRECTORY: "FILE|DIRECTORY",
         VERSION: "VERSION",
         LOCATION: "LOCATION",
-        This_version_of_the_Javascript_runtime_doesn_t_support_the_0_function: "This version of the Javascript runtime doesn't support the '{0}' function.",
+        This_version_of_the_Javascript_runtime_does_not_support_the_0_function: "This version of the Javascript runtime does not support the '{0}' function.",
         Looking_up_path_for_identifier_token_did_not_result_in_an_identifer: "Looking up path for identifier token did not result in an identifer.",
         Unknown_rule: "Unknown rule",
         Invalid_line_number_0: "Invalid line number ({0})",
@@ -1810,9 +1819,6 @@ var TypeScript;
     }
     TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
-///<reference path='references.ts' />
-///<reference path='..\enumerator.ts' />
-///<reference path='..\process.ts' />
 var TypeScript;
 (function (TypeScript) {
     TypeScript.nodeMakeDirectoryTime = 0;
@@ -3465,6 +3471,26 @@ var TypeScript;
             "code": 2180,
             "category": 1 /* Error */
         },
+        "Exported import declaration '{0}' is assigned value with type that has or is using private type '{1}'.": {
+            "code": 2181,
+            "category": 1 /* Error */
+        },
+        "Exported import declaration '{0}' is assigned value with type that is using inaccessible module '{1}'.": {
+            "code": 2182,
+            "category": 1 /* Error */
+        },
+        "Exported import declaration '{0}' is assigned type that has or is using private type '{1}'.": {
+            "code": 2183,
+            "category": 1 /* Error */
+        },
+        "Exported import declaration '{0}' is assigned type that is using inaccessible module '{1}'.": {
+            "code": 2184,
+            "category": 1 /* Error */
+        },
+        "Exported import declaration '{0}' is assigned container that is or is using inaccessible module '{1}'.": {
+            "code": 2185,
+            "category": 1 /* Error */
+        },
         "Type '{0}' is missing property '{1}' from type '{2}'.": {
             "code": 4000,
             "category": 3 /* NoPrefix */
@@ -3577,7 +3603,7 @@ var TypeScript;
             "code": 5002,
             "category": 0 /* Warning */
         },
-        "Module code generation '{0}' not supported.  Using default '{1}' code generation.": {
+        "Module code generation '{0}' not supported.": {
             "code": 5003,
             "category": 0 /* Warning */
         },
@@ -3693,16 +3719,32 @@ var TypeScript;
             "code": 5033,
             "category": 1 /* Error */
         },
-        "Couldn't delete file '{0}'": {
+        "Could not delete file '{0}'": {
             "code": 5034,
             "category": 1 /* Error */
         },
-        "Couldn't create directory '{0}'": {
+        "Could not create directory '{0}'": {
             "code": 5035,
             "category": 1 /* Error */
         },
         "Error while executing file '{0}': ": {
             "code": 5036,
+            "category": 1 /* Error */
+        },
+        "Cannot compile external modules unless the '--module' flag is provided.": {
+            "code": 5037,
+            "category": 1 /* Error */
+        },
+        "Option mapRoot cannot be specified without specifying sourcemap option.": {
+            "code": 5038,
+            "category": 1 /* Error */
+        },
+        "Option sourceRoot cannot be specified without specifying sourcemap option.": {
+            "code": 5039,
+            "category": 1 /* Error */
+        },
+        "Options mapRoot and sourceRoot cannot be specified without specifying sourcemap option.": {
+            "code": 5040,
             "category": 1 /* Error */
         },
         "Concatenate and emit output to single file | Redirect output structure to the directory": {
@@ -3737,7 +3779,7 @@ var TypeScript;
             "code": 6015,
             "category": 2 /* Message */
         },
-        "Specify module code generation: \"{0}\" (default) or \"{1}\"": {
+        "Specify module code generation: \"{0}\" or \"{1}\"": {
             "code": 6016,
             "category": 2 /* Message */
         },
@@ -3813,7 +3855,7 @@ var TypeScript;
             "code": 6037,
             "category": 2 /* Message */
         },
-        "This version of the Javascript runtime doesn't support the '{0}' function.": {
+        "This version of the Javascript runtime does not support the '{0}' function.": {
             "code": 7000,
             "category": 1 /* Error */
         },
@@ -5363,11 +5405,16 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var ParseOptions = (function () {
-        function ParseOptions(allowAutomaticSemicolonInsertion) {
+        function ParseOptions(languageVersion, allowAutomaticSemicolonInsertion) {
+            this._languageVersion = languageVersion;
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
         }
         ParseOptions.prototype.toJSON = function (key) {
             return { allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion };
+        };
+
+        ParseOptions.prototype.languageVersion = function () {
+            return this._languageVersion;
         };
 
         ParseOptions.prototype.allowAutomaticSemicolonInsertion = function () {
@@ -21091,6 +21138,10 @@ var TypeScript;
         };
 
         SyntaxUtilities.hasExportKeyword = function (moduleElement) {
+            return SyntaxUtilities.getExportKeyword(moduleElement) !== null;
+        };
+
+        SyntaxUtilities.getExportKeyword = function (moduleElement) {
             switch (moduleElement.kind()) {
                 case 130 /* ModuleDeclaration */:
                 case 131 /* ClassDeclaration */:
@@ -21099,10 +21150,10 @@ var TypeScript;
                 case 132 /* EnumDeclaration */:
                 case 128 /* InterfaceDeclaration */:
                 case 133 /* ImportDeclaration */:
-                    return SyntaxUtilities.containsToken((moduleElement).modifiers, 47 /* ExportKeyword */);
+                    return SyntaxUtilities.getToken((moduleElement).modifiers, 47 /* ExportKeyword */);
+                default:
+                    return null;
             }
-
-            return false;
         };
 
         SyntaxUtilities.isAmbientDeclarationSyntax = function (positionNode) {
@@ -22595,10 +22646,6 @@ var TypeScript;
                 this.slidingWindow = new TypeScript.SlidingWindow(this, TypeScript.ArrayUtilities.createArray(32, null), null);
                 this.scanner = new TypeScript.Scanner(fileName, text, languageVersion);
             }
-            NormalParserSource.prototype.languageVersion = function () {
-                return this.scanner.languageVersion();
-            };
-
             NormalParserSource.prototype.currentNode = function () {
                 // The normal parser source never returns nodes.  They're only returned by the
                 // incremental parser source.
@@ -22791,7 +22838,7 @@ var TypeScript;
                 // equal the new text's length!
                 // Debug.assert((oldSourceUnit.fullWidth() - this._changeRange.span().length() + this._changeRange.newLength()) === newText.length());
                 // Set up a scanner so that we can scan tokens out of the new text.
-                this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.languageVersion());
+                this._normalParserSource = new NormalParserSource(oldSyntaxTree.fileName(), newText, oldSyntaxTree.parseOptions().languageVersion());
             }
             IncrementalParserSource.extendToAffectedRange = function (changeRange, sourceUnit) {
                 // Consider the following code:
@@ -22829,10 +22876,6 @@ var TypeScript;
                 var finalLength = changeRange.newLength() + (changeRange.span().start() - start);
 
                 return new TypeScript.TextChangeRange(finalSpan, finalLength);
-            };
-
-            IncrementalParserSource.prototype.languageVersion = function () {
-                return this._normalParserSource.languageVersion();
             };
 
             IncrementalParserSource.prototype.absolutePosition = function () {
@@ -23607,7 +23650,7 @@ var TypeScript;
                     return a.start() - b.start();
                 });
 
-                return new TypeScript.SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.source.languageVersion(), this.parseOptions);
+                return new TypeScript.SyntaxTree(sourceUnit, isDeclaration, allDiagnostics, this.fileName, this.lineMap, this.parseOptions);
             };
 
             ParserImpl.prototype.setStrictMode = function (isInStrictMode) {
@@ -27066,8 +27109,8 @@ var TypeScript;
             return ParserImpl;
         })();
 
-        function parse(fileName, text, isDeclaration, languageVersion, options) {
-            var source = new NormalParserSource(fileName, text, languageVersion);
+        function parse(fileName, text, isDeclaration, options) {
+            var source = new NormalParserSource(fileName, text, options.languageVersion());
 
             return new ParserImpl(fileName, text.lineMap(), source, options).parseSyntaxTree(isDeclaration);
         }
@@ -27090,21 +27133,20 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var SyntaxTree = (function () {
-        function SyntaxTree(sourceUnit, isDeclaration, diagnostics, fileName, lineMap, languageVersion, parseOtions) {
+        function SyntaxTree(sourceUnit, isDeclaration, diagnostics, fileName, lineMap, parseOtions) {
             this._allDiagnostics = null;
             this._sourceUnit = sourceUnit;
             this._isDeclaration = isDeclaration;
             this._parserDiagnostics = diagnostics;
             this._fileName = fileName;
             this._lineMap = lineMap;
-            this._languageVersion = languageVersion;
             this._parseOptions = parseOtions;
         }
         SyntaxTree.prototype.toJSON = function (key) {
             var result = {};
 
             result.isDeclaration = this._isDeclaration;
-            result.languageVersion = TypeScript.LanguageVersion[this._languageVersion];
+            result.languageVersion = TypeScript.LanguageVersion[this._parseOptions.languageVersion()];
             result.parseOptions = this._parseOptions;
 
             if (this.diagnostics().length > 0) {
@@ -27151,10 +27193,6 @@ var TypeScript;
 
         SyntaxTree.prototype.lineMap = function () {
             return this._lineMap;
-        };
-
-        SyntaxTree.prototype.languageVersion = function () {
-            return this._languageVersion;
         };
 
         SyntaxTree.prototype.parseOptions = function () {
@@ -27754,7 +27792,7 @@ var TypeScript;
         };
 
         GrammarCheckerWalker.prototype.checkEcmaScriptVersionIsAtLeast = function (parent, node, languageVersion, diagnosticKey) {
-            if (this.syntaxTree.languageVersion() < languageVersion) {
+            if (this.syntaxTree.parseOptions().languageVersion() < languageVersion) {
                 var nodeFullStart = this.childFullStart(parent, node);
                 this.pushDiagnostic1(nodeFullStart, node, diagnosticKey);
                 return true;
@@ -27983,11 +28021,13 @@ var TypeScript;
                 return;
             }
 
-            if (node.stringLiteral && !this.inAmbientDeclaration && !TypeScript.SyntaxUtilities.containsToken(node.modifiers, 63 /* DeclareKeyword */)) {
-                var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
-                this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral, TypeScript.DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
-                this.skip(node);
-                return;
+            if (node.stringLiteral) {
+                if (!this.inAmbientDeclaration && !TypeScript.SyntaxUtilities.containsToken(node.modifiers, 63 /* DeclareKeyword */)) {
+                    var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
+                    this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral, TypeScript.DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
+                    this.skip(node);
+                    return;
+                }
             }
 
             if (!node.stringLiteral && this.checkForDisallowedExportAssignment(node)) {
@@ -28639,8 +28679,9 @@ var TypeScript;
     var TypeRelationshipFlags = TypeScript.TypeRelationshipFlags;
 
     (function (ModuleGenTarget) {
-        ModuleGenTarget[ModuleGenTarget["Synchronous"] = 0] = "Synchronous";
-        ModuleGenTarget[ModuleGenTarget["Asynchronous"] = 1] = "Asynchronous";
+        ModuleGenTarget[ModuleGenTarget["Unspecified"] = 0] = "Unspecified";
+        ModuleGenTarget[ModuleGenTarget["Synchronous"] = 1] = "Synchronous";
+        ModuleGenTarget[ModuleGenTarget["Asynchronous"] = 2] = "Asynchronous";
     })(TypeScript.ModuleGenTarget || (TypeScript.ModuleGenTarget = {}));
     var ModuleGenTarget = TypeScript.ModuleGenTarget;
 })(TypeScript || (TypeScript = {}));
@@ -30362,7 +30403,76 @@ var TypeScript;
                 }
             }
 
-            return pullSymbol.getIsUsedAsValue();
+            return pullSymbol.isUsedAsValue;
+        };
+
+        Emitter.prototype.emitImportDeclaration = function (importDeclAST) {
+            if (this.importStatementShouldBeEmitted(importDeclAST)) {
+                var prevModAliasId = this.modAliasId;
+                var prevFirstModAlias = this.firstModAlias;
+
+                this.emitComments(importDeclAST, true);
+
+                var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
+                var importSymbol = importDecl.getSymbol();
+
+                var parentSymbol = importSymbol.getContainer();
+                var parentKind = parentSymbol ? parentSymbol.kind : 0 /* None */;
+                var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+                var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.kind : 0 /* None */;
+
+                var needsPropertyAssignment = false;
+                var usePropertyAssignmentInsteadOfVarDecl = false;
+                var moduleNamePrefix;
+
+                if (TypeScript.hasFlag(importDecl.flags, 1 /* Exported */) && (parentKind == 4 /* Container */ || parentKind === 32 /* DynamicModule */ || associatedParentSymbolKind === 4 /* Container */ || associatedParentSymbolKind === 32 /* DynamicModule */)) {
+                    if (importSymbol.getExportAssignedTypeSymbol() || importSymbol.getExportAssignedContainerSymbol()) {
+                        // Type or container assignment that is exported
+                        needsPropertyAssignment = true;
+                    } else {
+                        var valueSymbol = importSymbol.getExportAssignedValueSymbol();
+                        if (valueSymbol && (valueSymbol.kind == 65536 /* Method */ || valueSymbol.kind == 16384 /* Function */)) {
+                            needsPropertyAssignment = true;
+                        } else {
+                            usePropertyAssignmentInsteadOfVarDecl = true;
+                        }
+                    }
+
+                    if (this.emitState.container === 2 /* DynamicModule */) {
+                        moduleNamePrefix = "exports.";
+                    } else {
+                        moduleNamePrefix = this.moduleName + ".";
+                    }
+                }
+
+                this.recordSourceMappingStart(importDeclAST);
+                if (usePropertyAssignmentInsteadOfVarDecl) {
+                    this.writeToOutput(moduleNamePrefix);
+                } else {
+                    this.writeToOutput("var ");
+                }
+                this.writeToOutput(importDeclAST.id.actualText + " = ");
+                this.modAliasId = importDeclAST.id.actualText;
+                this.firstModAlias = importDeclAST.firstAliasedModToString();
+                var aliasAST = importDeclAST.alias.nodeType() === 11 /* TypeRef */ ? (importDeclAST.alias).term : importDeclAST.alias;
+
+                this.emitJavascript(aliasAST, false);
+                this.recordSourceMappingEnd(importDeclAST);
+                this.writeToOutput(";");
+
+                if (needsPropertyAssignment) {
+                    this.writeLineToOutput("");
+                    this.emitIndent();
+                    this.recordSourceMappingStart(importDeclAST);
+                    this.writeToOutput(moduleNamePrefix + importDeclAST.id.actualText + " = " + importDeclAST.id.actualText);
+                    this.recordSourceMappingEnd(importDeclAST);
+                    this.writeToOutput(";");
+                }
+                this.emitComments(importDeclAST, false);
+
+                this.modAliasId = prevModAliasId;
+                this.firstModAlias = prevFirstModAlias;
+            }
         };
 
         Emitter.prototype.setSourceMappings = function (mapper) {
@@ -30879,7 +30989,7 @@ var TypeScript;
                     var importStatementSymbol = importStatementDecl.getSymbol();
                     var importStatementAST = semanticInfo.getASTForDecl(importStatementDecl);
 
-                    if (importStatementSymbol.getIsUsedAsValue()) {
+                    if (importStatementSymbol.isUsedAsValue) {
                         if (i <= importDecls.length - 1) {
                             dependencyList += ", ";
                             importList += ", ";
@@ -30943,7 +31053,7 @@ var TypeScript;
                 this.setContainer(2 /* DynamicModule */);
 
                 this.recordSourceMappingStart(moduleDecl);
-                if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                if (this.emitOptions.compilationSettings.moduleGenTarget === 2 /* Asynchronous */) {
                     var dependencyList = "[\"require\", \"exports\"";
                     var importList = "require, exports";
 
@@ -30978,7 +31088,7 @@ var TypeScript;
                 this.recordSourceMappingNameStart(this.moduleName);
             }
 
-            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 2 /* Asynchronous */) {
                 this.indenter.increaseIndent();
             }
 
@@ -30987,7 +31097,7 @@ var TypeScript;
             }
 
             this.emitModuleElements(moduleDecl.members);
-            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === 2 /* Asynchronous */) {
                 this.indenter.decreaseIndent();
             }
             this.emitIndent();
@@ -30996,7 +31106,7 @@ var TypeScript;
                 var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
                 var exportAssignmentValueSymbol = (pullDecl.getSymbol()).getExportAssignedValueSymbol();
 
-                if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                if (this.emitOptions.compilationSettings.moduleGenTarget === 2 /* Asynchronous */) {
                     if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & TypeScript.PullElementKind.SomeTypeReference)) {
                         // indent was decreased for AMD above
                         this.indenter.increaseIndent();
@@ -31258,7 +31368,7 @@ var TypeScript;
                             this.writeToOutput("this.");
                         }
                     }
-                } else if (parentKind === 64 /* Enum */ || parentKind === 32 /* DynamicModule */ || associatedParentSymbolKind === 4 /* Container */ || associatedParentSymbolKind === 32 /* DynamicModule */ || associatedParentSymbolKind === 64 /* Enum */) {
+                } else if (TypeScript.PullHelpers.symbolIsModule(parentSymbol) || TypeScript.PullHelpers.symbolIsEnum(parentSymbol) || TypeScript.PullHelpers.symbolIsModule(associatedParentSymbol) || TypeScript.PullHelpers.symbolIsEnum(associatedParentSymbol) || parentKind === 32 /* DynamicModule */ || associatedParentSymbolKind === 32 /* DynamicModule */) {
                     if (!TypeScript.hasFlag(pullDecl.flags, 1 /* Exported */) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
                     } else {
@@ -31421,7 +31531,7 @@ var TypeScript;
                 }
 
                 if (pullSymbol && pullSymbolKind === 32 /* DynamicModule */) {
-                    if (this.emitOptions.compilationSettings.moduleGenTarget === 1 /* Asynchronous */) {
+                    if (this.emitOptions.compilationSettings.moduleGenTarget === 2 /* Asynchronous */) {
                         this.writeToOutput("__" + this.modAliasId + "__");
                     } else {
                         var moduleDecl = this.semanticInfoChain.getASTForSymbol(pullSymbol, this.document.fileName);
@@ -32461,7 +32571,7 @@ var TypeScript;
             this.noImplicitAny = false;
             this.noLib = false;
             this.codeGenTarget = 0 /* EcmaScript3 */;
-            this.moduleGenTarget = 0 /* Synchronous */;
+            this.moduleGenTarget = 0 /* Unspecified */;
             // --out option passed.
             // Default is the "" which leads to multiple files generated next to the.ts files
             this.outputOption = "";
@@ -32635,7 +32745,7 @@ var TypeScript;
     TypeScript.preProcessFile = preProcessFile;
 
     function getParseOptions(settings) {
-        return new TypeScript.ParseOptions(settings.allowAutomaticSemicolonInsertion);
+        return new TypeScript.ParseOptions(settings.codeGenTarget, settings.allowAutomaticSemicolonInsertion);
     }
     TypeScript.getParseOptions = getParseOptions;
 })(TypeScript || (TypeScript = {}));// Tools
@@ -33061,7 +33171,7 @@ var TypeScript;
                         emitDeclare = true;
                     }
 
-                    if (emitDeclare && typeString !== "interface") {
+                    if (emitDeclare && typeString !== "interface" && typeString != "import") {
                         result += "declare ";
                     }
 
@@ -33622,16 +33732,17 @@ var TypeScript;
 
         DeclarationEmitter.prototype.importDeclarationCallback = function (pre, importDeclAST) {
             if (pre) {
-                var start = new Date().getTime();
                 var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.fileName);
                 var importSymbol = importDecl.getSymbol();
-                TypeScript.declarationEmitGetImportDeclarationSymbolTime += new Date().getTime() - start;
+                var isExportedImportDecl = TypeScript.hasFlag(importDeclAST.getVarFlags(), 1 /* Exported */);
 
-                if (importSymbol.getTypeUsedExternally() || TypeScript.PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
+                if (isExportedImportDecl || importSymbol.typeUsedExternally || TypeScript.PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
                     this.emitDeclarationComments(importDeclAST);
                     this.emitIndent();
+                    if (isExportedImportDecl) {
+                        this.declFile.Write("export ");
+                    }
                     this.declFile.Write("import ");
-
                     this.declFile.Write(importDeclAST.id.actualText + " = ");
                     if (importDeclAST.isExternalImportDeclaration()) {
                         this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
@@ -34533,11 +34644,30 @@ var TypeScript;
             return null;
         };
 
+        PullSymbol.prototype.getScopedDynamicModuleAlias = function (scopeSymbol) {
+            var aliasSymbol = this.getAliasedSymbol(scopeSymbol);
+
+            if (aliasSymbol) {
+                if (aliasSymbol.assignedValue) {
+                    return null;
+                }
+
+                if (aliasSymbol.assignedType && aliasSymbol.assignedType != aliasSymbol.assignedContainer) {
+                    return null;
+                }
+
+                if (aliasSymbol.assignedContainer.kind != 32 /* DynamicModule */) {
+                    return null;
+                }
+            }
+            return aliasSymbol;
+        };
+
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
         * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
         */
         PullSymbol.prototype.getName = function (scopeSymbol, useConstraintInName) {
-            var symbol = this.getAliasedSymbol(scopeSymbol);
+            var symbol = this.getScopedDynamicModuleAlias(scopeSymbol);
             if (symbol) {
                 return symbol.getName();
             }
@@ -34546,7 +34676,7 @@ var TypeScript;
         };
 
         PullSymbol.prototype.getDisplayName = function (scopeSymbol, useConstraintInName) {
-            var symbol = this.getAliasedSymbol(scopeSymbol);
+            var symbol = this.getScopedDynamicModuleAlias(scopeSymbol);
             if (symbol) {
                 return symbol.getDisplayName();
             }
@@ -34785,16 +34915,16 @@ var TypeScript;
         PullSymbol.prototype.fullName = function (scopeSymbol) {
             var path = this.pathToRoot();
             var fullName = "";
-            var aliasedSymbol = this.getAliasedSymbol(scopeSymbol);
+            var aliasedSymbol = this.getScopedDynamicModuleAlias(scopeSymbol);
             if (aliasedSymbol) {
-                return aliasedSymbol.getDisplayName();
+                return aliasedSymbol.fullName(scopeSymbol);
             }
 
             for (var i = 1; i < path.length; i++) {
-                aliasedSymbol = path[i].getAliasedSymbol(scopeSymbol);
+                aliasedSymbol = path[i].getScopedDynamicModuleAlias(scopeSymbol);
                 if (aliasedSymbol) {
                     // Aliased name found
-                    fullName = aliasedSymbol.getDisplayName() + "." + fullName;
+                    fullName = aliasedSymbol.fullName(scopeSymbol) + "." + fullName;
                     break;
                 } else {
                     var scopedName = path[i].getNamePartForFullName();
@@ -34817,18 +34947,18 @@ var TypeScript;
         PullSymbol.prototype.getScopedName = function (scopeSymbol, useConstraintInName) {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
-            var aliasedSymbol = this.getAliasedSymbol(scopeSymbol);
+            var aliasedSymbol = this.getScopedDynamicModuleAlias(scopeSymbol);
             if (aliasedSymbol) {
-                return aliasedSymbol.getDisplayName();
+                return aliasedSymbol.getScopedName(scopeSymbol);
             }
 
             for (var i = 1; i < path.length; i++) {
                 var kind = path[i].kind;
                 if (kind === 4 /* Container */ || kind === 32 /* DynamicModule */) {
-                    aliasedSymbol = path[i].getAliasedSymbol(scopeSymbol);
+                    aliasedSymbol = path[i].getScopedDynamicModuleAlias(scopeSymbol);
                     if (aliasedSymbol) {
                         // Aliased name
-                        fullName = aliasedSymbol.getDisplayName() + "." + fullName;
+                        fullName = aliasedSymbol.getScopedName(scopeSymbol) + "." + fullName;
                         break;
                     } else if (kind === 4 /* Container */) {
                         fullName = path[i].getDisplayName() + "." + fullName;
@@ -36427,7 +36557,7 @@ var TypeScript;
                 return false;
             }
 
-            if (containerSymbol.type == symbol) {
+            if (!containerSymbol.isAlias() && containerSymbol.type == symbol) {
                 return true;
             }
 
@@ -36440,6 +36570,10 @@ var TypeScript;
             }
 
             return false;
+        };
+
+        PullContainerTypeSymbol.prototype.getInstanceType = function () {
+            return this.instanceSymbol ? this.instanceSymbol.type : null;
         };
         return PullContainerTypeSymbol;
     })(PullTypeSymbol);
@@ -36536,22 +36670,6 @@ var TypeScript;
             }
 
             return this.assignedContainer;
-        };
-
-        PullTypeAliasSymbol.prototype.setIsUsedAsValue = function () {
-            this.isUsedAsValue = true;
-        };
-
-        PullTypeAliasSymbol.prototype.getIsUsedAsValue = function () {
-            return this.isUsedAsValue;
-        };
-
-        PullTypeAliasSymbol.prototype.setIsTypeUsedExternally = function () {
-            this.typeUsedExternally = true;
-        };
-
-        PullTypeAliasSymbol.prototype.getTypeUsedExternally = function () {
-            return this.typeUsedExternally;
         };
 
         PullTypeAliasSymbol.prototype.getMembers = function () {
@@ -38268,6 +38386,28 @@ var TypeScript;
                 if (childDecls.length) {
                     return this.getExportedMemberSymbol(childDecls[0].getSymbol(), parent);
                 }
+
+                if ((declSearchKind & TypeScript.PullElementKind.SomeType) != 0 || (declSearchKind & TypeScript.PullElementKind.SomeValue) != 0) {
+                    childDecls = typeDeclarations[j].searchChildDecls(symbolName, 256 /* TypeAlias */);
+                    if (childDecls.length && childDecls[0].kind == 256 /* TypeAlias */) {
+                        var aliasSymbol = this.getExportedMemberSymbol(childDecls[0].getSymbol(), parent);
+                        if (aliasSymbol) {
+                            if ((declSearchKind & TypeScript.PullElementKind.SomeType) != 0) {
+                                // Some type
+                                var typeSymbol = aliasSymbol.getExportAssignedTypeSymbol();
+                                if (typeSymbol) {
+                                    return typeSymbol;
+                                }
+                            } else {
+                                // Some value
+                                var valueSymbol = aliasSymbol.getExportAssignedValueSymbol();
+                                if (valueSymbol) {
+                                    return valueSymbol;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         };
 
@@ -38633,8 +38773,8 @@ var TypeScript;
                     this.currentUnit.addSynthesizedDecl(prototypeDecl);
                     prototypeDecl.setParentDecl(parentDecl);
                     prototypeSymbol.addDeclaration(prototypeDecl);
-
-                    // prototypeSymbol.setType(lhsType);
+                    prototypeSymbol.type = lhsType.getAssociatedContainerType();
+                    prototypeSymbol.isResolved = true;
                     members.push(prototypeSymbol);
                 } else {
                     var associatedContainerSymbol = lhsType.getAssociatedContainerType();
@@ -38651,13 +38791,6 @@ var TypeScript;
 
             if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType()) {
                 members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, false));
-            }
-
-            for (var i = 0; i < members.length; i++) {
-                if (!members[i].isResolved) {
-                    this.resolveDeclaredSymbol(members[i], enclosingDecl, context);
-                }
-                members[i].setUnresolved();
             }
 
             return members;
@@ -38892,6 +39025,7 @@ var TypeScript;
                     childDecls[j].ensureSymbolIsBound();
                 }
             }
+
             var members = ast.members.members;
 
             if (containerDecl.kind != 64 /* Enum */) {
@@ -38920,7 +39054,10 @@ var TypeScript;
                         this.resolveAST(subModuleAST.members, false, containerDecls[i], context);
                     }
                 }
+
                 this.setUnitPath(currentPath);
+
+                this.validateVariableDeclarationGroups(containerDecl, context);
             }
 
             if (!context.isInBaseTypeResolution()) {
@@ -39087,7 +39224,9 @@ var TypeScript;
                         this.resolveDeclaredSymbol(indexSignatures[i], typeDecl, context);
                     }
 
-                    this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
+                    if (context.typeCheck()) {
+                        this.typeCheckBases(typeDeclAST, typeDeclSymbol, enclosingDecl, context);
+                    }
                 }
             }
 
@@ -39173,12 +39312,14 @@ var TypeScript;
                     return classDeclSymbol;
                 }
 
-                var constructorMembers = constructorTypeSymbol.getMembers();
+                if (context.typeCheck()) {
+                    var constructorMembers = constructorTypeSymbol.getMembers();
 
-                this.resolveDeclaredSymbol(constructorMethod, classDecl, context);
+                    this.resolveDeclaredSymbol(constructorMethod, classDecl, context);
 
-                for (var i = 0; i < constructorMembers.length; i++) {
-                    this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                    for (var i = 0; i < constructorMembers.length; i++) {
+                        this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
+                    }
                 }
             }
 
@@ -39191,9 +39332,11 @@ var TypeScript;
                 }
             }
 
-            this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
-            if (classDeclSymbol.isResolved && !classDeclSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
+            if (context.typeCheck()) {
+                this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
+                if (classDeclSymbol.isResolved && !classDeclSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
+                }
             }
 
             return classDeclSymbol;
@@ -39204,9 +39347,13 @@ var TypeScript;
             var interfaceDeclSymbol = interfaceDecl.getSymbol();
 
             this.resolveReferenceTypeDeclaration(interfaceDeclAST, context);
-            if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
+
+            if (context.typeCheck()) {
+                if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
+                }
             }
+
             return interfaceDeclSymbol;
         };
 
@@ -39370,7 +39517,7 @@ var TypeScript;
                         importDeclSymbol.setAssignedTypeSymbol(identifierResolution.typeSymbol);
                         importDeclSymbol.setAssignedContainerSymbol(identifierResolution.containerSymbol);
                         if (identifierResolution.valueSymbol) {
-                            importDeclSymbol.setIsUsedAsValue();
+                            importDeclSymbol.isUsedAsValue = true;
                         }
                         this.semanticInfoChain.setSymbolForAST(importStatementAST.alias, importDeclSymbol, this.unitPath);
                         return null;
@@ -39399,7 +39546,9 @@ var TypeScript;
 
             importDeclSymbol.startResolving();
 
-            if (importStatementAST.isExternalImportDeclaration()) {
+            var isExternalImportDeclaration = importStatementAST.isExternalImportDeclaration();
+
+            if (isExternalImportDeclaration) {
                 // dynamic module name (string literal)
                 var modPath = (importStatementAST.alias).actualText;
                 var declPath = TypeScript.getPathToDecl(enclosingDecl);
@@ -39426,7 +39575,7 @@ var TypeScript;
                     importDecl.addDiagnostic(new TypeScript.Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), TypeScript.DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 } else if ((aliasedType).getExportAssignedValueSymbol()) {
-                    importDeclSymbol.setIsUsedAsValue();
+                    importDeclSymbol.isUsedAsValue = true;
                 }
 
                 if (aliasedType.isContainer()) {
@@ -39439,6 +39588,50 @@ var TypeScript;
             }
 
             importDeclSymbol.setResolved();
+
+            if (context.typeCheck()) {
+                var checkPrivacy;
+                if (isExternalImportDeclaration) {
+                    var containerSymbol = importDeclSymbol.getExportAssignedContainerSymbol();
+                    var container = containerSymbol ? containerSymbol.getContainer() : null;
+                    if (container && container.kind == 32 /* DynamicModule */) {
+                        checkPrivacy = true;
+                    }
+                } else {
+                    checkPrivacy = true;
+                }
+
+                if (checkPrivacy) {
+                    // Check if import satisfies type privacy
+                    var typeSymbol = importDeclSymbol.getExportAssignedTypeSymbol();
+                    var containerSymbol = importDeclSymbol.getExportAssignedContainerSymbol();
+                    var valueSymbol = importDeclSymbol.getExportAssignedValueSymbol();
+
+                    this.checkSymbolPrivacy(importDeclSymbol, containerSymbol, context, function (symbol) {
+                        var messageCode = TypeScript.DiagnosticCode.Exported_import_declaration_0_is_assigned_container_that_is_or_is_using_inaccessible_module_1;
+                        var messageArguments = [importDeclSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null), symbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null)];
+                        context.postError(_this.unitPath, importStatementAST.minChar, importStatementAST.getLength(), messageCode, messageArguments, enclosingDecl);
+                    });
+
+                    if (typeSymbol != containerSymbol) {
+                        this.checkSymbolPrivacy(importDeclSymbol, typeSymbol, context, function (symbol) {
+                            var messageCode = symbol.isContainer() ? TypeScript.DiagnosticCode.Exported_import_declaration_0_is_assigned_type_that_is_using_inaccessible_module_1 : TypeScript.DiagnosticCode.Exported_import_declaration_0_is_assigned_type_that_has_or_is_using_private_type_1;
+
+                            var messageArguments = [importDeclSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null), symbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null)];
+                            context.postError(_this.unitPath, importStatementAST.minChar, importStatementAST.getLength(), messageCode, messageArguments, enclosingDecl);
+                        });
+                    }
+
+                    if (valueSymbol) {
+                        this.checkSymbolPrivacy(importDeclSymbol, valueSymbol.type, context, function (symbol) {
+                            var messageCode = symbol.isContainer() ? TypeScript.DiagnosticCode.Exported_import_declaration_0_is_assigned_value_with_type_that_is_using_inaccessible_module_1 : TypeScript.DiagnosticCode.Exported_import_declaration_0_is_assigned_value_with_type_that_has_or_is_using_private_type_1;
+                            var messageArguments = [importDeclSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null), symbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null)];
+                            context.postError(_this.unitPath, importStatementAST.minChar, importStatementAST.getLength(), messageCode, messageArguments, enclosingDecl);
+                        });
+                    }
+                }
+            }
+
             return importDeclSymbol;
         };
 
@@ -39594,7 +39787,9 @@ var TypeScript;
 
             funcDeclSymbol.setResolved();
 
-            this.typeCheckFunctionOverloads(funcDeclAST, context);
+            if (context.typeCheck()) {
+                this.typeCheckFunctionOverloads(funcDeclAST, context);
+            }
 
             return funcDeclSymbol;
         };
@@ -39723,8 +39918,10 @@ var TypeScript;
 
             interfaceSymbol.setResolved();
 
-            if (!interfaceSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+            if (context.typeCheck()) {
+                if (!interfaceSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+                }
             }
 
             return interfaceSymbol;
@@ -39739,6 +39936,15 @@ var TypeScript;
             var aliasType = null;
             if (!type) {
                 type = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
+
+                if (type.kind == 4 /* Container */) {
+                    var containerType = type;
+                    var instanceSymbol = containerType.getInstanceSymbol();
+
+                    if (instanceSymbol && (instanceSymbol.hasFlag(16384 /* ClassConstructorVariable */) || instanceSymbol.kind == 32768 /* ConstructorMethod */)) {
+                        type = instanceSymbol.type.getAssociatedContainerType();
+                    }
+                }
 
                 if (type && type.isAlias()) {
                     aliasType = type;
@@ -40084,40 +40290,23 @@ var TypeScript;
                 }
 
                 if (typeExprSymbol && typeExprSymbol.isContainer()) {
-                    if (typeExprSymbol.isAlias()) {
-                        typeExprSymbol = (typeExprSymbol).getExportAssignedTypeSymbol();
-                    }
-
                     var exportedTypeSymbol = (typeExprSymbol).getExportAssignedTypeSymbol();
 
                     if (exportedTypeSymbol) {
                         typeExprSymbol = exportedTypeSymbol;
                     } else {
-                        var instanceTypeSymbol = (typeExprSymbol.type).getInstanceSymbol().type;
+                        var instanceTypeSymbol = (typeExprSymbol).getInstanceType();
 
                         if (!instanceTypeSymbol || !TypeScript.PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), TypeScript.DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [typeExprSymbol.toString()], enclosingDecl);
                             typeExprSymbol = null;
                         } else {
-                            typeExprSymbol = instanceTypeSymbol.type;
+                            typeExprSymbol = instanceTypeSymbol;
                         }
                     }
                 }
 
-                if (initTypeSymbol && initTypeSymbol.isAlias()) {
-                    initTypeSymbol = (initTypeSymbol).getExportAssignedTypeSymbol();
-                }
-
-                if (initTypeSymbol && initTypeSymbol.isContainer()) {
-                    instanceTypeSymbol = (initTypeSymbol).getInstanceSymbol().type;
-
-                    if (!instanceTypeSymbol) {
-                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), TypeScript.DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [initTypeSymbol.toString()], enclosingDecl);
-                        initTypeSymbol = null;
-                    } else {
-                        initTypeSymbol = instanceTypeSymbol.type;
-                    }
-                }
+                initTypeSymbol = this.getInstanceTypeForAssignment(varDecl, initTypeSymbol, enclosingDecl, context);
 
                 if (initTypeSymbol && typeExprSymbol) {
                     var comparisonInfo = new TypeComparisonInfo();
@@ -40148,8 +40337,8 @@ var TypeScript;
                     }
                 }
                 if (declSymbol.kind != 2048 /* Parameter */ && (declSymbol.kind != 4096 /* Property */ || declSymbol.getContainer().isNamedTypeSymbol())) {
-                    this.checkTypePrivacy(declSymbol, declSymbol.type, context, function (typeSymbol) {
-                        return _this.variablePrivacyErrorReporter(declSymbol, typeSymbol, context);
+                    this.checkSymbolPrivacy(declSymbol, declSymbol.type, context, function (symbol) {
+                        return _this.variablePrivacyErrorReporter(declSymbol, symbol, context);
                     });
                 }
             }
@@ -40293,10 +40482,6 @@ var TypeScript;
 
                     var functionDecl = this.getDeclForAST(funcDeclAST);
                     var functionSymbol = functionDecl.getSymbol();
-                    if (functionSymbol && functionSymbol.type == returnType) {
-                        // If recursive typing, use return type as any
-                        returnType = this.semanticInfoChain.anyTypeSymbol;
-                    }
 
                     if (returnType) {
                         var previousReturnType = returnType;
@@ -40304,7 +40489,7 @@ var TypeScript;
                         signature.returnType = newReturnType;
 
                         if (this.compilationSettings.noImplicitAny) {
-                            if (previousReturnType != newReturnType) {
+                            if (previousReturnType !== newReturnType && newReturnType === this.semanticInfoChain.anyTypeSymbol) {
                                 var functionName = enclosingDecl.name;
                                 if (functionName == "") {
                                     functionName = (enclosingDecl).getFunctionExpressionName();
@@ -40358,6 +40543,9 @@ var TypeScript;
 
                 var diagnostic;
 
+                // Save this in case we had set the function type to any because of a recursive reference.
+                var functionTypeSymbol = funcSymbol && funcSymbol.type;
+
                 if (signature.inResolution) {
                     if (funcDeclAST.returnTypeAnnotation) {
                         var returnTypeSymbol = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, funcDecl, context);
@@ -40382,10 +40570,19 @@ var TypeScript;
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                     }
 
+                    if (funcSymbol) {
+                        funcSymbol.setUnresolved();
+                        if (funcSymbol.type === this.semanticInfoChain.anyTypeSymbol) {
+                            funcSymbol.type = functionTypeSymbol;
+                        }
+                    }
                     signature.setResolved();
                     return funcSymbol;
                 }
 
+                if (funcSymbol) {
+                    funcSymbol.startResolving();
+                }
                 signature.startResolving();
 
                 if (funcDeclAST.typeArguments) {
@@ -40464,6 +40661,12 @@ var TypeScript;
                 }
 
                 if (!hadError) {
+                    if (funcSymbol) {
+                        funcSymbol.setUnresolved();
+                        if (funcSymbol.type === this.semanticInfoChain.anyTypeSymbol) {
+                            funcSymbol.type = functionTypeSymbol;
+                        }
+                    }
                     signature.setResolved();
                 }
             }
@@ -40696,15 +40899,11 @@ var TypeScript;
 
                 var hasReturn = (funcDecl.flags & (2048 /* Signature */ | 4194304 /* HasReturnStatement */)) != 0;
 
-                var parameters = signature.parameters;
-
                 var isGetter = TypeScript.hasFlag(funcDeclAST.getFunctionFlags(), 32 /* GetAccessor */);
                 var isSetter = !isGetter;
 
                 var getter = accessorSymbol.getGetter();
                 var setter = accessorSymbol.getSetter();
-
-                var parameters = signature.parameters;
 
                 var funcNameAST = funcDeclAST.name;
 
@@ -40829,15 +41028,11 @@ var TypeScript;
 
                 var hasReturn = (funcDecl.flags & (2048 /* Signature */ | 4194304 /* HasReturnStatement */)) != 0;
 
-                var parameters = signature.parameters;
-
                 var isGetter = TypeScript.hasFlag(funcDeclAST.getFunctionFlags(), 32 /* GetAccessor */);
                 var isSetter = !isGetter;
 
                 var getter = accessorSymbol.getGetter();
                 var setter = accessorSymbol.getSetter();
-
-                var parameters = signature.parameters;
 
                 var funcNameAST = funcDeclAST.name;
 
@@ -41175,7 +41370,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveWithStatement = function (ast, enclosingDecl, context) {
-            if (context.typeCheck) {
+            if (context.typeCheck()) {
                 var withStatement = ast;
                 context.postError(this.unitPath, withStatement.expr.minChar, withStatement.expr.getLength(), TypeScript.DiagnosticCode.All_symbols_within_a_with_block_will_be_resolved_to_any, null, enclosingDecl);
             }
@@ -41199,8 +41394,6 @@ var TypeScript;
 
         PullTypeResolver.prototype.resolveCatchClause = function (ast, enclosingDecl, context) {
             if (context.typeCheck()) {
-                ;
-
                 this.resolveAST((ast).body, false, this.getDeclForAST(ast), context);
             }
 
@@ -41698,7 +41891,12 @@ var TypeScript;
 
         PullTypeResolver.prototype.resolveNameSymbol = function (nameSymbol, context) {
             if (nameSymbol && !context.canUseTypeSymbol && nameSymbol != this.semanticInfoChain.undefinedTypeSymbol && nameSymbol != this.semanticInfoChain.nullTypeSymbol && (nameSymbol.isPrimitive() || !(nameSymbol.kind & TypeScript.PullElementKind.SomeValue))) {
-                nameSymbol = null;
+                var valueSymbol = nameSymbol.isAlias() ? (nameSymbol).getExportAssignedValueSymbol() : null;
+                if (valueSymbol) {
+                    nameSymbol = valueSymbol;
+                } else {
+                    nameSymbol = null;
+                }
             }
 
             return nameSymbol;
@@ -41762,10 +41960,18 @@ var TypeScript;
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = nameSymbol;
-                aliasSymbol.setIsUsedAsValue();
+                aliasSymbol.isUsedAsValue = true;
 
                 if (!nameSymbol.isResolved) {
                     this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
+                }
+
+                if (aliasSymbol.assignedValue) {
+                    if (!aliasSymbol.assignedValue.isResolved) {
+                        this.resolveDeclaredSymbol(aliasSymbol.assignedValue, enclosingDecl, context);
+                    }
+                } else if (aliasSymbol.assignedContainer && !aliasSymbol.assignedContainer.isResolved) {
+                    this.resolveDeclaredSymbol(aliasSymbol.assignedContainer, enclosingDecl, context);
                 }
 
                 var exportAssignmentSymbol = (nameSymbol).getExportAssignedValueSymbol();
@@ -41842,7 +42048,7 @@ var TypeScript;
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
-                (lhs).setIsUsedAsValue();
+                (lhs).isUsedAsValue = true;
                 lhsType = (lhs).getExportAssignedTypeSymbol();
             }
 
@@ -42187,7 +42393,7 @@ var TypeScript;
 
             if (context.isResolvingClassExtendedType) {
                 if (lhs.isAlias()) {
-                    (lhs).setIsUsedAsValue();
+                    (lhs).isUsedAsValue = true;
                 }
             }
 
@@ -43863,6 +44069,8 @@ var TypeScript;
             var rightType = this.widenType(this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type);
             context.popContextualType();
 
+            rightType = this.getInstanceTypeForAssignment(binaryExpression.operand1, rightType, enclosingDecl, context);
+
             if (context.typeCheck()) {
                 if (!this.isValidLHS(binaryExpression.operand1, leftExpr)) {
                     context.postError(this.unitPath, binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), TypeScript.DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null, enclosingDecl);
@@ -43881,6 +44089,26 @@ var TypeScript;
             context.popContextualType();
 
             return leftType;
+        };
+
+        PullTypeResolver.prototype.getInstanceTypeForAssignment = function (lhs, type, enclosingDecl, context) {
+            var typeToReturn = type;
+            if (typeToReturn && typeToReturn.isAlias()) {
+                typeToReturn = (typeToReturn).getExportAssignedTypeSymbol();
+            }
+
+            if (typeToReturn && typeToReturn.isContainer()) {
+                var instanceTypeSymbol = (typeToReturn).getInstanceType();
+
+                if (!instanceTypeSymbol) {
+                    context.postError(this.unitPath, lhs.minChar, lhs.getLength(), TypeScript.DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [type.toString()], enclosingDecl);
+                    typeToReturn = null;
+                } else {
+                    typeToReturn = instanceTypeSymbol;
+                }
+            }
+
+            return typeToReturn;
         };
 
         PullTypeResolver.prototype.resolveBoundDecls = function (decl, context) {
@@ -45064,6 +45292,7 @@ var TypeScript;
                         var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
                         actuals[i] = argSym.type;
                     }
+
                     context.isInInvocationExpression = originalIsInInvocationExpression;
                 }
             } else if (application.nodeType() === 36 /* ElementAccessExpression */) {
@@ -45795,14 +46024,10 @@ var TypeScript;
                     if (!j) {
                         firstSymbol = symbol;
                         firstSymbolType = symbolType;
-
-                        if (this.isAnyOrEquivalent(this.widenType(firstSymbolType))) {
-                            return;
-                        }
                         continue;
                     }
 
-                    if (symbolType && firstSymbolType && !this.isAnyOrEquivalent(symbolType) && !this.typesAreIdentical(symbolType, firstSymbolType)) {
+                    if (symbolType && firstSymbolType && !this.typesAreIdentical(symbolType, firstSymbolType)) {
                         context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(), TypeScript.DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()], enclosingDecl);
                     }
                 }
@@ -45909,7 +46134,7 @@ var TypeScript;
                 signatureForVisibilityCheck = allSignatures[0];
             }
 
-            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signature != signatureForVisibilityCheck) {
+            if (!funcDecl.isConstructor && !funcDecl.isConstructMember() && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
                 var errorCode;
 
                 if (signatureForVisibilityCheck.hasFlag(2 /* Private */) != signature.hasFlag(2 /* Private */)) {
@@ -45929,61 +46154,74 @@ var TypeScript;
         };
 
         // Privacy checking
-        PullTypeResolver.prototype.checkTypePrivacy = function (declSymbol, typeSymbol, context, privacyErrorReporter) {
-            if (!typeSymbol || typeSymbol.kind === 2 /* Primitive */) {
+        PullTypeResolver.prototype.checkSymbolPrivacy = function (declSymbol, symbol, context, privacyErrorReporter) {
+            if (!symbol || symbol.kind === 2 /* Primitive */) {
                 return;
             }
 
-            if (typeSymbol.isArray()) {
-                this.checkTypePrivacy(declSymbol, typeSymbol.getElementType(), context, privacyErrorReporter);
-                return;
-            }
-
-            if (!typeSymbol.isNamedTypeSymbol()) {
-                // Check the privacy of members, constructors, calls, index signatures
-                var members = typeSymbol.getMembers();
-                for (var i = 0; i < members.length; i++) {
-                    this.checkTypePrivacy(declSymbol, members[i].type, context, privacyErrorReporter);
+            if (symbol.isType()) {
+                var typeSymbol = symbol;
+                if (typeSymbol.isArray()) {
+                    this.checkSymbolPrivacy(declSymbol, typeSymbol.getElementType(), context, privacyErrorReporter);
+                    return;
                 }
 
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+                if (!typeSymbol.isNamedTypeSymbol()) {
+                    // Check the privacy of members, constructors, calls, index signatures
+                    var members = typeSymbol.getMembers();
+                    for (var i = 0; i < members.length; i++) {
+                        this.checkSymbolPrivacy(declSymbol, members[i].type, context, privacyErrorReporter);
+                    }
 
-                return;
+                    this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
+                    this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
+                    this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+
+                    return;
+                }
             }
 
             if (declSymbol.isExternallyVisible()) {
                 // Check if type symbol is externally visible
-                var typeSymbolIsVisible = typeSymbol.isExternallyVisible();
+                var symbolIsVisible = symbol.isExternallyVisible();
 
-                if (typeSymbolIsVisible) {
-                    var typeSymbolPath = typeSymbol.pathToRoot();
-                    if (typeSymbolPath.length && typeSymbolPath[typeSymbolPath.length - 1].kind === 32 /* DynamicModule */) {
+                if (symbolIsVisible) {
+                    var symbolPath = symbol.pathToRoot();
+                    if (symbolPath.length && symbolPath[symbolPath.length - 1].kind === 32 /* DynamicModule */) {
                         // Type from the dynamic module
                         var declSymbolPath = declSymbol.pathToRoot();
-                        if (declSymbolPath.length && declSymbolPath[declSymbolPath.length - 1] != typeSymbolPath[typeSymbolPath.length - 1]) {
+                        var verifyAlias = false;
+                        if (declSymbolPath.length) {
+                            if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
+                                verifyAlias = true;
+                            } else if (symbolPath.length > 1 && symbolPath[symbolPath.length - 2].kind == 32 /* DynamicModule */) {
+                                if (declSymbolPath.length < 2 || declSymbolPath[declSymbolPath.length - 2] != symbolPath[symbolPath.length - 2]) {
+                                    verifyAlias = true;
+                                }
+                            }
+                        }
+
+                        if (verifyAlias) {
                             // Declaration symbol is from different unit
                             // Type may not be visible without import statement
-                            typeSymbolIsVisible = false;
-                            for (var i = typeSymbolPath.length - 1; i >= 0; i--) {
-                                var aliasSymbol = typeSymbolPath[i].getAliasedSymbol(declSymbol);
+                            symbolIsVisible = false;
+                            for (var i = symbolPath.length - 1; i >= 0; i--) {
+                                var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
                                 if (aliasSymbol) {
                                     // Visible type.
-                                    // Also mark this Import declaration as visible
-                                    TypeScript.CompilerDiagnostics.assert(aliasSymbol.kind === 256 /* TypeAlias */, "dynamic module need to be referenced by type alias");
-                                    (aliasSymbol).setIsTypeUsedExternally();
-                                    typeSymbolIsVisible = true;
+                                    symbolIsVisible = true;
+                                    aliasSymbol.typeUsedExternally = true;
                                     break;
                                 }
                             }
+                            symbol = symbolPath[symbolPath.length - 1];
                         }
                     }
                 }
 
-                if (!typeSymbolIsVisible) {
+                if (!symbolIsVisible) {
                     // declaration is visible from outside but the type isnt - Report error
-                    privacyErrorReporter(typeSymbol);
+                    privacyErrorReporter(symbol);
                 }
             }
         };
@@ -45991,33 +46229,34 @@ var TypeScript;
         PullTypeResolver.prototype.checkTypePrivacyOfSignatures = function (declSymbol, signatures, context, privacyErrorReporter) {
             for (var i = 0; i < signatures.length; i++) {
                 var signature = signatures[i];
-                if (signatures.length && signature.isDefinition()) {
+                if (signatures.length > 1 && signature.isDefinition()) {
                     continue;
                 }
 
                 var typeParams = signature.getTypeParameters();
                 for (var j = 0; j < typeParams.length; j++) {
-                    this.checkTypePrivacy(declSymbol, typeParams[j], context, privacyErrorReporter);
+                    this.checkSymbolPrivacy(declSymbol, typeParams[j], context, privacyErrorReporter);
                 }
 
                 var params = signature.parameters;
                 for (var j = 0; j < params.length; j++) {
                     var paramType = params[j].type;
-                    this.checkTypePrivacy(declSymbol, paramType, context, privacyErrorReporter);
+                    this.checkSymbolPrivacy(declSymbol, paramType, context, privacyErrorReporter);
                 }
 
                 var returnType = signature.returnType;
-                this.checkTypePrivacy(declSymbol, returnType, context, privacyErrorReporter);
+                this.checkSymbolPrivacy(declSymbol, returnType, context, privacyErrorReporter);
             }
         };
 
-        PullTypeResolver.prototype.baseListPrivacyErrorReporter = function (declAST, declSymbol, baseAst, isExtendedType, typeSymbol, context) {
+        PullTypeResolver.prototype.baseListPrivacyErrorReporter = function (declAST, declSymbol, baseAst, isExtendedType, symbol, context) {
             var decl = this.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
+            var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
             var messageCode;
-            var messageArguments;
 
-            var typeSymbolName = typeSymbol.getScopedName();
+            var typeSymbol = symbol;
+            var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
@@ -46025,38 +46264,35 @@ var TypeScript;
                 if (declAST.nodeType() === 14 /* ClassDeclaration */) {
                     if (isExtendedType) {
                         messageCode = TypeScript.DiagnosticCode.Exported_class_0_extends_class_from_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Exported_class_0_implements_interface_from_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
                     // Interface
                     messageCode = TypeScript.DiagnosticCode.Exported_interface_0_extends_interface_from_inaccessible_module_1;
-                    messageArguments = [declSymbol.toString(), typeSymbolName];
                 }
             } else {
                 if (declAST.nodeType() === 14 /* ClassDeclaration */) {
                     if (isExtendedType) {
                         messageCode = TypeScript.DiagnosticCode.Exported_class_0_extends_private_class_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Exported_class_0_implements_private_interface_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
                     // Interface
                     messageCode = TypeScript.DiagnosticCode.Exported_interface_0_extends_private_interface_1;
-                    messageArguments = [declSymbol.toString(), typeSymbolName];
                 }
             }
 
+            var messageArguments = [declSymbol.getScopedName(enclosingSymbol), typeSymbolName];
             context.postError(this.unitPath, baseAst.minChar, baseAst.getLength(), messageCode, messageArguments, enclosingDecl);
         };
 
-        PullTypeResolver.prototype.variablePrivacyErrorReporter = function (declSymbol, typeSymbol, context) {
+        PullTypeResolver.prototype.variablePrivacyErrorReporter = function (declSymbol, symbol, context) {
+            var typeSymbol = symbol;
             var declAST = this.getASTForSymbol(declSymbol);
             var enclosingDecl = this.getEnclosingDecl(declSymbol.getDeclarations()[0]);
+            var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
             var isProperty = declSymbol.kind === 4096 /* Property */;
             var isPropertyOfClass = false;
@@ -46066,8 +46302,7 @@ var TypeScript;
             }
 
             var messageCode;
-            var messageArguments;
-            var typeSymbolName = typeSymbol.getScopedName();
+            var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
@@ -46075,37 +46310,30 @@ var TypeScript;
 
                 if (declSymbol.hasFlag(16 /* Static */)) {
                     messageCode = TypeScript.DiagnosticCode.Public_static_property_0_of_exported_class_is_using_inaccessible_module_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
                         messageCode = TypeScript.DiagnosticCode.Public_property_0_of_exported_class_is_using_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Property_0_of_exported_interface_is_using_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
                     messageCode = TypeScript.DiagnosticCode.Exported_variable_0_is_using_inaccessible_module_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 }
             } else {
                 if (declSymbol.hasFlag(16 /* Static */)) {
                     messageCode = TypeScript.DiagnosticCode.Public_static_property_0_of_exported_class_has_or_is_using_private_type_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
                         messageCode = TypeScript.DiagnosticCode.Public_property_0_of_exported_class_has_or_is_using_private_type_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Property_0_of_exported_interface_has_or_is_using_private_type_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                     }
                 } else {
                     messageCode = TypeScript.DiagnosticCode.Exported_variable_0_has_or_is_using_private_type_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
                 }
             }
 
+            var messageArguments = [declSymbol.getScopedName(enclosingSymbol), typeSymbolName];
             context.postError(this.unitPath, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl);
         };
 
@@ -46144,22 +46372,23 @@ var TypeScript;
             if (!isGetter) {
                 var funcParams = functionSignature.parameters;
                 for (var i = 0; i < funcParams.length; i++) {
-                    this.checkTypePrivacy(functionSymbol, funcParams[i].type, context, function (typeSymbol) {
-                        return _this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, context);
+                    this.checkSymbolPrivacy(functionSymbol, funcParams[i].type, context, function (symbol) {
+                        return _this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], symbol, context);
                     });
                 }
             }
 
             if (!isSetter) {
-                this.checkTypePrivacy(functionSymbol, functionSignature.returnType, context, function (typeSymbol) {
-                    return _this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.returnType, typeSymbol, context);
+                this.checkSymbolPrivacy(functionSymbol, functionSignature.returnType, context, function (symbol) {
+                    return _this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.returnType, symbol, context);
                 });
             }
         };
 
-        PullTypeResolver.prototype.functionArgumentTypePrivacyErrorReporter = function (declAST, argIndex, paramSymbol, typeSymbol, context) {
+        PullTypeResolver.prototype.functionArgumentTypePrivacyErrorReporter = function (declAST, argIndex, paramSymbol, symbol, context) {
             var decl = this.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
+            var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
             var isGetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 32 /* GetAccessor */);
             var isSetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 64 /* SetAccessor */);
@@ -46174,63 +46403,70 @@ var TypeScript;
             var start = declAST.arguments.members[argIndex].minChar;
             var length = declAST.arguments.members[argIndex].getLength();
 
-            var typeSymbolName = typeSymbol.getScopedName();
+            var typeSymbol = symbol;
+            var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
+            var messageCode;
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
 
                 if (declAST.isConstructor) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1;
                 } else if (isSetter) {
                     if (isStatic) {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1;
                     } else {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1;
                     }
                 } else if (declAST.isConstructMember()) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1;
                 } else if (declAST.isCallMember()) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1;
                 } else if (isMethod) {
                     if (isStatic) {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1;
                     } else if (isMethodOfClass) {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1;
                     } else {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1;
                     }
                 } else if (!isGetter) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1;
                 }
             } else {
                 if (declAST.isConstructor) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1;
                 } else if (isSetter) {
                     if (isStatic) {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1;
                     } else {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1;
                     }
                 } else if (declAST.isConstructMember()) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1;
                 } else if (declAST.isCallMember()) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1;
                 } else if (isMethod) {
                     if (isStatic) {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1;
                     } else if (isMethodOfClass) {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1;
                     } else {
-                        context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                        messageCode = TypeScript.DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1;
                     }
                 } else if (!isGetter && !declAST.isIndexerMember()) {
-                    context.postError(this.unitPath, start, length, TypeScript.DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
+                    messageCode = TypeScript.DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1;
                 }
+            }
+
+            if (messageCode) {
+                var messageArgs = [paramSymbol.getScopedName(enclosingSymbol), typeSymbolName];
+                context.postError(this.unitPath, start, length, messageCode, messageArgs, enclosingDecl);
             }
         };
 
-        PullTypeResolver.prototype.functionReturnTypePrivacyErrorReporter = function (declAST, funcReturnType, typeSymbol, context) {
+        PullTypeResolver.prototype.functionReturnTypePrivacyErrorReporter = function (declAST, funcReturnType, symbol, context) {
             var _this = this;
             var decl = this.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
@@ -46246,8 +46482,8 @@ var TypeScript;
             }
 
             var messageCode = null;
-            var messageArguments;
-            var typeSymbolName = typeSymbol.getScopedName();
+            var typeSymbol = symbol;
+            var typeSymbolName = typeSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null);
             if (typeSymbol.isContainer()) {
                 if (!TypeScript.isQuoted(typeSymbolName)) {
                     typeSymbolName = "'" + typeSymbolName + "'";
@@ -46256,71 +46492,54 @@ var TypeScript;
                 if (isGetter) {
                     if (isStatic) {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
                     }
                 } else if (declAST.isConstructMember()) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
                 } else if (declAST.isCallMember()) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
                 } else if (declAST.isIndexerMember()) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
                 } else if (isMethod) {
                     if (isStatic) {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
                     } else if (isMethodOfClass) {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
                     }
                 } else if (!isSetter && !declAST.isConstructor) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
                 }
             } else {
                 if (isGetter) {
                     if (isStatic) {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
                     }
                 } else if (declAST.isConstructMember()) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
                 } else if (declAST.isCallMember()) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
                 } else if (declAST.isIndexerMember()) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
                 } else if (isMethod) {
                     if (isStatic) {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
                     } else if (isMethodOfClass) {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
                     } else {
                         messageCode = TypeScript.DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
                     }
                 } else if (!isSetter && !declAST.isConstructor) {
                     messageCode = TypeScript.DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
                 }
             }
 
             if (messageCode) {
+                var messageArguments = [typeSymbolName];
                 var reportOnFuncDecl = false;
 
                 if (declAST.returnTypeAnnotation) {
@@ -46719,12 +46938,16 @@ var TypeScript;
             }
 
             // Privacy error:
-            this.checkTypePrivacy(typeSymbol, baseType, context, function (errorTypeSymbol) {
-                return _this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, context);
+            this.checkSymbolPrivacy(typeSymbol, baseType, context, function (errorSymbol) {
+                return _this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorSymbol, context);
             });
         };
 
         PullTypeResolver.prototype.typeCheckBases = function (typeDeclAst, typeSymbol, enclosingDecl, context) {
+            if (!context.typeCheck()) {
+                return;
+            }
+
             if (!typeDeclAst.extendsList && !typeDeclAst.implementsList) {
                 return;
             }
@@ -47283,7 +47506,6 @@ var TypeScript;
         // validate:
         //  - lhs and rhs types agree (if lhs has no type annotation)
         PullTypeChecker.prototype.typeCheckBoundDecl = function (ast, typeCheckContext) {
-            var _this = this;
             var boundDeclAST = ast;
             var decl = this.resolver.getDeclForAST(boundDeclAST);
 
@@ -47377,18 +47599,11 @@ var TypeScript;
 
             var declSymbol = decl.getSymbol();
 
-            if (declSymbol.kind != 2048 /* Parameter */ && (declSymbol.kind != 4096 /* Property */ || declSymbol.getContainer().isNamedTypeSymbol())) {
-                this.checkTypePrivacy(declSymbol, varTypeSymbol, typeCheckContext, function (typeSymbol) {
-                    return _this.variablePrivacyErrorReporter(declSymbol, typeSymbol, typeCheckContext);
-                });
-            }
-
             return varTypeSymbol;
         };
 
         PullTypeChecker.prototype.typeCheckImportDeclaration = function (importDeclaration, typeCheckContext) {
-            var result = this.resolveSymbolAndReportDiagnostics(importDeclaration, false, typeCheckContext.getEnclosingDecl());
-            return result;
+            return this.resolveSymbolAndReportDiagnostics(importDeclaration, false, typeCheckContext.getEnclosingDecl());
         };
 
         // functions
@@ -47458,7 +47673,6 @@ var TypeScript;
             }
 
             this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext);
-            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             return functionSymbol ? functionSymbol.type : null;
         };
@@ -47622,9 +47836,6 @@ var TypeScript;
 
             var functionSignature = functionDecl.getSignatureSymbol();
 
-            // check for optionality
-            var parameters = functionSignature.parameters;
-
             var returnType = functionSignature.returnType;
 
             this.checkForResolutionError(returnType, enclosingDecl);
@@ -47648,8 +47859,6 @@ var TypeScript;
                     this.postError(funcNameAST.minChar, funcNameAST.getLength(), typeCheckContext.scriptName, TypeScript.DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility, null, typeCheckContext.getEnclosingDecl());
                 }
             }
-
-            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             return null;
         };
@@ -47706,7 +47915,6 @@ var TypeScript;
             }
 
             this.typeCheckFunctionOverloads(funcDeclAST, typeCheckContext);
-            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
             return functionSymbol ? functionSymbol.type : null;
         };
 
@@ -47739,7 +47947,6 @@ var TypeScript;
             }
 
             this.checkForResolutionError(indexSignature.returnType, enclosingDecl);
-            this.checkFunctionTypePrivacy(funcDeclAST, inContextuallyTypedAssignment, typeCheckContext);
 
             var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
 
@@ -47987,7 +48194,6 @@ var TypeScript;
         };
 
         PullTypeChecker.prototype.typeCheckBase = function (typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, typeCheckContext) {
-            var _this = this;
             var typeDecl = typeCheckContext.semanticInfo.getDeclForAST(typeDeclAst);
             var contextForBaseTypeResolution = new TypeScript.PullTypeResolutionContext();
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
@@ -48031,11 +48237,6 @@ var TypeScript;
                 // If class implementes interface or class, verify all the public members are implemented
                 this.typeCheckIfClassImplementsType(typeDeclAst, typeSymbol, baseType, typeCheckContext);
             }
-
-            // Privacy error:
-            this.checkTypePrivacy(typeSymbol, baseType, typeCheckContext, function (errorTypeSymbol) {
-                return _this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorTypeSymbol, typeCheckContext);
-            });
         };
 
         PullTypeChecker.prototype.typeCheckBases = function (typeDeclAst, typeSymbol, typeCheckContext) {
@@ -49317,451 +49518,6 @@ var TypeScript;
         PullTypeChecker.prototype.typeCheckLabeledStatement = function (labeledStatement, typeCheckContext) {
             return this.typeCheckAST(labeledStatement.statement, typeCheckContext, false);
         };
-
-        // Privacy checking
-        PullTypeChecker.prototype.checkTypePrivacy = function (declSymbol, typeSymbol, typeCheckContext, privacyErrorReporter) {
-            if (!typeSymbol || typeSymbol.kind === 2 /* Primitive */) {
-                return;
-            }
-
-            if (typeSymbol.isArray()) {
-                this.checkTypePrivacy(declSymbol, typeSymbol.getElementType(), typeCheckContext, privacyErrorReporter);
-                return;
-            }
-
-            if (!typeSymbol.isNamedTypeSymbol()) {
-                // Check the privacy of members, constructors, calls, index signatures
-                var members = typeSymbol.getMembers();
-                for (var i = 0; i < members.length; i++) {
-                    this.checkTypePrivacy(declSymbol, members[i].type, typeCheckContext, privacyErrorReporter);
-                }
-
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), typeCheckContext, privacyErrorReporter);
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), typeCheckContext, privacyErrorReporter);
-                this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), typeCheckContext, privacyErrorReporter);
-
-                return;
-            }
-
-            if (declSymbol.isExternallyVisible()) {
-                // Check if type symbol is externally visible
-                var typeSymbolIsVisible = typeSymbol.isExternallyVisible();
-
-                if (typeSymbolIsVisible) {
-                    var typeSymbolPath = typeSymbol.pathToRoot();
-                    if (typeSymbolPath.length && typeSymbolPath[typeSymbolPath.length - 1].kind === 32 /* DynamicModule */) {
-                        // Type from the dynamic module
-                        var declSymbolPath = declSymbol.pathToRoot();
-                        if (declSymbolPath.length && declSymbolPath[declSymbolPath.length - 1] != typeSymbolPath[typeSymbolPath.length - 1]) {
-                            // Declaration symbol is from different unit
-                            // Type may not be visible without import statement
-                            typeSymbolIsVisible = false;
-                            for (var i = typeSymbolPath.length - 1; i >= 0; i--) {
-                                var aliasSymbol = typeSymbolPath[i].getAliasedSymbol(declSymbol);
-                                if (aliasSymbol) {
-                                    // Visible type.
-                                    // Also mark this Import declaration as visible
-                                    TypeScript.CompilerDiagnostics.assert(aliasSymbol.kind === 256 /* TypeAlias */, "dynamic module need to be referenced by type alias");
-                                    (aliasSymbol).setIsTypeUsedExternally();
-                                    typeSymbolIsVisible = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!typeSymbolIsVisible) {
-                    // declaration is visible from outside but the type isnt - Report error
-                    privacyErrorReporter(typeSymbol);
-                }
-            }
-        };
-
-        PullTypeChecker.prototype.checkTypePrivacyOfSignatures = function (declSymbol, signatures, typeCheckContext, privacyErrorReporter) {
-            for (var i = 0; i < signatures.length; i++) {
-                var signature = signatures[i];
-                if (signatures.length && signature.isDefinition()) {
-                    continue;
-                }
-
-                var typeParams = signature.getTypeParameters();
-                for (var j = 0; j < typeParams.length; j++) {
-                    this.checkTypePrivacy(declSymbol, typeParams[j], typeCheckContext, privacyErrorReporter);
-                }
-
-                var params = signature.parameters;
-                for (var j = 0; j < params.length; j++) {
-                    var paramType = params[j].type;
-                    this.checkTypePrivacy(declSymbol, paramType, typeCheckContext, privacyErrorReporter);
-                }
-
-                var returnType = signature.returnType;
-                this.checkTypePrivacy(declSymbol, returnType, typeCheckContext, privacyErrorReporter);
-            }
-        };
-
-        PullTypeChecker.prototype.baseListPrivacyErrorReporter = function (declAST, declSymbol, baseAst, isExtendedType, typeSymbol, typeCheckContext) {
-            var decl = this.resolver.getDeclForAST(declAST);
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-            var messageCode;
-            var messageArguments;
-
-            var typeSymbolName = typeSymbol.getScopedName();
-            if (typeSymbol.isContainer()) {
-                if (!TypeScript.isQuoted(typeSymbolName)) {
-                    typeSymbolName = "'" + typeSymbolName + "'";
-                }
-                if (declAST.nodeType() === 14 /* ClassDeclaration */) {
-                    if (isExtendedType) {
-                        messageCode = TypeScript.DiagnosticCode.Exported_class_0_extends_class_from_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Exported_class_0_implements_interface_from_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    }
-                } else {
-                    // Interface
-                    messageCode = TypeScript.DiagnosticCode.Exported_interface_0_extends_interface_from_inaccessible_module_1;
-                    messageArguments = [declSymbol.toString(), typeSymbolName];
-                }
-            } else {
-                if (declAST.nodeType() === 14 /* ClassDeclaration */) {
-                    if (isExtendedType) {
-                        messageCode = TypeScript.DiagnosticCode.Exported_class_0_extends_private_class_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Exported_class_0_implements_private_interface_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    }
-                } else {
-                    // Interface
-                    messageCode = TypeScript.DiagnosticCode.Exported_interface_0_extends_private_interface_1;
-                    messageArguments = [declSymbol.toString(), typeSymbolName];
-                }
-            }
-
-            this.context.postError(typeCheckContext.scriptName, baseAst.minChar, baseAst.getLength(), messageCode, messageArguments, enclosingDecl);
-        };
-
-        PullTypeChecker.prototype.variablePrivacyErrorReporter = function (declSymbol, typeSymbol, typeCheckContext) {
-            var declAST = this.resolver.getASTForSymbol(declSymbol);
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            var isProperty = declSymbol.kind === 4096 /* Property */;
-            var isPropertyOfClass = false;
-            var declParent = declSymbol.getContainer();
-            if (declParent && (declParent.kind === 8 /* Class */ || declParent.kind === 32768 /* ConstructorMethod */)) {
-                isPropertyOfClass = true;
-            }
-
-            var messageCode;
-            var messageArguments;
-            var typeSymbolName = typeSymbol.getScopedName();
-            if (typeSymbol.isContainer()) {
-                if (!TypeScript.isQuoted(typeSymbolName)) {
-                    typeSymbolName = "'" + typeSymbolName + "'";
-                }
-
-                if (declSymbol.hasFlag(16 /* Static */)) {
-                    messageCode = TypeScript.DiagnosticCode.Public_static_property_0_of_exported_class_is_using_inaccessible_module_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                } else if (isProperty) {
-                    if (isPropertyOfClass) {
-                        messageCode = TypeScript.DiagnosticCode.Public_property_0_of_exported_class_is_using_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Property_0_of_exported_interface_is_using_inaccessible_module_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    }
-                } else {
-                    messageCode = TypeScript.DiagnosticCode.Exported_variable_0_is_using_inaccessible_module_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                }
-            } else {
-                if (declSymbol.hasFlag(16 /* Static */)) {
-                    messageCode = TypeScript.DiagnosticCode.Public_static_property_0_of_exported_class_has_or_is_using_private_type_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                } else if (isProperty) {
-                    if (isPropertyOfClass) {
-                        messageCode = TypeScript.DiagnosticCode.Public_property_0_of_exported_class_has_or_is_using_private_type_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Property_0_of_exported_interface_has_or_is_using_private_type_1;
-                        messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                    }
-                } else {
-                    messageCode = TypeScript.DiagnosticCode.Exported_variable_0_has_or_is_using_private_type_1;
-                    messageArguments = [declSymbol.getScopedName(), typeSymbolName];
-                }
-            }
-
-            this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl);
-        };
-
-        PullTypeChecker.prototype.checkFunctionTypePrivacy = function (funcDeclAST, inContextuallyTypedAssignment, typeCheckContext) {
-            var _this = this;
-            if (inContextuallyTypedAssignment || (funcDeclAST.getFunctionFlags() & 8192 /* IsFunctionExpression */) || (funcDeclAST.getFunctionFlags() & 16384 /* IsFunctionProperty */)) {
-                return;
-            }
-
-            var functionDecl = typeCheckContext.semanticInfo.getDeclForAST(funcDeclAST);
-            var functionSymbol = functionDecl.getSymbol();
-            ;
-            var functionSignature;
-
-            var isGetter = funcDeclAST.isGetAccessor();
-            var isSetter = funcDeclAST.isSetAccessor();
-
-            if (isGetter || isSetter) {
-                var accessorSymbol = functionSymbol;
-                functionSignature = (isGetter ? accessorSymbol.getGetter() : accessorSymbol.getSetter()).type.getCallSignatures()[0];
-            } else {
-                if (!functionSymbol) {
-                    var parentDecl = functionDecl.getParentDecl();
-                    functionSymbol = parentDecl.getSymbol();
-                    if (functionSymbol && functionSymbol.isType() && !(functionSymbol).isNamedTypeSymbol()) {
-                        // Call Signature from the non named type
-                        return;
-                    }
-                } else if (functionSymbol.kind == 65536 /* Method */ && !functionSymbol.getContainer().isNamedTypeSymbol()) {
-                    // method of the unnmaed type
-                    return;
-                }
-                functionSignature = functionDecl.getSignatureSymbol();
-            }
-
-            if (!isGetter) {
-                var funcParams = functionSignature.parameters;
-                for (var i = 0; i < funcParams.length; i++) {
-                    this.checkTypePrivacy(functionSymbol, funcParams[i].type, typeCheckContext, function (typeSymbol) {
-                        return _this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], typeSymbol, typeCheckContext);
-                    });
-                }
-            }
-
-            if (!isSetter) {
-                this.checkTypePrivacy(functionSymbol, functionSignature.returnType, typeCheckContext, function (typeSymbol) {
-                    return _this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.returnType, typeSymbol, typeCheckContext);
-                });
-            }
-        };
-
-        PullTypeChecker.prototype.functionArgumentTypePrivacyErrorReporter = function (declAST, argIndex, paramSymbol, typeSymbol, typeCheckContext) {
-            var decl = this.resolver.getDeclForAST(declAST);
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            var isGetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 32 /* GetAccessor */);
-            var isSetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 64 /* SetAccessor */);
-            var isStatic = (decl.flags & 16 /* Static */) === 16 /* Static */;
-            var isMethod = decl.kind === 65536 /* Method */;
-            var isMethodOfClass = false;
-            var declParent = decl.getParentDecl();
-            if (declParent && (declParent.kind === 8 /* Class */ || declParent.kind === 32768 /* ConstructorMethod */)) {
-                isMethodOfClass = true;
-            }
-
-            var start = declAST.arguments.members[argIndex].minChar;
-            var length = declAST.arguments.members[argIndex].getLength();
-
-            var typeSymbolName = typeSymbol.getScopedName();
-            if (typeSymbol.isContainer()) {
-                if (!TypeScript.isQuoted(typeSymbolName)) {
-                    typeSymbolName = "'" + typeSymbolName + "'";
-                }
-
-                if (declAST.isConstructor) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                } else if (isSetter) {
-                    if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    }
-                } else if (declAST.isConstructMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                } else if (declAST.isCallMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                } else if (isMethod) {
-                    if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    } else if (isMethodOfClass) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    }
-                } else if (!isGetter) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                }
-            } else {
-                if (declAST.isConstructor) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                } else if (isSetter) {
-                    if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    }
-                } else if (declAST.isConstructMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                } else if (declAST.isCallMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                } else if (isMethod) {
-                    if (isStatic) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    } else if (isMethodOfClass) {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    } else {
-                        this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                    }
-                } else if (!isGetter && !declAST.isIndexerMember()) {
-                    this.context.postError(typeCheckContext.scriptName, start, length, TypeScript.DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1, [paramSymbol.getScopedName(), typeSymbolName], enclosingDecl);
-                }
-            }
-        };
-
-        PullTypeChecker.prototype.functionReturnTypePrivacyErrorReporter = function (declAST, funcReturnType, typeSymbol, typeCheckContext) {
-            var _this = this;
-            var decl = this.resolver.getDeclForAST(declAST);
-            var enclosingDecl = typeCheckContext.getEnclosingDecl();
-
-            var isGetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 32 /* GetAccessor */);
-            var isSetter = declAST.isAccessor() && TypeScript.hasFlag(declAST.getFunctionFlags(), 64 /* SetAccessor */);
-            var isStatic = (decl.flags & 16 /* Static */) === 16 /* Static */;
-            var isMethod = decl.kind === 65536 /* Method */;
-            var isMethodOfClass = false;
-            var declParent = decl.getParentDecl();
-            if (declParent && (declParent.kind === 8 /* Class */ || declParent.kind === 32768 /* ConstructorMethod */)) {
-                isMethodOfClass = true;
-            }
-
-            var messageCode = null;
-            var messageArguments;
-            var typeSymbolName = typeSymbol.getScopedName();
-            if (typeSymbol.isContainer()) {
-                if (!TypeScript.isQuoted(typeSymbolName)) {
-                    typeSymbolName = "'" + typeSymbolName + "'";
-                }
-
-                if (isGetter) {
-                    if (isStatic) {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
-                    }
-                } else if (declAST.isConstructMember()) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
-                } else if (declAST.isCallMember()) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
-                } else if (declAST.isIndexerMember()) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
-                } else if (isMethod) {
-                    if (isStatic) {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_method_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
-                    } else if (isMethodOfClass) {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_method_from_exported_class_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module_0;
-                        messageArguments = [typeSymbolName];
-                    }
-                } else if (!isSetter && !declAST.isConstructor) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module_0;
-                    messageArguments = [typeSymbolName];
-                }
-            } else {
-                if (isGetter) {
-                    if (isStatic) {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
-                    }
-                } else if (declAST.isConstructMember()) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
-                } else if (declAST.isCallMember()) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
-                } else if (declAST.isIndexerMember()) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
-                } else if (isMethod) {
-                    if (isStatic) {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
-                    } else if (isMethodOfClass) {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_public_method_from_exported_class_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
-                    } else {
-                        messageCode = TypeScript.DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type_0;
-                        messageArguments = [typeSymbolName];
-                    }
-                } else if (!isSetter && !declAST.isConstructor) {
-                    messageCode = TypeScript.DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type_0;
-                    messageArguments = [typeSymbolName];
-                }
-            }
-
-            if (messageCode) {
-                var reportOnFuncDecl = false;
-                var contextForReturnTypeResolution = new TypeScript.PullTypeResolutionContext();
-                if (declAST.returnTypeAnnotation) {
-                    // NOTE: we don't want to report this diagnostics.  They'll already have been
-                    // reported when we first hit the return statement.
-                    var returnExpressionSymbol = this.resolver.resolveTypeReference(declAST.returnTypeAnnotation, decl, contextForReturnTypeResolution);
-                    if (returnExpressionSymbol === funcReturnType) {
-                        // Error coming from return annotation
-                        this.context.postError(typeCheckContext.scriptName, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments, enclosingDecl);
-                    }
-                }
-
-                if (declAST.block) {
-                    var reportErrorOnReturnExpressions = function (ast, parent, walker) {
-                        var go = true;
-                        switch (ast.nodeType()) {
-                            case 13 /* FunctionDeclaration */:
-                                // don't recurse into a function decl - we don't want to confuse a nested
-                                // return type with the top-level function's return type
-                                go = false;
-                                break;
-
-                            case 94 /* ReturnStatement */:
-                                var returnStatement = ast;
-                                var returnExpressionSymbol = _this.resolver.resolveAST(returnStatement.returnExpression, false, decl, contextForReturnTypeResolution).type;
-
-                                if (returnExpressionSymbol === funcReturnType) {
-                                    _this.context.postError(typeCheckContext.scriptName, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments, enclosingDecl);
-                                } else {
-                                    reportOnFuncDecl = true;
-                                }
-                                go = false;
-                                break;
-
-                            default:
-                                break;
-                        }
-
-                        walker.options.goChildren = go;
-                        return ast;
-                    };
-
-                    TypeScript.getAstWalkerFactory().walk(declAST.block, reportErrorOnReturnExpressions);
-                }
-
-                if (reportOnFuncDecl) {
-                    // Show on function decl
-                    this.context.postError(typeCheckContext.scriptName, declAST.minChar, declAST.getLength(), messageCode, messageArguments, enclosingDecl);
-                }
-            }
-        };
         PullTypeChecker.globalPullTypeCheckPhase = 0;
         return PullTypeChecker;
     })();
@@ -50379,7 +50135,7 @@ var TypeScript;
                         var decl = unit.getTopLevelDecls()[0].getChildDecls()[0];
 
                         if (decl.kind == 32 /* DynamicModule */) {
-                            return decl;
+                            return [decl];
                         }
                     }
 
@@ -50714,6 +50470,10 @@ var TypeScript;
         var span = TypeScript.TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
 
         var parent = context.getParent();
+
+        if (!context.containingModuleHasExportAssignment() && TypeScript.hasFlag(importDecl.getVarFlags(), 1 /* Exported */)) {
+            declFlags |= 1 /* Exported */;
+        }
 
         if (parent && (parent.kind === 536870912 /* WithBlock */ || (parent.flags & 2097152 /* DeclaredInAWithBlock */))) {
             declFlags |= 2097152 /* DeclaredInAWithBlock */;
@@ -52042,7 +51802,9 @@ var TypeScript;
 
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
 
-                moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
+                if (!moduleInstanceTypeSymbol.getAssociatedContainerType()) {
+                    moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
+                }
 
                 if (variableSymbol) {
                     moduleInstanceSymbol = variableSymbol;
@@ -52502,7 +52264,7 @@ var TypeScript;
             var parentDecl = variableDeclaration.getParentDecl();
 
             var isImplicit = (declFlags & TypeScript.PullElementFlags.ImplicitVariable) !== 0;
-            var isModuleValue = (declFlags & (32768 /* InitializedModule */ | 65536 /* InitializedDynamicModule */ | 131072 /* InitializedEnum */)) != 0;
+            var isModuleValue = (declFlags & (TypeScript.PullElementFlags.SomeInitializedModule)) != 0;
             var isEnumValue = (declFlags & 131072 /* InitializedEnum */) != 0;
             var isClassConstructorVariable = (declFlags & 16384 /* ClassConstructorVariable */) != 0;
 
@@ -52546,27 +52308,27 @@ var TypeScript;
                 var prevKind = variableSymbol.kind;
                 var prevIsAmbient = variableSymbol.hasFlag(8 /* Ambient */);
                 var prevIsEnum = variableSymbol.hasFlag(131072 /* InitializedEnum */);
-                var prevIsClass = prevKind == 32768 /* ConstructorMethod */;
-                var prevIsContainer = variableSymbol.hasFlag(32768 /* InitializedModule */ | 65536 /* InitializedDynamicModule */);
+                var prevIsClassConstructorVariable = variableSymbol.hasFlag(16384 /* ClassConstructorVariable */);
+                var prevIsModuleValue = variableSymbol.hasFlag(TypeScript.PullElementFlags.SomeInitializedModule);
+                var prevIsImplicit = variableSymbol.hasFlag(TypeScript.PullElementFlags.ImplicitVariable);
                 var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
                 var isAmbient = (variableDeclaration.flags & 8 /* Ambient */) != 0;
-                var isClass = variableDeclaration.kind == 32768 /* ConstructorMethod */;
                 var prevDecl = variableSymbol.getDeclarations()[0];
                 var bothAreGlobal = prevKind == 1 /* Script */ && declKind == prevKind;
                 var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
                 var prevIsParam = shareParent && prevKind == 2048 /* Parameter */ && declKind == 1024 /* Variable */;
 
-                var acceptableRedeclaration = (!shareParent || prevIsParam) || (isImplicit && ((!isEnumValue && !isClassConstructorVariable && prevKind == 16384 /* Function */) || (!isModuleValue && prevIsContainer && isAmbient) || (!isModuleValue && prevIsClass) || variableSymbol.hasFlag(TypeScript.PullElementFlags.ImplicitVariable)));
+                var acceptableRedeclaration = (!shareParent || prevIsParam) || (isImplicit && ((!isEnumValue && !isClassConstructorVariable && prevKind == 16384 /* Function */) || (isModuleValue && prevIsModuleValue) || (isClassConstructorVariable && prevIsModuleValue && isAmbient) || (isModuleValue && prevIsClassConstructorVariable)));
 
-                if (acceptableRedeclaration && prevIsClass && !prevIsAmbient) {
+                if (acceptableRedeclaration && prevIsClassConstructorVariable && !prevIsAmbient) {
                     if (prevDecl.getScriptName() != variableDeclaration.getScriptName()) {
                         acceptableRedeclaration = false;
                     }
                 }
 
-                if ((shareParent && !prevIsParam) && ((!isModuleValue && !isClass && !isAmbient) || !acceptableRedeclaration || onlyOneIsEnum)) {
-                    span = variableDeclaration.getSpan();
-                    if (!parent || variableSymbol.getIsSynthesized()) {
+                if (shareParent && !prevIsParam && (!acceptableRedeclaration || onlyOneIsEnum)) {
+                    if (isImplicit || prevIsImplicit || (prevKind & TypeScript.PullElementKind.SomeFunction) !== 0) {
+                        span = variableDeclaration.getSpan();
                         var errorDecl = isImplicit ? variableSymbol.getDeclarations()[0] : variableDeclaration;
                         errorDecl.addDiagnostic(new TypeScript.Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), TypeScript.DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]));
                     }
@@ -53831,7 +53593,7 @@ var TypeScript;
         PullHelpers.symbolIsEnum = symbolIsEnum;
 
         function symbolIsModule(symbol) {
-            return symbol.kind == 4 /* Container */ || isOneDeclarationOfKind(symbol, 4 /* Container */);
+            return symbol && (symbol.kind == 4 /* Container */ || isOneDeclarationOfKind(symbol, 4 /* Container */));
         }
         PullHelpers.symbolIsModule = symbolIsModule;
 
@@ -54586,6 +54348,12 @@ var TypeScript;
 
             var result = new TypeScript.ImportDeclaration(name, alias);
             this.setCommentsAndSpan(result, start, node);
+
+            var flags = result.getVarFlags();
+            if (TypeScript.SyntaxUtilities.containsToken(node.modifiers, 47 /* ExportKeyword */)) {
+                flags = flags | 1 /* Exported */;
+            }
+            result.setVarFlags(flags);
 
             return result;
         };
@@ -56975,7 +56743,7 @@ var TypeScript;
                 return this._syntaxTree;
             }
 
-            return TypeScript.Parser.parse(this.fileName, TypeScript.SimpleText.fromScriptSnapshot(this.scriptSnapshot), TypeScript.isDTSFile(this.fileName), this.compilationSettings.codeGenTarget, TypeScript.getParseOptions(this.compilationSettings));
+            return TypeScript.Parser.parse(this.fileName, TypeScript.SimpleText.fromScriptSnapshot(this.scriptSnapshot), TypeScript.isDTSFile(this.fileName), TypeScript.getParseOptions(this.compilationSettings));
         };
 
         Document.prototype.bloomFilter = function () {
@@ -57016,7 +56784,7 @@ var TypeScript;
 
             // If we don't have a text change, or we don't have an old syntax tree, then do a full
             // parse.  Otherwise, do an incremental parse.
-            var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), settings.codeGenTarget, TypeScript.getParseOptions(this.compilationSettings)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+            var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), TypeScript.getParseOptions(this.compilationSettings)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
             return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
         };
@@ -57024,7 +56792,7 @@ var TypeScript;
         Document.create = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, compilationSettings) {
             // for an open file, make a syntax tree and a script, and store both around.
             var start = new Date().getTime();
-            var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), compilationSettings.codeGenTarget, TypeScript.getParseOptions(compilationSettings));
+            var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), TypeScript.getParseOptions(compilationSettings));
             TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
 
             var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
@@ -57055,7 +56823,7 @@ var TypeScript;
             TypeScript.globalLogger = logger;
         }
         TypeScriptCompiler.prototype.getDocument = function (fileName) {
-            return this.fileNameToDocument.lookup(fileName);
+            return this.fileNameToDocument.lookup(TypeScript.switchToForwardSlashes(fileName));
         };
 
         TypeScriptCompiler.prototype.timeFunction = function (funcDescription, func) {
@@ -57064,6 +56832,8 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.addSourceUnit = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles) {
             if (typeof referencedFiles === "undefined") { referencedFiles = []; }
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
             var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
@@ -57074,6 +56844,7 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.updateSourceUnit = function (fileName, scriptSnapshot, version, isOpen, textChangeRange) {
             var _this = this;
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", function () {
                 var document = _this.getDocument(fileName);
                 var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, _this.settings);
@@ -57160,8 +56931,19 @@ var TypeScript;
             return dirPath;
         };
 
-        TypeScriptCompiler.prototype.parseEmitOption = function (ioHost) {
+        TypeScriptCompiler.prototype.setEmitOptions = function (ioHost) {
             this.emitOptions.ioHost = ioHost;
+            if (!this.emitOptions.compilationSettings.mapSourceFiles) {
+                if (this.emitOptions.compilationSettings.mapRoot) {
+                    if (this.emitOptions.compilationSettings.sourceRoot) {
+                        return new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                    } else {
+                        return new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Option_mapRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                    }
+                } else if (this.emitOptions.compilationSettings.sourceRoot) {
+                    return new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                }
+            }
 
             this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(TypeScript.switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
             this.emitOptions.compilationSettings.sourceRoot = this.convertToDirectoryPath(TypeScript.switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
@@ -57195,6 +56977,10 @@ var TypeScript;
 
             if (this.emitOptions.outputMany || this.emitOptions.compilationSettings.mapRoot || this.emitOptions.compilationSettings.sourceRoot) {
                 return this.updateCommonDirectoryPath();
+            }
+
+            if (this.emitOptions.compilationSettings.moduleGenTarget === 0 /* Unspecified */ && this.isDynamicModuleCompilation()) {
+                return new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
             }
 
             return null;
@@ -57380,7 +57166,7 @@ var TypeScript;
         TypeScriptCompiler.prototype.emitAll = function (ioHost, inputOutputMapper) {
             var start = new Date().getTime();
 
-            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            var optionsDiagnostic = this.setEmitOptions(ioHost);
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
             }
@@ -57426,7 +57212,7 @@ var TypeScript;
         // Emit single file if outputMany is specified, else emit all
         // Will not throw exceptions.
         TypeScriptCompiler.prototype.emitUnit = function (fileName, ioHost, inputOutputMapper) {
-            var optionsDiagnostic = this.parseEmitOption(ioHost);
+            var optionsDiagnostic = this.setEmitOptions(ioHost);
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
             }
@@ -57923,10 +57709,8 @@ var TypeScript;
 
                 switch (current.nodeType()) {
                     case 13 /* FunctionDeclaration */:
-                        if (propagateContextualTypes) {
-                            if (TypeScript.hasFlag((current).getFunctionFlags(), 8192 /* IsFunctionExpression */)) {
-                                this.pullTypeChecker.resolver.resolveAST((current), true, enclosingDecl, resolutionContext);
-                            }
+                        if (TypeScript.hasFlag((current).getFunctionFlags(), 8192 /* IsFunctionExpression */)) {
+                            this.pullTypeChecker.resolver.resolveAST((current), true, enclosingDecl, resolutionContext);
                         }
 
                         break;
@@ -59115,6 +58899,7 @@ var TypeScript;
             _super.call(this);
             this.id = id;
             this.alias = alias;
+            this._varFlags = 0 /* None */;
         }
         ImportDeclaration.prototype.nodeType = function () {
             return 17 /* ImportDeclaration */;
@@ -59122,6 +58907,15 @@ var TypeScript;
 
         ImportDeclaration.prototype.isDeclaration = function () {
             return true;
+        };
+
+        ImportDeclaration.prototype.getVarFlags = function () {
+            return this._varFlags;
+        };
+
+        // Must only be called from SyntaxTreeVisitor
+        ImportDeclaration.prototype.setVarFlags = function (flags) {
+            this._varFlags = flags;
         };
 
         ImportDeclaration.prototype.isExternalImportDeclaration = function () {
@@ -59134,30 +58928,15 @@ var TypeScript;
         };
 
         ImportDeclaration.prototype.emit = function (emitter) {
-            if (emitter.importStatementShouldBeEmitted(this)) {
-                var prevModAliasId = emitter.modAliasId;
-                var prevFirstModAlias = emitter.firstModAlias;
-
-                emitter.recordSourceMappingStart(this);
-                emitter.emitComments(this, true);
-                emitter.writeToOutput("var " + this.id.actualText + " = ");
-                emitter.modAliasId = this.id.actualText;
-                emitter.firstModAlias = this.firstAliasedModToString();
-                var aliasAST = this.alias.nodeType() === 11 /* TypeRef */ ? (this.alias).term : this.alias;
-
-                emitter.emitJavascript(aliasAST, false);
-                emitter.writeToOutput(";");
-
-                emitter.emitComments(this, false);
-                emitter.recordSourceMappingEnd(this);
-
-                emitter.modAliasId = prevModAliasId;
-                emitter.firstModAlias = prevFirstModAlias;
-            }
+            emitter.emitImportDeclaration(this);
         };
 
         ImportDeclaration.prototype.getAliasName = function (aliasAST) {
             if (typeof aliasAST === "undefined") { aliasAST = this.alias; }
+            if (aliasAST.nodeType() == 11 /* TypeRef */) {
+                aliasAST = (aliasAST).term;
+            }
+
             if (aliasAST.nodeType() === 21 /* Name */) {
                 return (aliasAST).actualText;
             } else {
@@ -59177,7 +58956,7 @@ var TypeScript;
         };
 
         ImportDeclaration.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.id, ast.id, includingPosition) && structuralEquals(this.alias, ast.alias, includingPosition);
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this._varFlags === ast._varFlags && structuralEquals(this.id, ast.id, includingPosition) && structuralEquals(this.alias, ast.alias, includingPosition);
         };
         return ImportDeclaration;
     })(AST);
@@ -60738,7 +60517,7 @@ var IO = (function () {
                         fso.DeleteFile(path, true);
                     }
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_delete_file_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_delete_file_0, [path]), e);
                 }
             },
             directoryExists: function (path) {
@@ -60750,7 +60529,7 @@ var IO = (function () {
                         fso.CreateFolder(path);
                     }
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_create_directory_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_create_directory_0, [path]), e);
                 }
             },
             dir: function (path, spec, options) {
@@ -60832,7 +60611,7 @@ var IO = (function () {
                 try  {
                     _fs.unlinkSync(path);
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_delete_file_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_delete_file_0, [path]), e);
                 }
             },
             fileExists: function (path) {
@@ -60871,7 +60650,7 @@ var IO = (function () {
                         _fs.mkdirSync(path);
                     }
                 } catch (e) {
-                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Couldn_t_create_directory_0, [path]), e);
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_create_directory_0, [path]), e);
                 }
             },
             directoryExists: function (path) {
@@ -60996,7 +60775,7 @@ var IO = (function () {
     }
     ;
 
-    if (typeof ActiveXObject === "function")
+    if (typeof WScript !== "undefined" && typeof ActiveXObject === "function")
         return getWindowsScriptHostIO();
 else if (typeof module !== 'undefined' && module.exports)
         return getNodeIO();
@@ -61485,17 +61264,6 @@ var TypeScript;
                     return true;
                 }
 
-                var mapInputToOutput = function (inputFile, outputFile) {
-                    _this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-                };
-
-                // TODO: if there are any emit diagnostics.  Don't proceed.
-                var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
-                compiler.reportDiagnostics(emitDiagnostics, this);
-                if (emitDiagnostics.length > 0) {
-                    return true;
-                }
-
                 var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
                 compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
                 if (emitDeclarationsDiagnostics.length > 0) {
@@ -61708,19 +61476,19 @@ var TypeScript;
 
             opts.option('module', {
                 usage: {
-                    locCode: TypeScript.DiagnosticCode.Specify_module_code_generation_0_default_or_1,
+                    locCode: TypeScript.DiagnosticCode.Specify_module_code_generation_0_or_1,
                     args: ['commonjs', 'amd']
                 },
                 type: TypeScript.DiagnosticCode.KIND,
                 set: function (type) {
                     type = type.toLowerCase();
 
-                    if (type === 'commonjs' || type === 'node') {
-                        _this.compilationSettings.moduleGenTarget = 0 /* Synchronous */;
+                    if (type === 'commonjs') {
+                        _this.compilationSettings.moduleGenTarget = 1 /* Synchronous */;
                     } else if (type === 'amd') {
-                        _this.compilationSettings.moduleGenTarget = 1 /* Asynchronous */;
+                        _this.compilationSettings.moduleGenTarget = 2 /* Asynchronous */;
                     } else {
-                        _this.addDiagnostic(new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Module_code_generation_0_not_supported_Using_default_1_code_generation, [type, "commonjs"]));
+                        _this.addDiagnostic(new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Module_code_generation_0_not_supported, [type]));
                     }
                 }
             }, 'm');
@@ -61794,7 +61562,7 @@ var TypeScript;
                 opts.printVersion();
             }
 
-            return true;
+            return !this.hasErrors;
         };
 
         BatchCompiler.prototype.setLocale = function (locale) {
