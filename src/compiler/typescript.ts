@@ -790,6 +790,10 @@ module TypeScript {
             this.semanticInfoChain = new SemanticInfoChain();
             globalSemanticInfoChain = this.semanticInfoChain;
 
+            if (this.resolver) {
+                this.resolver.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var declCollectionContext: DeclCollectionContext = null;
             var i: number, n: number;
 
