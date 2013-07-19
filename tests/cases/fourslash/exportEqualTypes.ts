@@ -1,0 +1,23 @@
+/// <reference path='./fourslash.ts'/>
+
+////declare module "test" {
+////    interface x {
+////        (): Date;
+////        foo: string;
+////    }
+////    export = x;
+////}
+////import test = require('test');
+////var t: test/*1*/;  // var 't' should be of type 'test'
+////var r1/*2*/ = t(); // Should return a Date
+////var r2/*3*/ = t.foo/*4*/; // t should have 'foo' in dropdown list and be of type 'string'
+
+goTo.marker('1');
+verify.quickInfoIs('test');
+goTo.marker('2');
+verify.quickInfoIs('Date');
+goTo.marker('3');
+verify.quickInfoIs('string');
+goTo.marker('4');
+verify.memberListContains('foo');
+verify.numberOfErrorsInCurrentFile(0);
