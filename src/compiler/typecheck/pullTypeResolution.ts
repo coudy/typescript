@@ -1135,7 +1135,7 @@ module TypeScript {
             if ((typeDeclSymbol.isResolved && hasVisited) || (typeDeclSymbol.inResolution && !context.isInBaseTypeResolution())) {
                 return typeDeclSymbol;
             }
-
+            
             var wasResolving = typeDeclSymbol.inResolution;
             typeDeclSymbol.startResolving();
 
@@ -1227,7 +1227,7 @@ module TypeScript {
             }
 
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
-
+            
             if (wasInBaseTypeResolution /*&& (typeDeclAST.implementsList || typeDeclAST.extendsList)*/) {
                 // Do not resolve members as yet
                 typeDeclSymbol.inResolution = false;
