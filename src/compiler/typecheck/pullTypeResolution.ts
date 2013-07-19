@@ -1557,6 +1557,14 @@ module TypeScript {
                 var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, context, declPath);
                 if (moduleSymbol) {
                     aliasedType = moduleSymbol.type;
+                    if (context.typeCheck() && aliasedType.hasFlag(PullElementFlags.InitializedModule)) {
+                        var moduleName = (<Identifier>aliasExpr).text();
+                        var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
+                        var instanceSymbol = (<PullContainerTypeSymbol>aliasedType).getInstanceSymbol();
+                        if (valueSymbol && (instanceSymbol != valueSymbol || valueSymbol.type == aliasedType)) {
+                            context.postError(this.unitPath, aliasExpr.minChar, aliasExpr.getLength(), DiagnosticCode.Internal_module_reference_0_in_import_declaration_doesn_t_reference_module_instance_for_1, [(<Identifier>aliasExpr).actualText, moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)], enclosingDecl);
+                        }
+                    }
                 } else {
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
@@ -4313,8 +4321,12 @@ module TypeScript {
             }
 
             if (!nameSymbol) {
-                context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText], enclosingDecl);
-                return this.getNewErrorTypeSymbol(null, id);
+                if (context.resolvingTypeNameAsNameExpression) {
+                    return null;
+                } else {
+                    context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText], enclosingDecl);
+                    return this.getNewErrorTypeSymbol(null, id);
+                }
             }
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
@@ -9796,6 +9808,39 @@ module TypeScript {
             }
         }
 
+        private hasClassTypeSymbolConflictAsValue(
+            valueDeclAST: Identifier,
+            typeSymbol: PullTypeSymbol,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext) {
+            var typeSymbolAlias = this.currentUnit.getAliasSymbolForAST(valueDeclAST);
+            var tempResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
+            context.resolvingTypeNameAsNameExpression = true;
+            var valueSymbol = this.computeNameExpression(valueDeclAST, enclosingDecl, context);
+            context.resolvingTypeNameAsNameExpression = tempResolvingTypeNameAsNameExpression;
+            var valueSymbolAlias = this.currentUnit.getAliasSymbolForAST(valueDeclAST);
+
+            // Reset the alias value 
+            this.currentUnit.setAliasSymbolForAST(valueDeclAST, typeSymbolAlias);
+
+            // If aliases are same
+            if (typeSymbolAlias && valueSymbolAlias) {
+                return typeSymbolAlias != valueSymbolAlias;
+            }
+
+            // Verify if value refers to same class;
+            if (!valueSymbol.hasFlag(PullElementFlags.ClassConstructorVariable)) {
+                return true;
+            }
+
+            var associatedContainerType = valueSymbol.type ? valueSymbol.type.getAssociatedContainerType() : null;
+            if (associatedContainerType) {
+                return associatedContainerType != typeSymbol;
+            }
+
+            return true;
+        }
+
         private typeCheckBase(typeDeclAst: TypeDeclaration,
             typeSymbol: PullTypeSymbol, baseDeclAST: AST,
             isExtendedType: boolean,
@@ -9811,24 +9856,30 @@ module TypeScript {
 
             var typeDeclIsClass = typeSymbol.isClass();
 
-            if (!typeSymbol.isValidBaseKind(baseType, isExtendedType)) {
-                // Report error about invalid base kind
-                if (baseType.isError()) {
-                    var error = (<PullErrorTypeSymbol>baseType).getDiagnostic();
-                    if (error) {
-                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), error.diagnosticKey(), error.arguments(), enclosingDecl);
-                    }
-                } else if (isExtendedType) {
-                    if (typeDeclIsClass) {
-                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.A_class_may_only_extend_another_class, null, enclosingDecl);
+                if (!typeSymbol.isValidBaseKind(baseType, isExtendedType)) {
+                    // Report error about invalid base kind
+                    if (baseType.isError()) {
+                        var error = (<PullErrorTypeSymbol>baseType).getDiagnostic();
+                        if (error) {
+                            context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), error.diagnosticKey(), error.arguments(), enclosingDecl);
+                        }
+                    } else if (isExtendedType) {
+                        if (typeDeclIsClass) {
+                            context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.A_class_may_only_extend_another_class, null, enclosingDecl);
+                        } else {
+                            context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.An_interface_may_only_extend_another_class_or_interface, null, enclosingDecl);
+                        }
                     } else {
-                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.An_interface_may_only_extend_another_class_or_interface, null, enclosingDecl);
+                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.A_class_may_only_implement_another_class_or_interface, null, enclosingDecl);
                     }
-                } else {
-                    context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.A_class_may_only_implement_another_class_or_interface, null, enclosingDecl);
+                    return;
+                } else if (typeDeclIsClass && isExtendedType && baseDeclAST.nodeType() == NodeType.Name) {
+                    // Verify if the class extends another class verify the value position resolves to the same type expression
+                    if (this.hasClassTypeSymbolConflictAsValue(<Identifier>baseDeclAST, baseType, enclosingDecl, context)) {
+                        // Report error
+                        context.postError(this.unitPath, baseDeclAST.minChar, baseDeclAST.getLength(), DiagnosticCode.Type_reference_0_in_extends_clause_doesn_t_reference_constructor_function_for_1, [(<Identifier>baseDeclAST).actualText, baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)], enclosingDecl);
+                    }
                 }
-                return;
-            }
 
             // Check if its a recursive extend/implement type
             if ((<PullTypeSymbol>baseType.getRootSymbol()).hasBase(<PullTypeSymbol>typeSymbol.getRootSymbol())) {

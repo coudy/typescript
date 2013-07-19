@@ -263,6 +263,8 @@ module TypeScript {
         Exported_import_declaration_0_is_assigned_type_that_has_or_is_using_private_type_1: "Exported import declaration '{0}' is assigned type that has or is using private type '{1}'.",
         Exported_import_declaration_0_is_assigned_type_that_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned type that is using inaccessible module '{1}'.",
         Exported_import_declaration_0_is_assigned_container_that_is_or_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned container that is or is using inaccessible module '{1}'.",
+        Type_reference_0_in_extends_clause_doesn_t_reference_constructor_function_for_1: "Type reference '{0}' in extends clause doesn't reference constructor function for '{1}'.",
+        Internal_module_reference_0_in_import_declaration_doesn_t_reference_module_instance_for_1: "Internal module reference '{0}' in import declaration doesn't reference module instance for '{1}'.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",

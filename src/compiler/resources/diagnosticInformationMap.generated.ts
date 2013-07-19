@@ -1050,6 +1050,14 @@ module TypeScript {
     "code": 2185,
     "category": DiagnosticCategory.Error
   },
+  "Type reference '{0}' in extends clause doesn't reference constructor function for '{1}'.": {
+    "code": 2186,
+    "category": DiagnosticCategory.Error
+  },
+  "Internal module reference '{0}' in import declaration doesn't reference module instance for '{1}'.": {
+    "code": 2187,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

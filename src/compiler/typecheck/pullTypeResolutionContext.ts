@@ -182,6 +182,7 @@ module TypeScript {
         public inImportDeclaration = false;
         public isInStaticInitializer = false;
         public isInInvocationExpression = false;
+        public resolvingTypeNameAsNameExpression = false;
 
         constructor(public inTypeCheck = false) { }
 
