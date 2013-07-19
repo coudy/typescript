@@ -1232,7 +1232,6 @@ module TypeScript {
         }
 
         public addTypeParameter(typeParameter: PullTypeParameterSymbol): void {
-
             if (!typeParameter) {
                 return;
             }

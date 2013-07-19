@@ -4669,6 +4669,10 @@ module TypeScript {
                 this.resolveDeclaredSymbol(genericTypeSymbol, enclosingDecl, context);
             }
 
+            if (genericTypeSymbol.isAlias()) {
+                genericTypeSymbol = (<PullTypeAliasSymbol>genericTypeSymbol).getExportAssignedTypeSymbol();
+            }
+
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
 
@@ -4705,7 +4709,7 @@ module TypeScript {
                 context.doneResolvingTypeArguments();
             }
 
-            var typeParameters = genericTypeSymbol.getTypeParameters();
+            var typeParameters = genericTypeSymbol.getTypeParameters()
 
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
                 context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type_0_requires_1_type_argument_s, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length], enclosingDecl);
