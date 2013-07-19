@@ -683,7 +683,7 @@ module TypeScript {
         }
 
         private getSourceFile(fileName: string): SourceFile {
-            var sourceFile = this.fileNameToSourceFile.lookup(fileName);
+            var sourceFile: SourceFile = this.fileNameToSourceFile.lookup(fileName);
             if (!sourceFile) {
                 // Attempt to read the file
                 var fileInformation: FileInformation;

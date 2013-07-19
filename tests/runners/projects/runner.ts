@@ -158,7 +158,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
     }
 
     private getSourceFile(fileName: string): SourceFile {
-        var sourceFile = this.fileNameToSourceFile.lookup(fileName);
+        var sourceFile: SourceFile = this.fileNameToSourceFile.lookup(fileName);
         if (!sourceFile) {
             var fileInformation = this.host.readFile(fileName);
             var snapshot = TypeScript.ScriptSnapshot.fromString(fileInformation.contents);

@@ -31,6 +31,6 @@ class MyDerived extends MyBase {
 
         super.value = 0;                                    // Should error, instance data property not a public instance member function
         
-        var x = super.value;                                // Should error, instance data property not a public instance member function
+        var z = super.value;                                // Should error, instance data property not a public instance member function
     }
 }

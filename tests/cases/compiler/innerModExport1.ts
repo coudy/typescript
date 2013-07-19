@@ -1,7 +1,7 @@
 module Outer {
 
     // inner mod 1
-    var non_export_var;
+    var non_export_var: number;
     module {
         var non_export_var = 0;
         export var export_var = 1;

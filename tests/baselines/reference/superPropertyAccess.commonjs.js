@@ -55,7 +55,7 @@ var MyDerived = (function (_super) {
 
         _super.prototype.value = 0;
 
-        var x = _super.prototype.value;
+        var z = _super.prototype.value;
     };
     return MyDerived;
 })(MyBase);
