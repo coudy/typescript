@@ -20,3 +20,6 @@ rue.address = "1 Main Street";
 
 void 0;
 
+if (!module.exports)
+    module.exports = "";
+

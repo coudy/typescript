@@ -10,8 +10,6 @@ function x1(a, cb) {
 var cb = function (x) {
     return 1;
 };
-
-// BUG 669572
 x1(1, cb);
 x1(1, function (x) {
     return 1;

@@ -1,5 +1,5 @@
 ﻿interface ifc { }
-// BUG 12735: Attempting to 'new' an interface yields poor error
+// Attempting to 'new' an interface yields poor error
 var i = new ifc();
 
 // Parens are optional

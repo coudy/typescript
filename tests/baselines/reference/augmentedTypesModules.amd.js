@@ -122,8 +122,6 @@ var m3d;
     m3d.y = 2;
 })(m3d || (m3d = {}));
 
-// REVIEW: why not the same as previous case?
-// BUG 694373
 var m3e;
 (function (m3e) {
     m3e.y = 2;

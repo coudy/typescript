@@ -1,4 +1,4 @@
-// bug 527430: this should not compile both B classes are in the same module this should be a collission
+// This should not compile both B classes are in the same module this should be a collission
 var A;
 (function (A) {
     var B = (function () {

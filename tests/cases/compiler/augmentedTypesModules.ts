@@ -60,8 +60,6 @@ module m3c { export var y = 2; }
 declare class m3d { foo(): void }
 module m3d { export var y = 2; } 
 
-// REVIEW: why not the same as previous case?
-// BUG 694373
 module m3e { export var y = 2; } 
 declare class m3e { foo(): void } 
 
@@ -73,7 +71,6 @@ module m3g { export class C { foo() { } } }
 
 // module then enum
 // should be errors
-// BUG 694381
 module m4 { }
 enum m4 { }
 

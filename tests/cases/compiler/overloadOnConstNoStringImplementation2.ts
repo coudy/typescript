@@ -17,5 +17,4 @@ var c: C;
 c.x1(1, (x: 'hi') => { return 1; } );
 c.x1(1, (x: 'bye') => { return 1; } ); 
 c.x1(1, (x: string) => { return 1; } );
-// BUG 669572
-c.x1(1, (x: number) => { return 1; } ); // should be error
+c.x1(1, (x: number) => { return 1; } );

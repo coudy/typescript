@@ -10,7 +10,6 @@ function x2(a: number, cb: (x: any) => number) {
 }
 
 var cb: (number) => number = (x: number) => 1;
-// BUG 669572
 x2(1, cb); // error
 x2(1, (x: 'hi') => 1); // error
 x2(1, (x: string) => 1);

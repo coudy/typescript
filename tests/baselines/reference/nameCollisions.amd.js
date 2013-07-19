@@ -1,3 +1,4 @@
+// bug 738635: Error for clinterfaces is gone
 var T;
 (function (T) {
     var x = 2;

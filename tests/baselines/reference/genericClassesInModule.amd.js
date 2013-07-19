@@ -1,4 +1,3 @@
-//bug 719806: invalid declare file
 var Foo;
 (function (Foo) {
     var B = (function () {

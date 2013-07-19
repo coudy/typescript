@@ -1,6 +1,4 @@
 // @declaration: true
-//bug 719806: invalid declare file
-
 
 module Foo {
 

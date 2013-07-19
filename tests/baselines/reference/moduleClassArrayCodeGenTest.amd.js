@@ -1,4 +1,4 @@
-// bug 524132: Invalid code gen for Array of Module class
+// Invalid code gen for Array of Module class
 var M;
 (function (M) {
     var A = (function () {

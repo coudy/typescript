@@ -1,4 +1,4 @@
-// Bug 17506: Shouldn't be able to index a class instance by a number (unless it has declared a number index signature)
+// Shouldn't be able to index a class instance by a number (unless it has declared a number index signature)
 var foo = (function () {
     function foo() {
     }

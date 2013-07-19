@@ -1,4 +1,3 @@
-// bug 713459: class cannot be named bool, any, number and string
 // reserved ES5 future in strict mode
 var constructor = 0;
 var any = 0;

@@ -1,4 +1,3 @@
-// bug 685324:
 var List = (function () {
     function List() {
     }

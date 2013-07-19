@@ -10,5 +10,4 @@ rue.address = "1 Main Street";
 
 void 0;
 
-// Bug 17403: module.exports causing internal error
-//if (!module.exports) module.exports = "";
+if (!module.exports) module.exports = "";

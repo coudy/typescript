@@ -1,6 +1,6 @@
 // enum then interface
 enum e1 { One }
-// BUG 694381
+
 interface e1 {
     foo(): void;
 }

@@ -1,6 +1,4 @@
-﻿// Bug 690837:Array Literal type inference
-
-class Action {
+﻿class Action {
     id: number;
 }
 

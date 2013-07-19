@@ -1,4 +1,4 @@
-// Bug 17406: Binding for an import statement in a typeref position is being added to the global scope
+// Binding for an import statement in a typeref position is being added to the global scope
 // Shouldn't compile b.B is not defined in C
 var A;
 (function (A) {

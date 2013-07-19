@@ -1,4 +1,4 @@
-// bug 734209: this.call in static generic method not resolved correctly
+// this.call in static generic method not resolved correctly
 var A = (function () {
     function A() {
     }
