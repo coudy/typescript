@@ -620,12 +620,15 @@ module TypeScript {
                 // Clean errors for previous compilation
                 this.hasErrors = false;
 
+                // Clear out any source file data we've cached.
+                this.fileNameToSourceFile = new StringHashTable();
+
                 // Resolve file dependencies, if requested
                 this.resolve();
 
                 // Check if any new files were added to the environment as a result of the file change
                 var oldFiles = lastResolvedFileSet;
-                var newFiles = this.resolvedFiles.map((resolvedFile) => { return resolvedFile.path; }).sort();
+                var newFiles = this.resolvedFiles.map(resolvedFile => resolvedFile.path).sort();
 
                 var i = 0, j = 0;
                 while (i < oldFiles.length && j < newFiles.length) {
@@ -673,7 +676,6 @@ module TypeScript {
 
                 // Trigger a new compilation
                 this.compile();
-
             };
 
             // Switch to using stdout for all error messages
