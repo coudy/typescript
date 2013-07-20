@@ -2553,7 +2553,7 @@ module TypeScript {
                     !constraintTypeSymbol.isTypeParameter() &&
                     constraintTypeSymbol.getTypeParameters().length &&
                     (constraintTypeSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(constraintTypeSymbol)) &&
-                    constraintTypeSymbol.isResolved &&
+                    (constraintTypeSymbol.isResolved || (constraintTypeSymbol.inResolution && !context.inSpecialization)) &&
                     this.isTypeRefWithoutTypeArgs(<TypeReference>typeParameterAST.constraint)) {
 
                     context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
