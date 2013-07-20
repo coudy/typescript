@@ -40101,7 +40101,7 @@ var TypeScript;
                         this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                     }
 
-                    if (typeDeclSymbol.isNamedTypeSymbol() && typeDeclSymbol.isGeneric() && !typeDeclSymbol.isTypeParameter() && typeDeclSymbol.isResolved && !typeDeclSymbol.getIsSpecialized() && typeDeclSymbol.getTypeParameters().length && (typeDeclSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeDeclSymbol)) && this.isTypeRefWithoutTypeArgs(typeRef)) {
+                    if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, typeRef, context)) {
                         context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
                         typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
                     }
@@ -40129,6 +40129,10 @@ var TypeScript;
             }
 
             return typeDeclSymbol;
+        };
+
+        PullTypeResolver.prototype.genericTypeIsUsedWithoutRequiredTypeArguments = function (typeSymbol, typeReference, context) {
+            return typeSymbol.isNamedTypeSymbol() && typeSymbol.isGeneric() && !typeSymbol.isTypeParameter() && (typeSymbol.isResolved || (typeSymbol.inResolution && !context.inSpecialization)) && !typeSymbol.getIsSpecialized() && typeSymbol.getTypeParameters().length && (typeSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeSymbol)) && this.isTypeRefWithoutTypeArgs(typeReference);
         };
 
         PullTypeResolver.prototype.resolveVariableDeclaration = function (varDecl, context, enclosingDecl) {
@@ -40196,7 +40200,7 @@ var TypeScript;
                         decl.setFlag(16777216 /* IsAnnotatedWithAny */);
                     }
 
-                    if (typeExprSymbol.isNamedTypeSymbol() && typeExprSymbol.isGeneric() && !typeExprSymbol.isTypeParameter() && (typeExprSymbol.isResolved || (typeExprSymbol.inResolution && !context.inSpecialization)) && !typeExprSymbol.getIsSpecialized() && typeExprSymbol.getTypeParameters().length && (typeExprSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeExprSymbol)) && this.isTypeRefWithoutTypeArgs(varDecl.typeExpr)) {
+                    if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeExprSymbol, varDecl.typeExpr, context)) {
                         context.postError(this.unitPath, varDecl.typeExpr.minChar, varDecl.typeExpr.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
 
                         typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
@@ -40401,7 +40405,7 @@ var TypeScript;
                 if (constraintTypeSymbol && constraintTypeSymbol.isPrimitive() && !constraintTypeSymbol.isError()) {
                     context.postError(this.unitPath, typeParameterAST.minChar, typeParameterAST.getLength(), TypeScript.DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null, enclosingDecl);
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
-                } else if (constraintTypeSymbol.isNamedTypeSymbol() && constraintTypeSymbol.isGeneric() && !constraintTypeSymbol.isTypeParameter() && constraintTypeSymbol.getTypeParameters().length && (constraintTypeSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(constraintTypeSymbol)) && constraintTypeSymbol.isResolved && this.isTypeRefWithoutTypeArgs(typeParameterAST.constraint)) {
+                } else if (this.genericTypeIsUsedWithoutRequiredTypeArguments(constraintTypeSymbol, typeParameterAST.constraint, context)) {
                     context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
                 }
@@ -42339,7 +42343,7 @@ var TypeScript;
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
                         var typeArg = this.resolveTypeReference(genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
-                        if (typeArg.isNamedTypeSymbol() && typeArg.isGeneric() && !typeArg.isTypeParameter() && typeArg.isResolved && !typeArg.getIsSpecialized() && typeArg.getTypeParameters().length && (typeArg.getTypeArguments() == null && !this.isArrayOrEquivalent(typeArg)) && this.isTypeRefWithoutTypeArgs(genericTypeAST.typeArguments.members[i])) {
+                        if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeArg, genericTypeAST.typeArguments.members[i], context)) {
                             context.postError(this.unitPath, genericTypeAST.typeArguments.members[i].minChar, genericTypeAST.typeArguments.members[i].getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, enclosingDecl);
                             typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
                         }
