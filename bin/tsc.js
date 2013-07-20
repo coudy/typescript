@@ -54749,6 +54749,10 @@ var TypeScript;
             this.semanticInfoChain = new TypeScript.SemanticInfoChain();
             TypeScript.globalSemanticInfoChain = this.semanticInfoChain;
 
+            if (this.resolver) {
+                this.resolver.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var declCollectionContext = null;
             var i, n;
 
@@ -59064,6 +59068,9 @@ var TypeScript;
             var onWatchedFileChange = function () {
                 // Clean errors for previous compilation
                 _this.hasErrors = false;
+
+                // Clear out any source file data we've cached.
+                _this.fileNameToSourceFile = new TypeScript.StringHashTable();
 
                 // Resolve file dependencies, if requested
                 _this.resolve();

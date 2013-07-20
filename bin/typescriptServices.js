@@ -54834,6 +54834,10 @@ var TypeScript;
             this.semanticInfoChain = new TypeScript.SemanticInfoChain();
             TypeScript.globalSemanticInfoChain = this.semanticInfoChain;
 
+            if (this.resolver) {
+                this.resolver.semanticInfoChain = this.semanticInfoChain;
+            }
+
             var declCollectionContext = null;
             var i, n;
 
