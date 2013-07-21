@@ -2705,6 +2705,8 @@ module TypeScript {
         var typeAST: TypeDeclaration;
         var unitPath: string;
         var decls: PullDecl[] = typeToSpecialize.getDeclarations();
+        var extendTypeSymbol: PullTypeSymbol = null;
+        var implementedTypeSymbol: PullTypeSymbol = null;
 
         if (extendedTypesToSpecialize.length) {
             for (var i = 0; i < decls.length; i++) {
@@ -2715,12 +2717,14 @@ module TypeScript {
                 if (typeAST.extendsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.getScriptName());
-                    context.pushTypeSpecializationCache(typeReplacementMap);
-                    var extendTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.extendsList.members[0], 0), typeDecl, context);
-                    resolver.setUnitPath(unitPath);
-                    context.popTypeSpecializationCache();
+                    for (var j = 0; j < typeAST.extendsList.members.length; j++) {
+                        context.pushTypeSpecializationCache(typeReplacementMap);
+                        extendTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.extendsList.members[j], 0), typeDecl, context);
+                        resolver.setUnitPath(unitPath);
+                        context.popTypeSpecializationCache();
 
-                    newType.addExtendedType(extendTypeSymbol);
+                        newType.addExtendedType(extendTypeSymbol);
+                    }
                 }
             }
         }
@@ -2735,12 +2739,14 @@ module TypeScript {
                 if (typeAST.implementsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.getScriptName());
-                    context.pushTypeSpecializationCache(typeReplacementMap);
-                    var implementedTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.implementsList.members[0], 0), typeDecl, context);
-                    resolver.setUnitPath(unitPath);
-                    context.popTypeSpecializationCache();
+                    for (var j = 0; j < typeAST.implementsList.members.length; j++) {
+                        context.pushTypeSpecializationCache(typeReplacementMap);
+                        implementedTypeSymbol = resolver.resolveTypeReference(new TypeReference(typeAST.implementsList.members[j], 0), typeDecl, context);
+                        resolver.setUnitPath(unitPath);
+                        context.popTypeSpecializationCache();
 
-                    newType.addImplementedType(implementedTypeSymbol);
+                        newType.addImplementedType(implementedTypeSymbol);
+                    }
                 }
             }
         }
