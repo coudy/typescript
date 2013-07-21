@@ -1019,6 +1019,8 @@ module TypeScript {
         // TODO: Really only used to track doc comments...
         private _functionSymbol: PullSymbol = null;
 
+        public hasRecursiveSpecializationError = false;
+
         private inMemberTypeNameEx = false;
         public inSymbolPrivacyCheck = false;
 
@@ -2558,10 +2560,10 @@ module TypeScript {
 
         var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        if (searchForExistingSpecialization || context.specializingToAny) {
-            if (!typeArguments.length || context.specializingToAny) {
+        if (searchForExistingSpecialization || context.specializingToAny || typeToSpecialize.hasRecursiveSpecializationError) {
+            if (!typeArguments.length || context.specializingToAny || typeToSpecialize.hasRecursiveSpecializationError) {
                 for (var i = 0; i < typeParameters.length; i++) {
-                    typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
+                    typeArguments[i] = resolver.semanticInfoChain.anyTypeSymbol;
                 }
             }
 
@@ -2581,6 +2583,7 @@ module TypeScript {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null, enclosingDecl);
+                        typeToSpecialize.hasRecursiveSpecializationError = true;
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
                     else {
@@ -2601,6 +2604,7 @@ module TypeScript {
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null, enclosingDecl);
+                        typeToSpecialize.hasRecursiveSpecializationError = true;
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     }
                     else {
@@ -2663,6 +2667,8 @@ module TypeScript {
         newType.setIsBeingSpecialized();
 
         newType.setTypeArguments(typeArguments);
+
+        newType.hasRecursiveSpecializationError = typeToSpecialize.hasRecursiveSpecializationError;
 
         rootType.addSpecialization(newType, typeArguments);
 
