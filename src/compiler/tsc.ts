@@ -498,6 +498,7 @@ module TypeScript {
 
             var locale: string = null;
             opts.option('locale', {
+                experimental: true,
                 usage: {
                     locCode: DiagnosticCode.Specify_locale_for_errors_and_messages_For_example_0_or_1,
                     args: ['en', 'ja-jp']
@@ -568,9 +569,9 @@ module TypeScript {
             var compilerFilePath = this.ioHost.getExecutingFilePath();
             var containingDirectoryPath = this.ioHost.dirName(compilerFilePath);
 
-            var filePath = IOUtils.combine(IOUtils.combine(containingDirectoryPath, "resources"), language);
+            var filePath = IOUtils.combine(containingDirectoryPath, language);
             if (territory) {
-                filePath = IOUtils.combine(filePath, territory);
+                filePath = filePath + "-" + territory;
             }
 
             filePath = this.ioHost.resolvePath(IOUtils.combine(filePath, "diagnosticMessages.generated.json"));

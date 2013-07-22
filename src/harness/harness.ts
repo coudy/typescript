@@ -1887,6 +1887,10 @@ module Harness {
             return new LanguageServicesDiagnostics("");
         }
 
+        public getLocalizedDiagnosticMessages(): string {
+            return "";
+        }
+
         public fileExists(s: string) {
             return IO.fileExists(s);
         }

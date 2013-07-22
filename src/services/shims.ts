@@ -53,6 +53,7 @@ module Services {
         directoryExists(path: string): boolean;
         getParentDirectory(path: string): string;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
+        getLocalizedDiagnosticMessages(): string;
     }
 
     //
@@ -229,6 +230,20 @@ module Services {
 
         public getDiagnosticsObject(): ILanguageServicesDiagnostics {
             return this.shimHost.getDiagnosticsObject();
+        }
+
+        public getLocalizedDiagnosticMessages(): any {
+            var diagnosticMessagesJson = this.shimHost.getLocalizedDiagnosticMessages();
+            if (diagnosticMessagesJson == null || diagnosticMessagesJson == "") {
+                return null;
+            }
+            try {
+                return JSON.parse(diagnosticMessagesJson);
+            }
+            catch (e) {
+                this.log(e.description || "diagnosticMessages.generated.json has invalid JSON format");
+                return null;
+            }
         }
 
         // IReferenceResolverHost methods
