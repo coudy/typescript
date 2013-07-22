@@ -151,6 +151,7 @@ var servicesSources = [
 	"completionHelpers.ts",
 	"completionSession.ts",
 	"coreServices.ts",
+	"getScriptLexicalStructureWalker.ts",
 	"diagnosticServices.ts",
 	"es5compat.ts",
 	"findReferenceHelpers.ts",

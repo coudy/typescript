@@ -525,19 +525,6 @@ module Services {
             return null;
         }
 
-        public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
-            this.refresh();
-
-            var declarations = this.compilerState.getTopLevelDeclarations(TypeScript.switchToForwardSlashes(fileName));
-            if (!declarations) {
-                return null;
-            }
-
-            var result: NavigateToItem[] = [];
-            this.mapPullDeclsToNavigateToItem(declarations, result);
-            return result;
-        }
-
         private mapPullDeclsToNavigateToItem(declarations: TypeScript.PullDecl[], result: NavigateToItem[], parentName?: string, parentkindName?: string, includeSubcontainers:boolean = true): void {
             for (var i = 0, n = declarations.length; i < n; i++) {
                 var declaration = declarations[i];
@@ -1325,7 +1312,7 @@ module Services {
             this.minimalRefresh();
 
             var manager = this.getFormattingManager(fileName, options);
-           
+
             return manager.formatSelection(minChar, limChar);
         }
 
@@ -1417,6 +1404,17 @@ module Services {
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
 
             return BraceMatcher.getMatchSpans(syntaxTree, position);
+        }
+
+        public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
+            this.minimalRefresh();
+
+            var syntaxTree = this.getSyntaxTreeInternal(fileName);
+            var items: NavigateToItem[] = [];
+            var visitor = new GetScriptLexicalStructureWalker(items, fileName);
+            syntaxTree.sourceUnit().accept(visitor);
+
+            return items;
         }
 
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {

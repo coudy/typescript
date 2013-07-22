@@ -31,6 +31,7 @@
 ///<reference path='braceMatcher.ts' />
 ///<reference path='indenter.ts' />
 ///<reference path='breakpoints.ts' />
+///<reference path='getScriptLexicalStructureWalker.ts' />
 
 module Services {
     export function copyDataObject(dst: any, src: any): any {
