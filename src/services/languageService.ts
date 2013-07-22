@@ -30,6 +30,7 @@ module Services {
         getScriptByteOrderMark(fileName: string): ByteOrderMark;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
+        getLocalizedDiagnosticMessages(): any;
     }
 
     //

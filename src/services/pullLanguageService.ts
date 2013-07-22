@@ -18,6 +18,11 @@ module Services {
         constructor(public host: ILanguageServiceHost) {
             this.logger = this.host;
             this.compilerState = new CompilerState(this.host);
+
+            // Check if the localized messages json is set, otherwise query the host for it
+            if (!TypeScript.LocalizedDiagnosticMessages) {
+                TypeScript.LocalizedDiagnosticMessages = this.host.getLocalizedDiagnosticMessages();
+            }
         }
 
         public refresh(): void {

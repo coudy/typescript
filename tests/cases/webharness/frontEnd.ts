@@ -123,6 +123,10 @@ class BatchCompiler implements Services.ILanguageServiceHost {
         return null;
     }
 
+    public getLocalizedDiagnosticMessages(): any {
+        return null;
+    }
+
     public createLanguageService() {
         return new Services.LanguageService(this);
     }
