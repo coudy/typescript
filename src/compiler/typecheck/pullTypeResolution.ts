@@ -1932,19 +1932,16 @@ module TypeScript {
                 context.setTypeInContext(paramSymbol, typeRef);
             } // PULLTODO: default values?
             else {
-                if (paramSymbol.isVarArg && paramSymbol.type) {
-                    if (this.cachedArrayInterfaceType()) {
-                        context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [paramSymbol.type], this, this.cachedArrayInterfaceType().getDeclarations()[0], context));
-                    }
-                    else {
-                        context.setTypeInContext(paramSymbol, paramSymbol.type);
-                    }
-                }
-                else if (contextParam) {
+                if (contextParam) {
                     context.setTypeInContext(paramSymbol, contextParam.type);
                 }
                 else {
-                    context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+                    if (paramSymbol.isVarArg && this.cachedArrayInterfaceType()) {
+                        context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context));
+                    }
+                    else {
+                        context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+                    }
 
                     // if the noImplicitAny flag is set to be true, report an error
                     if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
@@ -4871,7 +4868,8 @@ module TypeScript {
             if (shouldContextuallyType && funcDeclAST.arguments) {
 
                 for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    if ((<Parameter>funcDeclAST.arguments.members[i]).typeExpr) {
+                    var parameter = <Parameter>funcDeclAST.arguments.members[i];
+                    if (parameter.typeExpr) {
                         shouldContextuallyType = false;
                         break;
                     }
@@ -4917,25 +4915,40 @@ module TypeScript {
 
             // link parameters and resolve their annotations
             if (funcDeclAST.arguments) {
-
                 var contextParams: PullSymbol[] = [];
-                var contextParam: PullSymbol = null;
 
                 if (assigningFunctionSignature) {
                     contextParams = assigningFunctionSignature.parameters;
                 }
 
-                for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
+               var contextualParametersCount = contextParams.length;
+                for (var i = 0, n = funcDeclAST.arguments.members.length; i < n; i++) {
+                    var actualParameter = <Parameter>funcDeclAST.arguments.members[i];
+                    // Function has a variable argument list, and this paramter is the last
+                    var actualParameterIsVarArgParameter = funcDeclAST.variableArgList && i === n - 1;
+                    var correspondingContextualParameter: PullSymbol = null;
+                    var contextualParameterType: PullTypeSymbol = null;
 
-                    if ((i < contextParams.length) && !contextParams[i].isVarArg) {
-                        contextParam = contextParams[i];
+                    // Find the matching contextual paramter
+                    if (i < contextualParametersCount) {
+                        correspondingContextualParameter = contextParams[i];
                     }
-                    else if (contextParams.length && contextParams[contextParams.length - 1].isVarArg) {
-                        contextParam = contextParams[contextParams.length - 1].type.getElementType();
+                    else if (contextualParametersCount && contextParams[contextualParametersCount - 1].isVarArg) {
+                        correspondingContextualParameter = contextParams[contextualParametersCount - 1];
+                    }
+
+                    // Find the contextual type from the paramter
+                    if (correspondingContextualParameter) {
+                        if (correspondingContextualParameter.isVarArg === actualParameterIsVarArgParameter) {
+                            contextualParameterType = correspondingContextualParameter.type;
+                        }
+                        else if (correspondingContextualParameter.isVarArg) {
+                            contextualParameterType = correspondingContextualParameter.type.getElementType();
+                        }
                     }
 
                     // use the function decl as the enclosing decl, so as to properly resolve type parameters
-                    this.resolveFunctionExpressionParameter(<Parameter>funcDeclAST.arguments.members[i], contextParam, functionDecl, context);
+                    this.resolveFunctionExpressionParameter(actualParameter, contextualParameterType, functionDecl, context);
                 }
             }
 
