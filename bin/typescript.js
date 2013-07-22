@@ -35504,6 +35504,7 @@ var TypeScript;
             this._hasDefaultConstructor = false;
             // TODO: Really only used to track doc comments...
             this._functionSymbol = null;
+            this.hasRecursiveSpecializationError = false;
             this.inMemberTypeNameEx = false;
             this.inSymbolPrivacyCheck = false;
             this.type = this;
@@ -37070,10 +37071,10 @@ var TypeScript;
 
         var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        if (searchForExistingSpecialization || context.specializingToAny) {
-            if (!typeArguments.length || context.specializingToAny) {
+        if (searchForExistingSpecialization || context.specializingToAny || typeToSpecialize.hasRecursiveSpecializationError) {
+            if (!typeArguments.length || context.specializingToAny || typeToSpecialize.hasRecursiveSpecializationError) {
                 for (var i = 0; i < typeParameters.length; i++) {
-                    typeArguments[typeArguments.length] = resolver.semanticInfoChain.anyTypeSymbol;
+                    typeArguments[i] = resolver.semanticInfoChain.anyTypeSymbol;
                 }
             }
 
@@ -37092,6 +37093,7 @@ var TypeScript;
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), TypeScript.DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null, enclosingDecl);
+                        typeToSpecialize.hasRecursiveSpecializationError = true;
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     } else {
                         return resolver.semanticInfoChain.anyTypeSymbol;
@@ -37109,6 +37111,7 @@ var TypeScript;
                     declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
                     if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         diagnostic = context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), TypeScript.DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null, enclosingDecl);
+                        typeToSpecialize.hasRecursiveSpecializationError = true;
                         return resolver.getNewErrorTypeSymbol(diagnostic);
                     } else {
                         return resolver.semanticInfoChain.anyTypeSymbol;
@@ -37166,6 +37169,8 @@ var TypeScript;
 
         newType.setTypeArguments(typeArguments);
 
+        newType.hasRecursiveSpecializationError = typeToSpecialize.hasRecursiveSpecializationError;
+
         rootType.addSpecialization(newType, typeArguments);
 
         if (isArray) {
@@ -37200,6 +37205,8 @@ var TypeScript;
         var typeAST;
         var unitPath;
         var decls = typeToSpecialize.getDeclarations();
+        var extendTypeSymbol = null;
+        var implementedTypeSymbol = null;
 
         if (extendedTypesToSpecialize.length) {
             for (var i = 0; i < decls.length; i++) {
@@ -37209,12 +37216,14 @@ var TypeScript;
                 if (typeAST.extendsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.getScriptName());
-                    context.pushTypeSpecializationCache(typeReplacementMap);
-                    var extendTypeSymbol = resolver.resolveTypeReference(new TypeScript.TypeReference(typeAST.extendsList.members[0], 0), typeDecl, context);
-                    resolver.setUnitPath(unitPath);
-                    context.popTypeSpecializationCache();
+                    for (var j = 0; j < typeAST.extendsList.members.length; j++) {
+                        context.pushTypeSpecializationCache(typeReplacementMap);
+                        extendTypeSymbol = resolver.resolveTypeReference(new TypeScript.TypeReference(typeAST.extendsList.members[j], 0), typeDecl, context);
+                        resolver.setUnitPath(unitPath);
+                        context.popTypeSpecializationCache();
 
-                    newType.addExtendedType(extendTypeSymbol);
+                        newType.addExtendedType(extendTypeSymbol);
+                    }
                 }
             }
         }
@@ -37229,12 +37238,14 @@ var TypeScript;
                 if (typeAST.implementsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.getScriptName());
-                    context.pushTypeSpecializationCache(typeReplacementMap);
-                    var implementedTypeSymbol = resolver.resolveTypeReference(new TypeScript.TypeReference(typeAST.implementsList.members[0], 0), typeDecl, context);
-                    resolver.setUnitPath(unitPath);
-                    context.popTypeSpecializationCache();
+                    for (var j = 0; j < typeAST.implementsList.members.length; j++) {
+                        context.pushTypeSpecializationCache(typeReplacementMap);
+                        implementedTypeSymbol = resolver.resolveTypeReference(new TypeScript.TypeReference(typeAST.implementsList.members[j], 0), typeDecl, context);
+                        resolver.setUnitPath(unitPath);
+                        context.popTypeSpecializationCache();
 
-                    newType.addImplementedType(implementedTypeSymbol);
+                        newType.addImplementedType(implementedTypeSymbol);
+                    }
                 }
             }
         }
@@ -44604,6 +44615,10 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.sourceExtendsTarget = function (source, target, context) {
+            if (source.isGeneric() != target.isGeneric()) {
+                return false;
+            }
+
             if (source.hasBase(target)) {
                 return true;
             }
