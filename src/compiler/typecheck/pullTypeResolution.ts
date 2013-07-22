@@ -7183,6 +7183,11 @@ module TypeScript {
         }
 
         private sourceExtendsTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext) {
+            // if one is generic and the other is not, we'll need to do a member-wise comparison
+            if (source.isGeneric() != target.isGeneric()) {
+                return false;
+            }
+
             if (source.hasBase(target)) {
                 return true;
             }
