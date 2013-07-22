@@ -70,20 +70,6 @@
             });
         }
 
-        function newParseAndFakeAST() {
-            var batch = new BatchCompiler();
-
-            run(function () {
-                var start = new Date().getTime();
-
-                var tree = batch.newParse();
-                TypeScript.SyntaxTreeToAstVisitor2.visit(tree, "", new TypeScript.CompilationSettings());
-
-                var end = new Date().getTime();
-                appendTime("Fake AST", end - start);
-            });
-        }
-
         function newIncrementalParse() {
             var batch = new BatchCompiler();
             var tree = batch.newParse();
@@ -199,7 +185,6 @@
     <h1>TypeScript Perf Testbed</h1>
     <button onclick="newParse()">Parse</button>
     <button onclick="newParseAndAST()">Parse + AST</button>
-    <button onclick="newParseAndFakeAST()">Parse + Fake AST</button>
     <button onclick="newIncrementalParse()">Incremental Parse</button>
     <button onclick="newIncrementalParseAndAST()">Incremental Parse + AST</button>
     <button onclick="typeCheck()">Type Check</button>
