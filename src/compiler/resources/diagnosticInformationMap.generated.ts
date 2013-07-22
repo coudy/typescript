@@ -330,6 +330,14 @@ module TypeScript {
     "code": 1081,
     "category": DiagnosticCategory.Error
   },
+  "Parameter property declarations cannot be used in an ambient context.": {
+    "code": 1082,
+    "category": DiagnosticCategory.Error
+  },
+  "Parameter property declarations cannot be used in a constructor overload.": {
+    "code": 1083,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error

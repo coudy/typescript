@@ -206,8 +206,19 @@ module TypeScript {
 
                     if (parameter.publicOrPrivateKeyword) {
                         var keywordFullStart = parameterFullStart + Syntax.childOffset(parameter, parameter.publicOrPrivateKeyword);
-                        this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
-                            DiagnosticCode.Parameter_property_declarations_can_only_be_used_in_constructors);
+
+                        if (this.inAmbientDeclaration) {
+                            this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
+                                DiagnosticCode.Parameter_property_declarations_cannot_be_used_in_an_ambient_context);
+                        }
+                        else if (!this.currentConstructor.block) {
+                            this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
+                                DiagnosticCode.Parameter_property_declarations_cannot_be_used_in_a_constructor_overload);
+                        }
+                        else {
+                            this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
+                                DiagnosticCode.Parameter_property_declarations_can_only_be_used_in_constructors);
+                        }
                     }
                 }
 
