@@ -339,7 +339,7 @@ module TypeScript {
                                 updatedPath = true;
 
                                 if (j === 0) {
-                                    if (this.emitOptions.outputMany || this.emitOptions.compilationSettings.sourceRoot) {
+                                    if (this.emitOptions.compilationSettings.outDirOption || this.emitOptions.compilationSettings.sourceRoot) {
                                         // Its error to not have common path
                                         return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
                                     } else {
@@ -361,10 +361,6 @@ module TypeScript {
             }
 
             this.emitOptions.commonDirectoryPath = commonComponents.slice(0, commonComponentsLength).join("/") + "/";
-            if (this.emitOptions.outputMany) {
-                this.emitOptions.compilationSettings.outputOption = this.convertToDirectoryPath(this.emitOptions.compilationSettings.outputOption);
-            }
-
             return null;
         }
 
@@ -378,6 +374,11 @@ module TypeScript {
 
         public setEmitOptions(ioHost: EmitterIOHost): Diagnostic {
             this.emitOptions.ioHost = ioHost;
+
+            if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Unspecified && this.isDynamicModuleCompilation()) {
+                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
+            }
+
             if (!this.emitOptions.compilationSettings.mapSourceFiles) {
                 // Error to specify --mapRoot or --sourceRoot without mapSourceFiles
                 if (this.emitOptions.compilationSettings.mapRoot) {
@@ -394,42 +395,27 @@ module TypeScript {
             this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
             this.emitOptions.compilationSettings.sourceRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
 
-            if (!this.emitOptions.compilationSettings.outputOption && !this.emitOptions.compilationSettings.mapRoot && !this.emitOptions.compilationSettings.sourceRoot) {
+            if (!this.emitOptions.compilationSettings.outFileOption && !this.emitOptions.compilationSettings.outDirOption && !this.emitOptions.compilationSettings.mapRoot && !this.emitOptions.compilationSettings.sourceRoot) {
                 this.emitOptions.outputMany = true;
                 this.emitOptions.commonDirectoryPath = "";
                 return null;
             }
 
-            if (this.emitOptions.compilationSettings.outputOption) {
-                this.emitOptions.compilationSettings.outputOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outputOption));
-                // Determine if output options is directory or file
-                if (this.emitOptions.ioHost.directoryExists(this.emitOptions.compilationSettings.outputOption)) {
-                    // Existing directory
-                    this.emitOptions.outputMany = true;
-                } else if (this.emitOptions.ioHost.fileExists(this.emitOptions.compilationSettings.outputOption)) {
-                    // Existing file
-                    this.emitOptions.outputMany = false;
-                }
-                else {
-                    // New File/directory
-                    this.emitOptions.outputMany = !isJSFile(this.emitOptions.compilationSettings.outputOption);
-                }
+            if (this.emitOptions.compilationSettings.outFileOption) {
+                this.emitOptions.compilationSettings.outFileOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outFileOption));
+                this.emitOptions.outputMany = false;
             } else {
                 this.emitOptions.outputMany = true;
             } 
 
-            // Verify if options are correct
-            if (!this.emitOptions.outputMany && this.isDynamicModuleCompilation()) {
-                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_when_emitting_into_single_file, null);
+            if (this.emitOptions.compilationSettings.outDirOption) {
+                this.emitOptions.compilationSettings.outDirOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outDirOption));
+                this.emitOptions.compilationSettings.outDirOption = this.convertToDirectoryPath(this.emitOptions.compilationSettings.outDirOption);
             }
-
+           
             // Parse the directory structure
-            if (this.emitOptions.outputMany || this.emitOptions.compilationSettings.mapRoot || this.emitOptions.compilationSettings.sourceRoot) {
+            if (this.emitOptions.compilationSettings.outDirOption || this.emitOptions.compilationSettings.mapRoot || this.emitOptions.compilationSettings.sourceRoot) {
                 return this.updateCommonDirectoryPath();
-            }
-
-            if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Unspecified && this.isDynamicModuleCompilation()) {
-                return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
             }
 
             return null;
@@ -447,13 +433,30 @@ module TypeScript {
             return result;
         }
 
+        public getDocuments(): Document[] {
+            var result: TypeScript.Document[] = [];
+            var fileNames = this.fileNameToDocument.getAllKeys();
+
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var document = this.getDocument(fileNames[i]);
+                result.push(document);
+            }
+
+            return result;
+        }
+
         private writeByteOrderMarkForDocument(document: Document) {
-            if (this.emitOptions.outputMany) {
+            // If module its always emitted in its own file
+            if (this.emitOptions.outputMany || document.script.topLevelMod) {
                 return document.byteOrderMark !== ByteOrderMark.None;
             } else {
                 var fileNames = this.fileNameToDocument.getAllKeys();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
+                    if (document.script.topLevelMod) {
+                        // Dynamic module never contributes to the single file
+                        continue;
+                    }
                     var document = this.getDocument(fileNames[i]);
                     if (document.byteOrderMark !== ByteOrderMark.None) {
                         return true;
@@ -485,13 +488,13 @@ module TypeScript {
         private emitDeclarations(document: Document, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
             var script = document.script;
             if (this.canEmitDeclarations(script)) {
-                if (!declarationEmitter) {
-                    var declareFileName = this.emitOptions.mapOutputFileName(document.fileName, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new DeclarationEmitter(
-                        declareFileName, this.semanticInfoChain, this.emitOptions, document.byteOrderMark !== ByteOrderMark.None);
+                if (declarationEmitter) {
+                    declarationEmitter.document = document;
+                } else {
+                    var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
+                    declarationEmitter = new DeclarationEmitter(declareFileName, document, this);
                 }
 
-                declarationEmitter.fileName = document.fileName;
                 declarationEmitter.emitDeclarations(script);
             }
 
@@ -512,7 +515,8 @@ module TypeScript {
                     try {
                         var document = this.getDocument(fileNames[i]);
 
-                        if (this.emitOptions.outputMany) {
+                        // Emitting module or multiple files, always goes to single file
+                        if (this.emitOptions.outputMany || document.script.topLevelMod) {
                             var singleEmitter = this.emitDeclarations(document);
                             if (singleEmitter) {
                                 singleEmitter.close();
@@ -533,7 +537,7 @@ module TypeScript {
                         sharedEmitter.close();
                     }
                     catch (ex2) {
-                        return Emitter.handleEmitterError(sharedEmitter.fileName, ex2);
+                        return Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
                     }
                 }
             }
@@ -546,9 +550,10 @@ module TypeScript {
         // Will not throw exceptions.
         public emitUnitDeclarations(fileName: string): Diagnostic[] {
             if (this.canEmitDeclarations()) {
-                if (this.emitOptions.outputMany) {
+                var document = this.getDocument(fileName);
+                // Emitting module or multiple files, always goes to single file
+                if (this.emitOptions.outputMany || document.script.topLevelMod) {
                     try {
-                        var document = this.getDocument(fileName);
                         var emitter = this.emitDeclarations(document);
                         if (emitter) {
                             emitter.close();
@@ -593,7 +598,7 @@ module TypeScript {
             if (!script.isDeclareFile) {
                 var typeScriptFileName = document.fileName;
                 if (!emitter) {
-                    var javaScriptFileName = this.emitOptions.mapOutputFileName(typeScriptFileName, TypeScriptCompiler.mapToJSFileName);
+                    var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
                     var outFile = this.createFile(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
 
                     emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
@@ -601,7 +606,7 @@ module TypeScript {
                     if (this.settings.mapSourceFiles) {
                         // We always create map files next to the jsFiles
                         var sourceMapFile = this.createFile(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
-                        var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(typeScriptFileName, javaScriptFileName);
+                        var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(document, javaScriptFileName);
                         emitter.setSourceMappings(new SourceMapper(outFile, sourceMapFile, sourceMapSourceInfo));
                     }
 
@@ -611,7 +616,7 @@ module TypeScript {
                     }
                 }
                 else if (this.settings.mapSourceFiles) {
-                    var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(typeScriptFileName, emitter.emittingFileName, emitter.sourceMapper.sourceMapSourceInfo);
+                    var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(document, emitter.emittingFileName, emitter.sourceMapper.sourceMapSourceInfo);
                     emitter.setSourceMappings(new SourceMapper(emitter.outfile, emitter.sourceMapper.sourceMapOut, sourceMapSourceInfo));
                 }
 
@@ -642,7 +647,8 @@ module TypeScript {
                 var document = this.getDocument(fileName);
 
                 try {
-                    if (this.emitOptions.outputMany) {
+                    // Emitting module or multiple files, always goes to single file
+                    if (this.emitOptions.outputMany || document.script.topLevelMod) {
                         // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
                         var singleEmitter = this.emit(document, inputOutputMapper);
 
@@ -683,9 +689,10 @@ module TypeScript {
                 return [optionsDiagnostic];
             }
 
-            if (this.emitOptions.outputMany) {
+            var document = this.getDocument(fileName);
+            // Emitting module or multiple files, always goes to single file
+            if (this.emitOptions.outputMany || document.script.topLevelMod) {
                 // In outputMany mode, only emit the document specified and its sourceMap if needed
-                var document = this.getDocument(fileName);
                 try {
                     var emitter = this.emit(document, inputOutputMapper);
 

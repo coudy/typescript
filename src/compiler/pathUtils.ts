@@ -101,7 +101,7 @@ module TypeScript {
         return path.split("/");
     }
 
-    export function getRelativePathToFixedPath(fixedModFilePath: string, absoluteModPath: string) {
+    export function getRelativePathToFixedPath(fixedModFilePath: string, absoluteModPath: string, isAbsoultePathURL = true) {
         absoluteModPath = switchToForwardSlashes(absoluteModPath);
 
         var modComponents = this.getPathComponents(absoluteModPath);
@@ -128,7 +128,7 @@ module TypeScript {
             return relativePath + relativePathComponents.join("/");
         }
 
-        if (absoluteModPath.indexOf("://") === -1) {
+        if (isAbsoultePathURL && absoluteModPath.indexOf("://") === -1) {
             absoluteModPath = "file:///" + absoluteModPath;
         }
 

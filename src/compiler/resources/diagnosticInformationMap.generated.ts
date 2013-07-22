@@ -1198,10 +1198,6 @@ module TypeScript {
     "code": 5009,
     "category": DiagnosticCategory.Error
   },
-  "Cannot compile external modules when emitting into single file.": {
-    "code": 5010,
-    "category": DiagnosticCategory.Error
-  },
   "Emit Error: {0}.": {
     "code": 5011,
     "category": DiagnosticCategory.Error
@@ -1322,7 +1318,7 @@ module TypeScript {
     "code": 5040,
     "category": DiagnosticCategory.Error
   },
-  "Concatenate and emit output to single file | Redirect output structure to the directory": {
+  "Concatenate and emit output to single file": {
     "code": 6001,
     "category": DiagnosticCategory.Message
   },
@@ -1340,6 +1336,10 @@ module TypeScript {
   },
   "Watch input files": {
     "code": 6005,
+    "category": DiagnosticCategory.Message
+  },
+  "Redirect output structure to the directory": {
+    "code": 6006,
     "category": DiagnosticCategory.Message
   },
   "Do not emit comments to output": {
@@ -1418,7 +1418,7 @@ module TypeScript {
     "code": 6034,
     "category": DiagnosticCategory.Message
   },
-  "FILE|DIRECTORY": {
+  "FILE": {
     "code": 6035,
     "category": DiagnosticCategory.Message
   },
@@ -1428,6 +1428,10 @@ module TypeScript {
   },
   "LOCATION": {
     "code": 6037,
+    "category": DiagnosticCategory.Message
+  },
+  "DIRECTORY": {
+    "code": 6038,
     "category": DiagnosticCategory.Message
   },
   "This version of the Javascript runtime does not support the '{0}' function.": {

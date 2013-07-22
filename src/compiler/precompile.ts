@@ -33,7 +33,8 @@ module TypeScript {
 
         // --out option passed. 
         // Default is the "" which leads to multiple files generated next to the.ts files
-        public outputOption: string = "";
+        public outFileOption: string = "";
+        public outDirOption: string = "";
         public mapSourceFiles = false;
         public mapRoot: string = ""; 
         public sourceRoot: string = "";

@@ -1,3 +1,4 @@
+/// <reference path="m1.d.ts" />
 declare var a1: number;
 declare class c1 {
     public p1: number;

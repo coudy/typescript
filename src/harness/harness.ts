@@ -1112,7 +1112,8 @@ module Harness {
                 { flag: 'nolib', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noLib = value.toLowerCase() === 'true' ? false : true; } },
                 { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; } },
                 { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
-                { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outputOption = value; } },
+                { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outFileOption = value; } },
+                { flag: 'outDir', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outDirOption = value; } },
                 { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
                 { flag: 'noimplicitany', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noImplicitAny = value.toLowerCase() === 'true' ? true : false; } }, 
             ];
@@ -1613,7 +1614,7 @@ module Harness {
         var optionRegex = /^[\/]{2}\s*@(\w+)\s*:\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
-        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "noimplicitany"];
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "outDir", "noimplicitany"];
 
         function extractCompilerSettings(content: string): CompilerSetting[] {
 
