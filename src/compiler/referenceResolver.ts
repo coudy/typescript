@@ -45,7 +45,7 @@ module TypeScript {
         private inputFileNames: string[];
         private host: IReferenceResolverHost;
         private settings: TypeScript.CompilationSettings;
-        private visited: { [s: string]: boolean };
+        private visited: { [s: string]: string };
 
         constructor(inputFileNames: string[], host: IReferenceResolverHost, settings: TypeScript.CompilationSettings) {
             this.inputFileNames = inputFileNames;
@@ -162,7 +162,8 @@ module TypeScript {
 
         private resolveFile(normalizedPath: string, resolutionResult: ReferenceResolutionResult): string {
             // If we have processed this file before, skip it
-            if (!this.isVisited(normalizedPath)) {
+            var visitedPath = this.isVisited(normalizedPath);
+            if (!visitedPath) {
                 // Record that we have seen it
                 this.recordVisitedFile(normalizedPath);
 
@@ -198,6 +199,8 @@ module TypeScript {
                     referencedFiles: normalizedReferencePaths,
                     importedFiles: normalizedImportPaths
                 });
+            } else {
+                normalizedPath = visitedPath;
             }
 
             return normalizedPath;
@@ -214,10 +217,10 @@ module TypeScript {
         }
 
         private recordVisitedFile(filePath: string): void {
-            this.visited[this.getUniqueFileId(filePath)] = true;
+            this.visited[this.getUniqueFileId(filePath)] = filePath;
         }
 
-        private isVisited(filePath: string): boolean {
+        private isVisited(filePath: string): string {
             return this.visited[this.getUniqueFileId(filePath)];
         }
 
