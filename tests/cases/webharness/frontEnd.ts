@@ -42,7 +42,7 @@ class BatchCompiler implements Services.ILanguageServiceHost {
     public compile() {
         var settings = new TypeScript.CompilationSettings();
         settings.generateDeclarationFiles = true;
-        settings.outputOption = "Output.ts";
+        settings.outFileOption = "Output.ts";
 
         this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
 

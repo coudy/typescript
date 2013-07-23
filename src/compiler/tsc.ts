@@ -315,12 +315,23 @@ module TypeScript {
 
             opts.option('out', {
                 usage: {
-                    locCode: DiagnosticCode.Concatenate_and_emit_output_to_single_file_Redirect_output_structure_to_the_directory, 
+                    locCode: DiagnosticCode.Concatenate_and_emit_output_to_single_file, 
                     args: null
                 },
-                type: DiagnosticCode.FILE_DIRECTORY,
+                type: DiagnosticCode.FILE,
                 set: (str) => {
-                    this.compilationSettings.outputOption = str;
+                    this.compilationSettings.outFileOption = str;
+                }
+            });
+
+            opts.option('outDir', {
+                usage: {
+                    locCode: DiagnosticCode.Redirect_output_structure_to_the_directory,
+                    args: null
+                },
+                type: DiagnosticCode.DIRECTORY,
+                set: (str) => {
+                    this.compilationSettings.outDirOption = str;
                 }
             });
 

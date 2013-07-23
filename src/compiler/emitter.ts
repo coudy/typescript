@@ -47,24 +47,24 @@ module TypeScript {
         constructor(public compilationSettings: CompilationSettings) {
         }
 
-        public mapOutputFileName(fileName: string, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
-            if (this.outputMany) {
-                var updatedFileName = fileName;
-                if (this.compilationSettings.outputOption !== "") {
+        public mapOutputFileName(document: Document, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
+            if (this.outputMany || document.script.topLevelMod) {
+                var updatedFileName = document.fileName;
+                if (this.compilationSettings.outDirOption !== "") {
                     // Replace the common directory path with the option specified
-                    updatedFileName = fileName.replace(this.commonDirectoryPath, "");
-                    updatedFileName = this.compilationSettings.outputOption + updatedFileName;
+                    updatedFileName = document.fileName.replace(this.commonDirectoryPath, "");
+                    updatedFileName = this.compilationSettings.outDirOption + updatedFileName;
                 }
                 return extensionChanger(updatedFileName, false);
             } else {
-                return extensionChanger(this.compilationSettings.outputOption, true);
+                return extensionChanger(this.compilationSettings.outFileOption, true);
             }
         }
 
-        public decodeSourceMapOptions(tsFilePath: string, jsFilePath: string, oldSourceMapSourceInfo?: SourceMapSourceInfo): SourceMapSourceInfo {
+        public decodeSourceMapOptions(document: Document, jsFilePath: string, oldSourceMapSourceInfo?: SourceMapSourceInfo): SourceMapSourceInfo {
             var sourceMapSourceInfo = new SourceMapSourceInfo(oldSourceMapSourceInfo);
 
-            tsFilePath = switchToForwardSlashes(tsFilePath);
+            var tsFilePath = switchToForwardSlashes(document.fileName);
 
             // Decode mapRoot and sourceRoot
             if (!oldSourceMapSourceInfo) {
@@ -75,7 +75,7 @@ module TypeScript {
 
                 // Figure out sourceMapPath and sourceMapDirectory
                 if (this.compilationSettings.mapRoot) {
-                    if (this.outputMany) {
+                    if (this.outputMany || document.script.topLevelMod) {
                         var sourceMapPath = tsFilePath.replace(this.commonDirectoryPath, "");
                         sourceMapPath = this.compilationSettings.mapRoot + sourceMapPath;
                         sourceMapPath = TypeScriptCompiler.mapToJSFileName(sourceMapPath, false) + SourceMapper.MapFileExtension;
