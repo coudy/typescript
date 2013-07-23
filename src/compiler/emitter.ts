@@ -1948,28 +1948,30 @@ module TypeScript {
                 var memberDecl = classDecl.members.members[i];
 
                 if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
-                    var fn = <FunctionDeclaration>memberDecl;
+                    var functionDeclaration = <FunctionDeclaration>memberDecl;
 
-                    if (hasFlag(fn.getFunctionFlags(), FunctionFlags.Method) && !fn.isSignature()) {
-                        this.emitSpaceBetweenConstructs(lastEmittedMember, fn);
+                    if (hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Method) && !functionDeclaration.isSignature()) {
+                        this.emitSpaceBetweenConstructs(lastEmittedMember, functionDeclaration);
 
-                        if (!hasFlag(fn.getFunctionFlags(), FunctionFlags.Static)) {
-                            this.emitPrototypeMember(fn, classDecl.name.actualText);
+                        if (!hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Static)) {
+                            this.emitPrototypeMember(functionDeclaration, classDecl.name.actualText);
                         }
-                        else { // static functions
-                            if (fn.isAccessor()) {
-                                this.emitPropertyAccessor(fn, this.thisClassNode.name.actualText, false);
+                        else {
+                             // static functions
+                            if (functionDeclaration.isAccessor()) {
+                                this.emitPropertyAccessor(functionDeclaration, this.thisClassNode.name.actualText, false);
                             }
                             else {
                                 this.emitIndent();
-                                this.recordSourceMappingStart(fn);
-                                this.writeToOutput(classDecl.name.actualText + "." + fn.name.actualText + " = ");
-                                this.emitInnerFunction(fn, /*printName:*/ false);
+                                this.recordSourceMappingStart(functionDeclaration);
+                                this.emitComments(functionDeclaration, true);
+                                this.writeToOutput(classDecl.name.actualText + "." + functionDeclaration.name.actualText + " = ");
+                                this.emitInnerFunction(functionDeclaration, /*printName:*/ false, /*includePreComments:*/ false);
                                 this.writeLineToOutput(";");
                             }
                         }
 
-                        lastEmittedMember = fn;
+                        lastEmittedMember = functionDeclaration;
                     }
                 }
             }
