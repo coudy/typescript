@@ -1705,6 +1705,10 @@ module TypeScript {
 
 
         public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            if (exportAssignmentAST.id.isMissing()) {
+                // No point trying to resolve an export assignment without an actual identifier.
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
 
             // get the identifier text
             var id = exportAssignmentAST.id.text();
