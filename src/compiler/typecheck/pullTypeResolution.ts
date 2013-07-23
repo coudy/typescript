@@ -5892,13 +5892,21 @@ module TypeScript {
 
             var targetTypeSymbol = targetSymbol.type;
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
+                // Note: targetType is either any or an error.
 
-                // resolve any arguments
+                // resolve any arguments.
                 this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
 
-                if (targetSymbol != this.semanticInfoChain.anyTypeSymbol && callEx.typeArguments) {
-                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null, enclosingDecl)
-                    return this.getNewErrorTypeSymbol(null);
+                if (callEx.typeArguments && callEx.typeArguments.members.length) {
+                    // Can't invoke 'any' generically.
+                    if (targetTypeSymbol === this.semanticInfoChain.anyTypeSymbol) {
+                        context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments, null, enclosingDecl)
+                        return this.getNewErrorTypeSymbol(null);
+                    }
+
+                    // Note: if we get here, targetType is an error type.  In that case we don't
+                    // want to report *another* error since the user will have already gotten 
+                    // the first error about the target not resolving properly.
                 }
 
                 return this.semanticInfoChain.anyTypeSymbol;
