@@ -340,10 +340,10 @@ task("LKG", libraryTargets, function() {
 	for (i in expectedFiles) {
 		jake.cpR(expectedFiles[i], LKGDirectory);
 	}
-	var resourceDirectories = fs.readdirSync(builtLocalResourcesDirectory).map(function(p) { return path.join(builtLocalResourcesDirectory, p); });
-	resourceDirectories.map(function(d) {
-		jake.cpR(d, LKGResourcesDirectory);
-	});
+	//var resourceDirectories = fs.readdirSync(builtLocalResourcesDirectory).map(function(p) { return path.join(builtLocalResourcesDirectory, p); });
+	//resourceDirectories.map(function(d) {
+	//	jake.cpR(d, LKGResourcesDirectory);
+	//});
 });
 
 // Test directory
