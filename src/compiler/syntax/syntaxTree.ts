@@ -211,7 +211,7 @@ module TypeScript {
                             this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
                                 DiagnosticCode.Parameter_property_declarations_cannot_be_used_in_an_ambient_context);
                         }
-                        else if (!this.currentConstructor.block) {
+                        else if (this.currentConstructor && !this.currentConstructor.block) {
                             this.pushDiagnostic1(keywordFullStart, parameter.publicOrPrivateKeyword,
                                 DiagnosticCode.Parameter_property_declarations_cannot_be_used_in_a_constructor_overload);
                         }
