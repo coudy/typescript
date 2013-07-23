@@ -41,8 +41,8 @@ var c1 = (function () {
     });
 
 
-    c1.s2 = /** static sum with property*/
-    function (/** number to add*/ b) {
+    /** static sum with property*/
+    c1.s2 = function (/** number to add*/ b) {
         return c1.s1 + b;
     };
 
@@ -140,8 +140,8 @@ var c1 = (function () {
     });
 
 
-    c1.a_s2 = // static sum with property
-    function (b) {
+    // static sum with property
+    c1.a_s2 = function (b) {
         return c1.a_s1 + b;
     };
 
@@ -197,8 +197,8 @@ var c1 = (function () {
     });
 
 
-    c1.b_s2 = /** static sum with property */
-    function (b) {
+    /** static sum with property */
+    c1.b_s2 = function (b) {
         return c1.b_s1 + b;
     };
 
