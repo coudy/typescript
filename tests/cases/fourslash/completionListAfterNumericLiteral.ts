@@ -1,6 +1,5 @@
 /// <reference path='fourslash.ts' />
 
-// BUG 745030
 // @Filename: f1.ts
 ////0./*dotOnNumberExrpressions1*/
 
