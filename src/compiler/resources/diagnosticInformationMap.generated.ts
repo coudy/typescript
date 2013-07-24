@@ -322,11 +322,11 @@ module TypeScript {
     "code": 1079,
     "category": DiagnosticCategory.Error
   },
-  "Function overload must be static": {
+  "Function overload must be static.": {
     "code": 1080,
     "category": DiagnosticCategory.Error
   },
-  "Function overload must not be static": {
+  "Function overload must not be static.": {
     "code": 1081,
     "category": DiagnosticCategory.Error
   },
@@ -974,7 +974,7 @@ module TypeScript {
     "code": 2164,
     "category": DiagnosticCategory.Error
   },
-  "Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules": {
+  "Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules.": {
     "code": 2165,
     "category": DiagnosticCategory.Error
   },
@@ -1222,11 +1222,11 @@ module TypeScript {
     "code": 5016,
     "category": DiagnosticCategory.Error
   },
-  "Should not emit a type query": {
+  "Should not emit a type query.": {
     "code": 5017,
     "category": DiagnosticCategory.Error
   },
-  "Should not emit a type reference": {
+  "Should not emit a type reference.": {
     "code": 5018,
     "category": DiagnosticCategory.Error
   },
@@ -1238,11 +1238,11 @@ module TypeScript {
     "code": 5020,
     "category": DiagnosticCategory.Error
   },
-  "Base64 value '{0}' finished with a continuation bit": {
+  "Base64 value '{0}' finished with a continuation bit.": {
     "code": 5021,
     "category": DiagnosticCategory.Error
   },
-  "Key was already in table": {
+  "Key was already in table.": {
     "code": 5022,
     "category": DiagnosticCategory.Error
   },
@@ -1250,7 +1250,7 @@ module TypeScript {
     "code": 5023,
     "category": DiagnosticCategory.Error
   },
-  "Expected {0} arguments to message, got {1} instead": {
+  "Expected {0} arguments to message, got {1} instead.": {
     "code": 5024,
     "category": DiagnosticCategory.Error
   },
@@ -1318,11 +1318,11 @@ module TypeScript {
     "code": 5040,
     "category": DiagnosticCategory.Error
   },
-  "Concatenate and emit output to single file": {
+  "Concatenate and emit output to single file.": {
     "code": 6001,
     "category": DiagnosticCategory.Message
   },
-  "Generates corresponding {0} file": {
+  "Generates corresponding {0} file.": {
     "code": 6002,
     "category": DiagnosticCategory.Message
   },
@@ -1334,31 +1334,31 @@ module TypeScript {
     "code": 6004,
     "category": DiagnosticCategory.Message
   },
-  "Watch input files": {
+  "Watch input files.": {
     "code": 6005,
     "category": DiagnosticCategory.Message
   },
-  "Redirect output structure to the directory": {
+  "Redirect output structure to the directory.": {
     "code": 6006,
     "category": DiagnosticCategory.Message
   },
-  "Do not emit comments to output": {
+  "Do not emit comments to output.": {
     "code": 6009,
     "category": DiagnosticCategory.Message
   },
-  "Skip resolution and preprocessing": {
+  "Skip resolution and preprocessing.": {
     "code": 6010,
     "category": DiagnosticCategory.Message
   },
-  "Specify ECMAScript target version: \"{0}\" (default), or \"{1}\"": {
+  "Specify ECMAScript target version: '{0}' (default), or '{1}'": {
     "code": 6015,
     "category": DiagnosticCategory.Message
   },
-  "Specify module code generation: \"{0}\" or \"{1}\"": {
+  "Specify module code generation: '{0}' or '{1}'": {
     "code": 6016,
     "category": DiagnosticCategory.Message
   },
-  "Print this message": {
+  "Print this message.": {
     "code": 6017,
     "category": DiagnosticCategory.Message
   },
@@ -1366,7 +1366,7 @@ module TypeScript {
     "code": 6019,
     "category": DiagnosticCategory.Message
   },
-  "Allow use of deprecated \"{0}\" keyword when referencing an external module": {
+  "Allow use of deprecated '{0}' keyword when referencing an external module.": {
     "code": 6021,
     "category": DiagnosticCategory.Message
   },
@@ -1402,7 +1402,7 @@ module TypeScript {
     "code": 6029,
     "category": DiagnosticCategory.Message
   },
-  "Use the '{0}' flag to see options": {
+  "Use the '{0}' flag to see options.": {
     "code": 6031,
     "category": DiagnosticCategory.Message
   },
@@ -1442,7 +1442,7 @@ module TypeScript {
     "code": 7001,
     "category": DiagnosticCategory.Error
   },
-  "Unknown rule": {
+  "Unknown rule.": {
     "code": 7002,
     "category": DiagnosticCategory.Error
   },
@@ -1470,7 +1470,7 @@ module TypeScript {
     "code": 7008,
     "category": DiagnosticCategory.Error
   },
-  "\"New\" expression, which lacks a constructor signature, implicitly has an 'any' type.": {
+  "'new' expression, which lacks a constructor signature, implicitly has an 'any' type.": {
     "code": 7009,
     "category": DiagnosticCategory.Error
   },
