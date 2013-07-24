@@ -1336,19 +1336,17 @@ module Services {
         private updateSyntaxTree(fileName: string, previousSyntaxTree: TypeScript.SyntaxTree, previousFileVersion: number): TypeScript.SyntaxTree {
             var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
 
-            // If "no changes", tree is good to go as is
-            if (editRange === null) {
-                return previousSyntaxTree;
-            }
-
             // Debug.assert(newLength >= 0);
+
+            // The host considers the entire buffer changed.  So parse a completely new tree.
+            if (editRange === null) {
+                return this.createSyntaxTree(fileName);
+            }
 
             var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var newSegmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(newScriptSnapshot);
 
-            var nextSyntaxTree = TypeScript.Parser.incrementalParse(
-                previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
-
+            var nextSyntaxTree = TypeScript.Parser.incrementalParse(previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
             return nextSyntaxTree;
         }
     }
