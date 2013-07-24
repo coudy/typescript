@@ -659,7 +659,7 @@ module TypeScript {
 
         public structuralEquals(ast: NumberLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.value === ast.value &&
+                   (this.value === ast.value || (isNaN(this.value) && isNaN(ast.value))) &&
                    this._text === ast._text;
         }
     }

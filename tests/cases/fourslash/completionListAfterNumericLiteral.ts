@@ -1,31 +1,44 @@
 /// <reference path='fourslash.ts' />
 
 // BUG 745030
-/////0./*dotOnNumberExrpressions1*/
-/////0.0./*dotOnNumberExrpressions2*/
-//////0.0.0./*dotOnNumberExrpressions3*/
-/////0./** comment *//*dotOnNumberExrpressions4*/
-/////(0)./*validDotOnNumberExrpressions1*/
-/////(0.)./*validDotOnNumberExrpressions2*/
-/////(0.0)./*validDotOnNumberExrpressions3*/
+// @Filename: f1.ts
+////0./*dotOnNumberExrpressions1*/
 
-//goTo.marker("dotOnNumberExrpressions1");
-//verify.completionListIsEmpty();
+// @Filename: f2.ts
+////0.0./*dotOnNumberExrpressions2*/
 
-//goTo.marker("dotOnNumberExrpressions2");
-//verify.completionListIsEmpty();
+// @Filename: f3.ts
+////0.0.0./*dotOnNumberExrpressions3*/
 
-//goTo.marker("dotOnNumberExrpressions3");
-//verify.completionListIsEmpty();
+// @Filename: f4.ts
+////0./** comment *//*dotOnNumberExrpressions4*/
 
-//goTo.marker("dotOnNumberExrpressions4");
-//verify.completionListIsEmpty();
+// @Filename: f5.ts
+////(0)./*validDotOnNumberExrpressions1*/
 
-//goTo.marker("validDotOnNumberExrpressions1");
-//verify.completionListContains("toExponential");
+// @Filename: f6.ts
+////(0.)./*validDotOnNumberExrpressions2*/
 
-//goTo.marker("validDotOnNumberExrpressions2");
-//verify.completionListContains("toExponential");
+// @Filename: f7.ts
+////(0.0)./*validDotOnNumberExrpressions3*/
 
-//goTo.marker("validDotOnNumberExrpressions3");
-//verify.completionListContains("toExponential");
+goTo.marker("dotOnNumberExrpressions1");
+verify.completionListIsEmpty();
+
+goTo.marker("dotOnNumberExrpressions2");
+verify.completionListIsEmpty();
+
+goTo.marker("dotOnNumberExrpressions3");
+verify.completionListIsEmpty();
+
+goTo.marker("dotOnNumberExrpressions4");
+verify.completionListIsEmpty();
+
+goTo.marker("validDotOnNumberExrpressions1");
+verify.completionListContains("toExponential");
+
+goTo.marker("validDotOnNumberExrpressions2");
+verify.completionListContains("toExponential");
+
+goTo.marker("validDotOnNumberExrpressions3");
+verify.completionListContains("toExponential");
