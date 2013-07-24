@@ -12,6 +12,7 @@ module Services {
         private currentFileName: string = "";
         private currentFileVersion: number = -1;
         private currentFileSyntaxTree: TypeScript.SyntaxTree = null;
+        private currentFileScriptSnapshot: TypeScript.IScriptSnapshot = null;
 
         private activeCompletionSession: CompletionSession = null;
 
@@ -1306,15 +1307,17 @@ module Services {
             var version = this.compilerState.getScriptVersion(fileName);
             var syntaxTree: TypeScript.SyntaxTree = null;
 
+            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             if (this.currentFileSyntaxTree === null || this.currentFileName !== fileName) {
-                syntaxTree = this.createSyntaxTree(fileName);
+                syntaxTree = this.createSyntaxTree(fileName, scriptSnapshot);
             }
             else if (this.currentFileVersion !== version) {
-                syntaxTree = this.updateSyntaxTree(fileName, this.currentFileSyntaxTree, this.currentFileVersion);
+                syntaxTree = this.updateSyntaxTree(fileName, scriptSnapshot, this.currentFileSyntaxTree, this.currentFileVersion);
             }
 
             if (syntaxTree !== null) {
                 // All done, ensure state is up to date
+                this.currentFileScriptSnapshot = scriptSnapshot;
                 this.currentFileVersion = version;
                 this.currentFileName = fileName;
                 this.currentFileSyntaxTree = syntaxTree;
@@ -1323,31 +1326,69 @@ module Services {
             return this.currentFileSyntaxTree;
         }
 
-        private createSyntaxTree(fileName: string): TypeScript.SyntaxTree {
-            var scriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
+        private createSyntaxTree(fileName: string, scriptSnapshot: TypeScript.IScriptSnapshot): TypeScript.SyntaxTree {
             var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
             var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName),
                 TypeScript.getParseOptions(this.compilerState.getHostCompilationSettings()));
 
-            return syntaxTree
+            return syntaxTree;
         }
 
-        private updateSyntaxTree(fileName: string, previousSyntaxTree: TypeScript.SyntaxTree, previousFileVersion: number): TypeScript.SyntaxTree {
+        private updateSyntaxTree(fileName: string, scriptSnapshot: TypeScript.IScriptSnapshot, previousSyntaxTree: TypeScript.SyntaxTree, previousFileVersion: number): TypeScript.SyntaxTree {
             var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
 
             // Debug.assert(newLength >= 0);
 
             // The host considers the entire buffer changed.  So parse a completely new tree.
             if (editRange === null) {
-                return this.createSyntaxTree(fileName);
+                return this.createSyntaxTree(fileName, scriptSnapshot);
             }
 
-            var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
-            var newSegmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(newScriptSnapshot);
+            var nextSyntaxTree = TypeScript.Parser.incrementalParse(previousSyntaxTree, editRange,
+                TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot));
 
-            var nextSyntaxTree = TypeScript.Parser.incrementalParse(previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
+            this.ensureInvariants(fileName, editRange, nextSyntaxTree, this.currentFileScriptSnapshot, scriptSnapshot);
+
             return nextSyntaxTree;
+        }
+
+        private ensureInvariants(fileName: string, editRange: TypeScript.TextChangeRange, incrementalTree: TypeScript.SyntaxTree, oldScriptSnapshot: TypeScript.IScriptSnapshot, newScriptSnapshot: TypeScript.IScriptSnapshot) {
+            // First, verify that the edit range and the script snapshots make sense.
+
+            // If this fires, then the edit range is completely bogus.  Somehow the lengths of the
+            // old snapshot, the change range and the new snapshot aren't in sync.  This is very
+            // bad.
+            var expectedNewLength = oldScriptSnapshot.getLength() - editRange.span().length() + editRange.newLength();
+            var actualNewLength = newScriptSnapshot.getLength();
+            TypeScript.Debug.assert(expectedNewLength === actualNewLength);
+
+            // The following checks are quite expensive.  Don't perform them by default.
+            // return;
+
+            // If this fires, the text change range is bogus.  It says the change starts at point 
+            // 'X', but we can see a text difference *before* that point.
+            var oldPrefixText = oldScriptSnapshot.getText(0, editRange.span().start());
+            var newPrefixText = newScriptSnapshot.getText(0, editRange.span().start());
+            TypeScript.Debug.assert(oldPrefixText === newPrefixText);
+
+            // If this fires, the text change range is bogus.  It says the change goes only up to
+            // point 'X', but we can see a text difference *after* that point.
+            var oldSuffixText = oldScriptSnapshot.getText(editRange.span().end(), oldScriptSnapshot.getLength());
+            var newSuffixText = newScriptSnapshot.getText(editRange.newSpan().end(), newScriptSnapshot.getLength());
+            TypeScript.Debug.assert(oldSuffixText === newSuffixText);
+
+            // Ok, text change range and script snapshots look ok.  Let's verify that our 
+            // incremental parsing worked properly.
+            var normalTree = this.createSyntaxTree(fileName, newScriptSnapshot);
+            TypeScript.Debug.assert(normalTree.structuralEquals(incrementalTree));
+
+            // Ok, the trees looked good.  So at least our incremental parser agrees with the 
+            // normal parser.  Now, verify that the incremental tree matches the contents of the 
+            // script snapshot.
+            var incrementalTreeText = incrementalTree.sourceUnit().fullText();
+            var actualSnapshotText = newScriptSnapshot.getText(0, newScriptSnapshot.getLength());
+            TypeScript.Debug.assert(incrementalTreeText === actualSnapshotText);
         }
     }
 }

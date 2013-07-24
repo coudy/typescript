@@ -134,7 +134,7 @@ module TypeScript {
 
         constructor(public fileName: string,
                     private compilationSettings: CompilationSettings,
-                    private scriptSnapshot: IScriptSnapshot,
+                    public scriptSnapshot: IScriptSnapshot,
                     public byteOrderMark: ByteOrderMark,
                     public version: number,
                     public isOpen: boolean,
