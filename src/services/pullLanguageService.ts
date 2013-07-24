@@ -1364,7 +1364,7 @@ module Services {
             TypeScript.Debug.assert(expectedNewLength === actualNewLength);
 
             // The following checks are quite expensive.  Don't perform them by default.
-            // return;
+            return;
 
             // If this fires, the text change range is bogus.  It says the change starts at point 
             // 'X', but we can see a text difference *before* that point.
