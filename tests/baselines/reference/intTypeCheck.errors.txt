@@ -4,6 +4,13 @@ intTypeCheck.ts line 37 col 29: error TS1008: Unexpected token; 'call, construct
 intTypeCheck.ts line 72 col 16: error TS1005: ']' expected.
 intTypeCheck.ts line 72 col 28: error TS1005: ';' expected.
 intTypeCheck.ts line 72 col 29: error TS1008: Unexpected token; 'call, construct, index, property or function signature' expected.
+intTypeCheck.ts line 15 col 5: error TS2175: Overloads cannot differ only by return type.
+intTypeCheck.ts line 26 col 5: error TS2175: Overloads cannot differ only by return type.
+intTypeCheck.ts line 50 col 5: error TS2175: Overloads cannot differ only by return type.
+intTypeCheck.ts line 62 col 5: error TS2175: Overloads cannot differ only by return type.
+intTypeCheck.ts line 78 col 5: error TS2000: Duplicate identifier 'p3'.
+intTypeCheck.ts line 83 col 5: error TS2153: Overload signatures must all be optional or required.
+intTypeCheck.ts line 83 col 5: error TS2144: Duplicate overload signature for 'p7'.
 intTypeCheck.ts line 97 col 5: error TS2012: Cannot convert 'Object' to 'i1':
 	Type 'Object' is missing property 'p' from type 'i1'.
 intTypeCheck.ts line 98 col 20: error TS2083: Invalid 'new' expression.
@@ -85,10 +92,3 @@ intTypeCheck.ts line 199 col 5: error TS2012: Cannot convert '() => void' to 'i8
 	Type '() => void' is missing property 'p3' from type 'i8'.
 intTypeCheck.ts line 202 col 21: error TS2083: Invalid 'new' expression.
 intTypeCheck.ts line 203 col 21: error TS2083: Invalid 'new' expression.
-intTypeCheck.ts line 15 col 5: error TS2175: Overloads cannot differ only by return type.
-intTypeCheck.ts line 26 col 5: error TS2175: Overloads cannot differ only by return type.
-intTypeCheck.ts line 50 col 5: error TS2175: Overloads cannot differ only by return type.
-intTypeCheck.ts line 62 col 5: error TS2175: Overloads cannot differ only by return type.
-intTypeCheck.ts line 78 col 5: error TS2000: Duplicate identifier 'p3'.
-intTypeCheck.ts line 83 col 5: error TS2144: Duplicate overload signature for 'p7'.
-intTypeCheck.ts line 83 col 5: error TS2153: Overload signatures must all be optional or required.

@@ -14,6 +14,8 @@ typeName1.ts line 15 col 5: error TS2012: Cannot convert 'number' to '(s: string
 	Type '(s: string) => boolean' requires a call signature, but type 'Number' lacks one.
 typeName1.ts line 16 col 5: error TS2012: Cannot convert 'number' to '{ z: I; (): boolean; [s: string]: { x: any; y: any; }; [n: number]: { x: any; y: any; }; }':
 	Type 'Number' is missing property 'z' from type '{ z: I; (): boolean; [s: string]: { x: any; y: any; }; [n: number]: { x: any; y: any; }; }'.
+typeName1.ts line 16 col 10: error TS2172: All named properties must be subtypes of string indexer type '{ x: any; y: any; }':
+	Type 'I' is missing property 'x' from type '{ x: any; y: any; }'.
 typeName1.ts line 17 col 5: error TS2012: Cannot convert 'number' to 'I':
 	Type 'Number' is missing property 'k' from type 'I'.
 typeName1.ts line 18 col 5: error TS2012: Cannot convert 'number' to 'I[][][][]':
@@ -22,12 +24,10 @@ typeName1.ts line 19 col 5: error TS2012: Cannot convert 'number' to '{ z: I; x:
 	Type 'Number' is missing property 'concat' from type '{ z: I; x: boolean; }[][]'.
 typeName1.ts line 20 col 5: error TS2012: Cannot convert 'number' to '{ z: I; x: boolean; y: (s: string) => boolean; w: { z: I; (): boolean; [s: string]: { x: any; y: any; }; [n: number]: { x: any; y: any; }; }; }[][]':
 	Type 'Number' is missing property 'concat' from type '{ z: I; x: boolean; y: (s: string) => boolean; w: { z: I; (): boolean; [s: string]: { x: any; y: any; }; [n: number]: { x: any; y: any; }; }; }[][]'.
+typeName1.ts line 20 col 50: error TS2172: All named properties must be subtypes of string indexer type '{ x: any; y: any; }':
+	Type 'I' is missing property 'x' from type '{ x: any; y: any; }'.
 typeName1.ts line 21 col 5: error TS2012: Cannot convert 'number' to '{ x: string; w: { y: number; }; (): {}; new(): number; new(n: number): number; }':
 	Type 'Number' is missing property 'x' from type '{ x: string; w: { y: number; }; (): {}; new(): number; new(n: number): number; }'.
 typeName1.ts line 22 col 5: error TS2012: Cannot convert 'number' to '{ f(x: number): boolean; p: any; q: any; (): string; }':
 	Type 'Number' is missing property 'f' from type '{ f(x: number): boolean; p: any; q: any; (): string; }'.
 typeName1.ts line 23 col 5: error TS2011: Cannot convert '{ zeek: number; new(): C; }' to 'number'.
-typeName1.ts line 16 col 10: error TS2172: All named properties must be subtypes of string indexer type '{ x: any; y: any; }':
-	Type 'I' is missing property 'x' from type '{ x: any; y: any; }'.
-typeName1.ts line 20 col 50: error TS2172: All named properties must be subtypes of string indexer type '{ x: any; y: any; }':
-	Type 'I' is missing property 'x' from type '{ x: any; y: any; }'.

@@ -1,4 +1,5 @@
 recursiveFunctionTypes.ts line 3 col 5: error TS2011: Cannot convert '() => any' to 'number'.
+recursiveFunctionTypes.ts line 11 col 16: error TS2125: Function 'f2' declared a non-void return type, but has no return expression.
 recursiveFunctionTypes.ts line 17 col 5: error TS2011: Cannot convert '() => I<any>' to 'number'.
 recursiveFunctionTypes.ts line 25 col 1: error TS2012: Cannot convert 'number' to '() => any':
 	Type '() => any' requires a call signature, but type 'Number' lacks one.
@@ -6,4 +7,3 @@ recursiveFunctionTypes.ts line 33 col 1: error TS2081: Supplied parameters do no
 recursiveFunctionTypes.ts line 33 col 1: error TS2087: Could not select overload for 'call' expression.
 recursiveFunctionTypes.ts line 42 col 1: error TS2081: Supplied parameters do not match any signature of call target.
 recursiveFunctionTypes.ts line 42 col 1: error TS2087: Could not select overload for 'call' expression.
-recursiveFunctionTypes.ts line 11 col 16: error TS2125: Function 'f2' declared a non-void return type, but has no return expression.

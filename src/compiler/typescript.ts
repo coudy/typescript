@@ -773,6 +773,24 @@ module TypeScript {
                 }
             }
 
+            errors.sort((d1, d2) => {
+                if (d1.fileName() < d2.fileName()) {
+                    return -1;
+                }
+                else if (d1.fileName() > d2.fileName()) {
+                    return 1;
+                }
+
+                if (d1.start() < d2.start()) {
+                    return -1;
+                }
+                else if (d1.start() > d2.start()) {
+                    return 1;
+                }
+
+                return 0;
+            });
+
             return errors;
         }
 
