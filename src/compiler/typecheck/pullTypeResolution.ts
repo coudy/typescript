@@ -1403,13 +1403,17 @@ module TypeScript {
             return interfaceDeclSymbol;
         }
 
-        private filterSymbol(symbol: PullSymbol, kind: PullElementKind) {
+        private filterSymbol(symbol: PullSymbol, kind: PullElementKind, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (symbol) {
                 if (symbol.kind & kind) {
                     return symbol;
                 }
 
                 if (symbol.isAlias()) {
+                    if (!symbol.isResolved) {
+                        this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
+                    }
+
                     var alias = <PullTypeAliasSymbol>symbol;
                     if (kind & PullElementKind.SomeContainer) {
                         return alias.getExportAssignedContainerSymbol();
@@ -1423,10 +1427,10 @@ module TypeScript {
             return null;
         }
 
-        private getMemberSymbolOfKind(symbolName: string, kind: PullElementKind, pullTypeSymbol: PullTypeSymbol) {
+        private getMemberSymbolOfKind(symbolName: string, kind: PullElementKind, pullTypeSymbol: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var symbol = this.getMemberSymbol(symbolName, kind, pullTypeSymbol);
             // Verify that the symbol is actually of the given kind
-            return this.filterSymbol(symbol, kind);
+            return this.filterSymbol(symbol, kind, enclosingDecl, context);
         }
 
         private resolveIdentifierOfInternalModuleReference(importDecl: PullDecl, identifier: Identifier, moduleSymbol: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext):
@@ -1439,7 +1443,7 @@ module TypeScript {
 
             var moduleTypeSymbol = <PullContainerTypeSymbol>moduleSymbol.type;
             var rhsName = identifier.text();
-            var containerSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeContainer, moduleTypeSymbol);
+            var containerSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeContainer, moduleTypeSymbol, enclosingDecl, context);
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
 
@@ -1475,11 +1479,12 @@ module TypeScript {
             // if we haven't already gotten a value or type from the alias, look for them now
             if (!valueSymbol) {
                 if (moduleTypeSymbol.getInstanceSymbol()) {
-                    valueSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeValue, moduleTypeSymbol.getInstanceSymbol().type);
+                    valueSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeValue, moduleTypeSymbol.getInstanceSymbol().type, enclosingDecl, context);
                 }
             }
+
             if (!typeSymbol) {
-                typeSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeType, moduleTypeSymbol);
+                typeSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeType, moduleTypeSymbol, enclosingDecl, context);
             }
 
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
@@ -1515,7 +1520,7 @@ module TypeScript {
             };
         }
 
-        private resolveModuleReference(importDecl: PullDecl, moduleNameExpr: AST, context: PullTypeResolutionContext, declPath: PullDecl[]) {
+        private resolveModuleReference(importDecl: PullDecl, moduleNameExpr: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext, declPath: PullDecl[]) {
             CompilerDiagnostics.assert(moduleNameExpr.nodeType() == NodeType.MemberAccessExpression || moduleNameExpr.nodeType() == NodeType.Name, "resolving module reference should always be either name or member reference");
 
             var moduleSymbol: PullSymbol = null;
@@ -1523,10 +1528,10 @@ module TypeScript {
 
             if (moduleNameExpr.nodeType() == NodeType.MemberAccessExpression) {
                 var dottedNameAST = <BinaryExpression>moduleNameExpr;
-                var moduleContainer = this.resolveModuleReference(importDecl, dottedNameAST.operand1, context, declPath);
+                var moduleContainer = this.resolveModuleReference(importDecl, dottedNameAST.operand1, enclosingDecl, context, declPath);
                 if (moduleContainer) {
                     moduleName = (<Identifier>dottedNameAST.operand2).text();
-                    moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type);
+                    moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
                     if (!moduleSymbol) {
                         importDecl.addDiagnostic(
                             new Diagnostic(importDecl.getScriptName(), dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
@@ -1534,7 +1539,7 @@ module TypeScript {
                 }
             } else if (!(<Identifier>moduleNameExpr).isMissing()) {
                 moduleName = (<Identifier>moduleNameExpr).text();
-                moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container);
+                moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
                 if (!moduleSymbol) {
                     importDecl.addDiagnostic(
                         new Diagnostic(importDecl.getScriptName(), moduleNameExpr.minChar, moduleNameExpr.getLength(), DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]));
@@ -1554,7 +1559,7 @@ module TypeScript {
             var aliasedType: PullTypeSymbol = null;
 
             if (aliasExpr.nodeType() == NodeType.Name) {
-                var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, context, declPath);
+                var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
                     aliasedType = moduleSymbol.type;
                     if (context.typeCheck() && aliasedType.hasFlag(PullElementFlags.InitializedModule)) {
@@ -1571,7 +1576,7 @@ module TypeScript {
             } else if (aliasExpr.nodeType() == NodeType.MemberAccessExpression) {
                 var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
                 var dottedNameAST = <BinaryExpression>aliasExpr;
-                var moduleSymbol = this.resolveModuleReference(importDecl, dottedNameAST.operand1, context, declPath);
+                var moduleSymbol = this.resolveModuleReference(importDecl, dottedNameAST.operand1, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
                     var identifierResolution = this.resolveIdentifierOfInternalModuleReference(importDecl, <Identifier>dottedNameAST.operand2, moduleSymbol, enclosingDecl, context);
                     if (identifierResolution) {
