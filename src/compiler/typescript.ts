@@ -788,6 +788,16 @@ module TypeScript {
                     return 1;
                 }
 
+                // For multiple errors reported on the same file at the same position.
+                var code1 = diagnosticInformationMap[d1.diagnosticKey()].code;
+                var code2 = diagnosticInformationMap[d2.diagnosticKey()].code;
+                if (code1 < code2) {
+                    return -1;
+                }
+                else if (code1 > code2) {
+                    return 1;
+                }
+
                 return 0;
             });
 
@@ -912,16 +922,18 @@ module TypeScript {
             if (!decl) {
                 return null;
             }
+
             var ast = this.resolver.getASTForDecl(decl);
             if (!ast) {
                 return null;
             }
+
             var enlosingDecl = this.resolver.getEnclosingDecl(decl);
             if (ast.nodeType() === NodeType.Member) {
                 return this.getSymbolOfDeclaration(enlosingDecl);
             }
-            var resolutionContext = new PullTypeResolutionContext();
-            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, resolutionContext);
+
+            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, new PullTypeResolutionContext());
         }
 
         public resolvePosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
@@ -1217,7 +1229,7 @@ module TypeScript {
             globalSemanticInfoChain = this.semanticInfoChain;
             if (globalBinder) {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }            
+            }
 
             var resolutionContext = new PullTypeResolutionContext();
             resolutionContext.resolveAggressively = true;
