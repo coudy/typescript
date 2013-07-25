@@ -361,7 +361,12 @@ module TypeScript {
                 childDecls = typeDeclarations[j].searchChildDecls(symbolName, declSearchKind);
 
                 if (childDecls.length) {
-                    return this.getExportedMemberSymbol(childDecls[0].getSymbol(), parent);
+                    member = childDecls[0].getSymbol();
+
+                    if (!member) {
+                        member = childDecls[0].getSignatureSymbol();
+                    }
+                    return this.getExportedMemberSymbol(member, parent);
                 }
 
                 // If we were looking  for some type or value, we need to look for alias so we can see if it has associated value or type symbol with it
@@ -7142,6 +7147,10 @@ module TypeScript {
             }
 
             if (s1.nonOptionalParamCount != s2.nonOptionalParamCount) {
+                return false;
+            }
+
+            if (s1.typeParameters && s2.typeParameters && (s1.typeParameters.length != s2.typeParameters.length)) {
                 return false;
             }
 
