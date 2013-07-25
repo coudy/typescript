@@ -1804,8 +1804,7 @@ module TypeScript {
 
             var functionDecl = this.getDeclForAST(funcDeclAST);
 
-            if (!functionDecl || !functionDecl.hasSymbol()) {
-
+            if (!functionDecl) {
                 var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
                 var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
 
@@ -1817,7 +1816,9 @@ module TypeScript {
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
                 this.currentUnit.addSynthesizedDecl(functionDecl);
+            }
 
+            if (!functionDecl.hasSymbol()) {
                 var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
                 if (functionDecl.kind === PullElementKind.ConstructorType) {
