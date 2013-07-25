@@ -267,7 +267,10 @@ module TypeScript {
             }
          }
 
-        public getChildDecls() : PullDecl[] { return this.childDecls ? this.childDecls : sentinelEmptyPullDeclArray; }
+        public getChildDecls(): PullDecl[] {
+            return this.childDecls ? this.childDecls : sentinelEmptyPullDeclArray;
+        }
+
         public getTypeParameters() { return this.typeParameters ? this.typeParameters : sentinelEmptyPullDeclArray; }
 
         public addVariableDeclToGroup(decl: PullDecl) {
@@ -287,11 +290,11 @@ module TypeScript {
 
             for (var declName in this.declGroups) {
                 if (this.declGroups[declName]) {
-                    if (!declGroups) {
+                    if (declGroups === null) {
                         declGroups = [];
                     }
 
-                    declGroups[declGroups.length] = this.declGroups[declName].getDecls();
+                    declGroups.push(this.declGroups[declName].getDecls());
                 }
             }
 

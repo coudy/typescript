@@ -41,6 +41,7 @@ module TypeScript {
         private symbolSyntaxElementMap: DataMap = new DataMap();
 
         private hasBeenTypeChecked = false;
+        private importDeclarationNames: BlockIntrinsics = null;
 
         constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
@@ -182,7 +183,27 @@ module TypeScript {
                 getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
             }
         }
-        
+
+        public getImportDeclarationNames(): BlockIntrinsics {
+            if (this.importDeclarationNames === null) {
+                this.importDeclarationNames = new BlockIntrinsics();
+                this.populateImportDeclarationNames(this.topLevelDecls);
+            }
+
+            return this.importDeclarationNames;
+        }
+
+        private populateImportDeclarationNames(decls: PullDecl[]): void {
+            for (var i = 0, n = decls.length; i < n; i++) {
+                var decl = decls[i];
+                if (decl.kind === PullElementKind.TypeAlias) {
+                    this.importDeclarationNames[decl.name] = true;
+                }
+                else {
+                    this.populateImportDeclarationNames(decl.getChildDecls());
+                }
+            }
+        }
     }
 
     export class SemanticInfoChain {

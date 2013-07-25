@@ -1,0 +1,15 @@
+var m;
+(function (m) {
+    m.m = '';
+})(m || (m = {}));
+
+var x = m.m;
+
+var C = (function () {
+    function C() {
+    }
+    C.prototype.foo = function () {
+        var x = '';
+    };
+    return C;
+})();

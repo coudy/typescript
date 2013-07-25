@@ -1170,6 +1170,10 @@ module TypeScript {
     "code": 4025,
     "category": DiagnosticCategory.Message
   },
+  "Variable declaration cannot have the same name as an import declaration.": {
+    "code": 4026,
+    "category": DiagnosticCategory.Error
+  },
   "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error

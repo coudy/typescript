@@ -8869,25 +8869,36 @@ module TypeScript {
             }
 
             unit.setTypeChecked();
+        }
 
+        private getImportDeclarationNames(): BlockIntrinsics {
+            return this.currentUnit.getImportDeclarationNames();
         }
 
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
-            var decl: PullDecl;
-            var firstSymbol: PullSymbol;
-            var firstSymbolType: PullTypeSymbol;
-            var symbol: PullSymbol;
-            var symbolType: PullTypeSymbol;
-            var boundDeclAST: AST;
+            var importDeclarationNames = this.getImportDeclarationNames();
 
-            for (var i = 0; i < declGroups.length; i++) {
-                for (var j = 0; j < declGroups[i].length; j++) {
-                    decl = declGroups[i][j];
-                    symbol = decl.getSymbol();
-                    boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
-                    symbolType = this.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/false, enclosingDecl, context).type;
-                    if (!j) {
+            var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
+
+            for (var i = 0, i_max = declGroups.length; i < i_max; i++) {
+                var firstSymbol: PullSymbol;
+                var firstSymbolType: PullTypeSymbol;
+
+                for (var j = 0, j_max = declGroups[i].length; j < j_max; j++) {
+                    var decl = declGroups[i][j];
+                    var boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
+
+                    var name = decl.name;
+                    if (importDeclarationNames[name]) {
+                        context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(),
+                            DiagnosticCode.Variable_declaration_cannot_have_the_same_name_as_an_import_declaration, null, enclosingDecl);
+                        continue;
+                    }
+
+                    var symbol = decl.getSymbol();
+                    var symbolType = this.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+
+                    if (j === 0) {
                         firstSymbol = symbol;
                         firstSymbolType = symbolType;
                         continue;
@@ -8895,6 +8906,7 @@ module TypeScript {
 
                     if (symbolType && firstSymbolType && !this.typesAreIdentical(symbolType, firstSymbolType)) {
                         context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(), DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()], enclosingDecl);
+                        continue;
                     }
                 }
             }
