@@ -1,6 +1,6 @@
 // allowed per spec
 var a = +1;
-var b = +("");
+var b = +"";
 var E;
 (function (E) {
     E[E["some"] = 0] = "some";

@@ -344,11 +344,18 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput("(");
-            this.expression.emit(emitter);
-            emitter.writeToOutput(")");
+            if (this.expression.nodeType() === NodeType.CastExpression) {
+                // We have an expression of the form: (<Type>SubExpr)
+                // Emitting this as (SubExpr) is really not desirable.  Just emit the subexpr as is.
+                this.expression.emit(emitter);
+            }
+            else {
+                emitter.writeToOutput("(");
+                this.expression.emit(emitter);
+                emitter.writeToOutput(")");
+            }
         }
-
+        
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expression, ast.expression, includingPosition);
