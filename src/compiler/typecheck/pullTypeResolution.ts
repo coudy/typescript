@@ -8871,12 +8871,20 @@ module TypeScript {
             unit.setTypeChecked();
         }
 
-        private getImportDeclarationNames(): BlockIntrinsics {
-            return this.currentUnit.getImportDeclarationNames();
-        }
-
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var importDeclarationNames = this.getImportDeclarationNames();
+            // If we're inside a module, collect the names of imports so we can ensure they don't 
+            // conflict with any variable declaration names.
+            var importDeclarationNames: BlockIntrinsics = null;
+            if (enclosingDecl.kind & (PullElementKind.Container | PullElementKind.DynamicModule | PullElementKind.Script)) {
+                var childDecls = enclosingDecl.getChildDecls();
+                for (var i = 0, n = childDecls.length; i < n; i++) {
+                    var childDecl = childDecls[i];
+                    if (childDecl.kind === PullElementKind.TypeAlias) {
+                        importDeclarationNames = importDeclarationNames || new BlockIntrinsics();
+                        importDeclarationNames[childDecl.name] = true;
+                    }
+                }
+            }
 
             var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
 
@@ -8889,7 +8897,9 @@ module TypeScript {
                     var boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
 
                     var name = decl.name;
-                    if (importDeclarationNames[name]) {
+
+                    // Make sure the variable declaration doesn't conflict with an import declaration.
+                    if (importDeclarationNames && importDeclarationNames[name]) {
                         context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(),
                             DiagnosticCode.Variable_declaration_cannot_have_the_same_name_as_an_import_declaration, null, enclosingDecl);
                         continue;
