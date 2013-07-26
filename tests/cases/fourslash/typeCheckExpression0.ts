@@ -1,5 +1,4 @@
-//bug 702384: retyper: error when typechecking expression
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// class Point {
 //// 
@@ -25,4 +24,4 @@
 //// 
 
 edit.disableFormatting();
-//diagnostics.validateTypesAtPositions(258);
+diagnostics.validateTypesAtPositions(258);
