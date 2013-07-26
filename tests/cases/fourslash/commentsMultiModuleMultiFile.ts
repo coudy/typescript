@@ -1,6 +1,6 @@
 /// <reference path='fourslash.ts' />
 
-// @Filename: file_0.ts
+// @Filename: commentsMultiModuleMultiFile_0.ts
 /////** this is multi declare module*/
 ////module mult/*3*/iM {
 ////    /** class b*/
@@ -17,7 +17,7 @@
 ////new /*1*/mu/*4*/ltiM.b();
 ////new mu/*5*/ltiM.c();
 
-// @Filename: file_1.ts
+// @Filename: commentsMultiModuleMultiFile_1.ts
 /////** this is multi module 3 comment*/
 ////module mu/*6*/ltiM {
 ////    /** class d comment*/
@@ -36,10 +36,10 @@ goTo.marker('3');
 verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
 
 goTo.marker('4');
-verify.quickInfoIs("multiM");
+verify.quickInfoIs("{ b: new() => multiM.b; c: new() => multiM.c; d: new() => multiM.d; }");
 
 goTo.marker('5');
-verify.quickInfoIs("multiM");
+verify.quickInfoIs("{ b: new() => multiM.b; c: new() => multiM.c; d: new() => multiM.d; }");
 
 goTo.marker('6');
 verify.quickInfoIs("multiM", "this is multi declare module\nthi is multi module 2\nthis is multi module 3 comment", "multiM", "module");
@@ -48,4 +48,4 @@ goTo.marker('7');
 verify.completionListContains("multiM");
 
 goTo.marker('8');
-verify.quickInfoIs("multiM");
+verify.quickInfoIs("{ b: new() => multiM.b; c: new() => multiM.c; d: new() => multiM.d; }");
