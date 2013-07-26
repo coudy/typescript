@@ -137,8 +137,8 @@ module TypeScript {
         public provisionalDiagnostic: Diagnostic[] = [];
 
         constructor(public contextualType: PullTypeSymbol,
-                     public provisional: boolean,
-                     public substitutions: any) { }
+                    public provisional: boolean,
+                    public substitutions: any) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -184,7 +184,7 @@ module TypeScript {
         public isInInvocationExpression = false;
         public resolvingTypeNameAsNameExpression = false;
 
-        constructor(public inTypeCheck = false) { }
+        constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
@@ -297,18 +297,18 @@ module TypeScript {
             var diagnostic = new Diagnostic(fileName, offset, length, diagnosticKey, arguments);
 
             if (post) {
-                this.postDiagnostic(diagnostic, enclosingDecl);
+                this.postDiagnostic(diagnostic);
             }
 
             return diagnostic;
         }
 
-        public postDiagnostic(diagnostic: Diagnostic, enclosingDecl: PullDecl): void {
+        public postDiagnostic(diagnostic: Diagnostic): void {
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
             }
-            else if (this.inTypeCheck && !this.suppressErrors && enclosingDecl) {
-                enclosingDecl.addDiagnostic(diagnostic);
+            else if (this.inTypeCheck && !this.suppressErrors && this.resolver) {
+                this.resolver.currentUnit.addDiagnostic(diagnostic);
             }
         }
 

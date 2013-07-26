@@ -108,7 +108,7 @@ module TypeScript {
 
         private resolutionDataCache = new PullResolutionDataCache();
 
-        private currentUnit: SemanticInfo = null;
+        public currentUnit: SemanticInfo = null;
 
         public cleanCachedGlobals() {
             this._cachedArrayInterfaceType = null;
@@ -136,7 +136,7 @@ module TypeScript {
             }
 
             if (!this._cachedArrayInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedArrayInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedArrayInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedArrayInterfaceType;
@@ -152,7 +152,7 @@ module TypeScript {
             }
 
             if (this._cachedNumberInterfaceType && !this._cachedNumberInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedNumberInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedNumberInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedNumberInterfaceType;
@@ -164,7 +164,7 @@ module TypeScript {
             }
 
             if (this._cachedStringInterfaceType && !this._cachedStringInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedStringInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedStringInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedStringInterfaceType;
@@ -176,7 +176,7 @@ module TypeScript {
             }
 
             if (this._cachedBooleanInterfaceType && !this._cachedBooleanInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedBooleanInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedBooleanInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedBooleanInterfaceType;
@@ -192,7 +192,7 @@ module TypeScript {
             }
 
             if (!this._cachedObjectInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedObjectInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedObjectInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedObjectInterfaceType;
@@ -204,7 +204,7 @@ module TypeScript {
             }
 
             if (this._cachedFunctionInterfaceType && !this._cachedFunctionInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedFunctionInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedFunctionInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedFunctionInterfaceType;
@@ -216,7 +216,7 @@ module TypeScript {
             }
 
             if (this._cachedIArgumentsInterfaceType && !this._cachedIArgumentsInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedIArgumentsInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedIArgumentsInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedIArgumentsInterfaceType;
@@ -228,7 +228,7 @@ module TypeScript {
             }
 
             if (!this._cachedRegExpInterfaceType.isResolved) {
-                this.resolveDeclaredSymbol(this._cachedRegExpInterfaceType, null, new PullTypeResolutionContext());
+                this.resolveDeclaredSymbol(this._cachedRegExpInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
             return this._cachedRegExpInterfaceType;
@@ -1183,7 +1183,7 @@ module TypeScript {
                         extendedTypes[extendedTypes.length] = parentType;
                         if (parentType.isGeneric() && parentType.isResolved && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
-                            typeDecl.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
+                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
                         if (!typeDeclSymbol.hasBase(parentType)) {
                             this.setSymbolForAST(typeDeclAST.extendsList.members[i], resolvedParentType, context);
@@ -1212,7 +1212,7 @@ module TypeScript {
                         implementedTypes[implementedTypes.length] = implementedType;
                         if (implementedType.isGeneric() && implementedType.isResolved && !implementedType.getIsSpecialized()) {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
-                            typeDecl.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
+                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                             this.setSymbolForAST(
                                 typeDeclAST.implementsList.members[i - extendsCount], implementedType, context);
                             typeDeclSymbol.addImplementedType(implementedType);
@@ -1471,7 +1471,7 @@ module TypeScript {
 
             // check for valid export assignment type (variable, function, class, interface, enum, internal module)
             if (!acceptableAlias) {
-                importDecl.addDiagnostic(
+                this.currentUnit.addDiagnostic(
                     new Diagnostic(importDecl.getScriptName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Import_declaration_referencing_identifier_from_internal_module_can_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
                 return null;
             }
@@ -1488,7 +1488,7 @@ module TypeScript {
             }
 
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
-                importDecl.addDiagnostic(
+                this.currentUnit.addDiagnostic(
                     new Diagnostic(importDecl.getScriptName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Could_not_find_symbol_0_in_module_1, [rhsName, moduleSymbol.toString()]));
                 return null;
             }
@@ -1533,7 +1533,7 @@ module TypeScript {
                     moduleName = (<Identifier>dottedNameAST.operand2).text();
                     moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
                     if (!moduleSymbol) {
-                        importDecl.addDiagnostic(
+                        this.currentUnit.addDiagnostic(
                             new Diagnostic(importDecl.getScriptName(), dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
                     }
                 }
@@ -1541,7 +1541,7 @@ module TypeScript {
                 moduleName = (<Identifier>moduleNameExpr).text();
                 moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
                 if (!moduleSymbol) {
-                    importDecl.addDiagnostic(
+                    this.currentUnit.addDiagnostic(
                         new Diagnostic(importDecl.getScriptName(), moduleNameExpr.minChar, moduleNameExpr.getLength(), DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]));
                 }
             }
@@ -1629,7 +1629,7 @@ module TypeScript {
                     aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.DynamicModule));
                 }
                 if (!aliasedType) {
-                    importDecl.addDiagnostic(
+                    this.currentUnit.addDiagnostic(
                         new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [modPath]));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
@@ -1639,7 +1639,7 @@ module TypeScript {
 
             if (aliasedType) {
                 if (!aliasedType.isContainer()) {
-                    importDecl.addDiagnostic(
+                    this.currentUnit.addDiagnostic(
                         new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
@@ -1726,7 +1726,7 @@ module TypeScript {
             if (!parentSymbol.isType() && (<PullTypeSymbol>parentSymbol).isContainer()) {
                 // Error
                 // Export assignments may only be used at the top-level of external modules
-                enclosingDecl.addDiagnostic(
+                this.currentUnit.addDiagnostic(
                     new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_at_the_top_level_of_external_modules));
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -1765,7 +1765,7 @@ module TypeScript {
             if (!acceptableAlias) {
                 // Error
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
-                enclosingDecl.addDiagnostic(
+                this.currentUnit.addDiagnostic(
                     new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
                 return this.semanticInfoChain.voidTypeSymbol;
             }
@@ -2961,7 +2961,7 @@ module TypeScript {
                                     }
                                 }
                                 var comparisonInfo = new TypeComparisonInfo();
-                                var resolutionContext = new PullTypeResolutionContext();
+                                var resolutionContext = new PullTypeResolutionContext(this);
                                 if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
                                     if (comparisonInfo.message) {
                                         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
@@ -6126,7 +6126,7 @@ module TypeScript {
                 }
 
                 if (constraintDiagnostic) {
-                    context.postDiagnostic(constraintDiagnostic, enclosingDecl);
+                    context.postDiagnostic(constraintDiagnostic);
                 }
 
                 return errorCondition;
@@ -6147,7 +6147,7 @@ module TypeScript {
 
             if (!signature) {
                 for (var i = 0; i < diagnostics.length; i++) {
-                    context.postDiagnostic(diagnostics[i], enclosingDecl);
+                    context.postDiagnostic(diagnostics[i]);
                 }
 
                 context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_call_expression, null, enclosingDecl);
@@ -6472,7 +6472,7 @@ module TypeScript {
                 if (!constructSignatures.length) {
 
                     if (constraintDiagnostic) {
-                        context.postDiagnostic(constraintDiagnostic, enclosingDecl);
+                        context.postDiagnostic(constraintDiagnostic);
                     }
 
                     return this.getNewErrorTypeSymbol(null);
@@ -6484,7 +6484,7 @@ module TypeScript {
                 if (!signature) {
 
                     for (var i = 0; i < diagnostics.length; i++) {
-                        context.postDiagnostic(diagnostics[i], enclosingDecl);
+                        context.postDiagnostic(diagnostics[i]);
                     }
 
                     context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Could_not_select_overload_for_new_expression, null, enclosingDecl);
@@ -8858,7 +8858,7 @@ module TypeScript {
             var scriptDecl = unit.getTopLevelDecls()[0];
 
             var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
-            var context = new PullTypeResolutionContext(/*inTypeCheck*/ true);
+            var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
 
             resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
 
@@ -9673,7 +9673,7 @@ module TypeScript {
         private checkThatMemberIsSubtypeOfIndexer(member: PullSymbol, indexSignature: PullSignatureSymbol, astForError: AST, context: PullTypeResolutionContext, enclosingDecl: PullDecl, isNumeric: boolean) {
 
             var comparisonInfo = new TypeComparisonInfo();
-            var resolutionContext = new PullTypeResolutionContext();
+            var resolutionContext = new PullTypeResolutionContext(this);
 
             if (!this.sourceIsSubtypeOfTarget(member.type, indexSignature.returnType, resolutionContext, comparisonInfo)) {
                 if (isNumeric) {
@@ -9733,7 +9733,7 @@ module TypeScript {
         private typeCheckIfTypeExtendsType(typeDecl: TypeDeclaration, typeSymbol: PullTypeSymbol, extendedType: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var typeMembers = typeSymbol.getMembers();
 
-            var resolutionContext = new PullTypeResolutionContext();
+            var resolutionContext = new PullTypeResolutionContext(this);
             var comparisonInfo = new TypeComparisonInfo();
             var foundError = false;
 
@@ -9827,7 +9827,7 @@ module TypeScript {
 
         private typeCheckIfClassImplementsType(classDecl: TypeDeclaration, classSymbol: PullTypeSymbol, implementedType: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
 
-            var resolutionContext = new PullTypeResolutionContext();
+            var resolutionContext = new PullTypeResolutionContext(this);
             var comparisonInfo = new TypeComparisonInfo();
             var foundError = !this.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, resolutionContext, comparisonInfo);
             if (!foundError) {
@@ -9886,7 +9886,7 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             var typeDecl = this.getDeclForAST(typeDeclAst);
-            var contextForBaseTypeResolution = new PullTypeResolutionContext();
+            var contextForBaseTypeResolution = new PullTypeResolutionContext(this);
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
 
             var baseType = <PullTypeSymbol>this.resolveAST(baseDeclAST, false, enclosingDecl, context);

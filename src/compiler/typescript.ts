@@ -732,7 +732,7 @@ module TypeScript {
 
             this.setUnit(fileName);
 
-            this.resolver.resolveBoundDecls(unit.getTopLevelDecls()[0], new PullTypeResolutionContext());
+            this.resolver.resolveBoundDecls(unit.getTopLevelDecls()[0], new PullTypeResolutionContext(this.resolver));
 
             return true;
         }
@@ -933,7 +933,7 @@ module TypeScript {
                 return this.getSymbolOfDeclaration(enlosingDecl);
             }
 
-            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, new PullTypeResolutionContext());
+            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, new PullTypeResolutionContext(this.resolver));
         }
 
         public resolvePosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
@@ -957,7 +957,7 @@ module TypeScript {
             var objectLitAST: UnaryExpression = null;
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: UnaryExpression[] = [];
-            var resolutionContext = new PullTypeResolutionContext();
+            var resolutionContext = new PullTypeResolutionContext(this.resolver);
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
@@ -1231,7 +1231,7 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
 
-            var resolutionContext = new PullTypeResolutionContext();
+            var resolutionContext = new PullTypeResolutionContext(this.resolver);
             resolutionContext.resolveAggressively = true;
 
             if (path.count() === 0) {

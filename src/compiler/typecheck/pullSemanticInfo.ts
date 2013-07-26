@@ -43,8 +43,18 @@ module TypeScript {
         private hasBeenTypeChecked = false;
         private importDeclarationNames: BlockIntrinsics = null;
 
+        private diagnostics: Diagnostic[] = null;
+
         constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
+        }
+
+        public addDiagnostic(diagnostic: Diagnostic): void {
+            if (this.diagnostics === null) {
+                this.diagnostics = [];
+            }
+
+            this.diagnostics.push(diagnostic);
         }
 
         public addTopLevelDecl(decl: PullDecl) {
@@ -179,8 +189,8 @@ module TypeScript {
         }
 
         public getDiagnostics(semanticErrors: Diagnostic[]) {
-            for (var i = 0; i < this.topLevelDecls.length; i++) {
-                getDiagnosticsFromEnclosingDecl(this.topLevelDecls[i], semanticErrors);
+            if (this.diagnostics) {
+                semanticErrors.push.apply(semanticErrors, this.diagnostics);
             }
         }
 

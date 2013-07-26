@@ -41,8 +41,6 @@ module TypeScript {
 
         private scriptName: string;
 
-        private diagnostics: Diagnostic[] = null;
-
         private parentDecl: PullDecl = null;
         private _parentPath: PullDecl[] = null;
         private _isBound: boolean = false;
@@ -157,26 +155,6 @@ module TypeScript {
 
         public setParentDecl(parentDecl: PullDecl) {
             this.parentDecl = parentDecl;
-        }
-
-        public addDiagnostic(diagnostic: Diagnostic) {
-            if (diagnostic) {
-                if (!this.diagnostics) {
-                    this.diagnostics = [];
-                }
-
-                //error.adjustOffset(this.span.start());
-
-                this.diagnostics[this.diagnostics.length] = diagnostic;
-            }
-        }
-
-        public getDiagnostics(): Diagnostic[] {
-            return this.diagnostics ? this.diagnostics : sentinelEmptyPullDeclArray;
-        }
-
-        public resetErrors() {
-            this.diagnostics = null;
         }
 
         private getChildDeclCache(declKind: PullElementKind): any {

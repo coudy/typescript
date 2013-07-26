@@ -157,7 +157,7 @@ module TypeScript {
         public captureThisStmtString = "var _this = this;";
         public varListCountStack: number[] = [0];
         private declStack: PullDecl[] = [];
-        private resolvingContext = new PullTypeResolutionContext();
+        private resolvingContext = new PullTypeResolutionContext(null);
         private exportAssignmentIdentifier: string = null;
 
         public document: Document = null;
