@@ -338,6 +338,10 @@ module TypeScript {
     "code": 1083,
     "category": DiagnosticCategory.Error
   },
+  "Invalid 'reference' directive syntax.": {
+    "code": 1084,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error

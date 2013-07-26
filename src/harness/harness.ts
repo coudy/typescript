@@ -800,7 +800,7 @@ module Harness {
                         // If declaration files are going to be emitted, preprocess the file contents and add in referenced files as well
                         if (this.compiler.settings.generateDeclarationFiles) {
                             var references = TypeScript.getReferencedFiles(inputFile, this.getScriptSnapshot(inputFile));
-                            references.forEach((reference) => { referencedFiles.push(reference.path); });
+                            references.forEach(reference => { referencedFiles.push(reference.path); });
                         }
 
                         resolvedFiles.push({

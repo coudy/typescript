@@ -53,37 +53,60 @@ module TypeScript {
         settings: CompilationSettings;
         referencedFiles: IFileReference[];
         importedFiles: IFileReference[];
+        diagnostics: Diagnostic[];
         isLibFile: boolean;
     }
 
     interface ITripleSlashDirectiveProperties {
         noDefaultLib: boolean;
+        diagnostics: Diagnostic[];
+        referencedFiles: IFileReference[];
     }
 
-    function getFileReferenceFromReferencePath(comment: string): IFileReference {
-        var referencesRegEx = /^(\/\/\/\s*<reference\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/gim;
-        var match = referencesRegEx.exec(comment);
+    function isNoDefaultLibMatch(comment: string): RegExpExecArray {
+        var isNoDefaultLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
+        return isNoDefaultLibRegex.exec(comment);
+    }
 
-        if (match) {
-            var path: string = normalizePath(match[3]);
-            var adjustedPath = normalizePath(path);
-    
-            var isResident = match.length >= 7 && match[6] === "true";
-            if (isResident) {
-                CompilerDiagnostics.debugPrint(path + " is resident");
+    function getFileReferenceFromReferencePath(fileName: string, position: number, comment: string, diagnostics: Diagnostic[]): IFileReference {
+        // First, just see if they've written: /// <reference\s+
+        // If so, then we'll consider this a reference directive and we'll report errors if it's
+        // malformed.  Otherwise, we'll completely ignore this.
+
+        var simpleReferenceRegEx = /^\/\/\/\s*<reference\s+/gim;
+        if (simpleReferenceRegEx.exec(comment)) {
+            var isNoDefaultLib = isNoDefaultLibMatch(comment);
+
+            if (!isNoDefaultLib) {
+                var fullReferenceRegEx = /^(\/\/\/\s*<reference\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/gim;
+                var fullReference = fullReferenceRegEx.exec(comment);
+
+                if (!fullReference) {
+                    // It matched the start of a reference directive, but wasn't well formed.  Report
+                    // an appropriate error to the user.
+                    diagnostics.push(new Diagnostic(fileName, position, comment.length, DiagnosticCode.Invalid_reference_directive_syntax));
+                }
+                else {
+                    var path: string = normalizePath(fullReference[3]);
+                    var adjustedPath = normalizePath(path);
+
+                    var isResident = fullReference.length >= 7 && fullReference[6] === "true";
+                    if (isResident) {
+                        CompilerDiagnostics.debugPrint(path + " is resident");
+                    }
+                    return {
+                        line: 0,
+                        character: 0,
+                        position: 0,
+                        length: 0,
+                        path: switchToForwardSlashes(adjustedPath),
+                        isResident: isResident
+                    };
+                }
             }
-            return {
-                line: 0,
-                character: 0,
-                position: 0,
-                length: 0,
-                path: switchToForwardSlashes(adjustedPath),
-                isResident: isResident
-            };
         }
-        else {
-            return null;
-        }
+
+        return null;
     }
 
     export function getImplicitImport(comment: string): boolean {
@@ -95,11 +118,6 @@ module TypeScript {
         }
         
         return false;
-    }
-
-    export function getReferencedFiles(fileName: string, sourceText: IScriptSnapshot): IFileReference[] {
-        var preProcessInfo = preProcessFile(fileName, sourceText, null, false);
-        return preProcessInfo.referencedFiles;
     }
 
     var scannerWindow = ArrayUtilities.createArray(2048, 0);
@@ -153,19 +171,21 @@ module TypeScript {
         }
     }
 
-    function processTripleSlashDirectives(lineMap: LineMap, firstToken: ISyntaxToken, settings: CompilationSettings, referencedFiles: IFileReference[]): ITripleSlashDirectiveProperties {
+    function processTripleSlashDirectives(fileName: string, lineMap: LineMap, firstToken: ISyntaxToken, settings: CompilationSettings): ITripleSlashDirectiveProperties {
         var leadingTrivia = firstToken.leadingTrivia();
 
         var position = 0;
         var lineChar = { line: -1, character: -1 };
         var noDefaultLib = false;
+        var diagnostics: Diagnostic[] = [];
+        var referencedFiles: IFileReference[] = [];
 
         for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
             var trivia = leadingTrivia.syntaxTriviaAt(i);
 
             if (trivia.kind() === SyntaxKind.SingleLineCommentTrivia) {
                 var triviaText = trivia.fullText();
-                var referencedCode = getFileReferenceFromReferencePath(triviaText);
+                var referencedCode = getFileReferenceFromReferencePath(fileName, position, triviaText, diagnostics);
 
                 if (referencedCode) {
                     lineMap.fillLineAndCharacterFromPosition(position, lineChar);
@@ -179,10 +199,9 @@ module TypeScript {
 
                 if (settings) {
                     // is it a lib file?
-                    var isNoDefaultLibRegex = /^(\/\/\/\s*<reference\s+no-default-lib=)('|")(.+?)\2\s*\/>/gim;
-                    var isNoDefaultLibMatch: any = isNoDefaultLibRegex.exec(triviaText);
-                    if (isNoDefaultLibMatch) {
-                        noDefaultLib = (isNoDefaultLibMatch[3] === "true");
+                    var isNoDefaultLib = isNoDefaultLibMatch(triviaText);
+                    if (isNoDefaultLib) {
+                        noDefaultLib = isNoDefaultLib[3] === "true";
                     }
                 }
             }
@@ -190,7 +209,7 @@ module TypeScript {
             position += trivia.fullWidth();
         }
 
-        return { noDefaultLib: noDefaultLib};
+        return { noDefaultLib: noDefaultLib, diagnostics: diagnostics, referencedFiles: referencedFiles };
     }
 
     export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings?: CompilationSettings, readImportFiles = true): IPreProcessedFileInfo {
@@ -209,16 +228,18 @@ module TypeScript {
         if (readImportFiles) {
             processImports(text.lineMap(), scanner, firstToken, importedFiles);
         }
-        
-        var referencedFiles: IFileReference[] = [];
-        var properties  = processTripleSlashDirectives(text.lineMap(), firstToken, settings, referencedFiles);
+
+        var properties = processTripleSlashDirectives(fileName, text.lineMap(), firstToken, settings);
 
         scannerDiagnostics.length = 0;
-        return { settings:settings, referencedFiles: referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib };
+        return { settings:settings, referencedFiles: properties.referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib, diagnostics: properties.diagnostics };
     }
 
     export function getParseOptions(settings: CompilationSettings): ParseOptions {
         return new ParseOptions(settings.codeGenTarget, settings.allowAutomaticSemicolonInsertion);
     }
 
+    export function getReferencedFiles(fileName: string, sourceText: IScriptSnapshot): IFileReference[] {
+        return preProcessFile(fileName, sourceText, null, false).referencedFiles;
+    }
 } // Tools

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-/// <references path="formatting.ts"/>
+/// <reference path="formatting.ts"/>
 
 module TypeScript.Formatting {
     export class FormattingManager {

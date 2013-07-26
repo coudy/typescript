@@ -169,6 +169,7 @@ module TypeScript {
 
                 // Preprocess the file
                 var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, this.host.getScriptSnapshot(normalizedPath), this.settings);
+                resolutionResult.diagnostics.push.apply(resolutionResult.diagnostics, preprocessedFileInformation.diagnostics);
 
                 // If this file has a "no-default-lib = 'true'" tag
                 if (preprocessedFileInformation.isLibFile) {

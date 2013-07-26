@@ -85,6 +85,7 @@ module TypeScript {
         Function_overload_must_not_be_static: "Function overload must not be static.",
         Parameter_property_declarations_cannot_be_used_in_an_ambient_context: "Parameter property declarations cannot be used in an ambient context.",
         Parameter_property_declarations_cannot_be_used_in_a_constructor_overload: "Parameter property declarations cannot be used in a constructor overload.",
+        Invalid_reference_directive_syntax: "Invalid 'reference' directive syntax.",
         Duplicate_identifier_0: "Duplicate identifier '{0}'.",
         The_name_0_does_not_exist_in_the_current_scope: "The name '{0}' does not exist in the current scope.",
         The_name_0_does_not_refer_to_a_value: "The name '{0}' does not refer to a value.",
