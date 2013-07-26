@@ -1996,8 +1996,8 @@ module TypeScript {
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
 
-        constructor(private diagnostic: Diagnostic, public delegateType: PullTypeSymbol, private _data: any = null) {
-            super("error");
+        constructor(private anyType: PullTypeSymbol, name: string) {
+            super(name);
 
             this.isResolved = true;
         }
@@ -2006,28 +2006,16 @@ module TypeScript {
             return true;
         }
 
-        public getDiagnostic() {
-            return this.diagnostic;
-        }
-
         public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            return this.delegateType.getName(scopeSymbol, useConstraintInName);
+            return this.anyType.getName(scopeSymbol, useConstraintInName);
         }
 
         public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            return this.delegateType.getDisplayName(scopeSymbol, useConstraintInName);
+            return this.anyType.getName(scopeSymbol, useConstraintInName);
         }
 
         public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
-            return this.delegateType.toString(scopeSymbol, useConstraintInName);
-        }
-
-        public setData(data: any) {
-            this._data = data;
-        }
-
-        public getData(): any {
-            return this._data;
+            return this.anyType.getName(scopeSymbol, useConstraintInName);
         }
     }
 
@@ -2584,7 +2572,7 @@ module TypeScript {
                     if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null);
                         typeToSpecialize.hasRecursiveSpecializationError = true;
-                        return resolver.getNewErrorTypeSymbol(null);
+                        return resolver.getNewErrorTypeSymbol();
                     }
                     else {
                         return resolver.semanticInfoChain.anyTypeSymbol;
@@ -2604,7 +2592,7 @@ module TypeScript {
                     if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
                         context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null);
                         typeToSpecialize.hasRecursiveSpecializationError = true;
-                        return resolver.getNewErrorTypeSymbol(null);
+                        return resolver.getNewErrorTypeSymbol();
                     }
                     else {
                         return resolver.semanticInfoChain.anyTypeSymbol;
