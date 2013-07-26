@@ -293,10 +293,9 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[]): Diagnostic {
+        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[]): void {
             var diagnostic = new Diagnostic(fileName, offset, length, diagnosticKey, arguments);
             this.postDiagnostic(diagnostic);
-            return diagnostic;
         }
 
         public postDiagnostic(diagnostic: Diagnostic): void {

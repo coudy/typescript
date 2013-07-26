@@ -1893,7 +1893,7 @@ module TypeScript {
 
                 if (paramSymbol.isVarArg && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType())) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null);
-                    typeRef = this.getNewErrorTypeSymbol(diagnostic);
+                    typeRef = this.getNewErrorTypeSymbol(null);
                 }
 
                 context.setTypeInContext(paramSymbol, typeRef);
@@ -1935,7 +1935,7 @@ module TypeScript {
 
                 if (paramSymbol.isVarArg && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType())) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null);
-                    typeRef = this.getNewErrorTypeSymbol(diagnostic);
+                    typeRef = this.getNewErrorTypeSymbol(null);
                 }
 
                 context.setTypeInContext(paramSymbol, typeRef);
@@ -2090,7 +2090,6 @@ module TypeScript {
             // a type query
 
             var typeDeclSymbol: PullTypeSymbol = null;
-            var diagnostic: Diagnostic = null;
             var typeSymbol: PullTypeSymbol = null;
 
             // a name
@@ -2286,8 +2285,8 @@ module TypeScript {
                 typeExprSymbol = this.resolveTypeReference(<TypeReference>varDecl.typeExpr, wrapperDecl, context);
 
                 if (!typeExprSymbol) {
-                    diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [varDecl.id.actualText]);
-                    declSymbol.type = this.getNewErrorTypeSymbol(diagnostic);
+                    context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [varDecl.id.actualText]);
+                    declSymbol.type = this.getNewErrorTypeSymbol(null);
 
                     if (declParameterSymbol) {
                         context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
@@ -2330,7 +2329,7 @@ module TypeScript {
                                 var instanceSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceSymbol();
 
                                 if (!instanceSymbol || !PullHelpers.symbolIsEnum(instanceSymbol)) {
-                                    typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                                    typeExprSymbol = this.getNewErrorTypeSymbol(null);
                                 }
                                 else {
                                     typeExprSymbol = instanceSymbol.type;
@@ -2339,8 +2338,8 @@ module TypeScript {
                         }
                     }
                     else if (declSymbol.isVarArg && !(typeExprSymbol.isArray() || typeExprSymbol == this.cachedArrayInterfaceType())) {
-                        var diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null);
-                        typeExprSymbol = this.getNewErrorTypeSymbol(diagnostic);
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null);
+                        typeExprSymbol = this.getNewErrorTypeSymbol(null);
                     }
 
                     context.setTypeInContext(declSymbol, typeExprSymbol);
@@ -2389,10 +2388,10 @@ module TypeScript {
                 }
 
                 if (!initExprSymbol) {
-                    diagnostic = context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [varDecl.id.actualText]);
+                    context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [varDecl.id.actualText]);
 
                     if (!varDecl.typeExpr) {
-                        context.setTypeInContext(declSymbol, this.getNewErrorTypeSymbol(diagnostic));
+                        context.setTypeInContext(declSymbol, this.getNewErrorTypeSymbol(null));
 
                         if (declParameterSymbol) {
                             context.setTypeInContext(declParameterSymbol, this.semanticInfoChain.anyTypeSymbol);
@@ -2734,7 +2733,6 @@ module TypeScript {
                     }
                 }
 
-                var diagnostic: Diagnostic;
                 // Save this in case we had set the function type to any because of a recursive reference.
                 var functionTypeSymbol = funcSymbol && funcSymbol.type;
 
@@ -2744,8 +2742,8 @@ module TypeScript {
                     if (funcDeclAST.returnTypeAnnotation) {
                         var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context);
                         if (!returnTypeSymbol) {
-                            diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
-                            signature.returnType = this.getNewErrorTypeSymbol(diagnostic);
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
+                            signature.returnType = this.getNewErrorTypeSymbol(null);
                             hadError = true;
                         } else {
                             if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
@@ -2816,8 +2814,8 @@ module TypeScript {
                     returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
-                        signature.returnType = this.getNewErrorTypeSymbol(diagnostic);
+                        context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
+                        signature.returnType = this.getNewErrorTypeSymbol(null);
 
                         hadError = true;
                     }
@@ -3032,7 +3030,6 @@ module TypeScript {
             var signature: PullSignatureSymbol = getterTypeSymbol.getCallSignatures()[0];
 
             var hadError = false;
-            var diagnostic: Diagnostic;
 
             if (signature) {
 
@@ -3071,8 +3068,8 @@ module TypeScript {
                     var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context);
 
                     if (!returnTypeSymbol) {
-                        diagnostic = context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
-                        signature.returnType = this.getNewErrorTypeSymbol(diagnostic);
+                        context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
+                        signature.returnType = this.getNewErrorTypeSymbol(null);
 
                         hadError = true;
                     }
@@ -3125,8 +3122,8 @@ module TypeScript {
                         var setterParameterType = setterParameter.type;
 
                         if (!this.typesAreIdentical(accessorType, setterParameterType)) {
-                            diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
-                            accessorSymbol.type = this.getNewErrorTypeSymbol(diagnostic);
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
+                            accessorSymbol.type = this.getNewErrorTypeSymbol(null);
                         }
                     }
                 }
@@ -3258,8 +3255,8 @@ module TypeScript {
                             }
                         }
                         else {
-                            var diagnostic = context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
-                            accessorSymbol.type = this.getNewErrorTypeSymbol(diagnostic);
+                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
+                            accessorSymbol.type = this.getNewErrorTypeSymbol(null);
                         }
                     }
                 }
@@ -5456,11 +5453,10 @@ module TypeScript {
                     var currentElementType = elementTypes[i];
                     var currentElementAST = elements.members[i];
                     if (!this.sourceIsAssignableToTarget(currentElementType, contextualElementType, context, comparisonInfo)) {
-                        var message: Diagnostic;
                         if (comparisonInfo.message) {
-                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [currentElementType.toString(), contextualElementType.toString(), comparisonInfo.message]);
+                            context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [currentElementType.toString(), contextualElementType.toString(), comparisonInfo.message]);
                         } else {
-                            message = context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [currentElementType.toString(), contextualElementType.toString()]);
+                            context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [currentElementType.toString(), contextualElementType.toString()]);
                         }
 
                         // POST message
