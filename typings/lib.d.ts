@@ -2768,7 +2768,7 @@ interface Window extends EventTarget, MSEventAttachmentTarget, WindowLocalStorag
     oninput: (ev: Event) => any;
     addEventListener(type: "input", listener: (ev: Event) => any, useCapture?: boolean): void;
     performance: Performance;
-    alert(message?: string): void;
+    alert(message?: any): void;
     scroll(x?: number, y?: number): void;
     focus(): void;
     scrollTo(x?: number, y?: number): void;
@@ -6866,7 +6866,7 @@ declare function addEventListener(type: "volumechange", listener: (ev: Event) =>
 declare var oninput: (ev: Event) => any;
 declare function addEventListener(type: "input", listener: (ev: Event) => any, useCapture?: boolean): void;
 declare var performance: Performance;
-declare function alert(message?: string): void;
+declare function alert(message?: any): void;
 declare function scroll(x?: number, y?: number): void;
 declare function focus(): void;
 declare function scrollTo(x?: number, y?: number): void;
