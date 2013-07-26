@@ -1,3 +1,3 @@
 //// class then class
-class c3aa { public foo() { } }
-class c3aa { public bar() { } } // error
+class c3 { public foo() { } }
+class c3 { public bar() { } } // error

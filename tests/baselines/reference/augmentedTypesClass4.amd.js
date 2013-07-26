@@ -1,15 +1,15 @@
 //// class then class
-var c3aa = (function () {
-    function c3aa() {
+var c3 = (function () {
+    function c3() {
     }
-    c3aa.prototype.foo = function () {
+    c3.prototype.foo = function () {
     };
-    return c3aa;
+    return c3;
 })();
-var c3aa = (function () {
-    function c3aa() {
+var c3 = (function () {
+    function c3() {
     }
-    c3aa.prototype.bar = function () {
+    c3.prototype.bar = function () {
     };
-    return c3aa;
+    return c3;
 })();

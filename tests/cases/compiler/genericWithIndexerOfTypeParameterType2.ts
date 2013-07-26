@@ -3,10 +3,7 @@ export class Collection<TItem extends CollectionItem> {
 }
 
 export class List extends Collection<ListItem>{
-    Bar() {
-        // BUG 712326
-        //var oldItem: ListItem = this._itemsByKey[""];
-    }
+    Bar() {}
 }
 
 export class CollectionItem {}

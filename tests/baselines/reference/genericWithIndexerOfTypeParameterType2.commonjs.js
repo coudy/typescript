@@ -17,8 +17,6 @@ var List = (function (_super) {
         _super.apply(this, arguments);
     }
     List.prototype.Bar = function () {
-        // BUG 712326
-        //var oldItem: ListItem = this._itemsByKey[""];
     };
     return List;
 })(Collection);
