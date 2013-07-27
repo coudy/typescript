@@ -1214,10 +1214,10 @@ module TypeScript {
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
-                var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
-                var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
-                var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.kind : PullElementKind.None;
-                if (parentKind === PullElementKind.Class) {
+                var parentDecl = pullDecl.getParentDecl();
+                var parentIsClass = parentDecl && parentDecl.kind === PullElementKind.Class;
+                var parentIsModule = parentDecl && (parentDecl.flags & PullElementFlags.SomeInitializedModule);
+                if (parentIsClass) {
                     // class
                     if (this.emitState.container !== EmitContainer.Args) {
                         if (varDecl.isStatic()) {
@@ -1238,12 +1238,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if (PullHelpers.symbolIsModule(parentSymbol) || 
-                    PullHelpers.symbolIsEnum(parentSymbol) || 
-                    PullHelpers.symbolIsModule(associatedParentSymbol) || 
-                    PullHelpers.symbolIsEnum(associatedParentSymbol) ||
-                    parentKind === PullElementKind.DynamicModule ||
-                    associatedParentSymbolKind === PullElementKind.DynamicModule) {
+                else if (parentIsModule) {
                     // module
                         if (!hasFlag(pullDecl.flags, PullElementFlags.Exported) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
@@ -1290,7 +1285,7 @@ module TypeScript {
                     this.varListCountStack.pop();
                 }
 
-                if (parentKind === PullElementKind.Class) {
+                if (parentIsClass) {
                     // class
                     if (this.emitState.container !== EmitContainer.Args) {
                         this.writeToOutput(";");

@@ -2482,7 +2482,7 @@ module TypeScript {
                     else {
                         var instanceTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getInstanceType();
 
-                        if (!instanceTypeSymbol || !PullHelpers.symbolIsEnum(instanceTypeSymbol)) {
+                        if (!instanceTypeSymbol) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Tried_to_set_variable_type_to_uninitialized_module_type_0, [typeExprSymbol.toString()]);
                             typeExprSymbol = null;
                         }
@@ -4505,26 +4505,12 @@ module TypeScript {
             }
 
             // now for the name...
-            // For classes, check the statics first below
-            var nameSymbol: PullSymbol = null;
-            if (!(lhs.isType() && (<PullTypeSymbol>lhs).isClass() && this.isNameOrMemberAccessExpression(dottedNameAST.operand1)) && !nameSymbol) {
-                nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
-                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
-            }
+            var nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
+            nameSymbol = this.resolveNameSymbol(nameSymbol, context);
 
             if (!nameSymbol) {
-                // could be a static
-                if (lhsType.isClass()) {
-                    var staticType = lhsType.getConstructorMethod().type;
-
-                    nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, staticType);
-
-                    if (!nameSymbol) {
-                        nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
-                    }
-                }
                 // could be a function symbol
-                else if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
+                if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
                     nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, this.cachedFunctionInterfaceType());
                 }
                 else if (lhsType.isContainer()) {

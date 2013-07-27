@@ -503,15 +503,22 @@ module TypeScript {
 
             this.resetTypeParameterCache();
 
-            // create the default constructor symbol, if necessary
-
-            // even if we've already tried to set these, we want to try again after we've walked the class members
             constructorSymbol = classSymbol.getConstructorMethod();
             constructorTypeSymbol = constructorSymbol ? constructorSymbol.type : null;
 
             if (!constructorSymbol) {
-                constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
-                constructorTypeSymbol = new PullTypeSymbol("", PullElementKind.ConstructorType);
+                // First, try to find a sibling value decl that is already bound. If there is one, reuse it.
+                var siblingValueDecls: PullDecl[] = null;
+                if (parentDecl) {
+                    siblingValueDecls = parentDecl.searchChildDecls(className, PullElementKind.SomeValue);
+                    // The first decl should have the right symbol
+                    if (siblingValueDecls && siblingValueDecls[0] && siblingValueDecls[0].hasSymbol()) {
+                        constructorSymbol = siblingValueDecls[0].getSymbol();
+                    }
+                }
+
+                constructorSymbol = constructorSymbol || new PullSymbol(className, PullElementKind.ConstructorMethod);
+                constructorTypeSymbol = constructorSymbol.type || new PullTypeSymbol("", PullElementKind.ConstructorType);
 
                 constructorSymbol.setIsSynthesized();
 
@@ -813,7 +820,6 @@ module TypeScript {
             var ast: AST;
             var members: PullSymbol[];
 
-            // PULLTODO: Keeping these two error clauses separate for now, so that we can add a better error message later
             if (variableSymbol) {
 
                 var prevKind = variableSymbol.kind;
@@ -848,21 +854,15 @@ module TypeScript {
                     // However, we will error when a variable clobbers a function.
                     if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0)) {
                         span = variableDeclaration.getSpan();
-                        var errorDecl = isImplicit ? variableSymbol.getDeclarations()[0] : variableDeclaration;
-                        this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]));
+                        var diagnostic = new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]);
+                        this.semanticInfo.addDiagnostic(diagnostic);
+                        variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                     }
-
-                    variableSymbol = null;
-                    parentHadSymbol = false;
+                    else { // double var declaration (keep them separate so we can verify type sameness during type check)
+                        variableSymbol = null;
+                        parentHadSymbol = false;
+                    }
                 }
-            }
-            else if (variableSymbol && (variableSymbol.kind !== PullElementKind.Variable) && !isImplicit) {
-                span = variableDeclaration.getSpan();
-
-                this.semanticInfo.addDiagnostic(
-                    new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]));
-                variableSymbol = null;
-                parentHadSymbol = false;
             }
 
             if ((declFlags & PullElementFlags.ImplicitVariable) === 0) {

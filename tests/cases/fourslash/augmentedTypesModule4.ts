@@ -7,14 +7,10 @@
 ////var r2/*4*/ = m3d./*3*/
 
 goTo.marker('1');
-// BUG 697145
-//verify.quickInfoIs('m3d');
-verify.quickInfoIs('any');
+verify.quickInfoIs('m3d');
 
 goTo.marker('2');
-// BUG 697145
-//verify.completionListContains('foo');
-verify.completionListIsEmpty();
+verify.completionListContains('foo');
 edit.insert('foo();');
 
 goTo.marker('3');
