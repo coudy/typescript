@@ -47326,7 +47326,7 @@ var TypeScript;
                 var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
                 var isAmbient = (variableDeclaration.flags & 8 /* Ambient */) != 0;
                 var prevDecl = variableSymbol.getDeclarations()[0];
-                var bothAreGlobal = prevKind == 1 /* Script */ && declKind == prevKind;
+                var bothAreGlobal = parentDecl && (parentDecl.kind == 1 /* Script */) && (declKind == prevKind);
                 var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
                 var prevIsParam = shareParent && prevKind == 2048 /* Parameter */ && declKind == 1024 /* Variable */;
 
