@@ -1390,7 +1390,7 @@ module TypeScript {
     "code": 6024,
     "category": DiagnosticCategory.Message
   },
-  "file": {
+  "file1": {
     "code": 6025,
     "category": DiagnosticCategory.Message
   },
@@ -1426,7 +1426,7 @@ module TypeScript {
     "code": 6034,
     "category": DiagnosticCategory.Message
   },
-  "FILE": {
+  "file2": {
     "code": 6035,
     "category": DiagnosticCategory.Message
   },
