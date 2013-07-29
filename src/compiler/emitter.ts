@@ -1209,6 +1209,9 @@ module TypeScript {
                 this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
 
+                var varDeclName = varDecl.id.actualText;
+                var quoted = isQuoted(varDeclName);
+
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
                 var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
@@ -1218,10 +1221,20 @@ module TypeScript {
                     // class
                     if (this.emitState.container !== EmitContainer.Args) {
                         if (varDecl.isStatic()) {
-                            this.writeToOutput(parentSymbol.getName() + ".");
+                            if (quoted) {
+                                this.writeToOutput(parentSymbol.getName() + "[");
+                            }
+                            else {
+                                this.writeToOutput(parentSymbol.getName() + ".");
+                            }
                         }
                         else {
-                            this.writeToOutput("this.");
+                            if (quoted) {
+                                this.writeToOutput("this[");
+                            }
+                            else {
+                                this.writeToOutput("this.");
+                            }
                         }
                     }
                 }
@@ -1237,10 +1250,20 @@ module TypeScript {
                     }
                     else {
                         if (this.emitState.container === EmitContainer.DynamicModule) {
-                            this.writeToOutput("exports.");
+                            if (quoted) {
+                                this.writeToOutput("exports[");
+                            }
+                            else {
+                                this.writeToOutput("exports.");
+                            }
                         }
                         else {
-                            this.writeToOutput(this.moduleName + ".");
+                            if (quoted) {
+                                this.writeToOutput(this.moduleName + "[");
+                            }
+                            else {
+                                this.writeToOutput(this.moduleName + ".");
+                            }
                         }
                     }
                 }
@@ -1251,8 +1274,12 @@ module TypeScript {
                 this.recordSourceMappingStart(varDecl.id);
                 this.writeToOutput(varDecl.id.actualText);
                 this.recordSourceMappingEnd(varDecl.id);
-                var hasInitializer = (varDecl.init !== null);
-                if (hasInitializer) {
+
+                if (quoted) {
+                    this.writeToOutput("]");
+                }
+
+                if (varDecl.init) {
                     this.writeToOutputTrimmable(" = ");
 
                     // Ensure we have a fresh var list count when recursing into the variable 
@@ -1788,7 +1815,25 @@ module TypeScript {
 
             this.emitIndent();
             this.recordSourceMappingStart(funcDecl);
-            this.writeLineToOutput("Object.defineProperty(" + className + (isProto ? ".prototype, \"" : ", \"") + funcDecl.name.actualText + "\"" + ", {");
+
+            this.writeToOutput("Object.defineProperty(" + className);
+            if (isProto) {
+                this.writeToOutput(".prototype, ");
+            }
+            else {
+                this.writeToOutput(", ");
+            }
+
+            var functionName = funcDecl.name.actualText;
+            if (isQuoted(functionName)) {
+                this.writeToOutput(functionName);
+            }
+            else {
+                this.writeToOutput('"' + functionName + '"');
+            }
+
+            this.writeLineToOutput(", {");
+
             this.indenter.increaseIndent();
 
             var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.document.fileName);
@@ -1826,7 +1871,15 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(funcDecl);
                 this.emitComments(funcDecl, true);
-                this.writeToOutput(className + ".prototype." + funcDecl.getNameText() + " = ");
+
+                var functionName = funcDecl.getNameText();
+                if (isQuoted(functionName)) {
+                    this.writeToOutput(className + ".prototype[" + functionName + "] = ");
+                }
+                else {
+                    this.writeToOutput(className + ".prototype." + functionName + " = ");
+                }
+
                 this.emitInnerFunction(funcDecl, /*printName:*/ false, /*includePreComments:*/ false);
                 this.writeLineToOutput(";");
             }
@@ -1965,7 +2018,15 @@ module TypeScript {
                                 this.emitIndent();
                                 this.recordSourceMappingStart(functionDeclaration);
                                 this.emitComments(functionDeclaration, true);
-                                this.writeToOutput(classDecl.name.actualText + "." + functionDeclaration.name.actualText + " = ");
+
+                                var functionName = functionDeclaration.name.actualText;
+                                if (isQuoted(functionName)) {
+                                    this.writeToOutput(classDecl.name.actualText + "[" + functionName + "] = ");
+                                }
+                                else {
+                                    this.writeToOutput(classDecl.name.actualText + "." + functionName + " = ");
+                                }
+
                                 this.emitInnerFunction(functionDeclaration, /*printName:*/ false, /*includePreComments:*/ false);
                                 this.writeLineToOutput(";");
                             }
@@ -1988,7 +2049,15 @@ module TypeScript {
 
                         this.emitIndent();
                         this.recordSourceMappingStart(varDecl);
-                        this.writeToOutput(classDecl.name.actualText + "." + varDecl.id.actualText + " = ");
+
+                        var varDeclName = varDecl.id.actualText;
+                        if (isQuoted(varDeclName)) {
+                            this.writeToOutput(classDecl.name.actualText + "[" + varDeclName + "] = ");
+                        }
+                        else {
+                            this.writeToOutput(classDecl.name.actualText + "." + varDeclName + " = ");
+                        }
+
                         varDecl.init.emit(this);
 
                         this.writeLineToOutput(";");
