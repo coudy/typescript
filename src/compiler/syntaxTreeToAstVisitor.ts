@@ -953,13 +953,19 @@ module TypeScript {
         public visitParenthesizedExpression(node: ParenthesizedExpressionSyntax): ParenthesizedExpression {
             var start = this.position;
 
-            this.movePast(node.openParenToken);
+            var openParenToken = node.openParenToken;
+            var openParenTrailingComments = this.convertTokenTrailingComments(
+                openParenToken, start + openParenToken.leadingTriviaWidth() + openParenToken.width());
+
+            this.movePast(openParenToken);
+
             var expr = node.expression.accept(this);
             this.movePast(node.closeParenToken);
 
             var result = new ParenthesizedExpression(expr);
             this.setSpan(result, start, node);
 
+            result.openParenTrailingComments = openParenTrailingComments;
             return result;
         }
 

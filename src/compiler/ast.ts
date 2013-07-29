@@ -335,6 +335,8 @@ module TypeScript {
     }
 
     export class ParenthesizedExpression extends AST {
+        public openParenTrailingComments: Comment[] = null;
+
         constructor(public expression: AST) {
             super();
         }
@@ -344,13 +346,14 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            if (this.expression.nodeType() === NodeType.CastExpression) {
+            if (this.expression.nodeType() === NodeType.CastExpression && this.openParenTrailingComments === null) {
                 // We have an expression of the form: (<Type>SubExpr)
                 // Emitting this as (SubExpr) is really not desirable.  Just emit the subexpr as is.
                 this.expression.emit(emitter);
             }
             else {
                 emitter.writeToOutput("(");
+                emitter.emitCommentsArray(this.openParenTrailingComments);
                 this.expression.emit(emitter);
                 emitter.writeToOutput(")");
             }
