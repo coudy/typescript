@@ -332,6 +332,7 @@ module TypeScript {
         Option_mapRoot_cannot_be_specified_without_specifying_sourcemap_option: "Option mapRoot cannot be specified without specifying sourcemap option.",
         Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option: "Option sourceRoot cannot be specified without specifying sourcemap option.",
         Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option: "Options mapRoot and sourceRoot cannot be specified without specifying sourcemap option.",
+        Option_0_specified_without_1: "Option '{0}' specified without '{1}'",
         Concatenate_and_emit_output_to_single_file: "Concatenate and emit output to single file.",
         Generates_corresponding_0_file: "Generates corresponding {0} file.",
         Specifies_the_location_where_debugger_should_locate_map_files_instead_of_generated_locations: "Specifies the location where debugger should locate map files instead of generated locations.",

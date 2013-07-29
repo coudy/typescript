@@ -1326,6 +1326,10 @@ module TypeScript {
     "code": 5040,
     "category": DiagnosticCategory.Error
   },
+  "Option '{0}' specified without '{1}'": {
+    "code": 5041,
+    "category": DiagnosticCategory.Error
+  },
   "Concatenate and emit output to single file.": {
     "code": 6001,
     "category": DiagnosticCategory.Message

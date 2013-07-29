@@ -241,8 +241,15 @@ module TypeScript {
                             this.host.printLine(getDiagnosticMessage(DiagnosticCode.Unknown_option_0, [arg]));
                             this.host.printLine(getLocalizedText(DiagnosticCode.Use_the_0_flag_to_see_options, ["--help"]));
                         } else {
-                            if (!option.flag)
+                            if (!option.flag) {
                                 value = consume();
+                                if (value === undefined) {
+                                    // No value provided
+                                    this.host.printLine(getDiagnosticMessage(DiagnosticCode.Option_0_specified_without_1, [arg, getLocalizedText(option.type, null)]));
+                                    this.host.printLine(getLocalizedText(DiagnosticCode.Use_the_0_flag_to_see_options, ["--help"]));
+                                    continue;
+                                }
+                            }
 
                             option.set(value);
                         }
