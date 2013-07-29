@@ -835,7 +835,7 @@ module TypeScript {
                 var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
                 var isAmbient = (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
                 var prevDecl = variableSymbol.getDeclarations()[0];
-                var bothAreGlobal = parentDecl && parentDecl.kind == PullElementKind.Script && declKind == prevKind;
+                var bothAreGlobal = parentDecl && (parentDecl.kind == PullElementKind.Script) && (declKind == prevKind);
                 var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
                 var prevIsParam = shareParent && prevKind == PullElementKind.Parameter && declKind == PullElementKind.Variable;
 
