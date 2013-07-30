@@ -2,8 +2,8 @@
 
 ////declare var /*ambientVariableDefinition*/ambientVar;
 /////*ambientFunctionDefinition*/declare function ambientFunction();
-/////*constructorDefinition*/declare class ambientClass {
-////    constructor();
+////declare class ambientClass {
+////    /*constructorDefinition*/constructor();
 ////    /*staticMethodDefinition*/static method();
 ////    /*instanceMethodDefinition*/public method();
 ////}

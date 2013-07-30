@@ -1,17 +1,17 @@
 /// <reference path='fourslash.ts' />
 
-/////*constructorOverloadDefinition*/class ConstructorOverload {
-////    /*constructorOverload*/constructor();
+////class ConstructorOverload {
+////    constructor();
 ////    constructor(foo: string);
-////    constructor(foo: any)  { }
+////    /*constructorOverload*/constructor(foo: any)  { }
 ////}
 ////
 ////var constructorOverload = new /*constructorOverloadReference*/ConstructorOverload();
 
 goTo.marker('constructorOverloadReference');
 goTo.definition();
-verify.caretAtMarker('constructorOverloadDefinition');
+verify.caretAtMarker('constructorOverload');
 
 goTo.marker('constructorOverload');
 goTo.definition();
-verify.caretAtMarker('constructorOverloadDefinition');
+verify.caretAtMarker('constructorOverload');

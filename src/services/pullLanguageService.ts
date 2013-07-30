@@ -500,32 +500,74 @@ module Services {
             var symbolKind = this.mapPullElementKind(symbolInfo.symbol.kind, symbolInfo.symbol);
             var container = symbolInfo.symbol.getContainer();
             var containerName = container ? container.fullName() : "";
-            var containerKind = container ? this.mapPullElementKind(container.kind, container): "";
+            var containerKind = container ? this.mapPullElementKind(container.kind, container) : "";
 
             var result: DefinitionInfo[] = [];
-            var lastAddedSingature: { isDefinition: boolean; index: number; } = null;
-            for (var i = 0, n = declarations.length; i < n; i++) {
-                var declaration = declarations[i];
-                var span = declaration.getSpan();
 
-                var nextEntryIndex = result.length;
+            if (!this.tryAddDefinition(symbolKind, symbolName, containerKind, containerName, declarations, result) &&
+                !this.tryAddSignatures(symbolKind, symbolName, containerKind, containerName, declarations, result) &&
+                !this.tryAddConstructor(symbolKind, symbolName, containerKind, containerName, declarations, result)) {
 
-                var signature = declaration.getSignatureSymbol();
-                if (signature) {
-                    // This is either a signature of an overload, definition or an ambient function signature.
-                    // We want to filter them so that we only have one entry for all signatures. 
-                    // If a definition exits, we should pick it, if not (e.g. ambient methods case) just use the last of the signatures.
-                    if (lastAddedSingature && !lastAddedSingature.isDefinition) {
-                        // The last entry was a signature overload. overwrite it with the new signature.
-                        nextEntryIndex = lastAddedSingature.index;
-                    }
-                    lastAddedSingature = { isDefinition: signature.isDefinition(), index: nextEntryIndex };
-                }
-
-                result[nextEntryIndex] = new DefinitionInfo(this.compilerState.getHostFileName(declaration.getScriptName()), span.start(), span.end(), symbolKind, symbolName, containerKind, containerName);
+                // Just add all the declarations. 
+                this.addDeclarations(symbolKind, symbolName, containerKind, containerName, declarations, result);
             }
 
             return result;
+        }
+
+        private addDeclarations(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declarations: TypeScript.PullDecl[], result: DefinitionInfo[]): void {
+            for (var i = 0, n = declarations.length; i < n; i++) {
+                this.addDeclaration(symbolKind, symbolName, containerKind, containerName, declarations[i], result);
+            }
+        }
+
+        private addDeclaration(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declaration: TypeScript.PullDecl, result: DefinitionInfo[]): void {
+            var span = declaration.getSpan();
+            result.push(new DefinitionInfo(
+                this.compilerState.getHostFileName(declaration.getScriptName()),
+                span.start(), span.end(), symbolKind, symbolName, containerKind, containerName));
+        }
+
+        private tryAddDefinition(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declarations: TypeScript.PullDecl[], result: DefinitionInfo[]): boolean {
+            // First, if there are definitions and signatures, then just pick the definition.
+            var definitionDeclaration = TypeScript.ArrayUtilities.firstOrDefault(declarations, d => {
+                var signature = d.getSignatureSymbol();
+                return signature && signature.isDefinition();
+            });
+
+            if (!definitionDeclaration) {
+                return false;
+            }
+
+            this.addDeclaration(symbolKind, symbolName, containerKind, containerName, definitionDeclaration, result);
+            return true;
+        }
+
+        private tryAddSignatures(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declarations: TypeScript.PullDecl[], result: DefinitionInfo[]): boolean {
+            // We didn't have a definition.  Check and see if we have any signatures.  If so, just
+            // add the last one.
+            var signatureDeclarations = TypeScript.ArrayUtilities.where(declarations, d => {
+                var signature = d.getSignatureSymbol();
+                return signature && !signature.isDefinition();
+            });
+
+            if (signatureDeclarations.length === 0) {
+                return false;
+            }
+
+            this.addDeclaration(symbolKind, symbolName, containerKind, containerName, TypeScript.ArrayUtilities.last(signatureDeclarations), result);
+            return true;
+        }
+
+        private tryAddConstructor(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declarations: TypeScript.PullDecl[], result: DefinitionInfo[]): boolean {
+            var constructorDeclarations = TypeScript.ArrayUtilities.where(declarations, d => d.kind === TypeScript.PullElementKind.ConstructorMethod);
+
+            if (constructorDeclarations.length === 0) {
+                return false;
+            }
+
+            this.addDeclaration(symbolKind, symbolName, containerKind, containerName, TypeScript.ArrayUtilities.last(constructorDeclarations), result);
+            return true;
         }
 
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
