@@ -4,6 +4,13 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 653,
+            "length": 6,
+            "diagnosticCode": "Octal literals are not available when targeting ECMAScript 5 and higher."
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 743,
@@ -12,6 +19,7 @@
             {
                 "kind": "FunctionDeclaration",
                 "fullWidth": 719,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "functionKeyword": {
                     "kind": "FunctionKeyword",
@@ -130,6 +138,7 @@
                 "block": {
                     "kind": "Block",
                     "fullWidth": 127,
+                    "isIncrementallyUnusable": true,
                     "openBraceToken": {
                         "kind": "OpenBraceToken",
                         "width": 1,
@@ -256,9 +265,11 @@
                         {
                             "kind": "ExpressionStatement",
                             "fullWidth": 49,
+                            "isIncrementallyUnusable": true,
                             "expression": {
                                 "kind": "InvocationExpression",
                                 "fullWidth": 46,
+                                "isIncrementallyUnusable": true,
                                 "expression": {
                                     "kind": "MemberAccessExpression",
                                     "fullWidth": 29,
@@ -295,6 +306,7 @@
                                 "argumentList": {
                                     "kind": "ArgumentList",
                                     "fullWidth": 17,
+                                    "isIncrementallyUnusable": true,
                                     "openParenToken": {
                                         "kind": "OpenParenToken",
                                         "width": 1,

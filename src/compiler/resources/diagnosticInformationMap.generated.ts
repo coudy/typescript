@@ -342,6 +342,10 @@ module TypeScript {
     "code": 1084,
     "category": DiagnosticCategory.Error
   },
+  "Octal literals are not available when targeting ECMAScript 5 and higher.": {
+    "code": 1085,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error

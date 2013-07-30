@@ -46,6 +46,14 @@ class Program {
             TypeScript.IncrementalParserTests.runAllTests();
         }
 
+        Environment.standardOut.WriteLine("Testing scanner ES3.");
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\scanner\\ecmascript3",
+            fileName => this.runScanner(fileName, TypeScript.LanguageVersion.EcmaScript3, verify, /*generateBaselines:*/ generate));
+
+        Environment.standardOut.WriteLine("Testing scanner ES5.");
+        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\scanner\\ecmascript5",
+            fileName => this.runScanner(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
+
         Environment.standardOut.WriteLine("Testing parser ES5.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runParser(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
@@ -78,10 +86,6 @@ class Program {
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\trivia\\ecmascript5",
             fileName => this.runTrivia(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
 
-        Environment.standardOut.WriteLine("Testing scanner.");
-        this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\scanner\\ecmascript5",
-            fileName => this.runScanner(fileName, TypeScript.LanguageVersion.EcmaScript5, verify, /*generateBaselines:*/ generate));
-            
         Environment.standardOut.WriteLine("Testing Incremental 1.");
         this.runTests(Environment.currentDirectory() + "\\tests\\Fidelity\\parser\\ecmascript5",
             fileName => this.runIncremental(fileName, TypeScript.LanguageVersion.EcmaScript5));

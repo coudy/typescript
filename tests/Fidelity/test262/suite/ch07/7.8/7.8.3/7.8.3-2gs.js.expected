@@ -4,6 +4,13 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 665,
+            "length": 2,
+            "diagnosticCode": "Octal literals are not available when targeting ECMAScript 5 and higher."
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 670,
@@ -259,10 +266,12 @@
             {
                 "kind": "ExpressionStatement",
                 "fullWidth": 9,
+                "isIncrementallyUnusable": true,
                 "parsedInStrictMode": true,
                 "expression": {
                     "kind": "AssignmentExpression",
                     "fullWidth": 6,
+                    "isIncrementallyUnusable": true,
                     "parsedInStrictMode": true,
                     "left": {
                         "kind": "IdentifierName",

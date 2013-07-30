@@ -456,7 +456,7 @@ module TypeScript {
                     return this.scanSlashToken(allowRegularExpression);
 
                 case CharacterCodes.dot:
-                    return this.scanDotToken();
+                    return this.scanDotToken(diagnostics);
 
                 case CharacterCodes.minus:
                     return this.scanMinusToken();
@@ -528,7 +528,7 @@ module TypeScript {
             }
 
             if (isNumericLiteralStart[character]) {
-                return this.scanNumericLiteral();
+                return this.scanNumericLiteral(diagnostics);
             }
 
             // We run into so many identifiers (and keywords) when scanning, that we want the code to
@@ -615,48 +615,82 @@ module TypeScript {
             return SyntaxKind.IdentifierName;
         }
 
-        private scanNumericLiteral(): SyntaxKind {
+        private scanNumericLiteral(diagnostics: Diagnostic[]): SyntaxKind {
             if (this.isHexNumericLiteral()) {
-                return this.scanHexNumericLiteral();
+                this.scanHexNumericLiteral();
+            }
+            else if (this.isOctalNumericLiteral()) {
+                this.scanOctalNumericLiteral(diagnostics);
             }
             else {
-                return this.scanDecimalNumericLiteral();
-            }
-        }
-
-        private scanDecimalNumericLiteral(): SyntaxKind {
-            while (CharacterInfo.isDecimalDigit(this.currentCharCode())) {
-                this.slidingWindow.moveToNextItem();
-            }
-
-            if (this.currentCharCode() === CharacterCodes.dot) {
-                this.slidingWindow.moveToNextItem();
-            }
-
-            while (CharacterInfo.isDecimalDigit(this.currentCharCode())) {
-                this.slidingWindow.moveToNextItem();
-            }
-
-            var ch = this.currentCharCode();
-            if (ch === CharacterCodes.e || ch === CharacterCodes.E) {
-                this.slidingWindow.moveToNextItem();
-
-                ch = this.currentCharCode();
-                if (ch === CharacterCodes.minus || ch === CharacterCodes.plus) {
-                    if (CharacterInfo.isDecimalDigit(this.slidingWindow.peekItemN(1))) {
-                        this.slidingWindow.moveToNextItem();
-                    }
-                }
-            }
-
-            while (CharacterInfo.isDecimalDigit(this.currentCharCode())) {
-                this.slidingWindow.moveToNextItem();
+                this.scanDecimalNumericLiteral();
             }
 
             return SyntaxKind.NumericLiteral;
         }
 
-        private scanHexNumericLiteral(): SyntaxKind {
+        private isOctalNumericLiteral(): boolean {
+            return this.currentCharCode() === CharacterCodes._0 && CharacterInfo.isOctalDigit(this.slidingWindow.peekItemN(1));
+        }
+
+        private scanOctalNumericLiteral(diagnostics: Diagnostic[]): void {
+            var position = this.absoluteIndex();
+
+            while (CharacterInfo.isOctalDigit(this.currentCharCode())) {
+                this.slidingWindow.moveToNextItem();
+            }
+
+            if (this.languageVersion() >= LanguageVersion.EcmaScript5) {
+                diagnostics.push(new Diagnostic(this.fileName,
+                    position, this.absoluteIndex() - position, DiagnosticCode.Octal_literals_are_not_available_when_targeting_ECMAScript_5_and_higher, null));
+            }
+        }
+
+        private scanDecimalDigits(): void {
+            while (CharacterInfo.isDecimalDigit(this.currentCharCode())) {
+                this.slidingWindow.moveToNextItem();
+            }
+        }
+
+        private scanDecimalNumericLiteral(): void {
+            this.scanDecimalDigits();
+
+            if (this.currentCharCode() === CharacterCodes.dot) {
+                this.slidingWindow.moveToNextItem();
+            }
+
+            this.scanDecimalDigits();
+
+            // If we see an 'e' or 'E' we should only consume it if its of the form:
+            // e<number> or E<number> 
+            // e+<number>   E+<number>
+            // e-<number>   E-<number>
+            var ch = this.currentCharCode();
+            if (ch === CharacterCodes.e || ch === CharacterCodes.E) {
+                // Ok, we've got 'e' or 'E'.  Make sure it's followed correctly.
+                var nextChar1 = this.slidingWindow.peekItemN(1);
+
+                if (CharacterInfo.isDecimalDigit(nextChar1)) {
+                    // e<number> or E<number>
+                    // Consume 'e' or 'E' and the number portion.
+                    this.slidingWindow.moveToNextItem();
+                    this.scanDecimalDigits();
+                }
+                else if (nextChar1 === CharacterCodes.minus || nextChar1 === CharacterCodes.plus) {
+                    // e+ or E+ or e- or E-
+                    var nextChar2 = this.slidingWindow.peekItemN(2);
+                    if (CharacterInfo.isDecimalDigit(nextChar2)) {
+                        // e+<number> or E+<number> or e-<number> or E-<number>
+                        // Consume first two characters and the number portion.
+                        this.slidingWindow.moveToNextItem();
+                        this.slidingWindow.moveToNextItem();
+                        this.scanDecimalDigits();
+                    }
+                }
+            }
+        }
+
+        private scanHexNumericLiteral(): void {
             // Debug.assert(this.isHexNumericLiteral());
 
             // Move past the 0x.
@@ -666,8 +700,6 @@ module TypeScript {
             while (CharacterInfo.isHexDigit(this.currentCharCode())) {
                 this.slidingWindow.moveToNextItem();
             }
-
-            return SyntaxKind.NumericLiteral;
         }
 
         private isHexNumericLiteral(): boolean {
@@ -840,9 +872,9 @@ module TypeScript {
             return false;
         }
 
-        private scanDotToken(): SyntaxKind {
+        private scanDotToken(diagnostics: Diagnostic[]): SyntaxKind {
             if (this.isDotPrefixedNumericLiteral()) {
-                return this.scanNumericLiteral();
+                return this.scanNumericLiteral(diagnostics);
             }
 
             this.slidingWindow.moveToNextItem();

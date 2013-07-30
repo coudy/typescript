@@ -272,7 +272,7 @@ var Environment = (function () {
                         return;
                     } else {
                         mkdirRecursiveSync(_path.dirname(path));
-                        _fs.mkdirSync(path, 0775);
+                        _fs.mkdirSync(path, 509 /*775 in octal*/);
                     }
                 }
                 var start = new Date().getTime();

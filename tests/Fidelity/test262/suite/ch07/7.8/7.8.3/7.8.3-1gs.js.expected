@@ -4,6 +4,13 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 611,
+            "length": 3,
+            "diagnosticCode": "Octal literals are not available when targeting ECMAScript 5 and higher."
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 617,
@@ -144,11 +151,13 @@
             {
                 "kind": "VariableStatement",
                 "fullWidth": 14,
+                "isIncrementallyUnusable": true,
                 "parsedInStrictMode": true,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
                     "fullWidth": 11,
+                    "isIncrementallyUnusable": true,
                     "parsedInStrictMode": true,
                     "varKeyword": {
                         "kind": "VarKeyword",
@@ -169,6 +178,7 @@
                         {
                             "kind": "VariableDeclarator",
                             "fullWidth": 7,
+                            "isIncrementallyUnusable": true,
                             "parsedInStrictMode": true,
                             "identifier": {
                                 "kind": "IdentifierName",
@@ -188,6 +198,7 @@
                             "equalsValueClause": {
                                 "kind": "EqualsValueClause",
                                 "fullWidth": 5,
+                                "isIncrementallyUnusable": true,
                                 "parsedInStrictMode": true,
                                 "equalsToken": {
                                     "kind": "EqualsToken",

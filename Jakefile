@@ -360,7 +360,7 @@ compileFile(perfCompilerPath, [frontEndPath], [tscFile], [], true);
 // Fidelity Tests
 var fidelityTestsOutFile = "tests/Fidelity/program.js";
 var fidelityTestsInFile = "tests/Fidelity/Program.ts";
-compileFile(fidelityTestsOutFile, [fidelityTestsInFile], [tscFile], [], true);
+compileFile(fidelityTestsOutFile, [fidelityTestsInFile], [tscFile].concat(compilerSources.concat(servicesSources)), [], true);
 
 desc("Builds the web harness front end");
 task("test-harness", [perfCompilerPath]);
