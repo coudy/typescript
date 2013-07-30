@@ -3040,6 +3040,10 @@ module TypeScript {
             if (signature) {
 
                 if (signature.isResolved) {
+
+                    if (!accessorSymbol.type) {
+                        accessorSymbol.type = signature.returnType;
+                    }
                     return accessorSymbol;
                 }
 
@@ -3047,6 +3051,10 @@ module TypeScript {
                     // PULLTODO: Error or warning?
                     signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                     signature.setResolved();
+
+                    if (!accessorSymbol.type) {
+                        accessorSymbol.type = signature.returnType;
+                    }
 
                     return accessorSymbol;
                 }
