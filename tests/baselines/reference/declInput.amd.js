@@ -24,7 +24,7 @@ declare class bar {
     public g(): {
         a: bar;
         b: undefined;
-        c: void;
+        c: undefined;
     };
     public h(x?: number, y?, z?: string): void;
 }
