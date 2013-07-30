@@ -1478,6 +1478,7 @@ module Harness {
         export class CompilerResult {
             public code: string;
             public errors: CompilerError[];
+            public declFilesCode: { fileName: string; code: string; }[] = [];
 
             /** @param fileResults an array of strings for the fileName and an ITextWriter with its code */
             constructor(public fileResults: { fileName: string; file: WriterAggregator; }[], errorLines: string[]) {
@@ -1496,6 +1497,12 @@ module Harness {
                         WScript.Echo("non-match on: " + errorLines[i]);
                     }
                 }
+
+                fileResults.forEach(result => {
+                    if (result.fileName.indexOf('.d.ts') !== -1) {
+                        this.declFilesCode.push({ fileName: result.fileName, code: result.file.lines.join('\r\n') });
+                    }
+                });
             }
 
             public isErrorAt(line: number, column: number, message: string) {

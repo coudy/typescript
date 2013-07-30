@@ -39,8 +39,7 @@ class CompilerBaselineRunner extends RunnerBase {
             var jsOutputAsync = '';
             var jsOutputSync = '';
 
-            var declFileName = TypeScript.isDTSFile(lastUnit.name) ? lastUnit.name : lastUnit.name.replace('.ts', '.d.ts');
-            var declFileCode = '';
+            var declFilesCode: { fileName: string; code: string; }[] = []
 
             var errorDescriptionAsync = '';
             var errorDescriptionLocal = '';
@@ -75,6 +74,8 @@ class CompilerBaselineRunner extends RunnerBase {
                     errorDescriptionAsync += Harness.getFileName(amdResult.errors[i].file) + ' line ' + amdResult.errors[i].line + ' col ' + amdResult.errors[i].column + ': ' + amdResult.errors[i].message + '\r\n';
                 }
                 jsOutputAsync = amdResult.code;
+
+                declFilesCode = result.commonJS.declFilesCode;
             }, function (settings?: TypeScript.CompilationSettings) {
                 tcSettings.push({ flag: "module", value: "commonjs" });
                 harnessCompiler.setCompilerSettings(tcSettings);
@@ -103,20 +104,22 @@ class CompilerBaselineRunner extends RunnerBase {
             }
 
             // if the .d.ts is non-empty, confirm it compiles correctly as well
-            if (this.decl && declFileCode) {
+            if (this.decl && declFilesCode) {
                 var declErrors = '';
-                var declFile = { unitName: declFileName, content: declFileCode };
-                harnessCompiler.compileFiles(
-                    [declFile],
-                    function (result) {
-                        var jsOutputSync = result.commonJS;
-                        for (var i = 0; i < jsOutputSync.errors.length; i++) {
-                            declErrors += jsOutputSync.errors[i].file + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
-                        }
-                    });
+                declFilesCode.forEach(file => {
+                    var declFile = { unitName: file.fileName, content: file.code };
+                    harnessCompiler.compileFiles(
+                        [declFile],
+                        function (result) {
+                            var jsOutputSync = result.commonJS;
+                            for (var i = 0; i < jsOutputSync.errors.length; i++) {
+                                declErrors += jsOutputSync.errors[i].file + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
+                            }
+                        });
 
-                Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' compiles without error', declFileName.replace(/\.ts/, '.errors.txt'), () => {
-                    return (declErrors === '') ? null : declErrors;
+                    Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' compiles without error', Harness.getFileName(file.fileName).replace(/\.ts/, '.errors.txt'), () => {
+                        return (declErrors === '') ? null : declErrors;
+                    });
                 });
             }
 
