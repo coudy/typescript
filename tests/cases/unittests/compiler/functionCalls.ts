@@ -169,7 +169,7 @@ describe('Compiling unittests\\compiler\\functionCalls.ts', function () {
             it("Check for optional and rest param - 2", function () {
                 var code = "function foo(a?:string, b?:number, ...b:number[]){} ";
                 Harness.Compiler.compileString(code, 'singleParam', function (result) {
-                    assert.arrayLengthIs(result.errors, 1);
+                    assert.arrayLengthIs(result.errors, 2);
                 });
             });
 

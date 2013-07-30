@@ -853,10 +853,10 @@ module TypeScript {
                     }
                 }
 
-                if (shareParent && !prevIsParam && (!acceptableRedeclaration || onlyOneIsEnum)) {
+                if (shareParent && (!acceptableRedeclaration || onlyOneIsEnum || prevIsParam)) {
                     // If neither of them are implicit (both explicitly declared as vars), we won't error now. We'll check that the types match during type check.
                     // However, we will error when a variable clobbers a function.
-                    if (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0) {
+                    if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0)) {
                         span = variableDeclaration.getSpan();
                         var errorDecl = isImplicit ? variableSymbol.getDeclarations()[0] : variableDeclaration;
                         this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]));
@@ -1122,7 +1122,7 @@ module TypeScript {
         }
 
         // parameters
-        public bindParameterSymbols(funcDecl: FunctionDeclaration, funcType: PullTypeSymbol, signatureSymbol: PullSignatureSymbol) {
+        public bindParameterSymbols(functionDeclaration: FunctionDeclaration, funcType: PullTypeSymbol, signatureSymbol: PullSignatureSymbol) {
             // create a symbol for each ast
             // if it's a property, add the symbol to the enclosing type's member list
             var parameters: PullSymbol[] = [];
@@ -1131,16 +1131,17 @@ module TypeScript {
             var parameterSymbol: PullSymbol = null;
             var isProperty = false;
             var params: any = new BlockIntrinsics();
+            var funcDecl = this.semanticInfo.getDeclForAST(functionDeclaration);
 
-            if (funcDecl.arguments) {
+            if (functionDeclaration.arguments) {
 
-                for (var i = 0; i < funcDecl.arguments.members.length; i++) {
-                    argDecl = <BoundDecl>funcDecl.arguments.members[i];
+                for (var i = 0; i < functionDeclaration.arguments.members.length; i++) {
+                    argDecl = <BoundDecl>functionDeclaration.arguments.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
 
-                    if (funcDecl.variableArgList && i === funcDecl.arguments.members.length - 1) {
+                    if (functionDeclaration.variableArgList && i === functionDeclaration.arguments.members.length - 1) {
                         parameterSymbol.isVarArg = true;
                     }
 
@@ -1171,6 +1172,10 @@ module TypeScript {
                         else {
                             parameterSymbol.addDeclaration(decl);
                             decl.setSymbol(parameterSymbol);
+                        }
+
+                        if (funcDecl) {
+                            funcDecl.addVariableDeclToGroup(decl);
                         }
                     }
 
