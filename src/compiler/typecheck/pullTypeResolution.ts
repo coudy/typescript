@@ -962,7 +962,7 @@ module TypeScript {
 
             if (symbol.inResolution) {
                 if (!symbol.currentlyBeingSpecialized()) {
-                    if (!symbol.isType()) {
+                    if (!symbol.type && !symbol.isType()) {
                         symbol.type = this.semanticInfoChain.anyTypeSymbol;
                     }
 
