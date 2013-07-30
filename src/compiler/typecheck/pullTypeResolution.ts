@@ -6295,13 +6295,6 @@ module TypeScript {
 
             var targetAST = this.getLastIdentifierInTarget(callEx);
 
-            // PULLREVIEW: In the case of a generic instantiation of a class type,
-            // we'll have gotten a 'GenericType' node, which will be resolved as the class type and not
-            // the constructor type.  In this case, set the targetTypeSymbol to the constructor type
-            if (targetTypeSymbol.isClass()) {
-                targetTypeSymbol = targetTypeSymbol.getConstructorMethod().type;
-            }
-
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
@@ -6618,10 +6611,6 @@ module TypeScript {
                 }
 
                 return returnType
-            }
-            else if (targetTypeSymbol.isClass()) {
-                // implicit constructor
-                return returnType;
             }
 
             context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid_new_expression, null);
