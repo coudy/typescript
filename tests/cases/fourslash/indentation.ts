@@ -165,5 +165,5 @@
 ////{| "indent": 0 |} 
 
 test.markers().forEach((marker) => {
-        verify.indentationAtPositionIs('file_0.ts', marker.position, marker.data.indent);
+        verify.indentationAtPositionIs('tests/cases/fourslash/indentation.ts', marker.position, marker.data.indent);
     });

@@ -1,6 +1,6 @@
 /// <reference path="fourslash.ts" />
 
-//// function method() { var dictionary = <{ /**/[index]: string; }>{}; }
+//// function method() { var dictionary/**/ = <{ [index]: string; }>{}; }
 
 goTo.marker();
-verify.quickInfoExists();
+verify.quickInfoIs('{ [index: any]: string; }');

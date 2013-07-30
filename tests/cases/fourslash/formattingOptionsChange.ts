@@ -1,46 +1,24 @@
 ///<reference path="fourslash.ts"/>
 
 /////*InsertSpaceAfterCommaDelimiter*/[1,2,   3];
-
-runTest("InsertSpaceAfterCommaDelimiter", "[1, 2, 3];", "[1,2,3];");
-
-
 /////*InsertSpaceAfterSemicolonInForStatements*/for (i = 0;i;    i++);
-
-runTest("InsertSpaceAfterSemicolonInForStatements", "for (i = 0; i; i++);", "for (i = 0;i;i++);");
-
-
 /////*InsertSpaceBeforeAndAfterBinaryOperators*/1+2-    3
-
-runTest("InsertSpaceBeforeAndAfterBinaryOperators", "1 + 2 - 3", "1+2-3");
-
-
 /////*InsertSpaceAfterKeywordsInControlFlowStatements*/if     (true) { }
-
-runTest("InsertSpaceAfterKeywordsInControlFlowStatements", "if (true) { }", "if(true) { }");
-
-
 /////*InsertSpaceAfterFunctionKeywordForAnonymousFunctions*/(function               () { })
-
-runTest("InsertSpaceAfterFunctionKeywordForAnonymousFunctions", "(function () { })", "(function() { })");
-
-
 /////*InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis*/(1  )
-
-runTest("InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis", "( 1 )", "(1)");
-
-
 /////*PlaceOpenBraceOnNewLineForFunctions*/class   foo   { 
 ////}
-
-runTest("PlaceOpenBraceOnNewLineForFunctions", "class foo", "class foo {");
-
-
-// bug 697725
 /////*PlaceOpenBraceOnNewLineForControlBlocks*/if (true)   {
 ////}
 
-//runTest("PlaceOpenBraceOnNewLineForControlBlocks", "if ( true )", "if ( true ) {");
+runTest("InsertSpaceAfterCommaDelimiter", "[1, 2, 3];", "[1,2,3];");
+runTest("InsertSpaceAfterSemicolonInForStatements", "for (i = 0; i; i++);", "for (i = 0;i;i++);");
+runTest("InsertSpaceBeforeAndAfterBinaryOperators", "1 + 2 - 3", "1+2-3");
+runTest("InsertSpaceAfterKeywordsInControlFlowStatements", "if (true) { }", "if(true) { }");
+runTest("InsertSpaceAfterFunctionKeywordForAnonymousFunctions", "(function () { })", "(function() { })");
+runTest("InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis", "    ( 1 )", "    (1)");
+runTest("PlaceOpenBraceOnNewLineForFunctions", "class foo", "class foo {");
+runTest("PlaceOpenBraceOnNewLineForControlBlocks", "if ( true )", "if ( true ) {");
 
 
 function runTest(propertyName: string, expectedStringWhenTrue: string, expectedStringWhenFalse: string) {

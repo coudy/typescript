@@ -1,6 +1,6 @@
 /// <reference path='fourslash.ts' />
 
-// @Filename: file_0.ts
+// @Filename: externalModuleWithExportAssignment_file0.ts
 ////module m2 {
 ////    export interface connectModule {
 ////        (res, req, next): void;
@@ -17,8 +17,8 @@
 ////};
 ////export = m2;
 
-// @Filename: file_1.ts
-////import /*1*/a1 = require("file_0");
+// @Filename: externalModuleWithExportAssignment_file1.ts
+////import /*1*/a1 = require("externalModuleWithExportAssignment_file0");
 ////export var /*2*/a = a1;
 ////a./*3*/test1(/*4*/null, null, null);
 ////var /*6*/r1 = a.test2(/*5*/);
@@ -29,7 +29,7 @@
 ////var v1: a1./*15*/connectExport;
 
 
-goTo.file("file_1.ts");
+goTo.file("externalModuleWithExportAssignment_file1.ts");
 goTo.marker('1');
 verify.quickInfoIs("{ test1: a1.connectModule; test2(): a1.connectModule; (): a1.connectExport; }", undefined, "a1", "var");
 

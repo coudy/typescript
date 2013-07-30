@@ -2,7 +2,7 @@
 
 // Reference a class static.
 
-// @Filename: ReferencesOnStatic1.ts
+// @Filename: referencesOnStatic_1.ts
 ////var n = 43;
 ////
 ////class foo {
@@ -27,7 +27,7 @@
 ////    }
 ////}
 
-// @Filename: ReferencesOnStatic2.ts
+// @Filename: referencesOnStatic_2.ts
 ////var q = foo.n;
 
 goTo.marker("1");

@@ -35,16 +35,10 @@ class UnitTestRunner extends RunnerBase {
         var outerr = new Harness.Compiler.WriterAggregator();
         var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.DesignTime);
 
-        for (var i = 0; i < this.tests.length; i++) {
-            try {
-                harnessCompiler.addInputFile(this.tests[i]);
-            }
-            catch (e) {
-                IO.printLine('FATAL ERROR COMPILING TEST: ' + this.tests[i]);
-                throw e;
-            }
-        }
-
+        var toBeAdded = this.tests.map(test => {
+            return { unitName: test, content: IO.readFile(test).contents }
+        });
+        harnessCompiler.addInputFiles(toBeAdded);
         harnessCompiler.compile(false);
         
         var stdout = new Harness.Compiler.EmitterIOHost();

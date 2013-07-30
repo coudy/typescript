@@ -1,6 +1,6 @@
 /// <reference path='fourslash.ts' />
 
-// @Filename: file_0.ts
+// @Filename: commentsExternalModules_file0.ts
 /////** Module comment*/
 ////export module m/*1*/1 {
 ////    /** b's comment*/
@@ -25,13 +25,13 @@
 /////*4*/m1./*5*/fooEx/*6q*/port(/*6*/);
 ////var my/*7*/var = new m1.m2./*8*/c();
 
-// @Filename: file_1.ts
+// @Filename: commentsExternalModules_file1.ts
 /////**This is on import declaration*/
-////import ex/*9*/tMod = require("file_0");
+////import ex/*9*/tMod = require("commentsExternalModules_file0");
 /////*10*/extMod./*11*/m1./*12*/fooExp/*13q*/ort(/*13*/);
 ////var new/*14*/Var = new extMod.m1.m2./*15*/c();
 
-goTo.file("file_0.ts");
+goTo.file("commentsExternalModules_file0.ts");
 goTo.marker('1');
 verify.quickInfoIs("m1", "Module comment", "m1", "module");
 
@@ -64,7 +64,7 @@ goTo.marker('8');
 verify.memberListContains("c", undefined, "class comment;", "m1.m2.c", "class");
 verify.memberListContains("i", "m1.m2.c", "i", "m1.m2.i", "var");
 
-goTo.file("file_1.ts");
+goTo.file("commentsExternalModules_file1.ts");
 goTo.marker('9');
 verify.quickInfoIs(undefined, "This is on import declaration", "extMod", "module");
 

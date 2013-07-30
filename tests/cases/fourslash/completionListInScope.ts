@@ -45,6 +45,20 @@
 ////        export var x = 0;
 ////    }
 ////}
+////var globalVar: string = "";
+////function globalFunction() { }
+////
+////class TestClass {
+////    property: number;
+////    method() { }
+////    staticMethod() { }
+////    testMethod(param: number) {
+////        var localVar = 0;
+////        function localFunction() {};
+////        /*insideMethod*/
+////    }
+////}
+
 
 goTo.marker("valueReference");
 verify.memberListContains("localVariable");
@@ -76,21 +90,6 @@ verify.memberListContains("exportedModule");
 
 verify.memberListContains("exportedClass2");
 verify.memberListContains("exportedModule2");
-
-
-////var globalVar: string = "";
-////function globalFunction() { }
-////
-////class TestClass {
-////    property: number;
-////    method() { }
-////    staticMethod() { }
-////    testMethod(param: number) {
-////        var localVar = 0;
-////        function localFunction() {};
-////        /*insideMethod*/
-////    }
-////}
 
 goTo.marker("insideMethod");
 verify.not.memberListContains("property");

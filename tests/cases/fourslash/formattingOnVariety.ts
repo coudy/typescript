@@ -20,7 +20,8 @@
 //}/*16*/
 
 // BUG 000000 general incremental issues
-//format.document();
+// TODO: the behavior below matches what the editor does but fourslash test fails
+format.document();
 //goTo.marker("1");
 //verify.currentLineContentIs("function f(a, b, c, d) {");
 //goTo.marker("2");

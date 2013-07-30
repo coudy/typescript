@@ -1,28 +1,5 @@
 /// <reference path="fourslash.ts" />
 
-////// lib.d.ts
-////interface Object {
-////    toString(): string;
-////    toLocaleString(): string;
-////    valueOf(): Object;
-////    hasOwnProperty(v: string): boolean;
-////    isPrototypeOf(v: Object): boolean;
-////    propertyIsEnumerable(v: string): boolean;
-////    [s: string]: any;
-////}
-////
-////interface Function {
-////    apply(thisArg: any, argArray?: any): any;
-////    call(thisArg: any, ...argArray: any[]): any;
-////    bind(thisArg: any, ...argArray: any[]): any;
-////    prototype: any;
-////    length: number;
-////    // Non-standard extensions
-////    arguments: any;
-////    caller: Function;
-////}
-
-
 ////// Simple constraint
 ////class Foo<T extends Object> {
 ////    private v: T;
@@ -30,12 +7,6 @@
 ////        this.v./*objectMembers*/
 ////    }
 ////}
-
-goTo.marker("objectMembers");
-verify.memberListContains("hasOwnProperty");
-verify.memberListContains("isPrototypeOf");
-verify.memberListContains("toString");
-
 ////// Inheritance in constraints
 ////interface IBar1 {
 ////    bar11: number;
@@ -53,14 +24,6 @@ verify.memberListContains("toString");
 ////        this.value./*interfaceMembers*/;
 ////    }
 ////}
-
-goTo.marker("interfaceMembers");
-verify.memberListContains("bar11");
-verify.memberListContains("bar12");
-verify.memberListContains("bar21");
-verify.memberListContains("bar22");
-
-
 ////// Interface with call signature
 ////interface ICallable {
 ////    (n: number): string;
@@ -72,14 +35,6 @@ verify.memberListContains("bar22");
 ////        value./*callableMembers*/        
 ////    }
 ////}
-
-goTo.marker("callableMembers");
-verify.memberListContains("name");
-verify.memberListContains("apply");
-verify.memberListContains("call");
-verify.memberListContains("bind");
-
-
 ////// Only public members of a constraint should be shown
 ////class Base {
 ////    public publicProperty: number;
@@ -95,6 +50,23 @@ verify.memberListContains("bind");
 ////        value./*publicOnlyMemebers*/
 ////    }
 ////}
+
+goTo.marker("objectMembers");
+verify.memberListContains("hasOwnProperty");
+verify.memberListContains("isPrototypeOf");
+verify.memberListContains("toString");
+
+goTo.marker("interfaceMembers");
+verify.memberListContains("bar11");
+verify.memberListContains("bar12");
+verify.memberListContains("bar21");
+verify.memberListContains("bar22");
+
+goTo.marker("callableMembers");
+verify.memberListContains("name");
+verify.memberListContains("apply");
+verify.memberListContains("call");
+verify.memberListContains("bind");
 
 goTo.marker("publicOnlyMemebers");
 verify.memberListContains("publicProperty");

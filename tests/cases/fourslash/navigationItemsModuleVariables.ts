@@ -30,4 +30,3 @@ verify.navigationItemsListContains("Module1", "module");
 verify.navigationItemsListContains("SubModule", "module");
 verify.navigationItemsListContains("y", "var");
 verify.navigationItemsCount(3);
-

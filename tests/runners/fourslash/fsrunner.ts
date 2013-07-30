@@ -3,15 +3,10 @@
 ///<reference path='..\runnerbase.ts' />
 
 class FourslashRunner extends RunnerBase {
-    public basePath = 'tests/cases/';
+    public basePath = 'tests/cases/fourslash';
 
     constructor(testType?: string) {
         super(testType);
-        if(testType == 'all') {
-            this.basePath += 'fourslash_old/'
-        } else {
-            this.basePath += 'fourslash/';
-        }
     }
 
     public initializeTests() {
@@ -21,7 +16,7 @@ class FourslashRunner extends RunnerBase {
             if (!justName.match(/fourslash.ts$/i) && !justName.match(/.d.ts$/i)) {
                 describe('FourSlash test ' + justName, function () {
                     it('Runs correctly', function () {
-                        FourSlash.runFourSlashTest(fn);
+                        FourSlash.runFourSlashTest(switchToForwardSlashes(fn));
                     });
                 });
             }

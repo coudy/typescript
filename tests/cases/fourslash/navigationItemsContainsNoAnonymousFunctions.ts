@@ -1,5 +1,5 @@
 /// <reference path="fourslash.ts"/>
-
+// @Filename: navigationItemsContainsNoAnonymousFunctions_0.ts
 /////*file1*/
 ////(function() {
 ////    // this should not be included
@@ -11,10 +11,7 @@
 ////    }
 ////})();
 
-goTo.marker("file1");
-verify.navigationItemsCount(0);
-
-
+// @Filename: navigationItemsContainsNoAnonymousFunctions_1.ts
 /////*file2*/
 ////var x = function() {
 ////    // this should not be included
@@ -24,16 +21,19 @@ verify.navigationItemsCount(0);
 ////    function foo() {
 ////};
 
-goTo.marker("file2");
-verify.navigationItemsCount(1);
-
-
-// Named functions should still show up
+// @Filename: navigationItemsContainsNoAnonymousFunctions_2.ts
+////// Named functions should still show up
 /////*file3*/
 ////function foo() {
 ////}
 ////function bar() {
 ////}
+
+goTo.marker("file1");
+verify.navigationItemsCount(0);
+
+goTo.marker("file2");
+verify.navigationItemsCount(1);
 
 goTo.marker("file3");
 verify.navigationItemsCount(2);

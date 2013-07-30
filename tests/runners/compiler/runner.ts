@@ -58,24 +58,19 @@ class CompilerBaselineRunner extends RunnerBase {
                     break;
                 }
             }
-            
-            // compile as CommonJS module        
-            harnessCompiler.compileUnit(fileName, function (result) {
-                var jsResult = result.commonJSResult;
+
+            var toBeCompiled = units.map(unit => {
+                return { unitName: 'tests/cases/compiler/' + unit.name, content: unit.content };
+            });
+            harnessCompiler.compileFiles(toBeCompiled, function (result) {
+                var jsResult = result.commonJS;
                 for (var i = 0; i < jsResult.errors.length; i++) {
                     errorDescriptionLocal += Harness.getFileName(jsResult.errors[i].file) + ' line ' + jsResult.errors[i].line + ' col ' + jsResult.errors[i].column + ': ' + jsResult.errors[i].message + '\r\n';
                 }
                 jsOutputSync = jsResult.code;
 
-                // save away any generated .d.ts code for later verification
-                jsResult.fileResults.forEach(r => {
-                    if (r.fileName === declFileName) {
-                        declFileCode = r.file.lines.join('\n');
-                    }
-                });
-
                 // AMD output
-                var amdResult = result.amdResult;
+                var amdResult = result.amd;
                 for (var i = 0; i < amdResult.errors.length; i++) {
                     errorDescriptionAsync += Harness.getFileName(amdResult.errors[i].file) + ' line ' + amdResult.errors[i].line + ' col ' + amdResult.errors[i].column + ': ' + amdResult.errors[i].message + '\r\n';
                 }
@@ -110,16 +105,17 @@ class CompilerBaselineRunner extends RunnerBase {
             // if the .d.ts is non-empty, confirm it compiles correctly as well
             if (this.decl && declFileCode) {
                 var declErrors = '';
-                // For single file tests we don't want the baseline file to be named 0.d.ts
-                var realDeclName = (lastUnit.name === '0.ts') ? justName.replace('.ts', '.d.ts') : declFileName;               
-                harnessCompiler.compileUnit(realDeclName, function (result) {
-                    var jsOutputSync = result.commonJSResult;
-                    for (var i = 0; i < jsOutputSync.errors.length; i++) {
-                        declErrors += jsOutputSync.errors[i].file + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
-                    }
-                });
+                var declFile = { unitName: declFileName, content: declFileCode };
+                harnessCompiler.compileFiles(
+                    [declFile],
+                    function (result) {
+                        var jsOutputSync = result.commonJS;
+                        for (var i = 0; i < jsOutputSync.errors.length; i++) {
+                            declErrors += jsOutputSync.errors[i].file + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
+                        }
+                    });
 
-                Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' compiles without error', realDeclName.replace(/\.ts/, '.errors.txt'), () => {
+                Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' compiles without error', declFileName.replace(/\.ts/, '.errors.txt'), () => {
                     return (declErrors === '') ? null : declErrors;
                 });
             }

@@ -1,13 +1,13 @@
 /// <reference path='fourslash.ts' />
 
-// @Filename: Definition.ts
+// @Filename: goToDefinitionDifferentFile_Definition.ts
 ////var /*remoteVariableDefinition*/remoteVariable;
 /////*remoteFunctionDefinition*/function remoteFunction() { }
 /////*remoteClassDefinition*/class remoteClass { }
 /////*remoteInterfaceDefinition*/interface remoteInterface{ }
 /////*remoteModuleDefinition*/module remoteModule{ export var foo = 1;}
 
-// @Filename: Consumption.ts
+// @Filename: goToDefinitionDifferentFile_Consumption.ts
 /////*remoteVariableReference*/remoteVariable = 1;
 /////*remoteFunctionReference*/remoteFunction();
 ////var foo = new /*remoteClassReference*/remoteClass();

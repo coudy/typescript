@@ -125,11 +125,43 @@ module FourSlash {
             // Initialize the language service with all the scripts
             this.languageServiceShimHost = new Harness.TypeScriptLS();
 
-            for (var i = 0; i < testData.files.length; i++) {
-                this.languageServiceShimHost.addScript(testData.files[i].fileName, testData.files[i].content);
+            var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
+            var inputFiles: { unitName: string; content: string }[] = [];
+            
+            testData.files.forEach(file => {
+                var fixedPath = file.fileName.substr(file.fileName.indexOf('tests/'));
+                harnessCompiler.registerFile(fixedPath, file.content);
+            });
+
+            // If the last unit contains require( or /// reference then consider it the only input file
+            // and the rest will be added via resolution. If not, then assume we have multiple files
+            // with 0 references in any of them. We could be smarter here to allow scenarios like
+            // 2 files without references and 1 file with a reference but we have 0 tests like that
+            // at the moment and an exhaustive search of the test files for that content could be quite slow.
+            var lastFile = testData.files[testData.files.length - 1];
+            if (/require\(/.test(lastFile.content) || /reference\spath/.test(lastFile.content)) {
+                inputFiles.push({ unitName: lastFile.fileName, content: lastFile.content });
+            } else {
+                inputFiles = testData.files.map(file => {
+                    return { unitName: file.fileName, content: file.content };
+                });
             }
 
+            harnessCompiler.addInputFiles(inputFiles);
+            var resolvedFiles = harnessCompiler.resolve();
+
+            resolvedFiles.forEach(file => {
+                if (file.path.indexOf('lib.d.ts') === -1) {
+                    var fixedPath = file.path.substr(file.path.indexOf('tests/'));
+                    var content = harnessCompiler.getContentForFile(fixedPath);
+                    this.languageServiceShimHost.addScript(fixedPath, content);
+                }
+            });
+
             this.languageServiceShimHost.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
+
+            // harness no longer needs the results of the above work, make sure the next test operations are in a clean state
+            harnessCompiler.reset();
 
             // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
@@ -172,6 +204,7 @@ module FourSlash {
         public openFile(name: string): void;
         public openFile(indexOrName: any) {
             var fileToOpen: FourSlashFile = this.findFile(indexOrName);
+            fileToOpen.fileName = switchToForwardSlashes(fileToOpen.fileName);
             this.activeFile = fileToOpen;
         }
 
@@ -660,7 +693,7 @@ module FourSlash {
         }
 
         private editCheckpoint(filename: string) {
-            // 
+            // TODO: What's this for? It is being called by deleteChar
             // this.languageService.getScriptLexicalStructure(filename);
         }
 
@@ -761,7 +794,6 @@ module FourSlash {
 
             // Handle formatting
             if (this.enableFormatting) {
-                // this.languageService.
                 var edits = this.languageService.getFormattingEditsOnPaste(this.activeFile.fileName, start, offset, this.formatCodeOptions);
                 offset += this.applyEdits(this.activeFile.fileName, edits, true);
                 this.editCheckpoint(this.activeFile.fileName);
@@ -1284,6 +1316,8 @@ module FourSlash {
                 }
             } else if (typeof indexOrName === 'string') {
                 var name = <string>indexOrName;
+                // names are stored in the compiler with this relative path, this allows people to use goTo.file on just the filename
+                name = name.indexOf('/') === -1 ? 'tests/cases/fourslash/' + name : name;
                 var availableNames: string[] = [];
                 var foundIt = false;
                 for (var i = 0; i < this.testData.files.length; i++) {
@@ -1347,7 +1381,7 @@ module FourSlash {
 
     export function runFourSlashTestContent(content: string, fileName: string) {
         // Parse out the files and their metadata
-        var testData = parseTestData(content);
+        var testData = parseTestData(content, fileName);
 
         assert.bugs(content);
 
@@ -1358,15 +1392,8 @@ module FourSlash {
             throw error;
         }
 
-        var mockFilename = 'file_0.ts';
-
         var result = '';
-        var tsFn = './tests/cases/fourslash/fourslash.ts';
-
-        // TODO: previously we set these two settings on the compiler:
-        //    settings.outputOption = "fourslash.js";
-        //    settings.resolve = true;
-        // but they appear to not affect test execution, are they still necessary? (I don't think resolve ever really worked)
+        var tsFn = 'tests/cases/fourslash/fourslash.ts';
 
         fsOutput.reset();
         fsErrors.reset();
@@ -1374,8 +1401,11 @@ module FourSlash {
         var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
         harnessCompiler.reset();
 
-        harnessCompiler.addInputFile(tsFn);
-        harnessCompiler.addInputFile(fileName);
+        var filesToAdd = [
+            { unitName: tsFn, content: IO.readFile(tsFn).contents },
+            { unitName: fileName, content: IO.readFile(fileName).contents }
+        ];
+        harnessCompiler.addInputFiles(filesToAdd);
         harnessCompiler.compile();
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
@@ -1403,6 +1433,7 @@ module FourSlash {
             throw err;
         } finally {
             assert.throwAssertError = oldThrowAssertError;
+            harnessCompiler.reset();
         }
     }
 
@@ -1417,7 +1448,7 @@ module FourSlash {
         return lines.map(s => s.substr(1)).join('\n');
     }
 
-    function parseTestData(contents: string): FourSlashData {
+    function parseTestData(contents: string, fileName: string): FourSlashData {
         // Regex for parsing options in the format "@Alpha: Value of any sort"
         var optionRegex = /^\s*@(\w+): (.*)\s*/;
 
@@ -1426,7 +1457,6 @@ module FourSlash {
         // Global options
         var opts = {};
         // Marker positions
-        var makeDefaultFilename = () => 'file_' + files.length + '.ts';
 
         // Split up the input file by line
         // Note: IE JS engine incorrectly handles consecutive delimiters here when using RegExp split, so
@@ -1439,7 +1469,7 @@ module FourSlash {
 
         // Stuff related to the subfile we're parsing
         var currentFileContent: string = null;
-        var currentFileName = makeDefaultFilename();
+        var currentFileName = fileName;
         var currentFileOptions = {};
 
         for (var i = 0; i < lines.length; i++) {
@@ -1472,12 +1502,30 @@ module FourSlash {
                         if (fileNameIndex === -1) {
                             throw new Error('Unrecognized metadata name "' + match[1] + '". Available global metadata names are: ' + globalMetadataNames.join(', ') + '; file metadata names are: ' + fileMetadataNames.join(', '));
                         } else {
+                            // Found an @Filename directive, if this is not the first then create a new subfile
+                            if (currentFileContent) {
+                                var file = parseFileContent(currentFileContent, currentFileName, markerMap, markers, ranges);
+                                file.fileOptions = currentFileOptions;
+
+                                // Store result file
+                                files.push(file);
+
+                                // Reset local data
+                                currentFileContent = null;
+                                currentFileOptions = {};
+                                currentFileName = fileName;
+                            }
+
+                            currentFileName = 'tests/cases/fourslash/' + match[2];
                             currentFileOptions[match[1]] = match[2];
                         }
                     } else {
                         opts[match[1]] = match[2];
                     }
                 }
+            } else if (line == '' || lineLength === 0) { 
+                // Previously blank lines between fourslash content caused it to be considered as 2 files,
+                // Remove this behavior since it just causes errors now
             } else {
                 // Empty line or code line, terminate current subfile if there is one
                 if (currentFileContent) {
@@ -1490,7 +1538,7 @@ module FourSlash {
                     // Reset local data
                     currentFileContent = null;
                     currentFileOptions = {};
-                    currentFileName = makeDefaultFilename();
+                    currentFileName = fileName;
                 }
             }
         }
@@ -1514,10 +1562,6 @@ module FourSlash {
         var errorMessage = fileName + "(" + line + "," + col + "): " + message;
         throw new Error(errorMessage);
     }
-
-    //function isValidSlashStarMarkerText(text: string): boolean {
-    //    return !!(text !== null && text.match(markerTextRegexp));
-    //}
 
     function recordObjectMarker(fileName: string, location: ILocationInformation, text: string, markerMap: MarkerMap, markers: Marker[]): Marker {
         var markerValue: any = undefined;

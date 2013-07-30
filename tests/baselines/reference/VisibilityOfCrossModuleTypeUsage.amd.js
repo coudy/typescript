@@ -1,3 +1,9 @@
+//visibilityOfCrossModuleTypeUsage
+define(["require", "exports"], function(require, exports) {
+    
+    
+});
+
 define(["require", "exports"], function(require, exports) {
     
     function run(configuration) {

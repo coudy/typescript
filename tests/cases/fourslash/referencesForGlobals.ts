@@ -2,7 +2,7 @@
 
 // Global variable reference.
 
-// @Filename: ReferencesForGlobals1.ts
+// @Filename: referencesForGlobals_1.ts
 ////var /*1*/global = 2;
 ////
 ////class foo {
@@ -22,7 +22,7 @@
 ////
 ////var k = global;
 
-// @Filename: ReferencesForGlobals2.ts
+// @Filename: referencesForGlobals_2.ts
 ////var m = global;
 
 goTo.marker("1");

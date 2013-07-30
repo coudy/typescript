@@ -2,7 +2,7 @@
 
 // Class references should work across file and not find local variables.
 
-// @Filename: ReferenceToClass1.ts
+// @Filename: referenceToClass_1.ts
 ////class foo/*1*/ {
 ////    public n: /*2*/foo;
 ////    public foo: number;
@@ -17,7 +17,7 @@
 ////    var k: foo = null;
 ////}
 
-// @Filename: ReferenceToClass2.ts
+// @Filename: referenceToClass_2.ts
 ////var k: /*4*/foo;
 
 goTo.marker("1");

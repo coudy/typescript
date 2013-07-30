@@ -4,10 +4,9 @@
 ////    public x: number;
 ////}
 ////
-////class Bar extends Foo {
-////    /*1*/public x: string;/*2*/
+////class /*1*/Bar/*2*/ extends Foo {
+////    public x: string;
 ////}
 
-//Bug 509554: Incorrect warning length
-//verify.errorExistsBetweenMarkers("1", "2");
-//verify.numberOfErrorsInCurrentFile(1);
+verify.errorExistsBetweenMarkers("1", "2");
+verify.numberOfErrorsInCurrentFile(1);

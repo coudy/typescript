@@ -9,10 +9,6 @@
 ////    } ,
 ////    doStuff: (z, callback) => { return callback(this.y); }
 ////}
-
-goTo.marker("1");
-verify.quickInfoIs("() => string", undefined, "y1", "property");
-
 ////var value = 3;
 ////class Foo {
 ////    static getRandomPosition() {
@@ -21,6 +17,9 @@ verify.quickInfoIs("() => string", undefined, "y1", "property");
 ////        }
 ////  }
 ////}
+
+goTo.marker("1");
+verify.quickInfoIs("() => string", undefined, "y1", "property");
 
 goTo.marker("2");
 verify.quickInfoIs("number");

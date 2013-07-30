@@ -767,8 +767,8 @@ module Harness {
             private compiler: TypeScript.TypeScriptCompiler;
             // updateSourceUnit is sufficient if an existing unit is updated, if a new unit is added we need to do a full typecheck
             private needsFullTypeCheck = true;
-            private fileNameToScriptSnapshot = new TypeScript.StringHashTable();
-            
+            private fileNameToScriptSnapshot = new TypeScript.StringHashTable<TypeScript.IScriptSnapshot>();
+
             constructor(useMinimalDefaultLib = true, noImplicitAny = false) {
                 this.useMinimalDefaultLib = useMinimalDefaultLib;
                 this.compiler = new TypeScript.TypeScriptCompiler();
@@ -777,7 +777,7 @@ module Harness {
                 this.compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
             }
 
-            private resolve() {
+            public resolve() {
                 var resolvedFiles: TypeScript.IResolvedFile[] = [];
 
                 // This is the branch that we want to use to ensure proper testing of file resolution, though there is an alternative
@@ -821,20 +821,28 @@ module Harness {
                 // Prepend the library to the resolved list
                 resolvedFiles = [libraryResolvedFile].concat(resolvedFiles);
 
-                this.resolvedFiles = resolvedFiles;
+                return resolvedFiles.map(file => {
+                    return <TypeScript.IResolvedFile>
+                        {
+                            path: switchToForwardSlashes(file.path),
+                            referencedFiles: file.referencedFiles,
+                            importedFiles: file.importedFiles
+                        }
+                    });
             }
 
+            /* Compile the current set of input files (if resolve = false) or trigger resolution and compile the resulting set of files */
             public compile(resolve = true) {
                 // TODO: unsure I actually need resolve = false for unit tests
                 var addScriptSnapshot = (path: string, referencedFiles?: string[]) => {
-                    var scriptSnapshot = this.getScriptSnapshot(path);
                     if (path.indexOf('lib.d.ts') === -1) {
+                        var scriptSnapshot = this.getScriptSnapshot(path);
                         this.compiler.addSourceUnit(path, scriptSnapshot, /*BOM*/ null, /*version:*/ 0, /*isOpen:*/ false, referencedFiles);
                     }
                 }
 
                 if (resolve) {
-                    this.resolve();
+                    this.resolvedFiles = this.resolve();
                     for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                         var resolvedFile = this.resolvedFiles[i];
                         addScriptSnapshot(resolvedFile.path, resolvedFile.referencedFiles);
@@ -850,17 +858,75 @@ module Harness {
                 if (this.needsFullTypeCheck) {
                     this.compiler.pullTypeCheck();
                     if (!resolve) {
-                        // TODO: not sure this is necessary anymore
                         this.compiler.resolveAllFiles();
                     }
                     this.needsFullTypeCheck = false;
                 }
                 else {
-                    // don't only use inputFiles in case someone has used addSourceUnit
                     this.getAllFilesInCompiler().forEach(file => {
                         this.compiler.updateSourceUnit(file, this.getScriptSnapshot(file), 0, true, null);
                     });
                 }
+            }
+
+            /* Compiles the provided files with file resolution enabled and the given compiler settings */
+            public compileFiles(
+                files: { unitName: string; content?: string }[],
+                onComplete: (compileResult: { commonJS: CompilerResult; amd: CompilerResult; }) => void,
+                settingsCallback?: (settings: TypeScript.CompilationSettings) => void
+                ) {
+                var restoreSavedCompilerSettings = this.saveCompilerSettings();
+                this.reset();
+
+                this.addInputFiles(files);
+
+                if (settingsCallback) {
+                    settingsCallback(this.compiler.settings);
+                    this.compiler.emitOptions = new TypeScript.EmitOptions(this.compiler.settings);
+                } else {
+                    this.compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                }
+
+                try {
+                    this.compile();
+
+                    this.reportCompilationErrors();
+                    var commonJSResult = new CompilerResult(stdout.toArray(), stderr.lines)
+                    var amdCompilerResult = this.emitCurrentCompilerContentsAsAMD();
+
+                    onComplete({ commonJS: commonJSResult, amd: amdCompilerResult });
+                } finally {
+                    if (settingsCallback) {
+                        restoreSavedCompilerSettings();
+                    }
+                }
+            }
+
+            /** Compiles a given piece of code with the provided unitName, skipping reference resolution. The compilation results are available to the provided callback in a CompilerResult object */
+            public compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void) {
+                this.reset();
+
+                var justName = getFileName(unitName);
+                this.fileNameToScriptSnapshot.add(justName, TypeScript.ScriptSnapshot.fromString(code));
+                var fileNames = this.getAllFilesInCompiler();
+                var updatedExistingFile = false;
+                for (var i = 0; i < fileNames.length; i++) {
+                    if (fileNames[i] === justName) {
+                        this.updateUnit(code, justName);
+                        updatedExistingFile = true;
+                    }
+                }
+
+                if (!updatedExistingFile) {
+                    this.compiler.addSourceUnit(justName, TypeScript.ScriptSnapshot.fromString(code), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, []);
+                    this.needsFullTypeCheck = true;
+                }
+
+                this.compile(false);
+
+                this.reportCompilationErrors();
+
+                callback(new CompilerResult(stdout.toArray(), stderr.lines));
             }
 
             public reset() {
@@ -879,16 +945,13 @@ module Harness {
 
                 this.deleteAllUnits();
 
-                // TODO: make sure we're actually re-using the existing lib.d.ts for perf savings
-                if (this.inputFiles) {
-                    this.inputFiles = this.inputFiles.filter(file => file.indexOf('lib.d.ts') > -1);
-                }
-                if (this.resolvedFiles) {
-                    this.resolvedFiles = this.resolvedFiles.filter(file => file.path.indexOf('lib.d.ts') > -1);
-                }
+                this.inputFiles = [];
+                this.resolvedFiles = [];
+                this.fileNameToScriptSnapshot = new TypeScript.StringHashTable<TypeScript.IScriptSnapshot>();
             }
+
             public getAllFilesInCompiler() {
-                return this.compiler.fileNameToDocument.getAllKeys();
+                return this.compiler.fileNameToDocument.getAllKeys().filter(file => file.indexOf('lib.d.ts') === -1);
             }
 
             public getDocumentFromCompiler(documentName: string) {
@@ -899,34 +962,33 @@ module Harness {
                 return this.compiler.pullGetTypeInfoAtPosition(targetPosition, document);
             }
 
-            /** Use only when you want to add a piece of code to the compiler without invoking reference resolution on it */
-            public addSourceUnit(code: string, unitName: string, isDeclareFile?: boolean, references?: string[]) {
-                this.needsFullTypeCheck = true;
-
-                var script: TypeScript.Script = null;
-                var uName = unitName || '0' + (isDeclareFile ? '.d.ts' : '.ts');
-
-                var fileNames = this.getAllFilesInCompiler();
-                for (var i = 0; i < fileNames.length; i++) {
-                    if (fileNames[i] === uName) {
-                        this.updateUnit(code, uName);
-                        script = this.getDocumentFromCompiler(fileNames[i]).script;
-                    }
-                }
-
-                if (!script) {
-                    var document = this.compiler.addSourceUnit(uName, TypeScript.ScriptSnapshot.fromString(code),
-                        ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, references);
-                    script = document.script;
-                    this.needsFullTypeCheck = true;
-                }
+            public getContentForFile(fileName: string) {
+                var snapshot: TypeScript.IScriptSnapshot = this.fileNameToScriptSnapshot.lookup(fileName)
+                return snapshot.getText(0, snapshot.getLength());
             }
 
-            /** Used for general purpose addition of code units, equivalent to adding the file to the command line list of files for a compilation */
-            public addInputFile(unitName: string) {
-                this.needsFullTypeCheck = true;
-                this.inputFiles.push(unitName);
+            /** Tell the compiler that a file with the given name and contents exist for resolution purposes.
+              * A multi-file test could have many sub parts which we want to resolve correctly but which are not
+              * input files. Now subfile1, which references subfile0, can be the only input file, and when resolution
+              * asks if subfile0 exists we can confirm that it does even though it is not on the file system itself.
+              * Should only be necessary when doing language service operations.
+              */
+            public registerFile(unitName: string, content: string) {
+                this.fileNameToScriptSnapshot.add(switchToForwardSlashes(unitName), TypeScript.ScriptSnapshot.fromString(content));
             }
+
+            /** The primary way to add test content. Functionally equivallent to adding files to the command line for a tsc invocation. */
+            public addInputFile(file: { unitName: string; content: string }) {
+                this.needsFullTypeCheck = true;
+                var normalizedName = switchToForwardSlashes(file.unitName);
+                this.inputFiles.push(normalizedName);
+                this.fileNameToScriptSnapshot.add(normalizedName, TypeScript.ScriptSnapshot.fromString(file.content));
+            }
+
+            /** The primary way to add test content. Functionally equivallent to adding files to the command line for a tsc invocation. */
+            public addInputFiles(files: { unitName: string; content: string }[]) {
+                files.forEach(file => this.addInputFile(file));
+            }           
 
             /** Updates an existing unit in the compiler with new code. */
             public updateUnit(code: string, unitName: string) {
@@ -951,31 +1013,12 @@ module Harness {
                 this.compiler.fileNameToDocument = newTable;
             }
 
-            public compileUnit(fileName: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void, references?: string[]) {
-                var restoreSavedCompilerSettings = this.saveCompilerSettings();
-
-                if (settingsCallback) {
-                    settingsCallback(this.compiler.settings);
-                    this.compiler.emitOptions = new TypeScript.EmitOptions(this.compiler.settings);
-                }
-
-                try {
-                    this.compileStringForCommonJSAndAMD(fileName, callback, references);
-                } finally {
-                    // If settingsCallback exists, assume that it modified the compiler instance's settings in some way.
-                    // So that a test doesn't have side effects for tests run after it, restore the compiler settings to their previous state.
-                    if (settingsCallback) {
-                        restoreSavedCompilerSettings();
-                    }
-                }
-            }
-
             public emitAll(ioHost: TypeScript.EmitterIOHost): TypeScript.Diagnostic[] {
                 return this.compiler.emitAll(ioHost);
             }
 
             /** If the compiler already contains the contents of interest, this will re-emit for AMD without re-adding or recompiling the current compiler units */
-            public emitCurrentCompilerContentsAsAMD() {
+            private emitCurrentCompilerContentsAsAMD() {
                 var oldModuleType = this.compiler.settings.moduleGenTarget;
                 this.compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
 
@@ -1029,51 +1072,7 @@ module Harness {
                 this.compiler.reportDiagnostics(emitDeclarationsDiagnostics, errorReporter);
 
                 return errorTarget.lines;
-            }
-
-            /** Compiles a given piece of code with the provided unitName, skipping reference resolution. The compilation results are available to the provided callback in a CompilerResult object */
-            public compileString(code: string, unitName: string, callback: (res: Compiler.CompilerResult) => void) {
-                this.reset();
-
-                var isDeclareFile = TypeScript.isDTSFile(unitName);
-                // for single file tests just add them as using the old '0.ts' naming scheme
-                //var uName = unitName ? unitName : isDeclareFile ? '0.d.ts' : '0.ts';
-                this.addSourceUnit(code, unitName, isDeclareFile);
-                this.compile(false);
-
-                this.reportCompilationErrors();
-
-                callback(new CompilerResult(stdout.toArray(), stderr.lines));
-            }
-
-            /** Compiles a given piece of code with the provided unitName and emits Javascript for both CommonJS and AMD. The compilation results are available to the provided callback in one CompilerResult object for each emit type */
-            public compileStringForCommonJSAndAMD(unitName: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void, references?: string[]) {
-                this.reset();
-
-                var isDeclareFile = TypeScript.isDTSFile(unitName);
-                var uName = unitName ? unitName : isDeclareFile ? '0.d.ts' : '0.ts';
-                this.addInputFile(uName);
-                this.compile();
-
-                this.reportCompilationErrors();
-                var commonJSResult = new CompilerResult(stdout.toArray(), stderr.lines)
-                var amdCompilerResult = this.emitCurrentCompilerContentsAsAMD();
-
-                callback(
-                    {
-                        commonJSResult: commonJSResult,
-                        amdResult: amdCompilerResult
-                    }
-                );
-            }
-
-            public compileFile(path: string, callback: (res: { commonJSResult: Compiler.CompilerResult; amdResult: Compiler.CompilerResult; }) => void , settingsCallback?: (settings?: TypeScript.CompilationSettings) => void, references?: string[]) {
-                path = switchToForwardSlashes(path);
-                var fileName = getFileName(path)[0];
-                var code = readFile(path).contents;
-
-                this.compileUnit(fileName, callback, settingsCallback, references);
-            }
+            }           
 
             /** Modify the given compiler's settings as specified in the test case settings.
              *  The caller of this function is responsible for saving the existing settings if they want to restore them to the original settings later.
@@ -1141,64 +1140,14 @@ module Harness {
 
             // IReferenceResolverHost methods
             getScriptSnapshot(filename: string): TypeScript.IScriptSnapshot {
-                var snapshot = this.fileNameToScriptSnapshot.lookup(filename);
+                // Expecting filename to be rooted at typescript\public\tests
+                var fixedPath = filename.substr(filename.indexOf('tests/'));
+                var snapshot = this.fileNameToScriptSnapshot.lookup(fixedPath);
                 if (!snapshot) {
-                    var fileContents: any = null;
-                    try {
-                        /* Cases we could be in:
-                           1. filename = a single file test, there will only be 1 unit made from the test
-                           2. filename = a multi-file test, there will be multiple units, and we will resolve the
-                                current filename to the last unit since all others will be resolved through a reference
-                           3. filename = the name of a sub-file in a multi-file test, ie someTestFile_A.ts where someTestFile.ts exists
-                                we'll read the real file the sub-file comes from and return the appropriate sub-unit
-                        */
-                        var justName = getFileName(filename);
-                        if (IO.fileExists(filename)) {
-                            var code = IO.readFile(filename).contents;
-                            var units = TestCaseParser.makeUnitsFromTest(code, filename);
-                            var lastUnit = units.testUnitData[units.testUnitData.length - 1];
-                            fileContents = lastUnit.content;
-                        }
-                        else if (justName.indexOf('_') !== -1) {
-                            // Only sub-files in a multi-file test should have _ in their name
-                            var filenameMatches = /_(\w*)*\./.exec(filename);
-                            var realFile = filename.replace(filenameMatches[0], '.');
-                            var code = IO.readFile(realFile).contents;
-                            var units = TestCaseParser.makeUnitsFromTest(code, realFile);
-                            for (var i = 0; i < units.testUnitData.length; i++) {
-                                var currentUnit = units.testUnitData[i];
-                                if (currentUnit.name === justName) {
-                                    fileContents = currentUnit.content;
-                                    break;
-                                }
-                            }
-                            if (!fileContents) {
-                                fileContents = '';
-                            }
-                        }
-                        else {
-                            // someone may have added the unit via addSourceUnit rather than as an input file
-                            var compilerFiles = this.getAllFilesInCompiler();
-                            for (var i = 0; i < compilerFiles.length; i++) {
-                                var file = compilerFiles[i];
-                                if (file == justName) {
-                                    fileContents = this.fileNameToScriptSnapshot.lookup(file);
-                                    break;
-                                }
-                            }
-                            if (!fileContents) {
-                                fileContents = IO.readFile(filename);
-                            }
-                        }
-                    }
-                    catch (e) {
-                        // TODO: add a useful diagnostic?
-                        //this.compiler.addDiagnostic(new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_read_file_0_1, [filename, e.message]));
-                        fileContents = e.message; // could be empty if we gave a real diagnostic
-                    }
-
-                    snapshot = TypeScript.ScriptSnapshot.fromString(fileContents);
-                    this.fileNameToScriptSnapshot.add(justName, snapshot);
+                    // TODO: add a useful diagnostic?
+                    //this.compiler.addDiagnostic(new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_read_file_0_1, [filename, e.message]));
+                    // fileContents = e.message; // could be empty if we gave a real diagnostic
+                    throw 'Could not find file: ' + filename;
                 }
 
                 return snapshot;
@@ -1224,29 +1173,11 @@ module Harness {
             }
 
             fileExists(path: string): boolean {
-                /* 1. path could be a real file:
-                 *  a. single file test
-                 *  b. multi-file test
-                 * 2. path could be a fake file, i.e., the name of a sub-file in a multi-file test in which case we'll just
-                 * double check that the associated real file does claim this sub-file exists
-                */
-                var justName = getFileName(path);
-                if (justName.indexOf('_') !== -1) {
-                    // only sub-files in multi-file tests should have _ in the name
-                    for(var i = 0; i < this.inputFiles.length; i++) {
-                        var file = this.inputFiles[i];
-                        var contents = IO.readFile(Harness.userSpecifiedroot + file).contents;
-                        var hasAdditionalFilenames = new RegExp('//\\s*@Filename:\\s*' + justName);
-                        if (hasAdditionalFilenames.test(contents)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-                else {
-                    return IO.fileExists(Harness.userSpecifiedroot + path);
-                }
+                var fixedPath = path.substr(path.indexOf('tests/'));
+                var result = this.fileNameToScriptSnapshot.lookup(fixedPath);
+                return (result !== null && result !== undefined);
             }
+
             directoryExists(path: string): boolean {
                 return IO.directoryExists(path);
             }
@@ -1695,7 +1626,7 @@ module Harness {
             }
 
             // normalize the fileName for the single file case
-            currentFileName = files.length > 0 ? currentFileName : '0.ts';
+            currentFileName = files.length > 0 ? currentFileName : getFileName(fileName);
 
             // EOF, push whatever remains
             var newTestFile2 = {

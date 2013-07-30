@@ -5,4 +5,4 @@
 
 goTo.marker();
 edit.deleteAtCaret('class Bar { }'.length);
-verify.navigationItemsListContains('Foo', 'enum', 'file_0.ts', '');
+verify.navigationItemsListContains('Foo', 'enum', 'tests/cases/fourslash/deleteClassWithEnumPresent.ts', '');

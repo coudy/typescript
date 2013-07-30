@@ -10,10 +10,13 @@ describe('Compiling samples', function ()
     }
 
     function addUnitsAndCompile(units: string[]) {
-        units.forEach(unit => {
-            var code = IO.readFile(Harness.userSpecifiedroot + "samples/" + unit).contents;
-            harnessCompiler.addInputFile(unit);
+        var filesToAdd = units.map(unit => {
+            return {
+                unitName: unit,
+                content: IO.readFile(Harness.userSpecifiedroot + "samples/" + unit).contents
+            };
         });
+        harnessCompiler.addInputFiles(filesToAdd);
         harnessCompiler.compile();
     }
 

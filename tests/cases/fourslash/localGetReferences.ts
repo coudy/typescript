@@ -1,6 +1,6 @@
 /// <reference path='fourslash.ts'/>
 
-// @Filename: LocalGetReferences1.ts
+// @Filename: localGetReferences_1.ts
 ////// Comment Refence Test: g/*1*/lobalVar
 ////var g/*3*/lobalVar: n/*2*/umber = 2;
 ////
@@ -118,7 +118,7 @@
 ////
 ////});
 
-// @Filename: LocalGetReferences2.ts
+// @Filename: localGetReferences_2.ts
 ////var remoteglobalVar: number = 2;
 ////
 ////class remotefooCls {
@@ -218,7 +218,7 @@ goTo.marker("10");
 verify.referencesCountIs(11);
 
 // References to illegal assignment.
-goTo.marker("11");debugger;
+goTo.marker("11");
 verify.referencesCountIs(7);
 
 // References to unresolved symbol.

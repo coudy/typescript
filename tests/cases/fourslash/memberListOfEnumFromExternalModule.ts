@@ -1,13 +1,13 @@
 /// <reference path='fourslash.ts' />
 
-//@file_0.ts
+// @Filename: memberListOfEnumFromExternalModule_file0.ts
 ////export enum Topic{ One, Two }
 ////var topic = Topic.One;
 
-//@file_1.ts
-////import t = require('file_0');
+// @Filename: memberListOfEnumFromExternalModule_file1.ts
+////import t = require('memberListOfEnumFromExternalModule_file0');
 ////var topic = t.Topic./*1*/
 
-goTo.file("file_1.ts");
+goTo.file("memberListOfEnumFromExternalModule_file1.ts");
 goTo.marker('1');
 verify.memberListContains("One");

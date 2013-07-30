@@ -3,6 +3,5 @@
 ////"a"./**/
 
 goTo.marker();
-debugger;
 verify.not.memberListContains('alert');
-//verify.memberListContains('charAt');
+verify.memberListContains('charAt');
