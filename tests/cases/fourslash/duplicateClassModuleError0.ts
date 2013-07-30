@@ -1,5 +1,4 @@
-//bug 703465: retyper: Full type check doesn't error on duplicate class in re-opened module
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// module A
 //// {
@@ -23,4 +22,4 @@ goTo.marker("1");
 
 edit.insert("    export class B\n    {\n        public Hello(): string\n        {\n            return \"from export B\";\n        }\n    }\n");
 
-//edit.insert("\n");
+edit.insert("\n");
