@@ -3342,8 +3342,8 @@ module TypeScript {
                 this.resolveAST((<UnaryExpression>ast).operand, false, enclosingDecl, context);
             }
 
-            this.setSymbolForAST(ast, this.semanticInfoChain.voidTypeSymbol, context);
-            return this.semanticInfoChain.voidTypeSymbol;
+            this.setSymbolForAST(ast, this.semanticInfoChain.undefinedTypeSymbol, context);
+            return this.semanticInfoChain.undefinedTypeSymbol;
         }
 
         private resolveLogicalOperation(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4275,7 +4275,9 @@ module TypeScript {
             }
 
             // We don't want to capture an intermediate 'any' from a recursive resolution
-            if (nameSymbol && (nameSymbol.type != this.semanticInfoChain.anyTypeSymbol || nameSymbol.hasFlag(PullElementFlags.IsAnnotatedWithAny))/*&& !nameSymbol.inResolution*/) {
+            if (nameSymbol &&
+                (nameSymbol.type != this.semanticInfoChain.anyTypeSymbol ||
+                    nameSymbol.hasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !nameSymbol.inResolution*/) {
                 this.setSymbolForAST(nameAST, nameSymbol, context);
             }
 
@@ -4370,7 +4372,9 @@ module TypeScript {
                 this.resolveDeclaredSymbol(symbol, enclosingDecl, context);
             }
 
-            if (symbol && (symbol.type != this.semanticInfoChain.anyTypeSymbol || symbol.hasFlag(PullElementFlags.IsAnnotatedWithAny))/*&& !symbol.inResolution*/) {
+            if (symbol &&
+                (symbol.type != this.semanticInfoChain.anyTypeSymbol ||
+                    symbol.hasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !symbol.inResolution*/) {
                 this.setSymbolForAST(dottedNameAST, symbol, context);
                 this.setSymbolForAST(dottedNameAST.operand2, symbol, context);
             }
