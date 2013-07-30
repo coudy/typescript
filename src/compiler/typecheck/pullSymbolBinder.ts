@@ -533,7 +533,6 @@ module TypeScript {
 
             var typeParameters = classDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             // PULLREVIEW: Now that we clean type parameters, searching is redundant
             for (var i = 0; i < typeParameters.length; i++) {
@@ -547,9 +546,7 @@ module TypeScript {
                     constructorTypeSymbol.addConstructorTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
@@ -683,7 +680,6 @@ module TypeScript {
 
             var typeParameters = objectDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -695,9 +691,7 @@ module TypeScript {
                     objectSymbol.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
@@ -735,7 +729,6 @@ module TypeScript {
 
             var typeParameters = constructorTypeDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -747,9 +740,7 @@ module TypeScript {
                     constructorTypeSymbol.addConstructorTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
@@ -1287,7 +1278,6 @@ module TypeScript {
 
             var typeParameters = functionDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -1299,9 +1289,7 @@ module TypeScript {
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
@@ -1356,7 +1344,6 @@ module TypeScript {
 
             var typeParameters = functionExpressionDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -1368,9 +1355,7 @@ module TypeScript {
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
@@ -1411,7 +1396,6 @@ module TypeScript {
 
             var typeParameters = functionTypeDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -1423,7 +1407,7 @@ module TypeScript {
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
@@ -1515,7 +1499,6 @@ module TypeScript {
 
             var typeParameters = methodDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
             var typeParameterName: string;
             var typeParameterAST: TypeParameter;
 
@@ -1543,9 +1526,7 @@ module TypeScript {
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
@@ -1673,7 +1654,6 @@ module TypeScript {
 
             var typeParameters = constructSignatureDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -1685,9 +1665,7 @@ module TypeScript {
                     constructSignature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
@@ -1718,7 +1696,6 @@ module TypeScript {
 
             var typeParameters = callSignatureDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -1730,9 +1707,7 @@ module TypeScript {
                     callSignature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
@@ -1758,7 +1733,6 @@ module TypeScript {
 
             var typeParameters = indexSignatureDeclaration.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
-            var typeParameterDecls: PullDecl[] = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
 
@@ -1770,9 +1744,7 @@ module TypeScript {
                     indexSignature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterDecls = typeParameter.getDeclarations();
-
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
