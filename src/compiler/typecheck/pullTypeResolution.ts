@@ -1322,6 +1322,27 @@ module TypeScript {
 
                         var parentConstructSignature: PullSignatureSymbol;
                         var parentParameters: PullSymbol[];
+
+                        if (!parentConstructSignatures.length) {
+                            // If neither we nor our parent have a construct signature then we've entered this call recursively,
+                            // so just create the parent's constructor now rather than later.
+                            // (We'll have begun resolving this symbol because of the call to resolveReferenceTypeDeclaration above, so this
+                            // is safe to do here and now.)
+
+                            parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                            parentConstructSignature.returnType = parentClass;
+                            parentConstructorType.addConstructSignature(parentConstructSignature);
+                            parentConstructSignature.addDeclaration(parentClass.getDeclarations()[0]);
+
+                            var parentTypeParameters = parentConstructorType.getTypeParameters();
+
+                            for (var i = 0; i < parentTypeParameters.length; i++) {
+                                parentConstructSignature.addTypeParameter(parentTypeParameters[i]);
+                            }
+
+                            parentConstructSignatures = [parentConstructSignature];
+                        }
+
                         for (var i = 0; i < parentConstructSignatures.length; i++) {
                             // create a new signature for each parent constructor   
                             parentConstructSignature = parentConstructSignatures[i];
@@ -4734,6 +4755,20 @@ module TypeScript {
             if (typeArgs.length && typeArgs.length != typeParameters.length) {
                 context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Generic_type_0_requires_1_type_argument_s, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]);
                 return this.getNewErrorTypeSymbol();
+            }
+
+            // if the generic type symbol is not resolved, we need to ensure that all of its members are bound before specializing
+            if (!genericTypeSymbol.isResolved) {
+                var typeDecls = genericTypeSymbol.getDeclarations();
+                var childDecls: PullDecl[] = null;
+
+                for (var i = 0; i < typeDecls.length; i++) {
+                    childDecls = typeDecls[i].getChildDecls();
+
+                    for (var j = 0; j < childDecls.length; j++) {
+                        childDecls[j].ensureSymbolIsBound();
+                    }
+                }
             }
 
             var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
