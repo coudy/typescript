@@ -4875,7 +4875,7 @@ declare var Event: {
 
 interface ImageData {
     width: number;
-    data: number[];
+    data: Uint8Array;
     height: number;
 }
 declare var ImageData: {
