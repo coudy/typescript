@@ -239,14 +239,6 @@ opts.flag('fourslash-generated', {
     }
 });
 
-// for running fourslash tests written against 0.8.3 in the fourslash_old directory
-opts.option('fourslash-all', {
-    experimental: true,
-    set: function (str) {
-        runners.push(new FourslashRunner('all'));
-    }
-});
-
 opts.flag('unittests', {
     set: function () {
         runners.push(new UnitTestRunner('compiler'));
@@ -310,7 +302,6 @@ opts.option('iterations', {
 
 // For running only compiler baselines with specific options like emit, decl files, etc
 opts.flag('compiler-baselines', {
-    experimental: true,
     set: function (str) {
         var runner = new CompilerBaselineRunner();
         runner.options = str;

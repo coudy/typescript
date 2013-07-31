@@ -760,7 +760,7 @@ module Harness {
         export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts").contents : '';
 
         /** This is the harness's own version of the batch compiler that encapsulates state about resolution */
-        export class HarnessCompiler implements TypeScript.IReferenceResolverHost {
+        export class HarnessCompiler implements TypeScript.IReferenceResolverHost, TypeScript.IDiagnosticReporter {
             private inputFiles: string[] = [];
             private resolvedFiles: TypeScript.IResolvedFile[] = [];
             private useMinimalDefaultLib: boolean;
@@ -768,11 +768,14 @@ module Harness {
             // updateSourceUnit is sufficient if an existing unit is updated, if a new unit is added we need to do a full typecheck
             private needsFullTypeCheck = true;
             private fileNameToScriptSnapshot = new TypeScript.StringHashTable<TypeScript.IScriptSnapshot>();
-
+            public errout = new Harness.Compiler.WriterAggregator();
+            public stdout = new Harness.Compiler.EmitterIOHost();
             constructor(useMinimalDefaultLib = true, noImplicitAny = false) {
                 this.useMinimalDefaultLib = useMinimalDefaultLib;
                 this.compiler = new TypeScript.TypeScriptCompiler();
                 this.compiler.settings = makeDefaultCompilerSettings(useMinimalDefaultLib, noImplicitAny);
+                this.compiler.emitOptions.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                this.compiler.emitOptions.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
                 var libCode = useMinimalDefaultLib ? Compiler.libTextMinimal : Compiler.libText;
                 this.compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
             }
@@ -786,9 +789,8 @@ module Harness {
                     var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compiler.settings);
                     resolvedFiles = resolutionResults.resolvedFiles;
 
-                    // TODO: make HarnessCompiler implement TypeScript.IDiagnosticReporter so resolution errors are reported here
                     for (var i = 0, n = resolutionResults.diagnostics.length; i < n; i++) {
-                        //this.compiler.addDiagnostic(resolutionResults.diagnostics[i]);
+                        this.addDiagnostic(resolutionResults.diagnostics[i]);
                     }
                 }
                 else {
@@ -891,7 +893,7 @@ module Harness {
                     this.compile();
 
                     this.reportCompilationErrors();
-                    var commonJSResult = new CompilerResult(stdout.toArray(), stderr.lines)
+                    var commonJSResult = new CompilerResult(this.stdout.toArray(), this.errout.lines)
                     var amdCompilerResult = this.emitCurrentCompilerContentsAsAMD();
 
                     onComplete({ commonJS: commonJSResult, amd: amdCompilerResult });
@@ -907,7 +909,12 @@ module Harness {
                 this.reset();
 
                 var justName = getFileName(unitName);
-                this.fileNameToScriptSnapshot.add(justName, TypeScript.ScriptSnapshot.fromString(code));
+                if (justName.indexOf('.ts') === -1) {
+                    justName += '.ts';
+                }
+
+                this.registerFile(justName, code);
+                this.inputFiles.push(justName);
                 var fileNames = this.getAllFilesInCompiler();
                 var updatedExistingFile = false;
                 for (var i = 0; i < fileNames.length; i++) {
@@ -926,12 +933,12 @@ module Harness {
 
                 this.reportCompilationErrors();
 
-                callback(new CompilerResult(stdout.toArray(), stderr.lines));
+                callback(new CompilerResult(this.stdout.toArray(), this.errout.lines));
             }
 
             public reset() {
-                stdout.reset();
-                stderr.reset();
+                this.stdout.reset();
+                this.errout.reset();
                 var files = this.getAllFilesInCompiler();
                 
                 for (var i = 0; i < files.length; i++) {
@@ -951,6 +958,8 @@ module Harness {
             }
 
             public getAllFilesInCompiler() {
+                // returns what's actually in the compiler, not the contents of this.fileNameToSriptSnapshot because the latter
+                // really means what's 'on the filesystem' not in compiler
                 return this.compiler.fileNameToDocument.getAllKeys().filter(file => file.indexOf('lib.d.ts') === -1);
             }
 
@@ -1013,8 +1022,9 @@ module Harness {
                 this.compiler.fileNameToDocument = newTable;
             }
 
-            public emitAll(ioHost: TypeScript.EmitterIOHost): TypeScript.Diagnostic[] {
-                return this.compiler.emitAll(ioHost);
+            public emitAll(ioHost?: TypeScript.EmitterIOHost): TypeScript.Diagnostic[]{
+                var host = typeof ioHost === "undefined" ? this.stdout : ioHost;
+                return this.compiler.emitAll(host);
             }
 
             /** If the compiler already contains the contents of interest, this will re-emit for AMD without re-adding or recompiling the current compiler units */
@@ -1022,11 +1032,11 @@ module Harness {
                 var oldModuleType = this.compiler.settings.moduleGenTarget;
                 this.compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
 
-                stdout.reset();
-                stderr.reset();
-                this.compiler.emitAll(stdout);
+                this.stdout.reset();
+                this.errout.reset();
+                this.compiler.emitAll(this.stdout);
                 this.compiler.emitAllDeclarations();
-                var result = new CompilerResult(stdout.toArray(), stderr.lines);
+                var result = new CompilerResult(this.stdout.toArray(), this.errout.lines);
 
                 this.compiler.settings.moduleGenTarget = oldModuleType;
                 return result;
@@ -1043,33 +1053,20 @@ module Harness {
                     }
                 });
 
-                var errorTarget = (typeof errAggregator == "undefined") ? stderr : errAggregator;
-                var errorReporter = {
-                    addDiagnostic: (diagnostic: TypeScript.Diagnostic) => {
-                        if (diagnostic.fileName()) {
-                            var document = this.getDocumentFromCompiler(diagnostic.fileName());
-                            var lineCol = { line: -1, character: -1 };
-                            document.lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
-                            errorTarget.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): ");
-                        }
-
-                        errorTarget.WriteLine(diagnostic.message());
-                    }
-                };
-
+                var errorTarget = (typeof errAggregator == "undefined") ? this.errout : errAggregator;
                 units.forEach(u => {
                     var syntacticDiagnostics = this.compiler.getSyntacticDiagnostics(u);
-                    this.compiler.reportDiagnostics(syntacticDiagnostics, errorReporter);
+                    this.compiler.reportDiagnostics(syntacticDiagnostics, this);
 
                     var semanticDiagnostics = this.compiler.getSemanticDiagnostics(u);
-                    this.compiler.reportDiagnostics(semanticDiagnostics, errorReporter);
+                    this.compiler.reportDiagnostics(semanticDiagnostics, this);
                 });
 
-                var emitDiagnostics = this.emitAll(stdout);
-                this.compiler.reportDiagnostics(emitDiagnostics, errorReporter);
+                var emitDiagnostics = this.emitAll(this.stdout);
+                this.compiler.reportDiagnostics(emitDiagnostics, this);
 
                 var emitDeclarationsDiagnostics = this.compiler.emitAllDeclarations();
-                this.compiler.reportDiagnostics(emitDeclarationsDiagnostics, errorReporter);
+                this.compiler.reportDiagnostics(emitDeclarationsDiagnostics, this);
 
                 return errorTarget.lines;
             }           
@@ -1141,13 +1138,11 @@ module Harness {
             // IReferenceResolverHost methods
             getScriptSnapshot(filename: string): TypeScript.IScriptSnapshot {
                 // Expecting filename to be rooted at typescript\public\tests
-                var fixedPath = filename.substr(filename.indexOf('tests/'));
+                var idx = filename.indexOf('tests/'); // idx is -1 for tests using compileString and samples
+                var fixedPath = filename.substr(idx === -1 ? 0 : idx);
                 var snapshot = this.fileNameToScriptSnapshot.lookup(fixedPath);
                 if (!snapshot) {
-                    // TODO: add a useful diagnostic?
-                    //this.compiler.addDiagnostic(new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_read_file_0_1, [filename, e.message]));
-                    // fileContents = e.message; // could be empty if we gave a real diagnostic
-                    throw 'Could not find file: ' + filename;
+                    this.addDiagnostic(new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_read_file_0_1, [filename, '']));
                 }
 
                 return snapshot;
@@ -1173,7 +1168,8 @@ module Harness {
             }
 
             fileExists(path: string): boolean {
-                var fixedPath = path.substr(path.indexOf('tests/'));
+                var idx = path.indexOf('tests/');
+                var fixedPath = path.substr(idx === -1 ? 0 : idx);
                 var result = this.fileNameToScriptSnapshot.lookup(fixedPath);
                 return (result !== null && result !== undefined);
             }
@@ -1184,10 +1180,23 @@ module Harness {
             getParentDirectory(path: string): string {
                 return IO.dirName(path);
             }
-        }
 
-        var stdout = new EmitterIOHost();
-        var stderr = new WriterAggregator();        
+            // IDiagnosticReporter
+            addDiagnostic(diagnostic: TypeScript.Diagnostic) {
+                if (diagnostic.fileName()) {
+                    var scriptSnapshot = this.getScriptSnapshot(diagnostic.fileName());
+                    if (scriptSnapshot) {
+                        var lineMap = new TypeScript.LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
+                        var lineCol = { line: -1, character: -1 };
+                        lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
+                        this.errout.Write(diagnostic.fileName() + "(" + (lineCol.line + 1) + "," + (lineCol.character + 1) + "): ");
+                    }
+                }
+
+                this.errout.WriteLine(diagnostic.message());
+            }
+
+        }
 
         export function makeDefaultCompilerSettings(useMinimalDefaultLib = true, noImplicitAny = false) {
             var settings = new TypeScript.CompilationSettings();
@@ -1494,7 +1503,7 @@ module Harness {
                         this.errors.push(new CompilerError(match[1], parseFloat(match[2]), parseFloat(match[3]), match[4]));
                     }
                     else {
-                        WScript.Echo("non-match on: " + errorLines[i]);
+                        IO.printLine("non-match on: " + errorLines[i]);
                     }
                 }
 
@@ -2186,7 +2195,7 @@ module Harness {
         }
     }
 
-    if (Error) (<any>Error).stackTraceLimit = 100;
+    if (Error) (<any>Error).stackTraceLimit = 1;
 
     var currentRun = new Run();
 

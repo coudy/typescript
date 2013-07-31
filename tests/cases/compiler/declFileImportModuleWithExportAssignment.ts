@@ -14,7 +14,8 @@ module m2 {
 var m2: {
     (): m2.connectExport;
     test1: m2.connectModule;
-    test2(): m2.connectModule;
+    // BUG 750502
+    //test2(): m2.connectModule;
 };
 export = m2;
 

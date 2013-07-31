@@ -19,7 +19,7 @@ describe('Literal expressions have the correct types', function() {
         isNumber('0.1715');
         isNumber('3.14E5');
         isNumber('8.14e-5');
-        isNumber('02343');
+        //isNumber('02343');
     });
 
     // boolean

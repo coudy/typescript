@@ -21,7 +21,6 @@ declare module m2 {
 }
 declare var m2: {
     test1: m2.connectModule;
-    test2(): m2.connectModule;
     (): m2.connectExport;
 };
 export = m2;
@@ -31,6 +30,5 @@ export = m2;
 import a1 = require("declFileImportModuleWithExportAssignment_0");
 export declare var a: {
     test1: a1.connectModule;
-    test2(): a1.connectModule;
     (): a1.connectExport;
 };

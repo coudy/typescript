@@ -50,8 +50,13 @@ class CompilerBaselineRunner extends RunnerBase {
             // a fresh compiler instance for themselves and then create a fresh one for the next test. Would be nice to get dev fixes
             // eventually to remove this limitation.
             for (var i = 0; i < tcSettings.length; ++i) {
-                if (tcSettings[i].flag == "noimplicitany" || tcSettings[i].flag === "target") {
+                if (tcSettings[i].flag == "noimplicitany") {
                     Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, true /*noImplicitAny*/);
+                    harnessCompiler.setCompilerSettings(tcSettings);
+                    createNewInstance = true;
+                    break;
+                } else if (tcSettings[i].flag === 'target') {
+                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, false /*noImplicitAny*/);
                     harnessCompiler.setCompilerSettings(tcSettings);
                     createNewInstance = true;
                     break;
@@ -107,13 +112,14 @@ class CompilerBaselineRunner extends RunnerBase {
             if (this.decl && declFilesCode) {
                 var declErrors = '';
                 declFilesCode.forEach(file => {
-                    var declFile = { unitName: file.fileName, content: file.code };
+                    // don't want to use the fullpath for the unitName or the file won't be resolved correctly
+                    var declFile = { unitName: 'tests/cases/compiler/' + Harness.getFileName(file.fileName), content: file.code };
                     harnessCompiler.compileFiles(
                         [declFile],
                         function (result) {
                             var jsOutputSync = result.commonJS;
                             for (var i = 0; i < jsOutputSync.errors.length; i++) {
-                                declErrors += jsOutputSync.errors[i].file + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
+                                declErrors += Harness.getFileName(jsOutputSync.errors[i].file) + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
                             }
                         });
 

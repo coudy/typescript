@@ -1,5 +1,9 @@
 ///<reference path="..\..\..\..\src\harness\harness.ts" />
 
+describe("Setup compiler for samples", () => {
+    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+});
+
 describe('Compiling samples', function ()
 {
     var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
@@ -12,8 +16,8 @@ describe('Compiling samples', function ()
     function addUnitsAndCompile(units: string[]) {
         var filesToAdd = units.map(unit => {
             return {
-                unitName: unit,
-                content: IO.readFile(Harness.userSpecifiedroot + "samples/" + unit).contents
+                unitName: 'tests/cases/unittests/samples/' + unit,
+                content: loadSample(unit)
             };
         });
         harnessCompiler.addInputFiles(filesToAdd);
@@ -24,13 +28,14 @@ describe('Compiling samples', function ()
     it('compiles the d3 sample without error', function ()
     {
         // clean the world before our first sample runs
-        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-        harnessCompiler.reset();
+        //Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+        //harnessCompiler.reset();
 
         var units = ["d3/data.ts", "d3/d3.d.ts"];
         addUnitsAndCompile(units);
         var errLines = harnessCompiler.reportCompilationErrors();
         assert.equal(errLines.length, 0);
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
     });
 
     // greeter
@@ -53,7 +58,7 @@ describe('Compiling samples', function ()
         assert.equal(errLines.length, 0);
     });
 
-    // interfaces
+    //// interfaces
     it('compiles the interfaces sample without error', function ()
     {
         var interfaces = loadSample("interfaces/interfaces.ts");
@@ -71,6 +76,7 @@ describe('Compiling samples', function ()
     // jquery
     it('compiles the jquery sample without error', function ()
     {
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
         var units = ["jquery/parallax.ts", "jquery/jquery.d.ts"];
         addUnitsAndCompile(units);
         var errLines = harnessCompiler.reportCompilationErrors();
@@ -80,7 +86,7 @@ describe('Compiling samples', function ()
     // mankala
     it('compiles the mankala sample without error', function ()
     {
-        var units = ["mankala/Base.ts", "mankala/Driver.ts", "mankala/Features.ts", "mankala/Game.ts", "mankala/geometry.ts", "mankala/Position.ts" ];
+        var units = ["mankala/Base.ts", "mankala/Driver.ts", "mankala/Features.ts", "mankala/Game.ts", "mankala/Geometry.ts", "mankala/Position.ts" ];
         addUnitsAndCompile(units);
         var errLines = harnessCompiler.reportCompilationErrors();
         assert.equal(errLines.length, 0);
@@ -91,7 +97,7 @@ describe('Compiling samples', function ()
     {
         var units = ["node/HttpServer.ts", "node/node.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
+        var errLines = harnessCompiler.reportCompilationErrors();        
         assert.equal(errLines.length, 0);
     });
 
@@ -144,32 +150,36 @@ describe('Compiling samples', function ()
         addUnitsAndCompile(units);
         var errLines = harnessCompiler.reportCompilationErrors();
         assert.equal(errLines.length, 0);
+        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+        harnessCompiler.reset();  
     });
 
     // win8
-    it('compiles the win8 sample without error', function ()
-    {
-       var units = [
-           "../typings/winrt.d.ts",
-           "../typings/winjs.d.ts",
-           "win8/encyclopedia/Encyclopedia/js/data.ts",
-           "win8/encyclopedia/Encyclopedia/js/default.ts",
-           "win8/encyclopedia/Encyclopedia/js/groupDetailPage.ts",
-           "win8/encyclopedia/Encyclopedia/js/groupedItemsPage.ts",
-           "win8/encyclopedia/Encyclopedia/js/itemDetailPage.ts",
-           "win8/encyclopedia/Encyclopedia/js/navigator.ts",
-           "win8/encyclopedia/Encyclopedia/js/topic.ts",
-           "win8/encyclopedia/Encyclopedia/js/win.ts"
-       ]
+    //it('compiles the win8 sample without error', function ()
+    //{
+    //   var units = [
+    //       "../typings/winrt.d.ts",
+    //       "../typings/winjs.d.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/data.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/default.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/groupDetailPage.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/groupedItemsPage.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/itemDetailPage.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/navigator.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/topic.ts",
+    //       "win8/encyclopedia/Encyclopedia/js/win.ts"
+    //   ]
 
-       Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-       harnessCompiler.reset();       
+    //   Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+    //   harnessCompiler.reset();       
 
-       addUnitsAndCompile(units);
-       var errLines = harnessCompiler.reportCompilationErrors();
-       // if (errLines.length) {
-       //  WScript.Echo("Errors: " + errLines);
-       // }       
-       assert.equal(errLines.length, 0);
-    });
+    //   addUnitsAndCompile(units);
+    //    var errLines = harnessCompiler.reportCompilationErrors();     
+    //    errLines.forEach(err => IO.printLine(err);
+    //   assert.equal(errLines.length, 0);
+    //});
+});
+
+describe("Clean up samples", () => {
+    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true);
 });
