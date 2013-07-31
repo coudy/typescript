@@ -7002,7 +7002,7 @@ module TypeScript {
                     return this.symbolsShareDeclaration(t1, t2);
                 }
                 else {
-                    return true;
+                    return false;
                 }
             }
 

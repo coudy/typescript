@@ -2601,7 +2601,7 @@ module TypeScript {
 
                 substitution = specializeType(typesToReplace[i], null, resolver, enclosingDecl, context, ast);
 
-                typeArguments[i] = substitution != null ? substitution : typesToReplace[i];
+                typeArguments[i] = (substitution != null && !resolver.typesAreIdentical(typesToReplace[i], substitution)) ? substitution : typesToReplace[i];
             }
             
             newType = rootType.getSpecialization(typeArguments);            
