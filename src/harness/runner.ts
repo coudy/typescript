@@ -309,7 +309,7 @@ opts.option('iterations', {
 });
 
 // For running only compiler baselines with specific options like emit, decl files, etc
-opts.option('compiler-baselines', {
+opts.flag('compiler-baselines', {
     experimental: true,
     set: function (str) {
         var runner = new CompilerBaselineRunner();
