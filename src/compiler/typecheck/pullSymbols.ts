@@ -2481,7 +2481,8 @@ module TypeScript {
 
         var searchForExistingSpecialization = typeArguments != null;
 
-        if (typeArguments === null || (context.specializingToAny && typeArguments.length)) {
+        // if a base-type conflict exists, specialization may probe unpredictable, so we'll substitute in 'any'
+        if (typeArguments === null || (context.specializingToAny && typeArguments.length) || typeToSpecialize.hasBaseTypeConflict()) {
             typeArguments = [];
         }
 
