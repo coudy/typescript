@@ -59432,7 +59432,6 @@ var Services;
         LanguageService.prototype.refresh = function () {
             var _this = this;
             TypeScript.timeFunction(this.logger, "refresh()", function () {
-                _this.activeCompletionSession = null;
                 _this.compilerState.refresh();
             });
         };
