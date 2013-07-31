@@ -4487,14 +4487,30 @@ module TypeScript {
             if (this.isPrototypeMember(dottedNameAST, enclosingDecl, context)) {
                 if (lhsType.isClass()) {
                     this.checkForStaticMemberAccess(dottedNameAST, lhsType, lhsType, enclosingDecl, context);
+
+                    if (lhsType.isGeneric()) {
+                        return this.specializeTypeToAny(lhsType, enclosingDecl, context);
+                    }
+
                     return lhsType;
                 }
                 else {
-                    var classInstanceType = lhsType.getAssociatedContainerType();
 
-                    if (classInstanceType && classInstanceType.isClass()) {
-                        this.checkForStaticMemberAccess(dottedNameAST, lhsType, classInstanceType, enclosingDecl, context);
-                        return classInstanceType;
+                    var instanceType = lhsType.getAssociatedContainerType();
+
+                    if (instanceType) {
+                        if (instanceType.isGeneric()) {
+                            instanceType = this.specializeTypeToAny(instanceType, enclosingDecl, context);
+                        }
+                    }
+                    else {
+                        instanceType = lhsType;
+                    }
+
+                    if (instanceType && instanceType.isClass()) {
+                        this.checkForStaticMemberAccess(dottedNameAST, lhsType, instanceType, enclosingDecl, context);
+
+                        return instanceType;
                     }
                 }
             }

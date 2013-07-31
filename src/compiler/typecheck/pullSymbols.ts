@@ -3072,6 +3072,8 @@ module TypeScript {
 
             newConstructorMethod.setRootSymbol(constructorMethod);
 
+            newConstructorType.setAssociatedContainerType(newType);
+
             newType.setConstructorMethod(newConstructorMethod);
         }
 
