@@ -783,6 +783,11 @@ module TypeScript {
                     prototypeDecl.setParentDecl(parentDecl);
                     prototypeSymbol.addDeclaration(prototypeDecl);
                     prototypeSymbol.type = lhsType.getAssociatedContainerType();
+
+                    if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
+                        prototypeSymbol.type = this.specializeTypeToAny(prototypeSymbol.type, enclosingDecl, context);
+                    }
+
                     prototypeSymbol.isResolved = true;
                     members.push(prototypeSymbol);
                 }
@@ -5412,7 +5417,11 @@ module TypeScript {
                         }
                     }
 
-                    var memberExprType = this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context);
+                    var memberExpr = this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context);
+
+                    if (memberExpr.type && memberExpr.type.isGeneric()) {
+                        typeSymbol.setHasGenericMember();
+                    }
 
                     if (acceptedContextualType) {
                         context.popContextualType();
@@ -5420,9 +5429,9 @@ module TypeScript {
                     }
 
                     if (isAccessor) {
-                        this.setSymbolForAST(binex.operand1, memberExprType, context);
+                        this.setSymbolForAST(binex.operand1, memberExpr, context);
                     } else {
-                        context.setTypeInContext(memberSymbol, memberExprType.type);
+                        context.setTypeInContext(memberSymbol, memberExpr.type);
                         memberSymbol.setResolved();
 
                         this.setSymbolForAST(binex.operand1, memberSymbol, context);
