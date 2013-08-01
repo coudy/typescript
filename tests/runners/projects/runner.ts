@@ -13,6 +13,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
     private inputFiles: string[];
     private resolvedFiles: TypeScript.IResolvedFile[];
     private fileNameToSourceFile = new TypeScript.StringHashTable();
+    public sourcemapRecord = new Harness.Compiler.WriterAggregator();
 
     constructor(getDeclareFiles: boolean, generateMapFiles: boolean, outFileOption: string, outDirOption: string,
         mapRoot: string, sourceRoot: string, public compilationSettings: TypeScript.CompilationSettings) {
@@ -53,7 +54,8 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
     /// writing to output file(s).
     private compile(
         writeEmitFile: (path: string, contents: string, writeByteOrderMark: boolean) => void,
-        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void) {
+        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void,
+        sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback) {
 
         var compiler: TypeScript.TypeScriptCompiler;
 
@@ -107,6 +109,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
             }
         });
 
+        compiler.settings.sourceMapEmitterCallback = sourceMapEmitterCallback;
         var emitDiagnostics = compiler.emitAll(emitterIOHost);
         compiler.reportDiagnostics(emitDiagnostics, this);
 
@@ -135,7 +138,8 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
     public harnessCompile(
         files: string[],
         writeEmitFiles: (path: string, contents: string, writeByteOrderMark: boolean) => void,
-        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void) {
+        writeDeclareFile: (path: string, contents: string, writeByteOrderMark: boolean) => void,
+        sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback) {
 
         TypeScript.CompilerDiagnostics.diagnosticWriter = { Alert: function (s: string) { this.host.printLine(s); } };
 
@@ -146,7 +150,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
         // resolve file dependencies
         this.resolve();
 
-        this.compile(writeEmitFiles, writeDeclareFile);
+        this.compile(writeEmitFiles, writeDeclareFile, sourceMapEmitterCallback);
     }
 
     public getResolvedFilePaths(): string[] {
@@ -316,7 +320,7 @@ class ProjectRunner extends RunnerBase {
 
                 var generateMapFiles = false;
                 var sourcemapDir = "";
-                if (spec.generateMapFiles) {
+                if (spec.sourceMapRecordBaseline) {
                     generateMapFiles = true;
                     sourcemapDir = "sourcemap/"
                 }
@@ -410,6 +414,37 @@ class ProjectRunner extends RunnerBase {
                     }
                 }
 
+
+                var prevSourceFile = "";
+                var sourceMapRecord: Harness.Compiler.WriterAggregator;
+                var sourceMapEmitterCallback = (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void => {
+                    if (prevSourceFile != sourceFile) {
+                        var sourceFileName = sourceFile;
+                        var searchStr = "file:///" + baseFileName;
+                        var searchStrLen = searchStr.length;
+                        var replaceStr = "file:///" + spec.projectRoot + "/";
+                        if (sourceFile.indexOf(searchStr) == 0) {
+                            sourceFileName = replaceStr + sourceFile.substring(searchStrLen);
+                        }
+                        sourceMapRecord.WriteLine("");
+                        sourceMapRecord.WriteLine("EmittedFile: (" + emittedFile + ") sourceFile: (" + sourceFileName + ")");
+                        sourceMapRecord.WriteLine("-------------------------------------------------------------------");
+                        prevSourceFile = sourceFile;
+                    }
+                    sourceMapRecord.Write("Emitted (" + emittedLine + ", " + emittedColumn + ") source (" + sourceLine + ", " + sourceColumn + ")");
+                    if (sourceName) {
+                        sourceMapRecord.Write(" name (" + sourceName + ")");
+                    }
+                    sourceMapRecord.WriteLine("");
+                };
+
+                var verifySourceMapRecord = (sourceMapContents: string, baselineName: string) => {
+                    var localFileName = baseFileName + "local/" + codeGenType + "/" + sourcemapDir + mapRootDir + sourceRootDir + baselineName;
+                    var localFile = IOUtils.writeFileAndFolderStructure(IO, localFileName, sourceMapContents, /*writeByteOrderMark:*/ false);
+                    var referenceFileName = baseFileName + "reference/" + codeGenType + "/" + sourcemapDir + mapRootDir + sourceRootDir + baselineName;
+                    Harness.Assert.noDiff(sourceMapContents, IO.readFile(referenceFileName).contents);
+                }
+
                 /********************************************************
                                      NODE CODEGEN
                 *********************************************************/
@@ -427,7 +462,9 @@ class ProjectRunner extends RunnerBase {
                     compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
                     codeGenType = "node";
                     var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption, outDirOption, mapRoot, sourceRoot, compilationSettings);
-                    batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile);
+                    prevSourceFile = "";
+                    sourceMapRecord = batch.sourcemapRecord;
+                    batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile, sourceMapEmitterCallback);
 
                     it("collects the right files", function () {
                         var resolvedFiles = batch.getResolvedFilePaths();
@@ -477,6 +514,12 @@ class ProjectRunner extends RunnerBase {
                             compareGeneratedFiles(generatedDeclareFiles, spec.declareFiles);
                         });
                     }
+
+                    if (generateMapFiles && verifyEmitFiles && !spec.verifyFileNamesOnly ) {
+                        it("checks sourcemap record baseline", function () {
+                            verifySourceMapRecord(batch.sourcemapRecord.lines.join("\r\n"), spec.sourceMapRecordBaseline);
+                        });
+                    }
                 });
 
                 /// AMD Codegen
@@ -495,7 +538,9 @@ class ProjectRunner extends RunnerBase {
                     generatedEmitFiles = [];
                     codeGenType = "amd";
                     var batch = new HarnessBatch(getDeclareFiles, generateMapFiles, outputOption, outDirOption, mapRoot, sourceRoot, compilationSettings);
-                    batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile);
+                    prevSourceFile = "";
+                    sourceMapRecord = batch.sourcemapRecord;
+                    batch.harnessCompile(inputFiles, writeEmitFile, writeDeclareFile, sourceMapEmitterCallback);
 
                     it("collects the right files", function () {
                         var resolvedFiles = batch.getResolvedFilePaths();
@@ -548,6 +593,12 @@ class ProjectRunner extends RunnerBase {
                     if (getDeclareFiles) {
                         it("checks declare files baseline", function () {
                             compareGeneratedFiles(generatedDeclareFiles, spec.declareFiles);
+                        });
+                    }
+
+                    if (generateMapFiles && verifyEmitFiles && !spec.verifyFileNamesOnly) {
+                        it("checks sourcemap record baseline", function () {
+                            verifySourceMapRecord(batch.sourcemapRecord.lines.join("\r\n"), spec.sourceMapRecordBaseline);
                         });
                     }
                 });
@@ -979,7 +1030,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['test.js', 'test.js.map']
                 , declareFiles: ['test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
 
@@ -990,7 +1041,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1001,7 +1052,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1012,7 +1063,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1027,7 +1078,7 @@ class ProjectRunner extends RunnerBase {
                 , declareFiles: ['bin/test.d.ts']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1038,7 +1089,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1050,7 +1101,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binMapRootDiskPath/test.js', 'binMapRootDiskPath/test.js.map']
                 , outputOption: 'binMapRootDiskPath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileDiskPath.sourcemapRecord.baseline"
                 , mapRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_singleFile/mapFiles"
                 , skipRun: true
             });
@@ -1062,7 +1113,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binMapRootRelativePath/test.js', 'binMapRootRelativePath/test.js.map']
                 , outputOption: 'binMapRootRelativePath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileRelativePath.sourcemapRecord.baseline"
                 , mapRoot: "../mapFiles"
                 , skipRun: true
             });
@@ -1074,7 +1125,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1086,7 +1137,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binSourceRootDiskPath/test.js', 'binSourceRootDiskPath/test.js.map']
                 , outputOption: 'binSourceRootDiskPath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileDiskPath.sourcemapRecord.baseline"
                 , sourceRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_singleFile/src/"
                 , skipRun: true
             });
@@ -1098,7 +1149,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binSourceRootRelativePath/test.js', 'binSourceRootRelativePath/test.js.map']
                 , outputOption: 'binSourceRootRelativePath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileRelativePath.sourcemapRecord.baseline"
                 , sourceRoot: "../src/"
                 , skipRun: true
             });
@@ -1111,7 +1162,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1124,7 +1175,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -1137,7 +1188,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -1150,7 +1201,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simpleMapRootDiskPath/test.js', 'outdir/simpleMapRootDiskPath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirDiskPath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleMapRootDiskPath'
                 , mapRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_singleFile/mapFiles"
                 , skipRun: true
@@ -1163,7 +1214,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simpleMapRootRelativePath/test.js', 'outdir/simpleMapRootRelativePath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirRelativePath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleMapRootRelativePath'
                 , mapRoot: "../mapFiles"
                 , skipRun: true
@@ -1176,7 +1227,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1188,7 +1239,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simpleSourceRootDiskPath/test.js', 'outdir/simpleSourceRootDiskPath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirDiskPath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleSourceRootDiskPath'
                 , sourceRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_singleFile/src/"
                 , skipRun: true
@@ -1201,7 +1252,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simpleSourceRootRelativePath/test.js', 'outdir/simpleSourceRootRelativePath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirRelativePath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleSourceRootRelativePath'
                 , sourceRoot: "../src/"
                 , skipRun: true
@@ -1214,7 +1265,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts']
                 , outputFiles: ['outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -1264,7 +1315,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['m1.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1274,7 +1325,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1285,7 +1336,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1296,7 +1347,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1311,7 +1362,7 @@ class ProjectRunner extends RunnerBase {
                 , declareFiles: ['bin/test.d.ts']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1322,7 +1373,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1334,7 +1385,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binMapRootDiskPath/test.js', 'binMapRootDiskPath/test.js.map']
                 , outputOption: 'binMapRootDiskPath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileDiskPath.sourcemapRecord.baseline"
                 , mapRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_simple/mapFiles/"
                 , skipRun: true
             });
@@ -1346,7 +1397,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binMapRootRelativePath/test.js', 'binMapRootRelativePath/test.js.map']
                 , outputOption: 'binMapRootRelativePath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileRelativePath.sourcemapRecord.baseline"
                 , mapRoot: "../mapFiles"
                 , skipRun: true
             });
@@ -1358,7 +1409,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1370,7 +1421,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binSourceRootDiskPath/test.js', 'binSourceRootDiskPath/test.js.map']
                 , outputOption: 'binSourceRootDiskPath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileDiskPath.sourcemapRecord.baseline"
                 , sourceRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_simple/src/"
                 , skipRun: true
             });
@@ -1382,7 +1433,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['binSourceRootRelativePath/test.js', 'binSourceRootRelativePath/test.js.map']
                 , outputOption: 'binSourceRootRelativePath/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileRelativePath.sourcemapRecord.baseline"
                 , sourceRoot: "../src/"
                 , skipRun: true
             });
@@ -1394,7 +1445,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1407,7 +1458,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/m1.d.ts', 'outdir/simple/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -1419,7 +1470,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -1431,7 +1482,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simpleMapRootDiskPath/m1.js', 'outdir/simpleMapRootDiskPath/m1.js.map', 'outdir/simpleMapRootDiskPath/test.js', 'outdir/simpleMapRootDiskPath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirDiskPath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleMapRootDiskPath'
                 , mapRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_simple/mapFiles/"
                 , skipRun: true
@@ -1443,7 +1494,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simpleMapRootRelativePath/m1.js', 'outdir/simpleMapRootRelativePath/m1.js.map', 'outdir/simpleMapRootRelativePath/test.js', 'outdir/simpleMapRootRelativePath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirRelativePath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleMapRootRelativePath'
                 , mapRoot: "../mapFiles"
                 , skipRun: true
@@ -1455,7 +1506,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1467,7 +1518,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simpleSourceRootDiskPath/m1.js', 'outdir/simpleSourceRootDiskPath/m1.js.map', 'outdir/simpleSourceRootDiskPath/test.js', 'outdir/simpleSourceRootDiskPath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirDiskPath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleSourceRootDiskPath'
                 , sourceRoot: TypeScript.switchToForwardSlashes(IO.resolvePath(Harness.userSpecifiedroot)) + "/tests/cases/projects/outputdir_simple/src/"
                 , skipRun: true
@@ -1479,7 +1530,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simpleSourceRootRelativePath/m1.js', 'outdir/simpleSourceRootRelativePath/m1.js.map', 'outdir/simpleSourceRootRelativePath/test.js', 'outdir/simpleSourceRootRelativePath/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDirRelativePath.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simpleSourceRootRelativePath'
                 , sourceRoot: "../src/"
                 , skipRun: true
@@ -1491,7 +1542,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -1541,7 +1592,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['ref/m1.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1551,7 +1602,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1562,7 +1613,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1573,7 +1624,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1588,7 +1639,7 @@ class ProjectRunner extends RunnerBase {
                 , declareFiles: ['bin/test.d.ts']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1599,7 +1650,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1611,7 +1662,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1623,7 +1674,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['bin/test.js', 'bin/test.js.map']
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1636,7 +1687,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/ref/m1.d.ts', 'outdir/simple/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -1648,7 +1699,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -1660,7 +1711,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1672,7 +1723,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -1728,7 +1779,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', '../outputdir_multifolder_ref/m2.js', '../outputdir_multifolder_ref/m2.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['ref/m1.d.ts', '../outputdir_multifolder_ref/m2.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , verifyFileNamesOnly: true
                 , skipRun: true
             });
@@ -1739,7 +1790,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', '../outputdir_multifolder_ref/m2.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', '../outputdir_multifolder_ref/m2.js', '../outputdir_multifolder_ref/m2.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , verifyFileNamesOnly: true
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -1751,7 +1802,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', '../outputdir_multifolder_ref/m2.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', '../outputdir_multifolder_ref/m2.js', '../outputdir_multifolder_ref/m2.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , verifyFileNamesOnly: true
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1763,7 +1814,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', '../outputdir_multifolder_ref/m2.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', '../outputdir_multifolder_ref/m2.js', '../outputdir_multifolder_ref/m2.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , verifyFileNamesOnly: true
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -1780,7 +1831,7 @@ class ProjectRunner extends RunnerBase {
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1792,7 +1843,7 @@ class ProjectRunner extends RunnerBase {
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1805,7 +1856,7 @@ class ProjectRunner extends RunnerBase {
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1818,7 +1869,7 @@ class ProjectRunner extends RunnerBase {
                 , outputOption: 'bin/test.js'
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFile.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1832,7 +1883,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['outdir/simple/outputdir_multifolder/ref/m1.js', 'outdir/simple/outputdir_multifolder/ref/m1.js.map', 'outdir/simple/outputdir_multifolder_ref/m2.js', 'outdir/simple/outputdir_multifolder_ref/m2.js.map', 'outdir/simple/outputdir_multifolder/test.js', 'outdir/simple/outputdir_multifolder/test.js.map']
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/outputdir_multifolder/ref/m1.d.ts', 'outdir/simple/outputdir_multifolder_ref/m2.d.ts', 'outdir/simple/outputdir_multifolder/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -1846,7 +1897,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['outdir/simple/outputdir_multifolder/ref/m1.js', 'outdir/simple/outputdir_multifolder/ref/m1.js.map', 'outdir/simple/outputdir_multifolder_ref/m2.js', 'outdir/simple/outputdir_multifolder_ref/m2.js.map', 'outdir/simple/outputdir_multifolder/test.js', 'outdir/simple/outputdir_multifolder/test.js.map']
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
                 , mapRoot: "http://www.typescriptlang.org/"
@@ -1859,7 +1910,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['outdir/simple/outputdir_multifolder/ref/m1.js', 'outdir/simple/outputdir_multifolder/ref/m1.js.map', 'outdir/simple/outputdir_multifolder_ref/m2.js', 'outdir/simple/outputdir_multifolder_ref/m2.js.map', 'outdir/simple/outputdir_multifolder/test.js', 'outdir/simple/outputdir_multifolder/test.js.map']
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1872,7 +1923,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['outdir/simple/outputdir_multifolder/ref/m1.js', 'outdir/simple/outputdir_multifolder/ref/m1.js.map', 'outdir/simple/outputdir_multifolder_ref/m2.js', 'outdir/simple/outputdir_multifolder_ref/m2.js.map', 'outdir/simple/outputdir_multifolder/test.js', 'outdir/simple/outputdir_multifolder/test.js.map']
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
                 , mapRoot: "http://www.typescriptlang.org/"
@@ -1922,7 +1973,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['m1.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -1932,7 +1983,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -1944,7 +1995,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -1956,7 +2007,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['m1.js', 'm1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -1970,7 +2021,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/m1.d.ts', 'outdir/simple/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -1982,7 +2033,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -1995,7 +2046,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -2008,7 +2059,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'm1.ts']
                 , outputFiles: ['outdir/simple/m1.js', 'outdir/simple/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -2059,7 +2110,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['ref/m1.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -2069,7 +2120,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -2080,7 +2131,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -2091,7 +2142,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -2104,7 +2155,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/ref/m1.d.ts', 'outdir/simple/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -2116,7 +2167,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -2128,7 +2179,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -2140,7 +2191,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -2196,7 +2247,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', '../outputdir_module_multifolder_ref/m2.js', '../outputdir_module_multifolder_ref/m2.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['ref/m1.d.ts', '../outputdir_module_multifolder_ref/m2.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , verifyFileNamesOnly: true
                 , skipRun: true
             });
@@ -2209,7 +2260,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['outdir/simple/outputdir_module_multifolder/ref/m1.js', 'outdir/simple/outputdir_module_multifolder/ref/m1.js.map', 'outdir/simple/outputdir_module_multifolder_ref/m2.js', 'outdir/simple/outputdir_module_multifolder_ref/m2.js.map', 'outdir/simple/outputdir_module_multifolder/test.js', 'outdir/simple/outputdir_module_multifolder/test.js.map']
                 , verifyEmitFiles: true
                 , verifyFileNamesOnly: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/outputdir_module_multifolder/ref/m1.d.ts', 'outdir/simple/outputdir_module_multifolder_ref/m2.d.ts', 'outdir/simple/outputdir_module_multifolder/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -2271,7 +2322,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'ref/m2.js', 'ref/m2.js.map', 'test.js', 'test.js.map']
                 , declareFiles: ['ref/m1.d.ts', 'ref/m2.d.ts', 'test.d.ts']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
             tests.push({
@@ -2281,7 +2332,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'ref/m2.js', 'ref/m2.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -2292,7 +2343,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'ref/m2.js', 'ref/m2.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -2303,7 +2354,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['ref/m1.js', 'ref/m1.js.map', 'ref/m2.js', 'ref/m2.js.map', 'test.js', 'test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "noOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -2316,7 +2367,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/ref/m2.js', 'outdir/simple/ref/m2.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , declareFiles: ['outdir/simple/ref/m1.d.ts', 'outdir/simple/ref/m2.d.ts', 'outdir/simple/test.d.ts']
                 , outDirOption: 'outdir/simple'
                 , skipRun: true
@@ -2328,7 +2379,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/ref/m2.js', 'outdir/simple/ref/m2.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
@@ -2340,7 +2391,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/ref/m2.js', 'outdir/simple/ref/m2.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
@@ -2352,7 +2403,7 @@ class ProjectRunner extends RunnerBase {
                 , collectedFiles: ['test.ts', 'ref/m1.ts', 'ref/m2.ts']
                 , outputFiles: ['outdir/simple/ref/m1.js', 'outdir/simple/ref/m1.js.map', 'outdir/simple/ref/m2.js', 'outdir/simple/ref/m2.js.map', 'outdir/simple/test.js', 'outdir/simple/test.js.map']
                 , verifyEmitFiles: true
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outDir.sourcemapRecord.baseline"
                 , outDirOption: 'outdir/simple'
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
@@ -2368,7 +2419,7 @@ class ProjectRunner extends RunnerBase {
                 , verifyEmitFiles: true
                 , outputOption: 'bin/outAndOutDirFile.js'
                 , outDirOption: 'outdir/outAndOutDirFolder'
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileAndOutDir.sourcemapRecord.baseline"
                 , skipRun: true
             });
 
@@ -2381,7 +2432,7 @@ class ProjectRunner extends RunnerBase {
                 , verifyEmitFiles: true
                 , outputOption: 'bin/outAndOutDirFile.js'
                 , outDirOption: 'outdir/outAndOutDirFolder'
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileAndOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , skipRun: true
             });
@@ -2395,7 +2446,7 @@ class ProjectRunner extends RunnerBase {
                 , verifyEmitFiles: true
                 , outputOption: 'bin/outAndOutDirFile.js'
                 , outDirOption: 'outdir/outAndOutDirFolder'
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileAndOutDir.sourcemapRecord.baseline"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true
             });
@@ -2409,7 +2460,7 @@ class ProjectRunner extends RunnerBase {
                 , verifyEmitFiles: true
                 , outputOption: 'bin/outAndOutDirFile.js'
                 , outDirOption: 'outdir/outAndOutDirFolder'
-                , generateMapFiles: true
+                , sourceMapRecordBaseline: "outputFileAndOutDir.sourcemapRecord.baseline"
                 , mapRoot: "http://www.typescriptlang.org/"
                 , sourceRoot: "http://typescript.codeplex.com/"
                 , skipRun: true

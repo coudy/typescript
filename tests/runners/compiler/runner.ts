@@ -38,28 +38,29 @@ class CompilerBaselineRunner extends RunnerBase {
 
             var jsOutputAsync = '';
             var jsOutputSync = '';
+            var sourceMapRecordAsync = "";
+            var sourceMapRecordSync = "";
 
             var declFilesCode: { fileName: string; code: string; }[] = []
 
             var errorDescriptionAsync = '';
             var errorDescriptionLocal = '';
             var createNewInstance = false;
+            var emittingSourceMap = false;
 
             var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
             // The compiler doesn't handle certain flags flipping during a single compilation setting. Tests on these flags will need 
             // a fresh compiler instance for themselves and then create a fresh one for the next test. Would be nice to get dev fixes
             // eventually to remove this limitation.
             for (var i = 0; i < tcSettings.length; ++i) {
-                if (tcSettings[i].flag == "noimplicitany") {
-                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, true /*noImplicitAny*/);
+                if (!createNewInstance && (tcSettings[i].flag == "noimplicitany" || tcSettings[i].flag === 'target')) {
+                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, tcSettings[i].flag == "noimplicitany" /*noImplicitAny*/);
                     harnessCompiler.setCompilerSettings(tcSettings);
                     createNewInstance = true;
-                    break;
-                } else if (tcSettings[i].flag === 'target') {
-                    Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, false /*noImplicitAny*/);
-                    harnessCompiler.setCompilerSettings(tcSettings);
-                    createNewInstance = true;
-                    break;
+                }
+
+                if (tcSettings[i].flag == "sourcemap" && tcSettings[i].value.toLowerCase() === 'true') {
+                    emittingSourceMap = true;
                 }
             }
 
@@ -72,6 +73,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     errorDescriptionLocal += Harness.getFileName(jsResult.errors[i].file) + ' line ' + jsResult.errors[i].line + ' col ' + jsResult.errors[i].column + ': ' + jsResult.errors[i].message + '\r\n';
                 }
                 jsOutputSync = jsResult.code;
+                sourceMapRecordSync = jsResult.sourceMapRecord;
 
                 // AMD output
                 var amdResult = result.amd;
@@ -79,8 +81,8 @@ class CompilerBaselineRunner extends RunnerBase {
                     errorDescriptionAsync += Harness.getFileName(amdResult.errors[i].file) + ' line ' + amdResult.errors[i].line + ' col ' + amdResult.errors[i].column + ': ' + amdResult.errors[i].message + '\r\n';
                 }
                 jsOutputAsync = amdResult.code;
-
                 declFilesCode = result.commonJS.declFilesCode;
+                sourceMapRecordAsync = amdResult.sourceMapRecord;
             }, function (settings?: TypeScript.CompilationSettings) {
                 tcSettings.push({ flag: "module", value: "commonjs" });
                 harnessCompiler.setCompilerSettings(tcSettings);
@@ -139,6 +141,17 @@ class CompilerBaselineRunner extends RunnerBase {
                     Harness.Baseline.runBaseline('Correct JS output (AMD) for ' + fileName, justName.replace(/\.ts/, '.amd.js'), () => {
                         return jsOutputAsync;
                     });
+
+                    // Check sourcemap output
+                    if (emittingSourceMap) {
+                        Harness.Baseline.runBaseline('Correct SourceMap Record (commonjs) for ' + fileName, justName.replace(/\.ts/, '.sourcemapRecord.commonjs.baseline'), () => {
+                            return sourceMapRecordSync;
+                        });
+
+                        Harness.Baseline.runBaseline('Correct SourceMap Record (AMD) for ' + fileName, justName.replace(/\.ts/, '.sourcemapRecord.amd.baseline'), () => {
+                            return sourceMapRecordAsync;
+                        });
+                    }
                 }
             }
             if (createNewInstance) {

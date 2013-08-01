@@ -44,6 +44,7 @@ module TypeScript {
         public gatherDiagnostics = false;
 
         public updateTC = false;
+        public sourceMapEmitterCallback: SourceMapEmitterCallback;
     }
 
     ///

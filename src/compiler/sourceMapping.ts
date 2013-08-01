@@ -48,6 +48,10 @@ module TypeScript {
         }
     }
 
+    export interface SourceMapEmitterCallback {
+        (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void;
+    }
+
     export class SourceMapper {
         static MapFileExtension = ".map";
         
@@ -65,7 +69,7 @@ module TypeScript {
         
         // Generate source mapping.
         // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
-        static emitSourceMapping(allSourceMappers: SourceMapper[]): void {
+        static emitSourceMapping(allSourceMappers: SourceMapper[], sourceMapEmitterCallback: SourceMapEmitterCallback): void {
             // At this point we know that there is at least one source mapper present.
             // If there are multiple source mappers, all will correspond to same map file but different sources
 
@@ -120,6 +124,17 @@ module TypeScript {
                     }
                     else if (emitComma) {
                         mappingsString = mappingsString + ",";
+                    }
+
+                    if (sourceMapEmitterCallback) {
+                        sourceMapEmitterCallback(
+                            sourceMapper.sourceMapSourceInfo.jsFileName,
+                            mappedPosition.emittedLine + 1,
+                            mappedPosition.emittedColumn + 1,
+                            tsFiles[currentSourceIndex],
+                            mappedPosition.sourceLine,
+                            mappedPosition.sourceColumn + 1,
+                            nameIndex >= 0 ? sourceMapper.names[nameIndex] : undefined);
                     }
 
                     // 1. Relative Column

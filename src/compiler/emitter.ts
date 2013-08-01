@@ -1528,7 +1528,7 @@ module TypeScript {
         public emitSourceMapsAndClose(): void {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
             if (this.sourceMapper !== null) {
-                SourceMapper.emitSourceMapping(this.allSourceMappers);
+                SourceMapper.emitSourceMapping(this.allSourceMappers, this.emitOptions.compilationSettings.sourceMapEmitterCallback);
             }
 
             try {

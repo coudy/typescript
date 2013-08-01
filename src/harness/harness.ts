@@ -770,6 +770,8 @@ module Harness {
             private fileNameToScriptSnapshot = new TypeScript.StringHashTable<TypeScript.IScriptSnapshot>();
             public errout = new Harness.Compiler.WriterAggregator();
             public stdout = new Harness.Compiler.EmitterIOHost();
+            private sourcemapRecorder = new WriterAggregator();
+            
             constructor(useMinimalDefaultLib = true, noImplicitAny = false) {
                 this.useMinimalDefaultLib = useMinimalDefaultLib;
                 this.compiler = new TypeScript.TypeScriptCompiler();
@@ -893,7 +895,7 @@ module Harness {
                     this.compile();
 
                     this.reportCompilationErrors();
-                    var commonJSResult = new CompilerResult(this.stdout.toArray(), this.errout.lines)
+                    var commonJSResult = new CompilerResult(this.stdout.toArray(), this.errout.lines, this.sourcemapRecorder.lines)
                     var amdCompilerResult = this.emitCurrentCompilerContentsAsAMD();
 
                     onComplete({ commonJS: commonJSResult, amd: amdCompilerResult });
@@ -933,7 +935,7 @@ module Harness {
 
                 this.reportCompilationErrors();
 
-                callback(new CompilerResult(this.stdout.toArray(), this.errout.lines));
+                callback(new CompilerResult(this.stdout.toArray(), this.errout.lines, this.sourcemapRecorder.lines));
             }
 
             public reset() {
@@ -1024,6 +1026,23 @@ module Harness {
 
             public emitAll(ioHost?: TypeScript.EmitterIOHost): TypeScript.Diagnostic[]{
                 var host = typeof ioHost === "undefined" ? this.stdout : ioHost;
+
+                this.sourcemapRecorder.reset();
+                var prevSourceFile = "";
+                this.compiler.settings.sourceMapEmitterCallback = (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void => {
+                    if (prevSourceFile != sourceFile) {
+                        this.sourcemapRecorder.WriteLine("");
+                        this.sourcemapRecorder.WriteLine("EmittedFile: (" + emittedFile + ") sourceFile: (" + sourceFile + ")");
+                        this.sourcemapRecorder.WriteLine("-------------------------------------------------------------------");
+                        prevSourceFile = sourceFile;
+                    }
+                    this.sourcemapRecorder.Write("Emitted (" + emittedLine + ", " + emittedColumn + ") source (" + sourceLine + ", " + sourceColumn + ")");
+                    if (sourceName) {
+                        this.sourcemapRecorder.Write(" name (" + sourceName + ")");
+                    }
+                    this.sourcemapRecorder.WriteLine("");
+                };
+
                 return this.compiler.emitAll(host);
             }
 
@@ -1034,9 +1053,9 @@ module Harness {
 
                 this.stdout.reset();
                 this.errout.reset();
-                this.compiler.emitAll(this.stdout);
+                this.emitAll(this.stdout);
                 this.compiler.emitAllDeclarations();
-                var result = new CompilerResult(this.stdout.toArray(), this.errout.lines);
+                var result = new CompilerResult(this.stdout.toArray(), this.errout.lines, this.sourcemapRecorder.lines);
 
                 this.compiler.settings.moduleGenTarget = oldModuleType;
                 return result;
@@ -1071,6 +1090,7 @@ module Harness {
                 return errorTarget.lines;
             }           
 
+
             /** Modify the given compiler's settings as specified in the test case settings.
              *  The caller of this function is responsible for saving the existing settings if they want to restore them to the original settings later.
              */
@@ -1083,6 +1103,11 @@ module Harness {
                     idx[0].setFlag(this.compiler.settings, item.value);
                 });
                 this.compiler.emitOptions = new TypeScript.EmitOptions(this.compiler.settings);
+            }
+
+            /** sets the callback for the source map emitter information */
+            public setCompilerSourceMapEmitterCallBack(sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback) {
+                this.compiler.settings.sourceMapEmitterCallback = sourceMapEmitterCallback;
             }
 
             /** The compiler flags which tests are allowed to change and functions that can change them appropriately.
@@ -1106,7 +1131,7 @@ module Harness {
                     }
                 },
                 { flag: 'nolib', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noLib = value.toLowerCase() === 'true' ? false : true; } },
-                { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; } },
+                { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; x.sourceMapEmitterCallback = undefined; } },
                 { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
                 { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outFileOption = value; } },
                 { flag: 'outDir', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outDirOption = value; } },
@@ -1488,13 +1513,14 @@ module Harness {
             public code: string;
             public errors: CompilerError[];
             public declFilesCode: { fileName: string; code: string; }[] = [];
+            public sourceMapRecord = "";
 
             /** @param fileResults an array of strings for the fileName and an ITextWriter with its code */
-            constructor(public fileResults: { fileName: string; file: WriterAggregator; }[], errorLines: string[]) {
+            constructor(public fileResults: { fileName: string; file: WriterAggregator; }[], errorLines: string[], sourceMapRecordLines: string[]) {
                 var lines: string[] = [];
                 fileResults.forEach(v => lines = lines.concat(v.file.lines));
                 this.code = lines.join("\r\n")
-
+                this.sourceMapRecord = sourceMapRecordLines.join("\r\n");
                 this.errors = [];
 
                 for (var i = 0; i < errorLines.length; i++) {
