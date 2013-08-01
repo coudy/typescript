@@ -605,8 +605,7 @@ module TypeScript {
                     if (this.settings.mapSourceFiles) {
                         // We always create map files next to the jsFiles
                         var sourceMapFile = this.createFile(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
-                        var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(document, javaScriptFileName);
-                        emitter.setSourceMappings(new SourceMapper(outFile, sourceMapFile, sourceMapSourceInfo));
+                        emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile);
                     }
 
                     if (inputOutputMapper) {
@@ -615,8 +614,8 @@ module TypeScript {
                     }
                 }
                 else if (this.settings.mapSourceFiles) {
-                    var sourceMapSourceInfo = this.emitOptions.decodeSourceMapOptions(document, emitter.emittingFileName, emitter.sourceMapper.sourceMapSourceInfo);
-                    emitter.setSourceMappings(new SourceMapper(emitter.outfile, emitter.sourceMapper.sourceMapOut, sourceMapSourceInfo));
+                    // Already emitting into js file, update the mapper for new source info
+                    emitter.setSourceMapperNewSourceFile(document);
                 }
 
                 // Set location info

@@ -60,54 +60,6 @@ module TypeScript {
                 return extensionChanger(this.compilationSettings.outFileOption, true);
             }
         }
-
-        public decodeSourceMapOptions(document: Document, jsFilePath: string, oldSourceMapSourceInfo?: SourceMapSourceInfo): SourceMapSourceInfo {
-            var sourceMapSourceInfo = new SourceMapSourceInfo(oldSourceMapSourceInfo);
-
-            var tsFilePath = switchToForwardSlashes(document.fileName);
-
-            // Decode mapRoot and sourceRoot
-            if (!oldSourceMapSourceInfo) {
-                // Js File Name = pretty name of js file
-                var prettyJsFileName = TypeScript.getPrettyName(jsFilePath, false, true);
-                var prettyMapFileName = prettyJsFileName + SourceMapper.MapFileExtension;
-                sourceMapSourceInfo.jsFileName = prettyJsFileName;
-
-                // Figure out sourceMapPath and sourceMapDirectory
-                if (this.compilationSettings.mapRoot) {
-                    if (this.outputMany || document.script.topLevelMod) {
-                        var sourceMapPath = tsFilePath.replace(this.commonDirectoryPath, "");
-                        sourceMapPath = this.compilationSettings.mapRoot + sourceMapPath;
-                        sourceMapPath = TypeScriptCompiler.mapToJSFileName(sourceMapPath, false) + SourceMapper.MapFileExtension;
-                        sourceMapSourceInfo.sourceMapPath = sourceMapPath;
-
-                        if (isRelative(sourceMapSourceInfo.sourceMapPath)) {
-                            sourceMapPath = this.commonDirectoryPath + sourceMapSourceInfo.sourceMapPath;
-                        }
-                        sourceMapSourceInfo.sourceMapDirectory = getRootFilePath(sourceMapPath);
-                    } else {
-                        sourceMapSourceInfo.sourceMapPath = this.compilationSettings.mapRoot + prettyMapFileName;
-                        sourceMapSourceInfo.sourceMapDirectory = this.compilationSettings.mapRoot;
-                        if (isRelative(sourceMapSourceInfo.sourceMapDirectory)) {
-                            sourceMapSourceInfo.sourceMapDirectory = getRootFilePath(jsFilePath) + this.compilationSettings.mapRoot;
-                        }
-                    }
-                } else {
-                    sourceMapSourceInfo.sourceMapPath = prettyMapFileName;
-                    sourceMapSourceInfo.sourceMapDirectory = getRootFilePath(jsFilePath);
-                }
-                sourceMapSourceInfo.sourceRoot =  this.compilationSettings.sourceRoot;
-            }
-
-            if (this.compilationSettings.sourceRoot) {
-                // Use the relative path corresponding to the common directory path
-                sourceMapSourceInfo.tsFilePath = getRelativePathToFixedPath(this.commonDirectoryPath, tsFilePath);
-            } else {
-                // Source locations relative to map file location
-                sourceMapSourceInfo.tsFilePath = getRelativePathToFixedPath(sourceMapSourceInfo.sourceMapDirectory, tsFilePath);
-            }
-            return sourceMapSourceInfo;
-        }
     }
 
     export class Indenter {
@@ -291,9 +243,12 @@ module TypeScript {
             }
         }
 
-        public setSourceMappings(mapper: SourceMapper) {
-            this.allSourceMappers.push(mapper);
-            this.sourceMapper = mapper;
+        public createSourceMapper(document: Document, jsFileName: string, jsFile: ITextWriter, sourceMapOut: ITextWriter) {
+            this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions);
+        }
+
+        public setSourceMapperNewSourceFile(document: Document) {
+            this.sourceMapper.setNewSourceFile(document, this.emitOptions);
         }
 
         private updateLineAndColumn(s: string) {
@@ -1445,16 +1400,29 @@ module TypeScript {
 
         public recordSourceMappingNameStart(name: string) {
             if (this.sourceMapper) {
-                var finalName = name;
-                if (!name) {
-                    finalName = "";
-                } else if (this.sourceMapper.currentNameIndex.length > 0) {
-                    finalName = this.sourceMapper.names[this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1]] + "." + name;
-                }
+                var nameIndex = -1;
+                if (name) {
+                    if (this.sourceMapper.currentNameIndex.length > 0) {
+                        var parentNameIndex = this.sourceMapper.currentNameIndex[this.sourceMapper.currentNameIndex.length - 1];
+                        if (parentNameIndex != -1) {
+                            name = this.sourceMapper.names[parentNameIndex] + "." + name;
+                        }
+                    }
 
-                // We are currently not looking for duplicate but that is possible.
-                this.sourceMapper.names.push(finalName);
-                this.sourceMapper.currentNameIndex.push(this.sourceMapper.names.length - 1);
+                    // Look if there already exists name
+                    var nameIndex = this.sourceMapper.names.length - 1;
+                    for (nameIndex; nameIndex >= 0; nameIndex--) {
+                        if (this.sourceMapper.names[nameIndex] == name) {
+                            break;
+                        }
+                    }
+
+                    if (nameIndex == -1) {
+                        nameIndex = this.sourceMapper.names.length;
+                        this.sourceMapper.names.push(name);
+                    }
+                }
+                this.sourceMapper.currentNameIndex.push(nameIndex);
             }
         }
 
@@ -1506,7 +1474,7 @@ module TypeScript {
         public emitSourceMapsAndClose(): void {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
             if (this.sourceMapper !== null) {
-                SourceMapper.emitSourceMapping(this.allSourceMappers, this.emitOptions.compilationSettings.sourceMapEmitterCallback);
+                this.sourceMapper.emitSourceMapping(this.emitOptions.compilationSettings.sourceMapEmitterCallback);
             }
 
             try {

@@ -30,57 +30,97 @@ module TypeScript {
         public childMappings: SourceMapping[] = [];
     }
 
-    export class SourceMapSourceInfo {
-        public jsFileName: string;
-        public tsFilePath: string;
-        public sourceMapPath: string;
-        public sourceMapDirectory: string;
-        public sourceRoot: string;
-
-        constructor(oldSourceMapSourceInfo?: SourceMapSourceInfo) {
-            if (oldSourceMapSourceInfo) {
-                this.jsFileName = oldSourceMapSourceInfo.jsFileName;
-                this.sourceMapPath = oldSourceMapSourceInfo.sourceMapPath;
-                this.sourceMapDirectory = oldSourceMapSourceInfo.sourceMapDirectory;
-
-                this.sourceRoot = oldSourceMapSourceInfo.sourceRoot;
-            }
-        }
-    }
-
     export interface SourceMapEmitterCallback {
         (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void;
     }
 
     export class SourceMapper {
         static MapFileExtension = ".map";
-        
-        public sourceMappings: SourceMapping[] = [];
-        public currentMappings: SourceMapping[][] = [];
+
+        private jsFileName: string;
+        private sourceMapPath: string;
+        private sourceMapDirectory: string;
+        private sourceRoot: string;
 
         public names: string[] = [];
-        public currentNameIndex: number[] = [];
 
-        constructor(public jsFile: ITextWriter,
-            public sourceMapOut: ITextWriter,
-            public sourceMapSourceInfo: SourceMapSourceInfo) {
-            this.currentMappings.push(this.sourceMappings);
+        // Below two arrays represent the information about sourceFile at that index.
+        private tsFilePaths: string[] = [];
+        private allSourceMappings: SourceMapping[][] = [];
+
+        public currentMappings: SourceMapping[][];
+        public currentNameIndex: number[];
+
+        constructor(private jsFile: ITextWriter, private sourceMapOut: ITextWriter, document: Document, jsFilePath: string, emitOptions: EmitOptions) {
+            this.setSourceMapOptions(document, jsFilePath, emitOptions);
+            this.setNewSourceFile(document, emitOptions);
+        }
+
+        public setNewSourceFile(document: Document, emitOptions: EmitOptions) {
+            // Set new mappings
+            var sourceMappings: SourceMapping[] = [];
+            this.allSourceMappings.push(sourceMappings);
+            this.currentMappings = [sourceMappings];
+            this.currentNameIndex = [];
+
+            // Set new source file path
+            this.setNewSourceFilePath(document, emitOptions);
+        }
+
+        private setSourceMapOptions(document: Document, jsFilePath: string, emitOptions: EmitOptions) {
+            // Decode mapRoot and sourceRoot
+
+            // Js File Name = pretty name of js file
+            var prettyJsFileName = TypeScript.getPrettyName(jsFilePath, false, true);
+            var prettyMapFileName = prettyJsFileName + SourceMapper.MapFileExtension;
+            this.jsFileName = prettyJsFileName;
+
+            // Figure out sourceMapPath and sourceMapDirectory
+            if (emitOptions.compilationSettings.mapRoot) {
+                if (emitOptions.outputMany || document.script.topLevelMod) {
+                    var sourceMapPath = switchToForwardSlashes(document.fileName).replace(emitOptions.commonDirectoryPath, "");
+                    sourceMapPath = emitOptions.compilationSettings.mapRoot + sourceMapPath;
+                    sourceMapPath = TypeScriptCompiler.mapToJSFileName(sourceMapPath, false) + SourceMapper.MapFileExtension;
+                    this.sourceMapPath = sourceMapPath;
+
+                    if (isRelative(this.sourceMapPath)) {
+                        sourceMapPath = emitOptions.commonDirectoryPath + this.sourceMapPath;
+                    }
+                    this.sourceMapDirectory = getRootFilePath(sourceMapPath);
+                } else {
+                    this.sourceMapPath = emitOptions.compilationSettings.mapRoot + prettyMapFileName;
+                    this.sourceMapDirectory = emitOptions.compilationSettings.mapRoot;
+                    if (isRelative(this.sourceMapDirectory)) {
+                        this.sourceMapDirectory = getRootFilePath(jsFilePath) + emitOptions.compilationSettings.mapRoot;
+                    }
+                }
+            } else {
+                this.sourceMapPath = prettyMapFileName;
+                this.sourceMapDirectory = getRootFilePath(jsFilePath);
+            }
+            this.sourceRoot = emitOptions.compilationSettings.sourceRoot;
+        }
+
+        private setNewSourceFilePath(document: Document, emitOptions: EmitOptions) {
+            var tsFilePath = switchToForwardSlashes(document.fileName);
+            if (emitOptions.compilationSettings.sourceRoot) {
+                // Use the relative path corresponding to the common directory path
+                tsFilePath = getRelativePathToFixedPath(emitOptions.commonDirectoryPath, tsFilePath);
+            } else {
+                // Source locations relative to map file location
+                tsFilePath = getRelativePathToFixedPath(this.sourceMapDirectory, tsFilePath);
+            }
+            this.tsFilePaths.push(tsFilePath);
         }
         
         // Generate source mapping.
         // Creating files can cause exceptions, they will be caught higher up in TypeScriptCompiler.emit
-        static emitSourceMapping(allSourceMappers: SourceMapper[], sourceMapEmitterCallback: SourceMapEmitterCallback): void {
-            // At this point we know that there is at least one source mapper present.
-            // If there are multiple source mappers, all will correspond to same map file but different sources
-
+        public emitSourceMapping(sourceMapEmitterCallback: SourceMapEmitterCallback): void {
             // Output map file name into the js file
-            var sourceMapper = allSourceMappers[0];
-            sourceMapper.jsFile.WriteLine("//# sourceMappingURL=" + sourceMapper.sourceMapSourceInfo.sourceMapPath);
+            this.jsFile.WriteLine("//# sourceMappingURL=" + this.sourceMapPath);
 
             // Now output map file
-            var sourceMapOut = sourceMapper.sourceMapOut;
             var mappingsString = "";
-            var tsFiles: string[] = [];
 
             var prevEmittedColumn = 0;
             var prevEmittedLine = 0;
@@ -88,23 +128,10 @@ module TypeScript {
             var prevSourceLine = 0;
             var prevSourceIndex = 0;
             var prevNameIndex = 0;
-            var namesList: string[] = [];
-            var namesCount = 0;
             var emitComma = false;
 
             var recordedPosition: SourceMapPosition = null;
-            for (var sourceMapperIndex = 0; sourceMapperIndex < allSourceMappers.length; sourceMapperIndex++) {
-                sourceMapper = allSourceMappers[sourceMapperIndex];
-
-                // If there are any mappings generated
-                var currentSourceIndex = tsFiles.length;
-                tsFiles.push(sourceMapper.sourceMapSourceInfo.tsFilePath);
-
-                // Join namelist
-                if (sourceMapper.names.length > 0) {
-                    namesList.push.apply(namesList, sourceMapper.names);
-                }
-
+            for (var sourceIndex = 0; sourceIndex < this.tsFilePaths.length; sourceIndex++) {
                 var recordSourceMapping = (mappedPosition: SourceMapPosition, nameIndex: number) => {
                     if (recordedPosition !== null &&
                         recordedPosition.emittedColumn === mappedPosition.emittedColumn &&
@@ -128,13 +155,13 @@ module TypeScript {
 
                     if (sourceMapEmitterCallback) {
                         sourceMapEmitterCallback(
-                            sourceMapper.sourceMapSourceInfo.jsFileName,
+                            this.jsFileName,
                             mappedPosition.emittedLine + 1,
                             mappedPosition.emittedColumn + 1,
-                            tsFiles[currentSourceIndex],
+                            this.tsFilePaths[sourceIndex],
                             mappedPosition.sourceLine,
                             mappedPosition.sourceColumn + 1,
-                            nameIndex >= 0 ? sourceMapper.names[nameIndex] : undefined);
+                            nameIndex >= 0 ? this.names[nameIndex] : undefined);
                     }
 
                     // 1. Relative Column
@@ -142,8 +169,8 @@ module TypeScript {
                     prevEmittedColumn = mappedPosition.emittedColumn;
 
                     // 2. Relative sourceIndex 
-                    mappingsString = mappingsString + Base64VLQFormat.encode(currentSourceIndex - prevSourceIndex);
-                    prevSourceIndex = currentSourceIndex;
+                    mappingsString = mappingsString + Base64VLQFormat.encode(sourceIndex - prevSourceIndex);
+                    prevSourceIndex = sourceIndex;
 
                     // 3. Relative sourceLine 0 based
                     mappingsString = mappingsString + Base64VLQFormat.encode(mappedPosition.sourceLine - 1 - prevSourceLine);
@@ -155,8 +182,8 @@ module TypeScript {
 
                     // 5. Relative namePosition 0 based
                     if (nameIndex >= 0) {
-                        mappingsString = mappingsString + Base64VLQFormat.encode(namesCount + nameIndex - prevNameIndex);
-                        prevNameIndex = namesCount + nameIndex;
+                        mappingsString = mappingsString + Base64VLQFormat.encode(nameIndex - prevNameIndex);
+                        prevNameIndex = nameIndex;
                     }
 
                     emitComma = true;
@@ -173,22 +200,21 @@ module TypeScript {
                     }
                 };
 
-                recordSourceMappingSiblings(sourceMapper.sourceMappings);
-                namesCount = namesCount + sourceMapper.names.length;
+                recordSourceMappingSiblings(this.allSourceMappings[sourceIndex]);
             }
 
             // Write the actual map file
-            sourceMapOut.Write(JSON.stringify({
+            this.sourceMapOut.Write(JSON.stringify({
                 version: 3,
-                file: sourceMapper.sourceMapSourceInfo.jsFileName,
-                sourceRoot: sourceMapper.sourceMapSourceInfo.sourceRoot,
-                sources: tsFiles,
-                names: namesList,
+                file: this.jsFileName,
+                sourceRoot: this.sourceRoot,
+                sources: this.tsFilePaths,
+                names: this.names,
                 mappings: mappingsString
             }));
 
             // Closing files could result in exceptions, report them if they occur
-            sourceMapOut.Close();
+            this.sourceMapOut.Close();
         }
     }
 }
