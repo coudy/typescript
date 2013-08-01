@@ -9129,6 +9129,10 @@ module TypeScript {
 
                 if (!typeSymbol.isNamedTypeSymbol()) {
                     if (typeSymbol.inSymbolPrivacyCheck) {
+                        var associatedContainerType = typeSymbol.getAssociatedContainerType();
+                        if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
+                            this.checkSymbolPrivacy(declSymbol, associatedContainerType, context, privacyErrorReporter);
+                        }
                         return;
                     }
 
