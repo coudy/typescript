@@ -6,8 +6,8 @@
 ////}
 
 goTo.marker('1');
-verify.quickInfoIs('any[]');
+verify.quickInfoIs('U[]');
 
 goTo.marker('2');
-verify.quickInfoIs('any[]');
+verify.quickInfoIs('U[]');
 

@@ -2496,13 +2496,13 @@ module TypeScript {
 
             if (substitution != typeToSpecialize) {
 
-                if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeToSpecialize)) {
+                if (context.isSpecializingSignatureAtCallSite || shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeToSpecialize)) {
                     return substitution;
                 }
             }
 
             if (typeArguments && typeArguments.length) {
-                if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {
+                if (context.isSpecializingSignatureAtCallSite || shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {
                     return typeArguments[0];
                 }
             }

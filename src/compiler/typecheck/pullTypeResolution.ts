@@ -6058,6 +6058,9 @@ module TypeScript {
                             inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
                             triedToInferTypeArgs = true;
                         }
+                        else {
+                            inferredTypeArgs = [];
+                        }
 
                         // if we could infer Args, or we have type arguments, then attempt to specialize the signature
                         if (inferredTypeArgs) {
@@ -6414,6 +6417,9 @@ module TypeScript {
                             else if (callEx.arguments) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
                                 triedToInferTypeArgs = true;
+                            }
+                            else {
+                                inferredTypeArgs = [];
                             }
 
                             // if we could infer Args, or we have type arguments, then attempt to specialize the signature
@@ -8693,7 +8699,7 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
-                if (expressionType.isGeneric() && !expressionType.isFixed()) {
+                if (expressionType.isGeneric() && !expressionType.isFixed() && !expressionType.isTypeParameter()) {
                     expressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
                 }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
