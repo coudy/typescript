@@ -1203,8 +1203,12 @@ module FourSlash {
             }
         }
 
+        private getOccurancesAtCurrentPosition() {
+            return this.languageService.getOccurrencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+        }
+
         public verifyOccurrencesAtPositionListContains(fileName: string, start: number, end: number, isWriteAccess?: boolean) {
-            var occurances = this.languageService.getOccurrencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+            var occurances = this.getOccurancesAtCurrentPosition();
 
             if (!occurances || occurances.length === 0) {
                 throw new Error('verifyOccurancesAtPositionListContains failed - found 0 references, expected at least one.');
@@ -1222,6 +1226,14 @@ module FourSlash {
 
             var missingItem = { fileName: fileName, start: start, end: end, isWriteAccess: isWriteAccess };
             throw new Error('verifyOccurancesAtPositionListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(occurances) + ')');
+        }
+
+        public verifyOccurrencesAtPositionListCount(expectedCount: number) {
+            var occurances = this.getOccurancesAtCurrentPosition();
+            var actualCount = occurances ? occurances.length : 0;
+            if (expectedCount !== actualCount) {
+                throw new Error('verifyOccurrencesAtPositionListCount failed - actual: ' + actualCount + ', expected:' + expectedCount);
+            }
         }
 
         private getBOF(): number {

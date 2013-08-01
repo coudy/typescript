@@ -299,6 +299,10 @@ module FourSlashInterface {
         public occurrencesAtPositionContains(range: Range, isWriteAccess?: boolean) {
             FourSlash.currentTestState.verifyOccurrencesAtPositionListContains(range.fileName, range.start, range.end, isWriteAccess);
         }
+
+        public occurrencesAtPositionCount(expectedCount: number) {
+            FourSlash.currentTestState.verifyOccurrencesAtPositionListCount(expectedCount);
+        }
     }
    
     export class edit {

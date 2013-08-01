@@ -52,22 +52,33 @@ module Services {
             var path = this.getAstPathToPosition(script, pos);
             if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 this.logger.log("No name found at the given position");
-                return result;
+                return [];
             }
+
+            // Store the actual name before calling getSymbolInformationFromPath
+            var actualNameAtPosition = (<TypeScript.Identifier>path.ast()).text();
 
             var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
                 this.logger.log("No symbol found at the given position");
-                return result;
+                // only single reference
+                return this.getSingleNodeReferenceAtPosition(fileName, pos);
             }
 
             var symbol = symbolInfoAtPosition.symbol;
             var symbolName: string = symbol.getName();
 
+            // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
+            if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+                this.logger.log("Unknown symbol found at the given position");
+                // only single reference
+                return this.getSingleNodeReferenceAtPosition(fileName, pos);
+            }
+
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var tempFileName = fileNames[i];
-        
+
                 var tempDocument = this.compilerState.getDocument(tempFileName);
                 var filter: TypeScript.BloomFilter = tempDocument.bloomFilter();
 
@@ -82,8 +93,6 @@ module Services {
         public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[]{
             this.refresh();
 
-            var result: ReferenceEntry[] = [];
-
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
@@ -92,17 +101,46 @@ module Services {
             var path = this.getAstPathToPosition(script, pos);
             if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 this.logger.log("No name found at the given position");
-                return result;
+                return [];
             }
+
+            // Store the actual name before calling getSymbolInformationFromPath
+            var actualNameAtPosition = (<TypeScript.Identifier>path.ast()).text();
 
             var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
                 this.logger.log("No symbol found at the given position");
-                return result;
+                // only single reference
+                return this.getSingleNodeReferenceAtPosition(fileName, pos);
             }
 
             var symbol = symbolInfoAtPosition.symbol;
+            var symbolName: string = symbol.getName();
+
+            // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
+            if ((symbol.isError() ||  symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+                this.logger.log("Unknown symbol found at the given position");
+                // only single reference
+                return this.getSingleNodeReferenceAtPosition(fileName, pos);
+            }
+
             return this.getReferencesInFile(fileName, symbol);
+        }
+
+        private getSingleNodeReferenceAtPosition(fileName: string, position: number): ReferenceEntry[] {
+            var document = this.compilerState.getDocument(fileName);
+            var script = document.script;
+
+            var path = this.getAstPathToPosition(script, position);
+            if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
+                return [];
+            }
+
+            var node = path.ast();
+            var isWriteAccess = this.isWriteAccess(node, path.parent());
+            return [
+                new ReferenceEntry(this.compilerState.getHostFileName(fileName), node.minChar, node.limChar, isWriteAccess)
+            ];
         }
 
         public getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[] {
@@ -112,19 +150,30 @@ module Services {
 
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
-            
+
             var path = this.getAstPathToPosition(script, pos);
             if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 this.logger.log("No identifier at the specified location.");
                 return result;
             }
 
+            // Store the actual name before calling getSymbolInformationFromPath
+            var actualNameAtPosition = (<TypeScript.Identifier>path.ast()).text();
+
             var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
             var symbol = symbolInfoAtPosition.symbol;
 
             if (symbol === null) {
                 this.logger.log("No symbol annotation on the identifier AST.");
-                return [];
+                return result;
+            }
+
+            var symbolName: string = symbol.getName();
+
+            // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
+            if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+                this.logger.log("Unknown symbol found at the given position");
+                return result;
             }
 
             var typeSymbol: TypeScript.PullTypeSymbol = symbol.type;
@@ -242,7 +291,7 @@ module Services {
         private getReferencesInFile(fileName: string, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
             var result: ReferenceEntry[] = [];
             var symbolName = symbol.getDisplayName();
-            
+
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbolName);
             if (possiblePositions && possiblePositions.length > 0) {
                 var document = this.compilerState.getDocument(fileName);
