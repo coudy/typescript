@@ -1389,11 +1389,8 @@ module TypeScript {
                     case NodeType.CastExpression:
                         var castExpression = <UnaryExpression>current;
 
-                        if (i + 1 < n && path.asts[i + 1] === castExpression.castTerm) {
-                            // We are inside the cast term
-                            resolutionContext.resolvingTypeReference = true;
-                        }
-                        else {
+                        if (!(i + 1 < n && path.asts[i + 1] === castExpression.castTerm)) {
+                            // We are outside the cast term
                             if (propagateContextualTypes) {
                                 var contextualType: PullTypeSymbol = null;
                                 var typeSymbol = this.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
@@ -1447,9 +1444,18 @@ module TypeScript {
 
                         break;
 
+                    case NodeType.TypeQuery:
                     case NodeType.TypeRef:
                     case NodeType.TypeParameter:
-                        resolutionContext.resolvingTypeReference = true;
+                        // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
+                        // when we are looking at a function type (e.g. var y : (a) => void)
+                        var typeExpressionNode = path.asts[i + 1];
+                        if (!typeExpressionNode ||
+                            typeExpressionNode.nodeType() == NodeType.Name ||
+                            typeExpressionNode.nodeType() == NodeType.MemberAccessExpression) {
+                            resolutionContext.resolvingTypeReference = true;
+                        }
+
                         break;
 
                     case NodeType.ClassDeclaration:
