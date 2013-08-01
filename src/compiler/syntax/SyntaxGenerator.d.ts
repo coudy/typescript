@@ -1819,10 +1819,6 @@ declare module TypeScript {
         };
     };
 }
-declare module JSON3 {
-    function stringify(source: any, filter?: any, width?: any): any;
-    function parse(source: string, callback?: any): any;
-}
 declare module TypeScript {
     class ArrayUtilities {
         static isArray(value: any): boolean;

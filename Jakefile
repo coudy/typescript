@@ -50,7 +50,6 @@ var compilerSources = [
 	"core/hash.ts",
 	"core/hashTable.ts",
 	"core/integerUtilities.ts",
-	"core/JSON3.ts",
 	"core/mathPrototype.ts",
 	"core/references.ts",
 	"core/require.ts",
@@ -347,7 +346,8 @@ directory(builtTestDirectory);
 
 // Task to build the tests infrastructure using the built compiler
 var run = path.join(builtTestDirectory, "run.js");
-compileFile(run, harnessSources, [builtTestDirectory, tscFile].concat(libraryTargets).concat(harnessSources), [], true);
+var json2 = path.join(harnessDirectory, "external/json2.js")
+compileFile(run, harnessSources, [builtTestDirectory, tscFile].concat(libraryTargets).concat(harnessSources), [json2], true);
 
 // Webharness
 var frontEndPath = "tests/cases/webharness/frontEnd.ts";

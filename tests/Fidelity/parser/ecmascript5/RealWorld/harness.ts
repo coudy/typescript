@@ -1837,7 +1837,7 @@ module Harness {
         }
 
         public getHostSettings(): string {
-            return JSON2.stringify({ usePullLanguageService: usePull });
+            return JSON.stringify({ usePullLanguageService: usePull });
         }
     }
 

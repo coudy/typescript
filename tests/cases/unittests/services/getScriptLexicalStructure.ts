@@ -1,10 +1,4 @@
 ﻿///<reference path='_project.ts'/>
-declare var JSON2;
-declare var require: any;
-if (typeof require === "function") {
-	JSON2 = JSON;
-}
-
 describe('getScriptLexicalStructure', function () {
     var typescriptLS = new Harness.TypeScriptLS();
 
@@ -899,8 +893,8 @@ describe('getScriptLexicalStructure', function () {
   "containerKind": "class"
  }
 ];
-            var baselineText = JSON2.stringify(baseline, null, " ");
-            var resultText = JSON2.stringify(result, null, " ");
+            var baselineText = JSON.stringify(baseline, null, " ");
+            var resultText = JSON.stringify(result, null, " ");
             assert.notNull(result);
             assert.equal(79, result.length);
             assert.equal(baselineText, resultText);
