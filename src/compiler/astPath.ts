@@ -323,15 +323,18 @@ module TypeScript {
                     var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
                     if (pos >= minChar && pos < limChar) {
 
-                        // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
-                        //       than top of the stack.
-                        var previous = ctx.path.ast();
-                        if (previous === null || (cur.minChar >= previous.minChar &&
-                            (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
-                            ctx.path.push(cur);
-                        }
-                        else {
-                            //logger.log("TODO: Ignoring node because minChar, limChar not better than previous node in stack");
+                        // Ignore empty lists
+                        if (cur.nodeType() !== TypeScript.NodeType.List || cur.limChar > cur.minChar) {
+                            // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
+                            //       than top of the stack.
+                            var previous = ctx.path.ast();
+                            if (previous === null || (cur.minChar >= previous.minChar &&
+                                (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (previous.limChar + (useTrailingTriviaAsLimChar ? previous.trailingTriviaWidth : 0)))) {
+                                ctx.path.push(cur);
+                            }
+                            else {
+                                //logger.log("TODO: Ignoring node because minChar, limChar not better than previous node in stack");
+                            }
                         }
                     }
 
