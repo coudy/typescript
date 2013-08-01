@@ -1137,7 +1137,7 @@ module TypeScript {
         public emitVariableDeclarator(varDecl: VariableDeclarator) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
             this.pushDecl(pullDecl);
-            if ((pullDecl.flags & PullElementFlags.Ambient) === PullElementFlags.Ambient) {
+            if (pullDecl && (pullDecl.flags & PullElementFlags.Ambient) === PullElementFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
             }
             else {
@@ -1150,7 +1150,7 @@ module TypeScript {
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
-                var parentDecl = pullDecl.getParentDecl();
+                var parentDecl = pullDecl && pullDecl.getParentDecl();
                 var parentIsClass = parentDecl && parentDecl.kind === PullElementKind.Class;
                 var parentIsModule = parentDecl && (parentDecl.flags & PullElementFlags.SomeInitializedModule);
                 if (parentIsClass) {

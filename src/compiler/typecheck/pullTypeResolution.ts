@@ -783,11 +783,6 @@ module TypeScript {
                     prototypeDecl.setParentDecl(parentDecl);
                     prototypeSymbol.addDeclaration(prototypeDecl);
                     prototypeSymbol.type = lhsType.getAssociatedContainerType();
-
-                    if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
-                        prototypeSymbol.type = this.specializeTypeToAny(prototypeSymbol.type, enclosingDecl, context);
-                    }
-
                     prototypeSymbol.isResolved = true;
                     members.push(prototypeSymbol);
                 }

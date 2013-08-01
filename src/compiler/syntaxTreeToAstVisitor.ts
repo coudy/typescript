@@ -658,7 +658,11 @@ module TypeScript {
                     
                     var init = enumElement.equalsValueClause !== null ? enumElement.equalsValueClause.accept(this) : null;
 
-                    var declarator = new VariableDeclarator(memberName, new TypeReference(this.createRef(name.actualText, -1), 0), init);
+                    var typeReference = new TypeReference(this.createRef(name.actualText, -1), 0);
+                    typeReference.minChar = name.minChar;
+                    typeReference.limChar = name.limChar;
+
+                    var declarator = new VariableDeclarator(memberName, typeReference, init);
                     declarator.constantValue = this.determineConstantValue(enumElement.equalsValueClause, declarators);
 
                     declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
