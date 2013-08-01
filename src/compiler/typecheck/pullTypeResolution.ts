@@ -1389,6 +1389,17 @@ module TypeScript {
                     return classDeclSymbol;
                 }
 
+                // Need to ensure our constructor type can properly see our parent type's 
+                // constructor type before going and resolving our members.
+                if (parentType) {
+                    var parentConstructorSymbol = parentType.getConstructorMethod();
+                    var parentConstructorTypeSymbol = parentConstructorSymbol.type;
+
+                    if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
+                        constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                    }
+                }
+
                 if (context.typeCheck()) {
                     var constructorMembers = constructorTypeSymbol.getMembers();
 
@@ -1397,15 +1408,6 @@ module TypeScript {
                     for (var i = 0; i < constructorMembers.length; i++) {
                         this.resolveDeclaredSymbol(constructorMembers[i], classDecl, context);
                     }
-                }
-            }
-
-            if (parentType) {
-                var parentConstructorSymbol = parentType.getConstructorMethod();
-                var parentConstructorTypeSymbol = parentConstructorSymbol.type;
-
-                if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
-                    constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
                 }
             }
 
