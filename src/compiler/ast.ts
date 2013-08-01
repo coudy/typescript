@@ -149,9 +149,7 @@ module TypeScript {
 
         public emit(emitter: Emitter) {
             emitter.emitComments(this, true);
-            emitter.recordSourceMappingStart(this);
             this.emitWorker(emitter);
-            emitter.recordSourceMappingEnd(this);
             emitter.emitComments(this, false);
         }
 
@@ -205,9 +203,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            emitter.recordSourceMappingStart(this);
             emitter.emitModuleElements(this);
-            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {
@@ -283,13 +279,13 @@ module TypeScript {
         public emitWorker(emitter: Emitter) {
             switch (this.nodeType()) {
                 case NodeType.NullLiteral:
-                    emitter.writeToOutput("null");
+                    emitter.writeToOutputWithSourceMapRecord("null", this);
                     break;
                 case NodeType.FalseLiteral:
-                    emitter.writeToOutput("false");
+                    emitter.writeToOutputWithSourceMapRecord("false", this);
                     break;
                 case NodeType.TrueLiteral:
-                    emitter.writeToOutput("true");
+                    emitter.writeToOutputWithSourceMapRecord("true", this);
                     break;
                 default:
                     throw Errors.abstract();
@@ -308,10 +304,10 @@ module TypeScript {
 
         public emitWorker(emitter: Emitter) {
             if (emitter.thisFunctionDeclaration && (hasFlag(emitter.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
-                emitter.writeToOutput("_this");
+                emitter.writeToOutputWithSourceMapRecord("_this", this);
             }
             else {
-                emitter.writeToOutput("this");
+                emitter.writeToOutputWithSourceMapRecord("this", this);
             }
         }
 
@@ -326,7 +322,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.emitSuperReference();
+            emitter.writeToOutputWithSourceMapRecord("_super.prototype", this);
         }
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
@@ -352,10 +348,12 @@ module TypeScript {
                 this.expression.emit(emitter);
             }
             else {
+                emitter.recordSourceMappingStart(this);
                 emitter.writeToOutput("(");
                 emitter.emitCommentsArray(this.openParenTrailingComments);
                 this.expression.emit(emitter);
                 emitter.writeToOutput(")");
+                emitter.recordSourceMappingEnd(this);
             }
         }
         
@@ -375,7 +373,11 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            switch (this.nodeType()) {
+            var nodeType = this.nodeType();
+            if (nodeType != NodeType.CastExpression) {
+                emitter.recordSourceMappingStart(this);
+            }
+            switch (nodeType) {
                 case NodeType.PostIncrementExpression:
                     this.operand.emit(emitter);
                     emitter.writeToOutput("++");
@@ -438,6 +440,9 @@ module TypeScript {
                 default:
                     throw Errors.abstract();
             }
+            if (nodeType != NodeType.CastExpression) {
+                emitter.recordSourceMappingEnd(this);
+            }
         }
 
         public structuralEquals(ast: UnaryExpression, includingPosition: boolean): boolean {
@@ -469,7 +474,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.emitNew(this, this.target, this.arguments);
+            emitter.emitNew(this);
         }
 
         public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
@@ -494,7 +499,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.emitCall(this, this.target, this.arguments);
+            emitter.emitCall(this);
         }
 
         public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
@@ -560,6 +565,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             switch (this.nodeType()) {
                 case NodeType.MemberAccessExpression:
                     if (!emitter.tryEmitConstant(this)) {
@@ -585,7 +591,7 @@ module TypeScript {
                     }
                     else {
                         this.operand1.emit(emitter);
-                        emitter.writeToOutputTrimmable(": ");
+                        emitter.writeToOutput(": ");
                     }
                     this.operand2.emit(emitter);
                     break;
@@ -605,11 +611,12 @@ module TypeScript {
                             emitter.writeToOutput(" in ");
                         }
                         else {
-                            emitter.writeToOutputTrimmable(" " + binOp + " ");
+                            emitter.writeToOutput(" " + binOp + " ");
                         }
                         this.operand2.emit(emitter);
                     }
             }
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: BinaryExpression, includingPosition: boolean): boolean {
@@ -664,7 +671,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(this._text);
+            emitter.writeToOutputWithSourceMapRecord(this._text, this);
         }
 
         public structuralEquals(ast: NumberLiteral, includingPosition: boolean): boolean {
@@ -684,7 +691,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(this.text);
+            emitter.writeToOutputWithSourceMapRecord(this.text, this);
         }
 
         public structuralEquals(ast: RegexLiteral, includingPosition: boolean): boolean {
@@ -710,7 +717,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(this.actualText);
+            emitter.writeToOutputWithSourceMapRecord(this.actualText, this);
         }
 
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
@@ -862,7 +869,7 @@ module TypeScript {
         public isOptionalArg(): boolean { return this.isOptional || this.init; }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(this.id.actualText);
+            emitter.writeToOutputWithSourceMapRecord(this.id.actualText, this);
         }
 
         public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
@@ -1142,8 +1149,10 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("throw ");
             this.expression.emit(emitter);
+            emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
         }
 
@@ -1170,6 +1179,7 @@ module TypeScript {
             var isArrowExpression = this.expression.nodeType() === NodeType.FunctionDeclaration &&
                 hasFlag((<FunctionDeclaration>this.expression).getFunctionFlags(), FunctionFlags.IsFatArrowFunction);
 
+            emitter.recordSourceMappingStart(this);
             if (isArrowExpression) {
                 emitter.writeToOutput("(");
             }
@@ -1180,6 +1190,7 @@ module TypeScript {
                 emitter.writeToOutput(")");
             }
 
+            emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
         }
 
@@ -1203,9 +1214,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.recordSourceMappingStart(this.identifier);
-            emitter.writeToOutput(this.identifier.actualText);
-            emitter.recordSourceMappingEnd(this.identifier);
+            emitter.writeToOutputWithSourceMapRecord(this.identifier.actualText, this.identifier);
             emitter.writeLineToOutput(":");
             emitter.emitJavascript(this.statement, true);
         }
@@ -1286,6 +1295,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
             if (this.statements) {
@@ -1295,6 +1305,7 @@ module TypeScript {
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
@@ -1319,6 +1330,7 @@ module TypeScript {
         public hasExplicitTarget() { return this.target; }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             if (this.nodeType() === NodeType.BreakStatement) {
                 emitter.writeToOutput("break");
             }
@@ -1328,6 +1340,7 @@ module TypeScript {
             if (this.hasExplicitTarget()) {
                 emitter.writeToOutput(" " + this.target);
             }
+            emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
         }
 
@@ -1351,10 +1364,12 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("while (");
             this.cond.emit(emitter);
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
@@ -1378,14 +1393,14 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("do");
             emitter.emitBlockOrStatement(this.body);
-            emitter.recordSourceMappingStart(this.whileSpan);
-            emitter.writeToOutput(" while");
-            emitter.recordSourceMappingEnd(this.whileSpan);
+            emitter.writeToOutputWithSourceMapRecord(" while", this.whileSpan);
             emitter.writeToOutput('(');
             this.cond.emit(emitter);
             emitter.writeToOutput(")");
+            emitter.recordSourceMappingEnd(this);
             emitter.writeToOutput(";");
         }
 
@@ -1412,6 +1427,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("if (");
             this.cond.emit(emitter);
             emitter.writeToOutput(")");
@@ -1435,6 +1451,7 @@ module TypeScript {
                     emitter.emitBlockOrStatement(this.elseBod);
                 }
             }
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
@@ -1459,14 +1476,16 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             if (this.returnExpression) {
                 emitter.writeToOutput("return ");
                 this.returnExpression.emit(emitter);
-                emitter.writeToOutput(";");
             }
             else {
-                emitter.writeToOutput("return;");
+                emitter.writeToOutput("return");
             }
+            emitter.recordSourceMappingEnd(this);
+            emitter.writeToOutput(";");
         }
 
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
@@ -1489,12 +1508,14 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("for (");
             this.lval.emit(emitter);
             emitter.writeToOutput(" in ");
             this.obj.emit(emitter);
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
@@ -1522,13 +1543,13 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("for (");
             if (this.init) {
                 if (this.init.nodeType() !== NodeType.List) {
                     this.init.emit(emitter);
                 }
                 else {
-                    emitter.setInVarBlock((<ASTList>this.init).members.length);
                     emitter.emitCommaSeparatedList(<ASTList>this.init);
                 }
             }
@@ -1542,6 +1563,7 @@ module TypeScript {
             }
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
@@ -1567,6 +1589,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("with (");
             if (this.expr) {
                 this.expr.emit(emitter);
@@ -1574,6 +1597,7 @@ module TypeScript {
 
             emitter.writeToOutput(")");
             emitter.emitBlockOrStatement(this.body);
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
@@ -1597,6 +1621,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.recordSourceMappingStart(this.statement);
             emitter.writeToOutput("switch (");
             this.val.emit(emitter);
@@ -1617,6 +1642,7 @@ module TypeScript {
             emitter.indenter.decreaseIndent();
             emitter.emitIndent();
             emitter.writeToOutput("}");
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
@@ -1636,6 +1662,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             if (this.expr) {
                 emitter.writeToOutput("case ");
                 this.expr.emit(emitter);
@@ -1657,6 +1684,7 @@ module TypeScript {
                 this.body.emit(emitter);
                 emitter.indenter.decreaseIndent();
             }
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: CaseClause, includingPosition: boolean): boolean {
@@ -1757,6 +1785,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("try ");
             this.tryBody.emit(emitter);
             emitter.emitJavascript(this.catchClause, false);
@@ -1765,6 +1794,7 @@ module TypeScript {
                 emitter.writeToOutput(" finally");
                 this.finallyBody.emit(emitter);
             }
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: TryStatement, includingPosition: boolean): boolean {
@@ -1786,10 +1816,12 @@ module TypeScript {
 
         public emitWorker(emitter: Emitter) {
             emitter.writeToOutput(" ");
+            emitter.recordSourceMappingStart(this);
             emitter.writeToOutput("catch (");
             this.param.id.emit(emitter);
             emitter.writeToOutput(")");
             this.body.emit(emitter);
+            emitter.recordSourceMappingEnd(this);
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -1809,7 +1841,8 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput("debugger;");
+            emitter.writeToOutputWithSourceMapRecord("debugger", this);
+            emitter.writeToOutput(";");
         }
     }
 
@@ -1836,7 +1869,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutput(";");
+            emitter.writeToOutputWithSourceMapRecord(";", this);
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {

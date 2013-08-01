@@ -1,4 +1,4 @@
-{"version":3,"file":"sourceMapValidationFunctionExpressions.js","sourceRoot":"","sources":["sourceMapValidationFunctionExpressions.ts"],"names":["greet","incrGreetings"],"mappings":"AAAA,IAAI,SAAS,GAAG,CAAC,CAAC;AAClB,IAAI,KAAK,GAAG,UAAC,QAAgB;IACzBA,SAASA,EAAEA,CAACA;IACZA,OAAOA,SAASA,CAACA;AACrBA,CAACA,CAAA;AACD,KAAK,CAAC,OAAO,CAAC,CAAC;AACf,IAAI,aAAa,GAAG;WAAMC,SAASA,EAAEA;CAAA,CAAC"}
+{"version":3,"file":"sourceMapValidationFunctionExpressions.js","sourceRoot":"","sources":["sourceMapValidationFunctionExpressions.ts"],"names":["greet","incrGreetings"],"mappings":"AAAA,IAAI,SAAS,GAAG,CAAC;AACjB,IAAI,KAAK,GAAG,UAAC,QAAgB;IACzBA,SAASA,EAAEA;IACXA,OAAOA,SAASA;AACpBA,CAACA;AACD,KAAK,CAAC,OAAO,CAAC;AACd,IAAI,aAAa,GAAG;WAAMC,SAASA,EAAEA;AAAXA,CAAWA"}
 var greetings = 0;
 var greet = function (greeting) {
     greetings++;

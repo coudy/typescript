@@ -995,7 +995,7 @@ module TypeScript {
                 
                 var statements = new ASTList([returnStatement]);
 
-                var block = new Block(statements, statements.members[0]);
+                var block = new Block(statements, expression);
                 return block;
             }
         }

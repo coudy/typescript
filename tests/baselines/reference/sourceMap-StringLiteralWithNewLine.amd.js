@@ -1,4 +1,4 @@
-{"version":3,"file":"sourceMap-StringLiteralWithNewLine.js","sourceRoot":"","sources":["sourceMap-StringLiteralWithNewLine.ts"],"names":["Foo"],"mappings":"AAOA,IAAO,GAAG;AAKT,CALD,UAAO,GAAG;IACNA,IAAIA,CAACA,GAAGA,OAAOA,CAACA;IAChBA,IAAIA,CAACA,GAAGA;wBACYA,CAACA;IACrBA,IAAIA,CAACA,GAAGA,MAAMA,CAACA,QAAQA,CAACA;AAC5BA,CAACA,qBAAA"}
+{"version":3,"file":"sourceMap-StringLiteralWithNewLine.js","sourceRoot":"","sources":["sourceMap-StringLiteralWithNewLine.ts"],"names":["Foo"],"mappings":"AAOA,IAAO,GAAG;AAKT,CALD,UAAO,GAAG;IACNA,IAAIA,CAACA,GAAGA,OAAOA;IACfA,IAAIA,CAACA,GAAGA;wBACYA;IACpBA,IAAIA,CAACA,GAAGA,MAAMA,CAACA,QAAQA;AAC3BA,CAACA,qBAAA"}
 var Foo;
 (function (Foo) {
     var x = "test1";

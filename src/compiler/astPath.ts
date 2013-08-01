@@ -263,7 +263,7 @@ module TypeScript {
     }
 
     export function isValidAstNode(ast: TypeScript.IASTSpan): boolean {
-        if (ast === null)
+        if (!ast)
             return false;
 
         if (ast.minChar === -1 || ast.limChar === -1)
