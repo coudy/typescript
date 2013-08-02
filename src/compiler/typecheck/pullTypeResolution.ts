@@ -2495,7 +2495,7 @@ module TypeScript {
                     typeExprSymbol = (<PullTypeAliasSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
                 }
 
-                if (typeExprSymbol && typeExprSymbol.isContainer()) {
+                if (typeExprSymbol && typeExprSymbol.kind === PullElementKind.DynamicModule) {
 
                     var exportedTypeSymbol = (<PullContainerTypeSymbol>typeExprSymbol).getExportAssignedTypeSymbol();
 
@@ -4475,16 +4475,6 @@ module TypeScript {
                 return this.getNewErrorTypeSymbol();
             }
 
-            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || (lhs.kind == PullElementKind.EnumMember)) && this.cachedNumberInterfaceType()) {
-                lhsType = this.cachedNumberInterfaceType();
-            }
-            else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
-                lhsType = this.cachedStringInterfaceType();
-            }
-            else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
-                lhsType = this.cachedBooleanInterfaceType();
-            }
-
             if (!lhsType.isResolved) {
                 var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
 
@@ -4497,7 +4487,7 @@ module TypeScript {
                 }
             }
 
-            if (lhsType.isContainer() && !lhsType.isAlias()) {
+            if (lhsType.isContainer() && !lhsType.isAlias() && !lhsType.isEnum()) {
                 // we're searching in the value space, so we should try to use the
                 // instance value type
                 var instanceSymbol = (<PullContainerTypeSymbol>lhsType).getInstanceSymbol();
@@ -4543,6 +4533,16 @@ module TypeScript {
                 lhsType = this.substituteUpperBoundForType(lhsType);
             }
 
+            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || lhsType.isEnum()) && this.cachedNumberInterfaceType()) {
+                lhsType = this.cachedNumberInterfaceType();
+            }
+            else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
+                lhsType = this.cachedStringInterfaceType();
+            }
+            else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
+                lhsType = this.cachedBooleanInterfaceType();
+            }
+
             // now for the name...
             var nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
             nameSymbol = this.resolveNameSymbol(nameSymbol, context);
@@ -4552,7 +4552,7 @@ module TypeScript {
                 if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
                     nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, this.cachedFunctionInterfaceType());
                 }
-                else if (lhsType.isContainer()) {
+                else if (lhsType.kind === PullElementKind.DynamicModule) {
                     var containerType = <PullContainerTypeSymbol>lhsType;
                     var associatedInstance = containerType.getInstanceSymbol();
 
@@ -6729,8 +6729,9 @@ module TypeScript {
                 if (!this.isValidLHS(binaryExpression.operand1, leftExpr)) {
                     context.postError(this.unitPath, binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null);
                 }
-
-                this.checkAssignability(binaryExpression.operand1, rightType, leftType, enclosingDecl, context);
+                else {
+                    this.checkAssignability(binaryExpression.operand1, rightType, leftType, enclosingDecl, context);
+                }
             }
             return rightType;
         }
@@ -6751,7 +6752,7 @@ module TypeScript {
                 typeToReturn = (<PullTypeAliasSymbol>typeToReturn).getExportAssignedTypeSymbol();
             }
 
-            if (typeToReturn && typeToReturn.isContainer()) {
+            if (typeToReturn && typeToReturn.isContainer() && !typeToReturn.isEnum()) {
                 var instanceTypeSymbol = (<PullContainerTypeSymbol>typeToReturn).getInstanceType();
 
                 if (!instanceTypeSymbol) {

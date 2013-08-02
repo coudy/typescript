@@ -1247,7 +1247,7 @@ module TypeScript {
         }
 
         public static isValidIdentifier(text: ISimpleText, languageVersion: LanguageVersion): boolean {
-            var scanner = new Scanner(/*fileName:*/ null, text, LanguageVersion, Scanner.triviaWindow);
+            var scanner = new Scanner(/*fileName:*/ null, text, languageVersion, Scanner.triviaWindow);
             var errors = new Array<Diagnostic>();
             var token = scanner.scan(errors, false);
 

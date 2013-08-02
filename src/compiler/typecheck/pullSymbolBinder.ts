@@ -180,7 +180,6 @@ module TypeScript {
                     this.semanticInfo.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [moduleContainerDecl.getDisplayName()]));
                 }
-
                 moduleContainerTypeSymbol = null;
             }
 
@@ -197,79 +196,81 @@ module TypeScript {
             }
 
             if (!moduleInstanceSymbol && isInitializedModule) {
-
                 // search for a complementary instance symbol first
                 var variableSymbol: PullSymbol = null;
-                if (!isEnum) {
-                    if (parentInstanceSymbol) {
-                        if (isExported) {
-                            // We search twice because export visibility does not need to agree
-                            variableSymbol = parentInstanceSymbol.findMember(modName, false);
+                if (parentInstanceSymbol) {
+                    if (isExported) {
+                        // We search twice because export visibility does not need to agree
+                        variableSymbol = parentInstanceSymbol.findMember(modName, false);
 
-                            if (!variableSymbol) {
-                                variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
-                            }
-                        }
-                        else {
+                        if (!variableSymbol) {
                             variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
-
-                            if (!variableSymbol) {
-                                variableSymbol = parentInstanceSymbol.findMember(modName, false);
-                            }
                         }
+                    }
+                    else {
+                        variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
 
-                        if (variableSymbol) {
-                            var declarations = variableSymbol.getDeclarations();
+                        if (!variableSymbol) {
+                            variableSymbol = parentInstanceSymbol.findMember(modName, false);
+                        }
+                    }
 
-                            if (declarations.length) {
-                                var variableSymbolParentDecl = declarations[0].getParentDecl();
+                    if (variableSymbol) {
+                        var declarations = variableSymbol.getDeclarations();
 
-                                if (parentDecl !== variableSymbolParentDecl) {
-                                    variableSymbol = null;
-                                }
+                        if (declarations.length) {
+                            var variableSymbolParentDecl = declarations[0].getParentDecl();
+
+                            if (parentDecl !== variableSymbolParentDecl) {
+                                variableSymbol = null;
                             }
                         }
                     }
-                    else if (!(moduleContainerDecl.flags & PullElementFlags.Exported)) {
-                        // Search locally to this file for a previous declaration that's suitable for augmentation
-                        var siblingDecls = parentDecl.getChildDecls();
-                        var augmentedDecl: PullDecl = null;
+                }
+                else if (!(moduleContainerDecl.flags & PullElementFlags.Exported)) {
+                    // Search locally to this file for a previous declaration that's suitable for augmentation
+                    var siblingDecls = parentDecl.getChildDecls();
+                    var augmentedDecl: PullDecl = null;
 
-                        for (var i = 0; i < siblingDecls.length; i++) {
-                            if (siblingDecls[i] == moduleContainerDecl) {
-                                break;
-                            }
-
-                            if ((siblingDecls[i].name == modName) && (siblingDecls[i].kind & (PullElementKind.Class | PullElementKind.SomeFunction))) {
-                                augmentedDecl = siblingDecls[i];
-                                break;
-                            }
+                    for (var i = 0; i < siblingDecls.length; i++) {
+                        if (siblingDecls[i] == moduleContainerDecl) {
+                            break;
                         }
 
-                        if (augmentedDecl) {
-                            variableSymbol = augmentedDecl.getSymbol();
+                        if ((siblingDecls[i].name == modName) && (siblingDecls[i].kind & PullElementKind.SomeValue)) {
+                            augmentedDecl = siblingDecls[i];
+                            break;
+                        }
+                    }
 
-                            if (variableSymbol && variableSymbol.isType()) {
+                    if (augmentedDecl) {
+                        variableSymbol = augmentedDecl.getSymbol();
+
+                        if (variableSymbol) {
+                            if (variableSymbol.isContainer()) {
+                                variableSymbol = (<PullContainerTypeSymbol>variableSymbol).getInstanceSymbol();
+                            }
+                            else if (variableSymbol && variableSymbol.isType()) {
                                 variableSymbol = (<PullTypeSymbol>variableSymbol).getConstructorMethod();
                             }
                         }
                     }
                 }
 
+                // The instance symbol is further set up in bindVariableDeclaration
                 if (variableSymbol) {
-                    var prevKind = variableSymbol.kind;
-                    var acceptableRedeclaration = (prevKind == PullElementKind.Function) || (prevKind == PullElementKind.ConstructorMethod) || variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
-
-                    if (acceptableRedeclaration) {
-                        moduleInstanceTypeSymbol = variableSymbol.type;
-                    }
-                    else {
-                        variableSymbol = null;
-                    }
+                    moduleInstanceSymbol = variableSymbol;
+                    moduleInstanceTypeSymbol = variableSymbol.type;
                 }
+                else {
+                    moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
+                }
+
+                moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
 
                 if (!moduleInstanceTypeSymbol) {
                     moduleInstanceTypeSymbol = new PullTypeSymbol("", PullElementKind.ObjectType);
+                    moduleInstanceSymbol.type = moduleInstanceTypeSymbol;
                 }
 
                 moduleInstanceTypeSymbol.addDeclaration(moduleContainerDecl);
@@ -277,18 +278,6 @@ module TypeScript {
                 if (!moduleInstanceTypeSymbol.getAssociatedContainerType()) {
                     moduleInstanceTypeSymbol.setAssociatedContainerType(moduleContainerTypeSymbol);
                 }
-
-                // The instance symbol is further set up in bindVariableDeclaration
-                // (We add the declaration there, invalidate previous decls on edit and add the instance symbol to the parent)
-                if (variableSymbol) {
-                    moduleInstanceSymbol = variableSymbol;
-                }
-                else {
-                    moduleInstanceSymbol = new PullSymbol(modName, PullElementKind.Variable);
-                    moduleInstanceSymbol.type = moduleInstanceTypeSymbol;
-                }
-
-                moduleContainerTypeSymbol.setInstanceSymbol(moduleInstanceSymbol);
             }
 
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
@@ -775,7 +764,7 @@ module TypeScript {
             var parentDecl = variableDeclaration.getParentDecl();
 
             var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) !== 0;
-            var isModuleValue = (declFlags & (PullElementFlags.SomeInitializedModule)) != 0;
+            var isModuleValue = (declFlags & (PullElementFlags.InitializedModule)) != 0;
             var isEnumValue = (declFlags & PullElementFlags.InitializedEnum) != 0;
             var isClassConstructorVariable = (declFlags & PullElementFlags.ClassConstructorVariable) != 0;
 
@@ -826,9 +815,8 @@ module TypeScript {
                 var prevIsAmbient = variableSymbol.hasFlag(PullElementFlags.Ambient);
                 var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.InitializedEnum);
                 var prevIsClassConstructorVariable = variableSymbol.hasFlag(PullElementFlags.ClassConstructorVariable);
-                var prevIsModuleValue = variableSymbol.hasFlag(PullElementFlags.SomeInitializedModule);
+                var prevIsModuleValue = variableSymbol.hasFlag(PullElementFlags.InitializedModule);
                 var prevIsImplicit = variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
-                var onlyOneIsEnum = (isEnumValue || prevIsEnum) && !(isEnumValue && prevIsEnum);
                 var isAmbient = (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
                 var prevDecl = variableSymbol.getDeclarations()[0];
                 var bothAreGlobal = parentDecl && (parentDecl.kind == PullElementKind.Script) && (declKind == prevKind);
@@ -838,7 +826,7 @@ module TypeScript {
                 var acceptableRedeclaration = (!shareParent || prevIsParam) ||
                     (isImplicit &&
                     ((!isEnumValue && !isClassConstructorVariable && prevKind == PullElementKind.Function) || // Enums can't mix with functions
-                    (isModuleValue && prevIsModuleValue) || // modules and enums can mix freely
+                    ((isModuleValue || isEnumValue) && (prevIsModuleValue || prevIsEnum)) || // modules and enums can mix freely
                     (isClassConstructorVariable && prevIsModuleValue && isAmbient) || // an ambient class can be declared after a module
                     (isModuleValue && prevIsClassConstructorVariable))); // the module variable can come after the class constructor variable
 
@@ -849,7 +837,7 @@ module TypeScript {
                     }
                 }
 
-                if (shareParent && (!acceptableRedeclaration || onlyOneIsEnum || prevIsParam)) {
+                if (shareParent && (!acceptableRedeclaration || prevIsParam)) {
                     // If neither of them are implicit (both explicitly declared as vars), we won't error now. We'll check that the types match during type check.
                     // However, we will error when a variable clobbers a function.
                     if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0)) {
