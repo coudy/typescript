@@ -5,7 +5,7 @@ var y: any = x;
 var r2 = y<string>();
 
 var c: Function;
-var r3 = c<number>(); 
+var r3 = c<number>(); // should be an error
 
 class C implements Function {
     prototype = null;

@@ -6178,6 +6178,9 @@ module TypeScript {
 
                     // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                     if (this.cachedFunctionInterfaceType() && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), context)) {
+                        if (callEx.typeArguments) {
+                            context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments, null);
+                        }
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
