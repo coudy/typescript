@@ -113,8 +113,7 @@ verify.quickInfoIs('string');
 goTo.marker('b3');
 verify.quickInfoIs('number');
 goTo.marker('b4');
-// BUG 668243
-//verify.quickInfoIs('any');
+//verify.quickInfoIs('any'); // TODO: fourslash differs from VS...
 goTo.marker('b5');
 verify.quickInfoIs('I');
 goTo.marker('b6');
@@ -170,9 +169,8 @@ goTo.marker('e2');
 verify.quickInfoIs('string');
 goTo.marker('e3');
 verify.quickInfoIs('Foo<number>');
-// BUG 667595
-//goTo.marker('e4');
-//verify.quickInfoIs('Foo<number>'); // TODO: fourslash differs from VS...
+goTo.marker('e4');
+verify.quickInfoIs('Foo<number>'); // TODO: fourslash differs from VS...
 goTo.marker('e5');
 verify.quickInfoIs('I');
 goTo.marker('e6');

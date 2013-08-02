@@ -1,5 +1,4 @@
-//bug 703330: retyper: add export = clause causes different errors reported pull/full type check
-/// <reference path="../fourslash.ts" />
+/// <reference path="fourslash.ts" />
 
 //// interface connectModule {
 ////     (res, req, next): void;
@@ -25,4 +24,4 @@ edit.deleteAtCaret(24);
 
 goTo.marker(1);
 
-//edit.insert("export = connectExport;\n");
+edit.insert("export = connectExport;\n");

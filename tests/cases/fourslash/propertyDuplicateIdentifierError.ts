@@ -1,4 +1,3 @@
-//bug 703575: retyper: duplicate identifier in property error dissapears on edit
 /// <reference path="fourslash.ts" />
 
 ////export class C {

@@ -4,7 +4,6 @@
 ////var y/*y*/ = x./*1*/pop/*2*/(5);
 ////
 
-//BUG 703066
 verify.errorExistsBetweenMarkers("1", "2");
 verify.numberOfErrorsInCurrentFile(2);
 // Expected errors are:

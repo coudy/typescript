@@ -15,7 +15,7 @@
 ////}
 ////interface StringyPlus {
 ////    [x: string]: RegExp;
-////    //foo(): RegExp; // BUG 709795
+////    foo(): RegExp;
 ////}
 ////}
 ////interface NumericG<T> {

@@ -65,9 +65,8 @@
 
 goTo.marker('a1');
 verify.quickInfoIs('Foo<any>');
-// BUG 682406
-//goTo.marker('a2');
-//verify.quickInfoIs('Foo<any>');
+goTo.marker('a2');
+// verify.quickInfoIs('Foo<any>');// TODO: fourslash differs from VS...
 goTo.marker('a3');
 verify.quickInfoIs('IG<any>');
 goTo.marker('a5');
@@ -77,9 +76,8 @@ verify.quickInfoIs('C<any>');
 
 goTo.marker('b1');
 verify.quickInfoIs('Foo<number>');
-// BUG 682406
-//goTo.marker('b2');
-//verify.quickInfoIs('Foo<number>'); 
+goTo.marker('b2');
+verify.quickInfoIs('Foo<number>'); 
 goTo.marker('b3');
 verify.quickInfoIs('IG<number>');
 goTo.marker('b5');
@@ -89,9 +87,8 @@ verify.quickInfoIs('C<number>');
 
 goTo.marker('c1');
 verify.quickInfoIs('Foo<I>');
-// BUG 682406
-//goTo.marker('c2');
-//verify.quickInfoIs('Foo<I>');
+goTo.marker('c2');
+verify.quickInfoIs('Foo<Foo<number>>');
 goTo.marker('c3');
 verify.quickInfoIs('IG<I>');
 goTo.marker('c5');
@@ -101,9 +98,8 @@ verify.quickInfoIs('C<I>');
 
 goTo.marker('d1');
 verify.quickInfoIs('Foo<{ x: number; }>');
-// BUG 682406
-//goTo.marker('d2');
-//verify.quickInfoIs('Foo<{ x: number; }>');
+goTo.marker('d2');
+verify.quickInfoIs('Foo<Foo<number>>');
 goTo.marker('d3');
 verify.quickInfoIs('IG<{ x: number; }>');
 goTo.marker('d5');
@@ -113,11 +109,10 @@ verify.quickInfoIs('C<{ x: number; }>');
 
 goTo.marker('e1');
 verify.quickInfoIs('Foo<Foo<number>>');
-// BUG 682406
-//goTo.marker('e2');
-//verify.quickInfoIs('any'); // TODO: fourslash reporting 'any' but VS is correct...
-//goTo.marker('e3');
-//verify.quickInfoIs('any');
+goTo.marker('e2');
+verify.quickInfoIs('Foo<Foo<number>>');
+goTo.marker('e3');
+verify.quickInfoIs('IG<Foo<number>>');
 goTo.marker('e5');
 verify.quickInfoIs('{ x: Foo<Foo<number>>; }');
 goTo.marker('e7');

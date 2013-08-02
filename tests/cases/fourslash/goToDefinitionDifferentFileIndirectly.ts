@@ -29,9 +29,8 @@ var markerList = [
     "remoteModule",
 ];
 
-// bug 661904: Lack of triple slash references support in Fourslash
-//markerList.forEach((marker) => {
-//    goTo.marker(marker + 'Reference');
-//    goTo.definition();
-//    verify.caretAtMarker(marker + 'Definition');
-//});
+markerList.forEach((marker) => {
+    goTo.marker(marker + 'Reference');
+    goTo.definition();
+    verify.caretAtMarker(marker + 'Definition');
+});

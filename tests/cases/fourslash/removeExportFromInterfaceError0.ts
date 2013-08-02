@@ -1,4 +1,3 @@
-//bug 703448: retyper: remove export from interface doesn't show error on incremental
 /// <reference path="fourslash.ts" />
 
 //// module M {

@@ -11,12 +11,12 @@ verify.quickInfoIs('m3e');
 
 goTo.marker('2');
 verify.completionListContains('foo');
-// BUG 696913
-//edit.insert('foo();');
 
-//goTo.marker('3');
-//verify.completionListContains('y');
-//edit.insert('y;');
+edit.insert('foo();');
 
-//goTo.marker('4');
-//verify.quickInfoIs('number');
+goTo.marker('3');
+verify.completionListContains('y');
+edit.insert('y;');
+
+goTo.marker('4');
+verify.quickInfoIs('number');

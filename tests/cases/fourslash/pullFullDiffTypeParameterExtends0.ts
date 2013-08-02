@@ -1,4 +1,3 @@
-//bug 703289: retyper: Pull/Full typecheck diff between extends clause on type parameter
 /// <reference path="fourslash.ts" />
 
 //// class A<T, U extends T> { }

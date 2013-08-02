@@ -5,5 +5,4 @@
 ////}
 
 goTo.marker();
-// Bug 509675: Completion list is available within comments
-// verify.completionListIsEmpty();
+// verify.completionListIsEmpty(); // TODO: difference between LS and FourSlash

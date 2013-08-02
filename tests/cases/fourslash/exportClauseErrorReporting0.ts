@@ -1,4 +1,3 @@
-//bug 703308: retyper: add/remove export clause changes reported error
 /// <reference path="fourslash.ts" />
 
 //// module M {

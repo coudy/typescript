@@ -8,5 +8,4 @@
 goTo.marker('1');
 verify.quickInfoIs('I<any>');
 goTo.marker('2');
-// BUG 684825
 verify.quickInfoIs('C<I<any>>');

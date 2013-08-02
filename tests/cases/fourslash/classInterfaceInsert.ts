@@ -1,10 +1,5 @@
 /// <reference path="fourslash.ts" />
 
-// What's the deal with bug 662364 here? If the line between 
-// the class and the interface is removed, the 
-// quick info verification at the last line of
-// the test fails
-
 //// interface Intersection {
 ////     dist: number;
 //// }
