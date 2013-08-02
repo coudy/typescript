@@ -530,16 +530,18 @@ module TypeScript {
                 }
             });
 
-            opts.option('codepage', {
-                usage: {
-                    locCode: DiagnosticCode.Specify_the_codepage_to_use_when_opening_source_files,
-                    args: null
-                },
-                type: DiagnosticCode.NUMBER,
-                set: (arg) => {
-                    this.compilationSettings.codepage = parseInt(arg, 10);
-                }
-            });
+            if (Environment.supportsCodePage()) {
+                opts.option('codepage', {
+                    usage: {
+                        locCode: DiagnosticCode.Specify_the_codepage_to_use_when_opening_source_files,
+                        args: null
+                    },
+                    type: DiagnosticCode.NUMBER,
+                    set: (arg) => {
+                        this.compilationSettings.codepage = parseInt(arg, 10);
+                    }
+                });
+            }
 
             opts.parse(this.ioHost.arguments);
 

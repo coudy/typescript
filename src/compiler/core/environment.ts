@@ -25,6 +25,7 @@ class FileInformation {
 }
 
 interface IEnvironment {
+    supportsCodePage(): boolean;
     readFile(path: string, codepage: number): FileInformation;
     writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
     deleteFile(path: string): void;
@@ -76,21 +77,22 @@ var Environment = (function () {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
 
+            supportsCodePage: () => {
+                return (<any>WScript).ReadFile;
+            },
+
             readFile: function (path: string, codepage: number): FileInformation {
                 try {
                     // If a codepage is requested, defer to our host to do the reading.  If it
                     // fails, fall back to our normal BOM/utf8 logic.
-                    if (codepage !== null) {
-                        var readFileFunction = (<any>WScript).ReadFile;
-                        if ((<any>WScript).ReadFile) {
-                            try {
-                                var contents = (<any>WScript).ReadFile(path, codepage);
-                                return new FileInformation(contents, ByteOrderMark.None);
-                            }
-                            catch (e) {
-                                // We couldn't read it with that code page.  Fall back to the normal
-                                // BOM/utf8 logic below.
-                            }
+                    if (codepage !== null && this.supportsCodePage()) {
+                        try {
+                            var contents = (<any>WScript).ReadFile(path, codepage);
+                            return new FileInformation(contents, ByteOrderMark.None);
+                        }
+                        catch (e) {
+                            // We couldn't read it with that code page.  Fall back to the normal
+                            // BOM/utf8 logic below.
                         }
                     }
 
@@ -244,6 +246,8 @@ var Environment = (function () {
             currentDirectory: (): string => {
                 return (<any>process).cwd();
             },
+
+            supportsCodePage: () => false,
 
             readFile: function (file: string, codepage: number): FileInformation {
                 if (codepage !== null) {
