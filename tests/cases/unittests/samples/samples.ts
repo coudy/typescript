@@ -10,7 +10,7 @@ describe('Compiling samples', function ()
 
     function loadSample(path: string): string
     {
-        return IO.readFile(Harness.userSpecifiedroot + "samples/" + path).contents;
+        return IO.readFile(Harness.userSpecifiedroot + "samples/" + path, /*codepage:*/null).contents;
     }
 
     function addUnitsAndCompile(units: string[]) {
@@ -23,6 +23,8 @@ describe('Compiling samples', function ()
         harnessCompiler.addInputFiles(filesToAdd);
         harnessCompiler.compile();
     }
+
+    debugger;
 
     // d3
     it('compiles the d3 sample without error', function ()
