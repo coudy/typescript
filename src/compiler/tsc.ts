@@ -530,6 +530,17 @@ module TypeScript {
                 }
             });
 
+            opts.option('codepage', {
+                usage: {
+                    locCode: DiagnosticCode.Specify_the_codepage_to_use_when_opening_source_files,
+                    args: null
+                },
+                type: DiagnosticCode.NUMBER,
+                set: (arg) => {
+                    this.compilationSettings.codepage = parseInt(arg, 10);
+                }
+            });
+
             opts.parse(this.ioHost.arguments);
 
             if (locale) {
@@ -591,7 +602,7 @@ module TypeScript {
                 return false;
             }
 
-            var fileContents = this.ioHost.readFile(filePath);
+            var fileContents = this.ioHost.readFile(filePath, this.compilationSettings.codepage);
             TypeScript.LocalizedDiagnosticMessages = JSON.parse(fileContents.contents);
             return true;
         }
@@ -703,7 +714,7 @@ module TypeScript {
                 var fileInformation: FileInformation;
 
                 try {
-                    fileInformation = this.ioHost.readFile(fileName);
+                    fileInformation = this.ioHost.readFile(fileName, this.compilationSettings.codepage);
                 }
                 catch (e) {
                     this.addDiagnostic(new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_read_file_0_1, [fileName, e.message]));

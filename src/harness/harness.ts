@@ -35,7 +35,7 @@ function filePath(fullPath: string) {
 }
 
 var typescriptServiceFileName = filePath(IO.getExecutingFilePath()) + "typescriptServices.js";
-var typescriptServiceFile = IO.readFile(typescriptServiceFileName).contents;
+var typescriptServiceFile = IO.readFile(typescriptServiceFileName, /*codepage:*/ null).contents;
 if (typeof ActiveXObject === "function") {
     eval(typescriptServiceFile);
 } else if (typeof require === "function") {
@@ -218,7 +218,7 @@ module Harness {
             path = "tests/" + path;
         }
 
-        var content = IO.readFile(Harness.userSpecifiedroot + path);
+        var content = IO.readFile(Harness.userSpecifiedroot + path, /*codepage:*/ null);
         if (content === null) {
             throw new Error("failed to read file at: '" + Harness.userSpecifiedroot + path + "'");
         }
@@ -756,8 +756,8 @@ module Harness {
         }
 
         var libFolder: string = global['WScript'] ? TypeScript.filePath(global['WScript'].ScriptFullName) : (__dirname + '/');
-        export var libText = IO ? IO.readFile(libFolder + "lib.d.ts").contents : '';
-        export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts").contents : '';
+        export var libText = IO ? IO.readFile(libFolder + "lib.d.ts", /*codepage:*/ null).contents : '';
+        export var libTextMinimal = IO ? IO.readFile(libFolder + "../../tests/minimal.lib.d.ts", /*codepage:*/ null).contents : '';
 
         /** This is the harness's own version of the batch compiler that encapsulates state about resolution */
         export class HarnessCompiler implements TypeScript.IReferenceResolverHost, TypeScript.IDiagnosticReporter {
@@ -1909,7 +1909,7 @@ module Harness {
 
         /** Parse a file on disk given its fileName */
         public parseFile(fileName: string) {
-            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName).contents)
+            var sourceText = TypeScript.ScriptSnapshot.fromString(IO.readFile(fileName, /*codepage:*/ null).contents)
             return this.parseSourceText(fileName, sourceText);
         }
 
@@ -2164,7 +2164,7 @@ module Harness {
 
             var expected = '<no content>';
             if (IO.fileExists(refFilename)) {
-                expected = IO.readFile(refFilename).contents;
+                expected = IO.readFile(refFilename, /*codepage:*/ null).contents;
             }
 
             var lineEndingSensitive = opts && opts.LineEndingSensitive;

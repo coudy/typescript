@@ -27,7 +27,7 @@ interface IFileWatcher {
 }
 
 interface IIO {
-    readFile(path: string): FileInformation;
+    readFile(path: string, codepage: number): FileInformation;
     writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
     deleteFile(path: string): void;
     dir(path: string, re?: RegExp, options?: { recursive?: boolean; }): string[];
@@ -144,8 +144,8 @@ var IO = (function() {
         }
 
         return {
-            readFile: function (path: string): FileInformation {
-                return Environment.readFile(path);
+            readFile: function (path: string, codepage: number): FileInformation {
+                return Environment.readFile(path, codepage);
             },
 
             writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
@@ -280,8 +280,8 @@ var IO = (function() {
         var _module = require('module');
 
         return {
-            readFile: function (file: string): FileInformation {
-                return Environment.readFile(file);
+            readFile: function (file: string, codepage: number): FileInformation {
+                return Environment.readFile(file, codepage);
             },
 
             writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {

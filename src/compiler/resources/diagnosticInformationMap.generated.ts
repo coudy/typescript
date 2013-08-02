@@ -1334,6 +1334,10 @@ module TypeScript {
     "code": 5041,
     "category": DiagnosticCategory.Error
   },
+  "'codepage' option not supported on current platform.": {
+    "code": 5042,
+    "category": DiagnosticCategory.Error
+  },
   "Concatenate and emit output to single file.": {
     "code": 6001,
     "category": DiagnosticCategory.Message
@@ -1448,6 +1452,14 @@ module TypeScript {
   },
   "DIRECTORY": {
     "code": 6038,
+    "category": DiagnosticCategory.Message
+  },
+  "NUMBER": {
+    "code": 6039,
+    "category": DiagnosticCategory.Message
+  },
+  "Specify the codepage to use when opening source files.": {
+    "code": 6040,
     "category": DiagnosticCategory.Message
   },
   "This version of the Javascript runtime does not support the '{0}' function.": {

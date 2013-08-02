@@ -25,7 +25,7 @@ class FileInformation {
 }
 
 interface IEnvironment {
-    readFile(path: string): FileInformation;
+    readFile(path: string, codepage: number): FileInformation;
     writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
     deleteFile(path: string): void;
     fileExists(path: string): boolean;
@@ -76,8 +76,24 @@ var Environment = (function () {
                 return (<any>WScript).CreateObject("WScript.Shell").CurrentDirectory;
             },
 
-            readFile: function (path: string): FileInformation {
+            readFile: function (path: string, codepage: number): FileInformation {
                 try {
+                    // If a codepage is requested, defer to our host to do the reading.  If it
+                    // fails, fall back to our normal BOM/utf8 logic.
+                    if (codepage !== null) {
+                        var readFileFunction = (<any>WScript).ReadFile;
+                        if ((<any>WScript).ReadFile) {
+                            try {
+                                var contents = (<any>WScript).ReadFile(path, codepage);
+                                return new FileInformation(contents, ByteOrderMark.None);
+                            }
+                            catch (e) {
+                                // We couldn't read it with that code page.  Fall back to the normal
+                                // BOM/utf8 logic below.
+                            }
+                        }
+                    }
+
                     // Initially just read the first two bytes of the file to see if there's a bom.
                     var streamObj = getStreamObject();
                     streamObj.Open();
@@ -229,7 +245,11 @@ var Environment = (function () {
                 return (<any>process).cwd();
             },
 
-            readFile: function (file: string): FileInformation {
+            readFile: function (file: string, codepage: number): FileInformation {
+                if (codepage !== null) {
+                    throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.codepage_option_not_supported_on_current_platform, null));
+                }
+
                 var buffer = _fs.readFileSync(file);
                 switch (buffer[0]) {
                     case 0xFE:

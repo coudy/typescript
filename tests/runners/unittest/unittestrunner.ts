@@ -36,7 +36,7 @@ class UnitTestRunner extends RunnerBase {
         var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.DesignTime);
 
         var toBeAdded = this.tests.map(test => {
-            return { unitName: test, content: IO.readFile(test).contents }
+            return { unitName: test, content: IO.readFile(test, /*codepage:*/ null).contents }
         });
         harnessCompiler.addInputFiles(toBeAdded);
         harnessCompiler.compile(false);

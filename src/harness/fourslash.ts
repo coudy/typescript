@@ -1387,7 +1387,7 @@ module FourSlash {
     var fsOutput = new Harness.Compiler.WriterAggregator();
     var fsErrors = new Harness.Compiler.WriterAggregator();
     export function runFourSlashTest(fileName: string) {
-        var content = IO.readFile(fileName);
+        var content = IO.readFile(fileName, /*codepage:*/ null);
         runFourSlashTestContent(content.contents, fileName)
     }
 
@@ -1414,8 +1414,8 @@ module FourSlash {
         harnessCompiler.reset();
 
         var filesToAdd = [
-            { unitName: tsFn, content: IO.readFile(tsFn).contents },
-            { unitName: fileName, content: IO.readFile(fileName).contents }
+            { unitName: tsFn, content: IO.readFile(tsFn, /*codepage:*/ null).contents },
+            { unitName: fileName, content: IO.readFile(fileName, /*codepage:*/ null).contents }
         ];
         harnessCompiler.addInputFiles(filesToAdd);
         harnessCompiler.compile();

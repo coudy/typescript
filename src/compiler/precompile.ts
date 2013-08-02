@@ -45,6 +45,8 @@ module TypeScript {
 
         public updateTC = false;
         public sourceMapEmitterCallback: SourceMapEmitterCallback;
+
+        public codepage: number = null;
     }
 
     ///
