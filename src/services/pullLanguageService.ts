@@ -843,6 +843,12 @@ module Services {
 
             var path = this.getAstPathToPosition(script, position);
 
+            if (path.count() >= 1 && path.asts[path.top].nodeType() === TypeScript.NodeType.Name &&
+                path.asts[path.top].minChar === path.asts[path.top].limChar) {
+                    // Ignore missing name nodes
+                    path.pop();
+            }
+
             var isRightOfDot = false;
             if (path.count() >= 1 &&
                 path.asts[path.top].nodeType() === TypeScript.NodeType.MemberAccessExpression
