@@ -180,6 +180,14 @@ module TypeScript {
         return path.join("/") + "/";
     }
 
+    export function convertToDirectoryPath(dirPath: string) {
+        if (dirPath && dirPath.charAt(dirPath.length - 1) !== "/") {
+            dirPath += "/";
+        }
+
+        return dirPath;
+    }
+
     var normalizePathRegEx = /^\\\\[^\\]/;
     export function normalizePath(path: string): string {
         // If it's a UNC style path (i.e. \\server\share), convert to a URI style (i.e. file://server/share)

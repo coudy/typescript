@@ -77,22 +77,21 @@ module TypeScript {
 
             // Figure out sourceMapPath and sourceMapDirectory
             if (emitOptions.compilationSettings.mapRoot) {
+                // Get the sourceMap Directory
+                this.sourceMapDirectory = emitOptions.compilationSettings.mapRoot;
                 if (emitOptions.outputMany || document.script.topLevelMod) {
-                    var sourceMapPath = switchToForwardSlashes(document.fileName).replace(emitOptions.commonDirectoryPath, "");
-                    sourceMapPath = emitOptions.compilationSettings.mapRoot + sourceMapPath;
-                    sourceMapPath = TypeScriptCompiler.mapToJSFileName(sourceMapPath, false) + SourceMapper.MapFileExtension;
-                    this.sourceMapPath = sourceMapPath;
+                    // For modules or multiple emit files the mapRoot will have directory structure like the sources
+                    // So if src\a.ts and src\lib\b.ts are compiled together user would be moving the maps into mapRoot\a.js.map and mapRoot\lib\b.js.map
+                    this.sourceMapDirectory = this.sourceMapDirectory + switchToForwardSlashes(getRootFilePath((document.fileName)).replace(emitOptions.commonDirectoryPath, ""));
+                }
 
-                    if (isRelative(this.sourceMapPath)) {
-                        sourceMapPath = emitOptions.commonDirectoryPath + this.sourceMapPath;
-                    }
-                    this.sourceMapDirectory = getRootFilePath(sourceMapPath);
+                if (isRelative(this.sourceMapDirectory)) {
+                    // The relative paths are relative to the common directory
+                    this.sourceMapDirectory = emitOptions.commonDirectoryPath + this.sourceMapDirectory;
+                    this.sourceMapDirectory = convertToDirectoryPath(switchToForwardSlashes(emitOptions.ioHost.resolvePath(this.sourceMapDirectory)));
+                    this.sourceMapPath = getRelativePathToFixedPath(getRootFilePath(jsFilePath), this.sourceMapDirectory + prettyMapFileName);
                 } else {
-                    this.sourceMapPath = emitOptions.compilationSettings.mapRoot + prettyMapFileName;
-                    this.sourceMapDirectory = emitOptions.compilationSettings.mapRoot;
-                    if (isRelative(this.sourceMapDirectory)) {
-                        this.sourceMapDirectory = getRootFilePath(jsFilePath) + emitOptions.compilationSettings.mapRoot;
-                    }
+                    this.sourceMapPath = this.sourceMapDirectory + prettyMapFileName;
                 }
             } else {
                 this.sourceMapPath = prettyMapFileName;
