@@ -791,7 +791,8 @@ module TypeScript {
         }
 
         public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
+            if (this.checkForAccessorDeclarationInAmbientContext(node) ||
+                this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
                 this.checkClassElementModifiers(node.modifiers) ||
                 this.checkGetMemberAccessorParameter(node)) {
                 this.skip(node);
@@ -800,6 +801,16 @@ module TypeScript {
 
             super.visitGetMemberAccessorDeclaration(node);
         }
+
+        private checkForAccessorDeclarationInAmbientContext(node: MemberAccessorDeclarationSyntax): boolean {
+            if (this.inAmbientDeclaration) {
+                this.pushDiagnostic1(this.position(), node, DiagnosticCode.Accessors_are_not_allowed_in_ambient_contexts, null);
+                return true;
+            }
+
+            return false;
+        }
+
 
         private checkSetMemberAccessorParameter(node: SetMemberAccessorDeclarationSyntax): boolean {
             var setKeywordFullStart = this.childFullStart(node, node.setKeyword);
@@ -841,7 +852,8 @@ module TypeScript {
         }
 
         public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
+            if (this.checkForAccessorDeclarationInAmbientContext(node) ||
+                this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
                 this.checkClassElementModifiers(node.modifiers) ||
                 this.checkSetMemberAccessorParameter(node)) {
                 this.skip(node);

@@ -346,6 +346,10 @@ module TypeScript {
     "code": 1085,
     "category": DiagnosticCategory.Error
   },
+  "Accessors are not allowed in ambient contexts.": {
+    "code": 1086,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error
