@@ -50,7 +50,6 @@ var compilerSources = [
 	"core/hash.ts",
 	"core/hashTable.ts",
 	"core/integerUtilities.ts",
-	"core/JSON3.ts",
 	"core/mathPrototype.ts",
 	"core/references.ts",
 	"core/require.ts",
