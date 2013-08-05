@@ -303,7 +303,7 @@ class Program {
         var actualFile = fileName + ".actual";
 
         if (generateBaseline) {
-            actualResult = justText ? result : JSON3.stringify(result, null, 4);
+            actualResult = justText ? result : JSON.stringify(result, null, 4);
             expectedFile = fileName + ".expected";
 
             // Environment.standardOut.WriteLine("Generating baseline for: " + fileName);
@@ -314,7 +314,7 @@ class Program {
             }
         }
         else if (verify) {
-            actualResult = justText ? result : JSON3.stringify(result, null, 4);
+            actualResult = justText ? result : JSON.stringify(result, null, 4);
 
             var expectedResult: string = null;
             if (!Environment.fileExists(expectedFile)) {
@@ -689,7 +689,7 @@ for (var d in TypeScript.LocalizedDiagnosticMessages) {
     }
 }
 
-var whatever = JSON3.stringify(diagnostics, null, 4);
+var whatever = JSON.stringify(diagnostics, null, 4);
 
 var totalTime = 0;
 var totalSize = 0;

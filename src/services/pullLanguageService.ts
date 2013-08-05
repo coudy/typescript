@@ -28,7 +28,6 @@ module Services {
 
         public refresh(): void {
             TypeScript.timeFunction(this.logger, "refresh()", () => {
-                this.activeCompletionSession = null;
                 this.compilerState.refresh();
             });
         }

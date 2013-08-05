@@ -37,7 +37,7 @@ describe('Baseline files match (intellisense data)', function() {
         var outputAndCheck = function(nameSuffix: string, process: any) {
             describe(nameSuffix + ' data for ' + filename + ' matches the baseline', function() {
                 var data = process(scriptText);
-                var stringified = JSON2.stringify(data).trim();
+                var stringified = JSON.stringify(data).trim();
 
                 var baseFilename = filename + '-' + nameSuffix + '.json';
                 IO.writeFile(outputPath + '/' + baseFilename, stringified);
