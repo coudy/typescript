@@ -9,10 +9,11 @@
 ////}
 
 ////var a = new A<number>();
-////A.B(/**/
+////A.B(a/**/
 
 goTo.marker();
-verify.currentSignatureHelpIs('B<S>(v: A<S>): A<S>')
-// BUG 701161
-//edit.insert('a');
-//verify.currentSignatureHelpIs('B<S>(v: A<S>): A<S>');
+verify.currentSignatureHelpIs('B<S>(v: A<number>): A<number>')
+edit.insert('); A.B(');
+verify.currentSignatureHelpIs('B<S>(v: A<S>): A<S>');
+edit.insert('a');
+verify.currentSignatureHelpIs('B<S>(v: A<number>): A<number>')
