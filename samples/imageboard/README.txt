@@ -30,7 +30,7 @@ npm install
 
 5. Compile the app with the following command:
 
-tsc app.ts
+tsc --module commonjs app.ts
 
 6. Launch the Node process to serve the app using the following command:
 
