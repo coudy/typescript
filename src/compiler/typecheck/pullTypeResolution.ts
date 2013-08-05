@@ -5427,6 +5427,13 @@ module TypeScript {
                     if (isAccessor) {
                         this.setSymbolForAST(binex.operand1, memberExpr, context);
                     } else {
+                        if (context.typeCheck()) {
+                            // Make sure this was not defined before
+                            if (typeSymbol.findMember(memberSymbol.name)) {
+                                context.postError(this.getUnitPath(), binex.minChar, binex.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
+                            }
+                        }
+
                         context.setTypeInContext(memberSymbol, memberExpr.type);
                         memberSymbol.setResolved();
 
