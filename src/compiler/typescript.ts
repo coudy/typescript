@@ -711,22 +711,6 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
-        public pullResolveFile(fileName: string): boolean {
-
-
-            var unit = this.semanticInfoChain.getUnit(fileName);
-
-            if (!unit) {
-                return false;
-            }
-
-            this.setUnit(fileName);
-
-            this.resolver.resolveBoundDecls(unit.getTopLevelDecls()[0], new PullTypeResolutionContext(this.resolver));
-
-            return true;
-        }
-
         public getSyntacticDiagnostics(fileName: string): Diagnostic[]{
             return this.getDocument(fileName).diagnostics();
         }
@@ -1688,8 +1672,6 @@ module TypeScript {
         }
 
         public getTopLevelDeclarations(scriptName: string): PullDecl[] {
-            //this.pullResolveFile(scriptName);
-
             var unit = this.semanticInfoChain.getUnit(scriptName);
 
             if (!unit) {

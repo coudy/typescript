@@ -987,7 +987,6 @@ module TypeScript {
                 // if it's an object literal member, just return the symbol and wait for
                 // the object lit to be resolved
                 if (!ast || ast.nodeType() === NodeType.Member) {
-
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
                     this.setUnitPath(thisUnit);
                     return symbol;

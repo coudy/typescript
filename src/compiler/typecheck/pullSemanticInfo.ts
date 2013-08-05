@@ -49,9 +49,9 @@ module TypeScript {
             this.astAliasSymbolMap = new DataMap();
             this.symbolASTMap = new DataMap();
             this.diagnostics = null;
-            this.hasBeenTypeChecked = false;
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
             this.importDeclarationNames = null;
+            this.hasBeenTypeChecked = false;
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {

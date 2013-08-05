@@ -299,8 +299,8 @@ module TypeScript {
                     this.ioHost.stdout.WriteLine("**** Update type check and errors for " + resolvedFile.path + ":");
 
                     compiler.updateSourceUnit(lastTypecheckedFileName, sourceFile.scriptSnapshot, /*version:*/ 0, /*isOpen:*/ true, null);
+
                     // resolve the file to simulate an IDE-driven pull
-                    //compiler.pullResolveFile(lastTypecheckedFileName);
                     semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
                     compiler.reportDiagnostics(semanticDiagnostics, this);
                 }
