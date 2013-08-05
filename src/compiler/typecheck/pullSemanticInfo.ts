@@ -25,28 +25,33 @@ module TypeScript {
         private topLevelSynthesizedDecls: PullDecl[] = [];
 
         private declASTMap: DataMap = new DataMap();
-
         private astDeclMap: DataMap = new DataMap();
 
+        // <-- Data to clear when we get invalidated
         private astSymbolMap: DataMap = new DataMap();
-
         private astAliasSymbolMap: DataMap = new DataMap();
-
         private symbolASTMap: DataMap = new DataMap();
+        private diagnostics: Diagnostic[] = null;
+        public hasBeenTypeChecked = false;
 
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
             Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
-        private syntaxElementSymbolMap: DataMap = new DataMap();
-        private symbolSyntaxElementMap: DataMap = new DataMap();
-
-        private hasBeenTypeChecked = false;
         private importDeclarationNames: BlockIntrinsics = null;
-
-        private diagnostics: Diagnostic[] = null;
+        // Data to clear when we get invalidated --> 
 
         constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
+        }
+
+        public invalidate() {
+            this.astSymbolMap = new DataMap();
+            this.astAliasSymbolMap = new DataMap();
+            this.symbolASTMap = new DataMap();
+            this.diagnostics = null;
+            this.hasBeenTypeChecked = false;
+            this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
+            this.importDeclarationNames = null;
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {
@@ -59,18 +64,6 @@ module TypeScript {
 
         public addTopLevelDecl(decl: PullDecl) {
             this.topLevelDecls[this.topLevelDecls.length] = decl;
-        }
-
-        public setTypeChecked(shouldTC=true) {
-            this.hasBeenTypeChecked = shouldTC;
-        }
-        public getTypeChecked() {
-            return this.hasBeenTypeChecked;
-        }
-        public invalidate() {
-            this.astSymbolMap = new DataMap();
-            this.symbolASTMap = new DataMap();
-            //this.hasBeenTypeChecked = false;
         }
 
         public getTopLevelDecls() { return this.topLevelDecls; }
@@ -297,7 +290,7 @@ module TypeScript {
             this.unitCache[unit.getPath()] = unit;
         }
 
-        public getUnit(compilationUnitPath: string) {
+        public getUnit(compilationUnitPath: string): SemanticInfo {
             return this.unitCache[compilationUnitPath];
         }
 
@@ -624,7 +617,7 @@ module TypeScript {
         }
 
         public invalidateUnit(compilationUnitPath: string) {
-            var unit = this.unitCache[compilationUnitPath];
+            var unit: SemanticInfo = this.unitCache[compilationUnitPath];
             if (unit) {
                 unit.invalidate();
             }

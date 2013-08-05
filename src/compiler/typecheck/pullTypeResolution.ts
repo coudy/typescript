@@ -8920,29 +8920,27 @@ module TypeScript {
         public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
             var unit = semanticInfoChain.getUnit(scriptName);
 
-            if (unit.getTypeChecked()) {
-                return;
+            if (!unit.hasBeenTypeChecked) {
+                unit.hasBeenTypeChecked = true;
+
+                var scriptDecl = unit.getTopLevelDecls()[0];
+
+                var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+                var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
+
+                resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
+
+                resolver.validateVariableDeclarationGroups(scriptDecl, context);
+
+                PullTypeResolver.globalTypeCheckPhase++;
+                var callBack: { (): void } = null;
+
+                while (PullTypeResolver.typeCheckCallBacks.length) {
+                    callBack = PullTypeResolver.typeCheckCallBacks[PullTypeResolver.typeCheckCallBacks.length - 1];
+                    PullTypeResolver.typeCheckCallBacks.pop();
+                    callBack();
+                }
             }
-
-            var scriptDecl = unit.getTopLevelDecls()[0];
-
-            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
-            var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
-
-            resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
-
-            resolver.validateVariableDeclarationGroups(scriptDecl, context);
-
-            PullTypeResolver.globalTypeCheckPhase++;
-            var callBack: { (): void } = null;
-
-            while (PullTypeResolver.typeCheckCallBacks.length) {
-                callBack = PullTypeResolver.typeCheckCallBacks[PullTypeResolver.typeCheckCallBacks.length - 1];
-                PullTypeResolver.typeCheckCallBacks.pop();
-                callBack();
-            }
-
-            unit.setTypeChecked();
         }
 
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {

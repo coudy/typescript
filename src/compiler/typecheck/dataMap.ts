@@ -11,10 +11,6 @@ module TypeScript {
             this.map[id] = data;
         }
 
-        public unlink(id: string) {
-            this.map[id] = undefined;
-        }
-
         public read(id: string): any {
             return this.map[id];
         }
