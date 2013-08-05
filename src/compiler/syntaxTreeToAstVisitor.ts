@@ -70,7 +70,7 @@ module TypeScript {
             span.limChar = end;
         }
 
-        public identifierFromToken(token: ISyntaxToken, isOptional: boolean): Identifier {
+        public identifierFromToken(token: ISyntaxToken, isOptional: boolean, stringLiteralIsTextOfIdentifier?: boolean): Identifier {
             var result: Identifier = null;
             if (token.fullWidth() === 0) {
                 result = new MissingIdentifier();
@@ -85,7 +85,8 @@ module TypeScript {
             }
             else {
                 var tokenText = token.text();
-                result = new Identifier(tokenText, tokenText);
+                var text = !stringLiteralIsTextOfIdentifier && token.kind() === SyntaxKind.StringLiteral ? <string>token.value() : null;
+                result = new Identifier(tokenText, text);
             }
 
             if (isOptional) {
@@ -499,7 +500,7 @@ module TypeScript {
             var result: Identifier[] = [];
 
             if (node.stringLiteral !== null) {
-                result.push(this.identifierFromToken(node.stringLiteral, /*isOptional:*/false));
+                result.push(this.identifierFromToken(node.stringLiteral, /*isOptional:*/false, true));
                 this.movePast(node.stringLiteral);
             }
             else {
