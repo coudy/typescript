@@ -165,8 +165,20 @@ module TypeScript {
                 else {
                     moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedNonMemberType(modName);
 
-                    if (moduleContainerTypeSymbol && !(moduleContainerTypeSymbol.kind & searchKind)) {
-                        moduleContainerTypeSymbol = null;
+                    if (moduleContainerTypeSymbol) {
+                        if (!(moduleContainerTypeSymbol.kind & searchKind)) {
+                            moduleContainerTypeSymbol = null;
+                        }
+                        else {
+                            // Check that they originate in the same parent declaration
+                            var declarations = moduleContainerTypeSymbol.getDeclarations();
+                            if (declarations.length) {
+                                var firstDeclParent = declarations[0].getParentDecl();
+                                if (firstDeclParent !== parentDecl) {
+                                    moduleContainerTypeSymbol = null;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -817,23 +829,28 @@ module TypeScript {
                 var prevIsClassConstructorVariable = variableSymbol.hasFlag(PullElementFlags.ClassConstructorVariable);
                 var prevIsModuleValue = variableSymbol.hasFlag(PullElementFlags.InitializedModule);
                 var prevIsImplicit = variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
+                var prevIsFunction = prevKind == PullElementKind.Function;
                 var isAmbient = (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
                 var prevDecl = variableSymbol.getDeclarations()[0];
-                var bothAreGlobal = parentDecl && (parentDecl.kind == PullElementKind.Script) && (declKind == prevKind);
+                var prevParentDecl = prevDecl.getParentDecl();
+                var bothAreGlobal = parentDecl && (parentDecl.kind == PullElementKind.Script) && (prevParentDecl.kind == PullElementKind.Script);
                 var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
                 var prevIsParam = shareParent && prevKind == PullElementKind.Parameter && declKind == PullElementKind.Variable;
 
                 var acceptableRedeclaration = (!shareParent || prevIsParam) ||
                     (isImplicit &&
-                    ((!isEnumValue && !isClassConstructorVariable && prevKind == PullElementKind.Function) || // Enums can't mix with functions
+                    ((!isEnumValue && !isClassConstructorVariable && prevIsFunction) || // Enums can't mix with functions
                     ((isModuleValue || isEnumValue) && (prevIsModuleValue || prevIsEnum)) || // modules and enums can mix freely
                     (isClassConstructorVariable && prevIsModuleValue && isAmbient) || // an ambient class can be declared after a module
                     (isModuleValue && prevIsClassConstructorVariable))); // the module variable can come after the class constructor variable
 
                 // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
-                if (acceptableRedeclaration && prevIsClassConstructorVariable && !prevIsAmbient) {
+                if (acceptableRedeclaration && (prevIsClassConstructorVariable || prevIsFunction) && !prevIsAmbient) {
                     if (prevDecl.getScriptName() != variableDeclaration.getScriptName()) {
-                        acceptableRedeclaration = false;
+                        span = variableDeclaration.getSpan();
+                        this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(),
+                            DiagnosticCode.Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2, [declName, declName, prevDecl.getScriptName()]));
+                        variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                     }
                 }
 

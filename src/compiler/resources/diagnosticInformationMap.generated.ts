@@ -1078,6 +1078,10 @@ module TypeScript {
     "code": 2187,
     "category": DiagnosticCategory.Error
   },
+  "Module '{0}' cannot merge with previous declaration of '{1}' in a different file '{2}'.": {
+    "code": 2188,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
