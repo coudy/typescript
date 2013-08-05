@@ -800,7 +800,7 @@ module TypeScript {
             }
 
             // could be a function symbol
-            if (lhsType.getCallSignatures().length && this.cachedFunctionInterfaceType()) {
+            if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) { 
                 members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, /*includePrivate*/ false));
             }
 
