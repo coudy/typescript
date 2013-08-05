@@ -562,7 +562,6 @@ module TypeScript {
                 }
             }
 
-
             var valueDecl = classDecl.getValueDecl();
 
             if (valueDecl) {

@@ -8928,15 +8928,12 @@ module TypeScript {
                 var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
 
                 resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
-
                 resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
                 PullTypeResolver.globalTypeCheckPhase++;
-                var callBack: { (): void } = null;
 
                 while (PullTypeResolver.typeCheckCallBacks.length) {
-                    callBack = PullTypeResolver.typeCheckCallBacks[PullTypeResolver.typeCheckCallBacks.length - 1];
-                    PullTypeResolver.typeCheckCallBacks.pop();
+                    var callBack = PullTypeResolver.typeCheckCallBacks.pop();
                     callBack();
                 }
             }
