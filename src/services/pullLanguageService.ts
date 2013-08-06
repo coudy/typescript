@@ -246,7 +246,6 @@ module Services {
             return result;
         }
 
-
         private getImplementorsInFile(fileName: string, symbol: TypeScript.PullTypeSymbol): ReferenceEntry[] {
             var result: ReferenceEntry[] = [];
             var symbolName = symbol.getDisplayName();
@@ -368,20 +367,38 @@ module Services {
             return false;
         }
 
-        private getPossibleSymbolReferencePositions(fileName: string, symbolName: string): number []{
+        private isLetterOrDigit(char: number): boolean {
+            return (char >= TypeScript.CharacterCodes.a && char <= TypeScript.CharacterCodes.z) ||
+                (char >= TypeScript.CharacterCodes.A && char <= TypeScript.CharacterCodes.Z) ||
+                (char >= TypeScript.CharacterCodes._0 && char <= TypeScript.CharacterCodes._9) ||
+                (char > 127 && TypeScript.Unicode.isIdentifierPart(char, TypeScript.LanguageVersion.EcmaScript5));
+        }
 
+        private getPossibleSymbolReferencePositions(fileName: string, symbolName: string): number[] {
             var positions: number[] = [];
 
             /// TODO: Cache symbol existence for files to save text search
-            /// TODO: Use a smarter search mechanism to avoid picking up partial matches, matches in comments and in string literals
+            // Also, need to make this work for unicode escapes.
 
             var sourceText = this.compilerState.getScriptSnapshot(fileName);
-            var text = sourceText.getText(0, sourceText.getLength());
+            var sourceLength = sourceText.getLength();
+            var text = sourceText.getText(0, sourceLength);
+            var symbolNameLength = symbolName.length;
 
             var position = text.indexOf(symbolName);
             while (position >= 0) {
-                positions.push(position);
-                position = text.indexOf(symbolName, position + symbolName.length + 1);
+                // We found a match.  Make sure it's not part of a larger word (i.e. the char 
+                // before and after it have to be a non-identifier char).
+                var endPosition = position + symbolNameLength;
+
+                if ((position <= 0 || !this.isLetterOrDigit(text.charCodeAt(position - 1))) &&
+                    (endPosition >= sourceLength || !this.isLetterOrDigit(endPosition))) {
+
+                    // Found a real match.  Keep searching.  
+                    positions.push(position);
+                }
+
+                position = text.indexOf(symbolName, position + symbolNameLength + 1);
             }
 
             return positions;
