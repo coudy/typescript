@@ -7150,6 +7150,10 @@ module TypeScript {
                 return false;
             }
 
+            if (!!(s1.typeParameters && s1.typeParameters.length) != !!(s2.typeParameters && s2.typeParameters.length)) {
+                return false;
+            }
+
             if (s1.typeParameters && s2.typeParameters && (s1.typeParameters.length != s2.typeParameters.length)) {
                 return false;
             }
