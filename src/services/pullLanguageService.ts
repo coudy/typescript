@@ -371,6 +371,8 @@ module Services {
             return (char >= TypeScript.CharacterCodes.a && char <= TypeScript.CharacterCodes.z) ||
                 (char >= TypeScript.CharacterCodes.A && char <= TypeScript.CharacterCodes.Z) ||
                 (char >= TypeScript.CharacterCodes._0 && char <= TypeScript.CharacterCodes._9) ||
+                char === TypeScript.CharacterCodes._ ||
+                char === TypeScript.CharacterCodes.$ ||
                 (char > 127 && TypeScript.Unicode.isIdentifierPart(char, TypeScript.LanguageVersion.EcmaScript5));
         }
 
@@ -392,7 +394,7 @@ module Services {
                 var endPosition = position + symbolNameLength;
 
                 if ((position <= 0 || !this.isLetterOrDigit(text.charCodeAt(position - 1))) &&
-                    (endPosition >= sourceLength || !this.isLetterOrDigit(endPosition))) {
+                    (endPosition >= sourceLength || !this.isLetterOrDigit(text.charCodeAt(endPosition)))) {
 
                     // Found a real match.  Keep searching.  
                     positions.push(position);
