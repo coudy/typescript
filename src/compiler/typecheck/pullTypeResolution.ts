@@ -5596,11 +5596,11 @@ module TypeScript {
                 if (paramSymbols.length) {
                     paramType = paramSymbols[0].type;
 
-                    if (paramType === this.semanticInfoChain.stringTypeSymbol) {
+                    if (!stringSignature && paramType === this.semanticInfoChain.stringTypeSymbol) {
                         stringSignature = signatures[i];
                         continue;
                     }
-                    else if (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum) {
+                    else if (!numberSignature && (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum)) {
                         numberSignature = signatures[i];
                         continue;
                     }

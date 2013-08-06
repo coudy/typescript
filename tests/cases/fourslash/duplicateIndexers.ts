@@ -9,4 +9,4 @@
 ////var r/**/ = i[1];
 
 goTo.marker();
-verify.quickInfoIs('number');
+verify.quickInfoIs('string');
