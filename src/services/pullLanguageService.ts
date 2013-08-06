@@ -916,7 +916,7 @@ module Services {
                     isMemberCompletion = true;
 
                     // Try to get the object members form contextual typing
-                    var contextualMembers = this.compilerState.geContextualMembersFromPath(path, document);
+                    var contextualMembers = this.compilerState.getContextualMembersFromPath(path, document);
                     if (contextualMembers && contextualMembers.symbols && contextualMembers.symbols.length > 0) {
                         // get existing members
                         var existingMembers = this.compilerState.getVisibleMemberSymbolsFromPath(path, document);

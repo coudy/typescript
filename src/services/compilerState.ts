@@ -399,7 +399,7 @@ module Services {
             return this.compiler.pullGetVisibleDeclsFromPath(path, document);
         }
 
-        public geContextualMembersFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
+        public getContextualMembersFromPath(path: TypeScript.AstPath, document: TypeScript.Document) {
             return this.compiler.pullGetContextualMembersFromPath(path, document);
         }
 
