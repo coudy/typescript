@@ -1,3 +1,4 @@
+// bug 754858: TypeParameters not required for return types
 class One<T>{
     value: T;
 }
