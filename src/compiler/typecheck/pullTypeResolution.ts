@@ -9868,7 +9868,12 @@ module TypeScript {
             var contextForBaseTypeResolution = new PullTypeResolutionContext();
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
 
+            // REVIEW: Is shouldn't be necessary to re-resolve the base list anymore - all of these names should already be resolved, and we can
+            // just use the extends/implements lists on the symbols
+            var prevResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = true;
             var baseType = <PullTypeSymbol>this.resolveAST(baseDeclAST, false, enclosingDecl, context);
+            context.resolvingTypeReference = prevResolvingTypeReference;
             contextForBaseTypeResolution.isResolvingClassExtendedType = false;
 
             var typeDeclIsClass = typeSymbol.isClass();
