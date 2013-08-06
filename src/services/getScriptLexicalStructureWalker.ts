@@ -5,22 +5,33 @@ module Services {
         private currentMemberVariableDeclaration: TypeScript.MemberVariableDeclarationSyntax = null;
         private currentVariableStatement: TypeScript.VariableStatementSyntax = null;
         private currentInterfaceDeclaration: TypeScript.InterfaceDeclarationSyntax = null;
+        private isMatch: (name: string) => string;
 
-        constructor(private items: NavigateToItem[], private fileName: string) {
+        constructor(private items: NavigateToItem[], private fileName: string, isMatch: (name: string) => string = null) {
             super();
+
+            this.isMatch = isMatch;
         }
 
         private createItem(
-                node: TypeScript.SyntaxNode,
-                modifiers: TypeScript.ISyntaxList,
-                kind: string,
-                name: string): NavigateToItem {
+            node: TypeScript.SyntaxNode,
+            modifiers: TypeScript.ISyntaxList,
+            kind: string,
+            name: string): void {
+
+            var matchKind = MatchKind.exact;
+            if (this.isMatch) {
+                //if does not match filter, return
+                matchKind = this.isMatch(name);
+                if (matchKind === MatchKind.none) {
+                    return;
+                }
+            }
 
             var item = new NavigateToItem();
-
             item.name = name;
             item.kind = kind;
-            item.matchKind = MatchKind.exact;
+            item.matchKind = matchKind;
             item.fileName = this.fileName;
             item.kindModifiers = this.getKindModifiers(modifiers);
             item.minChar = this.position() + node.leadingTriviaWidth();
@@ -29,8 +40,6 @@ module Services {
             item.containerKind = this.kindStack.length === 0 ? "" : TypeScript.ArrayUtilities.last(this.kindStack);
 
             this.items.push(item);
-
-            return item;
         }
 
         private getKindModifiers(modifiers: TypeScript.ISyntaxList): string {
@@ -76,10 +85,12 @@ module Services {
                 var modifiers = nameIndex === 0
                     ? node.modifiers
                     : TypeScript.Syntax.list([TypeScript.Syntax.token(TypeScript.SyntaxKind.ExportKeyword)]);
-                var item = this.createItem(node, node.modifiers, ScriptElementKind.moduleElement, names[nameIndex]);
+                var name = names[nameIndex];
+                var kind = ScriptElementKind.moduleElement;
+                this.createItem(node, node.modifiers, kind, name);
 
-                this.nameStack.push(item.name);
-                this.kindStack.push(item.kind);
+                this.nameStack.push(name);
+                this.kindStack.push(kind);
 
                 this.visitModuleDeclarationWorker(node, names, nameIndex + 1);
 
@@ -113,10 +124,13 @@ module Services {
         }
 
         public visitClassDeclaration(node: TypeScript.ClassDeclarationSyntax): void {
-            var item = this.createItem(node, node.modifiers, ScriptElementKind.classElement, node.identifier.text());
+            var name = node.identifier.text();
+            var kind = ScriptElementKind.classElement;
 
-            this.nameStack.push(item.name);
-            this.kindStack.push(item.kind);
+            this.createItem(node, node.modifiers, kind, name);
+
+            this.nameStack.push(name);
+            this.kindStack.push(kind);
 
             super.visitClassDeclaration(node);
 
@@ -125,10 +139,13 @@ module Services {
         }
 
         public visitInterfaceDeclaration(node: TypeScript.InterfaceDeclarationSyntax): void {
-            var item = this.createItem(node, node.modifiers, ScriptElementKind.interfaceElement, node.identifier.text());
+            var name = node.identifier.text();
+            var kind = ScriptElementKind.interfaceElement;
 
-            this.nameStack.push(item.name);
-            this.kindStack.push(item.kind);
+            this.createItem(node, node.modifiers, kind, name);
+
+            this.nameStack.push(name);
+            this.kindStack.push(kind);
 
             this.currentInterfaceDeclaration = node;
             super.visitInterfaceDeclaration(node);
@@ -150,10 +167,13 @@ module Services {
         }
 
         public visitEnumDeclaration(node: TypeScript.EnumDeclarationSyntax): void {
-            var item = this.createItem(node, node.modifiers, ScriptElementKind.enumElement, node.identifier.text());
+            var name = node.identifier.text();
+            var kind = ScriptElementKind.enumElement;
 
-            this.nameStack.push(item.name);
-            this.kindStack.push(item.kind);
+            this.createItem(node, node.modifiers, kind, name);
+
+            this.nameStack.push(name);
+            this.kindStack.push(kind);
 
             super.visitEnumDeclaration(node);
 

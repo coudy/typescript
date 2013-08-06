@@ -20,13 +20,13 @@
 ////}
 
 goTo.marker("file1");
-verify.navigationItemsListContains("Module1", "module");
-verify.navigationItemsListContains("x", "var");
+verify.getScriptLexicalStructureListContains("Module1", "module");
+verify.getScriptLexicalStructureListContains("x", "var");
 // nothing else should show up
-verify.navigationItemsCount(2); 
+verify.getScriptLexicalStructureListCount(2);
 
 goTo.marker("file2");
-verify.navigationItemsListContains("Module1", "module");
-verify.navigationItemsListContains("SubModule", "module");
-verify.navigationItemsListContains("y", "var");
-verify.navigationItemsCount(3);
+verify.getScriptLexicalStructureListContains("Module1", "module");
+verify.getScriptLexicalStructureListContains("SubModule", "module");
+verify.getScriptLexicalStructureListContains("y", "var");
+verify.getScriptLexicalStructureListCount(3);

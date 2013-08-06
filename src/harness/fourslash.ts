@@ -1163,19 +1163,62 @@ module FourSlash {
             }
         }
 
-        public verifyNavigationItemsCount(expected: number) {
-            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
-            var actual = (items && items.length) || 0;
+        /*
+            Check number of navigationItems which match both searchValue and matchKind.
+            Report an error if expected value and actual value do not match.
+        */
+        public verifyNavigationItemsCount(expected: number, searchValue: string, matchKind: string) {
+            var items = this.languageService.getNavigateToItems(searchValue);
+            var actual = 0;
+            var item: Services.NavigateToItem = null;
+
+            // Count only the match that match the same MatchKind
+            for (var i = 0; i < items.length; ++i) {
+                item = items[i];
+                if (item.matchKind === matchKind) {
+                    actual++;
+                }
+            }
+
             if (expected != actual) {
                 throw new Error('verifyNavigationItemsCount failed - found: ' + actual + ' navigation items, expected: ' + expected + '.');
             }
         }
 
-        public verifyNavigationItemsListContains(name: string, kind: string, fileName?: string, parentName?: string) {
-            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+        /*
+            Verify that returned navigationItems from getNavigateToItems have matched searchValue, matchKind, and kind.
+            Report an error if getNavigateToItems does not find any matched searchValue.
+        */
+        public verifyNavigationItemsListContains(name: string, kind: string, searchValue: string, matchKind: string, fileName?: string, parentName?: string) {
+            var items = this.languageService.getNavigateToItems(searchValue);
 
             if (!items || items.length === 0) {
                 throw new Error('verifyNavigationItemsListContains failed - found 0 navigation items, expected at least one.');
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item && item.name === name && item.kind === kind && item.matchKind === matchKind &&
+                    (fileName === undefined || item.fileName === fileName) &&
+                    (parentName === undefined || item.containerName === parentName)) {
+                    return;
+                }
+            }
+        }
+
+        public verifyGetScriptLexicalStructureListCount(expected: number) {
+            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+            var actual = (items && items.length) || 0;
+            if (expected != actual) {
+                throw new Error('verifyGetScriptLexicalStructureListCount failed - found: ' + actual + ' navigation items, expected: ' + expected + '.');
+            }
+        }
+
+        public verifGetScriptLexicalStructureListContains(name: string, kind: string, fileName?: string, parentName?: string) {
+            var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
+
+            if (!items || items.length === 0) {
+                throw new Error('verifyGetScriptLexicalStructureListContains failed - found 0 navigation items, expected at least one.');
             }
 
             for (var i = 0; i < items.length; i++) {
@@ -1187,11 +1230,24 @@ module FourSlash {
                 }
             }
 
+
             var missingItem = { name: name, kind: kind, fileName: fileName, parentName: parentName };
-            throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
+            throw new Error('verifyGetScriptLexicalStructureListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
         }
 
-        public printNavigationItems() {
+        public printNavigationItems(searchValue: string) {
+            var items = this.languageService.getNavigateToItems(searchValue);
+            var length = items && items.length;
+
+            IO.printLine('NavigationItems list (' + length + ' items)');
+
+            for (var i = 0; i < length; i++) {
+                var item = items[i];
+                IO.printLine('name: ' + item.name + ', kind: ' + item.kind + ', parentName: ' + item.containerName + ', fileName: ' + item.fileName);
+            }
+        }
+
+        public printScriptLexicalStructureItems() {
             var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
             var length = items && items.length;
 

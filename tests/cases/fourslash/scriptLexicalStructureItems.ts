@@ -18,7 +18,7 @@
 ////
 ////        // Instance member
 ////        {| "itemName": "getDist", "kind": "method", "parentName": "Shapes.Point" |}getDist() { return Math.sqrt(this.x * this.x + this.y * this.y); }
-////        
+////
 ////        // Getter
 ////        {| "itemName": "value", "kind": "getter", "parentName": "Shapes.Point" |}get value(): number { return 0; }
 ////
@@ -31,7 +31,7 @@
 ////        // Static method
 ////        {| "itemName": "getOrigin", "kind": "method", "parentName": "Shapes.Point" |}private static getOrigin() { return Point.origin;}
 ////    }
-//// 
+////
 ////    {| "itemName": "Values", "kind": "enum", "parentName": "Shapes" |}enum Values {
 ////        value1,
 ////        {| "itemName": "value2", "kind": "property", "parentName": "Shapes.Values" |}value2,
@@ -45,7 +45,7 @@
 
 test.markers().forEach((marker) => {
     if (marker.data) {
-        verify.navigationItemsListContains(marker.data.itemName, marker.data.kind, marker.fileName, marker.data.parentName);
+        verify.getScriptLexicalStructureListContains(marker.data.itemName, marker.data.kind, marker.fileName, marker.data.parentName);
     }
 });
 

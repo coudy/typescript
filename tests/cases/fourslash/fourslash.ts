@@ -288,12 +288,20 @@ module FourSlashInterface {
             FourSlash.currentTestState.setVerifyDocComments(val);
         }
 
-        public navigationItemsCount(count: number) {
-            FourSlash.currentTestState.verifyNavigationItemsCount(count);
+        public getScriptLexicalStructureListCount(count: number) {
+            FourSlash.currentTestState.verifyGetScriptLexicalStructureListCount(count);
         }
 
-        public navigationItemsListContains(name: string, kind: string, fileName?: string, parentName?: string) {
-            FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, fileName, parentName);
+        public getScriptLexicalStructureListContains(name: string, kind: string, fileName?: string, parentName?: string) {
+            FourSlash.currentTestState.verifGetScriptLexicalStructureListContains(name, kind, fileName, parentName);
+        }
+
+        public navigationItemsListCount(count: number, searchValue: string, matchKind: string) {
+            FourSlash.currentTestState.verifyNavigationItemsCount(count, searchValue, matchKind);
+        }
+
+        public navigationItemsListContains(name: string, kind: string, searchValue: string, matchKind: string, fileName?: string, parenetName?: string) {
+            FourSlash.currentTestState.verifyNavigationItemsListContains(name, kind, searchValue, matchKind, fileName, parenetName);
         }
 
         public occurrencesAtPositionContains(range: Range, isWriteAccess?: boolean) {
@@ -302,6 +310,14 @@ module FourSlashInterface {
 
         public occurrencesAtPositionCount(expectedCount: number) {
             FourSlash.currentTestState.verifyOccurrencesAtPositionListCount(expectedCount);
+        }
+
+        public printNavigationItems(searchValue: string) {
+            FourSlash.currentTestState.printNavigationItems(searchValue);
+        }
+
+        public printScriptLexicalStructureItems() {
+            FourSlash.currentTestState.printScriptLexicalStructureItems();
         }
     }
    
