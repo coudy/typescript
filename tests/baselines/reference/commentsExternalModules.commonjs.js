@@ -74,7 +74,7 @@ var myvar2 = new m4.m2.c();
 
 
 /**This is on import declaration*/
-var extMod = require("./commentsExternalModules_0");
+var extMod = require("commentsExternalModules_0");
 extMod.m1.fooExport();
 var newVar = new extMod.m1.m2.c();
 extMod.m4.fooExport();

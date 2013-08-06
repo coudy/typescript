@@ -9,7 +9,7 @@ var E;
 module.exports = E;
 
 
-var EnumE = require("./exportAssignmentEnum_A");
+var EnumE = require("exportAssignmentEnum_A");
 
 var a = EnumE.A;
 var b = EnumE.B;

@@ -1381,12 +1381,7 @@ module TypeScript {
                         this.writeToOutput("__" + this.modAliasId + "__");
                     }
                     else {
-                        var moduleDecl: ModuleDeclaration = <ModuleDeclaration>this.semanticInfoChain.getASTForSymbol(pullSymbol, this.document.fileName);
-                        var modPath = name.actualText;
-                        var isAmbient = pullSymbol.hasFlag(PullElementFlags.Ambient);
-                        modPath = isAmbient ? modPath : this.firstModAlias ? this.firstModAlias : quoteBaseName(modPath);
-                        modPath = isAmbient ? modPath : (!isRelative(stripStartAndEndQuotes(modPath)) ? quoteStr("./" + stripStartAndEndQuotes(modPath)) : modPath);
-                        this.writeToOutput("require(" + modPath + ")");
+                        this.writeToOutput("require(" + name.actualText + ")");
                     }
                 }
                 else {

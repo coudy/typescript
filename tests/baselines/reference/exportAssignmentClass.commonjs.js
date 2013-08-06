@@ -9,7 +9,7 @@ var C = (function () {
 module.exports = C;
 
 
-var D = require("./exportAssignmentClass_A");
+var D = require("exportAssignmentClass_A");
 
 var d = new D();
 var x = d.p;

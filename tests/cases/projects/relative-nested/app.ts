@@ -1,3 +1,3 @@
-import consume = require("main/consume");
+import consume = require("./main/consume");
 
 consume.call();

@@ -6,7 +6,7 @@ function foo() {
 module.exports = foo;
 
 
-var fooFunc = require("./exportAssignmentFunction_A");
+var fooFunc = require("exportAssignmentFunction_A");
 
 var n = fooFunc();
 

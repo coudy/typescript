@@ -7,7 +7,7 @@ var M;
 module.exports = M;
 
 
-var modM = require("./exportAssignmentInternalModule_A");
+var modM = require("exportAssignmentInternalModule_A");
 
 var n = modM.x;
 

@@ -642,6 +642,10 @@ class ProjectRunner extends RunnerBase {
                 , inputFiles: ['consume.ts']
                 , collectedFiles: ['consume.ts', 'decl.ts', 'lib/foo/a.ts', 'lib/foo/b.ts', 'lib/bar/a.ts']
                 , outputFiles: ['consume.js', 'decl.js', 'lib/bar/a.js', 'lib/foo/a.js']
+                , baselineCheck: true
+                , baselineFiles: ['base-consume', 'base-decl', 'lib/bar/base-a', 'lib/foo/base-a']
+                , path: 'cases/projects/non-relative/'
+                , skipRun: true
             });
 
             tests.push({
