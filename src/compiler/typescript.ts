@@ -364,14 +364,6 @@ module TypeScript {
             return null;
         }
 
-        private convertToDirectoryPath(dirPath: string) {
-            if (dirPath && dirPath.charAt(dirPath.length - 1) !== "/") {
-                dirPath += "/";
-            }
-
-            return dirPath;
-        }
-
         public setEmitOptions(ioHost: EmitterIOHost): Diagnostic {
             this.emitOptions.ioHost = ioHost;
 
@@ -392,8 +384,8 @@ module TypeScript {
                 }
             }
 
-            this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
-            this.emitOptions.compilationSettings.sourceRoot = this.convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
+            this.emitOptions.compilationSettings.mapRoot = convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
+            this.emitOptions.compilationSettings.sourceRoot = convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
 
             if (!this.emitOptions.compilationSettings.outFileOption && !this.emitOptions.compilationSettings.outDirOption && !this.emitOptions.compilationSettings.mapRoot && !this.emitOptions.compilationSettings.sourceRoot) {
                 this.emitOptions.outputMany = true;
@@ -410,7 +402,7 @@ module TypeScript {
 
             if (this.emitOptions.compilationSettings.outDirOption) {
                 this.emitOptions.compilationSettings.outDirOption = switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outDirOption));
-                this.emitOptions.compilationSettings.outDirOption = this.convertToDirectoryPath(this.emitOptions.compilationSettings.outDirOption);
+                this.emitOptions.compilationSettings.outDirOption = convertToDirectoryPath(this.emitOptions.compilationSettings.outDirOption);
             }
            
             // Parse the directory structure

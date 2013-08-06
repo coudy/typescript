@@ -150,7 +150,11 @@ module TypeScript {
                     // If declaration files are going to be emitted, preprocess the file contents and add in referenced files as well
                     if (this.compilationSettings.generateDeclarationFiles) {
                         var references = getReferencedFiles(inputFile, this.getScriptSnapshot(inputFile));
-                        references.forEach((reference) => { referencedFiles.push(reference.path); });
+                        for (var j = 0; j < references.length; j++) {
+                            referencedFiles.push(references[j].path);
+                        }
+
+                        inputFile = this.ioHost.resolvePath(inputFile);
                     }
 
                     resolvedFiles.push({
@@ -679,7 +683,9 @@ module TypeScript {
                 // Print header
                 if (!firstTime) {
                     var fileNames = "";
-                    lastResolvedFileSet.forEach((f) => { fileNames += Environment.newLine + "    " + f; });
+                    for (var k = 0; k < lastResolvedFileSet.length; k++) {
+                        fileNames += Environment.newLine + "    " + lastResolvedFileSet[k];
+                    }
                     this.ioHost.printLine(getLocalizedText(DiagnosticCode.NL_Recompiling_0, [fileNames]));
                 }
                 else {

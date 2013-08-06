@@ -926,6 +926,16 @@ module TypeScript {
             return false;
         }
 
+        private resolveScriptReference(document: Document, reference: string) {
+            if (!this.compiler.settings.noResolve || isRooted(reference)) {
+                return reference;
+            }
+
+            var documentDir = convertToDirectoryPath(switchToForwardSlashes(getRootFilePath(document.fileName)));
+            var resolvedReferencePath = this.compiler.emitOptions.ioHost.resolvePath(documentDir + reference);
+            return resolvedReferencePath;
+        }
+
         private emitReferencePaths(script: Script) {
             // In case of shared handler we collect all the references and emit them
             if (this.emittedReferencePaths) {
@@ -939,11 +949,12 @@ module TypeScript {
                 var scriptReferences = script.referencedFiles;
                 var addedGlobalDocument = false;
                 for (var j = 0; j < scriptReferences.length; j++) {
-                    var currentReference = scriptReferences[j];
+                    var currentReference = this.resolveScriptReference(this.document, scriptReferences[j]);
                     var document = this.compiler.getDocument(currentReference);
                     // All the references that are not going to be part of same file
 
-                    if (this.compiler.emitOptions.outputMany || document.script.isDeclareFile || document.script.topLevelMod || !addedGlobalDocument) {
+                    if (document &&
+                        (this.compiler.emitOptions.outputMany || document.script.isDeclareFile || document.script.topLevelMod || !addedGlobalDocument)) {
                         documents = documents.concat(document);
                         if (!document.script.isDeclareFile && document.script.topLevelMod) {
                             addedGlobalDocument = true;
@@ -958,10 +969,11 @@ module TypeScript {
                         // Check what references need to be added
                         var scriptReferences = allDocuments[i].script.referencedFiles;
                         for (var j = 0; j < scriptReferences.length; j++) {
-                            var currentReference = scriptReferences[j];
+                            var currentReference = this.resolveScriptReference(allDocuments[i], scriptReferences[j]);
                             var document = this.compiler.getDocument(currentReference);
                             // All the references that are not going to be part of same file
-                            if (document.script.isDeclareFile || document.script.topLevelMod) {
+                            if (document &&
+                                (document.script.isDeclareFile || document.script.topLevelMod)) {
                                 for (var k = 0; k < documents.length; k++) {
                                     if (documents[k] == document) {
                                         break;
