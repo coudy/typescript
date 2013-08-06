@@ -5666,11 +5666,11 @@ module TypeScript {
                 if (paramSymbols.length) {
                     paramType = paramSymbols[0].type;
 
-                    if (paramType === this.semanticInfoChain.stringTypeSymbol) {
+                    if (!stringSignature && paramType === this.semanticInfoChain.stringTypeSymbol) {
                         stringSignature = signatures[i];
                         continue;
                     }
-                    else if (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum) {
+                    else if (!numberSignature && (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum)) {
                         numberSignature = signatures[i];
                         continue;
                     }
@@ -7224,6 +7224,10 @@ module TypeScript {
             }
 
             if (s1.nonOptionalParamCount != s2.nonOptionalParamCount) {
+                return false;
+            }
+
+            if (!!(s1.typeParameters && s1.typeParameters.length) != !!(s2.typeParameters && s2.typeParameters.length)) {
                 return false;
             }
 
@@ -9963,7 +9967,12 @@ module TypeScript {
             var contextForBaseTypeResolution = new PullTypeResolutionContext(this);
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
 
+            // REVIEW: Is shouldn't be necessary to re-resolve the base list anymore - all of these names should already be resolved, and we can
+            // just use the extends/implements lists on the symbols
+            var prevResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = true;
             var baseType = <PullTypeSymbol>this.resolveAST(baseDeclAST, false, enclosingDecl, context);
+            context.resolvingTypeReference = prevResolvingTypeReference;
             contextForBaseTypeResolution.isResolvingClassExtendedType = false;
 
             var typeDeclIsClass = typeSymbol.isClass();
