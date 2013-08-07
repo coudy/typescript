@@ -689,16 +689,19 @@ module Services {
                 var fileName = this.compilerState.getHostFileName(fileNames[i]);
                 var document = this.compilerState.getDocument(fileName);
                 var syntaxTree = document.syntaxTree();
-                var visitor = new GetScriptLexicalStructureWalker(items, fileName, (name) => {
+                var visitor = GetScriptLexicalStructureWalker.createLexicalStructureWalkerWithMatchFunction(items, fileName, (name) => {
                     name = name.toLocaleLowerCase();
                     for (var i = 0; i < terms.length; i++) {
                         var term = terms[i];
-                        if (name === term)
+                        if (name === term) {
                             return MatchKind.exact;
-                        if (name.indexOf(term) == 0)
+                        }
+                        if (name.indexOf(term) == 0) {
                             return MatchKind.prefix;
-                        if (name.indexOf(term) > 0)
+                        }
+                        if (name.indexOf(term) > 0) {
                             return MatchKind.subString;
+                        }
                     }
 
                     return MatchKind.none;
@@ -1471,7 +1474,7 @@ module Services {
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
             var items: NavigateToItem[] = [];
-            var visitor = new GetScriptLexicalStructureWalker(items, fileName);
+            var visitor = GetScriptLexicalStructureWalker.createGeneralLexicalStructureWalker(items, fileName);
             syntaxTree.sourceUnit().accept(visitor);
 
             return items;

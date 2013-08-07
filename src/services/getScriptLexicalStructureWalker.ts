@@ -7,10 +7,18 @@ module Services {
         private currentInterfaceDeclaration: TypeScript.InterfaceDeclarationSyntax = null;
         private isMatch: (name: string) => string;
 
-        constructor(private items: NavigateToItem[], private fileName: string, isMatch: (name: string) => string = null) {
+        constructor(private items: NavigateToItem[], private fileName: string, isMatch: (name: string) => string) {
             super();
 
             this.isMatch = isMatch;
+        }
+
+        static createLexicalStructureWalkerWithMatchFunction(items: NavigateToItem[], fileName: string, isMatch: (name: string) => string) {
+            return new GetScriptLexicalStructureWalker(items, fileName, isMatch);
+        }
+
+        static createGeneralLexicalStructureWalker(items: NavigateToItem[], fileName: string) {
+            return new GetScriptLexicalStructureWalker(items, fileName, null);
         }
 
         private createItem(
