@@ -9761,7 +9761,7 @@ module TypeScript {
                         var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
                         if (extendedConstructorTypeProp) {
                             if (!extendedConstructorTypeProp.isResolved) {
-                                var extendedClassAst = this.currentUnit.getASTForSymbol(extendedType);
+                                var extendedClassAst = this.currentUnit.getASTForDecl(extendedType.getDeclarations()[0]);
                                 var extendedClassDecl = this.currentUnit.getDeclForAST(extendedClassAst);
                                 this.resolveDeclaredSymbol(extendedConstructorTypeProp, extendedClassDecl, resolutionContext);
                             }
