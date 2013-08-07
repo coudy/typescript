@@ -13,12 +13,14 @@ module Services {
             this.isMatch = isMatch;
         }
 
-        static createLexicalStructureWalkerWithMatchFunction(items: NavigateToItem[], fileName: string, isMatch: (name: string) => string) {
-            return new GetScriptLexicalStructureWalker(items, fileName, isMatch);
+        static searchScriptLexicalStructure(items: NavigateToItem[], fileName: string, isMatch: (name: string) => string, unit: TypeScript.SourceUnitSyntax) {
+            var visitor = new GetScriptLexicalStructureWalker(items, fileName, isMatch);
+            unit.accept(visitor);
         }
 
-        static createGeneralLexicalStructureWalker(items: NavigateToItem[], fileName: string) {
-            return new GetScriptLexicalStructureWalker(items, fileName, null);
+        static getListsOfAllScriptLexicalStructure(items: NavigateToItem[], fileName: string, unit: TypeScript.SourceUnitSyntax) {
+            var visitor = new GetScriptLexicalStructureWalker(items, fileName, null);
+            unit.accept(visitor);
         }
 
         private createItem(
