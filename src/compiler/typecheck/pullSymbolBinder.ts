@@ -182,7 +182,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (!isExported || moduleContainerDecl.kind === PullElementKind.DynamicModule) {
+            else if (!isExported) {
                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(modName, searchKind, this.semanticInfo.getPath());
             }
 
@@ -441,7 +441,7 @@ module TypeScript {
 
             if (parent) {
                 if (isExported) {
-                    classSymbol = parent.findNestedType(className);
+                    classSymbol = parent.findNestedType(className, PullElementKind.SomeType);
 
                     if (!classSymbol) {
                         classSymbol = <PullTypeSymbol>parent.findMember(className, false);
@@ -472,7 +472,8 @@ module TypeScript {
                 classSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(className, PullElementKind.Class, this.semanticInfo.getPath());
             }
 
-            if (classSymbol) {
+            // Only error if it is an interface (for classes and enums we will error when we bind the implicit variable)
+            if (classSymbol && classSymbol.kind === PullElementKind.Interface) {
                 this.semanticInfo.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), classAST.minChar, classAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [classDecl.getDisplayName()]));
                 classSymbol = null;
@@ -783,31 +784,33 @@ module TypeScript {
                 parentDecl.addVariableDeclToGroup(variableDeclaration);
             }
 
-            // The code below accounts for the variable symbol being a type because
-            // modules may create instance variables
-
             if (parent) {
                 if (isExported) {
                     variableSymbol = parent.findMember(declName, false);
                 }
                 else {
                     variableSymbol = parent.findContainedNonMember(declName);
-                }
 
-                if (variableSymbol) {
-                    var declarations = variableSymbol.getDeclarations();
+                    if (variableSymbol) {
+                        var declarations = variableSymbol.getDeclarations();
 
-                    if (declarations.length) {
-                        var variableSymbolParentDecl = declarations[0].getParentDecl();
+                        if (declarations.length) {
+                            var variableSymbolParentDecl = declarations[0].getParentDecl();
 
-                        if (parentDecl !== variableSymbolParentDecl) {
-                            variableSymbol = null;
+                            if (parentDecl !== variableSymbolParentDecl) {
+                                variableSymbol = null;
+                            }
                         }
                     }
                 }
             }
-            else if (!(variableDeclaration.flags & PullElementFlags.Exported)) {
+            else if (parentDecl && parentDecl.kind === PullElementKind.Script) {
                 variableSymbol = this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeValue, this.semanticInfo.getPath());
+            }
+            else {
+                // The variable is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
+                var prevDecls = parentDecl && parentDecl.searchChildDecls(declName, PullElementKind.SomeValue);
+                variableSymbol = prevDecls[0] && prevDecls[0].getSymbol();
             }
 
             if (variableSymbol && !variableSymbol.isType()) {
@@ -836,7 +839,7 @@ module TypeScript {
                 var shareParent = bothAreGlobal || prevDecl.getParentDecl() == variableDeclaration.getParentDecl();
                 var prevIsParam = shareParent && prevKind == PullElementKind.Parameter && declKind == PullElementKind.Variable;
 
-                var acceptableRedeclaration = (!shareParent || prevIsParam) ||
+                var acceptableRedeclaration = prevIsParam ||
                     (isImplicit &&
                     ((!isEnumValue && !isClassConstructorVariable && prevIsFunction) || // Enums can't mix with functions
                     ((isModuleValue || isEnumValue) && (prevIsModuleValue || prevIsEnum)) || // modules and enums can mix freely
@@ -853,10 +856,10 @@ module TypeScript {
                     }
                 }
 
-                if (shareParent && (!acceptableRedeclaration || prevIsParam)) {
+                if (!acceptableRedeclaration || prevIsParam) {
                     // If neither of them are implicit (both explicitly declared as vars), we won't error now. We'll check that the types match during type check.
-                    // However, we will error when a variable clobbers a function.
-                    if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0)) {
+                    // However, we will error when a variable clobbers a function, or when the two explicit var declarations are not in the same parent declaration
+                    if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0) || !shareParent) {
                         span = variableDeclaration.getSpan();
                         var diagnostic = new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]);
                         this.semanticInfo.addDiagnostic(diagnostic);
@@ -1224,16 +1227,25 @@ module TypeScript {
                     }
                 }
             }
-            else if (!(functionDeclaration.flags & PullElementFlags.Exported)) {
+            else if (parentDecl && parentDecl.kind === PullElementKind.Script) {
                 functionSymbol = this.semanticInfoChain.findTopLevelSymbol(funcName, PullElementKind.SomeValue, this.semanticInfo.getPath());
             }
+            else {
+                // The function is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
+                var prevDecls = parentDecl && parentDecl.searchChildDecls(funcName, PullElementKind.SomeValue);
+                functionSymbol = prevDecls[0] && prevDecls[0].getSymbol();
+            }
 
-            if (functionSymbol &&
-                (functionSymbol.kind !== PullElementKind.Function ||
-                (!isSignature && !functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
+            if (functionSymbol) {
+                // Duplicate is acceptable if it is another signature (not a duplicate implementation), or an ambient fundule
+                var isAmbient = functionDeclaration.flags & PullElementFlags.Ambient;
+                var acceptableRedeclaration = functionSymbol.kind === PullElementKind.Function && (isSignature || functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)) ||
+                    functionSymbol.hasFlag(PullElementFlags.InitializedModule) && isAmbient;
+                if (!acceptableRedeclaration) {
                     this.semanticInfo.addDiagnostic(
-                    new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [functionDeclaration.getDisplayName()]));
-                functionSymbol = null;
+                        new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [functionDeclaration.getDisplayName()]));
+                    functionSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, funcName);
+                }
             }
 
             if (functionSymbol) {
