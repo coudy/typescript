@@ -177,7 +177,7 @@ class HarnessBatch implements TypeScript.IDiagnosticReporter, TypeScript.IRefere
     }
 
     resolveRelativePath(path: string, directory: string): string {
-        var unQuotedPath = TypeScript.stripQuotes(path);
+        var unQuotedPath = TypeScript.stripStartAndEndQuotes(path);
         var normalizedPath: string;
 
         if (TypeScript.isRooted(unQuotedPath) || !directory) {
@@ -2530,6 +2530,15 @@ class ProjectRunner extends RunnerBase {
                 , negative: true
                 , errors: [
                     IO.resolvePath(Harness.userSpecifiedroot) + '\\tests\\cases\\projects\\No-default-lib\\test.ts(3,8): error TS2095: Could not find symbol \'Array\'.']
+            });
+
+            tests.push({
+                scenario: 'Quotes in file and directory names'
+                , projectRoot: 'tests/cases/projects/Quote\'InName'
+                , inputFiles: ['m\'ain.ts']
+                , collectedFiles: ['m\'ain.ts', 'class\'A.ts']
+                , outputFiles: ['m\'ain.js', 'li\'b/class\'A.js']
+                , skipRun: true /* this requires a host which is able to resolve the script in the reference tags */
             });
 
 

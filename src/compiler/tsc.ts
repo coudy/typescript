@@ -743,9 +743,9 @@ module TypeScript {
         getScriptSnapshot(fileName: string): IScriptSnapshot {
             return this.getSourceFile(fileName).scriptSnapshot;
         }
-
+        
         resolveRelativePath(path: string, directory: string): string {
-            var unQuotedPath = stripQuotes(path);
+            var unQuotedPath = stripStartAndEndQuotes(path);
             var normalizedPath: string;
 
             if (isRooted(unQuotedPath) || !directory) {

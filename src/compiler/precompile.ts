@@ -158,7 +158,7 @@ module TypeScript {
                                         character: lineChar.character,
                                         position: afterOpenParenPosition + token.leadingTriviaWidth(),
                                         length: token.width(),
-                                        path: stripQuotes(switchToForwardSlashes(token.text())),
+                                        path: stripStartAndEndQuotes(switchToForwardSlashes(token.text())),
                                         isResident: false
                                     };
                                     importedFiles.push(ref);

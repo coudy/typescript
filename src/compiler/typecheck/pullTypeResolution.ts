@@ -876,7 +876,7 @@ module TypeScript {
                 // check the full path first, as this is the most likely scenario
                 idText = originalIdText;
 
-                var strippedIdText = stripQuotes(idText);
+                var strippedIdText = stripStartAndEndQuotes(idText);
 
                 // Check to see if the previously resolved external module shares this path
                 if (this.lastExternalModulePath != "") {
@@ -938,12 +938,12 @@ module TypeScript {
 
                 // Check the literal path first
                 if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".d.ts";
+                    idText = stripStartAndEndQuotes(originalIdText) + ".d.ts";
                     symbol = search(idText);
                 }
 
                 if (!symbol) {
-                    idText = stripQuotes(originalIdText) + ".ts";
+                    idText = stripStartAndEndQuotes(originalIdText) + ".ts";
                     symbol = search(idText);
                 }
             }
@@ -5649,7 +5649,7 @@ module TypeScript {
             // a property with that name,  the property access is the type of that property
             if (callEx.operand2.nodeType() === NodeType.StringLiteral || callEx.operand2.nodeType() === NodeType.NumericLiteral) {
                 var memberName = callEx.operand2.nodeType() === NodeType.StringLiteral
-                    ? stripQuotes((<StringLiteral>callEx.operand2).actualText)
+                    ? stripStartAndEndQuotes((<StringLiteral>callEx.operand2).actualText)
                     : (<NumberLiteral>callEx.operand2).value.toString();
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
@@ -7035,16 +7035,16 @@ module TypeScript {
             }
 
             if (val && t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
-                return (val.nodeType() === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).actualText) === stripQuotes(t1.name));
+                return (val.nodeType() === NodeType.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).actualText) === stripStartAndEndQuotes(t1.name));
             }
 
             if (val && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
-                return (val.nodeType() === NodeType.StringLiteral) && (stripQuotes((<StringLiteral>val).actualText) === stripQuotes(t2.name));
+                return (val.nodeType() === NodeType.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).actualText) === stripStartAndEndQuotes(t2.name));
             }
 
             if (t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant()) {
                 // Both are string constants
-                return TypeScript.stripQuotes(t1.name) === TypeScript.stripQuotes(t2.name);
+                return TypeScript.stripStartAndEndQuotes(t1.name) === TypeScript.stripStartAndEndQuotes(t2.name);
             }
 
             if (t1.isPrimitive() || t2.isPrimitive()) {
@@ -7491,7 +7491,7 @@ module TypeScript {
                     return comparisonInfo &&
                         comparisonInfo.stringConstantVal &&
                         (comparisonInfo.stringConstantVal.nodeType() === NodeType.StringLiteral) &&
-                        (stripQuotes((<StringLiteral>comparisonInfo.stringConstantVal).actualText) === stripQuotes(target.name));
+                        (stripStartAndEndQuotes((<StringLiteral>comparisonInfo.stringConstantVal).actualText) === stripStartAndEndQuotes(target.name));
                 }
             }
             else {
@@ -7507,7 +7507,7 @@ module TypeScript {
 
             if (source.isPrimitive() && (<PullPrimitiveTypeSymbol>source).isStringConstant() && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
                 // Both are string constants
-                return TypeScript.stripQuotes(source.name) === TypeScript.stripQuotes(target.name);
+                return TypeScript.stripStartAndEndQuotes(source.name) === TypeScript.stripStartAndEndQuotes(target.name);
             }
 
             if (source === this.semanticInfoChain.undefinedTypeSymbol) {
@@ -8492,13 +8492,13 @@ module TypeScript {
                     else if (PType.isPrimitive() &&
                         (<PullPrimitiveTypeSymbol>PType).isStringConstant() &&
                         args.members[i].nodeType() === NodeType.StringLiteral &&
-                        stripQuotes((<StringLiteral>args.members[i]).actualText) === stripQuotes((<PullStringConstantTypeSymbol>PType).name)) {
+                        stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>PType).name)) {
                         break;
                     }
                     else if (QType.isPrimitive() &&
                         (<PullPrimitiveTypeSymbol>QType).isStringConstant() &&
                         args.members[i].nodeType() === NodeType.StringLiteral &&
-                        stripQuotes((<StringLiteral>args.members[i]).actualText) === stripQuotes((<PullStringConstantTypeSymbol>QType).name)) {
+                        stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>QType).name)) {
                         best = Q;
                     }
                     else if (this.typesAreIdentical(AType, PType)) {

@@ -1385,7 +1385,7 @@ module TypeScript {
                         var modPath = name.actualText;
                         var isAmbient = pullSymbol.hasFlag(PullElementFlags.Ambient);
                         modPath = isAmbient ? modPath : this.firstModAlias ? this.firstModAlias : quoteBaseName(modPath);
-                        modPath = isAmbient ? modPath : (!isRelative(stripQuotes(modPath)) ? quoteStr("./" + stripQuotes(modPath)) : modPath);
+                        modPath = isAmbient ? modPath : (!isRelative(stripStartAndEndQuotes(modPath)) ? quoteStr("./" + stripStartAndEndQuotes(modPath)) : modPath);
                         this.writeToOutput("require(" + modPath + ")");
                     }
                 }

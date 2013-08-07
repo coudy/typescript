@@ -16,17 +16,25 @@
 ///<reference path='typescript.ts' />
 
 module TypeScript {
-    var quoteRegEx = /["']/g;
-    export function stripQuotes(str: string) {
-        return str.replace(quoteRegEx, "");
+    export function stripStartAndEndQuotes(str: string) {
+        var firstCharCode = str && str.charCodeAt(0);
+        if (str && str.length >= 2 && firstCharCode === str.charCodeAt(str.length - 1) && (firstCharCode === CharacterCodes.singleQuote || firstCharCode === CharacterCodes.doubleQuote)) {
+            return str.substring(1, str.length - 1);
+        }
+
+        return str;
     }
 
     export function isSingleQuoted(str: string) {
-        return str.indexOf("'") !== -1;
+        return str && str.length >= 2 && str.charCodeAt(0) === str.charCodeAt(str.length - 1) && str.charCodeAt(0) === CharacterCodes.singleQuote;
+    }
+
+    export function isDoubleQuoted(str: string) {
+        return str && str.length >= 2 && str.charCodeAt(0) === str.charCodeAt(str.length - 1) && str.charCodeAt(0) === CharacterCodes.doubleQuote;
     }
 
     export function isQuoted(str: string) {
-        return str.indexOf("\"") !== -1 || isSingleQuoted(str);
+        return isDoubleQuoted(str) || isSingleQuoted(str);
     }
 
     export function quoteStr(str: string) {
@@ -34,14 +42,14 @@ module TypeScript {
     }
 
     export function swapQuotes(str: string) {
-
-        if (str.indexOf("\"") !== -1) {
-            str = str.replace("\"", "'");
-            str = str.replace("\"", "'");
-        }
-        else {
-            str = str.replace("'", "\"");
-            str = str.replace("'", "\"");
+        var firstCharCode = str && str.charCodeAt(0);
+        if (str && str.length >= 2 && firstCharCode === str.charCodeAt(str.length - 1)) {
+            if (firstCharCode === CharacterCodes.doubleQuote) {
+                return '\'' + str.substring(1, str.length - 1) + '\'';
+            }
+            else if (firstCharCode === CharacterCodes.singleQuote) {
+                return '\"' + str.substring(1, str.length - 1) + '\"';
+            }
         }
 
         return str;
@@ -92,7 +100,7 @@ module TypeScript {
     }
 
     export function getPrettyName(modPath: string, quote=true, treatAsFileName=false): any { 
-        var modName = treatAsFileName ? switchToForwardSlashes(modPath) : trimModName(stripQuotes(modPath));
+        var modName = treatAsFileName ? switchToForwardSlashes(modPath) : trimModName(stripStartAndEndQuotes(modPath));
         var components = this.getPathComponents(modName);
         return components.length ? (quote ? quoteStr(components[components.length - 1]) : components[components.length - 1]) : modPath;
     }
@@ -136,7 +144,7 @@ module TypeScript {
     }
 
     export function quoteBaseName(modPath: string) {
-        var modName = trimModName(stripQuotes(modPath));
+        var modName = trimModName(stripStartAndEndQuotes(modPath));
         var path = getRootFilePath(modName);
         if (path === "") {
             return modPath;
@@ -149,7 +157,7 @@ module TypeScript {
     }
 
     export function changePathToDTS(modPath: string) {
-        return trimModName(stripQuotes(modPath)) + ".d.ts";
+        return trimModName(stripStartAndEndQuotes(modPath)) + ".d.ts";
     }
 
     export function isRelative(path: string) {

@@ -1174,7 +1174,7 @@ module Harness {
             }
 
             resolveRelativePath(path: string, directory: string): string {
-                var unQuotedPath = TypeScript.stripQuotes(path);
+                var unQuotedPath = TypeScript.stripStartAndEndQuotes(path);
                 var normalizedPath: string;
 
                 if (TypeScript.isRooted(unQuotedPath) || !directory) {

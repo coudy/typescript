@@ -13,13 +13,13 @@ module Services {
             var existingMemberSymbols = existingMembers.symbols;
             var existingMemberNames: { [s: string]: boolean; } = {};
             for (var i = 0, n = existingMemberSymbols.length; i < n; i++) {
-                existingMemberNames[TypeScript.stripQuotes(existingMemberSymbols[i].getDisplayName())] = true;
+                existingMemberNames[TypeScript.stripStartAndEndQuotes(existingMemberSymbols[i].getDisplayName())] = true;
             }
 
             var filteredMembers: TypeScript.PullSymbol[] = [];
             for (var j = 0, m = contextualMemberSymbols.length; j < m; j++) {
                 var contextualMemberSymbol = contextualMemberSymbols[j];
-                if (!existingMemberNames[TypeScript.stripQuotes(contextualMemberSymbol.getDisplayName())]) {
+                if (!existingMemberNames[TypeScript.stripStartAndEndQuotes(contextualMemberSymbol.getDisplayName())]) {
                     filteredMembers.push(contextualMemberSymbol);
                 }
             }
@@ -153,7 +153,7 @@ module Services {
                 if (firstChar === TypeScript.CharacterCodes.singleQuote || firstChar === TypeScript.CharacterCodes.doubleQuote) {
                     // If the user entered name for the symbol was quoted, removing the quotes is not enough, as the name could be an
                     // invalid identifer name. We need to check if whatever was inside the qouates is actually a valid identifier name.
-                    displayName = TypeScript.stripQuotes(displayName);
+                    displayName = TypeScript.stripStartAndEndQuotes(displayName);
 
                     if (TypeScript.Scanner.isValidIdentifier(TypeScript.SimpleText.fromString(displayName), languageVersion)) {
                         return displayName;
