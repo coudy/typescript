@@ -1096,12 +1096,7 @@ module TypeScript {
                 this.validateVariableDeclarationGroups(containerDecl, context);
             }
 
-            if (!context.isInBaseTypeResolution()) {
-                containerSymbol.setResolved();
-            }
-            else {
-                containerSymbol.inResolution = false;
-            }
+            containerSymbol.setResolved();
 
             return containerSymbol;
         }
@@ -1233,12 +1228,17 @@ module TypeScript {
 
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
             
-            if (wasInBaseTypeResolution /*&& (typeDeclAST.implementsList || typeDeclAST.extendsList)*/) {
+            if (wasInBaseTypeResolution) {
                 // Do not resolve members as yet
                 typeDeclSymbol.inResolution = false;
+
+                // Store off and resolve the reference type after we've finished checking the file
+                // (This way, we'll still properly resolve the type even if its parent was already resolved during
+                // base type resolution, making the type otherwise inaccessible).
+                PullTypeResolver.typeCheckCallBacks.push(() => { this.resolveDeclaredSymbol(typeDeclSymbol, enclosingDecl, context) });
+
                 return typeDeclSymbol;
             }
-
 
             if (!typeDeclSymbol.isResolved) {
 
@@ -4713,7 +4713,11 @@ module TypeScript {
                         }   
                         else {   
                             typeArgs[i] = typeArg;   
-                        }  
+                        }
+
+                        if (typeArgs[i].isError()) {
+                            typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
+                        }
                     }
                 }
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
@@ -8189,6 +8193,11 @@ module TypeScript {
                     }
 
                     typeB = actuals[i];
+
+                    if (typeB.isAlias()) {
+                        (<PullTypeAliasSymbol>typeB).isUsedAsValue = true;
+                        typeB = (<PullTypeAliasSymbol>typeB).getExportAssignedTypeSymbol();
+                    }
 
                     if (typeA && !typeA.isResolved) {
                         this.resolveDeclaredSymbol(typeA, enclosingDecl, context);
