@@ -7,5 +7,5 @@
 verify.getScriptLexicalStructureListCount(2); // external module node + class + property
 
 test.markers().forEach((marker) => {
-    verify.navigationItemsListContains(marker.data.itemName, marker.data.kind, marker.fileName, marker.data.parentName);
+    verify.getScriptLexicalStructureListContains(marker.data.itemName, marker.data.kind, marker.fileName, marker.data.parentName);
 });
