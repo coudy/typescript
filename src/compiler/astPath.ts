@@ -29,7 +29,7 @@ module TypeScript {
     // This is helpful as our tree don't have parents.
     //
     export class AstPath {
-        public asts = new Array<AST>();
+        public asts: AST[] = [];
         public top: number = -1;
 
         static reverseIndexOf(items: any[], index: number): any {
@@ -279,7 +279,7 @@ module TypeScript {
     ///
     /// Return the stack of AST nodes containing "position"
     ///
-    export function getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar = true): TypeScript.AstPath {
+    export function getAstPathToPosition(script: TypeScript.AST, pos: number, useTrailingTriviaAsLimChar: boolean, forceInclusive: boolean): TypeScript.AstPath {
         var lookInComments = (comments: TypeScript.Comment[]) => {
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) {
@@ -311,6 +311,7 @@ module TypeScript {
                     //  0123
                     // If "position === 3", the caret is at the "right" of the "r" character, which should be considered valid
                     var inclusive =
+                        forceInclusive ||
                         cur.nodeType() === TypeScript.NodeType.Name ||
                         cur.nodeType() === TypeScript.NodeType.MemberAccessExpression ||
                         cur.nodeType() === TypeScript.NodeType.TypeRef ||
