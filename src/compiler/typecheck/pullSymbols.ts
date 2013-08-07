@@ -2772,7 +2772,7 @@ module TypeScript {
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-                Debug.assert(declAST != null, "Call signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+                Debug.assert(declAST != null, "Call signature for type '" + typeToSpecialize.pullSymbolIDString + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -2849,7 +2849,7 @@ module TypeScript {
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-                Debug.assert(declAST != null, "Construct signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+                Debug.assert(declAST != null, "Construct signature for type '" + typeToSpecialize.pullSymbolIDString + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -2926,7 +2926,7 @@ module TypeScript {
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-                Debug.assert(declAST != null, "Index signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+                Debug.assert(declAST != null, "Index signature for type '" + typeToSpecialize.pullSymbolIDString + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -3217,9 +3217,26 @@ module TypeScript {
 
     export function getIDForTypeSubstitutions(types: PullTypeSymbol[]): string {
         var substitution = "";
+        var members: PullSymbol[] = null;
 
         for (var i = 0; i < types.length; i++) {
-            substitution += types[i].pullSymbolIDString + "#";
+
+            // Cache object types structurally
+            if (types[i].kind != PullElementKind.ObjectType) {
+                substitution += types[i].pullSymbolIDString + "#";
+            }
+            else {
+                members = types[i].getMembers();
+
+                if (types[i].isResolved && members && members.length) {
+                    for (var j = 0; j < members.length; j++) {
+                        substitution += members[j].name + "@" + getIDForTypeSubstitutions([members[j].type]);
+                    }
+                }
+                else {
+                    substitution += types[i].pullSymbolIDString + "#";
+                }
+            }
         }
 
         return substitution;
