@@ -10063,7 +10063,7 @@ module TypeScript {
                 if (typeDeclAst.implementsList) {
                     context.postError(this.unitPath, typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), DiagnosticCode.An_interface_cannot_implement_another_type, null);
                 }
-                if (typeDeclAst.extendsList && !typeSymbol.hasBaseTypeConflict()) {
+                if (typeDeclAst.extendsList && typeDeclAst.extendsList.members.length > 1 && !typeSymbol.hasBaseTypeConflict()) {
                     this.checkPropertyTypeIdentityBetweenBases(typeDeclAst, typeSymbol, context);
                 }
             }
