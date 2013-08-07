@@ -3730,9 +3730,11 @@ module TypeScript {
         }
 
         private resolveCatchClause(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
+            
             if (context.typeCheck()) {
-                this.resolveAST((<CatchClause>ast).body, false, this.getDeclForAST(ast), context);
+                var catchDecl = this.getDeclForAST(ast);
+                this.resolveAST((<CatchClause>ast).body, false, catchDecl, context);
+                this.validateVariableDeclarationGroups(catchDecl, context);
             }
 
             this.setSymbolForAST(ast, this.semanticInfoChain.voidTypeSymbol, context);
@@ -10046,8 +10048,37 @@ module TypeScript {
                     }
                 }
             }
-            else if (typeDeclAst.implementsList) {
-                context.postError(this.unitPath, typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), DiagnosticCode.An_interface_cannot_implement_another_type, null);
+            else {
+                if (typeDeclAst.implementsList) {
+                    context.postError(this.unitPath, typeDeclAst.implementsList.minChar, typeDeclAst.implementsList.getLength(), DiagnosticCode.An_interface_cannot_implement_another_type, null);
+                }
+                if (typeDeclAst.extendsList && !typeSymbol.hasBaseTypeConflict()) {
+                    this.checkPropertyTypeIdentityBetweenBases(typeDeclAst, typeSymbol, context);
+                }
+            }
+        }
+
+        private checkPropertyTypeIdentityBetweenBases(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext): void {
+            // Check that all the extended base types have compatible members (members of the same name must have identical types)
+            var allMembers = typeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, false);
+            var membersBag = new BlockIntrinsics();
+            for (var i = 0; i < allMembers.length; i++) {
+                var member = allMembers[i];
+                var memberName = member.name;
+                // Error if there is already a member in the bag with that name, and it doesn't have the same type
+                if (membersBag[memberName]) {
+                    var prevMember: PullSymbol = membersBag[memberName];
+                    if (!this.typesAreIdentical(member.type, prevMember.type)) {
+                        var prevContainerName = prevMember.getContainer().getScopedName();
+                        var curContainerName = member.getContainer().getScopedName();
+                        context.postError(this.unitPath, typeDeclAst.name.minChar, typeDeclAst.name.getLength(),
+                            DiagnosticCode.Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_Types_of_property_3_of_types_1_and_2_are_not_identical,
+                            [typeSymbol.getDisplayName(), prevContainerName, curContainerName, memberName]);
+                    }
+                }
+                else {
+                    membersBag[memberName] = member;
+                }
             }
         }
 

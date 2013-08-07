@@ -1082,6 +1082,10 @@ module TypeScript {
     "code": 2188,
     "category": DiagnosticCategory.Error
   },
+  "Interface '{0}' cannot simultaneously extend types '{1}' and '{2}':{NL}Types of property '{3}' of types '{1}' and '{2}' are not identical.": {
+    "code": 2189,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
