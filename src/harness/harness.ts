@@ -2208,7 +2208,7 @@ module Harness {
             if (expected != actual) {
                 // Overwrite & issue error
                 var errMsg = 'The baseline file ' + relativeFilename + ' has changed. Please refer to baseline-report.html and ';
-                errMsg += 'either fix the regression (if unintended) or run nmake baseline-accept (if intended).'
+                errMsg += 'either fix the regression (if unintended) or run jake baseline-accept (if intended).'
 
                 var refFilename = referencePath(relativeFilename);
                 htmlBaselineReport.addDifference(descriptionForDescribe, actualFilename, refFilename, expected, actual, /*includeUnchangedRegions:*/ true);
