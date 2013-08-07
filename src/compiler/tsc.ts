@@ -39,7 +39,7 @@ module TypeScript {
     useDirectTypeStorage = true;
 
     export class BatchCompiler implements IReferenceResolverHost, IDiagnosticReporter, EmitterIOHost {
-        public compilerVersion = "0.9.1.0";
+        public compilerVersion = "0.9.1.1";
         private inputFiles: string[] = [];
         private compilationSettings: CompilationSettings;
         private resolvedFiles: IResolvedFile[] = [];
