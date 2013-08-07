@@ -1050,6 +1050,14 @@ module TypeScript {
                     parent.addEnclosedNonMember(variableSymbol);
                 }
             }
+
+            var otherDecls = this.findDeclsInContext(variableDeclaration, variableDeclaration.kind, /*searchGlobally*/ false);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
+            }
         }
 
         // properties

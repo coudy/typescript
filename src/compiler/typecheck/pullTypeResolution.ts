@@ -753,7 +753,6 @@ module TypeScript {
                 members = lhsType.getAllMembers(declSearchKind, includePrivate);
 
                 if (lhsType.isContainer()) {
-
                     if (lhsType.isAlias()) {
                         lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
                     }
@@ -765,6 +764,11 @@ module TypeScript {
                         }
                         var instanceMembers = instanceType.getAllMembers(declSearchKind, includePrivate);
                         members = members.concat(instanceMembers);
+
+                        if (instanceType.isConstructor()) {
+                            // If this is a cladule
+                            members.push(this.createPrototypeSymbol(instanceType));
+                        }
                     }
 
                     var exportedContainer = (<PullContainerTypeSymbol>lhsType).getExportAssignedContainerSymbol();
@@ -775,16 +779,7 @@ module TypeScript {
                 }
                 // Constructor types have a "prototype" property
                 else if (lhsType.isConstructor()) {
-                    var prototypeStr = "prototype";
-                    var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
-                    var parentDecl = lhsType.getDeclarations()[0];
-                    var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl.getSpan(), parentDecl.getScriptName());
-                    this.currentUnit.addSynthesizedDecl(prototypeDecl);
-                    prototypeDecl.setParentDecl(parentDecl);
-                    prototypeSymbol.addDeclaration(prototypeDecl);
-                    prototypeSymbol.type = lhsType.getAssociatedContainerType();
-                    prototypeSymbol.isResolved = true;
-                    members.push(prototypeSymbol);
+                    members.push(this.createPrototypeSymbol(lhsType));
                 }
                 else {
                     var associatedContainerSymbol = lhsType.getAssociatedContainerType();
@@ -805,6 +800,22 @@ module TypeScript {
             }
 
             return members;
+        }
+
+        private createPrototypeSymbol(constructorTypeSymbol: PullTypeSymbol): PullSymbol {
+            var prototypeStr = "prototype";
+            var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
+            var parentDecl = constructorTypeSymbol.getDeclarations()[0];
+            var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl.getSpan(), parentDecl.getScriptName());
+
+            this.currentUnit.addSynthesizedDecl(prototypeDecl);
+
+            prototypeDecl.setParentDecl(parentDecl);
+            prototypeSymbol.addDeclaration(prototypeDecl);
+            prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
+            prototypeSymbol.isResolved = true;
+
+            return prototypeSymbol;
         }
 
         public isAnyOrEquivalent(type: PullTypeSymbol) {
