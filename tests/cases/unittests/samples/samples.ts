@@ -10,10 +10,10 @@ describe('Compiling samples', function ()
 
     function loadSample(path: string): string
     {
-        return IO.readFile(Harness.userSpecifiedroot + "samples/" + path, /*codepage:*/null).contents;
+        return IO.readFile(Harness.userSpecifiedroot + 'samples/' + path, /*codepage:*/null).contents;
     }
 
-    function addUnitsAndCompile(units: string[]) {
+    function addUnitsAndCompile(units: string[], includeWin8Libs = false) {
         var filesToAdd = units.map(unit => {
             return {
                 unitName: 'tests/cases/unittests/samples/' + unit,
@@ -21,10 +21,16 @@ describe('Compiling samples', function ()
             };
         });
         harnessCompiler.addInputFiles(filesToAdd);
-        harnessCompiler.compile();
-    }
 
-    debugger;
+        if (includeWin8Libs) {
+            var winrt = "typings/winrt.d.ts";
+            var winjs = "typings/winjs.d.ts";
+            harnessCompiler.addInputFile({ unitName: winrt, content: IO.readFile(winrt, null).contents });
+            harnessCompiler.addInputFile({ unitName: winjs, content: IO.readFile(winjs, null).contents });
+        }
+
+        harnessCompiler.compile(!includeWin8Libs);
+    }
 
     // d3
     it('compiles the d3 sample without error', function ()
@@ -157,29 +163,26 @@ describe('Compiling samples', function ()
     });
 
     // win8
-    //it('compiles the win8 sample without error', function ()
-    //{
-    //   var units = [
-    //       "../typings/winrt.d.ts",
-    //       "../typings/winjs.d.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/data.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/default.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/groupDetailPage.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/groupedItemsPage.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/itemDetailPage.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/navigator.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/topic.ts",
-    //       "win8/encyclopedia/Encyclopedia/js/win.ts"
-    //   ]
+    it('compiles the win8 sample without error', function ()
+    {
+       var units = [
+           "win8/encyclopedia/Encyclopedia/js/data.ts",
+           "win8/encyclopedia/Encyclopedia/js/default.ts",
+           "win8/encyclopedia/Encyclopedia/js/groupDetailPage.ts",
+           "win8/encyclopedia/Encyclopedia/js/groupedItemsPage.ts",
+           "win8/encyclopedia/Encyclopedia/js/itemDetailPage.ts",
+           "win8/encyclopedia/Encyclopedia/js/navigator.ts",
+           "win8/encyclopedia/Encyclopedia/js/topic.ts",
+           "win8/encyclopedia/Encyclopedia/js/win.ts"
+       ]
 
-    //   Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-    //   harnessCompiler.reset();       
-
-    //   addUnitsAndCompile(units);
-    //    var errLines = harnessCompiler.reportCompilationErrors();     
-    //    errLines.forEach(err => IO.printLine(err);
-    //   assert.equal(errLines.length, 0);
-    //});
+       Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
+       harnessCompiler.reset();       
+       addUnitsAndCompile(units, true);
+       var errLines = harnessCompiler.reportCompilationErrors();
+       errLines.forEach(err => IO.printLine(err));
+       assert.equal(errLines.length, 0);
+    });
 });
 
 describe("Clean up samples", () => {
