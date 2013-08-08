@@ -12,7 +12,7 @@ goTo.marker('2');
 verify.quickInfoIs('any');
 
 goTo.marker('3');
-verify.quickInfoIs('{ x: number; y: null; }');
+verify.quickInfoIs('{ x: number; y: any; }');
 
 goTo.marker('4');
 verify.quickInfoIs('any[]');

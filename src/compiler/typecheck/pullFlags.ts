@@ -40,6 +40,8 @@ module TypeScript {
 
         IsAnnotatedWithAny = 1 << 24,
 
+        HasDefaultArgs = 1 << 25,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule | InitializedEnum,
         SomeInitializedModule = InitializedModule | InitializedDynamicModule | InitializedEnum,
     }

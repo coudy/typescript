@@ -220,6 +220,11 @@ module TypeScript {
         parent.addChildDecl(decl);
         decl.setParentDecl(parent);
 
+        // If it has a default arg, record the fact that the parent has default args (we will need this during resolution)
+        if (argDecl.init) {
+            parent.flags |= PullElementFlags.HasDefaultArgs;
+        }
+
         // if it's a property type, we'll need to add it to the parent's parent as well
         if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
             var propDecl = new PullDecl(argDecl.id.text(), argDecl.id.actualText, PullElementKind.Property, declFlags, span, context.scriptName);

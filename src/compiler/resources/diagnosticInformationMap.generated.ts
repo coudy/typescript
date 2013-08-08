@@ -1086,6 +1086,10 @@ module TypeScript {
     "code": 2189,
     "category": DiagnosticCategory.Error
   },
+  "Initializer of parameter '{0}' cannot reference identifier '{1}' declared after it.": {
+    "code": 2190,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

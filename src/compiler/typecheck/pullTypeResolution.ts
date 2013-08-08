@@ -2840,8 +2840,18 @@ module TypeScript {
                 if (funcDeclAST.arguments) {
                     var prevInConstructorArguments = context.inConstructorArguments;
                     context.inConstructorArguments = isConstructor;
+                    var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
+                    if (hasDefaultArgs) {
+                        context.pushParameterIndexContext(funcDeclAST);
+                    }
                     for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
                         this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
+                        if (hasDefaultArgs) {
+                            context.incrementParameterIndex();
+                        }
+                    }
+                    if (hasDefaultArgs) {
+                        context.popParameterIndexContext();
                     }
                     context.inConstructorArguments = prevInConstructorArguments;
                 }
@@ -4047,9 +4057,6 @@ module TypeScript {
                 case NodeType.ImportDeclaration:
                     return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
 
-                case NodeType.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
                 case NodeType.GenericType:
                     return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
 
@@ -4388,6 +4395,37 @@ module TypeScript {
                 } else {
                     context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText]);
                     return this.getNewErrorTypeSymbol(id);
+                }
+            }
+
+            // Make sure that if we found the symbol in a function's scope, it is a parameter to the left of us
+            var nameParentDecl = nameSymbol.getDeclarations()[0].getParentDecl();
+            if (nameParentDecl &&
+                (nameParentDecl.kind & PullElementKind.SomeFunction) &&
+                (nameParentDecl.flags & PullElementFlags.HasDefaultArgs)) {
+                // Get the AST and look it up in the parameter index context to find which parameter we are in
+                var enclosingFunctionAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(nameParentDecl);
+                var currentParameterIndex = context.getCurrentParameterIndexForFunction(enclosingFunctionAST);
+
+                // Short circuit if we are located in the function body, since all child decls of the function are accessible there
+                if (currentParameterIndex >= 0) {
+                    // Search the enclosing function AST for a parameter with the right name, but stop once we hit our current context
+                    var foundMatchingParameter = false;
+                    if (enclosingFunctionAST.arguments) {
+                        for (var i = 0; i <= currentParameterIndex; i++) {
+                            var candidateParameter = <Parameter>enclosingFunctionAST.arguments.members[i];
+                            if (candidateParameter && candidateParameter.id.text() === id) {
+                                foundMatchingParameter = true;
+                            }
+                        }
+                    }
+                    if (!foundMatchingParameter) {
+                        // We didn't find a matching parameter to the left, so error
+                        context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(),
+                            DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
+                            [(<Parameter>enclosingFunctionAST.arguments.members[currentParameterIndex]).id.actualText, nameAST.actualText]);
+                        return this.getNewErrorTypeSymbol(id);
+                    }
                 }
             }
 
@@ -5451,7 +5489,7 @@ module TypeScript {
                         }
                     }
 
-                    var memberExpr = this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context);
+                    var memberExpr = this.widenType(this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context).type);
 
                     if (memberExpr.type && memberExpr.type.isGeneric()) {
                         typeSymbol.setHasGenericMember();

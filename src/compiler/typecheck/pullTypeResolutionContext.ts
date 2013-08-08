@@ -163,6 +163,7 @@ module TypeScript {
         private contextStack: PullContextualTypeContext[] = [];
         private typeSpecializationStack: any[] = [];
         private genericASTResolutionStack: AST[] = [];
+        private enclosingFunctionParameterIndexStack: IParameterIndexContext[] = [];
 
         public resolvingTypeReference = false;
         public resolvingNamespaceMemberAccess = false;
@@ -328,5 +329,35 @@ module TypeScript {
         public doneResolvingTypeArguments() {
             this.genericASTResolutionStack.length--;
         }
+
+        public pushParameterIndexContext(enclosingFunction: FunctionDeclaration) {
+            this.enclosingFunctionParameterIndexStack.push({
+                enclosingFunction: enclosingFunction,
+                index: 0
+            });
+        }
+
+        public popParameterIndexContext() {
+            this.enclosingFunctionParameterIndexStack.pop();
+        }
+
+        public incrementParameterIndex() {
+            this.enclosingFunctionParameterIndexStack[this.enclosingFunctionParameterIndexStack.length - 1].index++;
+        }
+
+        public getCurrentParameterIndexForFunction(enclosingFunction: FunctionDeclaration): number {
+            for (var i = this.enclosingFunctionParameterIndexStack.length - 1; i >= 0; i--) {
+                if (this.enclosingFunctionParameterIndexStack[i].enclosingFunction === enclosingFunction) {
+                    return this.enclosingFunctionParameterIndexStack[i].index;
+                }
+            }
+            // If we didn't find it, return -1 (which signals that we are in the function body
+            return -1;
+        }
+    }
+
+    interface IParameterIndexContext {
+        enclosingFunction: AST;
+        index: number;
     }
 }

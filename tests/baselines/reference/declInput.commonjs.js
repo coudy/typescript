@@ -23,8 +23,8 @@ declare class bar {
     public f(): string;
     public g(): {
         a: bar;
-        b: undefined;
-        c: undefined;
+        b: any;
+        c: any;
     };
     public h(x?: number, y?, z?: string): void;
 }
