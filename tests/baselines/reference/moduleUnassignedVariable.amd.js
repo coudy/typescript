@@ -1,4 +1,3 @@
-// Bug 755706: Invalid codegen when returning an unassiged variable from function in module
 var Bar;
 (function (Bar) {
     Bar.a = 1;
@@ -8,6 +7,6 @@ var Bar;
 
     Bar.b;
     function fooB() {
-        return b;
+        return Bar.b;
     }
 })(Bar || (Bar = {}));
