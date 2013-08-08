@@ -1886,7 +1886,7 @@ module TypeScript {
                 var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
 
                 if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, functionDecl);
+                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
                     returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, functionDecl, context);
                 }
 
@@ -2880,7 +2880,7 @@ module TypeScript {
                         }
 
                         if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, funcDecl);
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
                             returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, funcDecl, context);
                         }
 
@@ -3148,7 +3148,7 @@ module TypeScript {
                         }
 
                         if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, funcDecl);
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
                             returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, funcDecl, context);
                         }
 
@@ -5056,7 +5056,7 @@ module TypeScript {
                 var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
 
                 if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, functionDecl);
+                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
                     returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, functionDecl, context);
                 }
 
