@@ -713,7 +713,6 @@ module Services {
                 declName = declName.toLocaleLowerCase();
                 navigationName = this.getNavigationItemDispalyName(declaration);
                 kindName = this.mapPullElementKind(declaration.kind);
-                fullName = parentName ? parentName + "." + navigationName : navigationName;
                 matchKind = null;
 
                 // Find match between name and given search terms
@@ -735,18 +734,21 @@ module Services {
 
                 // if there is a match, create NavigateToItem and add it into result array
                 // Able to find the match
-                if (matchKind && this.shouldIncludeDeclarationInNavigationItems(declaration)) {
-                    item = new NavigateToItem();
-                    item.name = navigationName;
-                    item.matchKind  = matchKind;
-                    item.kind = this.mapPullElementKind(declaration.kind);
-                    item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
-                    item.fileName = this.compilerState.getHostFileName(fileName);
-                    item.minChar = declaration.getSpan().start();
-                    item.limChar = declaration.getSpan().end();
-                    item.containerName = parentName || "";
-                    item.containerKind = parentkindName || "";
-                    results.push(item);
+                if (this.shouldIncludeDeclarationInNavigationItems(declaration)) {
+                    fullName = parentName ? parentName + "." + navigationName : navigationName;
+                    if (matchKind) {
+                        item = new NavigateToItem();
+                        item.name = navigationName;
+                        item.matchKind = matchKind;
+                        item.kind = this.mapPullElementKind(declaration.kind);
+                        item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
+                        item.fileName = this.compilerState.getHostFileName(fileName);
+                        item.minChar = declaration.getSpan().start();
+                        item.limChar = declaration.getSpan().end();
+                        item.containerName = parentName || "";
+                        item.containerKind = parentkindName || "";
+                        results.push(item);
+                    }
                 }
                 if (this.isContainerDeclaration(declaration)) {
                     this.findSearchValueInPullDecl(fileName, declaration.getChildDecls(), results, searchTerms, fullName, kindName);
