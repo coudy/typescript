@@ -257,7 +257,8 @@ module Services {
 
                 possiblePositions.forEach(p => {
                     var path = this.getAstPathToPosition(script, p);
-                    if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
+                    var nameAST = path.ast();
+                    if (nameAST === null || nameAST.nodeType() !== TypeScript.NodeType.Name) {
                         return;
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
@@ -274,9 +275,9 @@ module Services {
 
                         if (normalizedSymbol === symbol) {
                             var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
-                            var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
 
-                            result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), referenceAST.minChar, referenceAST.limChar, isWriteAccess));
+                            result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName),
+                                nameAST.minChar, nameAST.limChar, isWriteAccess));
 
                         }
                     }
@@ -297,18 +298,17 @@ module Services {
 
                 possiblePositions.forEach(p => {
                     var path = this.getAstPathToPosition(script, p);
-                    if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
+                    var nameAST = path.ast();
+
+                    // Compare the length so we filter out strict superstrings of the symbol we are looking for
+                    if (nameAST === null || nameAST.nodeType() !== TypeScript.NodeType.Name || (nameAST.limChar - nameAST.minChar !== symbolName.length)) {
                         return;
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
 
-                    if (searchSymbolInfoAtPosition !== null) {
-                        var referenceAST = FindReferenceHelpers.getCorrectASTForReferencedSymbolName(searchSymbolInfoAtPosition.ast, symbolName);
-                        // Compare the length so we filter out strict superstrings of the symbol we are looking for
-                        if (referenceAST.limChar - referenceAST.minChar === symbolName.length && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
-                            var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
-                            result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), referenceAST.minChar, referenceAST.limChar, isWriteAccess));
-                        }
+                    if (searchSymbolInfoAtPosition !== null && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
+                        var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
+                        result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
                     }
                 });
             }

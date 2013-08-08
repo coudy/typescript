@@ -7,22 +7,6 @@
 module Services {
 
     export class FindReferenceHelpers {
-        public static getCorrectASTForReferencedSymbolName(matchingAST: TypeScript.AST, symbolName: string): TypeScript.AST {
-
-            if (matchingAST.nodeType() == TypeScript.NodeType.MemberAccessExpression) {
-                var binaryExpression: TypeScript.BinaryExpression = <TypeScript.BinaryExpression>matchingAST;
-                var identifierOperand1: TypeScript.Identifier = <TypeScript.Identifier>binaryExpression.operand1;
-                var identifierOperand2: TypeScript.Identifier = <TypeScript.Identifier>binaryExpression.operand2;
-                if (identifierOperand1.actualText === symbolName) {
-                    return binaryExpression.operand1;
-                }
-                else if (identifierOperand2.actualText === symbolName) {
-                    return binaryExpression.operand2;
-                }
-            }
-            return matchingAST;
-        }
-
         public static compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
             if (firstSymbol.kind === secondSymbol.kind)
             {
