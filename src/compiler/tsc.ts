@@ -519,7 +519,7 @@ module TypeScript {
                 set: () => {
                     this.compilationSettings.allowBool = true;
                 }
-            }, 'b');
+            });
 
             opts.flag('allowimportmodule', {
                 usage: {
@@ -529,7 +529,7 @@ module TypeScript {
                 set: () => {
                     this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
                 }
-            }, 'm');
+            });
 
             var locale: string = null;
             opts.option('locale', {
