@@ -687,28 +687,154 @@ module Services {
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = this.compilerState.getHostFileName(fileNames[i]);
-                var document = this.compilerState.getDocument(fileName);
-                var syntaxTree = document.syntaxTree();
-                GetScriptLexicalStructureWalker.searchScriptLexicalStructure(items, fileName, (name) => {
-                    name = name.toLocaleLowerCase();
-                    for (var i = 0; i < terms.length; i++) {
-                        var term = terms[i];
-                        if (name === term) {
-                            return MatchKind.exact;
-                        }
-                        if (name.indexOf(term) == 0) {
-                            return MatchKind.prefix;
-                        }
-                        if (name.indexOf(term) > 0) {
-                            return MatchKind.subString;
-                        }
-                    }
+                var declarations = this.compilerState.getTopLevelDeclarations(TypeScript.switchToForwardSlashes(fileName));
+                if (!declarations) {
+                    return null;
+                }
+                this.findSearchValueInPullDecl(fileName, declarations, items, terms);
+            }
+            return items;
+        }
 
-                    return MatchKind.none;
-                }, syntaxTree.sourceUnit());
+        private findSearchValueInPullDecl(fileName: string, declarations: TypeScript.PullDecl[], results: NavigateToItem[],
+            searchTerms: string[], parentName?: string, parentkindName?: string): void {
+            var item: NavigateToItem;
+            var declaration: TypeScript.PullDecl;
+            var term: string;
+            var declName: string;
+            var navigationName: string;
+            var kindName: string;
+            var matchKind: string;
+            var fullName: string;
+
+            for (var i = 0, declLength = declarations.length; i < declLength; ++i) {
+                declaration = declarations[i];
+                declName = declaration.getDisplayName();
+                declName = declName.toLocaleLowerCase();
+                navigationName = this.getNavigationItemDispalyName(declaration);
+                kindName = this.mapPullElementKind(declaration.kind);
+                fullName = parentName ? parentName + "." + navigationName : navigationName;
+                matchKind = null;
+
+                // Find match between name and given search terms
+                for (var j = 0, termsLength = searchTerms.length; j < termsLength; ++j) {
+                    term = searchTerms[j];
+                    if (declName === term) {
+                        matchKind = MatchKind.exact;
+                        break;
+                    }
+                    if (declName.indexOf(term) === 0) {
+                        matchKind = MatchKind.prefix;
+                        break;
+                    }
+                    if (declName.indexOf(term) > 0) {
+                        matchKind = MatchKind.subString;
+                        break;
+                    }
+                }
+
+                // if there is a match, create NavigateToItem and add it into result array
+                // Able to find the match
+                if (matchKind && this.shouldIncludeDeclarationInNavigationItems(declaration)) {
+                    item = new NavigateToItem();
+                    item.name = navigationName;
+                    item.matchKind  = matchKind;
+                    item.kind = this.mapPullElementKind(declaration.kind);
+                    item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
+                    item.fileName = this.compilerState.getHostFileName(fileName);
+                    item.minChar = declaration.getSpan().start();
+                    item.limChar = declaration.getSpan().end();
+                    item.containerName = parentName || "";
+                    item.containerKind = parentkindName || "";
+                    results.push(item);
+                }
+                if (this.isContainerDeclaration(declaration)) {
+                    this.findSearchValueInPullDecl(fileName, declaration.getChildDecls(), results, searchTerms, fullName, kindName);
+                }
+            }
+        }
+
+        private getScriptElementKindModifiersFromDecl(decl: TypeScript.PullDecl): string {
+            var result: string[] = [];
+            var flags = decl.flags;
+
+            if (flags & TypeScript.PullElementFlags.Exported) {
+                result.push(ScriptElementKindModifier.exportedModifier);
             }
 
-            return items;
+            if (flags & TypeScript.PullElementFlags.Ambient) {
+                result.push(ScriptElementKindModifier.ambientModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Public) {
+                result.push(ScriptElementKindModifier.publicMemberModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Private) {
+                result.push(ScriptElementKindModifier.privateMemberModifier);
+            }
+
+            if (flags & TypeScript.PullElementFlags.Static) {
+                result.push(ScriptElementKindModifier.staticModifier);
+            }
+
+            return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
+        }
+
+        private isContainerDeclaration(declaration: TypeScript.PullDecl): boolean {
+            switch (declaration.kind) {
+                case TypeScript.PullElementKind.Script:
+                case TypeScript.PullElementKind.Container:
+                case TypeScript.PullElementKind.Class:
+                case TypeScript.PullElementKind.Interface:
+                case TypeScript.PullElementKind.DynamicModule:
+                case TypeScript.PullElementKind.Enum:
+                    return true;
+            }
+
+            return false;
+        }
+
+        private shouldIncludeDeclarationInNavigationItems(declaration: TypeScript.PullDecl): boolean {
+            switch (declaration.kind) {
+                case TypeScript.PullElementKind.Script:
+                    // Do not include the script item
+                    return false;
+                case TypeScript.PullElementKind.Variable:
+                case TypeScript.PullElementKind.Property:
+                    // Do not include the value side of modules or classes, as thier types has already been included
+                    return (declaration.flags & (TypeScript.PullElementFlags.ClassConstructorVariable |
+                        TypeScript.PullElementFlags.InitializedModule |
+                        TypeScript.PullElementFlags.InitializedDynamicModule |
+                        TypeScript.PullElementFlags.InitializedEnum)) === 0;
+                case TypeScript.PullElementKind.EnumMember:
+                    return true;
+                case TypeScript.PullElementKind.FunctionExpression:
+                case TypeScript.PullElementKind.Function:
+                    // Ignore anonomus functions
+                    return declaration.name !== "";
+            }
+
+            if (this.isContainerDeclaration(declaration)) {
+                return true;
+            }
+
+            return true;
+        }
+
+        private getNavigationItemDispalyName(declaration: TypeScript.PullDecl): string {
+            switch (declaration.kind) {
+                case TypeScript.PullElementKind.ConstructorMethod:
+                    return "constructor";
+                case TypeScript.PullElementKind.CallSignature:
+                    return "()";
+                case TypeScript.PullElementKind.ConstructSignature:
+                    return "new()";
+                case TypeScript.PullElementKind.IndexSignature:
+                    return "[]";
+            }
+
+            return declaration.getDisplayName();
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {

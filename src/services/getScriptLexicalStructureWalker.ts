@@ -5,43 +5,25 @@ module Services {
         private currentMemberVariableDeclaration: TypeScript.MemberVariableDeclarationSyntax = null;
         private currentVariableStatement: TypeScript.VariableStatementSyntax = null;
         private currentInterfaceDeclaration: TypeScript.InterfaceDeclarationSyntax = null;
-        private isMatch: (name: string) => string;
 
-        constructor(private items: NavigateToItem[], private fileName: string, isMatch: (name: string) => string) {
+        constructor(private items: NavigateToItem[], private fileName: string) {
             super();
-
-            this.isMatch = isMatch;
-        }
-
-        static searchScriptLexicalStructure(items: NavigateToItem[], fileName: string, isMatch: (name: string) => string, unit: TypeScript.SourceUnitSyntax) {
-            var visitor = new GetScriptLexicalStructureWalker(items, fileName, isMatch);
-            unit.accept(visitor);
         }
 
         static getListsOfAllScriptLexicalStructure(items: NavigateToItem[], fileName: string, unit: TypeScript.SourceUnitSyntax) {
-            var visitor = new GetScriptLexicalStructureWalker(items, fileName, null);
+            var visitor = new GetScriptLexicalStructureWalker(items, fileName);
             unit.accept(visitor);
         }
 
         private createItem(
-            node: TypeScript.SyntaxNode,
-            modifiers: TypeScript.ISyntaxList,
-            kind: string,
-            name: string): void {
-
-            var matchKind = MatchKind.exact;
-            if (this.isMatch) {
-                //if does not match filter, return
-                matchKind = this.isMatch(name);
-                if (matchKind === MatchKind.none) {
-                    return;
-                }
-            }
-
+                node: TypeScript.SyntaxNode,
+                modifiers: TypeScript.ISyntaxList,
+                kind: string,
+                name: string): void {
             var item = new NavigateToItem();
             item.name = name;
             item.kind = kind;
-            item.matchKind = matchKind;
+            item.matchKind = MatchKind.exact;
             item.fileName = this.fileName;
             item.kindModifiers = this.getKindModifiers(modifiers);
             item.minChar = this.position() + node.leadingTriviaWidth();
