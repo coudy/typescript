@@ -5628,6 +5628,7 @@ module TypeScript {
         private computeIndexExpressionSymbol(callEx: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             // resolve the target
             var targetSymbol = this.resolveAST(callEx.operand1, inContextuallyTypedAssignment, enclosingDecl, context);
+            var indexType = this.resolveAST(callEx.operand2, inContextuallyTypedAssignment, enclosingDecl, context).type;
 
             var targetTypeSymbol = targetSymbol.type;
 
@@ -5636,8 +5637,6 @@ module TypeScript {
             }
 
             var elementType = targetTypeSymbol.getElementType();
-
-            var indexType = this.resolveAST(callEx.operand2, inContextuallyTypedAssignment, enclosingDecl, context).type;
 
             var isNumberIndex = indexType === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(indexType);
 
