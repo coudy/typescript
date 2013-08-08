@@ -346,7 +346,7 @@ module TypeScript {
         Specify_locale_for_errors_and_messages_For_example_0_or_1: "Specify locale for errors and messages. For example '{0}' or '{1}'",
         Syntax_0: "Syntax:   {0}",
         options: "options",
-        file: "file",
+        file1: "file",
         Examples: "Examples:",
         Options: "Options:",
         Insert_command_line_options_and_files_from_a_file: "Insert command line options and files from a file.",
@@ -355,7 +355,7 @@ module TypeScript {
         NL_Recompiling_0: "{NL}Recompiling ({0}):",
         STRING: "STRING",
         KIND: "KIND",
-        FILE: "FILE",
+        file2: "FILE",
         VERSION: "VERSION",
         LOCATION: "LOCATION",
         DIRECTORY: "DIRECTORY",
@@ -375,5 +375,9 @@ module TypeScript {
         Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.",
         Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.",
         Array_Literal_implicitly_has_an_any_type_from_widening: "Array Literal implicitly has an 'any' type from widening.",
+        Use_of_deprecated_type_bool_Use_boolean_instead: "Use of deprecated type 'bool'. Use 'boolean' instead.",
+        module_is_deprecated_Use_require_instead: "'module(...)' is deprecated. Use 'require(...)' instead.",
+        Allow_bool_as_a_synonym_for_boolean: "Allow 'bool' as a synonym for 'boolean'.",
+        Allow_module_as_a_synonym_for_require: "Allow 'module(...)' as a synonym for 'require(...)'.",
     };
 }

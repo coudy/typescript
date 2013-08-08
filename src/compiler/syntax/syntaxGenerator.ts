@@ -59,7 +59,7 @@ var definitions:ITypeDefinition[] = [
         name: 'ExternalModuleReferenceSyntax',
         baseType: 'ModuleReferenceSyntax',
         children: [
-            <any>{ name: 'requireKeyword', isToken: true, tokenKinds: ['RequireKeyword'] },
+            <any>{ name: 'moduleOrRequireKeyword', isToken: true, tokenKinds: ['ModuleKeyword', 'RequireKeyword'] },
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'stringLiteral', isToken: true },
             <any>{ name: 'closeParenToken', isToken: true }

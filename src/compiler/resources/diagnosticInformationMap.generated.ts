@@ -1382,7 +1382,7 @@ module TypeScript {
     "code": 6024,
     "category": DiagnosticCategory.Message
   },
-  "file": {
+  "file1": {
     "code": 6025,
     "category": DiagnosticCategory.Message
   },
@@ -1418,7 +1418,7 @@ module TypeScript {
     "code": 6034,
     "category": DiagnosticCategory.Message
   },
-  "FILE": {
+  "file2": {
     "code": 6035,
     "category": DiagnosticCategory.Message
   },
@@ -1497,6 +1497,22 @@ module TypeScript {
   "Array Literal implicitly has an 'any' type from widening.": {
     "code": 7014,
     "category": DiagnosticCategory.Error
+  },
+  "Use of deprecated type 'bool'. Use 'boolean' instead.": {
+    "code": 7020,
+    "category": DiagnosticCategory.Warning
+  },
+  "'module(...)' is deprecated. Use 'require(...)' instead.": {
+    "code": 7021,
+    "category": DiagnosticCategory.Warning
+  },
+  "Allow 'bool' as a synonym for 'boolean'.": {
+    "code": 7022,
+    "category": DiagnosticCategory.Message
+  },
+  "Allow 'module(...)' as a synonym for 'require(...)'.": {
+    "code": 7022,
+    "category": DiagnosticCategory.Message
   }
 };
 }

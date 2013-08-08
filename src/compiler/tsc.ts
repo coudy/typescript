@@ -322,7 +322,7 @@ module TypeScript {
                     locCode: DiagnosticCode.Concatenate_and_emit_output_to_single_file, 
                     args: null
                 },
-                type: DiagnosticCode.FILE,
+                type: DiagnosticCode.file2,
                 set: (str) => {
                     this.compilationSettings.outFileOption = str;
                 }
@@ -510,6 +510,26 @@ module TypeScript {
                     shouldPrintVersionOnly = true;
                 }
             }, 'v');
+
+            opts.flag('allowbool', {
+                usage: {
+                    locCode: DiagnosticCode.Allow_bool_as_a_synonym_for_boolean,
+                    args: null
+                },
+                set: () => {
+                    this.compilationSettings.allowBool = true;
+                }
+            }, 'b');
+
+            opts.flag('allowimportmodule', {
+                usage: {
+                    locCode: DiagnosticCode.Allow_module_as_a_synonym_for_require,
+                    args: null
+                },
+                set: () => {
+                    this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
+                }
+            }, 'm');
 
             var locale: string = null;
             opts.option('locale', {

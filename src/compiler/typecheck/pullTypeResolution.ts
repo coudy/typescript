@@ -4611,6 +4611,17 @@ module TypeScript {
             else if (id === "number") {
                 return this.semanticInfoChain.numberTypeSymbol;
             }
+            else if (id === "bool") {
+                // Warn for using bool
+                if (!this.compilationSettings.allowBool && !this.currentUnit.getProperties().unitContainsBool) {
+                    this.currentUnit.getProperties().unitContainsBool = true;
+                    context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(), DiagnosticCode.Use_of_deprecated_type_bool_Use_boolean_instead, null, enclosingDecl);   
+                    return this.semanticInfoChain.booleanTypeSymbol;
+                }
+                else {
+                    return this.semanticInfoChain.booleanTypeSymbol;
+                }
+            }
             else if (id === "boolean") {
                 return this.semanticInfoChain.booleanTypeSymbol;
             }
@@ -9557,8 +9568,8 @@ module TypeScript {
         private superCallMustBeFirstStatementInConstructor(enclosingConstructor: PullDecl, enclosingClass: PullDecl): boolean {
             /*
             The first statement in the body of a constructor must be a super call if both of the following are true:
-                •	The containing class is a derived class.
-                •	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                •   The containing class is a derived class.
+                •   The constructor declares parameter properties or the containing class declares instance member variables with initializers.
             In such a required super call, it is a compile-time error for argument expressions to reference this.
             */
             if (enclosingConstructor && enclosingClass) {
