@@ -1656,7 +1656,7 @@ module TypeScript {
                 flags = flags | FunctionFlags.Static;
             }
 
-            flags = flags | FunctionFlags.Method;
+            flags = flags | FunctionFlags.Method | FunctionFlags.IsClassMethod;
             result.setFunctionFlags(flags);
 
             return result;

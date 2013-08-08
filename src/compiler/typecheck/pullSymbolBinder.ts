@@ -1531,7 +1531,6 @@ module TypeScript {
 
                 typeParameter = signature.findTypeParameter(typeParameterName);
 
-
                 if (!typeParameter) {
 
                     if (!typeParameterAST.constraint) {

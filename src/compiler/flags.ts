@@ -84,6 +84,7 @@ module TypeScript {
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,
         IsFunctionProperty = 1 << 14,       // function property in an object literal expression
+        IsClassMethod = 1 << 15,
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;

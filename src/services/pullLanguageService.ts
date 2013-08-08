@@ -65,7 +65,7 @@ module Services {
             }
 
             var symbol = symbolInfoAtPosition.symbol;
-            var symbolName: string = symbol.getName();
+            var symbolName = symbol.getName();
 
             // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
             if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
@@ -74,19 +74,46 @@ module Services {
                 return this.getSingleNodeReferenceAtPosition(fileName, pos);
             }
 
+            var containingASTOpt = this.getSymbolScopeAST(symbol, path);
+
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var tempFileName = fileNames[i];
 
+                if (containingASTOpt && fileName != tempFileName) {
+                    continue;
+                }
+
                 var tempDocument = this.compilerState.getDocument(tempFileName);
-                var filter: TypeScript.BloomFilter = tempDocument.bloomFilter();
+                var filter = tempDocument.bloomFilter();
 
                 if (filter.probablyContains(symbolName)) {
-                    result = result.concat(this.getReferencesInFile(tempFileName, symbol));
+                    result = result.concat(this.getReferencesInFile(tempFileName, symbol, containingASTOpt));
                 }
             }
 
             return result;
+        }
+
+        private getSymbolScopeAST(symbol: TypeScript.PullSymbol, path: TypeScript.AstPath): TypeScript.AST {
+            if (symbol.kind === TypeScript.PullElementKind.TypeParameter &&
+                symbol.getDeclarations().length > 0 &&
+                symbol.getDeclarations()[0].getParentDecl() &&
+                symbol.getDeclarations()[0].getParentDecl().kind === TypeScript.PullElementKind.Method) {
+
+                // The compiler shares class method type parameter symbols.  So if we get one, 
+                // scope our search down to the method ast so we don't find other hits elsewhere.
+                for (var i = path.top; i >= 0; i--) {
+                    var ast = path.asts[i];
+                    if (ast.nodeType() === TypeScript.NodeType.FunctionDeclaration &&
+                        TypeScript.hasFlag((<TypeScript.FunctionDeclaration>ast).getFunctionFlags(), TypeScript.FunctionFlags.IsClassMethod)) {
+                            return ast;
+                    }
+                }
+            }
+
+            // Todo: we could add more smarts about things like local variables and parameters here.
+            return null;
         }
 
         public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[]{
@@ -114,7 +141,7 @@ module Services {
             }
 
             var symbol = symbolInfoAtPosition.symbol;
-            var symbolName: string = symbol.getName();
+            var symbolName = symbol.getName();
 
             // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
             if ((symbol.isError() ||  symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
@@ -123,7 +150,9 @@ module Services {
                 return this.getSingleNodeReferenceAtPosition(fileName, pos);
             }
 
-            return this.getReferencesInFile(fileName, symbol);
+            var containingASTOpt = this.getSymbolScopeAST(symbol, path);
+
+            return this.getReferencesInFile(fileName, symbol, containingASTOpt);
         }
 
         private getSingleNodeReferenceAtPosition(fileName: string, position: number): ReferenceEntry[] {
@@ -287,7 +316,7 @@ module Services {
             return result;
         }
 
-        private getReferencesInFile(fileName: string, symbol: TypeScript.PullSymbol): ReferenceEntry[] {
+        private getReferencesInFile(fileName: string, symbol: TypeScript.PullSymbol, containingASTOpt: TypeScript.AST): ReferenceEntry[] {
             var result: ReferenceEntry[] = [];
             var symbolName = symbol.getDisplayName();
 
@@ -297,6 +326,11 @@ module Services {
                 var script = document.script;
 
                 possiblePositions.forEach(p => {
+                    // If it's not in the bounds of the AST we're asking for, then this can't possibly be a hit.
+                    if (containingASTOpt && (p < containingASTOpt.minChar || p > containingASTOpt.limChar)) {
+                        return;
+                    }
+
                     var path = this.getAstPathToPosition(script, p);
                     var nameAST = path.ast();
 
