@@ -9219,18 +9219,16 @@ module TypeScript {
                         // Type from the dynamic module
                         var declSymbolPath = declSymbol.pathToRoot();
                         var verifyAlias = false;
-                        if (declSymbolPath.length) {
-                            // From different dynamic module 
-                            if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
-                                verifyAlias = true;
-                            } else if (symbolPath.length > 1 &&
-                                symbolPath[symbolPath.length - 2].kind == PullElementKind.DynamicModule) {
+                        // From different dynamic module 
+                        if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
+                            verifyAlias = true;
+                        } else if (symbolPath.length > 1 &&
+                            symbolPath[symbolPath.length - 2].kind == PullElementKind.DynamicModule) {
 
-                                // declSymbol and symbol are from same dynamic module but symbol is from ambient module declaration
-                                if (declSymbolPath.length < 2 ||
-                                    declSymbolPath[declSymbolPath.length - 2] != symbolPath[symbolPath.length - 2]) {
-                                    verifyAlias = true;
-                                }
+                            // declSymbol and symbol are from same dynamic module but symbol is from ambient module declaration
+                            if (declSymbolPath.length < 2 ||
+                                declSymbolPath[declSymbolPath.length - 2] != symbolPath[symbolPath.length - 2]) {
+                                verifyAlias = true;
                             }
                         }
 
@@ -9250,7 +9248,7 @@ module TypeScript {
                             symbol = symbolPath[symbolPath.length - 1];
                         }
                     }
-                }
+                } else if (symbol.kind == PullElementKind.TypeAlias) {                    var aliasSymbol = <PullTypeAliasSymbol>symbol;                    symbolIsVisible = true;                    aliasSymbol.typeUsedExternally = true;                }
 
                 if (!symbolIsVisible) {
                     // declaration is visible from outside but the type isnt - Report error

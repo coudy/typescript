@@ -1,5 +1,3 @@
-// bug 755717: Cannot use array of imported class / interface when using single export
-
 declare module 'Car' {
     class Car {
 

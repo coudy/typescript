@@ -30722,6 +30722,15 @@ var TypeScript;
     }
     TypeScript.filePath = filePath;
 
+    function convertToDirectoryPath(dirPath) {
+        if (dirPath && dirPath.charAt(dirPath.length - 1) !== "/") {
+            dirPath += "/";
+        }
+
+        return dirPath;
+    }
+    TypeScript.convertToDirectoryPath = convertToDirectoryPath;
+
     var normalizePathRegEx = /^\\\\[^\\]/;
     function normalizePath(path) {
         if (normalizePathRegEx.test(path)) {
@@ -31991,6 +32000,16 @@ var TypeScript;
             return false;
         };
 
+        DeclarationEmitter.prototype.resolveScriptReference = function (document, reference) {
+            if (!this.compiler.settings.noResolve || TypeScript.isRooted(reference)) {
+                return reference;
+            }
+
+            var documentDir = TypeScript.convertToDirectoryPath(TypeScript.switchToForwardSlashes(TypeScript.getRootFilePath(document.fileName)));
+            var resolvedReferencePath = this.compiler.emitOptions.ioHost.resolvePath(documentDir + reference);
+            return resolvedReferencePath;
+        };
+
         DeclarationEmitter.prototype.emitReferencePaths = function (script) {
             if (this.emittedReferencePaths) {
                 return;
@@ -32001,10 +32020,10 @@ var TypeScript;
                 var scriptReferences = script.referencedFiles;
                 var addedGlobalDocument = false;
                 for (var j = 0; j < scriptReferences.length; j++) {
-                    var currentReference = scriptReferences[j];
+                    var currentReference = this.resolveScriptReference(this.document, scriptReferences[j]);
                     var document = this.compiler.getDocument(currentReference);
 
-                    if (this.compiler.emitOptions.outputMany || document.script.isDeclareFile || document.script.topLevelMod || !addedGlobalDocument) {
+                    if (document && (this.compiler.emitOptions.outputMany || document.script.isDeclareFile || document.script.topLevelMod || !addedGlobalDocument)) {
                         documents = documents.concat(document);
                         if (!document.script.isDeclareFile && document.script.topLevelMod) {
                             addedGlobalDocument = true;
@@ -32017,10 +32036,10 @@ var TypeScript;
                     if (!allDocuments[i].script.isDeclareFile && !allDocuments[i].script.topLevelMod) {
                         var scriptReferences = allDocuments[i].script.referencedFiles;
                         for (var j = 0; j < scriptReferences.length; j++) {
-                            var currentReference = scriptReferences[j];
+                            var currentReference = this.resolveScriptReference(allDocuments[i], scriptReferences[j]);
                             var document = this.compiler.getDocument(currentReference);
 
-                            if (document.script.isDeclareFile || document.script.topLevelMod) {
+                            if (document && (document.script.isDeclareFile || document.script.topLevelMod)) {
                                 for (var k = 0; k < documents.length; k++) {
                                     if (documents[k] == document) {
                                         break;
@@ -35255,7 +35274,7 @@ var TypeScript;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-                TypeScript.Debug.assert(declAST != null, "Call signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+                TypeScript.Debug.assert(declAST != null, "Call signature for type '" + typeToSpecialize.pullSymbolIDString + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -35327,7 +35346,7 @@ var TypeScript;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-                TypeScript.Debug.assert(declAST != null, "Construct signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+                TypeScript.Debug.assert(declAST != null, "Construct signature for type '" + typeToSpecialize.pullSymbolIDString + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -35399,7 +35418,7 @@ var TypeScript;
                 newSignature.mimicSignature(signature, resolver);
                 declAST = resolver.semanticInfoChain.getASTForDecl(decl);
 
-                TypeScript.Debug.assert(declAST != null, "Index signature for type '" + typeToSpecialize.toString() + "' could not be specialized because of a stale declaration");
+                TypeScript.Debug.assert(declAST != null, "Index signature for type '" + typeToSpecialize.pullSymbolIDString + "' could not be specialized because of a stale declaration");
 
                 prevSpecializationSignature = decl.getSpecializingSignatureSymbol();
                 decl.setSpecializingSignatureSymbol(newSignature);
@@ -35666,9 +35685,22 @@ var TypeScript;
 
     function getIDForTypeSubstitutions(types) {
         var substitution = "";
+        var members = null;
 
         for (var i = 0; i < types.length; i++) {
-            substitution += types[i].pullSymbolIDString + "#";
+            if (types[i].kind != 8388608 /* ObjectType */) {
+                substitution += types[i].pullSymbolIDString + "#";
+            } else {
+                members = types[i].getMembers();
+
+                if (types[i].isResolved && members && members.length) {
+                    for (var j = 0; j < members.length; j++) {
+                        substitution += members[j].name + "@" + getIDForTypeSubstitutions([members[j].type]);
+                    }
+                } else {
+                    substitution += types[i].pullSymbolIDString + "#";
+                }
+            }
         }
 
         return substitution;
@@ -37027,11 +37059,7 @@ var TypeScript;
                 this.validateVariableDeclarationGroups(containerDecl, context);
             }
 
-            if (!context.isInBaseTypeResolution()) {
-                containerSymbol.setResolved();
-            } else {
-                containerSymbol.inResolution = false;
-            }
+            containerSymbol.setResolved();
 
             return containerSymbol;
         };
@@ -37055,6 +37083,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveReferenceTypeDeclaration = function (typeDeclAST, context) {
+            var _this = this;
             var typeDecl = this.getDeclForAST(typeDeclAST);
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = typeDecl.getSymbol();
@@ -37152,6 +37181,11 @@ var TypeScript;
 
             if (wasInBaseTypeResolution) {
                 typeDeclSymbol.inResolution = false;
+
+                PullTypeResolver.typeCheckCallBacks.push(function () {
+                    _this.resolveDeclaredSymbol(typeDeclSymbol, enclosingDecl, context);
+                });
+
                 return typeDeclSymbol;
             }
 
@@ -37713,6 +37747,11 @@ var TypeScript;
 
             if (funcDeclAST.returnTypeAnnotation) {
                 var returnTypeSymbol = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, functionDecl, context);
+
+                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, funcDeclAST.returnTypeAnnotation, context)) {
+                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, functionDecl);
+                    returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, functionDecl, context);
+                }
 
                 signature.returnType = returnTypeSymbol;
 
@@ -38559,6 +38598,11 @@ var TypeScript;
                             }
                         }
 
+                        if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, funcDeclAST.returnTypeAnnotation, context)) {
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, funcDecl);
+                            returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, funcDecl, context);
+                        }
+
                         signature.returnType = returnTypeSymbol;
 
                         if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
@@ -38766,6 +38810,11 @@ var TypeScript;
                             if (getterSymbol) {
                                 getterTypeSymbol.setHasGenericSignature();
                             }
+                        }
+
+                        if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, funcDeclAST.returnTypeAnnotation, context)) {
+                            context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, funcDecl);
+                            returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, funcDecl, context);
                         }
 
                         signature.returnType = returnTypeSymbol;
@@ -39826,7 +39875,7 @@ var TypeScript;
                 this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
             }
 
-            if (nameSymbol && (nameSymbol.type != this.semanticInfoChain.anyTypeSymbol || nameSymbol.hasFlag(16777216 /* IsAnnotatedWithAny */))) {
+            if (nameSymbol && (nameSymbol.type != this.semanticInfoChain.anyTypeSymbol || nameSymbol.hasFlag(16777216 /* IsAnnotatedWithAny */ | 1 /* Exported */))) {
                 this.setSymbolForAST(nameAST, nameSymbol, context);
             }
 
@@ -40216,6 +40265,10 @@ var TypeScript;
                         } else {
                             typeArgs[i] = typeArg;
                         }
+
+                        if (typeArgs[i].isError()) {
+                            typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
+                        }
                     }
                 }
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
@@ -40453,6 +40506,11 @@ var TypeScript;
 
             if (funcDeclAST.returnTypeAnnotation) {
                 var returnTypeSymbol = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, functionDecl, context);
+
+                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, funcDeclAST.returnTypeAnnotation, context)) {
+                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), TypeScript.DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null, functionDecl);
+                    returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, functionDecl, context);
+                }
 
                 signature.returnType = returnTypeSymbol;
             } else {
@@ -40963,6 +41021,7 @@ var TypeScript;
 
         PullTypeResolver.prototype.computeIndexExpressionSymbol = function (callEx, inContextuallyTypedAssignment, enclosingDecl, context) {
             var targetSymbol = this.resolveAST(callEx.operand1, inContextuallyTypedAssignment, enclosingDecl, context);
+            var indexType = this.resolveAST(callEx.operand2, inContextuallyTypedAssignment, enclosingDecl, context).type;
 
             var targetTypeSymbol = targetSymbol.type;
 
@@ -40971,8 +41030,6 @@ var TypeScript;
             }
 
             var elementType = targetTypeSymbol.getElementType();
-
-            var indexType = this.resolveAST(callEx.operand2, inContextuallyTypedAssignment, enclosingDecl, context).type;
 
             var isNumberIndex = indexType === this.semanticInfoChain.numberTypeSymbol || TypeScript.PullHelpers.symbolIsEnum(indexType);
 
@@ -41010,10 +41067,10 @@ var TypeScript;
                 if (paramSymbols.length) {
                     paramType = paramSymbols[0].type;
 
-                    if (paramType === this.semanticInfoChain.stringTypeSymbol) {
+                    if (!stringSignature && paramType === this.semanticInfoChain.stringTypeSymbol) {
                         stringSignature = signatures[i];
                         continue;
-                    } else if (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === 64 /* Enum */) {
+                    } else if (!numberSignature && (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === 64 /* Enum */)) {
                         numberSignature = signatures[i];
                         continue;
                     }
@@ -42353,6 +42410,10 @@ var TypeScript;
                 return false;
             }
 
+            if (!!(s1.typeParameters && s1.typeParameters.length) != !!(s2.typeParameters && s2.typeParameters.length)) {
+                return false;
+            }
+
             if (s1.typeParameters && s2.typeParameters && (s1.typeParameters.length != s2.typeParameters.length)) {
                 return false;
             }
@@ -43231,6 +43292,11 @@ var TypeScript;
 
                     typeB = actuals[i];
 
+                    if (typeB.isAlias()) {
+                        (typeB).isUsedAsValue = true;
+                        typeB = (typeB).getExportAssignedTypeSymbol();
+                    }
+
                     if (typeA && !typeA.isResolved) {
                         this.resolveDeclaredSymbol(typeA, enclosingDecl, context);
                     }
@@ -43987,6 +44053,10 @@ var TypeScript;
 
                 if (!typeSymbol.isNamedTypeSymbol()) {
                     if (typeSymbol.inSymbolPrivacyCheck) {
+                        var associatedContainerType = typeSymbol.getAssociatedContainerType();
+                        if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
+                            this.checkSymbolPrivacy(declSymbol, associatedContainerType, context, privacyErrorReporter);
+                        }
                         return;
                     }
 
@@ -44010,7 +44080,7 @@ var TypeScript;
             if (declSymbol.isExternallyVisible()) {
                 var symbolIsVisible = symbol.isExternallyVisible();
 
-                if (symbolIsVisible) {
+                if (symbolIsVisible && symbol.kind != 2 /* Primitive */ && symbol.kind != 8192 /* TypeParameter */) {
                     var symbolPath = symbol.pathToRoot();
                     if (symbolPath.length && symbolPath[symbolPath.length - 1].kind === 32 /* DynamicModule */) {
                         var declSymbolPath = declSymbol.pathToRoot();
@@ -44638,7 +44708,7 @@ var TypeScript;
                         var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
                         if (extendedConstructorTypeProp) {
                             if (!extendedConstructorTypeProp.isResolved) {
-                                var extendedClassAst = this.currentUnit.getASTForSymbol(extendedType);
+                                var extendedClassAst = this.currentUnit.getASTForDecl(extendedType.getDeclarations()[0]);
                                 var extendedClassDecl = this.currentUnit.getDeclForAST(extendedClassAst);
                                 this.resolveDeclaredSymbol(extendedConstructorTypeProp, extendedClassDecl, resolutionContext);
                             }
@@ -44728,7 +44798,10 @@ var TypeScript;
             var contextForBaseTypeResolution = new TypeScript.PullTypeResolutionContext(this);
             contextForBaseTypeResolution.isResolvingClassExtendedType = true;
 
+            var prevResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = true;
             var baseType = this.resolveAST(baseDeclAST, false, enclosingDecl, context);
+            context.resolvingTypeReference = prevResolvingTypeReference;
             contextForBaseTypeResolution.isResolvingClassExtendedType = false;
 
             var typeDeclIsClass = typeSymbol.isClass();
@@ -51881,14 +51954,6 @@ var TypeScript;
             return null;
         };
 
-        TypeScriptCompiler.prototype.convertToDirectoryPath = function (dirPath) {
-            if (dirPath && dirPath.charAt(dirPath.length - 1) !== "/") {
-                dirPath += "/";
-            }
-
-            return dirPath;
-        };
-
         TypeScriptCompiler.prototype.setEmitOptions = function (ioHost) {
             this.emitOptions.ioHost = ioHost;
 
@@ -51908,8 +51973,8 @@ var TypeScript;
                 }
             }
 
-            this.emitOptions.compilationSettings.mapRoot = this.convertToDirectoryPath(TypeScript.switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
-            this.emitOptions.compilationSettings.sourceRoot = this.convertToDirectoryPath(TypeScript.switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
+            this.emitOptions.compilationSettings.mapRoot = TypeScript.convertToDirectoryPath(TypeScript.switchToForwardSlashes(this.emitOptions.compilationSettings.mapRoot));
+            this.emitOptions.compilationSettings.sourceRoot = TypeScript.convertToDirectoryPath(TypeScript.switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
 
             if (!this.emitOptions.compilationSettings.outFileOption && !this.emitOptions.compilationSettings.outDirOption && !this.emitOptions.compilationSettings.mapRoot && !this.emitOptions.compilationSettings.sourceRoot) {
                 this.emitOptions.outputMany = true;
@@ -51926,7 +51991,7 @@ var TypeScript;
 
             if (this.emitOptions.compilationSettings.outDirOption) {
                 this.emitOptions.compilationSettings.outDirOption = TypeScript.switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outDirOption));
-                this.emitOptions.compilationSettings.outDirOption = this.convertToDirectoryPath(this.emitOptions.compilationSettings.outDirOption);
+                this.emitOptions.compilationSettings.outDirOption = TypeScript.convertToDirectoryPath(this.emitOptions.compilationSettings.outDirOption);
             }
 
             if (this.emitOptions.compilationSettings.outDirOption || this.emitOptions.compilationSettings.mapRoot || this.emitOptions.compilationSettings.sourceRoot) {
