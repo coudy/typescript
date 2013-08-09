@@ -9,9 +9,12 @@
 ////}
 
 ////var a = new A<number>();
-////A.B(a/**/
+////A.B(/**/
 
 goTo.marker();
+verify.signatureHelpCountIs(2);
+edit.insert('a');
+verify.signatureHelpCountIs(3);
 verify.currentSignatureHelpIs('B<S>(v: A<number>): A<number>')
 edit.insert('); A.B(');
 verify.currentSignatureHelpIs('B<S>(v: A<S>): A<S>');
