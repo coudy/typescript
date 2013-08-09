@@ -85,7 +85,10 @@ module TypeScript {
             }
             else {
                 var tokenText = token.text();
-                var text = !stringLiteralIsTextOfIdentifier && token.kind() === SyntaxKind.StringLiteral ? <string>token.value() : null;
+                var text = token.kind() === SyntaxKind.StringLiteral ? <string>token.value() : null;
+                if (stringLiteralIsTextOfIdentifier && text) {
+                    text = quoteStr(text);
+                }
                 result = new Identifier(tokenText, text);
             }
 

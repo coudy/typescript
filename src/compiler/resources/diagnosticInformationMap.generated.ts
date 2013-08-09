@@ -350,6 +350,10 @@ module TypeScript {
     "code": 1086,
     "category": DiagnosticCategory.Error
   },
+  "Ambient external module declaration cannot specify relative module name.": {
+    "code": 1087,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error
@@ -1088,6 +1092,10 @@ module TypeScript {
   },
   "Initializer of parameter '{0}' cannot reference identifier '{1}' declared after it.": {
     "code": 2190,
+    "category": DiagnosticCategory.Error
+  },
+  "Ambient external module declaration cannot be reopened.": {
+    "code": 2191,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {

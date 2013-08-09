@@ -186,13 +186,19 @@ module TypeScript {
                 moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(modName, searchKind, this.semanticInfo.getPath());
             }
 
-            if (moduleContainerTypeSymbol && moduleContainerTypeSymbol.kind !== moduleKind) {
-                // duplicate symbol error
-                if (isInitializedModule) {
-                    this.semanticInfo.addDiagnostic(
-                        new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [moduleContainerDecl.getDisplayName()]));
+            if (moduleContainerTypeSymbol) {
+
+                if (moduleContainerTypeSymbol.kind !== moduleKind) {
+                    // duplicate symbol error
+                    if (isInitializedModule) {
+                        this.semanticInfo.addDiagnostic(
+                            new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [moduleContainerDecl.getDisplayName()]));
+                    }
+                    moduleContainerTypeSymbol = null;
+                } else if (moduleKind == PullElementKind.DynamicModule) {
+                    // Dynamic modules cannot be reopened.
+                    this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_be_reopened, null));
                 }
-                moduleContainerTypeSymbol = null;
             }
 
             if (moduleContainerTypeSymbol) {
