@@ -18,12 +18,13 @@ declare class _<T> {
     each(iterator: _.ListIterator<T, void>, context?: any): void;
 }
 
-module MyModule { 
-    export class MyClass {
-        public get myGetter() {
-            var obj:any = {};
+// uncomment this to repro the bug
+//module MyModule { 
+//    export class MyClass {
+//        public get myGetter() {
+//            var obj:any = {};
             
-            return obj;
-        }
-    }
-}
+//            return obj;
+//        }
+//    }
+//}
