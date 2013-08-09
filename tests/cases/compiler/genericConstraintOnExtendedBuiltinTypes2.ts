@@ -1,3 +1,5 @@
+// bug 757849: ICE using Number as generic constraint when extended
+
 declare module EndGate {
     export interface ICloneable {
         Clone(): any;
@@ -5,8 +7,6 @@ declare module EndGate {
 }
 
 interface Number extends EndGate.ICloneable { }
-
-//Number.prototype.Clone = function (): any { return this; }
 
 module EndGate.Tweening {
     export class Tween<T extends ICloneable>{
