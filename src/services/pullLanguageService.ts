@@ -988,7 +988,7 @@ module Services {
                 if (path.ast().nodeType() === TypeScript.NodeType.FunctionDeclaration) {
                     var funcDecl = <TypeScript.FunctionDeclaration>(path.ast());
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
-                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain().getUnit(fileName));
+                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain().getUnit(TypeScript.switchToForwardSlashes(fileName)));
                         isCallExpression = true;
                         candidateSignature = signatureInfo.signature;
                         resolvedSignatures = signatureInfo.allSignatures;
