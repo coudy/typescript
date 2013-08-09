@@ -9131,9 +9131,9 @@ module TypeScript {
                 // If Visible check if the type is part of dynamic module
                 if (symbolIsVisible && symbol.kind != PullElementKind.Primitive && symbol.kind != PullElementKind.TypeParameter) {
                     var symbolPath = symbol.pathToRoot();
-                    if (symbolPath.length && symbolPath[symbolPath.length - 1].kind === PullElementKind.DynamicModule) {
+                    var declSymbolPath = declSymbol.pathToRoot();
+                    if (symbolPath[symbolPath.length - 1].kind === PullElementKind.DynamicModule && declSymbolPath[declSymbolPath.length - 1].kind == PullElementKind.DynamicModule) {
                         // Type from the dynamic module
-                        var declSymbolPath = declSymbol.pathToRoot();
                         var verifyAlias = false;
                         // From different dynamic module 
                         if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
