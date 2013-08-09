@@ -678,8 +678,10 @@ module Services {
 
             // Split search value in terms array
             var terms = searchValue.split(" ");
+            var regExpTerms: RegExp[] = new Array<RegExp>(terms.length);
             for (var i = 0; i < terms.length; i++) {
                 terms[i] = terms[i].trim().toLocaleLowerCase();
+                regExpTerms[i] = new RegExp(terms[i], "i");
             }
 
             var items: NavigateToItem[] = [];
@@ -691,26 +693,27 @@ module Services {
                 if (!declarations) {
                     return null;
                 }
-                this.findSearchValueInPullDecl(fileName, declarations, items, terms);
+                this.findSearchValueInPullDecl(fileName, declarations, items, terms, regExpTerms);
             }
             return items;
-        }
+       }
 
         private findSearchValueInPullDecl(fileName: string, declarations: TypeScript.PullDecl[], results: NavigateToItem[],
-            searchTerms: string[], parentName?: string, parentkindName?: string): void {
+            searchTerms: string[], searchRegExpTerms: RegExp[], parentName?: string, parentkindName?: string): void {
             var item: NavigateToItem;
             var declaration: TypeScript.PullDecl;
             var term: string;
+            var regExpTerm: RegExp;
             var declName: string;
             var navigationName: string;
             var kindName: string;
             var matchKind: string;
             var fullName: string;
+            var resultArray: RegExpExecArray;
 
             for (var i = 0, declLength = declarations.length; i < declLength; ++i) {
                 declaration = declarations[i];
                 declName = declaration.getDisplayName();
-                declName = declName.toLocaleLowerCase();
                 navigationName = this.getNavigationItemDispalyName(declaration);
                 kindName = this.mapPullElementKind(declaration.kind);
                 matchKind = null;
@@ -718,17 +721,24 @@ module Services {
                 // Find match between name and given search terms
                 for (var j = 0, termsLength = searchTerms.length; j < termsLength; ++j) {
                     term = searchTerms[j];
-                    if (declName === term) {
-                        matchKind = MatchKind.exact;
-                        break;
-                    }
-                    if (declName.indexOf(term) === 0) {
-                        matchKind = MatchKind.prefix;
-                        break;
-                    }
-                    if (declName.indexOf(term) > 0) {
-                        matchKind = MatchKind.subString;
-                        break;
+                    regExpTerm = searchRegExpTerms[j];
+                    resultArray = regExpTerm.exec(declName);
+                    if (resultArray) {
+                        if (declName.length === term.length && resultArray.index === 0) {
+                            // declName and term have exactly same length and the match occur at the beginning of the string; so we must have exact match
+                            matchKind = MatchKind.exact;
+                            break;
+                        }
+                        if (declName.length > term.length && resultArray.index === 0) {
+                            // declName have larger length and the match occur at the beginning of the string; so we must have prefix match
+                            matchKind = MatchKind.prefix;
+                            break;
+                        }
+                        if (declName.length > term.length && resultArray.index > 0) {
+                            // declName hang larger length and the match doesn't occur at the beginning of the string; so we must have substring match
+                            matchKind = MatchKind.subString;
+                            break;
+                        }
                     }
                 }
 
@@ -751,7 +761,7 @@ module Services {
                     }
                 }
                 if (this.isContainerDeclaration(declaration)) {
-                    this.findSearchValueInPullDecl(fileName, declaration.getChildDecls(), results, searchTerms, fullName, kindName);
+                    this.findSearchValueInPullDecl(fileName, declaration.getChildDecls(), results, searchTerms, searchRegExpTerms, fullName, kindName);
                 }
             }
         }
