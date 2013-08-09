@@ -4,15 +4,15 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    export class DataMap {
+    export class DataMap<T> {
         public map: any = {};
 
-        public link(id: string, data: any) {
+        public link(id: string, data: T) {
             this.map[id] = data;
         }
 
-        public read(id: string): any {
-            return this.map[id];
+        public read(id: string): T {
+            return <T>this.map[id];
         }
     }
 }

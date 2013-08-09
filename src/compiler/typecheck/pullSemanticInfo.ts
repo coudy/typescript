@@ -24,13 +24,13 @@ module TypeScript {
         private topLevelDecls: PullDecl[] = [];
         private topLevelSynthesizedDecls: PullDecl[] = [];
 
-        private declASTMap: DataMap = new DataMap();
-        private astDeclMap: DataMap = new DataMap();
+        private declASTMap = new DataMap<AST>();
+        private astDeclMap = new DataMap<PullDecl>();
 
         // <-- Data to clear when we get invalidated
-        private astSymbolMap: DataMap = new DataMap();
-        private astAliasSymbolMap: DataMap = new DataMap();
-        private symbolASTMap: DataMap = new DataMap();
+        private astSymbolMap = new DataMap<PullSymbol>();
+        private astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
+        private symbolASTMap = new DataMap<AST>();
         private diagnostics: Diagnostic[] = null;
         public hasBeenTypeChecked = false;
 
@@ -45,9 +45,9 @@ module TypeScript {
         }
 
         public invalidate() {
-            this.astSymbolMap = new DataMap();
-            this.astAliasSymbolMap = new DataMap();
-            this.symbolASTMap = new DataMap();
+            this.astSymbolMap = new DataMap<PullSymbol>();
+            this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
+            this.symbolASTMap = new DataMap<AST>();
             this.diagnostics = null;
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
             this.importDeclarationNames = null;
@@ -139,13 +139,15 @@ module TypeScript {
             if (useDirectTypeStorage) {
                 return (<AST>ast).symbol;
             }
-            return <PullSymbol>this.astSymbolMap.read(ast.astIDString);
+
+            return this.astSymbolMap.read(ast.astIDString);
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
             if (useDirectTypeStorage) {
                 return symbol.ast;
             }
+
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
@@ -161,8 +163,10 @@ module TypeScript {
             if (useDirectTypeStorage) {
                 return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
             }
-            return <PullTypeAliasSymbol>this.astAliasSymbolMap.read(ast.astIDString);
+
+            return this.astAliasSymbolMap.read(ast.astIDString);
         }
+
 
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
             if (useDirectTypeStorage) {
@@ -180,6 +184,7 @@ module TypeScript {
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
         }
+
 
         public getDiagnostics(semanticErrors: Diagnostic[]) {
             if (this.diagnostics) {
