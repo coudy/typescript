@@ -5,9 +5,10 @@
 ///<reference path='typescriptServices.ts' />
 
 module Services {
-
     export class FindReferenceHelpers {
-        public static compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
+        public static compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol,
+                                                       secondSymbol: TypeScript.PullSymbol,
+                                                       semanticInfoChain: TypeScript.SemanticInfoChain): boolean {
             if (firstSymbol.kind === secondSymbol.kind) {
                 if (firstSymbol === secondSymbol) {
                     return true;
@@ -24,6 +25,26 @@ module Services {
                     var secondSymbolDecl = secondSymbol.getDeclarations()[0];
 
                     return firstSymbolDecl.getParentDecl() === secondSymbolDecl.getParentDecl();
+                }
+
+                // If we have two properties that belong to an object literal, then we need ot see
+                // if they came from teh same object literal ast.
+                if (firstSymbol.kind === TypeScript.PullElementKind.Property &&
+                    firstSymbol.name === secondSymbol.name &&
+                    firstSymbol.getDeclarations() && firstSymbol.getDeclarations().length >= 1 &&
+                    secondSymbol.getDeclarations() && secondSymbol.getDeclarations().length >= 1) {
+
+                    var firstSymbolDecl = firstSymbol.getDeclarations()[0];
+                    var secondSymbolDecl = secondSymbol.getDeclarations()[0];
+
+                    var firstParentDecl = firstSymbolDecl.getParentDecl();
+                    var secondParentDecl = secondSymbolDecl.getParentDecl()
+
+                    if (firstParentDecl.kind === TypeScript.PullElementKind.ObjectLiteral &&
+                        secondParentDecl.kind === TypeScript.PullElementKind.ObjectLiteral) {
+
+                        return semanticInfoChain.getASTForDecl(firstParentDecl) === semanticInfoChain.getASTForDecl(secondParentDecl);
+                    }
                 }
 
                 return false;

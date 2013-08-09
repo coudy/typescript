@@ -340,7 +340,9 @@ module Services {
                     }
                     var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
 
-                    if (searchSymbolInfoAtPosition !== null && FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol)) {
+                    if (searchSymbolInfoAtPosition !== null &&
+                        FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol, this.compilerState.getSemanticInfoChain())) {
+
                         var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
                         result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
                     }
