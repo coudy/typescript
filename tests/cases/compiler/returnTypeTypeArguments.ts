@@ -38,3 +38,39 @@ class D<T> {
     B2(): Three<T> { return null; }
     B3(): Three<string, T> { return null; }
 }
+
+interface I<T> {
+    value: T;
+}
+
+class Y<T>
+{
+    value: T;
+}
+
+class X<T>
+{
+    p1: () => X;
+    p2: { [idx: number]: X }
+    p3: X[]
+    p4: I<X>
+    p5: X
+    p6: () => Y;
+    p7: { [idx: number]: Y }
+    p8: Y[]
+    p9: I<Y>
+    pa: Y
+}
+
+declare var a: {
+    p1: () => X;
+    p2: { [idx: number]: X }
+    p3: X[]
+    p4: I<X>
+    p5: X
+    p6: () => Y;
+    p7: { [idx: number]: Y }
+    p8: Y[]
+    p9: I<Y>
+    pa: Y
+};

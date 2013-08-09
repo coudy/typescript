@@ -81,3 +81,15 @@ var D = (function () {
     };
     return D;
 })();
+
+var Y = (function () {
+    function Y() {
+    }
+    return Y;
+})();
+
+var X = (function () {
+    function X() {
+    }
+    return X;
+})();
