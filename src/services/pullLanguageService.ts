@@ -825,6 +825,8 @@ module Services {
                 case TypeScript.PullElementKind.Function:
                     // Ignore anonomus functions
                     return declaration.name !== "";
+                case TypeScript.PullElementKind.ConstructorMethod:
+                    return false;
             }
 
             if (this.isContainerDeclaration(declaration)) {
