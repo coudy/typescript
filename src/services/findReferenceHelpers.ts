@@ -8,9 +8,25 @@ module Services {
 
     export class FindReferenceHelpers {
         public static compareSymbolsForLexicalIdentity(firstSymbol: TypeScript.PullSymbol, secondSymbol: TypeScript.PullSymbol): boolean {
-            if (firstSymbol.kind === secondSymbol.kind)
-            {
-                return firstSymbol === secondSymbol;
+            if (firstSymbol.kind === secondSymbol.kind) {
+                if (firstSymbol === secondSymbol) {
+                    return true;
+                }
+
+                // If we have two variables and they have the same name and the same parent, then 
+                // they are the same symbol.
+                if (firstSymbol.kind === TypeScript.PullElementKind.Variable &&
+                    firstSymbol.name === secondSymbol.name &&
+                    firstSymbol.getDeclarations() && firstSymbol.getDeclarations().length >= 1 &&
+                    secondSymbol.getDeclarations() && secondSymbol.getDeclarations().length >= 1) {
+
+                    var firstSymbolDecl = firstSymbol.getDeclarations()[0];
+                    var secondSymbolDecl = secondSymbol.getDeclarations()[0];
+
+                    return firstSymbolDecl.getParentDecl() === secondSymbolDecl.getParentDecl();
+                }
+
+                return false;
             }
             else {
                 switch (firstSymbol.kind) {
@@ -30,7 +46,7 @@ module Services {
                                 return true;
                             }
                         }
-                        return false;   
+                        return false;
                     }
                     case TypeScript.PullElementKind.Function: {
                         if (secondSymbol.isAccessor()) {
