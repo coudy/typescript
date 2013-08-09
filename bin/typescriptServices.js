@@ -60265,14 +60265,13 @@ var Services;
             var editRange = this.compilerState.getScriptTextChangeRangeSinceVersion(fileName, previousFileVersion);
 
             if (editRange === null) {
-                return previousSyntaxTree;
+                return this.createSyntaxTree(fileName);
             }
 
             var newScriptSnapshot = this.compilerState.getScriptSnapshot(fileName);
             var newSegmentedScriptSnapshot = TypeScript.SimpleText.fromScriptSnapshot(newScriptSnapshot);
 
             var nextSyntaxTree = TypeScript.Parser.incrementalParse(previousSyntaxTree, editRange, newSegmentedScriptSnapshot);
-
             return nextSyntaxTree;
         };
         return LanguageService;
