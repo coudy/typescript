@@ -14,7 +14,7 @@ var m1 = new BasicMonster("1", 100);
 var m2 = new BasicMonster("2", 100);
 m1.attack(m2);
 m1.health = 0;
-// console.log((<any>m5.isAlive).toString());
+console.log((<any>m5.isAlive).toString());
 
 class GetSetMonster {
     constructor(public name: string, private _health: number) {
@@ -44,7 +44,7 @@ var m3 = new BasicMonster("1", 100);
 var m4 = new BasicMonster("2", 100);
 m3.attack(m4);
 m3.health = 0;
-//console.log((<any>m5.isAlive).toString());
+var x = (<any>m5.isAlive).toString()
 
 class OverloadedMonster {
     constructor(name: string);
@@ -65,7 +65,7 @@ var m5 = new OverloadedMonster("1");
 var m6 = new OverloadedMonster("2");
 m5.attack(m6);
 m5.health = 0;
-//console.log((<any>m5.isAlive).toString());
+var y = (<any>m5.isAlive).toString()
 
 class SplatMonster {
     constructor(...args: string[]) { }

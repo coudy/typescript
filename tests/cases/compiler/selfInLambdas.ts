@@ -15,9 +15,7 @@ var o = {
     start: function() {
 
         window.onmousemove = () => {
-
-            //console.log("iteration: " + this.counter++);
-
+            this.counter++
             var f = () => this.counter;
 
         }
@@ -33,10 +31,9 @@ class X {
 
 	public foo() {
 		var outer= () => {
-			//console.log(this.value); // works as expected
-
-			var inner= () => {
-				//console.log(this.value); // is undefined
+            var x = this.value;
+            var inner = () => {
+                var y = this.value;
 			}
 
 			inner();
