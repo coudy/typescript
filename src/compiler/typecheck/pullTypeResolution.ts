@@ -2698,6 +2698,12 @@ module TypeScript {
                         }
                     }
 
+                    // If the accessor is referenced via a recursive chain, we may not have set the accessor's type just yet and we'll
+                    // need to do so before setting the 'isGeneric' flag
+                    if (!functionSymbol.type && functionSymbol.isAccessor()) {
+                        functionSymbol.type = signature.returnType;
+                    }
+
                     if (this.isTypeArgumentOrWrapper(returnType) && functionSymbol) {
                         functionSymbol.type.setHasGenericSignature();
                     }
