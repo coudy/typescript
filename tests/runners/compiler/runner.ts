@@ -64,10 +64,25 @@ class CompilerBaselineRunner extends RunnerBase {
                 }
             }
 
-            var toBeCompiled = units.map(unit => {
-                return { unitName: 'tests/cases/compiler/' + unit.name, content: unit.content };
-            });
-            harnessCompiler.compileFiles(toBeCompiled, function (result) {
+            // We need to assemble the list of input files for the compiler and other related files on the 'filesystem' (ie in a multi-file test)
+            // If the last file in a test uses require or a triple slash reference we'll assume all other files will be brought in via references,
+            // otherwise, assume all files are just meant to be in the same compilation session without explicit references to one another.
+            var toBeCompiled: { unitName: string; content: string }[] = [];
+            var otherFiles: { unitName: string; content: string }[] = [];
+            if (/require\(/.test(lastUnit.content) || /reference\spath/.test(lastUnit.content)) {
+                toBeCompiled.push({ unitName: 'tests/cases/compiler/' + lastUnit.name, content: lastUnit.content });
+                units.forEach(unit => {
+                    if (unit.name !== lastUnit.name) {
+                        otherFiles.push({ unitName: 'tests/cases/compiler/' + unit.name, content: unit.content });
+                    }
+                });
+            } else {
+                toBeCompiled = units.map(unit => {
+                    return { unitName: 'tests/cases/compiler/' + unit.name, content: unit.content };
+                });
+            }
+
+            harnessCompiler.compileFiles(toBeCompiled, otherFiles, function (result) {
                 var jsResult = result.commonJS;
                 for (var i = 0; i < jsResult.errors.length; i++) {
                     errorDescriptionLocal += Harness.getFileName(jsResult.errors[i].file) + ' line ' + jsResult.errors[i].line + ' col ' + jsResult.errors[i].column + ': ' + jsResult.errors[i].message + '\r\n';
@@ -118,6 +133,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     var declFile = { unitName: 'tests/cases/compiler/' + Harness.getFileName(file.fileName), content: file.code };
                     harnessCompiler.compileFiles(
                         [declFile],
+                        [], // TODO: is this right?
                         function (result) {
                             var jsOutputSync = result.commonJS;
                             for (var i = 0; i < jsOutputSync.errors.length; i++) {

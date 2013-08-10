@@ -873,16 +873,22 @@ module Harness {
                 }
             }
 
-            /* Compiles the provided files with file resolution enabled and the given compiler settings */
+            /* Compiles the provided files with file resolution enabled and the given compiler settings 
+             * inputFiles is the set of files equivalent to what you would pass to your command line tsc invocation
+             * otherFiles is a set of file information for other files that the input files need, but which do not actually exist on the file system
+             * due to how we write multi-file tests in a single source file.
+            */
             public compileFiles(
-                files: { unitName: string; content?: string }[],
+                inputFiles: { unitName: string; content?: string }[],
+                otherFiles: { unitName: string; content?: string }[],
                 onComplete: (compileResult: { commonJS: CompilerResult; amd: CompilerResult; }) => void,
                 settingsCallback?: (settings: TypeScript.CompilationSettings) => void
                 ) {
                 var restoreSavedCompilerSettings = this.saveCompilerSettings();
                 this.reset();
 
-                this.addInputFiles(files);
+                this.addInputFiles(inputFiles);
+                otherFiles.forEach(file => this.registerFile(file.unitName, file.content));
 
                 if (settingsCallback) {
                     settingsCallback(this.compiler.settings);
@@ -982,7 +988,6 @@ module Harness {
               * A multi-file test could have many sub parts which we want to resolve correctly but which are not
               * input files. Now subfile1, which references subfile0, can be the only input file, and when resolution
               * asks if subfile0 exists we can confirm that it does even though it is not on the file system itself.
-              * Should only be necessary when doing language service operations.
               */
             public registerFile(unitName: string, content: string) {
                 this.fileNameToScriptSnapshot.add(switchToForwardSlashes(unitName), TypeScript.ScriptSnapshot.fromString(content));
