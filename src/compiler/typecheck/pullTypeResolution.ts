@@ -227,7 +227,7 @@ module TypeScript {
                 this._cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
             }
 
-            if (!this._cachedRegExpInterfaceType.isResolved) {
+            if (this._cachedRegExpInterfaceType && !this._cachedRegExpInterfaceType.isResolved) {
                 this.resolveDeclaredSymbol(this._cachedRegExpInterfaceType, null, new PullTypeResolutionContext());
             }
 
