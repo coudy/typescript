@@ -1947,7 +1947,7 @@ module TypeScript {
                 if (this.isTypeArgumentOrWrapper(typeRef)) {
                     signature.hasAGenericParameter = true;
                 }
-            } // PULLTODO: default values?
+            }
             else {
                 if (paramSymbol.isVarArg && paramSymbol.type) {
                     if (this.cachedArrayInterfaceType()) {
@@ -1961,7 +1961,7 @@ module TypeScript {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
 
                     // if the noImplicitAny flag is set to be true, report an error 
-                    if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+                    if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
                         context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
                             [argDeclAST.id.actualText])
                     }
@@ -1974,6 +1974,8 @@ module TypeScript {
         private resolveFunctionExpressionParameter(argDeclAST: Parameter, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var paramDecl = this.getDeclForAST(argDeclAST);
             var paramSymbol = paramDecl.getSymbol();
+            var contextualType = contextParam && contextParam.type;
+            var isImplicitAny = false;
 
             if (argDeclAST.typeExpr) {
                 var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, enclosingDecl, context);
@@ -1983,35 +1985,77 @@ module TypeScript {
                     typeRef = this.getNewErrorTypeSymbol();
                 }
 
-                context.setTypeInContext(paramSymbol, typeRef);
-            } // PULLTODO: default values?
-            else {
-                if (contextParam) {
-                    context.setTypeInContext(paramSymbol, contextParam.type);
+                // The contextual type now gets overriden by the type annotation
+                contextualType = typeRef || contextualType;
+            }
+            if (contextualType) {
+                context.setTypeInContext(paramSymbol, contextualType);
+            }
+            else if (paramSymbol.isVarArg && this.cachedArrayInterfaceType()) {
+                context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context));
+                isImplicitAny = true;
+            }
+
+            if (argDeclAST.init && (context.typeCheck() || !contextualType)) {
+                if (contextualType) {
+                    context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                }
+
+                var initExprSymbol = this.resolveAST(argDeclAST.init, contextualType != null, enclosingDecl, context);
+
+                if (contextualType) {
+                    context.popContextualType();
+                }
+
+                if (!initExprSymbol || !initExprSymbol.type) {
+                    context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Unable_to_resolve_type_of_0, [argDeclAST.id.actualText]);
+
+                    if (!contextualType) {
+                        context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(paramSymbol.name));
+                    }
                 }
                 else {
-                    if (paramSymbol.isVarArg && this.cachedArrayInterfaceType()) {
-                        context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context));
+                    var initTypeSymbol = this.getInstanceTypeForAssignment(argDeclAST, initExprSymbol.type, enclosingDecl, context);
+                    if (!contextualType) {
+                        // Set the type to the inferred initializer type
+                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol));
+                        isImplicitAny = initTypeSymbol !== paramSymbol.type;
                     }
                     else {
-                        context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
-                    }
+                        var comparisonInfo = new TypeComparisonInfo();
 
-                    // if the noImplicitAny flag is set to be true, report an error
-                    if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+                        var isAssignable = this.sourceIsAssignableToTarget(initTypeSymbol, contextualType, context, comparisonInfo);
 
-                        // there is a name for function expression then use the function expression name otherwise use "lambda"
-                        var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
-                        if (functionExpressionName != "") {
-                            context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
-                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [argDeclAST.id.actualText, functionExpressionName]);
-                        }
-                        else {
-                            context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
-                                DiagnosticCode.Parameter_0_of_lambda_function_implicitly_has_an_any_type,
-                                [argDeclAST.id.actualText]);
+                        if (!isAssignable) {
+                            if (comparisonInfo.message) {
+                                context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [initTypeSymbol.toString(), contextualType.toString(), comparisonInfo.message]);
+                            } else {
+                                context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [initTypeSymbol.toString(), contextualType.toString()]);
+                            }
                         }
                     }
+                }
+            }
+
+            // If we do not have any type for it, set it to any
+            if (!contextualType && !paramSymbol.isVarArg && !initTypeSymbol) {
+                context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+                isImplicitAny = true;
+            }
+               
+            // if the noImplicitAny flag is set to be true, report an error
+            if (isImplicitAny && this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+
+                // there is a name for function expression then use the function expression name otherwise use "lambda"
+                var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
+                if (functionExpressionName) {
+                    context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
+                        DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [argDeclAST.id.actualText, functionExpressionName]);
+                }
+                else {
+                    context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(),
+                        DiagnosticCode.Parameter_0_of_lambda_function_implicitly_has_an_any_type,
+                        [argDeclAST.id.actualText]);
                 }
             }
 
@@ -5058,6 +5102,12 @@ module TypeScript {
                     contextParams = assigningFunctionSignature.parameters;
                 }
 
+                // Push the function onto the parameter index stack
+                var hasDefaultArgs = (functionDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
+                if (hasDefaultArgs) {
+                    context.pushParameterIndexContext(funcDeclAST);
+                }
+
                 var contextualParametersCount = contextParams.length;
                 for (var i = 0, n = funcDeclAST.arguments.members.length; i < n; i++) {
                     var actualParameter = <Parameter>funcDeclAST.arguments.members[i];
@@ -5086,6 +5136,13 @@ module TypeScript {
 
                     // use the function decl as the enclosing decl, so as to properly resolve type parameters
                     this.resolveFunctionExpressionParameter(actualParameter, contextualParameterType, functionDecl, context);
+                    if (hasDefaultArgs) {
+                        context.incrementParameterIndex();
+                    }
+                }
+
+                if (hasDefaultArgs) {
+                    context.popParameterIndexContext();
                 }
             }
 
@@ -5115,7 +5172,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if disallowimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+                        if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
@@ -5582,7 +5639,7 @@ module TypeScript {
             }
 
             // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-            if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+            if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
                 // if it is an empty array and there is no contextual type
                 if (!inContextuallyTypedAssignment && elements.members.length == 0) {
                     context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
@@ -5636,7 +5693,7 @@ module TypeScript {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
                     // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
+                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                     }
                 }
@@ -5645,7 +5702,7 @@ module TypeScript {
                     elementType = this.semanticInfoChain.anyTypeSymbol;
 
                     // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.isInInvocationExpression) {
+                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                     }
                 }
@@ -8197,6 +8254,9 @@ module TypeScript {
             var args: ASTList = null;
             var target: AST = null;
 
+            var originalInProvisionalAnyContext = context.inProvisionalAnyContext;
+            context.inProvisionalAnyContext = true;
+
             if (application.nodeType() === NodeType.InvocationExpression || application.nodeType() === NodeType.ObjectCreationExpression) {
                 var callEx = <InvocationExpression>application;
 
@@ -8205,15 +8265,11 @@ module TypeScript {
 
                 if (callEx.arguments) {
                     var len = callEx.arguments.members.length;
-                    var originalIsInInvocationExpression = context.isInInvocationExpression;
-                    context.isInInvocationExpression = true;
 
                     for (var i = 0; i < len; i++) {
                         var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
                         actuals[i] = argSym.type;
                     }
-
-                    context.isInInvocationExpression = originalIsInInvocationExpression;
                 }
             }
             else if (application.nodeType() === NodeType.ElementAccessExpression) {
@@ -8277,6 +8333,8 @@ module TypeScript {
                     candidate = exactCandidates[0];
                 }
             }
+
+            context.inProvisionalAnyContext = originalInProvisionalAnyContext;
 
             this.resolutionDataCache.returnResolutionData(rd);
             return candidate;

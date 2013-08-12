@@ -33,3 +33,5 @@ class C {
     method(a = b, b = 1) { }
 }
 
+// Function expressions
+var x = (a = b, b = c, c = d) => { var d; };

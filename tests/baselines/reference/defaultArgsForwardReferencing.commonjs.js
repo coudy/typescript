@@ -60,3 +60,11 @@ var C = (function () {
     };
     return C;
 })();
+
+// Function expressions
+var x = function (a, b, c) {
+    if (typeof a === "undefined") { a = b; }
+    if (typeof b === "undefined") { b = c; }
+    if (typeof c === "undefined") { c = d; }
+    var d;
+};
