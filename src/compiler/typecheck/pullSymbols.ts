@@ -1036,7 +1036,7 @@ module TypeScript {
         // TODO: Really only used to track doc comments...
         private _functionSymbol: PullSymbol = null;
 
-        public hasRecursiveSpecializationError = false;
+        public memberWrapsOwnTypeParameter = false;
 
         private inMemberTypeNameEx = false;
         public inSymbolPrivacyCheck = false;
@@ -2496,6 +2496,10 @@ module TypeScript {
             return typeToSpecialize;
         }
 
+        if (context.recursiveMemberSpecializationDepth == maxRecursiveMemberSpecializationDepth) {
+            return resolver.semanticInfoChain.anyTypeSymbol;
+        }
+
         var searchForExistingSpecialization = typeArguments != null;
 
         // if a base-type conflict exists, specialization may probe unpredictable, so we'll substitute in 'any'
@@ -2566,8 +2570,8 @@ module TypeScript {
 
         var isArray = typeToSpecialize === resolver.getCachedArrayType() || typeToSpecialize.isArray();
 
-        if (searchForExistingSpecialization || context.specializingToAny || typeToSpecialize.hasRecursiveSpecializationError) {
-            if (!typeArguments.length || context.specializingToAny || typeToSpecialize.hasRecursiveSpecializationError) {
+        if (searchForExistingSpecialization || context.specializingToAny) {
+            if (!typeArguments.length || context.specializingToAny) {
                 for (var i = 0; i < typeParameters.length; i++) {
                     typeArguments[i] = resolver.semanticInfoChain.anyTypeSymbol;
                 }
@@ -2586,15 +2590,7 @@ module TypeScript {
             
             for (var i = 0; i < typeArguments.length; i++) {
                 if (!typeArguments[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typeArguments[i], typeParameters[i]))) {
-                    declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
-                    if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
-                        context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null);
-                        typeToSpecialize.hasRecursiveSpecializationError = true;
-                        return resolver.getNewErrorTypeSymbol();
-                    }
-                    else {
-                        return resolver.semanticInfoChain.anyTypeSymbol;
-                    }
+                    typeToSpecialize.memberWrapsOwnTypeParameter = true;
                 }
             }
         }
@@ -2602,22 +2598,19 @@ module TypeScript {
             var knownTypeArguments = typeToSpecialize.getTypeArguments();
             var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
             var declAST: AST;
+            var replacementType: PullTypeSymbol = null;
 
             for (var i = 0; i < typesToReplace.length; i++) {
 
                 if (!typesToReplace[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typesToReplace[i], typeParameters[i]))) {
-                    declAST = resolver.semanticInfoChain.getASTForDecl(newTypeDecl);
-                    if (declAST && typeArguments[i] != resolver.getCachedArrayType()) {
-                        context.postError(enclosingDecl.getScriptName(), declAST.minChar, declAST.getLength(), DiagnosticCode.A_generic_type_may_not_reference_itself_with_a_wrapped_form_of_its_own_type_parameters, null);
-                        typeToSpecialize.hasRecursiveSpecializationError = true;
-                        return resolver.getNewErrorTypeSymbol();
-                    }
-                    else {
-                        return resolver.semanticInfoChain.anyTypeSymbol;
-                    }
+                    typeToSpecialize.memberWrapsOwnTypeParameter = true;
                 }
 
-                substitution = specializeType(typesToReplace[i], null, resolver, enclosingDecl, context, ast);
+                // In cases of members wrapping their own type parameters, we substitute in the root symbol because we're already in the process
+                // of specializing the type, and if we didn't we would "over wrap" the type parameter 
+                replacementType = typeToSpecialize.memberWrapsOwnTypeParameter ? (<PullTypeSymbol>typesToReplace[i].getRootSymbol()) : typesToReplace[i];
+
+                substitution = specializeType(replacementType, null, resolver, enclosingDecl, context, ast);
 
                 typeArguments[i] = (substitution != null && !resolver.typesAreIdentical(typesToReplace[i], substitution)) ? substitution : typesToReplace[i];
             }
@@ -2647,10 +2640,7 @@ module TypeScript {
         }   
 
         if (newType) {
-            if (!newType.isResolved && !newType.currentlyBeingSpecialized()) {
-                //typeToSpecialize.invalidateSpecializations();
-            }
-            else {
+            if (newType.isResolved || newType.currentlyBeingSpecialized() || typeToSpecialize.memberWrapsOwnTypeParameter) {
                 return newType;
             }
         }
@@ -2672,8 +2662,6 @@ module TypeScript {
         newType.setIsBeingSpecialized();
 
         newType.setTypeArguments(typeArguments);
-
-        newType.hasRecursiveSpecializationError = typeToSpecialize.hasRecursiveSpecializationError;
 
         rootType.addSpecialization(newType, typeArguments);
 
@@ -2759,7 +2747,9 @@ module TypeScript {
         var callSignatures = typeToSpecialize.getCallSignatures(false);
         var constructSignatures = typeToSpecialize.getConstructSignatures(false);
         var indexSignatures = typeToSpecialize.getIndexSignatures(false);
-        var members = typeToSpecialize.getMembers();
+
+        // Like above, if the type to specialize wraps its own type parameters, we need to use the members of the root type
+        var members = typeToSpecialize.memberWrapsOwnTypeParameter? rootType.getMembers() : typeToSpecialize.getMembers();
 
         // specialize call signatures
         var newSignature: PullSignatureSymbol;
@@ -3043,6 +3033,11 @@ module TypeScript {
             if (replacementType) {
                 newField.type = replacementType;
             }
+            // REVIEW: Not quite ready to flip the switch on this right now, but I think this is worth
+            // experimenting with down the line
+            //else if (fieldType == typeToSpecialize) {
+            //    newField.type = newType;
+            //}
             else {
                 // re-resolve all field decls using the current replacements
                 if (fieldType.isGeneric() && !fieldType.isFixed()) {
@@ -3051,7 +3046,9 @@ module TypeScript {
 
                     context.pushTypeSpecializationCache(typeReplacementMap);
 
+                    context.recursiveMemberSpecializationDepth++;
                     newFieldType = specializeType(fieldType, !fieldType.getIsSpecialized() ? typeArguments : null, resolver, newTypeDecl, context, ast);
+                    context.recursiveMemberSpecializationDepth--;
 
                     resolver.setUnitPath(unitPath);
 
