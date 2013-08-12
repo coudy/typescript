@@ -1,8 +1,8 @@
 //visibilityOfCrossModuleTypeUsage
 
 // @Filename: visibilityOfCrossModuleTypeUsage_commands.ts
-import fs = require('visibilityOfCrossModuleTypeUsage_fs');
-import server = require('visibilityOfCrossModuleTypeUsage_server');
+import fs = require('fs');
+import server = require('server');
 
 export interface IConfiguration {
     workspace: server.IWorkspace;
@@ -18,7 +18,7 @@ export interface IWorkspace {
 }
 
 // @Filename: visibilityOfCrossModuleTypeUsage_fs.ts
-import commands = require('visibilityOfCrossModuleTypeUsage_commands');
+import commands = require('commands');
 function run(configuration: commands.IConfiguration) {
     var absoluteWorkspacePath = configuration.workspace.toAbsolutePath(configuration.server);
 }
