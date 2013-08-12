@@ -41,6 +41,7 @@ module Services {
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
             this.refresh();
 
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             var result: ReferenceEntry[] = [];
 
             var document = this.compilerState.getDocument(fileName);
