@@ -2744,11 +2744,10 @@ module TypeScript {
             }
         }
 
-        var callSignatures = typeToSpecialize.getCallSignatures(false);
-        var constructSignatures = typeToSpecialize.getConstructSignatures(false);
-        var indexSignatures = typeToSpecialize.getIndexSignatures(false);
-
         // Like above, if the type to specialize wraps its own type parameters, we need to use the members of the root type
+        var callSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getCallSignatures(false) : typeToSpecialize.getCallSignatures(false);
+        var constructSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getConstructSignatures(false) : typeToSpecialize.getConstructSignatures(false);
+        var indexSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getIndexSignatures(false) : typeToSpecialize.getIndexSignatures(false);
         var members = typeToSpecialize.memberWrapsOwnTypeParameter? rootType.getMembers() : typeToSpecialize.getMembers();
 
         // specialize call signatures
