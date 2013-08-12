@@ -42,8 +42,8 @@ module T {
     interface fi { } // ok
 
     class cli { }
-    interface cli { } // should be error (bug 738635)
+    interface cli { } // error
 
     interface cli2 { }
-    class cli2 { } // should be error (bug 738635)
+    class cli2 { } // error
 }

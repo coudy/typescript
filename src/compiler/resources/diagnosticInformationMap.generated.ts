@@ -942,7 +942,7 @@ module TypeScript {
     "code": 2150,
     "category": DiagnosticCategory.Error
   },
-  "Overload signatures must all be exported or local.": {
+  "Overload signatures must all be exported or not exported.": {
     "code": 2151,
     "category": DiagnosticCategory.Error
   },
@@ -1102,6 +1102,10 @@ module TypeScript {
     "code": 2191,
     "category": DiagnosticCategory.Error
   },
+  "All declarations of merged declaration '{0}' must be exported or not exported.": {
+    "code": 2192,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
@@ -1143,7 +1147,7 @@ module TypeScript {
     "category": DiagnosticCategory.NoPrefix
   },
   "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}": {
-    "code": 40010,
+    "code": 4010,
     "category": DiagnosticCategory.NoPrefix
   },
   "Type '{0}' requires a construct signature, but type '{1}' lacks one.": {

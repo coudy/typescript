@@ -9305,7 +9305,7 @@ module TypeScript {
                     errorCode = DiagnosticCode.Overload_signatures_must_all_be_public_or_private;
                 }
                 else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Exported) != signature.hasFlag(PullElementFlags.Exported)) {
-                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_exported_or_local;
+                    errorCode = DiagnosticCode.Overload_signatures_must_all_be_exported_or_not_exported;
                 }
                 else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Ambient) != signature.hasFlag(PullElementFlags.Ambient)) {
                     errorCode = DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient;

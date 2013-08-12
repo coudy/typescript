@@ -127,6 +127,84 @@ module TypeScript {
             return this.semanticInfoChain.findDecls([name], declKind);
         }
 
+        // Called by all the bind methods when searching for existing symbols to reuse. Returns the symbol, or null if it does not exist.
+        private getExistingSymbol(decl: PullDecl, searchKind: PullElementKind, parent: PullTypeSymbol): PullSymbol {
+            var lookingForValue = (searchKind & PullElementKind.SomeValue) !== 0;
+            var name = decl.name;
+            if (parent) {
+                var isExported = (decl.flags & PullElementFlags.Exported) !== 0;
+
+                // First search for a nonmember
+                var prevSymbol: PullSymbol = null;
+                if (lookingForValue) {
+                    prevSymbol = parent.findContainedNonMember(name);
+                }
+                else {
+                    prevSymbol = parent.findContainedNonMemberType(name, searchKind);
+                }
+                var prevIsExported = !prevSymbol; // We didn't find it as a local, so it must be exported if it exists
+                if (!prevSymbol) {
+                    if (lookingForValue) {
+                        prevSymbol = parent.findMember(name, false);
+                    }
+                    else {
+                        prevSymbol = parent.findNestedType(name, searchKind);
+                    }
+                }
+
+                // If they are both exported, then they should definitely merge
+                if (isExported && prevIsExported) {
+                    return prevSymbol; // This could actually be null, but that is ok because it means we are not merging with anything
+                }
+                if (prevSymbol) {
+                    // Check if they have the same parent (we use the LAST declaration to get the most positive answer on this)
+                    var prevDecls = prevSymbol.getDeclarations();
+                    var lastPrevDecl = prevDecls[prevDecls.length - 1];
+                    var parentDecl = decl.getParentDecl();
+                    var prevParentDecl = lastPrevDecl && lastPrevDecl.getParentDecl();
+                    if (parentDecl !== prevParentDecl) {
+                        // no merge
+                        return null;
+                    }
+
+                    // They share the same parent, so merge them
+                    return prevSymbol;
+                }
+            }
+            else {
+                var parentDecl = decl.getParentDecl();
+                if (parentDecl && parentDecl.kind === PullElementKind.Script) {
+                    return this.semanticInfoChain.findTopLevelSymbol(name, searchKind, this.semanticInfo.getPath());
+                }
+                else {
+                    // The decl is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
+                    var prevDecls = parentDecl && parentDecl.searchChildDecls(name, searchKind);
+                    return prevDecls[0] && prevDecls[0].getSymbol();
+                }
+            }
+
+            // Did not find a symbol
+            return null;
+        }
+
+        // Reports an error and returns false if exports do not match. Otherwise, returns true.
+        private checkThatExportsMatch(decl: PullDecl, prevSymbol: PullSymbol, reportError = true): boolean {
+            // Get export status of each (check against the last decl of the previous symbol)
+            var isExported = (decl.flags & PullElementFlags.Exported) !== 0;
+            var prevDecls = prevSymbol.getDeclarations();
+            var prevIsExported = (prevDecls[prevDecls.length - 1].flags & PullElementFlags.Exported) !== 0;
+            if ((isExported !== prevIsExported) && !prevSymbol.isSignature() && (decl.kind & PullElementKind.SomeSignature) == 0) {
+                if (reportError) {
+                    var ast = this.semanticInfo.getASTForDecl(decl);
+                    this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), ast.minChar, ast.getLength(),
+                        DiagnosticCode.All_declarations_of_merged_declaration_0_must_be_exported_or_not_exported, [decl.getDisplayName()]));
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         //
         // decl binding
         //
@@ -158,33 +236,7 @@ module TypeScript {
 
             var createdNewSymbol = false;
 
-            if (parent) {
-                if (isExported) {
-                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findNestedType(modName, searchKind);
-                }
-                else {
-                    moduleContainerTypeSymbol = <PullContainerTypeSymbol>parent.findContainedNonMemberType(modName);
-
-                    if (moduleContainerTypeSymbol) {
-                        if (!(moduleContainerTypeSymbol.kind & searchKind)) {
-                            moduleContainerTypeSymbol = null;
-                        }
-                        else {
-                            // Check that they originate in the same parent declaration
-                            var declarations = moduleContainerTypeSymbol.getDeclarations();
-                            if (declarations.length) {
-                                var firstDeclParent = declarations[0].getParentDecl();
-                                if (firstDeclParent !== parentDecl) {
-                                    moduleContainerTypeSymbol = null;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else if (!isExported) {
-                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(modName, searchKind, this.semanticInfo.getPath());
-            }
+            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.getExistingSymbol(moduleContainerDecl, searchKind, parent);
 
             if (moduleContainerTypeSymbol) {
 
@@ -198,6 +250,8 @@ module TypeScript {
                 } else if (moduleKind == PullElementKind.DynamicModule) {
                     // Dynamic modules cannot be reopened.
                     this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_be_reopened, null));
+                } else if (!this.checkThatExportsMatch(moduleContainerDecl, moduleContainerTypeSymbol)) {
+                    moduleContainerTypeSymbol = null;
                 }
             }
 
@@ -372,28 +426,7 @@ module TypeScript {
             var parentHadSymbol = false;
             var parent = this.getParent(importDeclaration);
 
-            if (parent) {
-                importSymbol = <PullTypeAliasSymbol>parent.findMember(declName, false);
-
-                if (!importSymbol) {
-                    importSymbol = <PullTypeAliasSymbol>parent.findContainedNonMemberType(declName);
-
-                    if (importSymbol) {
-                        var declarations = importSymbol.getDeclarations();
-
-                        if (declarations.length) {
-                            var importSymbolParent = declarations[0].getParentDecl();
-
-                            if (importSymbolParent !== importDeclaration.getParentDecl()) {
-                                importSymbol = null;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (!(importDeclaration.flags & PullElementFlags.Exported)) {
-                importSymbol = <PullTypeAliasSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.semanticInfo.getPath());
-            }
+            importSymbol = <PullTypeAliasSymbol>this.getExistingSymbol(importDeclaration, PullElementKind.SomeContainer, parent);
 
             if (importSymbol) {
                 parentHadSymbol = true;
@@ -445,38 +478,7 @@ module TypeScript {
             var isExported = classDecl.flags & PullElementFlags.Exported;
             var isGeneric = false;
 
-            if (parent) {
-                if (isExported) {
-                    classSymbol = parent.findNestedType(className, PullElementKind.SomeType);
-
-                    if (!classSymbol) {
-                        classSymbol = <PullTypeSymbol>parent.findMember(className, false);
-                    }
-                }
-                else {
-                    classSymbol = <PullTypeSymbol>parent.findContainedNonMemberType(className);
-
-                    if (classSymbol && (classSymbol.kind & PullElementKind.Class)) {
-
-                        var declarations = classSymbol.getDeclarations();
-
-                        if (declarations.length) {
-
-                            var classSymbolParentDecl = declarations[0].getParentDecl();
-
-                            if (classSymbolParentDecl !== parentDecl) {
-                                classSymbol = null;
-                            }
-                        }
-                    }
-                    else {
-                        classSymbol = null;
-                    }
-                }
-            }
-            else {
-                classSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(className, PullElementKind.Class, this.semanticInfo.getPath());
-            }
+            classSymbol = <PullTypeSymbol>this.getExistingSymbol(classDecl, PullElementKind.SomeType, parent);
 
             // Only error if it is an interface (for classes and enums we will error when we bind the implicit variable)
             if (classSymbol && classSymbol.kind === PullElementKind.Interface) {
@@ -591,17 +593,17 @@ module TypeScript {
             // We're not yet ready to support interfaces augmenting classes (or vice versa)
             var acceptableSharedKind = PullElementKind.Interface; // | PullElementKind.Class | PullElementKind.Enum;
 
-            if (parent) {
-                interfaceSymbol = parent.findNestedType(interfaceName, PullElementKind.SomeType);
-            }
-            else if (!(interfaceDecl.flags & PullElementFlags.Exported)) {
-                interfaceSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(interfaceName, PullElementKind.Interface, this.semanticInfo.getPath());
-            }
+            interfaceSymbol = <PullTypeSymbol>this.getExistingSymbol(interfaceDecl, PullElementKind.SomeType, parent);
 
-            if (interfaceSymbol && !(interfaceSymbol.kind & acceptableSharedKind)) {
-                this.semanticInfo.addDiagnostic(
-                    new Diagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [interfaceDecl.getDisplayName()]));
-                interfaceSymbol = null;
+            if (interfaceSymbol) {
+                if (!(interfaceSymbol.kind & acceptableSharedKind)) {
+                    this.semanticInfo.addDiagnostic(
+                        new Diagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [interfaceDecl.getDisplayName()]));
+                    interfaceSymbol = null;
+                }
+                else if (!this.checkThatExportsMatch(interfaceDecl, interfaceSymbol)) {
+                    interfaceSymbol = null;
+                }
             }
 
             if (!interfaceSymbol) {
@@ -790,34 +792,7 @@ module TypeScript {
                 parentDecl.addVariableDeclToGroup(variableDeclaration);
             }
 
-            if (parent) {
-                if (isExported) {
-                    variableSymbol = parent.findMember(declName, false);
-                }
-                else {
-                    variableSymbol = parent.findContainedNonMember(declName);
-
-                    if (variableSymbol) {
-                        var declarations = variableSymbol.getDeclarations();
-
-                        if (declarations.length) {
-                            var variableSymbolParentDecl = declarations[0].getParentDecl();
-
-                            if (parentDecl !== variableSymbolParentDecl) {
-                                variableSymbol = null;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (parentDecl && parentDecl.kind === PullElementKind.Script) {
-                variableSymbol = this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeValue, this.semanticInfo.getPath());
-            }
-            else {
-                // The variable is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
-                var prevDecls = parentDecl && parentDecl.searchChildDecls(declName, PullElementKind.SomeValue);
-                variableSymbol = prevDecls[0] && prevDecls[0].getSymbol();
-            }
+            variableSymbol = this.getExistingSymbol(variableDeclaration, PullElementKind.SomeValue, parent);
 
             if (variableSymbol && !variableSymbol.isType()) {
                 parentHadSymbol = true;
@@ -872,9 +847,18 @@ module TypeScript {
                         variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                     }
                     else { // double var declaration (keep them separate so we can verify type sameness during type check)
+                        this.checkThatExportsMatch(variableDeclaration, variableSymbol);
                         variableSymbol = null;
                         parentHadSymbol = false;
                     }
+                }
+
+                // If we haven't given an error so far and we merged two decls, check that the exports match
+                // Only report the error if they are not both initialized modules (if they are, the bind module code would report the error)
+                if (variableSymbol &&
+                    !(variableSymbol.type && variableSymbol.type.isError()) &&
+                    !this.checkThatExportsMatch(variableDeclaration, variableSymbol, !(isModuleValue && prevIsModuleValue))) {
+                    variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                 }
             }
 
@@ -1222,33 +1206,7 @@ module TypeScript {
             var functionSymbol: PullSymbol = null;
             var functionTypeSymbol: PullTypeSymbol = null;
 
-            if (parent) {
-                functionSymbol = parent.findMember(funcName, false);
-
-                if (!functionSymbol) {
-                    functionSymbol = parent.findContainedNonMember(funcName);
-
-                    if (functionSymbol) {
-                        var declarations = functionSymbol.getDeclarations();
-
-                        if (declarations.length) {
-                            var funcSymbolParentDecl = declarations[0].getParentDecl();
-
-                            if (parentDecl !== funcSymbolParentDecl) {
-                                functionSymbol = null;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (parentDecl && parentDecl.kind === PullElementKind.Script) {
-                functionSymbol = this.semanticInfoChain.findTopLevelSymbol(funcName, PullElementKind.SomeValue, this.semanticInfo.getPath());
-            }
-            else {
-                // The function is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
-                var prevDecls = parentDecl && parentDecl.searchChildDecls(funcName, PullElementKind.SomeValue);
-                functionSymbol = prevDecls[0] && prevDecls[0].getSymbol();
-            }
+            functionSymbol = this.getExistingSymbol(functionDeclaration, PullElementKind.SomeValue, parent);
 
             if (functionSymbol) {
                 // Duplicate is acceptable if it is another signature (not a duplicate implementation), or an ambient fundule

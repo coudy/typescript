@@ -939,7 +939,7 @@
         "category": "Error",
         "code": 2150
     },
-    "Overload signatures must all be exported or local.": {
+    "Overload signatures must all be exported or not exported.": {
         "category": "Error",
         "code": 2151
     },
@@ -1099,6 +1099,10 @@
         "category": "Error",
         "code": 2191
     },
+	"All declarations of merged declaration '{0}' must be exported or not exported.": {
+		"category": "Error",
+		"code": 2192
+	},
     "Type '{0}' is missing property '{1}' from type '{2}'.": {
         "category": "NoPrefix",
         "code": 4000
@@ -1141,7 +1145,7 @@
     },
     "Construct signatures of types '{0}' and '{1}' are incompatible:{NL}{2}": {
         "category": "NoPrefix",
-        "code": 40010
+        "code": 4010
     },
     "Type '{0}' requires a construct signature, but type '{1}' lacks one.": {
         "category": "NoPrefix",

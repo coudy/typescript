@@ -1166,12 +1166,18 @@ module TypeScript {
             return this._containedNonMemberNameCache[name];
         }
 
-        public findContainedNonMemberType(typeName: string): PullTypeSymbol {
+        public findContainedNonMemberType(typeName: string, kind = PullElementKind.None): PullTypeSymbol {
             if (!this._containedNonMemberTypeNameCache) {
                 return null;
             }
 
-            return this._containedNonMemberTypeNameCache[typeName];
+            var nonMemberSymbol = this._containedNonMemberTypeNameCache[typeName];
+
+            if (nonMemberSymbol && kind != PullElementKind.None) {
+                nonMemberSymbol = ((nonMemberSymbol.kind & kind) != 0) ? nonMemberSymbol : null;
+            }
+
+            return nonMemberSymbol;
         }
 
         public addMember(memberSymbol: PullSymbol): void {
