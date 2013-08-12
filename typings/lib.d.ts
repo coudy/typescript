@@ -2611,7 +2611,7 @@ interface Document extends Node, NodeSelector, MSEventAttachmentTarget, Document
     addEventListener(type: "stalled", listener: (ev: Event) => any, useCapture?: boolean): void;
     onmousemove: (ev: MouseEvent) => any;
     addEventListener(type: "mousemove", listener: (ev: MouseEvent) => any, useCapture?: boolean): void;
-    documentElement: Element;
+    documentElement: HTMLElement;
     onbeforeeditfocus: (ev: MSEventObj) => any;
     addEventListener(type: "beforeeditfocus", listener: (ev: MSEventObj) => any, useCapture?: boolean): void;
     onratechange: (ev: Event) => any;
