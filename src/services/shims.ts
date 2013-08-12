@@ -287,7 +287,7 @@ module Services {
         }
         catch (err) {
             Services.logInternalError(logger, err);
-            //throw err; //TODO: Remove this!
+            err.description = actionDescription;
             return JSON.stringify({ error: err });
         }
     }
