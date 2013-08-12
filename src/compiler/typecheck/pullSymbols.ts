@@ -585,6 +585,10 @@ module TypeScript {
                 return true;
             }
 
+            if (this.rootSymbol) {
+                return PullSymbol.getIsExternallyVisible(this.rootSymbol, this, inIsExternallyVisibleSymbols);
+            }
+            
             // Type - use container to determine privacy info
             if (this.isType()) {
                 var associatedContainerSymbol = (<PullTypeSymbol>this).getAssociatedContainerType();
