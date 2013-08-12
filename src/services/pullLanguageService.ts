@@ -673,6 +673,8 @@ module Services {
             return true;
         }
 
+        // Return array of NavigateToItems in which each item has matched name with searchValue. If none is found, return an empty array.
+        // The function will search all files (both close and open) in the solutions. SearchValue can be either one search term or multiple terms separated by comma.
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
             this.refresh();
 
@@ -698,6 +700,17 @@ module Services {
             return items;
        }
 
+        // Search given file's declaration and output matched NavigateToItem into array of NavigateToItem[] which is passed in as 
+        // one of the function's arguements. The function will recruseively call itself to visit all children declarations  
+        // of each member of declarations array.
+        // 
+        // @param fileName: name of the file which the function is currently visiting its PullDecl members.
+        //        delcarations: array of PullDecl, containing current visiting top level PullDecl objects.
+        //        results: array of NavigateToItem to be filled in with matched NavigateToItem objects.
+        //        searchTerms: array of search terms.
+        //        searchRegExpTerms: array of regular expressions in which each expression corresponding to each item in the searchTerms array.
+        //        parentName: a name of the parent of declarations array.
+        //        parentKindName: a kind of parent in string format.
         private findSearchValueInPullDecl(fileName: string, declarations: TypeScript.PullDecl[], results: NavigateToItem[],
             searchTerms: string[], searchRegExpTerms: RegExp[], parentName?: string, parentkindName?: string): void {
             var item: NavigateToItem;
@@ -705,7 +718,6 @@ module Services {
             var term: string;
             var regExpTerm: RegExp;
             var declName: string;
-            var navigationName: string;
             var kindName: string;
             var matchKind: string;
             var fullName: string;
@@ -714,11 +726,10 @@ module Services {
             for (var i = 0, declLength = declarations.length; i < declLength; ++i) {
                 declaration = declarations[i];
                 declName = declaration.getDisplayName();
-                navigationName = this.getNavigationItemDispalyName(declaration);
                 kindName = this.mapPullElementKind(declaration.kind);
                 matchKind = null;
 
-                // Find match between name and given search terms
+                // Find match between name and each given search terms using regular expression
                 for (var j = 0, termsLength = searchTerms.length; j < termsLength; ++j) {
                     term = searchTerms[j];
                     regExpTerm = searchRegExpTerms[j];
@@ -730,25 +741,25 @@ module Services {
                             break;
                         }
                         if (declName.length > term.length && resultArray.index === 0) {
-                            // declName have larger length and the match occur at the beginning of the string; so we must have prefix match
+                            // declName have longer length and the match occur at the beginning of the string; so we must have prefix match
                             matchKind = MatchKind.prefix;
                             break;
                         }
                         if (declName.length > term.length && resultArray.index > 0) {
-                            // declName hang larger length and the match doesn't occur at the beginning of the string; so we must have substring match
+                            // declName have longer length and the match doesn't occur at the beginning of the string; so we must have substring match
                             matchKind = MatchKind.subString;
                             break;
                         }
                     }
                 }
 
-                // if there is a match, create NavigateToItem and add it into result array
-                // Able to find the match
+                // if there is a match and the match should be included into NavigateToItem array, 
+                // create corresponding NavigateToItem and add it into results array
                 if (this.shouldIncludeDeclarationInNavigationItems(declaration)) {
-                    fullName = parentName ? parentName + "." + navigationName : navigationName;
+                    fullName = parentName ? parentName + "." + declName : declName;
                     if (matchKind) {
                         item = new NavigateToItem();
-                        item.name = navigationName;
+                        item.name = declName;
                         item.matchKind = matchKind;
                         item.kind = this.mapPullElementKind(declaration.kind);
                         item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
@@ -766,6 +777,7 @@ module Services {
             }
         }
 
+        // Return ScriptElementKind in string of a given declaration.
         private getScriptElementKindModifiersFromDecl(decl: TypeScript.PullDecl): string {
             var result: string[] = [];
             var flags = decl.flags;
@@ -793,6 +805,8 @@ module Services {
             return result.length > 0 ? result.join(',') : ScriptElementKindModifier.none;
         }
 
+        // Return true if the declaration has PullElementKind that is one of 
+        // the following container types and return false otherwise.
         private isContainerDeclaration(declaration: TypeScript.PullDecl): boolean {
             switch (declaration.kind) {
                 case TypeScript.PullElementKind.Script:
@@ -807,6 +821,7 @@ module Services {
             return false;
         }
 
+        // Return true if the declaration should havce corresponding NavigateToItem and false otherwise.
         private shouldIncludeDeclarationInNavigationItems(declaration: TypeScript.PullDecl): boolean {
             switch (declaration.kind) {
                 case TypeScript.PullElementKind.Script:
@@ -834,21 +849,6 @@ module Services {
             }
 
             return true;
-        }
-
-        private getNavigationItemDispalyName(declaration: TypeScript.PullDecl): string {
-            switch (declaration.kind) {
-                case TypeScript.PullElementKind.ConstructorMethod:
-                    return "constructor";
-                case TypeScript.PullElementKind.CallSignature:
-                    return "()";
-                case TypeScript.PullElementKind.ConstructSignature:
-                    return "new()";
-                case TypeScript.PullElementKind.IndexSignature:
-                    return "[]";
-            }
-
-            return declaration.getDisplayName();
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
