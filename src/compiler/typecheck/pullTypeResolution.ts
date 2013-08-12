@@ -6127,7 +6127,6 @@ module TypeScript {
         public computeInvocationExpressionSymbol(callEx: InvocationExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalCallResolutionData): PullSymbol {
             // resolve the target
             var targetSymbol = this.resolveAST(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
-
             var targetAST = this.getLastIdentifierInTarget(callEx);
 
             // don't be fooled
@@ -6171,6 +6170,7 @@ module TypeScript {
                 }
                 else {
                     context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Calls_to_super_are_only_valid_inside_a_class, null);
+                    this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
                     // POST diagnostics
                     return this.getNewErrorTypeSymbol();
                 }
@@ -6348,6 +6348,15 @@ module TypeScript {
                     additionalResults.candidateSignature = beforeResolutionSignatures && beforeResolutionSignatures.length ? beforeResolutionSignatures[0] : null;
 
                     additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
+                }
+
+                var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+                if (isSuperCall) {
+                    context.isResolvingSuperConstructorTarget = true;
+                }
+                this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
+                if (isSuperCall) {
+                    context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
                 }
 
                 if (!couldNotFindGenericOverload) {
@@ -6852,6 +6861,8 @@ module TypeScript {
                 }
 
                 return returnType
+            } else {
+                this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
             }
 
             context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Invalid_new_expression, null);
