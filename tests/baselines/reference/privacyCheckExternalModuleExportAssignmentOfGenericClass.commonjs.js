@@ -8,6 +8,6 @@ var Foo = (function () {
 module.exports = Foo;
 
 
-var Foo = require("privacyCheckExternalModuleExportAssignmentOfGenericClass_0");
+var Foo = require("./privacyCheckExternalModuleExportAssignmentOfGenericClass_0");
 
 
