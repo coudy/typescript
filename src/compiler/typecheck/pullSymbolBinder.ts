@@ -726,7 +726,7 @@ module TypeScript {
             constructorTypeSymbol.addDeclaration(constructorTypeDeclaration);
             this.semanticInfo.setSymbolForAST(constructorTypeAST, constructorTypeSymbol);
 
-            var signature = new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature);
+            var signature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
             if ((<FunctionDeclaration>constructorTypeAST).variableArgList) {
                 signature.hasVarArgs = true;
