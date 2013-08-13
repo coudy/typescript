@@ -2430,25 +2430,52 @@ module TypeScript {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                 // if the noImplicitAny flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny && ((varDecl.getVarFlags() & VariableFlags.ForInVariable) === 0)) {
+                // Dd not report an error if the variable declaration is declared in ForIn statement
+                if (this.compilationSettings.noImplicitAny && !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
+
                     // Check what enclosingDecl the varDecl is in and report an appropriate error message
-                    // varDecl is a function/method/constructor/constructor signature parameter
-                    if (wrapperDecl.kind == TypeScript.PullElementKind.Function ||
-                        wrapperDecl.kind == TypeScript.PullElementKind.Method ||
-                        wrapperDecl.kind == TypeScript.PullElementKind.ConstructorMethod ||
-                        wrapperDecl.kind == TypeScript.PullElementKind.ConstructSignature) {
-                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name], enclosingDecl);
+                    // varDecl is a function/constructor/constructor-signature parameter
+                    if ((wrapperDecl.kind === TypeScript.PullElementKind.Function ||
+                         wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
+                         wrapperDecl.kind === TypeScript.PullElementKind.ConstructSignature)) {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                    }
+                    // varDecl is a method paremeter
+                    else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
+                        // Check if the parent of wrapperDecl is aambient class declaration
+                        var parentDecl = wrapperDecl.getParentDecl();
+                        // parentDecl is not an ambient declaration; so report an error
+                        if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                        }
+                        // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
+                        else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
+                                 !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
+                                context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                                    DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                        }
                     }
                     // varDecl is a property in object type
-                    else if (wrapperDecl.kind == TypeScript.PullElementKind.ObjectType) {
+                    else if (wrapperDecl.kind === TypeScript.PullElementKind.ObjectType) {
                         context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
                             DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
                     }
                     // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
-                    else if (wrapperDecl.kind != TypeScript.PullElementKind.CatchBlock) {
-                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
+
+                    else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
+                        // varDecl is not declared in ambient declaration; so report an error
+                        if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
+                        }
+                        // varDecl is delcared in ambient declaration but it is not private; so report an error
+                        else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
+                                 !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.Private)) {
+                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
+                        }
                     }
                 }
 
@@ -2857,9 +2884,15 @@ module TypeScript {
                 else if (!funcDeclAST.isConstructor && !funcDeclAST.isConstructMember()) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
-
+                        var parentDecl = funcDecl.getParentDecl();
+                        var parentDeclFlags = TypeScript.PullElementFlags.None;
+                        if (parentDecl !== null) {
+                            parentDeclFlags = parentDecl.flags;
+                        }
                         // if the noImplicitAny flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny &&
+                            (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
+                            (TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) && !TypeScript.hasFlag(funcDecl.flags, PullElementFlags.Private)))) {
                             var funcDeclASTName = funcDeclAST.name;
                             if (funcDeclASTName) {
                                 context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
@@ -5027,8 +5060,9 @@ module TypeScript {
                     else {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
-                        // if disallowimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
+
+                        // if noimplictiany flag is set to be true, report an error
+                        if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
@@ -9164,7 +9198,11 @@ module TypeScript {
                             symbol = symbolPath[symbolPath.length - 1];
                         }
                     }
-                } else if (symbol.kind == PullElementKind.TypeAlias) {                    var aliasSymbol = <PullTypeAliasSymbol>symbol;                    symbolIsVisible = true;                    aliasSymbol.typeUsedExternally = true;                }
+                } else if (symbol.kind == PullElementKind.TypeAlias) {
+                    var aliasSymbol = <PullTypeAliasSymbol>symbol;
+                    symbolIsVisible = true;
+                    aliasSymbol.typeUsedExternally = true;
+                }
 
                 if (!symbolIsVisible) {
                     // declaration is visible from outside but the type isnt - Report error
