@@ -116,6 +116,9 @@ module TypeScript {
                         if (PullContainerTypeSymbol.usedAsSymbol(symbol, this)) {
                             return symbol;
                         }
+                        if (this.rootSymbol && PullContainerTypeSymbol.usedAsSymbol(symbol, this.rootSymbol)) {
+                            return symbol;
+                        }
                     }
                 }
             }
