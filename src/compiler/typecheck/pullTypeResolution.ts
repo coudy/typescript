@@ -2823,6 +2823,149 @@ module TypeScript {
             }
         }
 
+        private typeCheckFunctionDeclaration(
+            funcDeclAST: FunctionDeclaration,
+            funcDecl: PullDecl,
+            signature: PullSignatureSymbol,
+            context: PullTypeResolutionContext) {
+
+            if (context.inTypeCheck && (!context.inSpecialization || !signature.isGeneric())) {
+                PullTypeResolver.typeCheckCallBacks.push(() => {
+
+                    if (signature.hasBeenChecked || signature.getRootSymbol() != signature) {
+                        return;
+                    }
+
+                    var currentUnitPath = this.unitPath;
+                    this.setUnitPath(funcDecl.getScriptName());
+                    var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
+                    this.seenSuperConstructorCall = false;
+
+                    this.resolveAST(funcDeclAST.block, false, funcDecl, context);
+
+                    this.validateVariableDeclarationGroups(funcDecl, context);
+
+                    var enclosingDecl = this.getEnclosingDecl(funcDecl);
+
+                    var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
+
+                    var parameters = signature.parameters;
+
+                    // Is it a constructor?
+                    if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
+                        if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
+                            // Constructors for derived classes must contain a call to the class's 'super' constructor
+                            if (!this.seenSuperConstructorCall) {
+                                context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
+                                    DiagnosticCode.Constructors_for_derived_classes_must_contain_a_super_call, null);
+                            }
+                            // The first statement in the body of a constructor must be a super call if both of the following are true:
+                            //  - The containing class is a derived class.
+                            //  - The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                            else if (this.superCallMustBeFirstStatementInConstructor(funcDecl, enclosingDecl)) {
+                                var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
+                                if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
+                                    context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
+                                        DiagnosticCode.A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties, null);
+                                }
+                            }
+                        }
+                        this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    }
+
+                    // Is it an indexer?
+                    else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
+
+                        var allIndexSignatures = enclosingDecl.getSymbol().type.getIndexSignatures();
+
+                        for (var i = 0; i < allIndexSignatures.length; i++) {
+                            if (!allIndexSignatures[i].isResolved) {
+                                this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
+                            }
+
+                            if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
+                                var stringIndexSignature: PullSignatureSymbol = null;
+                                var numberIndexSignature: PullSignatureSymbol = null;
+
+                                var indexSignature = signature;
+
+                                var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
+
+                                if (isNumericIndexer) {
+                                    numberIndexSignature = indexSignature;
+                                    stringIndexSignature = allIndexSignatures[i];
+                                }
+                                else {
+                                    numberIndexSignature = allIndexSignatures[i];
+                                    stringIndexSignature = indexSignature;
+
+                                    // If we are a string indexer sharing a container with a number index signature, the number will report the error
+                                    // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
+                                    if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
+                                        break;
+                                    }
+                                }
+                                var comparisonInfo = new TypeComparisonInfo();
+                                var resolutionContext = new PullTypeResolutionContext(this);
+                                if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
+                                    if (comparisonInfo.message) {
+                                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
+                                            [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]);
+                                    } else {
+                                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
+                                            [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()]);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        // Check that property names comply with indexer constraints (both string and numeric)
+                        var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, /*includePrivate*/ true);
+                        for (var i = 0; i < allMembers.length; i++) {
+                            var name = allMembers[i].name;
+                            if (name) {
+                                if (!allMembers[i].isResolved) {
+                                    this.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), context);
+                                }
+                                // Skip members in the same container, they will be checked during their member type check
+                                if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
+                                    // Check if the member name is numerical
+                                    var isMemberNumeric = isFinite(+name);
+                                    if (isNumericIndexer === isMemberNumeric) {
+                                        this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // It's just a conventional function or method
+                    else {
+
+                        if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
+                            var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
+
+                            if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                                var funcName = funcDecl.getDisplayName();
+                                funcName = funcName ? funcName : "expression";
+
+                                context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]);
+                            }
+                        }
+                        this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    }
+
+
+                    this.checkFunctionTypePrivacy(funcDeclAST, false, context);
+                    this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+
+                    signature.hasBeenChecked = true;
+                    this.setUnitPath(currentUnitPath);
+                });
+            }
+        }
+
         private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
@@ -2838,6 +2981,7 @@ module TypeScript {
             if (signature) {
 
                 if (signature.isResolved) {
+                    this.typeCheckFunctionDeclaration(funcDeclAST, funcDecl, signature, context);
                     return funcSymbol;
                 }
 
@@ -3025,140 +3169,7 @@ module TypeScript {
                 }
             }
 
-            if (context.inTypeCheck && (!context.inSpecialization || !signature.isGeneric())) {
-                var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
-
-                PullTypeResolver.typeCheckCallBacks.push(() => {
-
-                    if (signature.hasBeenChecked) {
-                        return;
-                    }
-
-                    this.setUnitPath(funcDecl.getScriptName());
-                    this.seenSuperConstructorCall = false;
-
-                    this.resolveAST(funcDeclAST.block, false, funcDecl, context);
-
-                    this.validateVariableDeclarationGroups(funcDecl, context);
-
-                    var enclosingDecl = this.getEnclosingDecl(funcDecl);
-
-                    var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
-
-                    var parameters = signature.parameters;
-
-                    // Is it a constructor?
-                    if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
-                        if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
-                            // Constructors for derived classes must contain a call to the class's 'super' constructor
-                            if (!this.seenSuperConstructorCall) {
-                                context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
-                                    DiagnosticCode.Constructors_for_derived_classes_must_contain_a_super_call, null);
-                            }
-                            // The first statement in the body of a constructor must be a super call if both of the following are true:
-                            //  - The containing class is a derived class.
-                            //  - The constructor declares parameter properties or the containing class declares instance member variables with initializers.
-                            else if (this.superCallMustBeFirstStatementInConstructor(funcDecl, enclosingDecl)) {
-                                var firstStatement = this.getFirstStatementFromFunctionDeclAST(funcDeclAST);
-                                if (!firstStatement || !this.isSuperCallNode(firstStatement)) {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, 11 /* "constructor" */,
-                                        DiagnosticCode.A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties, null);
-                                }
-                            }
-                        }
-                        this.typeCheckFunctionOverloads(funcDeclAST, context);
-                    }
-
-                    // Is it an indexer?
-                    else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
-
-                        var allIndexSignatures = enclosingDecl.getSymbol().type.getIndexSignatures();
-
-                        for (var i = 0; i < allIndexSignatures.length; i++) {
-                            if (!allIndexSignatures[i].isResolved) {
-                                this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
-                            }
-
-                            if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
-                                var stringIndexSignature: PullSignatureSymbol = null;
-                                var numberIndexSignature: PullSignatureSymbol = null;
-
-                                var indexSignature = signature;
-
-                                var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
-
-                                if (isNumericIndexer) {
-                                    numberIndexSignature = indexSignature;
-                                    stringIndexSignature = allIndexSignatures[i];
-                                }
-                                else {
-                                    numberIndexSignature = allIndexSignatures[i];
-                                    stringIndexSignature = indexSignature;
-
-                                    // If we are a string indexer sharing a container with a number index signature, the number will report the error
-                                    // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
-                                    if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
-                                        break;
-                                    }
-                                }
-                                var comparisonInfo = new TypeComparisonInfo();
-                                var resolutionContext = new PullTypeResolutionContext(this);
-                                if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
-                                    if (comparisonInfo.message) {
-                                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
-                                            [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]);
-                                    } else {
-                                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
-                                            [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()]);
-                                    }
-                                }
-                                break;
-                            }
-                        }
-
-                        // Check that property names comply with indexer constraints (both string and numeric)
-                        var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, /*includePrivate*/ true);
-                        for (var i = 0; i < allMembers.length; i++) {
-                            var name = allMembers[i].name;
-                            if (name) {
-                                if (!allMembers[i].isResolved) {
-                                    this.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), context);
-                                }
-                                // Skip members in the same container, they will be checked during their member type check
-                                if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
-                                    // Check if the member name is numerical
-                                    var isMemberNumeric = isFinite(+name);
-                                    if (isNumericIndexer === isMemberNumeric) {
-                                        this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // It's just a conventional function or method
-                    else {
-
-                        if (funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
-                            var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
-
-                            if (!isVoidOrAny && !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
-                                var funcName = funcDecl.getDisplayName();
-                                funcName = funcName ? funcName : "expression";
-
-                                context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]);
-                            }
-                        }
-                        this.typeCheckFunctionOverloads(funcDeclAST, context);
-                    }
-
-
-                    this.checkFunctionTypePrivacy(funcDeclAST, false, context);
-                    this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
-
-                    signature.hasBeenChecked = true;
-                });
-            }
+            this.typeCheckFunctionDeclaration(funcDeclAST, funcDecl, signature, context);
 
             return funcSymbol;
         }
@@ -5232,6 +5243,7 @@ module TypeScript {
 
             if (context.typeCheck()) {
                 PullTypeResolver.typeCheckCallBacks.push(() => {
+                    var currentUnitPath = this.unitPath;
                     this.setUnitPath(functionDecl.getScriptName());
                     this.seenSuperConstructorCall = false;
 
@@ -5253,6 +5265,7 @@ module TypeScript {
                     }
 
                     this.typeCheckFunctionOverloads(funcDeclAST, context);
+                    this.setUnitPath(currentUnitPath);
                 });
             }
 
