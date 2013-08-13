@@ -999,21 +999,27 @@ module TypeScript {
         }
 
         private checkForDisallowedImportDeclaration(node: ModuleDeclarationSyntax): boolean {
-            if (node.stringLiteral === null) {
-                var currentElementFullStart = this.childFullStart(node, node.moduleElements);
+            var currentElementFullStart = this.childFullStart(node, node.moduleElements);
 
-                for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
-                    var child = node.moduleElements.childAt(i);
-                    if (child.kind() === SyntaxKind.ImportDeclaration) {
-                        var importDeclaration = <ImportDeclarationSyntax>child;
-                        if (importDeclaration.moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
+            for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+                var child = node.moduleElements.childAt(i);
+                if (child.kind() === SyntaxKind.ImportDeclaration) {
+                    var importDeclaration = <ImportDeclarationSyntax>child;
+                    if (importDeclaration.moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
+                        if (node.stringLiteral === null) {
                             this.pushDiagnostic1(currentElementFullStart, importDeclaration,
                                 DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module, null);
+                        } else {
+                            var importPath = (<ExternalModuleReferenceSyntax>importDeclaration.moduleReference).stringLiteral.value();
+                            if (isRelative(importPath)) {
+                                this.pushDiagnostic1(currentElementFullStart, importDeclaration,
+                                    DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null);
+                            }
                         }
                     }
-
-                    currentElementFullStart += child.fullWidth();
                 }
+
+                currentElementFullStart += child.fullWidth();
             }
 
             return false;

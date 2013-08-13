@@ -89,6 +89,7 @@ module TypeScript {
         Octal_literals_are_not_available_when_targeting_ECMAScript_5_and_higher: "Octal literals are not available when targeting ECMAScript 5 and higher.",
         Accessors_are_not_allowed_in_ambient_contexts: "Accessors are not allowed in ambient contexts.",
         Ambient_external_module_declaration_cannot_specify_relative_module_name: "Ambient external module declaration cannot specify relative module name.",
+        Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name: "Import declaration in an ambient external module declaration cannot reference external module through relative external module name.",
         Duplicate_identifier_0: "Duplicate identifier '{0}'.",
         The_name_0_does_not_exist_in_the_current_scope: "The name '{0}' does not exist in the current scope.",
         The_name_0_does_not_refer_to_a_value: "The name '{0}' does not refer to a value.",

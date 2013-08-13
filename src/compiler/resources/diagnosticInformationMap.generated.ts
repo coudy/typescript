@@ -354,6 +354,10 @@ module TypeScript {
     "code": 1087,
     "category": DiagnosticCategory.Error
   },
+  "Import declaration in an ambient external module declaration cannot reference external module through relative external module name.": {
+    "code": 1088,
+    "category": DiagnosticCategory.Error
+  },
   "Duplicate identifier '{0}'.": {
     "code": 2000,
     "category": DiagnosticCategory.Error
