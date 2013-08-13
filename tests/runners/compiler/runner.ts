@@ -133,7 +133,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     var declFile = { unitName: 'tests/cases/compiler/' + Harness.getFileName(file.fileName), content: file.code };
                     harnessCompiler.compileFiles(
                         [declFile],
-                        [], // TODO: is this right?
+                        otherFiles,
                         function (result) {
                             var jsOutputSync = result.commonJS;
                             for (var i = 0; i < jsOutputSync.errors.length; i++) {
