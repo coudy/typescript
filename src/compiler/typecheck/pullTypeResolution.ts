@@ -5000,7 +5000,7 @@ module TypeScript {
             context.resolvingTypeReference = savedResolvingTypeReference;
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
 
-            var lhsType = lhs.isAlias() ? (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol() : lhs.type;
+            var lhsType = lhs.isAlias() ? (<PullTypeAliasSymbol>lhs).getExportAssignedContainerSymbol() : lhs.type;
 
             if (context.isResolvingClassExtendedType) {
                 if (lhs.isAlias()) {
@@ -5008,13 +5008,12 @@ module TypeScript {
                 }
             }
 
-            if (this.isAnyOrEquivalent(lhsType)) {
-                return lhsType;
+            if (!lhsType) {
+                return this.getNewErrorTypeSymbol();
             }
 
-            if (!lhsType) {
-                context.postError(this.unitPath, dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [(<Identifier>dottedNameAST.operand2).actualText]);
-                return this.getNewErrorTypeSymbol();
+            if (this.isAnyOrEquivalent(lhsType)) {
+                return lhsType;
             }
 
             // now for the name...
@@ -9163,8 +9162,27 @@ module TypeScript {
             var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
 
             for (var i = 0, i_max = declGroups.length; i < i_max; i++) {
-                var firstSymbol: PullSymbol;
-                var firstSymbolType: PullTypeSymbol;
+                var firstSymbol: PullSymbol = null;
+                var firstSymbolType: PullTypeSymbol = null;
+
+                // If we are in a script context, we need to check more than just the current file. We need to check var type identity between files as well.
+                if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
+                    var name = declGroups[i][0].name;
+                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl.getScriptName());
+                    if (candidateSymbol && candidateSymbol.isResolved) {
+                        if (!candidateSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
+                            firstSymbol = candidateSymbol;
+                            firstSymbolType = candidateSymbol.type;
+                        }
+                    }
+
+                    // Also collect any imports with this name (throughout any of the files)
+                    var importSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.TypeAlias, null);
+                    if (importSymbol && importSymbol.isAlias()) {
+                        importDeclarationNames = importDeclarationNames || new BlockIntrinsics();
+                        importDeclarationNames[name] = true;
+                    }
+                }
 
                 for (var j = 0, j_max = declGroups[i].length; j < j_max; j++) {
                     var decl = declGroups[i][j];
@@ -9182,13 +9200,13 @@ module TypeScript {
                     var symbol = decl.getSymbol();
                     var symbolType = this.resolveAST(boundDeclAST, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
-                    if (j === 0) {
+                    if (j === 0 && !firstSymbol) {
                         firstSymbol = symbol;
                         firstSymbolType = symbolType;
                         continue;
                     }
 
-                    if (symbolType && firstSymbolType && !this.typesAreIdentical(symbolType, firstSymbolType)) {
+                    if (symbolType && firstSymbolType && symbolType !== firstSymbolType && !this.typesAreIdentical(symbolType, firstSymbolType)) {
                         context.postError(this.currentUnit.getPath(), boundDeclAST.minChar, boundDeclAST.getLength(), DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()]);
                         continue;
                     }
