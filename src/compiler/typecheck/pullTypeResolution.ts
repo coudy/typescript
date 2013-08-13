@@ -2443,7 +2443,7 @@ module TypeScript {
                     }
                     // varDecl is a method paremeter
                     else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
-                        // check if the parent of wrapperDecl is aambient class declaration
+                        // check if the parent of wrapperDecl is ambient class declaration
                         var parentDecl = wrapperDecl.getParentDecl();
                         // parentDecl is not an ambient declaration; so report an error
                         if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
@@ -2884,11 +2884,13 @@ module TypeScript {
                 else if (!funcDeclAST.isConstructor && !funcDeclAST.isConstructMember()) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
-                        var parentDecl = funcDecl.getParentDecl();
                         var parentDeclFlags = TypeScript.PullElementFlags.None;
-                        if (parentDecl !== null) {
+                        if (TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.Method) ||
+                            TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.ConstructorMethod)) {
+                            var parentDecl = funcDecl.getParentDecl();
                             parentDeclFlags = parentDecl.flags;
                         }
+
                         // if the noImplicitAny flag is set to be true, report an error
                         if (this.compilationSettings.noImplicitAny &&
                             (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
