@@ -227,7 +227,7 @@ module TypeScript {
                 this._cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
             }
 
-            if (!this._cachedRegExpInterfaceType.isResolved) {
+            if (this._cachedRegExpInterfaceType && !this._cachedRegExpInterfaceType.isResolved) {
                 this.resolveDeclaredSymbol(this._cachedRegExpInterfaceType, null, new PullTypeResolutionContext(this));
             }
 
@@ -5774,6 +5774,10 @@ module TypeScript {
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 
                 if (member) {
+                    if (!member.isResolved) {
+                        this.resolveDeclaredSymbol(member, enclosingDecl, context);
+                    }
+                    
                     return member.type;
                 }
             }
@@ -7447,7 +7451,7 @@ module TypeScript {
                         for (var j = 0; j < extendsList.members.length; j++) {
                             extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsList.members[j], sourceDecls[i].getScriptName());
 
-                            if (extendsSymbol == target || this.sourceExtendsTarget(extendsSymbol, target, context)) {
+                            if (extendsSymbol && (extendsSymbol == target || this.sourceExtendsTarget(extendsSymbol, target, context))) {
                                 return true;
                             }
                         }
@@ -9344,7 +9348,11 @@ module TypeScript {
                             symbol = symbolPath[symbolPath.length - 1];
                         }
                     }
-                } else if (symbol.kind == PullElementKind.TypeAlias) {                    var aliasSymbol = <PullTypeAliasSymbol>symbol;                    symbolIsVisible = true;                    aliasSymbol.typeUsedExternally = true;                }
+                } else if (symbol.kind == PullElementKind.TypeAlias) {
+                    var aliasSymbol = <PullTypeAliasSymbol>symbol;
+                    symbolIsVisible = true;
+                    aliasSymbol.typeUsedExternally = true;
+                }
 
                 if (!symbolIsVisible) {
                     // declaration is visible from outside but the type isnt - Report error
@@ -9766,8 +9774,8 @@ module TypeScript {
         private superCallMustBeFirstStatementInConstructor(enclosingConstructor: PullDecl, enclosingClass: PullDecl): boolean {
             /*
             The first statement in the body of a constructor must be a super call if both of the following are true:
-                •	The containing class is a derived class.
-                •	The constructor declares parameter properties or the containing class declares instance member variables with initializers.
+                •   The containing class is a derived class.
+                •   The constructor declares parameter properties or the containing class declares instance member variables with initializers.
             In such a required super call, it is a compile-time error for argument expressions to reference this.
             */
             if (enclosingConstructor && enclosingClass) {

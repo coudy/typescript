@@ -97,7 +97,7 @@ module TypeScript {
 
     export class ExternalModuleReferenceSyntax extends ModuleReferenceSyntax {
 
-        constructor(public requireKeyword: ISyntaxToken,
+        constructor(public moduleOrRequireKeyword: ISyntaxToken,
                     public openParenToken: ISyntaxToken,
                     public stringLiteral: ISyntaxToken,
                     public closeParenToken: ISyntaxToken,
@@ -120,7 +120,7 @@ module TypeScript {
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.requireKeyword;
+            case 0: return this.moduleOrRequireKeyword;
             case 1: return this.openParenToken;
             case 2: return this.stringLiteral;
             case 3: return this.closeParenToken;
@@ -128,19 +128,20 @@ module TypeScript {
         }
     }
 
-    public update(requireKeyword: ISyntaxToken,
+    public update(moduleOrRequireKeyword: ISyntaxToken,
                   openParenToken: ISyntaxToken,
                   stringLiteral: ISyntaxToken,
                   closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
-        if (this.requireKeyword === requireKeyword && this.openParenToken === openParenToken && this.stringLiteral === stringLiteral && this.closeParenToken === closeParenToken) {
+        if (this.moduleOrRequireKeyword === moduleOrRequireKeyword && this.openParenToken === openParenToken && this.stringLiteral === stringLiteral && this.closeParenToken === closeParenToken) {
             return this;
         }
 
-        return new ExternalModuleReferenceSyntax(requireKeyword, openParenToken, stringLiteral, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new ExternalModuleReferenceSyntax(moduleOrRequireKeyword, openParenToken, stringLiteral, closeParenToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return new ExternalModuleReferenceSyntax(Syntax.token(SyntaxKind.RequireKeyword), Syntax.token(SyntaxKind.OpenParenToken), stringLiteral, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
+    public static create1(moduleOrRequireKeyword: ISyntaxToken,
+                          stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return new ExternalModuleReferenceSyntax(moduleOrRequireKeyword, Syntax.token(SyntaxKind.OpenParenToken), stringLiteral, Syntax.token(SyntaxKind.CloseParenToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): ExternalModuleReferenceSyntax {
@@ -151,20 +152,20 @@ module TypeScript {
         return <ExternalModuleReferenceSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withRequireKeyword(requireKeyword: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(requireKeyword, this.openParenToken, this.stringLiteral, this.closeParenToken);
+    public withModuleOrRequireKeyword(moduleOrRequireKeyword: ISyntaxToken): ExternalModuleReferenceSyntax {
+        return this.update(moduleOrRequireKeyword, this.openParenToken, this.stringLiteral, this.closeParenToken);
     }
 
     public withOpenParenToken(openParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(this.requireKeyword, openParenToken, this.stringLiteral, this.closeParenToken);
+        return this.update(this.moduleOrRequireKeyword, openParenToken, this.stringLiteral, this.closeParenToken);
     }
 
     public withStringLiteral(stringLiteral: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(this.requireKeyword, this.openParenToken, stringLiteral, this.closeParenToken);
+        return this.update(this.moduleOrRequireKeyword, this.openParenToken, stringLiteral, this.closeParenToken);
     }
 
     public withCloseParenToken(closeParenToken: ISyntaxToken): ExternalModuleReferenceSyntax {
-        return this.update(this.requireKeyword, this.openParenToken, this.stringLiteral, closeParenToken);
+        return this.update(this.moduleOrRequireKeyword, this.openParenToken, this.stringLiteral, closeParenToken);
     }
 
     public isTypeScriptSpecific(): boolean {

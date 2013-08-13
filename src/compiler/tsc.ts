@@ -511,6 +511,26 @@ module TypeScript {
                 }
             }, 'v');
 
+            opts.flag('allowbool', {
+                usage: {
+                    locCode: DiagnosticCode.Allow_bool_as_a_synonym_for_boolean,
+                    args: null
+                },
+                set: () => {
+                    this.compilationSettings.allowBool = true;
+                }
+            });
+
+            opts.flag('allowimportmodule', {
+                usage: {
+                    locCode: DiagnosticCode.Allow_module_as_a_synonym_for_require,
+                    args: null
+                },
+                set: () => {
+                    this.compilationSettings.allowModuleKeywordInExternalModuleReference = true;
+                }
+            });
+
             var locale: string = null;
             opts.option('locale', {
                 experimental: true,

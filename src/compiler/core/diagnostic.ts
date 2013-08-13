@@ -109,17 +109,17 @@ module TypeScript {
 
     export function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
         var result: DiagnosticInfo = diagnosticInformationMap[diagnosticKey];
-        Debug.assert(result !== undefined && result !== null);
+        //Debug.assert(result !== undefined && result !== null);
         return result;
     }
 
     export function getLocalizedText(diagnosticKey: string, args: any[]): string {
         if (LocalizedDiagnosticMessages) {
-            Debug.assert(LocalizedDiagnosticMessages.hasOwnProperty(diagnosticKey));
+            //Debug.assert(LocalizedDiagnosticMessages.hasOwnProperty(diagnosticKey));
         }
 
         var diagnosticMessageText: string = LocalizedDiagnosticMessages ? LocalizedDiagnosticMessages[diagnosticKey] : diagnosticKey;
-        Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
+        //Debug.assert(diagnosticMessageText !== undefined && diagnosticMessageText !== null);
 
         var actualCount = args ? args.length : 0;
         // We have a string like "foo_0_bar_1".  We want to find the largest integer there.
