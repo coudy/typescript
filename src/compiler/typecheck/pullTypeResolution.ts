@@ -2439,7 +2439,7 @@ module TypeScript {
                          wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
                          wrapperDecl.kind === TypeScript.PullElementKind.ConstructSignature)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name], enclosingDecl);
                     }
                     // varDecl is a method paremeter
                     else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
@@ -2448,13 +2448,13 @@ module TypeScript {
                         // parentDecl is not an ambient declaration; so report an error
                         if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name], enclosingDecl);
                         }
                         // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
                         else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
                                  !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
                                 context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                    DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                                    DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name], enclosingDecl);
                         }
                     }
                     // varDecl is a property in object type
@@ -2468,13 +2468,13 @@ module TypeScript {
                         // varDecl is not declared in ambient declaration; so report an error
                         if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
+                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
                         }
                         // varDecl is delcared in ambient declaration but it is not private; so report an error
                         else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
                                  !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.Private)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
+                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText], enclosingDecl);
                         }
                     }
                 }
@@ -5064,7 +5064,7 @@ module TypeScript {
 
 
                         // if noimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+                        if (this.compilationSettings.noImplicitAny && !context.isInInvocationExpression) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
