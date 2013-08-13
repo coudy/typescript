@@ -388,9 +388,5 @@ module TypeScript {
         Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Constructor signature, which lacks return-type annotation, implicitly has an 'any' return type.",
         Lambda_Function_which_lacks_return_type_annotation_implicitly_has_an_any_return_type: "Lambda Function, which lacks return-type annotation, implicitly has an 'any' return type.",
         Array_Literal_implicitly_has_an_any_type_from_widening: "Array Literal implicitly has an 'any' type from widening.",
-        Use_of_deprecated_type_bool_Use_boolean_instead: "Use of deprecated type 'bool'. Use 'boolean' instead.",
-        module_is_deprecated_Use_require_instead: "'module(...)' is deprecated. Use 'require(...)' instead.",
-        Allow_bool_as_a_synonym_for_boolean: "Allow 'bool' as a synonym for 'boolean'.",
-        Allow_module_as_a_synonym_for_require: "Allow 'module(...)' as a synonym for 'require(...)'.",
     };
 }

@@ -122,7 +122,6 @@ module Services {
                     case TypeScript.SyntaxKind.StringKeyword:
                     case TypeScript.SyntaxKind.VoidKeyword:
                     case TypeScript.SyntaxKind.BooleanKeyword:
-                    case TypeScript.SyntaxKind.BoolKeyword:
                     case TypeScript.SyntaxKind.DotToken:
                     case TypeScript.SyntaxKind.OpenBracketToken:
                     case TypeScript.SyntaxKind.CloseBracketToken:

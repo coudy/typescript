@@ -84,7 +84,6 @@ module TypeScript {
         // TypeScript keywords.
         AnyKeyword,
         BooleanKeyword,
-        BoolKeyword,
         ConstructorKeyword,
         DeclareKeyword,
         GetKeyword,

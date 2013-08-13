@@ -4,20 +4,16 @@ module TypeScript {
     export class ParseOptions {
         private _languageVersion: LanguageVersion;
         private _allowAutomaticSemicolonInsertion: boolean;
-        private _allowModuleKeywordInExternalModuleReference: boolean;
 
         constructor(languageVersion: LanguageVersion,
-                    allowAutomaticSemicolonInsertion: boolean,
-                    allowModuleKeywordInExternalModuleReference: boolean) {
+                    allowAutomaticSemicolonInsertion: boolean) {
             this._languageVersion = languageVersion;
             this._allowAutomaticSemicolonInsertion = allowAutomaticSemicolonInsertion;
-            this._allowModuleKeywordInExternalModuleReference = allowModuleKeywordInExternalModuleReference;
         }
 
 
         public toJSON(key: any) {
-            return { allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion,
-                     allowModuleKeywordInExternalModuleReference: this._allowModuleKeywordInExternalModuleReference };
+            return { allowAutomaticSemicolonInsertion: this._allowAutomaticSemicolonInsertion };
          }
 
         public languageVersion(): LanguageVersion {
@@ -27,10 +23,5 @@ module TypeScript {
         public allowAutomaticSemicolonInsertion(): boolean {
             return this._allowAutomaticSemicolonInsertion;
         }
-
-        public allowModuleKeywordInExternalModuleReference(): boolean {
-            return this._allowModuleKeywordInExternalModuleReference;
-        }
-
     }
 }

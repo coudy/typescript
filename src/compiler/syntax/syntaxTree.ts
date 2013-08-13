@@ -614,7 +614,6 @@ module TypeScript {
                 switch (token.valueText()) {
                     case "any":
                     case "number":
-                    case "bool":
                     case "boolean":
                     case "string":
                     case "void":
@@ -1449,16 +1448,6 @@ module TypeScript {
             }
 
             super.visitSourceUnit(node);
-        }
-
-        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): void {
-            if (node.moduleOrRequireKeyword.tokenKind === SyntaxKind.ModuleKeyword && !this.syntaxTree.parseOptions().allowModuleKeywordInExternalModuleReference()) {
-                this.pushDiagnostic1(this.position(), node.moduleOrRequireKeyword, DiagnosticCode.module_is_deprecated_Use_require_instead);
-                this.skip(node);
-                return;
-            }
-
-            super.visitExternalModuleReference(node);
         }
     }
 }
