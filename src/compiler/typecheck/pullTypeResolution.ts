@@ -2425,15 +2425,15 @@ module TypeScript {
                 }
             }
 
-            // If we're lacking both a type annotation and an initialization expression, the type is 'any'
+            // if we're lacking both a type annotation and an initialization expression, the type is 'any'
             if (!(varDecl.typeExpr || varDecl.init)) {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                 // if the noImplicitAny flag is set to be true, report an error
-                // Dd not report an error if the variable declaration is declared in ForIn statement
+                // Do not report an error if the variable declaration is declared in ForIn statement
                 if (this.compilationSettings.noImplicitAny && !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
 
-                    // Check what enclosingDecl the varDecl is in and report an appropriate error message
+                    // check what enclosingDecl the varDecl is in and report an appropriate error message
                     // varDecl is a function/constructor/constructor-signature parameter
                     if ((wrapperDecl.kind === TypeScript.PullElementKind.Function ||
                          wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
@@ -2443,7 +2443,7 @@ module TypeScript {
                     }
                     // varDecl is a method paremeter
                     else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
-                        // Check if the parent of wrapperDecl is aambient class declaration
+                        // check if the parent of wrapperDecl is aambient class declaration
                         var parentDecl = wrapperDecl.getParentDecl();
                         // parentDecl is not an ambient declaration; so report an error
                         if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
