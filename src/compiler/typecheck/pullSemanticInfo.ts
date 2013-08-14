@@ -378,7 +378,7 @@ module TypeScript {
         public findTopLevelSymbol(name: string, kind: PullElementKind, stopAtFile: string): PullSymbol {
             var cacheID = this.getDeclPathCacheID([name], kind);
 
-            var symbol = this.symbolCache[name];
+            var symbol = this.symbolCache[cacheID];
 
             if (!symbol) {
                 var topLevelDecls = this.collectAllTopLevelDecls();
@@ -400,8 +400,6 @@ module TypeScript {
 
                 if (symbol) {
                     this.symbolCache[cacheID] = symbol;
-
-                    symbol.addCacheID(cacheID);
                 }
             }
 
@@ -528,8 +526,6 @@ module TypeScript {
 
                 if (symbol) {
                     this.symbolCache[cacheID] = symbol;
-
-                    symbol.addCacheID(cacheID);
                 }
             }
 
@@ -542,12 +538,10 @@ module TypeScript {
 
             if (!this.symbolCache[cacheID1]) {
                 this.symbolCache[cacheID1] = symbol;
-                symbol.addCacheID(cacheID1);
             }
 
             if (!this.symbolCache[cacheID2]) {
                 this.symbolCache[cacheID2] = symbol;
-                symbol.addCacheID(cacheID2);
             }
         }
 
@@ -714,11 +708,6 @@ module TypeScript {
 
             var kindID = this.getDeclPathCacheID(path, kind);
             var symID = this.getDeclPathCacheID(path, symbol.kind);
-
-            symbol.addCacheID(kindID);
-            symbol.addCacheID(symID);
-
-            symbol.invalidateCachedIDs(this.symbolCache);
         }
 
         public postDiagnostics(): Diagnostic[] {

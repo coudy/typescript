@@ -16,8 +16,6 @@ module TypeScript {
 
         public name: string;
 
-        private cachedPathIDs: any = {};
-
         public kind: PullElementKind;
 
         private _container: PullTypeSymbol = null;
@@ -211,20 +209,6 @@ module TypeScript {
 
         public getEnclosingSignature(): PullSignatureSymbol {
             return this._enclosingSignature;
-        }
-
-        public addCacheID(cacheID: string) {
-            if (!this.cachedPathIDs[cacheID]) {
-                this.cachedPathIDs[cacheID] = true;
-            }
-        }
-
-        public invalidateCachedIDs(cache: any) {
-            for (var id in this.cachedPathIDs) {
-                if (cache[id]) {
-                    cache[id] = undefined;
-                }
-            }
         }
 
         // declaration methods
