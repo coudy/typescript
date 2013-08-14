@@ -24,7 +24,7 @@ declare var run: any;
 declare var __dirname: any; // Node-specific
 
 function switchToForwardSlashes(path: string) {
-    return path.replace(/\\/g, "/");
+    return path.replace(/\\/g, "/").replace(/\/\//g, '/');
 }
 
 function filePath(fullPath: string) {
@@ -993,7 +993,7 @@ module Harness {
                 this.fileNameToScriptSnapshot.add(switchToForwardSlashes(unitName), TypeScript.ScriptSnapshot.fromString(content));
             }
 
-            /** The primary way to add test content. Functionally equivallent to adding files to the command line for a tsc invocation. */
+            /** The primary way to add test content. Functionally equivalent to adding files to the command line for a tsc invocation. */
             public addInputFile(file: { unitName: string; content: string }) {
                 this.needsFullTypeCheck = true;
                 var normalizedName = switchToForwardSlashes(file.unitName);
@@ -1001,7 +1001,7 @@ module Harness {
                 this.fileNameToScriptSnapshot.add(normalizedName, TypeScript.ScriptSnapshot.fromString(file.content));
             }
 
-            /** The primary way to add test content. Functionally equivallent to adding files to the command line for a tsc invocation. */
+            /** The primary way to add test content. Functionally equivalent to adding files to the command line for a tsc invocation. */
             public addInputFiles(files: { unitName: string; content: string }[]) {
                 files.forEach(file => this.addInputFile(file));
             }           
@@ -2226,7 +2226,7 @@ module Harness {
         }
     }
 
-    if (Error) (<any>Error).stackTraceLimit = 1;
+    if (Error) (<any>Error).stackTraceLimit = 100;
 
     var currentRun = new Run();
 
