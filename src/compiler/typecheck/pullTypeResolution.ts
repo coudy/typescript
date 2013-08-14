@@ -1139,8 +1139,6 @@ module TypeScript {
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclIsClass = typeDeclAST.nodeType() === NodeType.ClassDeclaration;
             var hasVisited = this.getSymbolForAST(typeDeclAST) != null;
-            var extendedTypes: PullTypeSymbol[] = [];
-            var implementedTypes: PullTypeSymbol[] = [];
 
             if ((typeDeclSymbol.isResolved && hasVisited) || (typeDeclSymbol.inResolution && !context.isInBaseTypeResolution())) {
                 return typeDeclSymbol;
@@ -1189,14 +1187,12 @@ module TypeScript {
                     var parentType = this.resolveTypeReference(new TypeReference(typeDeclAST.extendsList.members[i], 0), typeDecl, context);
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
-                        var resolvedParentType = parentType;
-                        extendedTypes[extendedTypes.length] = parentType;
+                        this.setSymbolForAST(typeDeclAST.extendsList.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
                         if (parentType.isGeneric() && parentType.isResolved && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                             this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
                         if (!typeDeclSymbol.hasBase(parentType)) {
-                            this.setSymbolForAST(typeDeclAST.extendsList.members[i], resolvedParentType, context);
                             typeDeclSymbol.addExtendedType(parentType);
 
                             var specializations = typeDeclSymbol.getKnownSpecializations();
@@ -1205,6 +1201,8 @@ module TypeScript {
                                 specializations[j].addExtendedType(parentType);
                             }
                         }
+                    } else if (parentType && !this.getSymbolForAST(typeDeclAST.extendsList.members[i])) {
+                        this.setSymbolForAST(typeDeclAST.extendsList.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
 
@@ -1216,22 +1214,19 @@ module TypeScript {
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < typeDeclAST.implementsList.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context);
-
+                    
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
-                        var resolvedImplementedType = implementedType;
-                        implementedTypes[implementedTypes.length] = implementedType;
+                        this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
                         if (implementedType.isGeneric() && implementedType.isResolved && !implementedType.getIsSpecialized()) {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
                             this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
-                            this.setSymbolForAST(
-                                typeDeclAST.implementsList.members[i - extendsCount], implementedType, context);
+                        }
+
+                        if (!typeDeclSymbol.hasBase(implementedType)) {
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
-                        else if (!typeDeclSymbol.hasBase(implementedType)) {
-                            this.setSymbolForAST(
-                                typeDeclAST.implementsList.members[i - extendsCount], resolvedImplementedType, context);
-                            typeDeclSymbol.addImplementedType(implementedType);
-                        }
+                    } else if (implementedType && !this.getSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount])) {
+                        this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
             }
@@ -10166,16 +10161,10 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             var typeDecl = this.getDeclForAST(typeDeclAst);
-            var contextForBaseTypeResolution = new PullTypeResolutionContext(this);
-            contextForBaseTypeResolution.isResolvingClassExtendedType = true;
-
-            // REVIEW: Is shouldn't be necessary to re-resolve the base list anymore - all of these names should already be resolved, and we can
-            // just use the extends/implements lists on the symbols
-            var prevResolvingTypeReference = context.resolvingTypeReference;
-            context.resolvingTypeReference = true;
-            var baseType = <PullTypeSymbol>this.resolveAST(baseDeclAST, false, enclosingDecl, context);
-            context.resolvingTypeReference = prevResolvingTypeReference;
-            contextForBaseTypeResolution.isResolvingClassExtendedType = false;
+                var baseType = <PullTypeSymbol>this.getSymbolForAST(baseDeclAST);
+                if (!baseType) {
+                    return;
+                }
 
             var typeDeclIsClass = typeSymbol.isClass();
 
@@ -10234,6 +10223,8 @@ module TypeScript {
             if (!typeDeclAst.extendsList && !typeDeclAst.implementsList) {
                 return;
             }
+
+            var typeDeclIsClass = typeDeclAst.nodeType() === NodeType.ClassDeclaration;
 
             if (typeDeclAst.extendsList) {
                 for (var i = 0; i < typeDeclAst.extendsList.members.length; i++) {

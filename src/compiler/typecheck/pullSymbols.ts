@@ -2789,7 +2789,7 @@ module TypeScript {
                 // if the signature is not yet specialized, specialize the signature using an empty context first - that way, no type parameters
                 // will be accidentally specialized
                 if (!(signature.isResolved || signature.inResolution)) {
-                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver));
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
                 }
 
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
@@ -2864,7 +2864,7 @@ module TypeScript {
                 decl.setSpecializingSignatureSymbol(newSignature);
 
                 if (!(signature.isResolved || signature.inResolution)) {
-                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver));
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
                 } 
 
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
@@ -2941,7 +2941,7 @@ module TypeScript {
                 decl.setSpecializingSignatureSymbol(newSignature);
 
                 if (!(signature.isResolved || signature.inResolution)) {
-                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver));
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
                 } 
 
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);

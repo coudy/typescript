@@ -596,10 +596,9 @@ module TypeScript {
 
         public emitBaseExpression(bases: ASTList, index: number) {
             var start = new Date().getTime();
-            var baseTypeAndDiagnostics = this.compiler.semanticInfoChain.getSymbolForAST(bases.members[index], this.document.fileName);
+            var baseType = <PullTypeSymbol>this.compiler.semanticInfoChain.getSymbolForAST(bases.members[index], this.document.fileName);
             TypeScript.declarationEmitGetBaseTypeTime += new Date().getTime() - start;
 
-            var baseType = baseTypeAndDiagnostics && <PullTypeSymbol>baseTypeAndDiagnostics;
             this.emitTypeSignature(baseType);
         }
 
