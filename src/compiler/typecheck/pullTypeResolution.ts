@@ -341,17 +341,17 @@ module TypeScript {
                 }
 
                 parent = containerType;
-            }
 
-            if (declSearchKind & PullElementKind.SomeValue) {
-                member = parent.findMember(symbolName);
-            }
-            else {
-                member = parent.findNestedType(symbolName);
-            }
+                if (declSearchKind & PullElementKind.SomeValue) {
+                    member = parent.findMember(symbolName);
+                }
+                else {
+                    member = parent.findNestedType(symbolName);
+                }
 
-            if (member) {
-                return this.getExportedMemberSymbol(member, parent);
+                if (member) {
+                    return this.getExportedMemberSymbol(member, parent);
+                }
             }
 
             var typeDeclarations = parent.getDeclarations();
@@ -7838,6 +7838,11 @@ module TypeScript {
                 }
 
                 var targetPropType = targetProp.type;
+
+                if (sourceProp && sourceProp.hasFlag(PullElementFlags.Static) && source.isClass()) {
+                    // static source prop is not really member of the source which is class instance
+                    sourceProp = null;
+                }
 
                 if (!sourceProp) {
                     // If it's not present on the type in question, look for the property on 'Object'
