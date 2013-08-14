@@ -1437,6 +1437,7 @@ module TypeScript {
             if (this.elseBod) {
                 if (this.thenBod.nodeType() !== NodeType.Block) {
                     emitter.writeLineToOutput("");
+                    emitter.emitIndent();
                 }
                 else {
                     emitter.writeToOutput(" ");
