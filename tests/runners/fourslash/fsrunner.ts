@@ -11,12 +11,17 @@ class FourslashRunner extends RunnerBase {
 
     public initializeTests() {
         var runSingleFourslashTest = (fn: string) => {
+            fn = switchToForwardSlashes(fn);
             var justName = fn.replace(/^.*[\\\/]/, '');
+
+            // Convert to relative path
+            var testIndex = fn.indexOf('tests/');
+            if (testIndex >= 0) fn = fn.substr(testIndex);
 
             if (!justName.match(/fourslash.ts$/i) && !justName.match(/.d.ts$/i)) {
                 describe('FourSlash test ' + justName, function () {
                     it('Runs correctly', function () {
-                        FourSlash.runFourSlashTest(switchToForwardSlashes(fn));
+                        FourSlash.runFourSlashTest(fn);
                     });
                 });
             }
