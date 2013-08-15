@@ -235,19 +235,21 @@ module Services {
                 });
             }
 
-            var fileNames = this.compilerState.getFileNames();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
-                var tempFileName = fileNames[i];
+            if (typesToSearch !== undefined) {
+                var fileNames = this.compilerState.getFileNames();
+                for (var i = 0, len = fileNames.length; i < len; i++) {
+                    var tempFileName = fileNames[i];
 
-                var tempDocument = this.compilerState.getDocument(tempFileName);
-                var filter = tempDocument.bloomFilter();
+                    var tempDocument = this.compilerState.getDocument(tempFileName);
+                    var filter = tempDocument.bloomFilter();
 
-                typesToSearch.forEach(typeToSearch => {
-                    var symbolName: string = typeToSearch.getName();
-                    if (filter.probablyContains(symbolName)) {
-                        result = result.concat(this.getImplementorsInFile(tempFileName, typeToSearch));
-                    }
-                });
+                    typesToSearch.forEach(typeToSearch => {
+                        var symbolName: string = typeToSearch.getName();
+                        if (filter.probablyContains(symbolName)) {
+                            result = result.concat(this.getImplementorsInFile(tempFileName, typeToSearch));
+                        }
+                    });
+                }
             }
             return result;
         }
