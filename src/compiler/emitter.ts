@@ -2039,7 +2039,7 @@ module TypeScript {
         }
 
         public emitThis() {
-            if (this.thisFunctionDeclaration && !this.thisFunctionDeclaration.isMethod() && (!this.thisFunctionDeclaration.isConstructor)) {
+            if (this.thisFunctionDeclaration && hasFlag(this.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
                 this.writeToOutput("_this");
             }
             else {

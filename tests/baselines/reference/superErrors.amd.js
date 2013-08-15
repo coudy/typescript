@@ -38,7 +38,7 @@ var RegisteredUser = (function (_super) {
 
         // super call in an inner function in a constructor
         function inner() {
-            _super.prototype.sayHello.call(_this);
+            _super.prototype.sayHello.call(this);
         }
 
         // super call in a lambda in an inner function in a constructor
