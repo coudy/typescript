@@ -12,7 +12,7 @@ var Outer;
 })(Outer || (Outer = {}));
 
 var importInst = Outer.instantiated;
-var importUninst = Outer.uninstantiated;
+
 
 var x1 = importInst.C;
 var x2 = new x1();
