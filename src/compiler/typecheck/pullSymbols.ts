@@ -641,6 +641,8 @@ module TypeScript {
 
         public hasVarArgs = false;
 
+        public cachedObjectSpecialization: PullSignatureSymbol = null;
+
         private specializationCache: any = {};
 
         private memberTypeParameterNameCache: any = null;

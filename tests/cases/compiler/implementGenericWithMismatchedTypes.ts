@@ -4,7 +4,7 @@
 interface IFoo<T> {
     foo(x: T): T;
 }
-class C<T> implements IFoo<T> {
+class C<T> implements IFoo<T> { // error
     foo(x: string): number {
         return null;
     }
@@ -13,7 +13,7 @@ class C<T> implements IFoo<T> {
 interface IFoo2<T> {
     foo(x: T): T;
 }
-class C2<T> implements IFoo2<T> {
+class C2<T> implements IFoo2<T> { // error
     foo<string>(x: string): number {
         return null;
     }

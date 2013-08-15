@@ -7612,15 +7612,6 @@ module TypeScript {
                 return true;
             }
 
-            if (context.specializingToObject) {
-                if (target.isTypeParameter()) {
-                    target = this.cachedObjectInterfaceType();
-                }
-                if (source.isTypeParameter()) {
-                    target = this.cachedObjectInterfaceType();
-                }
-            }
-
             //source = this.substituteUpperBoundForType(source);
             //target = this.substituteUpperBoundForType(target);
 
@@ -8207,6 +8198,9 @@ module TypeScript {
 
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
 
+            sourceSig = this.specializeSignatureToObject(sourceSig, sourceSig.getDeclarations()[0].getParentDecl(), context);
+            targetSig = this.specializeSignatureToObject(targetSig, targetSig.getDeclarations()[0].getParentDecl(), context);
+
             var sourceParameters = sourceSig.parameters;
             var targetParameters = targetSig.parameters;
 
@@ -8228,8 +8222,9 @@ module TypeScript {
             var sourceReturnType = sourceSig.returnType;
             var targetReturnType = targetSig.returnType;
 
-            var prevSpecializingToObject = context.specializingToObject;
-            context.specializingToObject = true;
+            var sourceFunctionDecl = sourceSig.getDeclarations()[0];
+            var targetFunctionDecl = targetSig.getDeclarations()[0];                         
+                                            
 
             if (targetReturnType != this.semanticInfoChain.voidTypeSymbol) {
                 if (!this.sourceIsRelatableToTarget(sourceReturnType, targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
@@ -8238,7 +8233,7 @@ module TypeScript {
                         // No need to print this one here - it's printed as part of the signature error in sourceIsRelatableToTarget
                         //comparisonInfo.addMessage("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
                     }
-                    context.specializingToObject = prevSpecializingToObject;
+                    
                     return false;
                 }
             }
@@ -8296,11 +8291,11 @@ module TypeScript {
                     if (comparisonInfo) {
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleParameterTypes;
                     }
-                    context.specializingToObject = prevSpecializingToObject;
+
                     return false;
                 }
             }
-            context.specializingToObject = prevSpecializingToObject;
+
             return true;
         }
 
@@ -9119,7 +9114,6 @@ module TypeScript {
                 typeArguments[0] = this.semanticInfoChain.anyTypeSymbol;
             }
 
-
             var prevSpecialize = context.specializingToAny;
 
             context.specializingToAny = true;
@@ -9128,6 +9122,29 @@ module TypeScript {
             context.specializingToAny = prevSpecialize;
 
             return sig;
+        }
+
+        public specializeSignatureToObject(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
+            if (!signatureToSpecialize.cachedObjectSpecialization) {
+                var typeParameters = signatureToSpecialize.getTypeParameters();
+
+                if (typeParameters.length) {
+                    var typeReplacementMap: any = {};
+                    var typeArguments: PullTypeSymbol[] = [];
+
+                    for (var i = 0; i < typeParameters.length; i++) {
+                        typeArguments[i] = this.cachedObjectInterfaceType();
+                        typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
+                    }
+
+                    signatureToSpecialize.cachedObjectSpecialization = specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, enclosingDecl, context);
+                }
+                else {
+                    signatureToSpecialize.cachedObjectSpecialization = signatureToSpecialize;
+                }
+            }
+
+            return signatureToSpecialize.cachedObjectSpecialization;
         }
 
         public static globalTypeCheckPhase = 0;
