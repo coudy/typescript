@@ -8206,12 +8206,8 @@ module TypeScript {
             }
 
             var sourceReturnType = sourceSig.returnType;
-            var targetReturnType = targetSig.returnType;
-
-            var sourceFunctionDecl = sourceSig.getDeclarations()[0];
-            var targetFunctionDecl = targetSig.getDeclarations()[0];                         
+            var targetReturnType = targetSig.returnType;             
                                             
-
             if (targetReturnType != this.semanticInfoChain.voidTypeSymbol) {
                 if (!this.sourceIsRelatableToTarget(sourceReturnType, targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
@@ -8262,13 +8258,6 @@ module TypeScript {
                         targetParamType = targetParamType.getElementType();
                     }
                     targetParamName = targetParameters[iTarget].name;
-                }
-
-                if (sourceParamType && sourceParamType.isTypeParameter() && this.cachedObjectInterfaceType()) {
-                    sourceParamType = this.cachedObjectInterfaceType();
-                }
-                if (targetParamType && targetParamType.isTypeParameter() && this.cachedObjectInterfaceType()) {
-                    targetParamType = this.cachedObjectInterfaceType();
                 }
 
                 if (!(this.sourceIsRelatableToTarget(sourceParamType, targetParamType, assignableTo, comparisonCache, context, comparisonInfo) ||
