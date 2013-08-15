@@ -759,7 +759,7 @@
         "category": "Error",
         "code": 2101
     },
-    "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.": {
+    "'super' property access is permitted only in a constructor, member function, or member accessor of a derived class.": {
         "category": "Error",
         "code": 2102
     },
@@ -995,7 +995,7 @@
         "category": "Error",
         "code": 2165
     },
-    "Only public instance methods of the base class are accessible via the 'super' keyword.": {
+    "Only public methods of the base class are accessible via the 'super' keyword.": {
         "category": "Error",
         "code": 2166
     },
@@ -1103,6 +1103,10 @@
 		"category": "Error",
 		"code": 2192
 	},
+    "'super' cannot be referenced in constructor arguments.": {
+        "category": "Error",
+        "code": 2155
+    },
     "Type '{0}' is missing property '{1}' from type '{2}'.": {
         "category": "NoPrefix",
         "code": 4000

@@ -7,7 +7,6 @@ class C {
     public static bar() { }
 }
 
-//BUG 733796
 class D extends C {
     public static foo() {
         super.bar(); // error

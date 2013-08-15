@@ -762,7 +762,7 @@ module TypeScript {
     "code": 2101,
     "category": DiagnosticCategory.Error
   },
-  "'super' property access is permitted only in a constructor, instance member function, or instance member accessor of a derived class.": {
+  "'super' property access is permitted only in a constructor, member function, or member accessor of a derived class.": {
     "code": 2102,
     "category": DiagnosticCategory.Error
   },
@@ -998,7 +998,7 @@ module TypeScript {
     "code": 2165,
     "category": DiagnosticCategory.Error
   },
-  "Only public instance methods of the base class are accessible via the 'super' keyword.": {
+  "Only public methods of the base class are accessible via the 'super' keyword.": {
     "code": 2166,
     "category": DiagnosticCategory.Error
   },
@@ -1104,6 +1104,10 @@ module TypeScript {
   },
   "All declarations of merged declaration '{0}' must be exported or not exported.": {
     "code": 2192,
+    "category": DiagnosticCategory.Error
+  },
+  "'super' cannot be referenced in constructor arguments.": {
+    "code": 2155,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {

@@ -2460,9 +2460,7 @@ module TypeScript {
                     context.pushContextualType(typeExprSymbol, context.inProvisionalResolution(), null);
                 }
 
-                if (inConstructorArgumentList) {
-                    context.inConstructorArguments = inConstructorArgumentList;
-                }
+                context.inConstructorArguments = inConstructorArgumentList || (decl.flags & PullElementFlags.PropertyParameter) !== 0;
 
                 context.isInStaticInitializer = (decl.flags & PullElementFlags.Static) != 0;
                 initExprSymbol = this.resolveAST(varDecl.init, typeExprSymbol != null, wrapperDecl, context);
@@ -5281,7 +5279,7 @@ module TypeScript {
                 this.setSymbolForAST(ast, symbol, context);
             }
 
-            this.checkForThisOrSuperCaptureInArrowFunction(ast, enclosingDecl);
+            this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
 
             return symbol;
         }
@@ -5297,46 +5295,9 @@ module TypeScript {
                     thisTypeSymbol = this.getNewErrorTypeSymbol();
                 }
                 else {
-                    var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
-
-                    // work back up the decl path, until you can find a class
-                    // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model.
-                    // PULLTODO: Why is this 'obviously not completely correct'.  
-                    if (declPath.length) {
-                        var isStaticContext = false;
-                        for (var i = declPath.length - 1; i >= 0; i--) {
-                            var decl = declPath[i];
-                            var declKind = decl.kind;
-                            var declFlags = decl.flags;
-
-                            if (declFlags & PullElementFlags.Static) {
-                                isStaticContext = true;
-                            }
-                            else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
-                                break;
-                            }
-                            else if (declKind === PullElementKind.Function) {
-                                break;
-                            }
-                            else if (declKind === PullElementKind.Class) {
-                                if (context.isInStaticInitializer) {
-                                    thisTypeSymbol = this.getNewErrorTypeSymbol();
-                                }
-                                else {
-                                    var classSymbol = <PullTypeSymbol>decl.getSymbol();
-                                    classDecl = decl;
-                                    if (isStaticContext) {
-                                        var constructorSymbol = classSymbol.getConstructorMethod();
-                                        thisTypeSymbol = constructorSymbol.type;
-                                    }
-                                    else {
-                                        thisTypeSymbol = classSymbol;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
+                    thisTypeSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context) || thisTypeSymbol;
+                    var decls = thisTypeSymbol.getDeclarations();
+                    classDecl = decls && decls[0];
                 }
             }
 
@@ -5365,6 +5326,48 @@ module TypeScript {
             return thisTypeSymbol;
         }
 
+        private getContextualClassSymbolForEnclosingDecl(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
+
+            // work back up the decl path, until you can find a class
+            if (declPath.length) {
+                var isStaticContext = false;
+                for (var i = declPath.length - 1; i >= 0; i--) {
+                    var decl = declPath[i];
+                    var declKind = decl.kind;
+                    var declFlags = decl.flags;
+
+                    if (declFlags & PullElementFlags.Static) {
+                        isStaticContext = true;
+                    }
+                    else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
+                        return null;
+                    }
+                    else if (declKind === PullElementKind.Function) {
+                        return null;
+                    }
+                    else if (declKind === PullElementKind.Class) {
+                        if (context.isInStaticInitializer) {
+                            return this.getNewErrorTypeSymbol();
+                        }
+                        else {
+                            var classSymbol = <PullTypeSymbol>decl.getSymbol();
+                            if (isStaticContext) {
+                                var constructorSymbol = classSymbol.getConstructorMethod();
+                                return constructorSymbol.type;
+                            }
+                            else {
+                                return classSymbol;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
 
@@ -5387,30 +5390,9 @@ module TypeScript {
             }
 
             var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
-            var classSymbol: PullTypeSymbol = null;
             var superType = this.semanticInfoChain.anyTypeSymbol;
 
-            // work back up the decl path, until you can find a class
-            if (declPath.length) {
-                for (var i = declPath.length - 1; i >= 0; i--) {
-                    var decl = declPath[i];
-                    var declFlags = decl.flags;
-
-                    if (decl.kind === PullElementKind.FunctionExpression &&
-                        !(declFlags & PullElementFlags.FatArrow)) {
-
-                        break;
-                    }
-                    else if (declFlags & PullElementFlags.Static) {
-                        break;
-                    }
-                    else if (decl.kind === PullElementKind.Class) {
-                        classSymbol = <PullTypeSymbol>decl.getSymbol();
-
-                        break;
-                    }
-                }
-            }
+            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
 
             if (classSymbol) {
 
@@ -5438,18 +5420,22 @@ module TypeScript {
                         context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors, null);
                     }
                     // A super property access is permitted only in a constructor, instance member function, or instance member accessor
-                    else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
-                        ((nonLambdaEnclosingDecl.flags & PullElementFlags.Static) !== 0)) {
-                        context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_instance_member_function_or_instance_member_accessor_of_a_derived_class, null);
+                    else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Class && nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
+                            context.isInStaticInitializer) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class, null);
                     }
                     // A super is permitted only in a derived class 
                     else if (!this.enclosingClassIsDerived(enclosingDecl)) {
                         context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes, null);
                     }
+                    // Cannot be referenced in constructor arguments
+                    else if (context.inConstructorArguments) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments, null);
+                    }
                 }
             }
 
-            this.checkForThisOrSuperCaptureInArrowFunction(ast, enclosingDecl);
+            this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
 
             return superType;
         }
@@ -9831,19 +9817,18 @@ module TypeScript {
 
         public enclosingClassIsDerived(decl: PullDecl): boolean {
             if (decl) {
-                var parentDecl = decl.getParentDecl();
                 var classSymbol: PullTypeSymbol = null;
 
-                while (parentDecl) {
-                    if (parentDecl.kind == PullElementKind.Class) {
-                        classSymbol = <PullTypeSymbol>parentDecl.getSymbol();
+                while (decl) {
+                    if (decl.kind == PullElementKind.Class) {
+                        classSymbol = <PullTypeSymbol>decl.getSymbol();
                         if (classSymbol.getExtendedTypes().length > 0) {
                             return true;
                         }
 
                         break;
                     }
-                    parentDecl = parentDecl.getParentDecl();
+                    decl = decl.getParentDecl();
                 }
             }
 
@@ -9911,7 +9896,7 @@ module TypeScript {
             return false;
         }
 
-        private checkForThisOrSuperCaptureInArrowFunction(expression: AST, enclosingDecl: PullDecl): void {
+        private checkForThisCaptureInArrowFunction(expression: AST, enclosingDecl: PullDecl): void {
 
             var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
 
@@ -10358,7 +10343,7 @@ module TypeScript {
                     resolvedName.kind !== PullElementKind.Method) {
 
                     context.postError(this.unitPath, memberAccessExpression.operand2.minChar, memberAccessExpression.operand2.getLength(),
-                        DiagnosticCode.Only_public_instance_methods_of_the_base_class_are_accessible_via_the_super_keyword, null);
+                        DiagnosticCode.Only_public_methods_of_the_base_class_are_accessible_via_the_super_keyword, null);
                     return true;
                 }
             }

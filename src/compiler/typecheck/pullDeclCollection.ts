@@ -230,6 +230,7 @@ module TypeScript {
             var propDecl = new PullDecl(argDecl.id.text(), argDecl.id.actualText, PullElementKind.Property, declFlags, span, context.scriptName);
             propDecl.setValueDecl(decl);
             decl.setFlag(PullElementFlags.PropertyParameter);
+            propDecl.setFlag(PullElementFlags.PropertyParameter);
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             propDecl.setParentDecl(context.parentChain[context.parentChain.length - 2]);
             context.semanticInfo.setASTForDecl(decl, argDecl);

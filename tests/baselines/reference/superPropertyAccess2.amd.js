@@ -22,7 +22,6 @@ var C = (function () {
     return C;
 })();
 
-//BUG 733796
 var D = (function (_super) {
     __extends(D, _super);
     function D() {
