@@ -1,4 +1,3 @@
-// bug 757578: typeparameter referenced in constructor arguments has wrong visibility in module
 define(["require", "exports"], function(require, exports) {
     var A = (function () {
         function A(callback) {

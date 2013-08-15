@@ -1,5 +1,3 @@
-// bug 757578: typeparameter referenced in constructor arguments has wrong visibility in module
-
 export class A<T1>{
     constructor( public callback: (self: A<T1>) => void) {
         var child = new B(this);

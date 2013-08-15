@@ -1,4 +1,3 @@
-// bug 755637: Return type from enum indexed with computed string not correct
 var MyEnumType;
 (function (MyEnumType) {
     MyEnumType[MyEnumType["foo"] = 0] = "foo";

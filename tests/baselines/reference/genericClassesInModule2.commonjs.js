@@ -1,4 +1,3 @@
-// bug 757578: typeparameter referenced in constructor arguments has wrong visibility in module
 var A = (function () {
     function A(callback) {
         this.callback = callback;
