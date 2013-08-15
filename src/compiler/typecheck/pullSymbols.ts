@@ -88,8 +88,8 @@ module TypeScript {
         }
 
         public isAlias() { return false; }
-        public isContainer() { return false; }
 
+        public isContainer() { return false; }
 
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
@@ -2054,7 +2054,6 @@ module TypeScript {
         }
 
         public invalidate() {
-
             if (this.instanceSymbol) {
                 this.instanceSymbol.invalidate();
             }
@@ -2065,6 +2064,7 @@ module TypeScript {
         public setExportAssignedValueSymbol(symbol: PullSymbol) {
             this.assignedValue = symbol; 
         }
+
         public getExportAssignedValueSymbol() {
             return this.assignedValue;
         }
