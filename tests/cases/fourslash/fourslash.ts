@@ -312,15 +312,11 @@ module FourSlashInterface {
             FourSlash.currentTestState.verifyOccurrencesAtPositionListCount(expectedCount);
         }
 
-        public printNavigationItems(searchValue: string) {
-            FourSlash.currentTestState.printNavigationItems(searchValue);
-        }
-
-        public printScriptLexicalStructureItems() {
-            FourSlash.currentTestState.printScriptLexicalStructureItems();
+        public completionEntryDetailIs(entryName: string, type: string, docComment?: string, fullSymbolName?: string, kind?: string) {
+            FourSlash.currentTestState.verifyCompletionEntryDetails(entryName, type, docComment, fullSymbolName, kind);
         }
     }
-   
+
     export class edit {
         public backspace(count?: number) {
             FourSlash.currentTestState.deleteCharBehindMarker(count);
@@ -417,14 +413,21 @@ module FourSlashInterface {
         public printBreakpointAtCurrentLocation() {
             FourSlash.currentTestState.printBreakpointAtCurrentLocation();
         }
+
         public printNameOrDottedNameSpans(pos: number) {
             FourSlash.currentTestState.printNameOrDottedNameSpans(pos);
         }
+
         public printErrorList() {
             FourSlash.currentTestState.printErrorList();
         }
-        public printNavigationItems() {
+
+        public printNavigationItems(searchValue?: string) {
             FourSlash.currentTestState.printNavigationItems();
+        }
+
+        public printScriptLexicalStructureItems() {
+            FourSlash.currentTestState.printScriptLexicalStructureItems();
         }
     }
 

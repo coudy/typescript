@@ -507,6 +507,57 @@ module TypeScript {
             return this.findDecls(declString, declKind);
         }
 
+        public findMatchingValidDecl(invalidatedDecl: PullDecl): PullDecl[]{
+            var unitPath = invalidatedDecl.getScriptName();
+            var unit = this.getUnit(unitPath);
+            if (!unit) {
+                return null;
+            }
+
+            var declsInPath: PullDecl[] = [];
+            var current = invalidatedDecl;
+            while (current) {
+                if (current.kind !== PullElementKind.Script) {
+                    declsInPath.unshift(current);
+                }
+
+                current = current.getParentDecl();
+            }
+
+            // now search for that decl
+            var declsToSearch = unit.getTopLevelDecls();
+            var foundDecls: PullDecl[] = [];
+            var keepSearching = (invalidatedDecl.kind & PullElementKind.Container) || 
+                (invalidatedDecl.kind & PullElementKind.Interface) ||
+                (invalidatedDecl.kind & PullElementKind.Class) ||
+                (invalidatedDecl.kind & PullElementKind.Enum);
+
+            for (var i = 0; i < declsInPath.length; i++) {
+                var declInPath = declsInPath[i];
+                var decls: PullDecl[] = [];
+
+                for (var j = 0; j < declsToSearch.length; j++) {
+                    foundDecls = declsToSearch[j].searchChildDecls(declInPath.name, declInPath.kind);
+
+                    decls.push.apply(decls, foundDecls);
+
+                    // Unless we're searching for an interface or module, we've found the one true
+                    // decl, so don't bother searching the rest of the top-level decls
+                    if (foundDecls.length && !keepSearching) {
+                        break;
+                    }
+                }
+
+                declsToSearch = decls;
+
+                if (declsToSearch.length == 0) {
+                    break;
+                }
+            }
+
+            return declsToSearch;
+        }
+
         public findSymbol(declPath: string[], declType: PullElementKind): PullSymbol {
 
             var cacheID = this.getDeclPathCacheID(declPath, declType);

@@ -414,6 +414,10 @@ module Services {
             return this.compiler.getTopLevelDeclarations(fileName);
         }
 
+        public findMatchingValidDecl(decl: TypeScript.PullDecl): TypeScript.PullDecl[]{
+            return this.compiler.semanticInfoChain.findMatchingValidDecl(decl);
+        }
+
         private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             var document: TypeScript.Document = this.compiler.getDocument(fileName);
 

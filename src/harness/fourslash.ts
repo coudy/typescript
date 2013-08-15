@@ -411,6 +411,24 @@ module FourSlash {
             }
         }
 
+        public verifyCompletionEntryDetails(entryName: string, type: string, docComment?: string, fullSymbolName?: string, kind?: string) {
+            var details = this.getCompletionEntryDetails(entryName);
+
+            assert.equal(details.type, type);
+
+            if (docComment != undefined) {
+                assert.equal(details.docComment, docComment);
+            }
+
+            if (fullSymbolName !== undefined) {
+                assert.equal(details.fullSymbolName, fullSymbolName);
+            }
+
+            if (kind !== undefined) {
+                assert.equal(details.kind, kind);
+            }
+        }
+
         public verifyReferencesCountIs(count: number, localFilesOnly: boolean = true) {
             var references = this.getReferencesAtCaret();
             var referencesCount = 0;
