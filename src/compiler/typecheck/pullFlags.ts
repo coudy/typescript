@@ -99,7 +99,7 @@ module TypeScript {
             FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature | ObjectType |
             FunctionType | ConstructorType | EnumMember | ErrorType | Expression | WithBlock | CatchBlock,
 
-        SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature,
+        SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor,
 
         // Warning: SomeValue and SomeType (along with their constituents) must be disjoint
         SomeValue = Variable | Parameter | Property | EnumMember | SomeFunction,

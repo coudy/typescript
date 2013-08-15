@@ -188,14 +188,17 @@ module TypeScript {
 
             // add to the appropriate cache
             var declName = childDecl.name;
-            var cache = this.getChildDeclCache(childDecl.kind);
-            var childrenOfName = <PullDecl[]>cache[declName];
-            if (!childrenOfName) {
-                childrenOfName = [];
-            }
 
-            childrenOfName.push(childDecl);
-            cache[declName] = childrenOfName;
+            if (!(childDecl.kind & PullElementKind.SomeSignature)) {
+                var cache = this.getChildDeclCache(childDecl.kind);
+                var childrenOfName = <PullDecl[]>cache[declName];
+                if (!childrenOfName) {
+                    childrenOfName = [];
+                }
+
+                childrenOfName.push(childDecl);
+                cache[declName] = childrenOfName;
+            }
         }
 
         //public lookupChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
