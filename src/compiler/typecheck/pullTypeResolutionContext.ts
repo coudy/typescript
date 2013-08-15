@@ -166,6 +166,7 @@ module TypeScript {
 
         public resolvingTypeReference = false;
         public resolvingNamespaceMemberAccess = false;
+        public resolvingTypeQueryExpression = false;
 
         public resolveAggressively = false;
 

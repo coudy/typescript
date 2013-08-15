@@ -2148,7 +2148,10 @@ module TypeScript {
 
                 var savedResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = false;
+                var savedResolvingTypeQueryExpression = context.resolvingTypeQueryExpression;
+                context.resolvingTypeQueryExpression = true;
                 var valueSymbol = this.resolveAST(typeQueryTerm, false, enclosingDecl, context);
+                context.resolvingTypeQueryExpression = savedResolvingTypeQueryExpression;
                 context.resolvingTypeReference = savedResolvingTypeReference;
 
                 if (valueSymbol && valueSymbol.isAlias()) {
@@ -4386,7 +4389,9 @@ module TypeScript {
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
-                aliasSymbol.isUsedAsValue = true;
+                if (!context.resolvingTypeQueryExpression) {
+                    aliasSymbol.isUsedAsValue = true;
+                }
 
                 if (!nameSymbol.isResolved) {
                     this.resolveDeclaredSymbol(nameSymbol, enclosingDecl, context);
@@ -4476,7 +4481,9 @@ module TypeScript {
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
-                (<PullTypeAliasSymbol>lhs).isUsedAsValue = true;
+                if (!context.resolvingTypeQueryExpression) {
+                    (<PullTypeAliasSymbol>lhs).isUsedAsValue = true;
+                }
                 lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
             }
 
