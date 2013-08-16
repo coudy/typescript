@@ -3140,6 +3140,11 @@ module TypeScript {
         var typeParameters = signature.getTypeParameters();
         var returnType = signature.returnType;
 
+        // this can only be the case if there were upstream errors
+        if (!returnType) {
+            returnType = resolver.semanticInfoChain.anyTypeSymbol;
+        }
+
         for (var i = 0; i < typeParameters.length; i++) {
             newSignature.addTypeParameter(typeParameters[i]);
         }
@@ -3183,6 +3188,12 @@ module TypeScript {
         newSignature.returnType = newReturnType;
 
         for (var k = 0; k < parameters.length; k++) {
+
+            if (!parameters[k].isResolved) {
+                // This can only be the case if we're specializing a class that inherited an implicit
+                // constructor containing parameters
+                resolver.resolveDeclaredSymbol(parameters[k], enclosingDecl, context);
+            }
 
             newParameter = new PullSymbol(parameters[k].name, parameters[k].kind);
             newParameter.setRootSymbol(parameters[k]);

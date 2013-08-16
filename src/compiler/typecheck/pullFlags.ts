@@ -42,6 +42,8 @@ module TypeScript {
 
         HasDefaultArgs = 1 << 25,
 
+        ConstructorParameter = 1 << 26,
+
         ImplicitVariable = ClassConstructorVariable | InitializedModule | InitializedDynamicModule | InitializedEnum,
         SomeInitializedModule = InitializedModule | InitializedDynamicModule | InitializedEnum,
     }

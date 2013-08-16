@@ -225,12 +225,21 @@ module TypeScript {
             parent.flags |= PullElementFlags.HasDefaultArgs;
         }
 
+        if (parent.kind == PullElementKind.ConstructorMethod) {
+            decl.setFlag(PullElementFlags.ConstructorParameter);
+        }
+
         // if it's a property type, we'll need to add it to the parent's parent as well
         if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
             var propDecl = new PullDecl(argDecl.id.text(), argDecl.id.actualText, PullElementKind.Property, declFlags, span, context.scriptName);
             propDecl.setValueDecl(decl);
             decl.setFlag(PullElementFlags.PropertyParameter);
             propDecl.setFlag(PullElementFlags.PropertyParameter);
+
+            if (parent.kind == PullElementKind.ConstructorMethod) {
+                propDecl.setFlag(PullElementFlags.ConstructorParameter);
+            }
+
             context.parentChain[context.parentChain.length - 2].addChildDecl(propDecl);
             propDecl.setParentDecl(context.parentChain[context.parentChain.length - 2]);
             context.semanticInfo.setASTForDecl(decl, argDecl);

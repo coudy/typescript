@@ -1012,7 +1012,7 @@ module TypeScript {
                     !symbol.isResolved &&
                     !symbol.type &&
                     resolvedSymbol &&
-                    symbol.hasFlag(PullElementFlags.PropertyParameter)) {
+                    symbol.hasFlag(PullElementFlags.PropertyParameter | PullElementFlags.ConstructorParameter)) {
 
                     symbol.type = resolvedSymbol.type;
                     symbol.setResolved();
@@ -1319,10 +1319,10 @@ module TypeScript {
                 if (!constructSignatures.length) {
                     var constructorSignature: PullSignatureSymbol;
 
+                    var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
+
                     // inherit parent's constructor signatures   
-                    if (parentType) {
-                        var parentClass = parentType;
-                        var parentConstructor = parentClass.getConstructorMethod();
+                    if (parentConstructor) {
                         var parentConstructorType = parentConstructor.type;
                         var parentConstructSignatures = parentConstructorType.getConstructSignatures();
 
@@ -1336,9 +1336,9 @@ module TypeScript {
                             // is safe to do here and now.)
 
                             parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                            parentConstructSignature.returnType = parentClass;
+                            parentConstructSignature.returnType = parentType;
                             parentConstructorType.addConstructSignature(parentConstructSignature);
-                            parentConstructSignature.addDeclaration(parentClass.getDeclarations()[0]);
+                            parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
 
                             var parentTypeParameters = parentConstructorType.getTypeParameters();
 
@@ -1394,10 +1394,14 @@ module TypeScript {
                 // constructor type before going and resolving our members.
                 if (parentType) {
                     var parentConstructorSymbol = parentType.getConstructorMethod();
-                    var parentConstructorTypeSymbol = parentConstructorSymbol.type;
 
-                    if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
-                        constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                    // this will only be null if we have upstream errors
+                    if (parentConstructorSymbol) {
+                        var parentConstructorTypeSymbol = parentConstructorSymbol.type;
+
+                        if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
+                            constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                        }
                     }
                 }
 
