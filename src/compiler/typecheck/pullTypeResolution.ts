@@ -1940,6 +1940,12 @@ module TypeScript {
 
                 // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                 if (this.isTypeArgumentOrWrapper(typeRef)) {
+
+                    if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeRef, <TypeReference>argDeclAST.typeExpr, context)) {
+                        context.postError(this.unitPath, argDeclAST.typeExpr.minChar, argDeclAST.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
+                        typeRef = this.specializeTypeToAny(typeRef, enclosingDecl, context);
+                    }
+
                     signature.hasAGenericParameter = true;
                 }
             }
@@ -1978,6 +1984,11 @@ module TypeScript {
                 if (paramSymbol.isVarArg && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType())) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null);
                     typeRef = this.getNewErrorTypeSymbol();
+                }
+
+                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeRef, <TypeReference>argDeclAST.typeExpr, context)) {
+                    context.postError(this.unitPath, argDeclAST.typeExpr.minChar, argDeclAST.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
+                    typeRef = this.specializeTypeToAny(typeRef, enclosingDecl, context);
                 }
 
                 // The contextual type now gets overriden by the type annotation
