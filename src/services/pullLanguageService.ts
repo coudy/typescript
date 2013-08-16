@@ -39,9 +39,9 @@ module Services {
         }
 
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
-            fileName = TypeScript.switchToForwardSlashes(fileName);
             var result: ReferenceEntry[] = [];
 
             var document = this.compilerState.getDocument(fileName);
@@ -117,7 +117,8 @@ module Services {
             return null;
         }
 
-        public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[]{
+        public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
@@ -173,6 +174,7 @@ module Services {
         }
 
         public getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
             var result: ReferenceEntry[] = [];
@@ -446,6 +448,7 @@ module Services {
         }
 
         public getSignatureAtPosition(fileName: string, position: number): SignatureInfo {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
@@ -580,6 +583,7 @@ module Services {
         }
 
         public getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
@@ -855,17 +859,23 @@ module Services {
         }
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
-            this.compilerState.refresh();
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.refresh();
+
             return this.compilerState.getSyntacticDiagnostics(fileName);
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
-            this.compilerState.refresh();
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.refresh();
+
             return this.compilerState.getSemanticDiagnostics(fileName);
         }
 
         public getEmitOutput(fileName: string): EmitOutput {
-            this.compilerState.refresh();
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.refresh();
+
             return this.compilerState.getEmitOutput(fileName);
         }
 
@@ -945,6 +955,9 @@ module Services {
         }
 
         public getTypeAtPosition(fileName: string, position: number): TypeInfo {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.refresh();
+
             var path = this.getTypeInfoEligiblePath(fileName, position, true);
             if (!path) {
                 return null;
@@ -1062,6 +1075,7 @@ module Services {
         }
 
         public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
             var document = this.compilerState.getDocument(fileName);
@@ -1252,6 +1266,8 @@ module Services {
         }
 
         public getCompletionEntryDetails(fileName: string, position: number, entryName: string): CompletionEntryDetails {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+
             // Ensure that the current active completion session is still valid for this request
             if (!this.activeCompletionSession ||
                 this.activeCompletionSession.fileName !== fileName ||
@@ -1489,6 +1505,9 @@ module Services {
         //
 
         public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.refresh();
+
             var path = this.getTypeInfoEligiblePath(fileName, startPos, false);
 
             if (!path) {
@@ -1508,12 +1527,15 @@ module Services {
         }
 
         public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
+
             var syntaxtree = this.getSyntaxTreeInternal(fileName);
             return Services.Breakpoints.getBreakpointLocation(syntaxtree, pos);
         }
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var manager = this.getFormattingManager(fileName, options);
@@ -1522,6 +1544,7 @@ module Services {
         }
 
         public getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var manager = this.getFormattingManager(fileName, options);
@@ -1530,6 +1553,7 @@ module Services {
         }
 
         public getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var manager = this.getFormattingManager(fileName, options);
@@ -1538,6 +1562,7 @@ module Services {
         }
 
         public getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var manager = this.getFormattingManager(fileName, options);
@@ -1577,6 +1602,7 @@ module Services {
         }
 
         public getOutliningRegions(fileName: string): TypeScript.TextSpan[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var syntaxTree = this.getSyntaxTree(fileName);
@@ -1588,6 +1614,7 @@ module Services {
         // the desired smart indent text (assuming the line is empty).
         // Return "null" in case the smart indent cannot be determined.
         public getIndentationAtPosition(fileName: string, position: number, editorOptions: EditorOptions): number {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var syntaxTree = this.getSyntaxTree(fileName);
@@ -1604,6 +1631,7 @@ module Services {
         // position corresponds to a "brace matchin" characters (e.g. "{" or "(", etc.)
         // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
@@ -1612,6 +1640,7 @@ module Services {
         }
 
         public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
@@ -1622,6 +1651,7 @@ module Services {
         }
 
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             this.minimalRefresh();
 
             return this.getSyntaxTreeInternal(fileName);
