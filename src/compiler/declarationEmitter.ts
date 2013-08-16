@@ -792,7 +792,7 @@ module TypeScript {
                 var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
                 var isExportedImportDecl = hasFlag(importDeclAST.getVarFlags(), VariableFlags.Exported);
 
-                if (isExportedImportDecl || importSymbol.typeUsedExternally || PullContainerTypeSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
+                if (isExportedImportDecl || importSymbol.typeUsedExternally || PullContainerSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
                     this.emitDeclarationComments(importDeclAST);
                     this.emitIndent();
                     if (isExportedImportDecl) {

@@ -11,5 +11,4 @@ module A {
     }
 }
 
-// BUG 742098
-var b: A.B; // should work
+var b: A.B; // ok

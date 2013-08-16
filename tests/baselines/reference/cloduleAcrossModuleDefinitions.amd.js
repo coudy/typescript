@@ -20,5 +20,4 @@ var A;
     var B = A.B;
 })(A || (A = {}));
 
-// BUG 742098
 var b;

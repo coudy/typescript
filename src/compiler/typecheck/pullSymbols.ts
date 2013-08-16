@@ -111,10 +111,10 @@ module TypeScript {
                 for (var j = 0; j < childDecls.length; j++) {
                     if (childDecls[j].kind === PullElementKind.TypeAlias) {
                         var symbol = <PullTypeAliasSymbol>childDecls[j].getSymbol();
-                        if (PullContainerTypeSymbol.usedAsSymbol(symbol, this)) {
+                        if (PullContainerSymbol.usedAsSymbol(symbol, this)) {
                             return symbol;
                         }
-                        if (this.rootSymbol && PullContainerTypeSymbol.usedAsSymbol(symbol, this.rootSymbol)) {
+                        if (this.rootSymbol && PullContainerSymbol.usedAsSymbol(symbol, this.rootSymbol)) {
                             return symbol;
                         }
                     }
@@ -611,10 +611,10 @@ module TypeScript {
             // If export assignment check if this is the symbol that is exported
             if (container.kind == PullElementKind.DynamicModule ||
                 (container.getAssociatedContainerType() && container.getAssociatedContainerType().kind == PullElementKind.DynamicModule)) {
-                var containerTypeSymbol = container.kind == PullElementKind.DynamicModule
-                    ? <PullContainerTypeSymbol>container
-                    : <PullContainerTypeSymbol>container.getAssociatedContainerType();
-                if (PullContainerTypeSymbol.usedAsSymbol(containerTypeSymbol, this)) {
+                var containerSymbol = container.kind == PullElementKind.DynamicModule
+                    ? <PullContainerSymbol>container
+                    : <PullContainerSymbol>container.getAssociatedContainerType();
+                if (PullContainerSymbol.usedAsSymbol(containerSymbol, this)) {
                     return true;
                 }
             }
@@ -979,10 +979,12 @@ module TypeScript {
 
         private _members: PullSymbol[] = sentinelEmptyArray;
         private _enclosedMemberTypes: PullTypeSymbol[] = null;
+        private _enclosedMemberContainers: PullTypeSymbol[] = null;
         private _typeParameters: PullTypeParameterSymbol[] = null;
         private _typeArguments: PullTypeSymbol[] = null;
         private _containedNonMembers: PullSymbol[] = null;
         private _containedNonMemberTypes: PullTypeSymbol[] = null;
+        private _containedNonMemberContainers: PullTypeSymbol[] = null;
 
         private _specializedVersionsOfThisType: PullTypeSymbol[] = null;
         private _arrayVersionOfThisType: PullTypeSymbol = null;
@@ -1004,9 +1006,11 @@ module TypeScript {
 
         private _memberNameCache: any = null;
         private _enclosedTypeNameCache: any = null;
+        private _enclosedContainerCache: any = null;
         private _typeParameterNameCache: any = null;
         private _containedNonMemberNameCache: any = null;
         private _containedNonMemberTypeNameCache: any = null;
+        private _containedNonMemberContainerCache: any = null;
         private _specializedTypeIDCache: any = null;
 
         private _hasGenericSignature = false;
@@ -1166,6 +1170,20 @@ module TypeScript {
             return nonMemberSymbol;
         }
 
+        public findContainedNonMemberContainer(containerName: string, kind = PullElementKind.None): PullTypeSymbol {
+            if (!this._containedNonMemberContainerCache) {
+                return null;
+            }
+
+            var nonMemberSymbol = this._containedNonMemberContainerCache[containerName];
+
+            if (nonMemberSymbol && kind != PullElementKind.None) {
+                nonMemberSymbol = ((nonMemberSymbol.kind & kind) != 0) ? nonMemberSymbol : null;
+            }
+
+            return nonMemberSymbol;
+        }
+
         public addMember(memberSymbol: PullSymbol): void {
             if (!memberSymbol) {
                 return;
@@ -1203,6 +1221,26 @@ module TypeScript {
 
             this._enclosedMemberTypes[this._enclosedMemberTypes.length] = enclosedType;
             this._enclosedTypeNameCache[enclosedType.name] = enclosedType;
+        }
+
+        public addEnclosedMemberContainer(enclosedContainer: PullTypeSymbol): void {
+
+            if (!enclosedContainer) {
+                return;
+            }
+
+            enclosedContainer.setContainer(this);
+
+            if (!this._enclosedContainerCache) {
+                this._enclosedContainerCache = new BlockIntrinsics();
+            }
+
+            if (!this._enclosedMemberContainers) {
+                this._enclosedMemberContainers = [];
+            }
+
+            this._enclosedMemberContainers[this._enclosedMemberContainers.length] = enclosedContainer;
+            this._enclosedContainerCache[enclosedContainer.name] = enclosedContainer;
         }
 
         public addEnclosedNonMember(enclosedNonMember: PullSymbol): void {
@@ -1243,6 +1281,26 @@ module TypeScript {
 
             this._containedNonMemberTypes[this._containedNonMemberTypes.length] = enclosedNonMemberType;
             this._containedNonMemberTypeNameCache[enclosedNonMemberType.name] = enclosedNonMemberType;
+        }
+
+        public addEnclosedNonMemberContainer(enclosedNonMemberContainer: PullTypeSymbol): void {
+
+            if (!enclosedNonMemberContainer) {
+                return;
+            }
+
+            enclosedNonMemberContainer.setContainer(this);
+
+            if (!this._containedNonMemberContainerCache) {
+                this._containedNonMemberContainerCache = new BlockIntrinsics();
+            }
+
+            if (!this._containedNonMemberContainers) {
+                this._containedNonMemberContainers = [];
+            }
+
+            this._containedNonMemberContainers[this._containedNonMemberContainers.length] = enclosedNonMemberContainer;
+            this._containedNonMemberContainerCache[enclosedNonMemberContainer.name] = enclosedNonMemberContainer;
         }
 
         public addTypeParameter(typeParameter: PullTypeParameterSymbol): void {
@@ -1728,6 +1786,22 @@ module TypeScript {
             return memberSymbol;
         }
 
+        public findNestedContainer(name: string, kind = PullElementKind.None): PullTypeSymbol {
+            var memberSymbol: PullTypeSymbol;
+
+            if (!this._enclosedContainerCache) {
+                return null;
+            }
+
+            memberSymbol = this._enclosedContainerCache[name];
+
+            if (memberSymbol && kind != PullElementKind.None) {
+                memberSymbol = ((memberSymbol.kind & kind) != 0) ? memberSymbol : null;
+            }
+
+            return memberSymbol;
+        }
+
         public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
 
             var allMembers: PullSymbol[] = [];
@@ -1763,9 +1837,16 @@ module TypeScript {
                 }
             }
 
-            if (this.isContainer() && this._enclosedMemberTypes) {
-                for (var i = 0; i < this._enclosedMemberTypes.length; i++) {
-                    allMembers[allMembers.length] = this._enclosedMemberTypes[i];
+            if (this.isContainer()) {
+                if (this._enclosedMemberTypes) {
+                    for (var i = 0; i < this._enclosedMemberTypes.length; i++) {
+                        allMembers[allMembers.length] = this._enclosedMemberTypes[i];
+                    }
+                }
+                if (this._enclosedMemberContainers) {
+                    for (var i = 0; i < this._enclosedMemberContainers.length; i++) {
+                        allMembers[allMembers.length] = this._enclosedMemberContainers[i];
+                    }
                 }
             }
 
@@ -2032,12 +2113,12 @@ module TypeScript {
     }
 
     // represents the module "namespace" type
-    export class PullContainerTypeSymbol extends PullTypeSymbol {
+    export class PullContainerSymbol extends PullTypeSymbol {
         public instanceSymbol: PullSymbol = null;
 
         private assignedValue: PullSymbol = null;
         private assignedType: PullTypeSymbol = null;
-        private assignedContainer: PullContainerTypeSymbol = null;
+        private assignedContainer: PullContainerSymbol = null;
 
         constructor(name: string, kind = PullElementKind.Container) {
             super(name, kind);
@@ -2077,7 +2158,7 @@ module TypeScript {
             return this.assignedType;
         }
 
-        public setExportAssignedContainerSymbol(container: PullContainerTypeSymbol) {
+        public setExportAssignedContainerSymbol(container: PullContainerSymbol) {
             this.assignedContainer = container;
         }
 
@@ -2100,12 +2181,12 @@ module TypeScript {
                 return true;
             }
 
-            var containerTypeSymbol = <PullContainerTypeSymbol>containerSymbol;
-            var valueExportSymbol = containerTypeSymbol.getExportAssignedValueSymbol();
-            var typeExportSymbol = containerTypeSymbol.getExportAssignedTypeSymbol();
-            var containerExportSymbol = containerTypeSymbol.getExportAssignedContainerSymbol();
+            var moduleSymbol = <PullContainerSymbol>containerSymbol;
+            var valueExportSymbol = moduleSymbol.getExportAssignedValueSymbol();
+            var typeExportSymbol = moduleSymbol.getExportAssignedTypeSymbol();
+            var containerExportSymbol = moduleSymbol.getExportAssignedContainerSymbol();
             if (valueExportSymbol || typeExportSymbol || containerExportSymbol) {
-                return valueExportSymbol == symbol || typeExportSymbol == symbol || containerExportSymbol == symbol || PullContainerTypeSymbol.usedAsSymbol(containerExportSymbol, symbol);
+                return valueExportSymbol == symbol || typeExportSymbol == symbol || containerExportSymbol == symbol || PullContainerSymbol.usedAsSymbol(containerExportSymbol, symbol);
             }
 
             return false;
@@ -2119,7 +2200,7 @@ module TypeScript {
     export class PullTypeAliasSymbol extends PullTypeSymbol {
         public assignedValue: PullSymbol = null;
         public assignedType: PullTypeSymbol = null;
-        public assignedContainer: PullContainerTypeSymbol = null;
+        public assignedContainer: PullContainerSymbol = null;
 
         public isUsedAsValue = false;
         public typeUsedExternally = false;
@@ -2186,11 +2267,11 @@ module TypeScript {
             return this.assignedContainer;
         }
 
-        public setAssignedContainerSymbol(container: PullContainerTypeSymbol): void {
+        public setAssignedContainerSymbol(container: PullContainerSymbol): void {
             this.assignedContainer = container;
         }
 
-        public getExportAssignedContainerSymbol(): PullContainerTypeSymbol {
+        public getExportAssignedContainerSymbol(): PullContainerSymbol {
             if (this.retrievingExportAssignment) {
                 return null;
             }
@@ -2250,6 +2331,14 @@ module TypeScript {
         public findNestedType(name: string): PullTypeSymbol {
             if (this.assignedType) {
                 return this.assignedType.findNestedType(name);
+            }
+
+            return null;
+        }
+
+        public findNestedContainer(name: string): PullTypeSymbol {
+            if (this.assignedType) {
+                return this.assignedType.findNestedContainer(name);
             }
 
             return null;

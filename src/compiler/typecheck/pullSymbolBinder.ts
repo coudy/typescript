@@ -87,7 +87,7 @@ module TypeScript {
 
             if (parent) {
                 if (returnInstanceType && parent.isType() && parent.isContainer()) {
-                    var instanceSymbol = (<PullContainerTypeSymbol>parent).getInstanceSymbol();
+                    var instanceSymbol = (<PullContainerSymbol>parent).getInstanceSymbol();
 
                     if (instanceSymbol) {
                         return instanceSymbol.type;
@@ -130,6 +130,8 @@ module TypeScript {
         // Called by all the bind methods when searching for existing symbols to reuse. Returns the symbol, or null if it does not exist.
         private getExistingSymbol(decl: PullDecl, searchKind: PullElementKind, parent: PullTypeSymbol): PullSymbol {
             var lookingForValue = (searchKind & PullElementKind.SomeValue) !== 0;
+            var lookingForType = (searchKind & PullElementKind.SomeType) !== 0;
+            var lookingForContainer = (searchKind & PullElementKind.SomeContainer) !== 0;
             var name = decl.name;
             if (parent) {
                 var isExported = (decl.flags & PullElementFlags.Exported) !== 0;
@@ -139,16 +141,22 @@ module TypeScript {
                 if (lookingForValue) {
                     prevSymbol = parent.findContainedNonMember(name);
                 }
-                else {
+                else if (lookingForType) {
                     prevSymbol = parent.findContainedNonMemberType(name, searchKind);
+                }
+                else if (lookingForContainer) {
+                    prevSymbol = parent.findContainedNonMemberContainer(name, searchKind);
                 }
                 var prevIsExported = !prevSymbol; // We didn't find it as a local, so it must be exported if it exists
                 if (!prevSymbol) {
                     if (lookingForValue) {
                         prevSymbol = parent.findMember(name, false);
                     }
-                    else {
+                    else if (lookingForType) {
                         prevSymbol = parent.findNestedType(name, searchKind);
+                    }
+                    else if (lookingForContainer) {
+                        prevSymbol = parent.findNestedContainer(name, searchKind);
                     }
                 }
 
@@ -216,7 +224,7 @@ module TypeScript {
 
             var modName = moduleContainerDecl.name;
 
-            var moduleContainerTypeSymbol: PullContainerTypeSymbol = null;
+            var moduleContainerTypeSymbol: PullContainerSymbol = null;
             var moduleInstanceSymbol: PullSymbol = null;
             var moduleInstanceTypeSymbol: PullTypeSymbol = null;
 
@@ -236,7 +244,7 @@ module TypeScript {
 
             var createdNewSymbol = false;
 
-            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.getExistingSymbol(moduleContainerDecl, searchKind, parent);
+            moduleContainerTypeSymbol = <PullContainerSymbol>this.getExistingSymbol(moduleContainerDecl, searchKind, parent);
 
             if (moduleContainerTypeSymbol) {
 
@@ -259,7 +267,7 @@ module TypeScript {
                 moduleInstanceSymbol = moduleContainerTypeSymbol.getInstanceSymbol();
             }
             else {
-                moduleContainerTypeSymbol = new PullContainerTypeSymbol(modName, moduleKind);
+                moduleContainerTypeSymbol = new PullContainerSymbol(modName, moduleKind);
                 createdNewSymbol = true;
 
                 if (!parent) {
@@ -320,7 +328,7 @@ module TypeScript {
 
                         if (variableSymbol) {
                             if (variableSymbol.isContainer()) {
-                                variableSymbol = (<PullContainerTypeSymbol>variableSymbol).getInstanceSymbol();
+                                variableSymbol = (<PullContainerSymbol>variableSymbol).getInstanceSymbol();
                             }
                             else if (variableSymbol && variableSymbol.isType()) {
                                 variableSymbol = (<PullTypeSymbol>variableSymbol).getConstructorMethod();
@@ -377,10 +385,10 @@ module TypeScript {
             if (createdNewSymbol) {
                 if (parent) {
                     if (moduleContainerDecl.flags & PullElementFlags.Exported) {
-                        parent.addEnclosedMemberType(moduleContainerTypeSymbol);
+                        parent.addEnclosedMemberContainer(moduleContainerTypeSymbol);
                     }
                     else {
-                        parent.addEnclosedNonMemberType(moduleContainerTypeSymbol);
+                        parent.addEnclosedNonMemberContainer(moduleContainerTypeSymbol);
                     }
                 }
             }
@@ -454,10 +462,10 @@ module TypeScript {
             if (parent && !parentHadSymbol) {
 
                 if (declFlags & PullElementFlags.Exported) {
-                    parent.addEnclosedMemberType(importSymbol);
+                    parent.addEnclosedMemberContainer(importSymbol);
                 }
                 else {
-                    parent.addEnclosedNonMemberType(importSymbol);
+                    parent.addEnclosedNonMemberContainer(importSymbol);
                 }
             }
         }
@@ -956,7 +964,7 @@ module TypeScript {
                     }
                 }
                 else if (declFlags & PullElementFlags.SomeInitializedModule) {
-                    var moduleContainerTypeSymbol: PullContainerTypeSymbol = null;
+                    var moduleContainerTypeSymbol: PullContainerSymbol = null;
                     var moduleParent = this.getParent(variableDeclaration);
 
                     if (moduleParent) {
@@ -964,7 +972,7 @@ module TypeScript {
 
                         for (var i = 0; i < members.length; i++) {
                             if ((members[i].name === declName) && (members[i].isContainer())) {
-                                moduleContainerTypeSymbol = <PullContainerTypeSymbol>members[i];
+                                moduleContainerTypeSymbol = <PullContainerSymbol>members[i];
                                 break;
                             }
                         }
@@ -981,16 +989,16 @@ module TypeScript {
 
                                 for (var i = 0; i < childDecls.length; i++) {
                                     if (childDecls[i].getValueDecl() === variableDeclaration) {
-                                        moduleContainerTypeSymbol = <PullContainerTypeSymbol>childDecls[i].getSymbol();
+                                        moduleContainerTypeSymbol = <PullContainerSymbol>childDecls[i].getSymbol();
                                     }
                                 }
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.semanticInfo.getPath());
+                            moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.semanticInfo.getPath());
 
                             if (!moduleContainerTypeSymbol) {
-                                moduleContainerTypeSymbol = <PullContainerTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, this.semanticInfo.getPath());
+                                moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, this.semanticInfo.getPath());
                             }
                         }
                     }

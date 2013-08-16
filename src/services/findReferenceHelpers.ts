@@ -10,10 +10,10 @@ module Services {
 
             // Unwrap modules so that we're always referring to the variable.
             if (!firstSymbol.isAlias() && firstSymbol.isContainer()) {
-                firstSymbol = (<TypeScript.PullContainerTypeSymbol>firstSymbol).getInstanceSymbol();
+                firstSymbol = (<TypeScript.PullContainerSymbol>firstSymbol).getInstanceSymbol();
             }
             if (!secondSymbol.isAlias() && secondSymbol.isContainer()) {
-                secondSymbol = (<TypeScript.PullContainerTypeSymbol>secondSymbol).getInstanceSymbol();
+                secondSymbol = (<TypeScript.PullContainerSymbol>secondSymbol).getInstanceSymbol();
             }
 
             if (firstSymbol.kind === secondSymbol.kind) {
