@@ -305,6 +305,7 @@ module TypeScript {
         Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element: "Enums with multiple declarations must provide an initializer for the first enum element.",
         _0_overload_s: " (+ {0} overload(s))",
         Variable_declaration_cannot_have_the_same_name_as_an_import_declaration: "Variable declaration cannot have the same name as an import declaration.",
+        Signature_expected_0_type_arguments_got_1_instead: "Signature expected {0} type arguments, got {1} instead.",
         Current_host_does_not_support_0_option: "Current host does not support '{0}' option.",
         ECMAScript_target_version_0_not_supported_Using_default_1_code_generation: "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.",
         Module_code_generation_0_not_supported: "Module code generation '{0}' not supported.",

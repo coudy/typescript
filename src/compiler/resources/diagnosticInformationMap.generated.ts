@@ -1218,6 +1218,10 @@ module TypeScript {
     "code": 4026,
     "category": DiagnosticCategory.Error
   },
+  "Signature expected {0} type arguments, got {1} instead.": {
+    "code": 4027,
+    "category": DiagnosticCategory.Error
+  },
   "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error

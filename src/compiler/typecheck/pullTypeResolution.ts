@@ -6217,6 +6217,8 @@ module TypeScript {
                 typeArgs = targetTypeSymbol.getTypeArguments();
             }
 
+            var triedToInferTypeArgs: boolean = false;
+
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
             // otherwise, try to specialize to the type arguments above
@@ -6230,7 +6232,6 @@ module TypeScript {
                 var prevSpecializingToAny = context.specializingToAny;
                 var prevSpecializing: boolean = context.isSpecializingSignatureAtCallSite;
                 var beforeResolutionSignatures = signatures;
-                var triedToInferTypeArgs: boolean;
 
                 for (var i = 0; i < signatures.length; i++) {
                     typeParameters = signatures[i].getTypeParameters();
@@ -6449,6 +6450,9 @@ module TypeScript {
 
             if (!signature.isGeneric() && callEx.typeArguments) {
                 context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments, null);
+            }
+            else if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
+                context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]);
             }
 
             var returnType = isSuperCall ? this.semanticInfoChain.voidTypeSymbol : signature.returnType;
@@ -6777,6 +6781,10 @@ module TypeScript {
                             }
                         }
                     }
+                }
+
+                if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
+                    context.postError(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]);
                 }
 
                 returnType = signature.returnType;
