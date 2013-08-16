@@ -1063,7 +1063,7 @@ module TypeScript {
                         }
                     }
                 }
-                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
+                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && pullFunctionDecl && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
                     this.writeLineToOutput("");
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
