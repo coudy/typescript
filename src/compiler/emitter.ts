@@ -1146,7 +1146,7 @@ module TypeScript {
                 this.recordSourceMappingStart(varDecl);
 
                 var varDeclName = varDecl.id.actualText;
-                var quoted = isQuoted(varDeclName);
+                var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isNumber;
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1157,7 +1157,7 @@ module TypeScript {
                     // class
                     if (this.emitState.container !== EmitContainer.Args) {
                         if (varDecl.isStatic()) {
-                            if (quoted) {
+                            if (quotedOrNumber) {
                                 this.writeToOutput(parentSymbol.getName() + "[");
                             }
                             else {
@@ -1165,7 +1165,7 @@ module TypeScript {
                             }
                         }
                         else {
-                            if (quoted) {
+                            if (quotedOrNumber) {
                                 this.writeToOutput("this[");
                             }
                             else {
@@ -1181,7 +1181,7 @@ module TypeScript {
                     }
                     else {
                         if (this.emitState.container === EmitContainer.DynamicModule) {
-                            if (quoted) {
+                            if (quotedOrNumber) {
                                 this.writeToOutput("exports[");
                             }
                             else {
@@ -1189,7 +1189,7 @@ module TypeScript {
                             }
                         }
                         else {
-                            if (quoted) {
+                            if (quotedOrNumber) {
                                 this.writeToOutput(this.moduleName + "[");
                             }
                             else {
@@ -1204,7 +1204,7 @@ module TypeScript {
 
                 this.writeToOutputWithSourceMapRecord(varDecl.id.actualText, varDecl.id);
 
-                if (quoted) {
+                if (quotedOrNumber) {
                     this.writeToOutput("]");
                 }
 
@@ -1805,7 +1805,7 @@ module TypeScript {
                 this.emitComments(funcDecl, true);
 
                 var functionName = funcDecl.getNameText();
-                if (isQuoted(functionName)) {
+                if (isQuoted(functionName) || funcDecl.name.isNumber) {
                     this.writeToOutput(className + ".prototype[" + functionName + "] = ");
                 }
                 else {
@@ -1947,7 +1947,7 @@ module TypeScript {
                                 this.emitComments(functionDeclaration, true);
 
                                 var functionName = functionDeclaration.name.actualText;
-                                if (isQuoted(functionName)) {
+                                if (isQuoted(functionName) || functionDeclaration.name.isNumber) {
                                     this.writeToOutput(classDecl.name.actualText + "[" + functionName + "] = ");
                                 }
                                 else {
@@ -1978,7 +1978,7 @@ module TypeScript {
                         this.recordSourceMappingStart(varDecl);
 
                         var varDeclName = varDecl.id.actualText;
-                        if (isQuoted(varDeclName)) {
+                        if (isQuoted(varDeclName) || varDecl.id.isNumber) {
                             this.writeToOutput(classDecl.name.actualText + "[" + varDeclName + "] = ");
                         }
                         else {

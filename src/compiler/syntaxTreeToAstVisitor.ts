@@ -89,7 +89,7 @@ module TypeScript {
                 if (stringLiteralIsTextOfIdentifier && text) {
                     text = quoteStr(text);
                 }
-                result = new Identifier(tokenText, text);
+                result = new Identifier(tokenText, text, /*isNumber:*/ token.tokenKind === SyntaxKind.NumericLiteral);
             }
 
             if (isOptional) {
