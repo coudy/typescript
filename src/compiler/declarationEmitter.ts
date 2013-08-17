@@ -583,7 +583,6 @@ module TypeScript {
                 this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 var returnType = funcSignature.returnType;
                 if (funcDecl.returnTypeAnnotation || returnType) {
-                    //(returnType && returnType !== this.compiler.semanticInfoChain.anyTypeSymbol)) {
                     this.declFile.Write(": ");
                     this.emitTypeSignature(returnType);
                 }
