@@ -164,7 +164,7 @@ declare class aAmbient {
         x: number;
         y: number;
     };
-    static d2();
+    static d2(): any;
     static p3;
     private pv3;
     private foo(s);

@@ -1,5 +1,5 @@
 ////[interfaceOnly.d.ts]
 interface foo {
-    foo();
-    f2(f: () => void);
+    foo(): any;
+    f2(f: () => void): any;
 }

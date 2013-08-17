@@ -69,7 +69,7 @@ declare class c {
 declare var i: c;
 interface i1 {
     (a: number): number;
-    new(b: string);
+    new(b: string): any;
     [a: number]: string;
     myFoo(a: number): string;
     prop: string;

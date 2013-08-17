@@ -10,7 +10,7 @@ interface a0 {
     (): string;
     (a, b, c?: string): number;
     new(): string;
-    new(s: string);
+    new(s: string): any;
     [n: number]: () => string;
     [s: string]: any;
     p1;
@@ -18,8 +18,8 @@ interface a0 {
     p3?;
     p4?: number;
     p5: (s: number) => string;
-    f1();
-    f2? ();
+    f1(): any;
+    f2? (): any;
     f3(a: string): number;
     f4? (s: number): string;
 }

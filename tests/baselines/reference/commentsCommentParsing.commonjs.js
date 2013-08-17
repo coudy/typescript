@@ -201,8 +201,8 @@ declare function multiply(a: number, b: number, c?: number, d?, e?): void;
 /** fn f1 with number
 * @param { string} b about b
 */
-declare function f1(a: number);
-declare function f1(b: string);
+declare function f1(a: number): any;
+declare function f1(b: string): any;
 /** This is subtract function
 @param { a
 *@param { number | } b this is about b

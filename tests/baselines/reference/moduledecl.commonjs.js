@@ -206,8 +206,8 @@ declare module m0 {
 }
 declare module m1 {
     function f1(): void;
-    function f2(s: string);
-    function f2(n: number);
+    function f2(s: string): any;
+    function f2(n: number): any;
     class c1 {
         public n;
         public n2: number;

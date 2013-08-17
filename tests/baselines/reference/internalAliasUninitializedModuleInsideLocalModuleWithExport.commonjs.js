@@ -9,7 +9,7 @@ var c = exports.c;
 ////[internalAliasUninitializedModuleInsideLocalModuleWithExport.d.ts]
 export declare module a.b {
     interface I {
-        foo();
+        foo(): any;
     }
 }
 export declare module c {
