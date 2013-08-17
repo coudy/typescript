@@ -3937,9 +3937,24 @@ module TypeScript {
             }
 
             if (context.typeCheck() && returnExpr) {
-
                 //PullTypeResolver.typeCheckCallBacks.push(() => {
 
+                // Return type of constructor signature must be assignable to the instance type of the class.
+                if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
+                    var classDecl = parentDecl.getParentDecl()
+                    if (classDecl) {
+                        var classSymbol = classDecl.getSymbol();
+                        if (!classSymbol.isResolved) {
+                            this.resolveDeclaredSymbol(classSymbol, classDecl, context);
+                        }
+
+                        var comparisonInfo = new TypeComparisonInfo();
+                        var isAssignable = this.sourceIsAssignableToTarget(returnType, classSymbol.type, context, comparisonInfo);
+                        if (!isAssignable) {
+                            context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class, null);
+                        }
+                    }
+                }
 
                 if (enclosingDecl.kind === PullElementKind.SetAccessor && returnExpr) {
                     context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null);

@@ -278,6 +278,7 @@ module TypeScript {
         Ambient_external_module_declaration_cannot_be_reopened: "Ambient external module declaration cannot be reopened.",
         All_declarations_of_merged_declaration_0_must_be_exported_or_not_exported: "All declarations of merged declaration '{0}' must be exported or not exported.",
         super_cannot_be_referenced_in_constructor_arguments: "'super' cannot be referenced in constructor arguments.",
+        Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class: "Return type of constructor signature must be assignable to the instance type of the class.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",

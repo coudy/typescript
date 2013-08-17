@@ -1107,7 +1107,11 @@ module TypeScript {
     "category": DiagnosticCategory.Error
   },
   "'super' cannot be referenced in constructor arguments.": {
-    "code": 2155,
+    "code": 2193,
+    "category": DiagnosticCategory.Error
+  },
+  "Return type of constructor signature must be assignable to the instance type of the class.": {
+    "code": 2194,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
@@ -1563,7 +1567,7 @@ module TypeScript {
     "category": DiagnosticCategory.Error
   },
   "Array Literal implicitly has an 'any' type from widening.": {
-    "code": 7014,
+    "code": 7015,
     "category": DiagnosticCategory.Error
   }
 };
