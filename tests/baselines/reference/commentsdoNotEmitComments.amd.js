@@ -35,6 +35,8 @@ var c = (function () {
 
 var i = new c();
 
+
+
 var i1_i;
 
 var m1;
@@ -46,7 +48,11 @@ var m1;
         return b;
     })();
     m1.b = b;
+
+    
 })(m1 || (m1 = {}));
+
+
 
 ////[commentsdoNotEmitComments.d.ts]
 declare var myVariable: number;

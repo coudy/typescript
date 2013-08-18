@@ -5,6 +5,13 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+// Key:
+// Cx - "Class x"
+// My - "Method x"
+// Az - "Argument z"
+// E.g., C1M1A1 = "Class 1, Method 1, Argument 1"
+
+
 // test basic configurations
 var C1 = (function () {
     function C1(v, p) {

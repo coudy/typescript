@@ -108,6 +108,11 @@ sum(10, 20);
 function multiply(a, b, c, d, e) {
 }
 
+/** fn f1 with number
+* @param { string} b about b
+*/
+
+
 /**@param opt optional parameter*/
 function f1(aOrb, opt) {
     return aOrb;

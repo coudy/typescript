@@ -14,10 +14,14 @@ exports.f4 = m4.foo();
 })(exports.m1 || (exports.m1 = {}));
 var m1 = exports.m1;
 
+//Emit global only usage
+
 var glo_m4 = require("glo_m4");
 exports.useGlo_m4_x4 = glo_m4.x;
 exports.useGlo_m4_d4 = glo_m4.d;
 exports.useGlo_m4_f4 = glo_m4.foo();
+
+//Emit even when used just in function type
 
 var fncOnly_m4 = require("fncOnly_m4");
 exports.useFncOnly_m4_f4 = fncOnly_m4.foo();

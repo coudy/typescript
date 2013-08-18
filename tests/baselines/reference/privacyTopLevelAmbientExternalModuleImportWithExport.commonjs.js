@@ -1,3 +1,9 @@
+// private elements
+
+
+// Public elements
+
+
 // Privacy errors - importing private elements
 var im_public_mi_private = require("mi_private");
 exports.im_public_mi_private = im_public_mi_private;

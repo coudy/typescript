@@ -922,13 +922,22 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        public shouldEmit(): boolean {
+        private isNonAmbientAndNotSignature(): boolean {
             return !hasFlag(this.getFunctionFlags(), FunctionFlags.Signature) &&
-                   !hasFlag(this.getFunctionFlags(), FunctionFlags.Ambient);
+                !hasFlag(this.getFunctionFlags(), FunctionFlags.Ambient);
+        }
+
+        public shouldEmit(): boolean {
+            return this.preComments() !== null || this.isNonAmbientAndNotSignature();
         }
 
         public emit(emitter: Emitter) {
-            emitter.emitFunction(this);
+            if (this.isNonAmbientAndNotSignature()) {
+                emitter.emitFunction(this);
+            }
+            else {
+                emitter.emitComments(this, /*pre:*/ true);
+            }
         }
 
         public getNameText() {
@@ -1018,14 +1027,14 @@ module TypeScript {
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
-        public shouldEmit(): boolean {
+        private isElided(): boolean {
             if (hasFlag(this.getModuleFlags(), ModuleFlags.Ambient)) {
-                return false;
+                return true;
             }
 
             // Always emit a non ambient enum (even empty ones).
             if (hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum)) {
-                return true;
+                return false;
             }
 
             for (var i = 0, n = this.members.members.length; i < n; i++) {
@@ -1035,23 +1044,30 @@ module TypeScript {
                 // Caveat: if we have contain a module, then we should be emitted *if we want to
                 // emit that inner module as well.
                 if (member.nodeType() === NodeType.ModuleDeclaration) {
-                    if ((<ModuleDeclaration>member).shouldEmit()) {
-                        return true;
+                    if (!(<ModuleDeclaration>member).isElided()) {
+                        return false;
                     }
                 }
                 else if (member.nodeType() !== NodeType.InterfaceDeclaration) {
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
+        }
+
+        public shouldEmit(): boolean {
+            return this.preComments() !== null || !this.isElided();
         }
 
         public emit(emitter: Emitter) {
-            if (this.shouldEmit()) {
+            if (!this.isElided()) {
                 emitter.emitComments(this, true);
                 emitter.emitModule(this);
                 emitter.emitComments(this, false);
+            }
+            else {
+                emitter.emitComments(this, true);
             }
         }
     }
@@ -1108,11 +1124,16 @@ module TypeScript {
         }
 
         public shouldEmit(): boolean {
-            return !hasFlag(this.getVarFlags(), VariableFlags.Ambient);
+            return this.preComments() !== null || !hasFlag(this.getVarFlags(), VariableFlags.Ambient);
         }
 
         public emit(emitter: Emitter): void {
-            emitter.emitClass(this);
+            if (!hasFlag(this.getVarFlags(), VariableFlags.Ambient)) {
+                emitter.emitClass(this);
+            }
+            else {
+                emitter.emitComments(this, /*pre:*/ true);
+            }
         }
     }
 
@@ -1131,7 +1152,11 @@ module TypeScript {
         }
 
         public shouldEmit(): boolean {
-            return false;
+            return this.preComments() !== null;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            // Only emit the comments.  Nothing else.
         }
     }
 
@@ -1258,18 +1283,31 @@ module TypeScript {
             return true;
         }
 
-        public shouldEmit(): boolean {
-            var varDecl = <VariableDeclarator>this.declaration.declarators.members[0];
+        private firstVariableDeclarator(): VariableDeclarator {
+            return <VariableDeclarator>this.declaration.declarators.members[0];
+        }
+
+        private isNotAmbientOrHasInitializer(): boolean {
+            var varDecl = this.firstVariableDeclarator();
             return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
         }
 
+        public shouldEmit(): boolean {
+            return this.firstVariableDeclarator().preComments() !== null || this.isNotAmbientOrHasInitializer();
+        }
+
         public emitWorker(emitter: Emitter) {
-            if (hasFlag(this.getFlags(), ASTFlags.EnumElement)) {
-                emitter.emitEnumElement(<VariableDeclarator>this.declaration.declarators.members[0]);
+            if (this.isNotAmbientOrHasInitializer()) {
+                if (hasFlag(this.getFlags(), ASTFlags.EnumElement)) {
+                    emitter.emitEnumElement(this.firstVariableDeclarator());
+                }
+                else {
+                    this.declaration.emit(emitter);
+                    emitter.writeToOutput(";");
+                }
             }
             else {
-                this.declaration.emit(emitter);
-                emitter.writeToOutput(";");
+                emitter.emitComments(this.firstVariableDeclarator(), /*pre:*/ true);
             }
         }
 

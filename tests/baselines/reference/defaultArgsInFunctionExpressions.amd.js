@@ -35,6 +35,8 @@ var f5 = function (a) {
     }; }
 };
 
+// Instantiated module
+
 var U;
 (function (U) {
     U.x;

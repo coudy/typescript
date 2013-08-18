@@ -1,3 +1,6 @@
+// Doesn't match export visibility, but it's in a different parent, so it's ok
+
+
 // Should report error only once for instantiated module
 var M;
 (function (M) {
@@ -44,4 +47,7 @@ var M;
     })(M.C || (M.C = {}));
     var C = M.C;
 })(M || (M = {}));
+
+// Top level
+
 

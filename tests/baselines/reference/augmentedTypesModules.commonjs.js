@@ -1,3 +1,5 @@
+// module then var
+
 var m1 = 1;
 
 var m1a;
@@ -26,6 +28,8 @@ var m1d;
     m1d.I = I;
 })(m1d || (m1d = {}));
 var m1d = 1;
+
+// module then function
 
 function m2() {
 }
@@ -74,6 +78,8 @@ var m2g;
     })();
     m2g.C = C;
 })(m2g || (m2g = {}));
+
+// module then class
 
 var m3 = (function () {
     function m3() {
@@ -138,6 +144,9 @@ var m3g;
     })();
     m3g.C = C;
 })(m3g || (m3g = {}));
+
+// module then enum
+// should be errors
 
 var m4;
 (function (m4) {

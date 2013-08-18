@@ -46,6 +46,9 @@ var c = (function () {
 /**instance comment*/
 var i = new c();
 
+/** interface comments*/
+
+
 /**interface instance comments*/
 var i1_i;
 
@@ -60,7 +63,13 @@ var m1;
         return b;
     })();
     m1.b = b;
+
+    /// module m2
+    
 })(m1 || (m1 = {}));
+
+/// this is x
+
 
 ////[commentsemitComments.d.ts]
 /** Variable comments*/

@@ -1,4 +1,10 @@
 define(["require", "exports", "mi_private", "mu_private", "mi_public"], function(require, exports, __im_private_mi_private__, __im_private_mu_private__, __im_private_mi_public__) {
+    // private elements
+    
+
+    // Public elements
+    
+
     // Privacy errors - importing private elements
     var im_private_mi_private = __im_private_mi_private__;
     var im_private_mu_private = __im_private_mu_private__;

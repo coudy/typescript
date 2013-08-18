@@ -1,3 +1,5 @@
+// module then function
+
 function m2() {
 }
 ;

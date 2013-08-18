@@ -1,4 +1,8 @@
 define(["require", "exports"], function(require, exports) {
+    //import FileManager = require('filemanager');
+    //import App = require('app');
+    
+
     var TestFileDir = ".\\TempTestFiles";
 
     var TestCase = (function () {

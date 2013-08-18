@@ -1,8 +1,14 @@
+/** this is signature 1*/
+
+
 function f1(aOrb) {
     return 10;
 }
 f1("hello");
 f1(10);
+
+/** this is signature 2*/
+
 
 /** this is f2 var comment*/
 function f2(aOrb) {
@@ -16,6 +22,11 @@ function f3(aOrb) {
 }
 f3("hello");
 f3(10);
+
+/** this is signature 4 - with number parameter*/
+
+
+/** this is signature 4 - with string parameter*/
 
 function f4(aOrb) {
     return 10;
