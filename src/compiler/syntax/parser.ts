@@ -2671,7 +2671,7 @@ module TypeScript.Parser {
                 case SyntaxKind.PrivateKeyword:
                 case SyntaxKind.StaticKeyword:
                     // None of hte above are actually keywords.  And they might show up in a real
-                    // statement (i.e. "public();").  However, if we see 'public identifier' then 
+                    // statement (i.e. "public();").  However, if we see 'public <identifier>' then 
                     // that can't possibly be a statement (and instead will be a class element), 
                     // and we should not parse it out here.
                     var token1 = this.peekToken(1);
@@ -4207,7 +4207,26 @@ module TypeScript.Parser {
                 return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
             }
             else {
-                return this.parseAssignmentExpression(/*allowIn:*/ true);
+                // We didn't have a block.  However, we may be in an error situation.  For example,
+                // if the user wrote:
+                //
+                //  a => 
+                //      var v = 0;
+                //  }
+                //
+                // (i.e. they're missing the open brace).  See if that's the case so we can try to 
+                // recover better.  If we don't do this, then the next close curly we see may end
+                // up preemptively closing the containing construct.
+                if (this.isStatement(/*inErrorRecovery:*/ false) &&
+                    !this.isExpressionStatement() &&
+                    !this.isFunctionDeclaration()) {
+                    // We've seen a statement (and it isn't an expressionStatement like 'foo()'), 
+                    // so treat this like a block with a missing open brace.
+                    return this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ true, /*checkForStrictMode:*/ false);
+                }
+                else {
+                    return this.parseAssignmentExpression(/*allowIn:*/ true);
+                }
             }
         }
 
