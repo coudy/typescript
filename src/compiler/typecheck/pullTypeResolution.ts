@@ -2047,7 +2047,7 @@ module TypeScript {
                     var initTypeSymbol = this.getInstanceTypeForAssignment(argDeclAST, initExprSymbol.type, enclosingDecl, context);
                     if (!contextualType) {
                         // Set the type to the inferred initializer type
-                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol));
+                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol, enclosingDecl, context));
                         isImplicitAny = initTypeSymbol !== paramSymbol.type;
                     }
                     else {
@@ -2526,7 +2526,7 @@ module TypeScript {
 
                     // Don't reset the type if we already have one from the type expression
                     if (!varDecl.typeExpr) {
-                        context.setTypeInContext(declSymbol, this.widenType(initTypeSymbol));
+                        context.setTypeInContext(declSymbol, this.widenType(initTypeSymbol, enclosingDecl, context));
 
                         if (declParameterSymbol) {
                             context.setTypeInContext(declParameterSymbol, initTypeSymbol);
@@ -2540,6 +2540,8 @@ module TypeScript {
                                     [varDecl.id.actualText]);
                             }
                         }
+
+                        initTypeSymbol = this.widenType(initTypeSymbol, enclosingDecl, context);
                     }
                 }
             }
@@ -2691,12 +2693,7 @@ module TypeScript {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
 
-
-                if (constraintTypeSymbol && constraintTypeSymbol.isPrimitive() && !constraintTypeSymbol.isError()) {
-                    context.postError(this.unitPath, typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Type_parameter_constraint_cannot_be_a_primitive_type, null);
-                    constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
-                }
-                else if (this.genericTypeIsUsedWithoutRequiredTypeArguments(constraintTypeSymbol, <TypeReference>typeParameterAST.constraint, context)) {
+                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(constraintTypeSymbol, <TypeReference>typeParameterAST.constraint, context)) {
                     context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
                     constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
                 }
@@ -2819,7 +2816,7 @@ module TypeScript {
 
                     if (returnType) {
                         var previousReturnType = returnType;
-                        var newReturnType = this.widenType(returnType);
+                        var newReturnType = this.widenType(returnType, enclosingDecl, context);
                         signature.returnType = newReturnType;
 
                         // if noImplicitAny flag is set to be true and return statements are not cast expressions, report an error
@@ -3691,8 +3688,8 @@ module TypeScript {
             if (context.typeCheck()) {
                 var binaryExpression = <BinaryExpression>ast;
 
-                var lhsType = this.widenType(this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type);
-                var rhsType = this.widenType(this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type);
+                var lhsType = this.widenType(this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type, enclosingDecl, context);
+                var rhsType = this.widenType(this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type, enclosingDecl, context);
 
                 var isValidLHS = lhsType && (this.isAnyOrEquivalent(lhsType) || !lhsType.isPrimitive());
                 var isValidRHS = rhsType && (this.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.typeIsSubtypeOfFunction(rhsType, context));
@@ -3727,8 +3724,8 @@ module TypeScript {
 
             if (context.typeCheck()) {
                 var binaryExpression = <BinaryExpression>ast;
-                var lhsType = this.widenType(this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type);
-                var rhsType = this.widenType(this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type);
+                var lhsType = this.widenType(this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type, enclosingDecl, context);
+                var rhsType = this.widenType(this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type, enclosingDecl, context);
 
                 var isStringAnyOrNumber = lhsType.type === this.semanticInfoChain.stringTypeSymbol ||
                     this.isAnyOrEquivalent(lhsType.type) ||
@@ -3767,7 +3764,7 @@ module TypeScript {
             if (context.typeCheck()) {
                 var forInStatement = <ForInStatement>ast;
 
-                var rhsType = this.widenType(this.resolveAST(forInStatement.obj, false, enclosingDecl, context).type);
+                var rhsType = this.widenType(this.resolveAST(forInStatement.obj, false, enclosingDecl, context).type, enclosingDecl, context);
                 var lval = forInStatement.lval;
 
                 if (lval.nodeType() === NodeType.VariableDeclaration) {
@@ -5644,7 +5641,7 @@ module TypeScript {
                         }
                     }
 
-                    var memberExpr = this.widenType(this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context).type);
+                    var memberExpr = this.widenType(this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context).type, enclosingDecl, context);
 
                     if (memberExpr.type && memberExpr.type.isGeneric()) {
                         typeSymbol.setHasGenericMember();
@@ -5691,7 +5688,7 @@ module TypeScript {
 
         private computeArrayLiteralExpressionSymbol(arrayLit: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var elements = <ASTList>arrayLit.operand;
-            var elementType = this.semanticInfoChain.anyTypeSymbol;
+            var elementType: PullTypeSymbol = null;
             var elementTypes: PullTypeSymbol[] = [];
             var comparisonInfo = new TypeComparisonInfo();
             var contextualElementType: PullTypeSymbol = null;
@@ -5782,22 +5779,16 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => { return elementTypes[index]; }
                 };
 
-                elementType = this.findBestCommonType(elementType, null, collection, context, comparisonInfo);
+                elementType = elementType ? this.findBestCommonType(elementType, null, collection, context, comparisonInfo) : elementType;
 
-                // if the array type is the undefined type, we should widen it to any
-                // if it's of the null type, only widen it if it's not in a nested array element, so as not to 
-                // short-circuit any checks for the best common type
-                if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
-                    elementType = this.semanticInfoChain.anyTypeSymbol;
-
-                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
                     if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                     }
                 }
 
                 if (!elementType) {
-                    elementType = this.semanticInfoChain.anyTypeSymbol;
+                    elementType = this.semanticInfoChain.undefinedTypeSymbol;
 
                     // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
                     if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
@@ -6984,10 +6975,10 @@ module TypeScript {
             var leftExpr = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context);
             var leftType = leftExpr.type;
 
-            leftType = this.widenType(leftExpr.type); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
+            leftType = this.widenType(leftExpr.type, enclosingDecl, context); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
 
             context.pushContextualType(leftType, context.inProvisionalResolution(), null);
-            var rightType = this.widenType(this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type);
+            var rightType = this.widenType(this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type, enclosingDecl, context);
             context.popContextualType();
 
             rightType = this.getInstanceTypeForAssignment(binaryExpression.operand1, rightType, enclosingDecl, context);
@@ -7150,12 +7141,35 @@ module TypeScript {
             return null;
         }
 
-        public widenType(type: PullTypeSymbol): PullTypeSymbol {
+        public widenType(type: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             if (type === this.semanticInfoChain.undefinedTypeSymbol ||
                 type === this.semanticInfoChain.nullTypeSymbol ||
                 type.isError()) {
 
                 return this.semanticInfoChain.anyTypeSymbol;
+            }
+
+            if (type.isArray()) {
+                var elementType = this.widenType(type.getElementType(), enclosingDecl, context);
+
+                var arraySymbol: PullTypeSymbol = elementType.getArrayType();
+
+                // otherwise, create a new array symbol
+                if (!arraySymbol) {
+                    // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
+
+                    if (!this.cachedArrayInterfaceType().isResolved) {
+                        this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
+                    }
+
+                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
+
+                    if (!arraySymbol) {
+                        arraySymbol = this.semanticInfoChain.anyTypeSymbol;
+                    }
+                }
+
+                return arraySymbol;
             }
 
             return type;
@@ -8905,7 +8919,7 @@ module TypeScript {
 
             hadProvisionalErrors = false;
 
-            var inferenceResults = argContext.inferArgumentTypes(this, context);
+            var inferenceResults = argContext.inferArgumentTypes(this, enclosingDecl, context);
 
             if (inferenceResults.unfit) {
                 return null;
