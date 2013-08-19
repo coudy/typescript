@@ -6,14 +6,14 @@ describe('Optional params dont generate any code inside interface', function () 
         var code = "interface i1 {a?: any;b: any;c(): any;d?(): any;}";
         Harness.Compiler.compileString(code, 'interface code-gen', function (result) {
             assert.equal(result.errors.length, 0);
-            assert.equal(result.code, "");
+            assert.equal(result.code || '', "");
         });
     });
     it('Check if inferfaces generate any code - 2', function () {
         var code = "interface i1 {a?: any;b: any;c(): any;d?(): any;}";
         Harness.Compiler.compileString(code, 'interface code-gen', function (result) {
             assert.equal(result.errors.length, 0);
-            assert.equal(result.code, "");
+            assert.equal(result.code || '', "");
         });
     });
 });

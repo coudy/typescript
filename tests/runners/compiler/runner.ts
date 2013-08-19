@@ -21,6 +21,16 @@ class CompilerBaselineRunner extends RunnerBase {
         this.basePath += '/compiler';
     }    
 
+    /** Replaces instances of full paths with filenames only */
+    static removeFullPaths(text: string) {
+        var fullPath = /\w+:(\/|\\)([\w+\-\.]|\/)*\.ts/g;
+        var fullPathList = text.match(fullPath);
+        if (fullPathList) {
+            fullPathList.forEach((match: string) => text = text.replace(match, Harness.getFileName(match)));
+        }
+        return text;
+    }
+
     public checkTestCodeOutput(fileName: string) {
         // strips the fileName from the path.
         var justName = fileName.replace(/^.*[\\\/]/, '');
@@ -36,23 +46,22 @@ class CompilerBaselineRunner extends RunnerBase {
         describe('JS output and errors for ' + fileName, () => {
             Harness.Assert.bugs(content);
 
-            var jsOutputAsync = '';
-            var jsOutputSync = '';
-            var sourceMapRecordAsync = "";
-            var sourceMapRecordSync = "";
+            /** Compiled JavaScript emit, if any */
+            var jsOutput = '';
+            /** Source map content, if any */
+            var sourceMapContent = "";
+            /** Newline-delimited string describing compilation errors */
+            var errorDescription = '';
 
-            var declFilesCode: { fileName: string; code: string; }[] = []
-
-            var errorDescriptionAsync = '';
-            var errorDescriptionLocal = '';
             var createNewInstance = false;
             var emittingSourceMap = false;
+            var moduleTarget = TypeScript.ModuleGenTarget.Unspecified;
 
             var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
-            // The compiler doesn't handle certain flags flipping during a single compilation setting. Tests on these flags will need 
-            // a fresh compiler instance for themselves and then create a fresh one for the next test. Would be nice to get dev fixes
-            // eventually to remove this limitation.
             for (var i = 0; i < tcSettings.length; ++i) {
+                // The compiler doesn't handle certain flags flipping during a single compilation setting. Tests on these flags will need 
+                // a fresh compiler instance for themselves and then create a fresh one for the next test. Would be nice to get dev fixes
+                // eventually to remove this limitation.
                 if (!createNewInstance && (tcSettings[i].flag == "noimplicitany" || tcSettings[i].flag === 'target')) {
                     Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, tcSettings[i].flag == "noimplicitany" /*noImplicitAny*/);
                     harnessCompiler.setCompilerSettings(tcSettings);
@@ -61,6 +70,14 @@ class CompilerBaselineRunner extends RunnerBase {
 
                 if (tcSettings[i].flag == "sourcemap" && tcSettings[i].value.toLowerCase() === 'true') {
                     emittingSourceMap = true;
+                } else if (tcSettings[i].flag === "module") {
+                    if (tcSettings[i].value.toLowerCase() === "amd") {
+                        moduleTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                    } else if (tcSettings[i].value.toLowerCase() === "commonjs") {
+                        moduleTarget = TypeScript.ModuleGenTarget.Synchronous;
+                    } else {
+                        throw new Error('Invalid module target ' + tcSettings[i].value + '; suported values are "amd" and "commonjs"');
+                    }
                 }
             }
 
@@ -82,94 +99,78 @@ class CompilerBaselineRunner extends RunnerBase {
                 });
             }
 
-            harnessCompiler.compileFiles(toBeCompiled, otherFiles, function (result) {
-                var jsResult = result.commonJS;
-                for (var i = 0; i < jsResult.errors.length; i++) {
-                    errorDescriptionLocal += Harness.getFileName(jsResult.errors[i].file) + ' line ' + jsResult.errors[i].line + ' col ' + jsResult.errors[i].column + ': ' + jsResult.errors[i].message + '\r\n';
-                }
-                jsOutputSync = jsResult.code;
-                sourceMapRecordSync = jsResult.sourceMapRecord;
-
-                // AMD output
-                var amdResult = result.amd;
-                for (var i = 0; i < amdResult.errors.length; i++) {
-                    errorDescriptionAsync += Harness.getFileName(amdResult.errors[i].file) + ' line ' + amdResult.errors[i].line + ' col ' + amdResult.errors[i].column + ': ' + amdResult.errors[i].message + '\r\n';
-                }
-                jsOutputAsync = amdResult.code;
-                declFilesCode = result.commonJS.declFilesCode;
-                sourceMapRecordAsync = amdResult.sourceMapRecord;
-            }, function (settings?: TypeScript.CompilationSettings) {
-                tcSettings.push({ flag: "module", value: "commonjs" });
-                harnessCompiler.setCompilerSettings(tcSettings);
+            var result: Harness.Compiler.CompilerResult;
+            harnessCompiler.compileFiles(toBeCompiled, otherFiles, moduleTarget, function (compileResult) {
+                result = compileResult;
+            }, function (settings) {
+                settings.mapSourceFiles = emittingSourceMap;
             });
 
             // check errors
             if (this.errors) {
-                Harness.Baseline.runBaseline('Correct errors for ' + fileName + ' (commonjs)', justName.replace(/\.ts/, '.errors.txt'), () => {
-                    if (errorDescriptionLocal === '') {
+                // Surface some errors that indicate test authoring failure
+                var badErrors = result.errors.filter(err => err.errorType === Harness.Compiler.ErrorType.Emit);
+                if (badErrors.length > 0) {
+                    throw new Error('Emit errors in ' + fileName + ': ' + badErrors.map(e => JSON.stringify(e)).join('\r\n'));
+                }
+
+                Harness.Baseline.runBaseline('Correct errors for ' + fileName, justName.replace(/\.ts/, '.errors.txt'), () => {
+                    if (result.errors.length === 0) {
                         return null;
                     } else {
-                        // Certain errors result in full paths being reported, namely when types of external modules are involved
-                        // we'll strip the full path and just report the filename
-                        var fullPath = /\w+:(\/|\\)([\w+\-\.]|\/)*\.ts/g;
-                        var hasFullPath = errorDescriptionLocal.match(fullPath);
-                        if (hasFullPath) {
-                            hasFullPath.forEach(match => {
-                                var filename = Harness.getFileName(match);
-                                errorDescriptionLocal = errorDescriptionLocal.replace(match, filename);
-                                errorDescriptionAsync = errorDescriptionAsync.replace(match, filename); // should be the same errors
-                            });
-                        }
-                        return errorDescriptionLocal;
+                        var errorDescr = result.errors.map(err => CompilerBaselineRunner.removeFullPaths(Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message)).join('\r\n');
+                        return errorDescr;
                     }
                 });
             }
 
             // if the .d.ts is non-empty, confirm it compiles correctly as well
-            if (this.decl && declFilesCode) {
-                var declErrors = '';
-                declFilesCode.forEach(file => {
+            if (this.decl && result.declFilesCode.length > 0) {
+                var declErrors: string[] = undefined;
+                result.declFilesCode.forEach(file => {
                     // don't want to use the fullpath for the unitName or the file won't be resolved correctly
                     var declFile = { unitName: 'tests/cases/compiler/' + Harness.getFileName(file.fileName), content: file.code };
                     harnessCompiler.compileFiles(
                         [declFile],
                         otherFiles,
+                        TypeScript.ModuleGenTarget.Unspecified,
                         function (result) {
-                            var jsOutputSync = result.commonJS;
-                            for (var i = 0; i < jsOutputSync.errors.length; i++) {
-                                declErrors += Harness.getFileName(jsOutputSync.errors[i].file) + ' line ' + jsOutputSync.errors[i].line + ' col ' + jsOutputSync.errors[i].column + ': ' + jsOutputSync.errors[i].message + '\r\n';
-                            }
-                        });
+                            declErrors = result.errors.map(err => Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message + '\r\n');
+                        }
+                    );
 
-                    Harness.Baseline.runBaseline('.d.ts for ' + fileName + ' compiles without error', Harness.getFileName(file.fileName).replace(/\.ts/, '.errors.txt'), () => {
-                        return (declErrors === '') ? null : declErrors;
-                    });
+                    if (declErrors && declErrors.length) {
+                        throw new Error('.d.ts file ' + file.fileName + ' did not compile. Errors: ' + declErrors.map(err => JSON.stringify(err)).join('\r\n'));
+                    }
                 });
             }
 
+            
+
             if (!TypeScript.isDTSFile(lastUnit.name)) {
                 if (this.emit) {
-                    // check js output
-                    Harness.Baseline.runBaseline('Correct JS output (commonjs) for ' + fileName, justName.replace(/\.ts/, '.commonjs.js'), () => {
-                        return jsOutputSync;
-                    });
+                    if (result.files.length === 0) {
+                        throw new Error('Expected at least 1 js file to be emitted');
+                    }
 
-                    Harness.Baseline.runBaseline('Correct JS output (AMD) for ' + fileName, justName.replace(/\.ts/, '.amd.js'), () => {
-                        return jsOutputAsync;
+                    // check js output
+                    Harness.Baseline.runBaseline('Correct JS output for ' + fileName, justName.replace(/\.ts/, '.js'), () => {
+                        return result.files[0].code;
                     });
 
                     // Check sourcemap output
                     if (emittingSourceMap) {
-                        Harness.Baseline.runBaseline('Correct SourceMap Record (commonjs) for ' + fileName, justName.replace(/\.ts/, '.sourcemapRecord.commonjs.baseline'), () => {
-                            return sourceMapRecordSync;
-                        });
-
-                        Harness.Baseline.runBaseline('Correct SourceMap Record (AMD) for ' + fileName, justName.replace(/\.ts/, '.sourcemapRecord.amd.baseline'), () => {
-                            return sourceMapRecordAsync;
+                        if (result.sourceMaps.length !== 1) {
+                            throw new Error('Expected exactly 1 .js.map file to be emitted, but got ' + result.sourceMaps.length);
+                        }
+                        
+                        Harness.Baseline.runBaseline('Correct SourceMap for ' + fileName, justName.replace(/\.ts/, '.map'), () => {
+                            return result.sourceMaps[0].code;
                         });
                     }
                 }
             }
+
             if (createNewInstance) {
                 Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true);
                 createNewInstance = false;

@@ -13,37 +13,28 @@ describe('Compiling samples', function ()
         return IO.readFile(Harness.userSpecifiedroot + 'samples/' + path, /*codepage:*/null).contents;
     }
 
-    function addUnitsAndCompile(units: string[], includeWin8Libs = false) {
+    function addUnitsAndCompile(units: string[], includeWin8Libs = false, moduleTarget = TypeScript.ModuleGenTarget.Unspecified) {
         var filesToAdd = units.map(unit => {
             return {
                 unitName: 'tests/cases/unittests/samples/' + unit,
                 content: loadSample(unit)
             };
         });
-        harnessCompiler.addInputFiles(filesToAdd);
-
         if (includeWin8Libs) {
-            var winrt = "typings/winrt.d.ts";
-            var winjs = "typings/winjs.d.ts";
-            harnessCompiler.addInputFile({ unitName: winrt, content: IO.readFile(winrt, null).contents });
-            harnessCompiler.addInputFile({ unitName: winjs, content: IO.readFile(winjs, null).contents });
+            ['winrt.d.ts', 'winjs.d.ts'].forEach(file => filesToAdd.push({ unitName: file, content: IO.readFile('typings/' + file, null).contents }));
         }
 
-        harnessCompiler.compile(!includeWin8Libs);
+        var result: Harness.Compiler.CompilerResult;
+        harnessCompiler.compileFiles(filesToAdd, [], moduleTarget, res => result = res, undefined, /*noResolve*/ includeWin8Libs);
+
+        assert.arrayLengthIs(result.errors, 0);
     }
 
     // d3
     it('compiles the d3 sample without error', function ()
     {
-        // clean the world before our first sample runs
-        //Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-        //harnessCompiler.reset();
-
         var units = ["d3/data.ts", "d3/d3.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
-        assert.equal(errLines.length, 0);
-        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
     });
 
     // greeter
@@ -52,7 +43,7 @@ describe('Compiling samples', function ()
         var src = loadSample("greeter/greeter.ts");
         Harness.Compiler.compileString(src, 'greeter.ts', function (result)
         {
-            assert.equal(result.errors.length, 0);
+            assert.arrayLengthIs(result.errors, 0);
         });
     });
 
@@ -61,9 +52,7 @@ describe('Compiling samples', function ()
     {
         var units = ["node\\node.d.ts", "imageboard\\app.ts", "imageboard\\db.ts", "imageboard\\express.d.ts", "imageboard\\mongodb.ts", "imageboard\\routes\\index.ts"];
     
-        addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
-        assert.equal(errLines.length, 0);
+        addUnitsAndCompile(units, undefined, TypeScript.ModuleGenTarget.Synchronous);
     });
 
     //// interfaces
@@ -73,12 +62,8 @@ describe('Compiling samples', function ()
 
         Harness.Compiler.compileString(interfaces, 'interfaces.ts', function (result)
         {
-            assert.equal(result.errors.length, 0);
+            assert.arrayLengthIs(result.errors, 0);
         });
-
-        // Necessary because of some compiler bug that will make the raytracer test fail
-        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-        harnessCompiler.reset();
     });
 
     // jquery
@@ -87,8 +72,6 @@ describe('Compiling samples', function ()
         Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
         var units = ["jquery/parallax.ts", "jquery/jquery.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
-        assert.equal(errLines.length, 0);
     });
 
     // mankala
@@ -96,25 +79,19 @@ describe('Compiling samples', function ()
     {
         var units = ["mankala/Base.ts", "mankala/Driver.ts", "mankala/Features.ts", "mankala/Game.ts", "mankala/Geometry.ts", "mankala/Position.ts" ];
         addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
-        assert.equal(errLines.length, 0);
     });
 
     // node
     it('compiles the node sample-1 without error', function ()
     {
         var units = ["node/HttpServer.ts", "node/node.d.ts"];
-        addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();        
-        assert.equal(errLines.length, 0);
+        addUnitsAndCompile(units, undefined, TypeScript.ModuleGenTarget.Synchronous);
     });
 
     it('compiles the node sample-2 without error', function ()
     {
         var units = ["node/TcpServer.ts", "node/node.d.ts"];
-        addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
-        assert.equal(errLines.length, 0);
+        addUnitsAndCompile(units, undefined, TypeScript.ModuleGenTarget.Synchronous);
     });
 
     // raytracer
@@ -123,7 +100,7 @@ describe('Compiling samples', function ()
         var src = loadSample("raytracer/raytracer.ts");
         Harness.Compiler.compileString(src, 'raytracer.ts', function (result)
         {
-            assert.equal(result.errors.length, 0);
+            assert.arrayLengthIs(result.errors, 0);
         });
     });
 
@@ -133,7 +110,7 @@ describe('Compiling samples', function ()
         var src = loadSample("simple/animals.ts");
         Harness.Compiler.compileString(src, 'animals.ts', function (result)
         {
-            assert.equal(result.errors.length, 0);
+            assert.arrayLengthIs(result.errors, 0);
         });
     });
 
@@ -143,7 +120,7 @@ describe('Compiling samples', function ()
         var src = loadSample("todomvc/js/todos.ts");
         Harness.Compiler.compileString(src, 'todos.ts', function (result)
         {
-            assert.equal(result.errors.length, 0);
+            assert.arrayLengthIs(result.errors, 0);
         });
 
         // Necessary because both todomvc and warship declare var $
@@ -156,10 +133,6 @@ describe('Compiling samples', function ()
     {
         var units = ["warship/warship.ts", "warship/jquery.d.ts", "warship/jqueryui.d.ts"];
         addUnitsAndCompile(units);
-        var errLines = harnessCompiler.reportCompilationErrors();
-        assert.equal(errLines.length, 0);
-        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
-        harnessCompiler.reset();  
     });
 
     // win8
@@ -179,9 +152,6 @@ describe('Compiling samples', function ()
        Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
        harnessCompiler.reset();       
        addUnitsAndCompile(units, true);
-       var errLines = harnessCompiler.reportCompilationErrors();
-       errLines.forEach(err => IO.printLine(err));
-       assert.equal(errLines.length, 0);
     });
 });
 
