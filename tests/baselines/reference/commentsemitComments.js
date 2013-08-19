@@ -46,6 +46,8 @@ var c = (function () {
 /**instance comment*/
 var i = new c();
 
+
+
 /**interface instance comments*/
 var i1_i;
 
@@ -60,4 +62,8 @@ var m1;
         return b;
     })();
     m1.b = b;
+
+    
 })(m1 || (m1 = {}));
+
+

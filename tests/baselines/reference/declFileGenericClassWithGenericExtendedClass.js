@@ -17,15 +17,8 @@ var Derived = (function (_super) {
     return Derived;
 })(Base);
 
-<<<<<<< HEAD:tests/baselines/reference/baseIndexSignatureResolution.commonjs.js
-
-
-var x = null;
-var y = x[0];
-=======
 var Baz = (function () {
     function Baz() {
     }
     return Baz;
 })();
->>>>>>> Update baselines for new compiler baseline improvements:tests/baselines/reference/declFileGenericClassWithGenericExtendedClass.js

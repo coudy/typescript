@@ -20,15 +20,3 @@ var Foo = (function () {
     return Foo;
 })();
 var foo;
-<<<<<<< HEAD:tests/baselines/reference/intrinsics.amd.js
-
-////[intrinsics.d.ts]
-declare var hasOwnProperty: any;
-declare module m1 {
-    var __proto__: any;
-}
-declare class Foo<__proto__> {
-}
-declare var foo: (__proto__: number) => void;
-=======
->>>>>>> Update baselines for new compiler baseline improvements:tests/baselines/reference/intrinsics.js

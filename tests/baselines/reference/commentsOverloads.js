@@ -1,8 +1,12 @@
+
+
 function f1(aOrb) {
     return 10;
 }
 f1("hello");
 f1(10);
+
+
 
 /** this is f2 var comment*/
 function f2(aOrb) {
@@ -16,6 +20,9 @@ function f3(aOrb) {
 }
 f3("hello");
 f3(10);
+
+
+
 
 function f4(aOrb) {
     return 10;

@@ -1,3 +1,5 @@
+
+
 // CONTEXT: Class property declaration
 var C1T5 = (function () {
     function C1T5() {
@@ -85,6 +87,8 @@ c6t5 = function (n) {
 // CONTEXT: Array index assignment
 var c7t2;
 c7t2[0] = ({ n: 1 });
+
+
 
 var objc8 = ({});
 
@@ -195,11 +199,15 @@ var c12t14 = ({
     a: []
 });
 
+
+
 function EF1(a, b) {
     return a + b;
 }
 
 var efv = EF1(1, 2);
+
+
 
 function Point(x, y) {
     this.x = x;

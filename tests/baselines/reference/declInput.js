@@ -15,19 +15,3 @@ var bar = (function () {
     };
     return bar;
 })();
-<<<<<<< HEAD:tests/baselines/reference/declInput.amd.js
-
-////[declInput.d.ts]
-interface bar {
-}
-declare class bar {
-    public f(): string;
-    public g(): {
-        a: bar;
-        b: any;
-        c: any;
-    };
-    public h(x?: number, y?: any, z?: string): void;
-}
-=======
->>>>>>> Update baselines for new compiler baseline improvements:tests/baselines/reference/declInput.js
