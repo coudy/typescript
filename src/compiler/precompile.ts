@@ -71,6 +71,8 @@ module TypeScript {
         return isNoDefaultLibRegex.exec(comment);
     }
 
+    export var tripleSlashReferenceRegExp = /^(\/\/\/\s*<reference\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/;
+
     function getFileReferenceFromReferencePath(fileName: string, position: number, comment: string, diagnostics: Diagnostic[]): IFileReference {
         // First, just see if they've written: /// <reference\s+
         // If so, then we'll consider this a reference directive and we'll report errors if it's
@@ -81,7 +83,7 @@ module TypeScript {
             var isNoDefaultLib = isNoDefaultLibMatch(comment);
 
             if (!isNoDefaultLib) {
-                var fullReferenceRegEx = /^(\/\/\/\s*<reference\s+path=)('|")(.+?)\2\s*(static=('|")(.+?)\2\s*)*\/>/gim;
+                var fullReferenceRegEx = tripleSlashReferenceRegExp;
                 var fullReference = fullReferenceRegEx.exec(comment);
 
                 if (!fullReference) {

@@ -1938,7 +1938,7 @@ module TypeScript {
         }
 
         public isPinnedOrTripleSlash(): boolean {
-            if (this.content.indexOf("///") === 0 && this.content.indexOf("////") !== 0) {
+            if (this.content.match(tripleSlashReferenceRegExp)) {
                 return true;
             }
             else {

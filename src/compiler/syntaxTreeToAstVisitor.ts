@@ -75,7 +75,7 @@ module TypeScript {
             if (token.fullWidth() === 0) {
                 result = new MissingIdentifier();
             }
-            else if (token.kind() === SyntaxKind.IdentifierName) {
+            else if (token.tokenKind === SyntaxKind.IdentifierName) {
                 var tokenText = token.text();
                 var text = tokenText === SyntaxTreeToAstVisitor.protoString
                     ? SyntaxTreeToAstVisitor.protoSubstitutionString
@@ -85,7 +85,7 @@ module TypeScript {
             }
             else {
                 var tokenText = token.text();
-                var text = token.kind() === SyntaxKind.StringLiteral ? <string>token.value() : null;
+                var text = token.tokenKind === SyntaxKind.StringLiteral ? <string>token.value() : null;
                 if (stringLiteralIsTextOfIdentifier && text) {
                     text = quoteStr(text);
                 }
@@ -222,28 +222,28 @@ module TypeScript {
             var fullStart = this.position;
 
             var result: AST;
-            if (token.kind() === SyntaxKind.ThisKeyword) {
+            if (token.tokenKind === SyntaxKind.ThisKeyword) {
                 result = new ThisExpression();
             }
-            else if (token.kind() === SyntaxKind.SuperKeyword) {
+            else if (token.tokenKind === SyntaxKind.SuperKeyword) {
                 result = new SuperExpression();
             }
-            else if (token.kind() === SyntaxKind.TrueKeyword) {
+            else if (token.tokenKind === SyntaxKind.TrueKeyword) {
                 result = new LiteralExpression(NodeType.TrueLiteral);
             }
-            else if (token.kind() === SyntaxKind.FalseKeyword) {
+            else if (token.tokenKind === SyntaxKind.FalseKeyword) {
                 result = new LiteralExpression(NodeType.FalseLiteral);
             }
-            else if (token.kind() === SyntaxKind.NullKeyword) {
+            else if (token.tokenKind === SyntaxKind.NullKeyword) {
                 result = new LiteralExpression(NodeType.NullLiteral);
             }
-            else if (token.kind() === SyntaxKind.StringLiteral) {
+            else if (token.tokenKind === SyntaxKind.StringLiteral) {
                 result = new StringLiteral(token.text(), token.valueText());
             }
-            else if (token.kind() === SyntaxKind.RegularExpressionLiteral) {
+            else if (token.tokenKind === SyntaxKind.RegularExpressionLiteral) {
                 result = new RegexLiteral(token.text());
             }
-            else if (token.kind() === SyntaxKind.NumericLiteral) {
+            else if (token.tokenKind === SyntaxKind.NumericLiteral) {
                 var preComments = this.convertTokenLeadingComments(token, fullStart);
 
                 var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
@@ -290,7 +290,7 @@ module TypeScript {
                 var moduleElement = node.moduleElements.childAt(i);
 
                 firstToken = moduleElement.firstToken();
-                if (firstToken !== null && firstToken.kind() === SyntaxKind.ExportKeyword) {
+                if (firstToken !== null && firstToken.tokenKind === SyntaxKind.ExportKeyword) {
                     return true;
                 }
 
@@ -1255,7 +1255,7 @@ module TypeScript {
             this.setCommentsAndSpan(result, start, node);
 
             if (node.publicOrPrivateKeyword) {
-                if (node.publicOrPrivateKeyword.kind() === SyntaxKind.PublicKeyword) {
+                if (node.publicOrPrivateKeyword.tokenKind === SyntaxKind.PublicKeyword) {
                     result.setVarFlags(result.getVarFlags() | VariableFlags.Property| VariableFlags.Public);
                 }
                 else {

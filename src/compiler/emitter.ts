@@ -347,21 +347,23 @@ module TypeScript {
         }
 
         public emitComments(ast: AST, pre: boolean, onlyPinnedOrTripleSlashComments: boolean = false) {
-            var isCopyright = false;
             if (pre) {
                 var preComments = ast.preComments();
+
                 if (preComments && ast === this.copyrightElement) {
                     // We're emitting the comments for the first script element.  Skip any 
                     // copyright comments, as we'll already have emitted those.
                     var copyrightComments = this.getCopyrightComments();
-                    this.emitCommentsArray(preComments.slice(copyrightComments.length));
+                    preComments = preComments.slice(copyrightComments.length);
                 }
-                else {
-                    if (onlyPinnedOrTripleSlashComments) {
-                        preComments = preComments.filter(c => c.isPinnedOrTripleSlash());
-                    }
-                    this.emitCommentsArray(preComments);
+
+                // We're emitting comments on an elided element.  Only keep the comment if it is
+                // a triple slash or pinned comment.
+                if (onlyPinnedOrTripleSlashComments) {
+                    preComments = preComments.filter(c => c.isPinnedOrTripleSlash());
                 }
+
+                this.emitCommentsArray(preComments);
             }
             else {
                 this.emitCommentsArray(ast.postComments());
