@@ -1912,6 +1912,12 @@ module TypeScript {
                 }
             }
 
+            if (funcDeclAST.typeArguments) {
+                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+                }
+            }
+
             // link parameters and resolve their annotations
             if (funcDeclAST.arguments) {
                 for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
@@ -5188,6 +5194,12 @@ module TypeScript {
             var funcDeclType = funcDeclSymbol.type;
             var signature = funcDeclType.getCallSignatures()[0];
             funcDeclSymbol.startResolving();
+
+            if (funcDeclAST.typeArguments) {
+                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+                }
+            }
 
             // link parameters and resolve their annotations
             if (funcDeclAST.arguments) {
