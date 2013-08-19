@@ -1,5 +1,5 @@
-/// Keep this comment, even though this is an ambient variable.
+/*! Keep this pinned comment */
 declare var v: number;
 
-class C {
-}
+// Don't keep this comment.
+declare var y: number;

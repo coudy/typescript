@@ -1,8 +1,4 @@
-/// Keep this comment even though it's on an ambient class.
+/*! Keep this pinned comment */
 
 
-var D = (function () {
-    function D() {
-    }
-    return D;
-})();
+

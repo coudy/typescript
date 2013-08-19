@@ -346,25 +346,26 @@ module TypeScript {
             }
         }
 
-        public emitComments(ast: AST, pre: boolean) {
-            var comments: Comment[];
+        public emitComments(ast: AST, pre: boolean, onlyPinnedOrTripleSlashComments: boolean = false) {
+            var isCopyright = false;
             if (pre) {
                 var preComments = ast.preComments();
                 if (preComments && ast === this.copyrightElement) {
                     // We're emitting the comments for the first script element.  Skip any 
                     // copyright comments, as we'll already have emitted those.
                     var copyrightComments = this.getCopyrightComments();
-                    comments = preComments.slice(copyrightComments.length);
+                    this.emitCommentsArray(preComments.slice(copyrightComments.length));
                 }
                 else {
-                    comments = preComments;
+                    if (onlyPinnedOrTripleSlashComments) {
+                        preComments = preComments.filter(c => c.isPinnedOrTripleSlash());
+                    }
+                    this.emitCommentsArray(preComments);
                 }
             }
             else {
-                comments = ast.postComments();
+                this.emitCommentsArray(ast.postComments());
             }
-
-            this.emitCommentsArray(comments);
         }
 
         public emitCommentsArray(comments: Comment[]): void {

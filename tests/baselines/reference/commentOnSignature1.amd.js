@@ -1,4 +1,5 @@
-/// Keep this comment even though it's on a signature.
+/*! Keep this pinned comment */
+
 
 
 function foo(a) {

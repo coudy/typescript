@@ -936,7 +936,7 @@ module TypeScript {
                 emitter.emitFunction(this);
             }
             else {
-                emitter.emitComments(this, /*pre:*/ true);
+                emitter.emitComments(this, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
             }
         }
 
@@ -1067,7 +1067,7 @@ module TypeScript {
                 emitter.emitComments(this, false);
             }
             else {
-                emitter.emitComments(this, true);
+                emitter.emitComments(this, true, /*onlyPinnedOrTripleSlashComments:*/ true);
             }
         }
     }
@@ -1132,7 +1132,7 @@ module TypeScript {
                 emitter.emitClass(this);
             }
             else {
-                emitter.emitComments(this, /*pre:*/ true);
+                emitter.emitComments(this, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
             }
         }
     }
@@ -1155,8 +1155,8 @@ module TypeScript {
             return this.preComments() !== null;
         }
 
-        public emitWorker(emitter: Emitter): void {
-            // Only emit the comments.  Nothing else.
+        public emit(emitter: Emitter): void {
+            emitter.emitComments(this, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
         }
     }
 
@@ -1307,7 +1307,7 @@ module TypeScript {
                 }
             }
             else {
-                emitter.emitComments(this.firstVariableDeclarator(), /*pre:*/ true);
+                emitter.emitComments(this.firstVariableDeclarator(), /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
             }
         }
 
@@ -1935,6 +1935,15 @@ module TypeScript {
                    this.content === ast.content &&
                    this.isBlockComment === ast.isBlockComment &&
                    this.endsLine === ast.endsLine;
+        }
+
+        public isPinnedOrTripleSlash(): boolean {
+            if (this.content.indexOf("///") === 0 && this.content.indexOf("////") !== 0) {
+                return true;
+            }
+            else {
+                return this.content.indexOf("/*!") === 0;
+            }
         }
 
         public getText(): string[] {

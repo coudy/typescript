@@ -1,6 +1,7 @@
-/// Keep this comment
+/*! Keep this pinned comment */
 module ElidedModule {
 }
 
-class C {
+// Don't keep this comment.
+module ElidedModule2 {
 }

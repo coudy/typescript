@@ -1,8 +1,4 @@
-/// Keep this comment, even though it's on an interface.
+/*! Keep this pinned comment */
 
 
-var C = (function () {
-    function C() {
-    }
-    return C;
-})();
+

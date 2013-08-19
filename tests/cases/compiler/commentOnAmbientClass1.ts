@@ -1,6 +1,7 @@
-/// Keep this comment even though it's on an ambient class.
+/*! Keep this pinned comment */
 declare class C {
 }
 
-class D {
+// Don't keep this comment.
+declare class D {
 }
