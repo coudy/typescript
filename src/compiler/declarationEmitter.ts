@@ -582,10 +582,8 @@ module TypeScript {
             if (!funcDecl.isConstructor &&
                 this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 var returnType = funcSignature.returnType;
-                if (funcDecl.returnTypeAnnotation || returnType) {
-                    this.declFile.Write(": ");
-                    this.emitTypeSignature(returnType);
-                }
+                this.declFile.Write(": ");
+                this.emitTypeSignature(returnType);
             }
 
             this.declFile.WriteLine(";");
