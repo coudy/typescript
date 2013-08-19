@@ -6,9 +6,9 @@ This sample implements a very basic node.js application using TypeScript
 
 === Running ===
 For HttpServer
-tsc --module node HttpServer.ts
+tsc --module commonjs HttpServer.ts
 node HttpServer.js
 
 For TcpServer
-tsc --module node TcpServer.ts
+tsc --module commonjs TcpServer.ts
 node TcpServer.js
