@@ -63,11 +63,9 @@ var m1;
     })();
     m1.b = b;
 
-    /// module m2
     
 })(m1 || (m1 = {}));
 
-/// this is x
 
 
 ////[commentsemitComments.d.ts]

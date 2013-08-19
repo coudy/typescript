@@ -1,4 +1,3 @@
-// module then var
 
 var m1 = 1;
 

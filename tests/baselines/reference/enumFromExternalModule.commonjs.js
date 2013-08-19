@@ -1,4 +1,3 @@
-// bug: 684225
 
 
 var f = require('filexx');

@@ -1,4 +1,3 @@
-/** this is interface 1*/
 
 var i1_i;
 

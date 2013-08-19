@@ -1,4 +1,3 @@
-//// module then class
 
 var m3 = (function () {
     function m3() {
