@@ -1,4 +1,5 @@
-﻿// bug: 684225
+//@module: commonjs
+// bug: 684225
 declare module 'filexx'{
 export enum Mode{ Open }
 }

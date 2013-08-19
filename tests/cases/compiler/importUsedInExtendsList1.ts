@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'base' {
     export class Super { }
 }

@@ -1,3 +1,4 @@
+//@module: commonjs
 export interface IOptions {
     italic?: boolean;
     bold?: boolean;

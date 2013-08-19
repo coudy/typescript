@@ -1,3 +1,4 @@
+//@module: amd
 module x {
     interface c {
     }

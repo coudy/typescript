@@ -1,3 +1,4 @@
+//@module: commonjs
 // @sourcemap: true
 export module m {
     export class c {

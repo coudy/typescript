@@ -1,3 +1,4 @@
+//@module: amd
 // @FileName: duplicateIdentifierShouldNotShortCircuitBaseTypeBinding_0.ts
 export interface IPoint {}
 

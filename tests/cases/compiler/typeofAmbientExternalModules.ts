@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module "external" {
     export class C { }
 }

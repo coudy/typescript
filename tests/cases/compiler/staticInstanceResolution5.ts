@@ -1,3 +1,4 @@
+//@module: amd
 declare module "winjs" {
     export class Promise {
         static timeout(delay: number): Promise;

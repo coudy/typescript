@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: moduleImportedForTypeArgumentPosition_0.ts
 export interface M2C { }
 

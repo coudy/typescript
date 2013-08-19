@@ -1,3 +1,4 @@
+//@module: commonjs
 
 //import FileManager = require('filemanager');
 //import App = require('app');

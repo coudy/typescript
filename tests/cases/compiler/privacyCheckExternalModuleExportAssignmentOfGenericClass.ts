@@ -1,3 +1,4 @@
+//@module: commonjs
 // @Filename: privacyCheckExternalModuleExportAssignmentOfGenericClass_0.ts
 export = Foo;
 class Foo<A> {

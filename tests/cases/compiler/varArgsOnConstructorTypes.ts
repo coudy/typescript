@@ -1,3 +1,4 @@
+//@module: amd
 export class A {
     constructor(ctor) { }
 }

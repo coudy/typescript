@@ -1,3 +1,4 @@
+//@module: commonjs
 interface connectModule {
     (res, req, next): void;
 }

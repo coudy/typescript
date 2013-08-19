@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'M' {
    interface Sammy {
       new (): any; // a constructor signature

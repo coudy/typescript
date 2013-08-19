@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'Car' {
     class Car {
 

@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: exportAssignmentInterface_A.ts
 interface A {
 	p1: number;

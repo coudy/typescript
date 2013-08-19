@@ -1,7 +1,6 @@
 // @target: ES5
 // @sourcemap: true
 // @declaration: true
-// @module: local
 
 class MyClass
 {

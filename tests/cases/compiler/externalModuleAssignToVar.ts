@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: externalModuleAssignToVar_ext.ts
 class D { }
 export = D;

@@ -1,3 +1,4 @@
+//@module: amd
 declare module "FS"
 
 {

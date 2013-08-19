@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: exportAssignmentClass_A.ts
 class C { public p = 0; }
 

@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 
 export class Enhancement {

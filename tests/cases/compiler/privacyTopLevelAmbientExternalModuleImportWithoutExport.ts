@@ -1,3 +1,4 @@
+//@module: amd
 // private elements
 declare module "mi_private" {
     export class c_private {

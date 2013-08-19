@@ -1,3 +1,4 @@
+//@module: commonjs
 // @Filename: importAsBaseClass_0.ts
 export class Greeter {
    greet() { return 'greet' }

@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 module m3 {
     export module m2 {

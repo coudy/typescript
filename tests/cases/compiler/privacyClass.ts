@@ -1,3 +1,4 @@
+//@module: commonjs
 export module m1 {
     export interface m1_i_public {
     }

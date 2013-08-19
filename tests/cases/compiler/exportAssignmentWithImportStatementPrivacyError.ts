@@ -1,3 +1,4 @@
+//@module: amd
 module m2 {
     export interface connectModule {
         (res, req, next): void;

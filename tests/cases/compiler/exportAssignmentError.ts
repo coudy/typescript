@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: exportEqualsModule_A.ts
 module M {
 	export var x;

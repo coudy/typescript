@@ -1,3 +1,4 @@
+//@module: amd
 export declare module TypeScript {
   class PullSymbol { }
   class PullSignatureSymbol <A,B,C> extends PullSymbol {

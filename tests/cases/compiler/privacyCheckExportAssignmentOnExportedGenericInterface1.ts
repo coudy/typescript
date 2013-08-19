@@ -1,3 +1,4 @@
+//@module: commonjs
 module Foo {
     export interface A<T> {
     }

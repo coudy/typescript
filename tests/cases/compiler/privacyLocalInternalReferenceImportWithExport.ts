@@ -1,3 +1,4 @@
+//@module: commonjs
 // private elements
 module m_private {
     export class c_private {

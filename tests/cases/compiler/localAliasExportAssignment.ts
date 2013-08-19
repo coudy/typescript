@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'connect' {
 
     var server: {

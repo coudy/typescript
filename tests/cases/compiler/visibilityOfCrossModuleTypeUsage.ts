@@ -1,3 +1,4 @@
+//@module: commonjs
 //visibilityOfCrossModuleTypeUsage
 
 // @Filename: visibilityOfCrossModuleTypeUsage_commands.ts

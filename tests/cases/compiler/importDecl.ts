@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 export declare module "m4" {
     export class d {

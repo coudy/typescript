@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: exportAssignmentInternalModule_A.ts
 module M {
 	export var x;

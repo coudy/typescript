@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 
 // @Filename: declFileImportModuleWithExportAssignment_0.ts

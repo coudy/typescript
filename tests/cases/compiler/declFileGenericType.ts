@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 export module C {
     export class A<T>{ }

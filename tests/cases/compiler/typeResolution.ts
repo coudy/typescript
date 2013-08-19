@@ -1,3 +1,4 @@
+//@module: amd
 // @sourcemap: true
 export module TopLevelModule1 {
     export module SubModule1 {

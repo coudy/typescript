@@ -1,6 +1,6 @@
 // @target: ES3
 // @sourcemap: true
-// @module: local
+
 interface Document {
 }
 interface Window {

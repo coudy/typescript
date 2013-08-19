@@ -1,3 +1,4 @@
+//@module: amd
 // @Filename: exportAssignmentFunction_A.ts
 function foo() { return 0; }
 

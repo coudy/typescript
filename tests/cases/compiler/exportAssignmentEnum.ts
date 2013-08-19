@@ -1,3 +1,4 @@
+//@module: commonjs
 // @Filename: exportAssignmentEnum_A.ts
 enum E {
 	A,

@@ -1,3 +1,4 @@
+//@module: amd
 export module a {
     export module b {
         export interface I {

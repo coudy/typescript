@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'a' {
     export class B {
         id: number;

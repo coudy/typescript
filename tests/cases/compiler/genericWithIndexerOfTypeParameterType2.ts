@@ -1,3 +1,4 @@
+//@module: amd
 export class Collection<TItem extends CollectionItem> {
     _itemsByKey: { [key: string]: TItem; };
 }

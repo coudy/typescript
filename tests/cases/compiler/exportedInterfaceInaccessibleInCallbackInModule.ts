@@ -1,3 +1,4 @@
+//@module: amd
 export interface ProgressCallback {
 	(progress:any):any;
 }	

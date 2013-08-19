@@ -1,3 +1,4 @@
+//@module: amd
 class Foo {
     public get foo() {
         var i: Foo;

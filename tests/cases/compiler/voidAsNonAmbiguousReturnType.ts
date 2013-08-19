@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module "fs" {
     export function mkdirSync(path: string, mode?: number): void;
     export function mkdirSync(path: string, mode?: string): void;

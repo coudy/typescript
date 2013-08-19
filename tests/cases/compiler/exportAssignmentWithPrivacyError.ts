@@ -1,3 +1,4 @@
+//@module: amd
 interface connectmodule {
     (res, req, next): void;
 }

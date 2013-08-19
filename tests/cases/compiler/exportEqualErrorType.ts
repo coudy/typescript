@@ -1,3 +1,4 @@
+//@module: amd
 declare module 'connect' {
     module server {
         export interface connectModule {

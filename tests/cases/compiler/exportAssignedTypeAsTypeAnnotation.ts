@@ -1,3 +1,4 @@
+//@module: amd
 declare module "test" {
     interface x {
         (): Date;

@@ -1,3 +1,4 @@
+//@module: commonjs
 export module x {
     export class c {
         foo(a: number) {

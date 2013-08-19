@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 module m2 {
     export interface connectModule {

@@ -1,3 +1,4 @@
+//@module: commonjs
 export module m1 {
     export module m1_M1_public {
         export class c1 {

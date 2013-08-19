@@ -1,3 +1,4 @@
+//@module: amd
 // @declaration: true
 
 // @Filename: declFileExportAssignmentOfGenericInterface_0.ts

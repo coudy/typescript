@@ -1,3 +1,4 @@
+//@module: commonjs
 // @target: ES5
 
 // @Filename: errorsOnImportedSymbol_0.ts

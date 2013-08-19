@@ -1,3 +1,4 @@
+//@module: commonjs
 export module a {
     export enum weekend {
         Friday,

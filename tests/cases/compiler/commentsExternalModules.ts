@@ -1,3 +1,4 @@
+//@module: amd
 // @target: ES5
 // @declaration: true
 // @comments: true

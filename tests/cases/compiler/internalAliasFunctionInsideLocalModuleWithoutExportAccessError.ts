@@ -1,3 +1,4 @@
+//@module: commonjs
 export module a {
     export function foo(x: number) {
         return x;

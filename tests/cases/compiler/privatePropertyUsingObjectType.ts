@@ -1,3 +1,4 @@
+//@module: amd
 export class FilterManager {
     private _filterProviders: { index: IFilterProvider; };
     private _filterProviders2: { [index: number]: IFilterProvider; };

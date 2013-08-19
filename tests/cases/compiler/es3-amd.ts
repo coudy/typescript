@@ -1,7 +1,7 @@
 // @target: ES3
 // @sourcemap: false
 // @declaration: false
-// @module: local
+// @module: amd
 
 class A
 {

@@ -1,3 +1,4 @@
+//@module: commonjs
 export var x = 1;
  
 for(var i = 0; i < 30; i++) {

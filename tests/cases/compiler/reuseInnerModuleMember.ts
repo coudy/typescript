@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'foo' { }
 
 declare module bar {

@@ -1,3 +1,4 @@
+//@module: amd
 export interface Callback {
     (value: any): void;
 }

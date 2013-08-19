@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module "foo" {
     class Foo {
         x: Foo.Bar;

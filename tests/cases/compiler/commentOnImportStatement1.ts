@@ -1,3 +1,4 @@
+//@module: amd
 // @comments: true
 /* Copyright */
 

@@ -1,3 +1,4 @@
+//@module: commonjs
 // @declaration: true
 export module a {
     export function foo(x: number) {

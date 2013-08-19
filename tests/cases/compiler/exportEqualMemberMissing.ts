@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module 'connect' {
     module server {
         export interface connectModule {

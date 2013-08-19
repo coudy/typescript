@@ -1,3 +1,4 @@
+//@module: commonjs
 declare module http {
 	export interface Server { openPort: number; }
 }

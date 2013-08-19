@@ -1,3 +1,5 @@
+// @module: commonjs
+
 module foo {    
     export class Provide {
     }

@@ -1,3 +1,4 @@
+//@module: amd
 export = Foo;
 
 interface Foo<T> {

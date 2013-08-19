@@ -1,3 +1,4 @@
+//@module: amd
 export class TestCase {
     constructor (public name: string, public test: ()=>boolean, public errorMessageRegEx?: string) {
     }

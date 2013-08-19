@@ -1,4 +1,5 @@
-﻿module M {
+//@module: commonjs
+module M {
     class C { }
     interface C { }
     interface D { }

@@ -1,7 +1,7 @@
 // @target: ES5
 // @sourcemap: true
 // @declaration: true
-// @module: local
+// @module: commonjs
 //// @out: bin\
 // @comments: true
 

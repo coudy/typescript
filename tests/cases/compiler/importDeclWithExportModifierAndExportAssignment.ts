@@ -1,3 +1,4 @@
+//@module: commonjs
 module x {
     interface c {
     }

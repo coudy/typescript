@@ -1,3 +1,4 @@
+//@module: commonjs
 export module Foo {
 	export class C {}
 }

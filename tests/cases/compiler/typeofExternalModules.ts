@@ -1,3 +1,4 @@
+//@module: commonjs
 // @Filename: typeofExternalModules_external.ts
 export class C { }
 

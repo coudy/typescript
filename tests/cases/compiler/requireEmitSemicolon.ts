@@ -1,3 +1,4 @@
+//@module: amd
 export declare module "Person" {
 	export module Models {
 		export class Person {
