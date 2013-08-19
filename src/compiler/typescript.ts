@@ -1421,6 +1421,10 @@ module TypeScript {
                         break;
 
                     case NodeType.TypeQuery:
+                        resolutionContext.resolvingTypeReference = false;
+                        resolutionContext.resolvingTypeQueryExpression = true;
+                        break;
+
                     case NodeType.TypeRef:
                     case NodeType.TypeParameter:
                         // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
