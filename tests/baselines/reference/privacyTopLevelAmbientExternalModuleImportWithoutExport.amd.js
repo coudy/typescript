@@ -2,7 +2,6 @@ define(["require", "exports", "mi_private", "mu_private", "mi_public"], function
     // private elements
     
 
-    // Public elements
     
 
     // Privacy errors - importing private elements

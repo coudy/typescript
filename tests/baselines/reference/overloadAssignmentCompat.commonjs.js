@@ -15,7 +15,6 @@ function attr(nameOrMap, value) {
     }
 }
 
-// not ok - there's an assignment compat error
 
 
 function attr2(nameOrMap, value) {
@@ -28,7 +27,6 @@ function attr2(nameOrMap, value) {
     }
 }
 
-// error - signatures are not assignment compatible
 
 function foo() {
     return "a";

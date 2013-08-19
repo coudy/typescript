@@ -15,14 +15,12 @@ define(["require", "exports", "m4", "glo_m4", "fncOnly_m4", "private_m4", "m5", 
     })(exports.m1 || (exports.m1 = {}));
     var m1 = exports.m1;
 
-    //Emit global only usage
     
     var glo_m4 = __glo_m4__;
     exports.useGlo_m4_x4 = glo_m4.x;
     exports.useGlo_m4_d4 = glo_m4.d;
     exports.useGlo_m4_f4 = glo_m4.foo();
 
-    //Emit even when used just in function type
     
     var fncOnly_m4 = __fncOnly_m4__;
     exports.useFncOnly_m4_f4 = fncOnly_m4.foo();

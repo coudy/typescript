@@ -91,5 +91,4 @@ var testClass8 = (function () {
     return testClass8;
 })();
 
-// in signatures
 

@@ -9,7 +9,6 @@ var __extends = this.__extends || function (d, b) {
 
 var s = ({});
 
-// scenario 2
 
 
 var x = {};

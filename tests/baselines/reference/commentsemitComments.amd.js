@@ -46,7 +46,6 @@ var c = (function () {
 /**instance comment*/
 var i = new c();
 
-/** interface comments*/
 
 
 /**interface instance comments*/

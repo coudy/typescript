@@ -17,7 +17,6 @@ var Derived = (function (_super) {
     return Derived;
 })(Base);
 
-// Note - commmenting "extends Foo" prevents the error
 
 
 var x = null;

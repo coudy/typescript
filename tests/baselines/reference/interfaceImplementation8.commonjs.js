@@ -49,9 +49,6 @@ var C6 = (function (_super) {
     return C6;
 })(C3);
 
-/*
-2
-*/
 
 
 var C7 = (function () {

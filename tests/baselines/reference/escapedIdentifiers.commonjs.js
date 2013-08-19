@@ -53,7 +53,6 @@ classType2Object1.foo2 = 2;
 var classType2Object2 = new classType\u0032();
 classType2Object2.foo2 = 2;
 
-// interfaces
 
 
 var interfaceType1Object1 = { bar1: 0 };

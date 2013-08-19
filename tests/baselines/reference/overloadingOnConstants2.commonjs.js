@@ -31,7 +31,6 @@ var a = foo("hi", []);
 var b = foo("bye", []);
 var c = foo("um", []);
 
-//function bar(x: "hi", items: string[]): D;
 
 
 function bar(x, items) {

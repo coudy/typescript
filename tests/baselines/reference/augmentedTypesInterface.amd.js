@@ -1,7 +1,6 @@
 // interface then interface
 
 
-// interface then class
 
 
 var i2 = (function () {
@@ -13,7 +12,6 @@ var i2 = (function () {
     return i2;
 })();
 
-// interface then enum
 
 var i3;
 (function (i3) {
@@ -21,5 +19,4 @@ var i3;
 })(i3 || (i3 = {}));
 ;
 
-// interface then import
 

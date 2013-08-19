@@ -1,5 +1,4 @@
 define(["require", "exports"], function(require, exports) {
-    // Doesn't match export visibility, but it's in a different parent, so it's ok
     
 
     // Should report error only once for instantiated module
@@ -49,6 +48,5 @@ define(["require", "exports"], function(require, exports) {
         var C = M.C;
     })(M || (M = {}));
 
-    // Top level
     
 });
