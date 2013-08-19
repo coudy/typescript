@@ -209,20 +209,20 @@ declare module m1 {
     function f2(s: string): any;
     function f2(n: number): any;
     class c1 {
-        public n;
+        public n: any;
         public n2: number;
         private n3;
         private n4;
         public a: () => string;
         private b;
         private static s1;
-        static s2;
+        static s2: any;
         public d(): string;
         public e: {
             x: number;
             y: string;
         };
-        constructor(n, n2: number, n3, n4: string);
+        constructor(n: any, n2: number, n3: any, n4: string);
     }
     interface i1 {
         (): Object;
@@ -247,16 +247,16 @@ declare module m13.m4 {
     function f(): number;
 }
 declare module m4 {
-    var b;
+    var b: any;
 }
 declare module m5 {
-    var c;
+    var c: any;
 }
 declare module m43 {
-    var b;
+    var b: any;
 }
 declare module m55 {
-    var c;
+    var c: any;
 }
 declare module "m3" {
     var b: number;

@@ -24,7 +24,7 @@ var foo;
 ////[intrinsics.d.ts]
 declare var hasOwnProperty: any;
 declare module m1 {
-    var __proto__;
+    var __proto__: any;
 }
 declare class Foo<__proto__> {
 }

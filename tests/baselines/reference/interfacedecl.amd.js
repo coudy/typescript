@@ -8,14 +8,14 @@ var instance2 = new c1();
 ////[interfacedecl.d.ts]
 interface a0 {
     (): string;
-    (a, b, c?: string): number;
+    (a: any, b: any, c?: string): number;
     new(): string;
     new(s: string): any;
     [n: number]: () => string;
     [s: string]: any;
-    p1;
+    p1: any;
     p2: string;
-    p3?;
+    p3?: any;
     p4?: number;
     p5: (s: number) => string;
     f1(): any;

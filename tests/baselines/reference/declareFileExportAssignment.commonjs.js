@@ -7,7 +7,7 @@ module.exports = m2;
 ////[declareFileExportAssignment.d.ts]
 declare module m2 {
     interface connectModule {
-        (res, req, next): void;
+        (res: any, req: any, next: any): void;
     }
     interface connectExport {
         use: (mod: connectModule) => connectExport;

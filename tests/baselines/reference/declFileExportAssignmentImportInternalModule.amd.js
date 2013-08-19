@@ -13,7 +13,7 @@ define(["require", "exports"], function(require, exports) {
 declare module m3 {
     module m2 {
         interface connectModule {
-            (res, req, next): void;
+            (res: any, req: any, next: any): void;
         }
         interface connectExport {
             use: (mod: connectModule) => connectExport;

@@ -14,7 +14,7 @@ define(["require", "exports", "declFileImportModuleWithExportAssignment_0"], fun
 ////[declFileImportModuleWithExportAssignment_0.d.ts]
 declare module m2 {
     interface connectModule {
-        (res, req, next): void;
+        (res: any, req: any, next: any): void;
     }
     interface connectExport {
         use: (mod: connectModule) => connectExport;

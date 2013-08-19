@@ -353,12 +353,8 @@ module TypeScript {
                 // PULLTODO
                 return;
             }
-
-            if (boundDecl.typeExpr || // Specified type expression
-                (boundDecl.init && type !== this.compiler.semanticInfoChain.anyTypeSymbol)) { // Not infered any
-                this.declFile.Write(": ");
-                this.emitTypeSignature(type);
-            }
+            this.declFile.Write(": ");
+            this.emitTypeSignature(type);
 
         }
 

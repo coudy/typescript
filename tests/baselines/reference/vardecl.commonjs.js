@@ -81,7 +81,7 @@ for (var k = 0; k < 30; k++) {
 var b = 10;
 
 ////[vardecl.d.ts]
-declare var simpleVar;
+declare var simpleVar: any;
 declare var anotherVar: any;
 declare var varWithSimpleType: number;
 declare var varWithArrayType: number[];
@@ -132,21 +132,21 @@ declare var d4: {
     };
 };
 declare module m2 {
-    var a, b2: number, b;
+    var a: any, b2: number, b: any;
     class C2 {
-        public b;
-        constructor(b);
+        public b: any;
+        constructor(b: any);
     }
-    var mE;
-    var d1E, d2E;
-    var b2E;
-    var v1E;
+    var mE: any;
+    var d1E: any, d2E: any;
+    var b2E: any;
+    var v1E: any;
 }
-declare var a22, b22: number, c22: number;
-declare var nn;
-declare var normalVar;
-declare var xl;
-declare var x;
-declare var z;
-declare function foo(a2): void;
+declare var a22: any, b22: number, c22: number;
+declare var nn: any;
+declare var normalVar: any;
+declare var xl: any;
+declare var x: any;
+declare var z: any;
+declare function foo(a2: any): void;
 declare var b: number;

@@ -51,7 +51,7 @@ exports.eVar3 = 10, exports.eVar4, exports.eVar5;
 
 
 ////[withExportDecl.d.ts]
-export declare var exportedSimpleVar;
+export declare var exportedSimpleVar: any;
 export declare var exportedVarWithInitialValue: number;
 export declare var exportedWithComplicatedValue: {
     x: number;
@@ -74,5 +74,5 @@ export declare module m2 {
 export declare module m3 {
     function foo(): string;
 }
-export declare var eVar1, eVar2: number;
-export declare var eVar3: number, eVar4, eVar5;
+export declare var eVar1: any, eVar2: number;
+export declare var eVar3: number, eVar4: any, eVar5: any;

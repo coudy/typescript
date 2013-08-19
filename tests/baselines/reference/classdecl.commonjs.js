@@ -125,7 +125,7 @@ declare class a {
     constructor(n: number);
     constructor(s: string);
     public pgF(): void;
-    public pv;
+    public pv: any;
     public d : any;
     static p2 : {
         x: number;
@@ -158,14 +158,14 @@ declare class aAmbient {
     constructor(n: number);
     constructor(s: string);
     public pgF(): void;
-    public pv;
+    public pv: any;
     public d: number;
     static p2: {
         x: number;
         y: number;
     };
     static d2(): any;
-    static p3;
+    static p3: any;
     private pv3;
     private foo(s);
 }

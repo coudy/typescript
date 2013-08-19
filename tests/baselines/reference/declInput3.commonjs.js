@@ -26,5 +26,5 @@ declare class bar {
         b: any;
         c: any;
     };
-    public h(x?: number, y?, z?: string): void;
+    public h(x?: number, y?: any, z?: string): void;
 }

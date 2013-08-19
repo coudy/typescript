@@ -197,7 +197,7 @@ declare function sum(a: number, b: number): number;
 /** @param c {
 @param d @anotherTag*/
 /** @param e LastParam @anotherTag*/
-declare function multiply(a: number, b: number, c?: number, d?, e?): void;
+declare function multiply(a: number, b: number, c?: number, d?: any, e?: any): void;
 /** fn f1 with number
 * @param { string} b about b
 */

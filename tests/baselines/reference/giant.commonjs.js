@@ -554,11 +554,11 @@ var eM = exports.eM;
 
 
 ////[giant.d.ts]
-export declare var eV;
+export declare var eV: any;
 export declare function eF(): void;
 export declare class eC {
     constructor();
-    public pV;
+    public pV: any;
     private rV;
     public pF(): void;
     private rF();
@@ -570,7 +570,7 @@ export declare class eC {
     private rgF;
     private rsF(param);
     private rsF;
-    static tV;
+    static tV: any;
     static tF(): void;
     static tsF(param: any): void;
     static tsF : any;
@@ -580,7 +580,7 @@ export declare class eC {
 export interface eI {
     (): any;
     (): number;
-    (p): any;
+    (p: any): any;
     (p1: string): any;
     (p2?: string): any;
     (...p3: any[]): any;
@@ -593,26 +593,26 @@ export interface eI {
     new(...p3: any[]): any;
     new(p4: string, p5?: string): any;
     new(p6: string, ...p7: any[]): any;
-    [p]: any;
+    [p: any]: any;
     [p1: string]: any;
     [p2: string]: any;
     p3: number;
-    p;
-    p1?;
+    p: any;
+    p1?: any;
     p2?: string;
     p3(): any;
     p4? (): any;
     p5? (): void;
-    p6(pa1): void;
-    p7(pa1, pa2): void;
-    p7? (pa1, pa2): void;
+    p6(pa1: any): void;
+    p7(pa1: any, pa2: any): void;
+    p7? (pa1: any, pa2: any): void;
 }
 export declare module eM {
-    var eV;
+    var eV: any;
     function eF(): void;
     class eC {
         constructor();
-        public pV;
+        public pV: any;
         private rV;
         public pF(): void;
         private rF();
@@ -624,7 +624,7 @@ export declare module eM {
         private rgF;
         private rsF(param);
         private rsF;
-        static tV;
+        static tV: any;
         static tF(): void;
         static tsF(param: any): void;
         static tsF : any;
@@ -634,7 +634,7 @@ export declare module eM {
     interface eI {
         (): any;
         (): number;
-        (p): any;
+        (p: any): any;
         (p1: string): any;
         (p2?: string): any;
         (...p3: any[]): any;
@@ -647,22 +647,22 @@ export declare module eM {
         new(...p3: any[]): any;
         new(p4: string, p5?: string): any;
         new(p6: string, ...p7: any[]): any;
-        [p]: any;
+        [p: any]: any;
         [p1: string]: any;
         [p2: string]: any;
         p3: number;
-        p;
-        p1?;
+        p: any;
+        p1?: any;
         p2?: string;
         p3(): any;
         p4? (): any;
         p5? (): void;
-        p6(pa1): void;
-        p7(pa1, pa2): void;
-        p7? (pa1, pa2): void;
+        p6(pa1: any): void;
+        p7(pa1: any, pa2: any): void;
+        p7? (pa1: any, pa2: any): void;
     }
     module eM {
-        var eV;
+        var eV: any;
         function eF(): void;
         class eC {
         }
@@ -670,18 +670,18 @@ export declare module eM {
         }
         module eM {
         }
-        var eaV;
+        var eaV: any;
         function eaF(): void;
         class eaC {
         }
         module eaM {
         }
     }
-    var eaV;
+    var eaV: any;
     function eaF(): void;
     class eaC {
         constructor();
-        public pV;
+        public pV: any;
         private rV;
         public pF(): void;
         private rF();
@@ -693,7 +693,7 @@ export declare module eM {
         private rgF;
         private rsF(param);
         private rsF;
-        static tV;
+        static tV: any;
         static tF(): void;
         static tsF(param: any): void;
         static tsF : any;
@@ -701,7 +701,7 @@ export declare module eM {
         static tgF : void;
     }
     module eaM {
-        var V;
+        var V: any;
         function F(): void;
         class C {
         }
@@ -709,7 +709,7 @@ export declare module eM {
         }
         module M {
         }
-        var eV;
+        var eV: any;
         function eF(): void;
         class eC {
         }
@@ -719,11 +719,11 @@ export declare module eM {
         }
     }
 }
-export declare var eaV;
+export declare var eaV: any;
 export declare function eaF(): void;
 export declare class eaC {
     constructor();
-    public pV;
+    public pV: any;
     private rV;
     public pF(): void;
     private rF();
@@ -735,7 +735,7 @@ export declare class eaC {
     private rgF;
     private rsF(param);
     private rsF;
-    static tV;
+    static tV: any;
     static tF(): void;
     static tsF(param: any): void;
     static tsF : any;
@@ -743,14 +743,14 @@ export declare class eaC {
     static tgF : void;
 }
 export declare module eaM {
-    var V;
+    var V: any;
     function F(): void;
     class C {
         constructor();
-        public pV;
+        public pV: any;
         private rV;
         public pF(): void;
-        static tV;
+        static tV: any;
         static tF(): void;
     }
     interface I {
@@ -768,22 +768,22 @@ export declare module eaM {
         new(...p3: any[]): any;
         new(p4: string, p5?: string): any;
         new(p6: string, ...p7: any[]): any;
-        [p]: any;
+        [p: any]: any;
         [p1: string]: any;
         [p2: string]: any;
         p3: number;
-        p;
-        p1?;
+        p: any;
+        p1?: any;
         p2?: string;
         p3(): any;
         p4? (): any;
         p5? (): void;
-        p6(pa1): void;
-        p7(pa1, pa2): void;
-        p7? (pa1, pa2): void;
+        p6(pa1: any): void;
+        p7(pa1: any, pa2: any): void;
+        p7? (pa1: any, pa2: any): void;
     }
     module M {
-        var V;
+        var V: any;
         function F(): void;
         class C {
         }
@@ -791,7 +791,7 @@ export declare module eaM {
         }
         module M {
         }
-        var eV;
+        var eV: any;
         function eF(): void;
         class eC {
         }
@@ -799,27 +799,27 @@ export declare module eaM {
         }
         module eM {
         }
-        var eaV;
+        var eaV: any;
         function eaF(): void;
         class eaC {
         }
         module eaM {
         }
     }
-    var eV;
+    var eV: any;
     function eF(): void;
     class eC {
         constructor();
-        public pV;
+        public pV: any;
         private rV;
         public pF(): void;
-        static tV;
+        static tV: any;
         static tF(): void;
     }
     interface eI {
         (): any;
         (): number;
-        (p): any;
+        (p: any): any;
         (p1: string): any;
         (p2?: string): any;
         (...p3: any[]): any;
@@ -832,28 +832,28 @@ export declare module eaM {
         new(...p3: any[]): any;
         new(p4: string, p5?: string): any;
         new(p6: string, ...p7: any[]): any;
-        [p]: any;
+        [p: any]: any;
         [p1: string]: any;
         [p2: string]: any;
         p3: number;
-        p;
-        p1?;
+        p: any;
+        p1?: any;
         p2?: string;
         p3(): any;
         p4? (): any;
         p5? (): void;
-        p6(pa1): void;
-        p7(pa1, pa2): void;
-        p7? (pa1, pa2): void;
+        p6(pa1: any): void;
+        p7(pa1: any, pa2: any): void;
+        p7? (pa1: any, pa2: any): void;
     }
     module eM {
-        var V;
+        var V: any;
         function F(): void;
         class C {
         }
         module M {
         }
-        var eV;
+        var eV: any;
         function eF(): void;
         class eC {
         }
