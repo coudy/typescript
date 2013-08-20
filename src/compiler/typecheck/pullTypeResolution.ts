@@ -2550,7 +2550,7 @@ module TypeScript {
 
                 // if the noImplicitAny flag is set to be true, report an error
                 // Do not report an error if the variable declaration is declared in ForIn statement
-                if (this.compilationSettings.noImplicitAny && !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
+                if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext &&  !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
 
                     // check what enclosingDecl the varDecl is in and report an appropriate error message
                     // varDecl is a function/constructor/constructor-signature parameter
@@ -2823,7 +2823,7 @@ module TypeScript {
                         signature.returnType = newReturnType;
 
                         // if noImplicitAny flag is set to be true and return statements are not cast expressions, report an error
-                        if (this.compilationSettings.noImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
                             // if the returnType got widen to Any
                             if (previousReturnType !== newReturnType && newReturnType === this.semanticInfoChain.anyTypeSymbol) {
                                 var functionName = enclosingDecl.name;
