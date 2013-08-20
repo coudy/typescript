@@ -3388,13 +3388,16 @@ module TypeScript {
             var setterSymbol = accessorSymbol.getSetter();
             var setterTypeSymbol = <PullTypeSymbol>setterSymbol.type;
 
-            var signature: PullSignatureSymbol = setterTypeSymbol.getCallSignatures()[0];
+            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
 
             var hadError = false;
 
             if (signature) {
 
                 if (signature.isResolved) {
+                    if (!accessorSymbol.type) {
+                        accessorSymbol.type = signature.parameters[0].type;
+                    }
                     return accessorSymbol;
                 }
 
@@ -3402,6 +3405,10 @@ module TypeScript {
                     // PULLTODO: Error or warning?
                     signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                     signature.setResolved();
+
+                    if (!accessorSymbol.type) {
+                        accessorSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                    }
 
                     return accessorSymbol;
                 }

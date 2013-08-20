@@ -651,6 +651,7 @@ module TypeScript {
         private stringConstantOverload: boolean = undefined;
 
         public hasBeenChecked = false;
+        public inWrapCheck = false;
 
         constructor(kind: PullElementKind) {
             super("", kind);
@@ -1033,6 +1034,7 @@ module TypeScript {
 
         private inMemberTypeNameEx = false;
         public inSymbolPrivacyCheck = false;
+        public inWrapCheck = false;
 
         constructor(name: string, kind: PullElementKind) {
             super(name, kind);
@@ -2515,17 +2517,91 @@ module TypeScript {
             return type == typeParameter;
         }
 
+        if (type.inWrapCheck) {
+            return false;
+        }
+
+        type.inWrapCheck = true;
+
+        var wrapsType = false;
+
         var typeArguments = type.getTypeArguments();
 
         if (typeArguments) {
             for (var i = 0; i < typeArguments.length; i++) {
                 if (typeWrapsTypeParameter(typeArguments[i], typeParameter)) {
-                    return true;
+                    wrapsType = true;
+                    break;
                 }
             }
         }
 
-        return false;
+        if (!wrapsType) {
+            var callSignatures = type.getCallSignatures();
+            var constructSignatures = type.getConstructSignatures();
+            var indexSignatures = type.getIndexSignatures();
+
+            for (var i = 0; i < callSignatures.length; i++) {
+                if (signatureWrapsTypeParameter(callSignatures[i], typeParameter)) {
+                    wrapsType = true;
+                    break;
+                }
+            }
+
+            if (!wrapsType) {
+                for (var i = 0; i < constructSignatures.length; i++) {
+                    if (signatureWrapsTypeParameter(constructSignatures[i], typeParameter)) {
+                        wrapsType = true;
+                        break;
+                    }
+                }
+
+                if (!wrapsType) {
+                    for (var i = 0; i < indexSignatures.length; i++) {
+                        if (signatureWrapsTypeParameter(indexSignatures[i], typeParameter)) {
+                            wrapsType = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        type.inWrapCheck = false;
+
+        return wrapsType;
+    }
+
+    export function signatureWrapsTypeParameter(signature: PullSignatureSymbol, typeParameter: PullTypeParameterSymbol) {
+
+        if (signature.inWrapCheck) {
+            return false;
+        }
+
+        var wrapsType = false;
+
+        // parameters
+        if (signature.parameters) {
+            for (var i = 0; i < signature.parameters.length; i++) {
+                if (signature.parameters[i].type) {
+                    if (typeWrapsTypeParameter(signature.parameters[i].type, typeParameter)) {
+
+                        wrapsType = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!wrapsType) {
+            if (signature.returnType) {
+                wrapsType = typeWrapsTypeParameter(signature.returnType, typeParameter);
+            }
+        }
+
+        signature.inWrapCheck = false;
+
+        return wrapsType;
     }
 
     export function getRootType(typeToSpecialize: PullTypeSymbol) {
@@ -2580,7 +2656,7 @@ module TypeScript {
             return typeToSpecialize;
         }
 
-        if (context.recursiveMemberSpecializationDepth == maxRecursiveMemberSpecializationDepth) {
+        if (context.recursiveMemberSpecializationDepth == maxRecursiveMemberSpecializationDepth || context.recursiveSignatureSpecializationDepth == maxRecursiveSignatureSpecializationDepth) {
             return resolver.semanticInfoChain.anyTypeSymbol;
         }
 
@@ -2873,7 +2949,10 @@ module TypeScript {
                     resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
                 }
 
+                context.recursiveSignatureSpecializationDepth++;
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
+                
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -2897,6 +2976,8 @@ module TypeScript {
                 placeHolderSignature = newSignature;
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
+
+                context.recursiveSignatureSpecializationDepth--;
 
                 if (newSignature != placeHolderSignature) {
                     newSignature.setRootSymbol(signature);
@@ -2948,7 +3029,10 @@ module TypeScript {
                     resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
                 } 
 
+                context.recursiveSignatureSpecializationDepth++;
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
+                
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -2974,6 +3058,7 @@ module TypeScript {
                 placeHolderSignature = newSignature;
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
+                context.recursiveSignatureSpecializationDepth--;
 
                 if (newSignature != placeHolderSignature) {
                     newSignature.setRootSymbol(signature);
@@ -3025,7 +3110,10 @@ module TypeScript {
                     resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
                 } 
 
+                context.recursiveSignatureSpecializationDepth++;
+
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
+                
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -3051,6 +3139,7 @@ module TypeScript {
                 placeHolderSignature = newSignature;
                 newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
+                context.recursiveSignatureSpecializationDepth--;
 
                 if (newSignature != placeHolderSignature) {
                     newSignature.setRootSymbol(signature);

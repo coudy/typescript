@@ -1095,8 +1095,6 @@ module TypeScript {
 
                 this.semanticInfo.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [propertyDeclaration.getDisplayName()]));
-
-                propertySymbol = null;
             }
 
             if (propertySymbol) {
