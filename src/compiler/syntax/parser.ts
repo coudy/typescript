@@ -3564,7 +3564,7 @@ module TypeScript.Parser {
                 // We either have a binary operator here, or we're finished.
                 var token0 = this.currentToken();
                 var token0Kind = token0.tokenKind;
-
+                
                 // Check for binary expressions.
                 if (SyntaxFacts.isBinaryExpressionOperatorToken(token0Kind)) {
                     // also, if it's the 'in' operator, only allow if our caller allows it.
@@ -3734,6 +3734,17 @@ module TypeScript.Parser {
         private parsePostFixExpression(expression: IUnaryExpressionSyntax, inObjectCreation: boolean): IUnaryExpressionSyntax {
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
+
+                // If we have seen "super" it must be followed by '(' or '.'.
+                // If it wasn't then just try to parse out a '.' and report an error.
+                if (expression.kind() === SyntaxKind.SuperKeyword) {
+                    if (currentTokenKind !== SyntaxKind.OpenParenToken && currentTokenKind !== SyntaxKind.DotToken) {
+                        expression = this.factory.memberAccessExpression(
+                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
+                        continue;
+                    }
+                }
+
                 switch (currentTokenKind) {
                     case SyntaxKind.OpenParenToken:
                         if (inObjectCreation) {
