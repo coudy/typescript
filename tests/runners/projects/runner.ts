@@ -653,7 +653,7 @@ class ProjectRunner extends RunnerBase {
                 , projectRoot: 'tests/cases/projects/NoModule'
                 , inputFiles: ['decl.ts']
                 , collectedFiles: ['decl.ts']
-                , outputFiles: []
+                , outputFiles: <string[]>[]
                 , negative: true
                 , skipRun: true
                 , errors: [
@@ -722,7 +722,7 @@ class ProjectRunner extends RunnerBase {
                 , projectRoot: 'tests/cases/projects/NestedDeclare'
                 , inputFiles: ['consume.ts']
                 , collectedFiles: ['consume.ts']
-                , outputFiles: []
+                , outputFiles: <string[]>[]
                 , skipRun: true
             });
 
@@ -778,7 +778,7 @@ class ProjectRunner extends RunnerBase {
                 , projectRoot: 'tests/cases/projects/NestedLocalModule-WithRecursiveTypecheck'
                 , inputFiles: ['test1.ts']
                 , collectedFiles: ['test1.ts', 'test2.ts']
-                , outputFiles: []
+                , outputFiles: <string[]>[]
                 , skipRun: true
                 , negative: true
                 , errors: [
@@ -792,7 +792,7 @@ class ProjectRunner extends RunnerBase {
                 , projectRoot: 'tests/cases/projects/NestedLocalModule-SimpleCase'
                 , inputFiles: ['test1.ts']
                 , collectedFiles: ['test1.ts', 'test2.ts']
-                , outputFiles: []
+                , outputFiles: <string[]>[]
                 , skipRun: true
                 , negative: true
                 , errors: [
@@ -808,7 +808,7 @@ class ProjectRunner extends RunnerBase {
                 , outputFiles: ['mExported.js', 'mNonExported.js']
                 , negative: true
                 , skipRun: true
-                , errors: []
+                , errors: <string[]>[]
             });
 
             tests.push({
@@ -885,7 +885,7 @@ class ProjectRunner extends RunnerBase {
                 , projectRoot: 'tests/cases/projects/declareVariableCollision'
                 , inputFiles: ['decl.d.ts', 'in1.d.ts', 'in2.d.ts']
                 , collectedFiles: ['decl.d.ts', 'in1.d.ts', 'in2.d.ts']
-                , outputFiles: []
+                , outputFiles: <string[]>[]
                 , negative: true
                 , skipRun: true
                 , bug: '535531'
@@ -2492,7 +2492,7 @@ class ProjectRunner extends RunnerBase {
                 , verifyEmitFiles: true
                 , skipRun: true
                 , negative: true
-                , errors: []
+                , errors: <string[]>[]
             });
 
 
@@ -2527,7 +2527,7 @@ class ProjectRunner extends RunnerBase {
                 scenario: "No-default-lib"
                 , projectRoot: 'tests/cases/projects/No-default-lib'
                 , inputFiles: ['test.ts']
-                , collectedFiles: []
+                , collectedFiles: <string[]>[]
                 , outputFiles: ['test.js']
                 , verifyEmitFiles: false
                 , skipRun: true

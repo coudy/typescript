@@ -337,7 +337,7 @@ module Harness {
 
         public runChild(index: number, done: IDone) {
             var that = this;
-            return this.call(<any>((done) => that.children[index].run(done)), done);
+            return this.call(<any>((done: IDone) => that.children[index].run(done)), done);
         }
 
         static errorHandlerStack: { (e: Error): void; }[] = [];
@@ -383,7 +383,7 @@ module Harness {
             emitLog('testStart', { desc: this.description });
 
             if (this.block) {
-                var async = this.runBlock(<any>function (e) {
+                var async = this.runBlock(<any>function (e: Error) {
                     if (e) {
                         that.passed = false;
                         that.error = e;
@@ -421,7 +421,7 @@ module Harness {
 
             emitLog('scenarioStart', { desc: this.description });
 
-            var async = this.runBlock(<any>function (e) {
+            var async = this.runBlock(<any>function (e:Error) {
                 Runnable.currentStack.pop();
                 if (e) {
                     that.passed = false;
@@ -447,7 +447,7 @@ module Harness {
             var async = false;
 
             for (; index < this.children.length; index++) {
-                async = this.runChild(index, <any>function (e) {
+                async = this.runChild(index, <any>function (e: Error) {
                     that.passed = that.passed && that.children[index].passed;
 
                     if (async)
@@ -485,7 +485,7 @@ module Harness {
                 // Clear out bug descriptions
                 assert.bugIds = [];
 
-                async = this.runChild(index, <any>function (e) {
+                async = this.runChild(index, <any>function (e: Error) {
                     if (async) {
                         that.runChildren(index + 1);
                     }
