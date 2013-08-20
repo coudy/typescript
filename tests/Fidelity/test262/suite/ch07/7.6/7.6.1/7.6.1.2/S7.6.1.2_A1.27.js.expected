@@ -12,6 +12,14 @@
             "arguments": [
                 "identifier"
             ]
+        },
+        {
+            "start": 326,
+            "length": 1,
+            "diagnosticCode": "'{0}' expected.",
+            "arguments": [
+                "."
+            ]
         }
     ],
     "sourceUnit": {
@@ -90,23 +98,40 @@
             {
                 "kind": "ExpressionStatement",
                 "fullWidth": 11,
+                "isIncrementallyUnusable": true,
                 "expression": {
                     "kind": "AssignmentExpression",
                     "fullWidth": 9,
+                    "isIncrementallyUnusable": true,
                     "left": {
-                        "kind": "SuperKeyword",
-                        "width": 5,
+                        "kind": "MemberAccessExpression",
                         "fullWidth": 6,
-                        "text": "super",
-                        "value": "super",
-                        "valueText": "super",
-                        "hasTrailingTrivia": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "WhitespaceTrivia",
-                                "text": " "
-                            }
-                        ]
+                        "isIncrementallyUnusable": true,
+                        "expression": {
+                            "kind": "SuperKeyword",
+                            "width": 5,
+                            "fullWidth": 6,
+                            "text": "super",
+                            "value": "super",
+                            "valueText": "super",
+                            "hasTrailingTrivia": true,
+                            "trailingTrivia": [
+                                {
+                                    "kind": "WhitespaceTrivia",
+                                    "text": " "
+                                }
+                            ]
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 0,
+                            "text": ""
+                        },
+                        "name": {
+                            "kind": "IdentifierName",
+                            "width": 0,
+                            "text": ""
+                        }
                     },
                     "operatorToken": {
                         "kind": "EqualsToken",
