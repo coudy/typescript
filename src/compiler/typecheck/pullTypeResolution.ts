@@ -8992,6 +8992,7 @@ module TypeScript {
             if (!parameterType.isArray() &&
                 parameterDeclarations.length &&
                 expressionDeclarations.length &&
+                !(parameterType.isTypeParameter() || expressionType.isTypeParameter()) &&
                 (parameterDeclarations[0].isEqual(expressionDeclarations[0]) ||
                 (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(expressionType, parameterType, context, null))) &&
                 expressionType.isGeneric()) {
