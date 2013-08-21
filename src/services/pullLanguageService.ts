@@ -38,12 +38,7 @@ module Services {
             });
         }
 
-        public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
-            fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
-
-            var result: ReferenceEntry[] = [];
-
+        private getSymbolInfoAtPosition(fileName: string, pos: number): { symbol: TypeScript.PullSymbol; containingASTOpt: TypeScript.AST } {
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
@@ -52,30 +47,53 @@ module Services {
             var path = this.getAstPathToPosition(script, pos);
             if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
                 this.logger.log("No name found at the given position");
-                return [];
+                return null;
             }
 
             // Store the actual name before calling getSymbolInformationFromPath
             var actualNameAtPosition = (<TypeScript.Identifier>path.ast()).text();
 
             var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
-            if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
+            if (symbolInfoAtPosition === null || (symbolInfoAtPosition.symbol === null && symbolInfoAtPosition.aliasSymbol)) {
                 this.logger.log("No symbol found at the given position");
                 // only single reference
-                return this.getSingleNodeReferenceAtPosition(fileName, pos);
+                return { symbol: null, containingASTOpt: null };
             }
 
-            var symbol = symbolInfoAtPosition.symbol;
+            var symbol = symbolInfoAtPosition.aliasSymbol || symbolInfoAtPosition.symbol;
             var symbolName = symbol.getName();
 
             // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
             if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
                 this.logger.log("Unknown symbol found at the given position");
                 // only single reference
-                return this.getSingleNodeReferenceAtPosition(fileName, pos);
+                return { symbol: null, containingASTOpt: null };
             }
 
             var containingASTOpt = this.getSymbolScopeAST(symbol, path);
+
+            return { symbol: symbol, containingASTOpt: containingASTOpt };
+        }
+
+        public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.refresh();
+
+            var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos);
+            if (symbolAndContainingAST === null) {
+                // Didn't even have a name at that position.
+                return [];
+            }
+
+            if (symbolAndContainingAST.symbol === null) {
+                // Had a name, but couldn't bind it to anything.
+                return this.getSingleNodeReferenceAtPosition(fileName, pos);
+            }
+
+            var result: ReferenceEntry[] = [];
+            var symbol = symbolAndContainingAST.symbol;
+            var symbolName = symbol.getName();
+            var containingASTOpt = symbolAndContainingAST.containingASTOpt;
 
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
@@ -121,38 +139,19 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
-            var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
-
-            /// TODO: this does not allow getting references on "constructor"
-
-            var path = this.getAstPathToPosition(script, pos);
-            if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
-                this.logger.log("No name found at the given position");
+            var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos);
+            if (symbolAndContainingAST === null) {
+                // Didn't even have a name at that position.
                 return [];
             }
 
-            // Store the actual name before calling getSymbolInformationFromPath
-            var actualNameAtPosition = (<TypeScript.Identifier>path.ast()).text();
-
-            var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
-            if (symbolInfoAtPosition === null || symbolInfoAtPosition.symbol === null) {
-                this.logger.log("No symbol found at the given position");
-                // only single reference
+            if (symbolAndContainingAST.symbol === null) {
+                // Had a name, but couldn't bind it to anything.
                 return this.getSingleNodeReferenceAtPosition(fileName, pos);
             }
 
-            var symbol = symbolInfoAtPosition.symbol;
-            var symbolName = symbol.getName();
-
-            // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
-            if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
-                this.logger.log("Unknown symbol found at the given position");
-                // only single reference
-                return this.getSingleNodeReferenceAtPosition(fileName, pos);
-            }
-
-            var containingASTOpt = this.getSymbolScopeAST(symbol, path);
+            var symbol = symbolAndContainingAST.symbol;
+            var containingASTOpt = symbolAndContainingAST.containingASTOpt;
 
             return this.getReferencesInFile(fileName, symbol, containingASTOpt);
         }
@@ -343,13 +342,16 @@ module Services {
                     if (nameAST === null || nameAST.nodeType() !== TypeScript.NodeType.Name || (nameAST.limChar - nameAST.minChar !== symbolName.length)) {
                         return;
                     }
-                    var searchSymbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
 
-                    if (searchSymbolInfoAtPosition !== null &&
-                        FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbolInfoAtPosition.symbol, symbol, this.compilerState.getSemanticInfoChain())) {
+                    var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
+                    if (symbolInfoAtPosition !== null) {
+                        var searchSymbol = symbolInfoAtPosition.aliasSymbol || symbolInfoAtPosition.symbol;
 
-                        var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
-                        result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
+                        if (FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol, this.compilerState.getSemanticInfoChain())) {
+
+                            var isWriteAccess = this.isWriteAccess(path.ast(), path.parent());
+                            result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
+                        }
                     }
                 });
             }
@@ -586,29 +588,16 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
-            var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
-
-            var path = this.getAstPathToPosition(script, position);
-            if (path.count() == 0) {
+            var symbolInfo = this.getSymbolInfoAtPosition(fileName, position);
+            if (symbolInfo === null || symbolInfo.symbol === null) {
                 return null;
             }
 
-            var symbolInfo = this.compilerState.getSymbolInformationFromPath(path, document);
-            if (symbolInfo == null || symbolInfo.symbol == null) {
-                this.logger.log("No identifier at the specified location.");
-                return null;
-            }
-
-            var declarations = symbolInfo.symbol.getDeclarations();
-            if (declarations == null || declarations.length === 0) {
-                this.logger.log("Could not find declaration for symbol.");
-                return null;
-            }
-
-            var symbolName = symbolInfo.symbol.getDisplayName();
-            var symbolKind = this.mapPullElementKind(symbolInfo.symbol.kind, symbolInfo.symbol);
-            var container = symbolInfo.symbol.getContainer();
+            var symbol = symbolInfo.symbol;
+            var declarations = symbol.getDeclarations();
+            var symbolName = symbol.getDisplayName();
+            var symbolKind = this.mapPullElementKind(symbol.kind, symbol);
+            var container = symbol.getContainer();
             var containerName = container ? container.fullName() : "";
             var containerKind = container ? this.mapPullElementKind(container.kind, container) : "";
 

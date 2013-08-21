@@ -106,6 +106,7 @@ module TypeScript {
 
     export interface PullSymbolInfo {
         symbol: PullSymbol;
+        aliasSymbol: PullTypeAliasSymbol;
         ast: AST;
         enclosingScopeSymbol: PullSymbol;
     }
@@ -1503,10 +1504,13 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }            
 
-            var symbol = this.resolver.resolveAST(path.ast(), context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
+            var ast = path.ast();
+            var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
+            var aliasSymbol = this.semanticInfoChain.getUnit(document.fileName).getAliasSymbolForAST(ast);
 
             return {
                 symbol: symbol,
+                aliasSymbol: aliasSymbol,
                 ast: path.ast(),
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
@@ -1542,6 +1546,7 @@ module TypeScript {
 
             return {
                 symbol: symbol,
+                aliasSymbol: null,
                 ast: path.ast(),
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
@@ -1664,6 +1669,7 @@ module TypeScript {
 
             return {
                 symbol: symbol,
+                aliasSymbol: null,
                 ast: path.ast(),
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
