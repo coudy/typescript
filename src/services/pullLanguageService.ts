@@ -38,20 +38,20 @@ module Services {
             });
         }
 
-        private getSymbolInfoAtPosition(fileName: string, pos: number): { symbol: TypeScript.PullSymbol; containingASTOpt: TypeScript.AST } {
+        private getSymbolInfoAtPosition(fileName: string, pos: number, requireName: boolean): { symbol: TypeScript.PullSymbol; containingASTOpt: TypeScript.AST } {
             var document = this.compilerState.getDocument(fileName);
             var script = document.script;
 
             /// TODO: this does not allow getting references on "constructor"
 
             var path = this.getAstPathToPosition(script, pos);
-            if (path.ast() === null || path.ast().nodeType() !== TypeScript.NodeType.Name) {
+            var topNode = path.ast();
+            if (topNode === null || (requireName && topNode.nodeType() !== TypeScript.NodeType.Name)) {
                 this.logger.log("No name found at the given position");
                 return null;
             }
 
             // Store the actual name before calling getSymbolInformationFromPath
-            var actualNameAtPosition = (<TypeScript.Identifier>path.ast()).text();
 
             var symbolInfoAtPosition = this.compilerState.getSymbolInformationFromPath(path, document);
             if (symbolInfoAtPosition === null || (symbolInfoAtPosition.symbol === null && symbolInfoAtPosition.aliasSymbol)) {
@@ -64,10 +64,14 @@ module Services {
             var symbolName = symbol.getName();
 
             // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
-            if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
-                this.logger.log("Unknown symbol found at the given position");
-                // only single reference
-                return { symbol: null, containingASTOpt: null };
+            if (requireName) {
+                var actualNameAtPosition = (<TypeScript.Identifier>topNode).text();
+
+                if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+                    this.logger.log("Unknown symbol found at the given position");
+                    // only single reference
+                    return { symbol: null, containingASTOpt: null };
+                }
             }
 
             var containingASTOpt = this.getSymbolScopeAST(symbol, path);
@@ -79,7 +83,7 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
-            var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos);
+            var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos, /*requireName:*/ true);
             if (symbolAndContainingAST === null) {
                 // Didn't even have a name at that position.
                 return [];
@@ -139,7 +143,7 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
-            var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos);
+            var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos, /*requireName:*/ true);
             if (symbolAndContainingAST === null) {
                 // Didn't even have a name at that position.
                 return [];
@@ -588,7 +592,7 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 
-            var symbolInfo = this.getSymbolInfoAtPosition(fileName, position);
+            var symbolInfo = this.getSymbolInfoAtPosition(fileName, position, /*requireName:*/ false);
             if (symbolInfo === null || symbolInfo.symbol === null) {
                 return null;
             }
