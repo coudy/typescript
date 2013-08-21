@@ -464,7 +464,8 @@ module TypeScript {
 
                             childSymbol = this.getMemberSymbol(symbolName, declSearchKind, instanceType);
 
-                            if (childSymbol && (childSymbol.kind & declSearchKind)) {
+                            // Make sure we are not picking up a static from a class (it is never in scope)
+                            if (childSymbol && (childSymbol.kind & declSearchKind) && !childSymbol.hasFlag(PullElementFlags.Static)) {
                                 return childSymbol;
                             }
                         }
@@ -481,7 +482,7 @@ module TypeScript {
 
                     var childSymbol = this.getMemberSymbol(symbolName, declSearchKind, declSymbol);
 
-                    if (childSymbol) {
+                    if (childSymbol && (childSymbol.kind & declSearchKind) && !childSymbol.hasFlag(PullElementFlags.Static)) {
                         return childSymbol;
                     }
                 }

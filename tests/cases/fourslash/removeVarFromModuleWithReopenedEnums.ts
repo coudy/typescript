@@ -12,6 +12,5 @@
 //// }
 
 goTo.marker();
-// Bug 761081
-// edit.deleteAtCaret('var o;'.length);
+edit.deleteAtCaret('var o;'.length);
 

@@ -395,12 +395,13 @@ module TypeScript {
 
                     foundDecls = topLevelDecls[i].searchChildDecls(name, kind);
 
-                    if (foundDecls.length) {
-                        symbol = foundDecls[0].getSymbol();
-                        break;
+                    for (var j = 0; j < foundDecls.length; j++) {
+                        if (foundDecls[j].hasSymbol()) {
+                            symbol = foundDecls[j].getSymbol();
+                            break;
+                        }
                     }
-
-                    if (topLevelDecls[i].name == stopAtFile) {
+                    if (symbol || topLevelDecls[i].name == stopAtFile) {
                         break;
                     }
                 }
