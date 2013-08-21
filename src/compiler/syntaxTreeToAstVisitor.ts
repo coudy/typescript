@@ -76,6 +76,8 @@ module TypeScript {
                 result = new MissingIdentifier();
             }
             else if (token.tokenKind === SyntaxKind.IdentifierName) {
+                // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
+                // so that we can safely use it as a key in a javascript object.
                 var tokenText = token.text();
                 var text = tokenText === SyntaxTreeToAstVisitor.protoString
                     ? SyntaxTreeToAstVisitor.protoSubstitutionString

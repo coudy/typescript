@@ -20,6 +20,8 @@ module TypeScript {
         [s: string]: T;
     }
 
+    var proto = "__proto__"
+
     export class BlockIntrinsics {
         public prototype: any = undefined;
         public toString: any = undefined;
@@ -29,9 +31,14 @@ module TypeScript {
         public propertyIsEnumerable: any = undefined;
         public isPrototypeOf: any = undefined;
 
-        constructor () {
+        constructor() {
             // initialize the 'constructor' field
             this["constructor"] = undefined;
+
+            // First we set it to null, because that's the only way to erase the value in node. Then we set it to undefined in case we are not in node, since
+            // in StringHashTable below, we check for undefined explicitly.
+            this[proto] = null;
+            this[proto] = undefined;
         }
     }
 

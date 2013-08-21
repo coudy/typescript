@@ -219,6 +219,8 @@ module TypeScript {
         // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
         // the resolved value of any escape sequences in the actual text; so in the previous 
         // example, actualText = '\u0041', text = 'A'.
+        // Also, in the case where actualText is "__proto__", we substitute "#__proto__" as the _text
+        // so that we can safely use it as a key in a javascript object.
         //
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
