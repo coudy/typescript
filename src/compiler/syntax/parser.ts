@@ -2055,10 +2055,6 @@ module TypeScript.Parser {
                 modifiers, classKeyword, identifier, typeParameterList, heritageClauses, openBraceToken, classElements, closeBraceToken);
         }
 
-        private isConstructorDeclaration(): boolean {
-            return this.currentToken().tokenKind === SyntaxKind.ConstructorKeyword;
-        }
-
         private static isPublicOrPrivateKeyword(token: ISyntaxToken): boolean {
             return token.tokenKind === SyntaxKind.PublicKeyword || token.tokenKind === SyntaxKind.PrivateKeyword;
         }
@@ -2127,7 +2123,38 @@ module TypeScript.Parser {
                    this.isMemberFunctionDeclaration(inErrorRecovery) ||
                    this.isMemberAccessorDeclaration(inErrorRecovery) ||
                    this.isMemberVariableDeclaration(inErrorRecovery) ||
-                   this.isIndexSignature();
+                   this.isMemberIndexerDeclaration();
+        }
+
+        private parseClassElement(inErrorRecovery: boolean): IClassElementSyntax {
+            // Debug.assert(this.isClassElement());
+
+            if (this.currentNode() !== null && this.currentNode().isClassElement()) {
+                return <IClassElementSyntax>this.eatNode();
+            }
+
+            if (this.isConstructorDeclaration()) {
+                return this.parseConstructorDeclaration();
+            }
+            else if (this.isMemberFunctionDeclaration(inErrorRecovery)) {
+                return this.parseMemberFunctionDeclaration();
+            }
+            else if (this.isMemberAccessorDeclaration(inErrorRecovery)) {
+                return this.parseMemberAccessorDeclaration();
+            }
+            else if (this.isMemberVariableDeclaration(inErrorRecovery)) {
+                return this.parseMemberVariableDeclaration();
+            }
+            else if (this.isMemberIndexerDeclaration()) {
+                return this.parseMemberIndexerDeclaration();
+            }
+            else {
+                throw Errors.invalidOperation();
+            }
+        }
+
+        private isConstructorDeclaration(): boolean {
+            return this.currentToken().tokenKind === SyntaxKind.ConstructorKeyword;
         }
 
         private parseConstructorDeclaration(): ConstructorDeclarationSyntax {
@@ -2305,31 +2332,16 @@ module TypeScript.Parser {
             return this.factory.memberVariableDeclaration(modifiers, variableDeclarator, semicolon);
         }
 
-        private parseClassElement(inErrorRecovery: boolean): IClassElementSyntax {
-            // Debug.assert(this.isClassElement());
+        private isMemberIndexerDeclaration(): boolean {
+            return this.isIndexSignature();
+        }
 
-            if (this.currentNode() !== null && this.currentNode().isClassElement()) {
-                return <IClassElementSyntax>this.eatNode();
-            }
+        private parseMemberIndexerDeclaration(): MemberIndexerDeclaration {
+            // Debug.assert(this.isMemberIndexerDeclaration()
+            var indexSignature = this.parseIndexSignature();
+            var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewLine:*/ false);
 
-            if (this.isConstructorDeclaration()) {
-                return this.parseConstructorDeclaration();
-            }
-            else if (this.isMemberFunctionDeclaration(inErrorRecovery)) {
-                return this.parseMemberFunctionDeclaration();
-            }
-            else if (this.isMemberAccessorDeclaration(inErrorRecovery)) {
-                return this.parseMemberAccessorDeclaration();
-            }
-            else if (this.isMemberVariableDeclaration(inErrorRecovery)) {
-                return this.parseMemberVariableDeclaration();
-            }
-            else if (this.isIndexSignature()) {
-                return this.parseIndexSignature();
-            }
-            else {
-                throw Errors.invalidOperation();
-            }
+            return this.factory.memberIndexerDeclaration(indexSignature, semicolonToken);
         }
 
         private tryAddUnexpectedEqualsGreaterThanToken(callSignature: CallSignatureSyntax): CallSignatureSyntax {

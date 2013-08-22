@@ -174,6 +174,7 @@ module TypeScript {
         ConstructorDeclaration,
         GetMemberAccessorDeclaration,
         SetMemberAccessorDeclaration,
+        MemberIndexerDeclaration,
 
         // Type members.
         PropertySignature,

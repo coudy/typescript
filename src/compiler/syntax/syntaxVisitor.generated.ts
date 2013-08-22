@@ -58,6 +58,7 @@ module TypeScript {
         visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): any;
         visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): any;
         visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): any;
+        visitMemberIndexerDeclaration(node: MemberIndexerDeclaration): any;
         visitThrowStatement(node: ThrowStatementSyntax): any;
         visitReturnStatement(node: ReturnStatementSyntax): any;
         visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): any;
@@ -317,6 +318,10 @@ module TypeScript {
         }
 
         public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): any {
+            return this.defaultVisit(node);
+        }
+
+        public visitMemberIndexerDeclaration(node: MemberIndexerDeclaration): any {
             return this.defaultVisit(node);
         }
 

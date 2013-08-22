@@ -3355,7 +3355,7 @@ module TypeScript {
     }
     }
 
-    export class IndexSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax, IClassElementSyntax {
+    export class IndexSignatureSyntax extends SyntaxNode implements ITypeMemberSyntax {
 
         constructor(public openBracketToken: ISyntaxToken,
                     public parameter: ParameterSyntax,
@@ -3389,10 +3389,6 @@ module TypeScript {
     }
 
     public isTypeMember(): boolean {
-        return true;
-    }
-
-    public isClassElement(): boolean {
         return true;
     }
 
@@ -4635,6 +4631,73 @@ module TypeScript {
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): MemberVariableDeclarationSyntax {
         return this.update(this.modifiers, this.variableDeclarator, semicolonToken);
+    }
+
+    public isTypeScriptSpecific(): boolean {
+        return true;
+    }
+    }
+
+    export class MemberIndexerDeclaration extends SyntaxNode implements IClassElementSyntax {
+
+        constructor(public indexSignature: IndexSignatureSyntax,
+                    public semicolonToken: ISyntaxToken,
+                    parsedInStrictMode: boolean) {
+            super(parsedInStrictMode); 
+
+        }
+
+    public accept(visitor: ISyntaxVisitor): any {
+        return visitor.visitMemberIndexerDeclaration(this);
+    }
+
+    public kind(): SyntaxKind {
+        return SyntaxKind.MemberIndexerDeclaration;
+    }
+
+    public childCount(): number {
+        return 2;
+    }
+
+    public childAt(slot: number): ISyntaxElement {
+        switch (slot) {
+            case 0: return this.indexSignature;
+            case 1: return this.semicolonToken;
+            default: throw Errors.invalidOperation();
+        }
+    }
+
+    public isClassElement(): boolean {
+        return true;
+    }
+
+    public update(indexSignature: IndexSignatureSyntax,
+                  semicolonToken: ISyntaxToken): MemberIndexerDeclaration {
+        if (this.indexSignature === indexSignature && this.semicolonToken === semicolonToken) {
+            return this;
+        }
+
+        return new MemberIndexerDeclaration(indexSignature, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create1(indexSignature: IndexSignatureSyntax): MemberIndexerDeclaration {
+        return new MemberIndexerDeclaration(indexSignature, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+    }
+
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberIndexerDeclaration {
+        return <MemberIndexerDeclaration>super.withLeadingTrivia(trivia);
+    }
+
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberIndexerDeclaration {
+        return <MemberIndexerDeclaration>super.withTrailingTrivia(trivia);
+    }
+
+    public withIndexSignature(indexSignature: IndexSignatureSyntax): MemberIndexerDeclaration {
+        return this.update(indexSignature, this.semicolonToken);
+    }
+
+    public withSemicolonToken(semicolonToken: ISyntaxToken): MemberIndexerDeclaration {
+        return this.update(this.indexSignature, semicolonToken);
     }
 
     public isTypeScriptSpecific(): boolean {

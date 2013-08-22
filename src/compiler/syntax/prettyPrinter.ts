@@ -222,7 +222,7 @@ module TypeScript.PrettyPrinter {
             this.ensureNewLine();
 
             this.indentation++;
-            
+
             var lastClassElement: IClassElementSyntax = null;
             for (var i = 0, n = node.classElements.childCount(); i < n; i++) {
                 var classElement = <IClassElementSyntax>node.classElements.childAt(i);
@@ -636,6 +636,11 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.constructorKeyword);
             node.parameterList.accept(this);
             this.appendBlockOrSemicolon(node.block, node.semicolonToken);
+        }
+
+        public visitMemberIndexerDeclaration(node: MemberIndexerDeclaration): void {
+            node.indexSignature.accept(this);
+            this.appendToken(node.semicolonToken);
         }
 
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): void {

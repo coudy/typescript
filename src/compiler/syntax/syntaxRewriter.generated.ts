@@ -470,6 +470,12 @@ module TypeScript {
                 this.visitToken(node.semicolonToken));
         }
 
+        public visitMemberIndexerDeclaration(node: MemberIndexerDeclaration): any {
+            return node.update(
+                <IndexSignatureSyntax>this.visitNode(node.indexSignature),
+                this.visitToken(node.semicolonToken));
+        }
+
         public visitThrowStatement(node: ThrowStatementSyntax): any {
             return node.update(
                 this.visitToken(node.throwKeyword),

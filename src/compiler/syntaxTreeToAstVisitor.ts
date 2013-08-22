@@ -1625,6 +1625,17 @@ module TypeScript {
             return result;
         }
 
+        public visitMemberIndexerDeclaration(node: MemberIndexerDeclaration): FunctionDeclaration {
+            var start = this.position;
+
+            var result = node.indexSignature.accept(this);
+            this.setCommentsAndSpan(result, start, node);
+
+            this.movePast(node.semicolonToken);
+
+            return result;
+        }
+
         public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
 
