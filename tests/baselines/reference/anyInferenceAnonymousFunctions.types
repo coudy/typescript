@@ -19,7 +19,7 @@ Line 4 col 11 MemberAccessExpression "a1.concat" = { <U extends Array<T>>(...ite
 Line 4 col 11 IdentifierName "a1" = any[]
 Line 4 col 14 IdentifierName "concat" = { <U extends Array<T>>(...items: U[]): any[]; (...items: any[]): any[]; }
 Line 4 col 21 ObjectLiteralExpression "{}" = {}
-Line 6 col 4 ArrayLiteralExpression "[]" = any[]
+Line 6 col 4 ArrayLiteralExpression "[]" = undefined[]
 Line 7 col 0 InvocationExpression "paired.reduce((b1, b2) => {
 
     return b1.concat({});
@@ -38,7 +38,7 @@ Line 10 col 11 MemberAccessExpression "b1.concat" = { <U extends Array<T>>(...it
 Line 10 col 11 IdentifierName "b1" = any[]
 Line 10 col 14 IdentifierName "concat" = { <U extends Array<T>>(...items: U[]): any[]; (...items: any[]): any[]; }
 Line 10 col 21 ObjectLiteralExpression "{}" = {}
-Line 11 col 4 ArrayLiteralExpression "[]" = any[]
+Line 11 col 4 ArrayLiteralExpression "[]" = undefined[]
 Line 12 col 0 InvocationExpression "paired.reduce((b3, b4) => b3.concat({}), [])" = any[]
 Line 12 col 0 MemberAccessExpression "paired.reduce" = { (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue?: any): any; <U>(callbackfn: (previousValue: U, currentValue: any, currentIndex: number, array: any[]) => U, initialValue: U): U; }
 Line 12 col 0 IdentifierName "paired" = any[]
@@ -51,7 +51,7 @@ Line 13 col 26 MemberAccessExpression "b3.concat" = { <U extends Array<T>>(...it
 Line 13 col 26 IdentifierName "b3" = any[]
 Line 13 col 29 IdentifierName "concat" = { <U extends Array<T>>(...items: U[]): any[]; (...items: any[]): any[]; }
 Line 13 col 36 ObjectLiteralExpression "{}" = {}
-Line 13 col 41 ArrayLiteralExpression "[]" = any[]
+Line 13 col 41 ArrayLiteralExpression "[]" = undefined[]
 Line 14 col 0 InvocationExpression "paired.map((c1) => c1.count)" = any[]
 Line 14 col 0 MemberAccessExpression "paired.map" = <U>(callbackfn: (value: any, index: number, array: any[]) => U, thisArg?: any) => U[]
 Line 14 col 0 IdentifierName "paired" = any[]
