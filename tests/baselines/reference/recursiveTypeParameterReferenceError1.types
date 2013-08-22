@@ -1,0 +1,22 @@
+=== tests/cases/compiler/recursiveTypeParameterReferenceError1.ts ===
+Line 0 col 8 IdentifierName "T" = any
+Line 1 col 14 IdentifierName "T" = any
+Line 2 col 0 IdentifierName "z" = Foo<X<T>>
+Line 2 col 7 IdentifierName "Foo" = Foo<T>
+Line 2 col 11 IdentifierName "X" = X<T>
+Line 2 col 13 IdentifierName "T" = T
+Line 4 col 7 IdentifierName "Foo" = Foo<T>
+Line 5 col 8 MemberAccessExpression "f.z" = Foo<X<T>>
+Line 5 col 8 IdentifierName "f" = Foo<number>
+Line 5 col 10 IdentifierName "z" = Foo<X<T>>
+Line 8 col 9 IdentifierName "T" = any
+Line 9 col 7 IdentifierName "T" = T
+Line 11 col 15 IdentifierName "T" = any
+Line 12 col 0 IdentifierName "ofC4" = C2<{ x: T; }>
+Line 12 col 10 IdentifierName "C2" = C2<T>
+Line 12 col 15 IdentifierName "x" = T
+Line 12 col 18 IdentifierName "T" = T
+Line 14 col 8 IdentifierName "Foo2" = Foo2<T>
+Line 15 col 9 MemberAccessExpression "f2.ofC4" = C2<{ x: number; }>
+Line 15 col 9 IdentifierName "f2" = Foo2<number>
+Line 15 col 12 IdentifierName "ofC4" = C2<{ x: number; }>

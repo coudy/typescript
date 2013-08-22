@@ -1,0 +1,28 @@
+=== tests/cases/compiler/thisInLambda.ts ===
+Line 3 col 0 MemberAccessExpression "this.x" = string
+Line 3 col 0 ThisKeyword "this" = Foo
+Line 3 col 13 IdentifierName "x" = string
+Line 4 col 16 ParenthesizedArrowFunctionExpression "() => this.x" = () => string
+Line 4 col 22 MemberAccessExpression "this.x" = string
+Line 4 col 22 ThisKeyword "this" = Foo
+Line 4 col 27 IdentifierName "x" = string
+Line 8 col 14 IdentifierName "a" = any
+Line 11 col 0 InvocationExpression "myFn(() => {
+            myFn(() => {
+                var x = this;
+            });
+        })" = void
+Line 11 col 0 IdentifierName "myFn" = (a: any) => void
+Line 11 col 13 ParenthesizedArrowFunctionExpression "() => {
+            myFn(() => {
+                var x = this;
+            });
+        }" = () => void
+Line 12 col 0 InvocationExpression "myFn(() => {
+                var x = this;
+            })" = void
+Line 12 col 0 IdentifierName "myFn" = (a: any) => void
+Line 12 col 17 ParenthesizedArrowFunctionExpression "() => {
+                var x = this;
+            }" = () => void
+Line 13 col 24 ThisKeyword "this" = myCls

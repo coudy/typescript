@@ -1,0 +1,14 @@
+=== tests/cases/compiler/baseIndexSignatureResolution.ts ===
+Line 1 col 22 IdentifierName "Base" = Base
+Line 5 col 5 IdentifierName "i" = any
+Line 5 col 17 IdentifierName "Base" = Base
+Line 7 col 16 IdentifierName "TBase" = any
+Line 7 col 30 IdentifierName "Base" = Base
+Line 7 col 44 IdentifierName "Foo" = Foo
+Line 8 col 5 IdentifierName "i" = any
+Line 8 col 17 IdentifierName "TBase" = TBase
+Line 10 col 7 IdentifierName "FooOf" = FooOf<TBase>
+Line 10 col 13 IdentifierName "Derived" = Derived
+Line 11 col 7 IdentifierName "Derived" = Derived
+Line 11 col 17 ElementAccessExpression "x[0]" = Derived
+Line 11 col 17 IdentifierName "x" = FooOf<Derived>

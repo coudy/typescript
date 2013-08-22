@@ -1,0 +1,23 @@
+=== tests/cases/compiler/ambiguousCallsWhereReturnTypesAgree.ts ===
+Line 1 col 15 IdentifierName "x" = any
+Line 2 col 15 IdentifierName "x" = any
+Line 3 col 15 IdentifierName "x" = any
+Line 7 col 15 IdentifierName "x" = any
+Line 8 col 15 IdentifierName "x" = any
+Line 9 col 15 IdentifierName "x" = any
+Line 10 col 0 InvocationExpression "this.bar(x)" = void
+Line 10 col 0 MemberAccessExpression "this.bar" = { (x: string): void; (x: string[]): void; }
+Line 10 col 0 ThisKeyword "this" = TestClass
+Line 10 col 13 IdentifierName "bar" = { (x: string): void; (x: string[]): void; }
+Line 10 col 17 IdentifierName "x" = any
+Line 15 col 15 IdentifierName "x" = any
+Line 16 col 15 IdentifierName "x" = any
+Line 17 col 15 IdentifierName "x" = any
+Line 21 col 15 IdentifierName "x" = any
+Line 22 col 15 IdentifierName "x" = any
+Line 23 col 15 IdentifierName "x" = any
+Line 24 col 15 InvocationExpression "this.bar(x)" = number
+Line 24 col 15 MemberAccessExpression "this.bar" = { (x: string): number; (x: string[]): number; }
+Line 24 col 15 ThisKeyword "this" = TestClass2
+Line 24 col 20 IdentifierName "bar" = { (x: string): number; (x: string[]): number; }
+Line 24 col 24 IdentifierName "x" = any

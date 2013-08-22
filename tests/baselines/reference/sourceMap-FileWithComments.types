@@ -1,0 +1,35 @@
+=== tests/cases/compiler/sourceMap-FileWithComments.ts ===
+Line 3 col 0 IdentifierName "getDist" = () => number
+Line 10 col 34 IdentifierName "IPoint" = IPoint
+Line 12 col 27 IdentifierName "x" = number
+Line 12 col 45 IdentifierName "y" = number
+Line 15 col 27 InvocationExpression "Math.sqrt(this.x * this.x + this.y * this.y)" = number
+Line 15 col 27 MemberAccessExpression "Math.sqrt" = (x: number) => number
+Line 15 col 27 IdentifierName "Math" = Math
+Line 15 col 32 IdentifierName "sqrt" = (x: number) => number
+Line 15 col 37 AddExpression "this.x * this.x + this.y * this.y" = number
+Line 15 col 37 MultiplyExpression "this.x * this.x" = number
+Line 15 col 37 MemberAccessExpression "this.x" = number
+Line 15 col 37 ThisKeyword "this" = Shapes.Point
+Line 15 col 42 IdentifierName "x" = number
+Line 15 col 46 MemberAccessExpression "this.x" = number
+Line 15 col 46 ThisKeyword "this" = Shapes.Point
+Line 15 col 51 IdentifierName "x" = number
+Line 15 col 55 MultiplyExpression "this.y * this.y" = number
+Line 15 col 55 MemberAccessExpression "this.y" = number
+Line 15 col 55 ThisKeyword "this" = Shapes.Point
+Line 15 col 60 IdentifierName "y" = number
+Line 15 col 64 MemberAccessExpression "this.y" = number
+Line 15 col 64 ThisKeyword "this" = Shapes.Point
+Line 15 col 69 IdentifierName "y" = number
+Line 18 col 24 ObjectCreationExpression "new Point(0, 0)" = Shapes.Point
+Line 18 col 28 IdentifierName "Point" = { origin: Shapes.Point; new(x: number, y: number): Shapes.Point; }
+Line 34 col 7 IdentifierName "IPoint" = IPoint
+Line 34 col 16 ObjectCreationExpression "new Shapes.Point(3, 4)" = Shapes.Point
+Line 34 col 20 MemberAccessExpression "Shapes.Point" = { origin: Shapes.Point; new(x: number, y: number): Shapes.Point; }
+Line 34 col 20 IdentifierName "Shapes" = { Point: { origin: Shapes.Point; new(x: number, y: number): Shapes.Point; }; foo(): void; }
+Line 34 col 27 IdentifierName "Point" = { origin: Shapes.Point; new(x: number, y: number): Shapes.Point; }
+Line 35 col 11 InvocationExpression "p.getDist()" = number
+Line 35 col 11 MemberAccessExpression "p.getDist" = () => number
+Line 35 col 11 IdentifierName "p" = IPoint
+Line 35 col 13 IdentifierName "getDist" = () => number

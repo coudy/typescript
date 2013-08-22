@@ -1,0 +1,18 @@
+=== tests/cases/compiler/stringPropCodeGen.ts ===
+Line 0 col 8 ObjectLiteralExpression "{
+
+  "foo" : function() { },
+  "bar" : 5
+
+}" = { "foo": () => void; "bar": number; }
+Line 2 col 10 FunctionExpression "function() { }" = () => void
+Line 6 col 0 InvocationExpression "a.foo()" = void
+Line 6 col 0 MemberAccessExpression "a.foo" = () => void
+Line 6 col 0 IdentifierName "a" = { "foo": () => void; "bar": number; }
+Line 9 col 2 IdentifierName "foo" = () => void
+Line 10 col 0 InvocationExpression "a.bar.toString()" = string
+Line 10 col 0 MemberAccessExpression "a.bar.toString" = (radix?: number) => string
+Line 10 col 0 MemberAccessExpression "a.bar" = number
+Line 10 col 0 IdentifierName "a" = { "foo": () => void; "bar": number; }
+Line 11 col 2 IdentifierName "bar" = number
+Line 11 col 6 IdentifierName "toString" = (radix?: number) => string

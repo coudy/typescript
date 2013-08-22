@@ -1,0 +1,120 @@
+=== tests/cases/compiler/typeResolution.ts ===
+Line 6 col 28 IdentifierName "ClassA" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 6 col 36 InvocationExpression "a1.AisIn1_1_1()" = void
+Line 6 col 36 MemberAccessExpression "a1.AisIn1_1_1" = () => void
+Line 6 col 36 IdentifierName "a1" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 6 col 39 IdentifierName "AisIn1_1_1" = () => void
+Line 7 col 50 InvocationExpression "a2.AisIn1_1_1()" = void
+Line 7 col 50 MemberAccessExpression "a2.AisIn1_1_1" = () => void
+Line 7 col 50 IdentifierName "a2" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 7 col 53 IdentifierName "AisIn1_1_1" = () => void
+Line 8 col 61 InvocationExpression "a3.AisIn1_1_1()" = void
+Line 8 col 61 MemberAccessExpression "a3.AisIn1_1_1" = () => void
+Line 8 col 61 IdentifierName "a3" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 8 col 64 IdentifierName "AisIn1_1_1" = () => void
+Line 9 col 77 InvocationExpression "a4.AisIn1_1_1()" = void
+Line 9 col 77 MemberAccessExpression "a4.AisIn1_1_1" = () => void
+Line 9 col 77 IdentifierName "a4" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 9 col 80 IdentifierName "AisIn1_1_1" = () => void
+Line 12 col 28 IdentifierName "ClassB" = TopLevelModule1.SubModule1.SubSubModule1.ClassB
+Line 12 col 36 InvocationExpression "b1.BisIn1_1_1()" = void
+Line 12 col 36 MemberAccessExpression "b1.BisIn1_1_1" = () => void
+Line 12 col 36 IdentifierName "b1" = TopLevelModule1.SubModule1.SubSubModule1.ClassB
+Line 12 col 39 IdentifierName "BisIn1_1_1" = () => void
+Line 13 col 77 InvocationExpression "b2.BisIn1_1_1()" = void
+Line 13 col 77 MemberAccessExpression "b2.BisIn1_1_1" = () => void
+Line 13 col 77 IdentifierName "b2" = TopLevelModule1.SubModule1.SubSubModule1.ClassB
+Line 13 col 80 IdentifierName "BisIn1_1_1" = () => void
+Line 16 col 77 InvocationExpression "c1.AisIn1_2_2()" = void
+Line 16 col 77 MemberAccessExpression "c1.AisIn1_2_2" = () => void
+Line 16 col 77 IdentifierName "c1" = TopLevelModule1.SubModule2.SubSubModule2.ClassA
+Line 16 col 80 IdentifierName "AisIn1_2_2" = () => void
+Line 19 col 28 IdentifierName "InterfaceX" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 19 col 40 InvocationExpression "d1.XisIn1_1_1()" = any
+Line 19 col 40 MemberAccessExpression "d1.XisIn1_1_1" = () => any
+Line 19 col 40 IdentifierName "d1" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 19 col 43 IdentifierName "XisIn1_1_1" = () => any
+Line 20 col 54 InvocationExpression "d2.XisIn1_1_1()" = any
+Line 20 col 54 MemberAccessExpression "d2.XisIn1_1_1" = () => any
+Line 20 col 54 IdentifierName "d2" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 20 col 57 IdentifierName "XisIn1_1_1" = () => any
+Line 28 col 28 IdentifierName "ClassA" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 28 col 36 InvocationExpression "a1.AisIn1_1_1()" = void
+Line 28 col 36 MemberAccessExpression "a1.AisIn1_1_1" = () => void
+Line 28 col 36 IdentifierName "a1" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 28 col 39 IdentifierName "AisIn1_1_1" = () => void
+Line 29 col 50 InvocationExpression "a2.AisIn1_1_1()" = void
+Line 29 col 50 MemberAccessExpression "a2.AisIn1_1_1" = () => void
+Line 29 col 50 IdentifierName "a2" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 29 col 53 IdentifierName "AisIn1_1_1" = () => void
+Line 30 col 61 InvocationExpression "a3.AisIn1_1_1()" = void
+Line 30 col 61 MemberAccessExpression "a3.AisIn1_1_1" = () => void
+Line 30 col 61 IdentifierName "a3" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 30 col 64 IdentifierName "AisIn1_1_1" = () => void
+Line 31 col 77 InvocationExpression "a4.AisIn1_1_1()" = void
+Line 31 col 77 MemberAccessExpression "a4.AisIn1_1_1" = () => void
+Line 31 col 77 IdentifierName "a4" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 31 col 80 IdentifierName "AisIn1_1_1" = () => void
+Line 34 col 28 IdentifierName "ClassB" = TopLevelModule1.SubModule1.SubSubModule1.ClassB
+Line 34 col 36 InvocationExpression "b1.BisIn1_1_1()" = void
+Line 34 col 36 MemberAccessExpression "b1.BisIn1_1_1" = () => void
+Line 34 col 36 IdentifierName "b1" = TopLevelModule1.SubModule1.SubSubModule1.ClassB
+Line 34 col 39 IdentifierName "BisIn1_1_1" = () => void
+Line 35 col 77 InvocationExpression "b2.BisIn1_1_1()" = void
+Line 35 col 77 MemberAccessExpression "b2.BisIn1_1_1" = () => void
+Line 35 col 77 IdentifierName "b2" = TopLevelModule1.SubModule1.SubSubModule1.ClassB
+Line 35 col 80 IdentifierName "BisIn1_1_1" = () => void
+Line 38 col 77 InvocationExpression "c1.AisIn1_2_2()" = void
+Line 38 col 77 MemberAccessExpression "c1.AisIn1_2_2" = () => void
+Line 38 col 77 IdentifierName "c1" = TopLevelModule1.SubModule2.SubSubModule2.ClassA
+Line 38 col 80 IdentifierName "AisIn1_2_2" = () => void
+Line 39 col 63 InvocationExpression "c2.AisIn2_3()" = void
+Line 39 col 63 MemberAccessExpression "c2.AisIn2_3" = () => void
+Line 39 col 63 IdentifierName "c2" = TopLevelModule2.SubModule3.ClassA
+Line 39 col 66 IdentifierName "AisIn2_3" = () => void
+Line 42 col 28 IdentifierName "InterfaceX" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 42 col 40 InvocationExpression "d1.XisIn1_1_1()" = any
+Line 42 col 40 MemberAccessExpression "d1.XisIn1_1_1" = () => any
+Line 42 col 40 IdentifierName "d1" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 42 col 43 IdentifierName "XisIn1_1_1" = () => any
+Line 43 col 54 InvocationExpression "d2.XisIn1_1_1()" = any
+Line 43 col 54 MemberAccessExpression "d2.XisIn1_1_1" = () => any
+Line 43 col 54 IdentifierName "d2" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 43 col 57 IdentifierName "XisIn1_1_1" = () => any
+Line 46 col 42 IdentifierName "XisIn1_1_1" = () => any
+Line 51 col 81 InvocationExpression "a4.AisIn1_1_1()" = void
+Line 51 col 81 MemberAccessExpression "a4.AisIn1_1_1" = () => void
+Line 51 col 81 IdentifierName "a4" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 51 col 84 IdentifierName "AisIn1_1_1" = () => void
+Line 52 col 81 InvocationExpression "c1.AisIn1_2_2()" = void
+Line 52 col 81 MemberAccessExpression "c1.AisIn1_2_2" = () => void
+Line 52 col 81 IdentifierName "c1" = TopLevelModule1.SubModule2.SubSubModule2.ClassA
+Line 52 col 84 IdentifierName "AisIn1_2_2" = () => void
+Line 53 col 32 IdentifierName "InterfaceX" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 53 col 44 InvocationExpression "d1.XisIn1_1_1()" = any
+Line 53 col 44 MemberAccessExpression "d1.XisIn1_1_1" = () => any
+Line 53 col 44 IdentifierName "d1" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 53 col 47 IdentifierName "XisIn1_1_1" = () => any
+Line 54 col 67 InvocationExpression "c2.AisIn2_3()" = void
+Line 54 col 67 MemberAccessExpression "c2.AisIn2_3" = () => void
+Line 54 col 67 IdentifierName "c2" = TopLevelModule2.SubModule3.ClassA
+Line 54 col 70 IdentifierName "AisIn2_3" = () => void
+Line 64 col 50 InvocationExpression "a2.AisIn1_1_1()" = void
+Line 64 col 50 MemberAccessExpression "a2.AisIn1_1_1" = () => void
+Line 64 col 50 IdentifierName "a2" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 64 col 53 IdentifierName "AisIn1_1_1" = () => void
+Line 65 col 61 InvocationExpression "a3.AisIn1_1_1()" = void
+Line 65 col 61 MemberAccessExpression "a3.AisIn1_1_1" = () => void
+Line 65 col 61 IdentifierName "a3" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 65 col 64 IdentifierName "AisIn1_1_1" = () => void
+Line 66 col 77 InvocationExpression "a4.AisIn1_1_1()" = void
+Line 66 col 77 MemberAccessExpression "a4.AisIn1_1_1" = () => void
+Line 66 col 77 IdentifierName "a4" = TopLevelModule1.SubModule1.SubSubModule1.ClassA
+Line 66 col 80 IdentifierName "AisIn1_1_1" = () => void
+Line 69 col 54 InvocationExpression "d2.XisIn1_1_1()" = any
+Line 69 col 54 MemberAccessExpression "d2.XisIn1_1_1" = () => any
+Line 69 col 54 IdentifierName "d2" = TopLevelModule1.SubModule1.SubSubModule1.InterfaceX
+Line 69 col 57 IdentifierName "XisIn1_1_1" = () => any
+Line 81 col 42 IdentifierName "YisIn1_2_2" = () => any
+Line 85 col 38 IdentifierName "YisIn1_2" = () => any
+Line 93 col 0 IdentifierName "YisIn1" = () => any

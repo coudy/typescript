@@ -1,0 +1,22 @@
+=== tests/cases/compiler/thisCapture1.ts ===
+Line 2 col 23 IdentifierName "keys" = any
+Line 4 col 15 InvocationExpression "ret.always(() => {
+            this.y = 0;
+        }).promise()" = any
+Line 4 col 15 MemberAccessExpression "ret.always(() => {
+            this.y = 0;
+        }).promise" = any
+Line 4 col 15 InvocationExpression "ret.always(() => {
+            this.y = 0;
+        })" = any
+Line 4 col 15 MemberAccessExpression "ret.always" = any
+Line 4 col 15 IdentifierName "ret" = any
+Line 4 col 19 IdentifierName "always" = any
+Line 4 col 26 ParenthesizedArrowFunctionExpression "() => {
+            this.y = 0;
+        }" = () => void
+Line 5 col 0 AssignmentExpression "this.y = 0" = number
+Line 5 col 0 MemberAccessExpression "this.y" = number
+Line 5 col 0 ThisKeyword "this" = X
+Line 5 col 17 IdentifierName "y" = number
+Line 6 col 11 IdentifierName "promise" = any

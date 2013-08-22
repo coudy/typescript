@@ -1,9 +1,9 @@
 /// <reference path='..\..\..\src\harness\harness.ts' />
 /// <reference path='..\..\..\src\compiler\diagnostics.ts' />
 /// <reference path='..\runnerbase.ts' />
+/// <reference path='typeWriter.ts' />
 
 class CompilerBaselineRunner extends RunnerBase {
-
     private basePath = 'tests/cases';
     private errors: boolean;
     private emit: boolean;
@@ -145,8 +145,6 @@ class CompilerBaselineRunner extends RunnerBase {
                 });
             }
 
-            
-
             if (!TypeScript.isDTSFile(lastUnit.name)) {
                 if (this.emit) {
                     if (result.files.length === 0) {
@@ -183,6 +181,33 @@ class CompilerBaselineRunner extends RunnerBase {
                         });
                     }
                 }
+            }
+
+            if (result.errors.length === 0) {
+                Harness.Baseline.runBaseline('Correct expression types for ' + fileName, justName.replace(/\.ts/, '.types'), () => {
+                    var host = new TypeWriterHost();
+                    var compilerState = new Services.CompilerState(host);
+
+                    host.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
+                    toBeCompiled.forEach(file => {
+                        host.addScript(file.unitName, file.content);
+                    });
+
+                    compilerState.refresh();
+                    toBeCompiled.forEach(file => {
+                        compilerState.getSemanticDiagnostics(file.unitName);
+                    });
+
+                    var typeLines: string[] = [];
+                    toBeCompiled.forEach(file => {
+                        typeLines.push('=== ' + file.unitName + ' ===');
+                        var walker = new TypeWriterWalker(file.unitName, host, compilerState);
+                        walker.run();
+                        walker.results.forEach(line => typeLines.push(line));
+                    });
+
+                    return typeLines.join('\r\n');
+                });
             }
 
             if (createNewInstance) {

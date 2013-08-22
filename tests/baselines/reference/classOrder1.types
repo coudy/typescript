@@ -1,0 +1,7 @@
+=== tests/cases/compiler/classOrder1.ts ===
+Line 6 col 8 ObjectCreationExpression "new A()" = A
+Line 6 col 12 IdentifierName "A" = new() => A
+Line 7 col 0 InvocationExpression "a.foo()" = void
+Line 7 col 0 MemberAccessExpression "a.foo" = () => void
+Line 7 col 0 IdentifierName "a" = A
+Line 7 col 2 IdentifierName "foo" = () => void

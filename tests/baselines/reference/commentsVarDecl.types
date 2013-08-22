@@ -1,0 +1,18 @@
+=== tests/cases/compiler/commentsVarDecl.ts ===
+Line 18 col 0 AssignmentExpression "/** Triple slash comment on the assignement shouldnt be in .d.ts file*/
+x = myVariable" = number
+Line 18 col 0 IdentifierName "/** Triple slash comment on the assignement shouldnt be in .d.ts file*/
+x" = number
+Line 20 col 4 IdentifierName "myVariable" = number
+Line 35 col 30 ParenthesizedArrowFunctionExpression "(x: number, y: number) => x + y" = (x: number, y: number) => number
+Line 35 col 31 IdentifierName "x" = number
+Line 35 col 42 IdentifierName "y" = number
+Line 35 col 56 AddExpression "x + y" = number
+Line 35 col 56 IdentifierName "x" = number
+Line 35 col 60 IdentifierName "y" = number
+Line 37 col 28 IdentifierName "x" = number
+Line 39 col 9 IdentifierName "z2" = (x: number) => string
+Line 41 col 9 IdentifierName "x" = number
+Line 42 col 0 AssignmentExpression "n4 = z2" = (x: number) => string
+Line 42 col 0 IdentifierName "n4" = (x: number) => string
+Line 42 col 5 IdentifierName "z2" = (x: number) => string

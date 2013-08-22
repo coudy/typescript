@@ -1,0 +1,7 @@
+=== tests/cases/compiler/gettersAndSettersTypesAgree.ts ===
+Line 2 col 19 IdentifierName "foo" = any
+Line 5 col 19 IdentifierName "bar" = any
+Line 8 col 9 ObjectLiteralExpression "{get Foo(){return 0;}, set Foo(val){}}" = { Foo: number; }
+Line 8 col 40 IdentifierName "val" = any
+Line 9 col 9 ObjectLiteralExpression "{get Foo(){return 0;}, set Foo(val:number){}}" = { Foo: number; }
+Line 9 col 40 IdentifierName "val" = any

@@ -1,0 +1,11 @@
+=== tests/cases/compiler/optionalConstructorArgInSuper.ts ===
+Line 1 col 16 IdentifierName "opt" = any
+Line 2 col 8 IdentifierName "other" = any
+Line 4 col 22 IdentifierName "Base" = Base
+Line 6 col 8 ObjectCreationExpression "new Derived()" = Derived
+Line 6 col 12 IdentifierName "Derived" = new(opt?: any) => Derived
+Line 7 col 8 IdentifierName "Derived" = Derived
+Line 8 col 0 InvocationExpression "d2.foo()" = void
+Line 8 col 0 MemberAccessExpression "d2.foo" = (other?: any) => void
+Line 8 col 0 IdentifierName "d2" = Derived
+Line 8 col 3 IdentifierName "foo" = (other?: any) => void

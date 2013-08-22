@@ -1,0 +1,9 @@
+=== tests/cases/compiler/commentsMultiModuleSingleFile.ts ===
+Line 22 col 0 ObjectCreationExpression "new multiM.b()" = multiM.b
+Line 22 col 4 MemberAccessExpression "multiM.b" = new() => multiM.b
+Line 22 col 4 IdentifierName "multiM" = { b: new() => multiM.b; d: new() => multiM.d; c: new() => multiM.c; e: new() => multiM.e; }
+Line 22 col 11 IdentifierName "b" = new() => multiM.b
+Line 23 col 0 ObjectCreationExpression "new multiM.c()" = multiM.c
+Line 23 col 4 MemberAccessExpression "multiM.c" = new() => multiM.c
+Line 23 col 4 IdentifierName "multiM" = { b: new() => multiM.b; d: new() => multiM.d; c: new() => multiM.c; e: new() => multiM.e; }
+Line 23 col 11 IdentifierName "c" = new() => multiM.c

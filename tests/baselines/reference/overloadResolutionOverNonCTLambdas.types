@@ -1,0 +1,49 @@
+=== tests/cases/compiler/overloadResolutionOverNonCTLambdas.ts ===
+Line 5 col 16 IdentifierName "message" = any
+Line 5 col 35 IdentifierName "args" = any
+Line 6 col 16 InvocationExpression "message.replace(/\{(\d+)\}/g, function(match, rest) {
+      var index= rest[0];
+      return typeof args[index] !== 'undefined'
+        ? args[index]
+        : match;
+    })" = string
+Line 6 col 16 MemberAccessExpression "message.replace" = { (searchValue: string, replaceValue: string): string; (searchValue: string, replaceValue: (substring: string, ...args: any[]) => string): string; (searchValue: RegExp, replaceValue: string): string; (searchValue: RegExp, replaceValue: (substring: string, ...args: any[]) => string): string; }
+Line 6 col 16 IdentifierName "message" = string
+Line 6 col 24 IdentifierName "replace" = { (searchValue: string, replaceValue: string): string; (searchValue: string, replaceValue: (substring: string, ...args: any[]) => string): string; (searchValue: RegExp, replaceValue: string): string; (searchValue: RegExp, replaceValue: (substring: string, ...args: any[]) => string): string; }
+Line 6 col 46 FunctionExpression "function(match, rest) {
+      var index= rest[0];
+      return typeof args[index] !== 'undefined'
+        ? args[index]
+        : match;
+    }" = (match: string, rest: any) => string
+Line 6 col 55 IdentifierName "match" = any
+Line 6 col 62 IdentifierName "rest" = any
+Line 7 col 17 ElementAccessExpression "rest[0]" = any
+Line 7 col 17 IdentifierName "rest" = any
+Line 8 col 13 ConditionalExpression "typeof args[index] !== 'undefined'
+        ? args[index]
+        : match" = any
+Line 8 col 13 NotEqualsExpression "typeof args[index] !== 'undefined'" = boolean
+Line 8 col 13 TypeOfExpression "typeof args[index]" = string
+Line 8 col 20 ElementAccessExpression "args[index]" = any
+Line 8 col 20 IdentifierName "args" = any[]
+Line 8 col 25 IdentifierName "index" = any
+Line 9 col 10 ElementAccessExpression "args[index]" = any
+Line 9 col 10 IdentifierName "args" = any[]
+Line 9 col 15 IdentifierName "index" = any
+Line 10 col 10 IdentifierName "match" = any
+Line 12 col 11 IdentifierName "result" = string
+Line 16 col 14 IdentifierName "f" = any
+Line 16 col 17 IdentifierName "x" = any
+Line 16 col 45 InvocationExpression "f("s")" = string
+Line 16 col 45 IdentifierName "f" = (x: string) => string
+Line 18 col 16 IdentifierName "x" = any
+Line 18 col 42 IdentifierName "x" = string
+Line 19 col 0 InvocationExpression "bug3(fprime)" = string
+Line 19 col 0 IdentifierName "bug3" = (f: (x: string) => string) => string
+Line 20 col 5 IdentifierName "fprime" = (x: string) => string
+Line 21 col 0 InvocationExpression "bug3(function(x:string):string { return x; })" = string
+Line 21 col 0 IdentifierName "bug3" = (f: (x: string) => string) => string
+Line 22 col 5 FunctionExpression "function(x:string):string { return x; }" = (x: string) => string
+Line 22 col 14 IdentifierName "x" = any
+Line 22 col 40 IdentifierName "x" = string

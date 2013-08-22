@@ -1,0 +1,7 @@
+=== tests/cases/compiler/innerAliases2.ts ===
+Line 8 col 34 IdentifierName "_provider" = _provider
+Line 13 col 61 ObjectCreationExpression "new provider.UsefulClass()" = _provider.UsefulClass
+Line 13 col 65 MemberAccessExpression "provider.UsefulClass" = new() => _provider.UsefulClass
+Line 13 col 65 IdentifierName "provider" = consumer.provider
+Line 13 col 74 IdentifierName "UsefulClass" = new() => _provider.UsefulClass
+Line 14 col 39 IdentifierName "p2" = _provider.UsefulClass

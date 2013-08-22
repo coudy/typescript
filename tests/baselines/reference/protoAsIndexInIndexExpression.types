@@ -1,0 +1,18 @@
+=== tests/cases/compiler/protoAsIndexInIndexExpression.ts ===
+Line 0 col 22 IdentifierName "undefined" = undefined
+Line 1 col 25 ObjectLiteralExpression "{
+    serialize: function (): any {
+    }
+}" = { serialize: () => any; }
+Line 2 col 15 FunctionExpression "function (): any {
+    }" = () => any
+Line 5 col 0 AssignmentExpression "WorkspacePrototype['__proto__'] = EntityPrototype" = any
+Line 5 col 0 ElementAccessExpression "WorkspacePrototype['__proto__']" = any
+Line 5 col 0 IdentifierName "WorkspacePrototype" = { serialize: () => any; }
+Line 5 col 34 IdentifierName "EntityPrototype" = any
+Line 7 col 8 ObjectLiteralExpression "{
+    "__proto__": 0
+}" = { "__proto__": number; }
+Line 15 col 0 MemberAccessExpression "p.x" = any
+Line 15 col 0 IdentifierName "p" = p
+Line 15 col 2 IdentifierName "x" = any

@@ -1,0 +1,17 @@
+=== tests/cases/compiler/inheritanceOfGenericConstructorMethod1.ts ===
+Line 0 col 8 IdentifierName "T" = any
+Line 1 col 8 IdentifierName "T" = any
+Line 1 col 19 IdentifierName "A" = A<T>
+Line 1 col 21 IdentifierName "T" = T
+Line 2 col 8 ObjectCreationExpression "new A<Date>()" = A<Date>
+Line 2 col 12 IdentifierName "A" = new<T>() => A<T>
+Line 2 col 14 IdentifierName "Date" = Date
+Line 3 col 9 ObjectCreationExpression "new B()" = B<any>
+Line 3 col 13 IdentifierName "B" = new<T>() => B<T>
+Line 4 col 8 IdentifierName "B" = B<T>
+Line 4 col 10 IdentifierName "Date" = Date
+Line 4 col 18 ObjectCreationExpression "new B()" = B<any>
+Line 4 col 22 IdentifierName "B" = new<T>() => B<T>
+Line 5 col 9 ObjectCreationExpression "new B<Date>()" = B<Date>
+Line 5 col 13 IdentifierName "B" = new<T>() => B<T>
+Line 5 col 15 IdentifierName "Date" = Date

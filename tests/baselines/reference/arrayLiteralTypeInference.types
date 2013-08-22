@@ -1,0 +1,59 @@
+=== tests/cases/compiler/arrayLiteralTypeInference.ts ===
+Line 4 col 22 IdentifierName "Action" = Action
+Line 8 col 22 IdentifierName "Action" = Action
+Line 12 col 8 IdentifierName "Action" = Action
+Line 12 col 19 ArrayLiteralExpression "[
+    { id: 2, trueness: false },
+    { id: 3, name: "three" }
+]" = Action[]
+Line 13 col 0 ObjectLiteralExpression "{ id: 2, trueness: false }" = { id: number; trueness: boolean; }
+Line 14 col 0 ObjectLiteralExpression "{ id: 3, name: "three" }" = { id: number; name: string; }
+Line 17 col 8 IdentifierName "Action" = Action
+Line 17 col 19 ArrayLiteralExpression "[
+    new ActionA(),
+    new ActionB()
+]" = Action[]
+Line 18 col 0 ObjectCreationExpression "new ActionA()" = ActionA
+Line 18 col 8 IdentifierName "ActionA" = new() => ActionA
+Line 19 col 0 ObjectCreationExpression "new ActionB()" = ActionB
+Line 19 col 8 IdentifierName "ActionB" = new() => ActionB
+Line 22 col 8 IdentifierName "Action" = Action
+Line 22 col 19 ArrayLiteralExpression "[
+    new Action(),
+    new ActionA(),
+    new ActionB()
+]" = Action[]
+Line 23 col 0 ObjectCreationExpression "new Action()" = Action
+Line 23 col 8 IdentifierName "Action" = new() => Action
+Line 24 col 0 ObjectCreationExpression "new ActionA()" = ActionA
+Line 24 col 8 IdentifierName "ActionA" = new() => ActionA
+Line 25 col 0 ObjectCreationExpression "new ActionB()" = ActionB
+Line 25 col 8 IdentifierName "ActionB" = new() => ActionB
+Line 28 col 10 IdentifierName "id" = number
+Line 29 col 0 ArrayLiteralExpression "[
+        { id: 2, trueness: false },
+        { id: 3, name: "three" }
+    ]" = { id: number; }[]
+Line 30 col 0 ObjectLiteralExpression "{ id: 2, trueness: false }" = { id: number; trueness: boolean; }
+Line 31 col 0 ObjectLiteralExpression "{ id: 3, name: "three" }" = { id: number; name: string; }
+Line 34 col 10 IdentifierName "id" = number
+Line 35 col 0 ArrayLiteralExpression "[
+        new ActionA(),
+        new ActionB()
+    ]" = { id: number; }[]
+Line 36 col 0 ObjectCreationExpression "new ActionA()" = ActionA
+Line 36 col 12 IdentifierName "ActionA" = new() => ActionA
+Line 37 col 0 ObjectCreationExpression "new ActionB()" = ActionB
+Line 37 col 12 IdentifierName "ActionB" = new() => ActionB
+Line 40 col 10 IdentifierName "id" = number
+Line 41 col 0 ArrayLiteralExpression "[
+        new Action(),
+        new ActionA(),
+        new ActionB()
+    ]" = { id: number; }[]
+Line 42 col 0 ObjectCreationExpression "new Action()" = Action
+Line 42 col 12 IdentifierName "Action" = new() => Action
+Line 43 col 0 ObjectCreationExpression "new ActionA()" = ActionA
+Line 43 col 12 IdentifierName "ActionA" = new() => ActionA
+Line 44 col 0 ObjectCreationExpression "new ActionB()" = ActionB
+Line 44 col 12 IdentifierName "ActionB" = new() => ActionB

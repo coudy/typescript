@@ -1,0 +1,13 @@
+=== tests/cases/compiler/selfInCallback.ts ===
+Line 2 col 17 IdentifierName "cb" = any
+Line 2 col 31 InvocationExpression "cb()" = void
+Line 2 col 31 IdentifierName "cb" = () => void
+Line 4 col 0 InvocationExpression "this.callback(()=>{this.p1+1})" = void
+Line 4 col 0 MemberAccessExpression "this.callback" = (cb: () => void) => void
+Line 4 col 0 ThisKeyword "this" = C
+Line 4 col 7 IdentifierName "callback" = (cb: () => void) => void
+Line 4 col 16 ParenthesizedArrowFunctionExpression "()=>{this.p1+1}" = () => void
+Line 4 col 21 AddExpression "this.p1+1" = number
+Line 4 col 21 MemberAccessExpression "this.p1" = number
+Line 4 col 21 ThisKeyword "this" = C
+Line 4 col 26 IdentifierName "p1" = number

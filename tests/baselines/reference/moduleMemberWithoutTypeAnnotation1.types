@@ -1,0 +1,34 @@
+=== tests/cases/compiler/moduleMemberWithoutTypeAnnotation1.ts ===
+Line 2 col 30 IdentifierName "SyntaxNode" = TypeScript.SyntaxNode
+Line 13 col 26 IdentifierName "child" = any
+Line 13 col 33 IdentifierName "ISyntaxElement" = TypeScript.ISyntaxElement
+Line 14 col 19 InvocationExpression "Syntax.childIndex()" = void
+Line 14 col 19 MemberAccessExpression "Syntax.childIndex" = () => void
+Line 14 col 19 IdentifierName "Syntax" = { childIndex(): void; VariableWidthTokenWithTrailingTrivia: new() => TypeScript.Syntax.VariableWidthTokenWithTrailingTrivia; }
+Line 14 col 26 IdentifierName "childIndex" = () => void
+Line 19 col 20 IdentifierName "parent" = any
+Line 19 col 28 IdentifierName "PositionedElement" = TypeScript.PositionedElement
+Line 19 col 47 IdentifierName "token" = any
+Line 19 col 54 IdentifierName "ISyntaxToken" = TypeScript.ISyntaxToken
+Line 19 col 68 IdentifierName "fullStart" = any
+Line 26 col 25 IdentifierName "position" = any
+Line 26 col 43 IdentifierName "includeSkippedTokens" = any
+Line 26 col 83 IdentifierName "PositionedToken" = TypeScript.PositionedToken
+Line 27 col 34 InvocationExpression "this.findTokenInternal(null, position, 0)" = any
+Line 27 col 34 MemberAccessExpression "this.findTokenInternal" = (x: any, y: any, z: any) => any
+Line 27 col 34 ThisKeyword "this" = TypeScript.SyntaxNode
+Line 27 col 39 IdentifierName "findTokenInternal" = (x: any, y: any, z: any) => any
+Line 27 col 63 IdentifierName "position" = number
+Line 30 col 26 IdentifierName "x" = any
+Line 30 col 29 IdentifierName "y" = any
+Line 30 col 32 IdentifierName "z" = any
+Line 39 col 65 IdentifierName "ISyntaxToken" = TypeScript.ISyntaxToken
+Line 40 col 34 IdentifierName "parent" = any
+Line 40 col 42 IdentifierName "PositionedElement" = TypeScript.PositionedElement
+Line 40 col 61 IdentifierName "position" = any
+Line 40 col 79 IdentifierName "fullStart" = any
+Line 41 col 19 ObjectCreationExpression "new PositionedToken(parent, this, fullStart)" = TypeScript.PositionedToken
+Line 41 col 23 IdentifierName "PositionedToken" = new(parent: TypeScript.PositionedElement, token: TypeScript.ISyntaxToken, fullStart: number) => TypeScript.PositionedToken
+Line 41 col 39 IdentifierName "parent" = TypeScript.PositionedElement
+Line 41 col 47 ThisKeyword "this" = TypeScript.Syntax.VariableWidthTokenWithTrailingTrivia
+Line 41 col 53 IdentifierName "fullStart" = number

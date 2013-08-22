@@ -1,0 +1,9 @@
+=== tests/cases/compiler/staticInstanceResolution2.ts ===
+Line 1 col 0 InvocationExpression "A.hasOwnProperty('foo')" = boolean
+Line 1 col 0 MemberAccessExpression "A.hasOwnProperty" = (v: string) => boolean
+Line 1 col 0 IdentifierName "A" = new() => A
+Line 1 col 2 IdentifierName "hasOwnProperty" = (v: string) => boolean
+Line 6 col 0 InvocationExpression "B.hasOwnProperty('foo')" = boolean
+Line 6 col 0 MemberAccessExpression "B.hasOwnProperty" = (v: string) => boolean
+Line 6 col 0 IdentifierName "B" = new() => B
+Line 6 col 2 IdentifierName "hasOwnProperty" = (v: string) => boolean

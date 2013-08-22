@@ -1,0 +1,74 @@
+=== tests/cases/compiler/selfInLambdas.ts ===
+Line 1 col 0 IdentifierName "x" = number
+Line 2 col 0 IdentifierName "y" = number
+Line 5 col 20 IdentifierName "Window" = Window
+Line 7 col 0 IdentifierName "onmousemove" = (ev: MouseEvent) => any
+Line 7 col 18 IdentifierName "ev" = any
+Line 7 col 22 IdentifierName "MouseEvent" = MouseEvent
+Line 10 col 8 ObjectLiteralExpression "{
+
+    counter: 0,
+
+    start: function() {
+
+        window.onmousemove = () => {
+            this.counter++
+            var f = () => this.counter;
+
+        }
+
+    }
+
+}" = { counter: number; start: () => void; }
+Line 14 col 11 FunctionExpression "function() {
+
+        window.onmousemove = () => {
+            this.counter++
+            var f = () => this.counter;
+
+        }
+
+    }" = () => void
+Line 15 col 0 AssignmentExpression "window.onmousemove = () => {
+            this.counter++
+            var f = () => this.counter;
+
+        }" = () => void
+Line 15 col 0 MemberAccessExpression "window.onmousemove" = (ev: MouseEvent) => any
+Line 15 col 0 IdentifierName "window" = Window
+Line 16 col 15 IdentifierName "onmousemove" = (ev: MouseEvent) => any
+Line 16 col 29 ParenthesizedArrowFunctionExpression "() => {
+            this.counter++
+            var f = () => this.counter;
+
+        }" = () => void
+Line 17 col 0 PostIncrementExpression "this.counter++" = number
+Line 17 col 0 MemberAccessExpression "this.counter" = any
+Line 17 col 0 ThisKeyword "this" = any
+Line 17 col 17 IdentifierName "counter" = any
+Line 18 col 20 ParenthesizedArrowFunctionExpression "() => this.counter" = () => any
+Line 18 col 26 MemberAccessExpression "this.counter" = any
+Line 18 col 26 ThisKeyword "this" = any
+Line 18 col 31 IdentifierName "counter" = any
+Line 32 col 13 ParenthesizedArrowFunctionExpression "() => {
+            var x = this.value;
+            var inner = () => {
+                var y = this.value;
+			}
+
+			inner();
+
+		}" = () => void
+Line 33 col 20 MemberAccessExpression "this.value" = string
+Line 33 col 20 ThisKeyword "this" = X
+Line 33 col 25 IdentifierName "value" = string
+Line 34 col 24 ParenthesizedArrowFunctionExpression "() => {
+                var y = this.value;
+			}" = () => void
+Line 35 col 24 MemberAccessExpression "this.value" = string
+Line 35 col 24 ThisKeyword "this" = X
+Line 35 col 29 IdentifierName "value" = string
+Line 37 col 0 InvocationExpression "inner()" = void
+Line 37 col 0 IdentifierName "inner" = () => void
+Line 41 col 0 InvocationExpression "outer()" = void
+Line 41 col 0 IdentifierName "outer" = () => void

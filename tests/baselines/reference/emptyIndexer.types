@@ -1,0 +1,10 @@
+=== tests/cases/compiler/emptyIndexer.ts ===
+Line 1 col 0 IdentifierName "m" = () => number
+Line 5 col 2 IdentifierName "s" = any
+Line 5 col 13 IdentifierName "I1" = I1
+Line 9 col 7 IdentifierName "I2" = I2
+Line 11 col 8 InvocationExpression "x[''].m()" = number
+Line 11 col 8 MemberAccessExpression "x[''].m" = () => number
+Line 11 col 8 ElementAccessExpression "x['']" = I1
+Line 11 col 8 IdentifierName "x" = I2
+Line 11 col 14 IdentifierName "m" = () => number

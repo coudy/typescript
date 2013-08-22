@@ -1,0 +1,20 @@
+=== tests/cases/compiler/multiExtendsSplitInterfaces2.ts ===
+Line 1 col 0 IdentifierName "a" = number
+Line 4 col 20 IdentifierName "A" = A
+Line 5 col 0 IdentifierName "i1" = number
+Line 9 col 0 IdentifierName "b" = number
+Line 12 col 20 IdentifierName "B" = B
+Line 13 col 0 IdentifierName "i2" = number
+Line 16 col 7 IdentifierName "I" = I
+Line 18 col 8 MemberAccessExpression "i.a" = number
+Line 18 col 8 IdentifierName "i" = I
+Line 18 col 10 IdentifierName "a" = number
+Line 19 col 9 MemberAccessExpression "i.i1" = number
+Line 19 col 9 IdentifierName "i" = I
+Line 19 col 11 IdentifierName "i1" = number
+Line 20 col 8 MemberAccessExpression "i.b" = number
+Line 20 col 8 IdentifierName "i" = I
+Line 20 col 10 IdentifierName "b" = number
+Line 21 col 9 MemberAccessExpression "i.i2" = number
+Line 21 col 9 IdentifierName "i" = I
+Line 21 col 11 IdentifierName "i2" = number

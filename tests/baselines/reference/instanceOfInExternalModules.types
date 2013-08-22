@@ -1,0 +1,7 @@
+=== tests/cases/compiler/instanceOfInExternalModules.ts ===
+Line 10 col 15 IdentifierName "value" = any
+Line 14 col 8 InstanceOfExpression "value instanceof Bar.Foo" = boolean
+Line 14 col 8 IdentifierName "value" = any
+Line 14 col 25 MemberAccessExpression "Bar.Foo" = new() => "FS".Foo
+Line 14 col 25 IdentifierName "Bar" = Bar
+Line 14 col 29 IdentifierName "Foo" = new() => "FS".Foo

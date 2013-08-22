@@ -1,0 +1,19 @@
+=== tests/cases/compiler/sourceMapValidationIfElse.ts ===
+Line 1 col 4 EqualsWithTypeConversionExpression "i == 10" = boolean
+Line 1 col 4 IdentifierName "i" = number
+Line 2 col 0 PostIncrementExpression "i++" = number
+Line 2 col 0 IdentifierName "i" = number
+Line 6 col 4 EqualsWithTypeConversionExpression "i == 10" = boolean
+Line 6 col 4 IdentifierName "i" = number
+Line 8 col 0 PostIncrementExpression "i++" = number
+Line 8 col 0 IdentifierName "i" = number
+Line 10 col 9 EqualsWithTypeConversionExpression "i == 20" = boolean
+Line 10 col 9 IdentifierName "i" = number
+Line 11 col 0 PostDecrementExpression "i--" = number
+Line 11 col 0 IdentifierName "i" = number
+Line 12 col 11 EqualsWithTypeConversionExpression "i == 30" = boolean
+Line 12 col 11 IdentifierName "i" = number
+Line 13 col 0 AddAssignmentExpression "i += 70" = number
+Line 13 col 0 IdentifierName "i" = number
+Line 15 col 0 PostDecrementExpression "i--" = number
+Line 15 col 0 IdentifierName "i" = number

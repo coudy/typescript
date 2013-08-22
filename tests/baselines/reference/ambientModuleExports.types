@@ -1,0 +1,23 @@
+=== tests/cases/compiler/ambientModuleExports.ts ===
+Line 5 col 0 InvocationExpression "Foo.a()" = void
+Line 5 col 0 MemberAccessExpression "Foo.a" = () => void
+Line 5 col 0 IdentifierName "Foo" = { a(): void; b: number; C: new() => Foo.C; }
+Line 6 col 4 IdentifierName "a" = () => void
+Line 7 col 0 MemberAccessExpression "Foo.b" = number
+Line 7 col 0 IdentifierName "Foo" = { a(): void; b: number; C: new() => Foo.C; }
+Line 7 col 4 IdentifierName "b" = number
+Line 8 col 8 ObjectCreationExpression "new Foo.C()" = Foo.C
+Line 8 col 12 MemberAccessExpression "Foo.C" = new() => Foo.C
+Line 8 col 12 IdentifierName "Foo" = { a(): void; b: number; C: new() => Foo.C; }
+Line 8 col 16 IdentifierName "C" = new() => Foo.C
+Line 15 col 0 InvocationExpression "Foo2.a()" = void
+Line 15 col 0 MemberAccessExpression "Foo2.a" = () => void
+Line 15 col 0 IdentifierName "Foo2" = { a(): void; b: number; C: new() => Foo2.C; }
+Line 16 col 5 IdentifierName "a" = () => void
+Line 17 col 0 MemberAccessExpression "Foo2.b" = number
+Line 17 col 0 IdentifierName "Foo2" = { a(): void; b: number; C: new() => Foo2.C; }
+Line 17 col 5 IdentifierName "b" = number
+Line 18 col 9 ObjectCreationExpression "new Foo2.C()" = Foo2.C
+Line 18 col 13 MemberAccessExpression "Foo2.C" = new() => Foo2.C
+Line 18 col 13 IdentifierName "Foo2" = { a(): void; b: number; C: new() => Foo2.C; }
+Line 18 col 18 IdentifierName "C" = new() => Foo2.C

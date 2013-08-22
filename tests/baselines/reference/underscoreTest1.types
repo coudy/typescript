@@ -1,0 +1,959 @@
+=== tests/cases/compiler/underscoreTest1_underscoreTests.ts ===
+Line 3 col 23 IdentifierName "x" = any
+Line 4 col 0 InvocationExpression "_.each([1, 2, 3], (num) => alert(num.toString()))" = any
+Line 4 col 0 MemberAccessExpression "_.each" = any
+Line 4 col 0 IdentifierName "_" = any
+Line 5 col 2 IdentifierName "each" = any
+Line 5 col 7 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 5 col 18 ParenthesizedArrowFunctionExpression "(num) => alert(num.toString())" = (num: any) => void
+Line 5 col 19 IdentifierName "num" = any
+Line 5 col 27 InvocationExpression "alert(num.toString())" = void
+Line 5 col 27 IdentifierName "alert" = (x: string) => void
+Line 5 col 33 InvocationExpression "num.toString()" = any
+Line 5 col 33 MemberAccessExpression "num.toString" = any
+Line 5 col 33 IdentifierName "num" = any
+Line 5 col 37 IdentifierName "toString" = any
+Line 6 col 0 InvocationExpression "_.each({ one: 1, two: 2, three: 3 }, (value: number, key?: string) => alert(value.toString()))" = any
+Line 6 col 0 MemberAccessExpression "_.each" = any
+Line 6 col 0 IdentifierName "_" = any
+Line 6 col 2 IdentifierName "each" = any
+Line 6 col 7 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 6 col 37 ParenthesizedArrowFunctionExpression "(value: number, key?: string) => alert(value.toString())" = (value: number, key?: string) => void
+Line 6 col 38 IdentifierName "value" = any
+Line 6 col 53 IdentifierName "key" = any
+Line 6 col 70 InvocationExpression "alert(value.toString())" = void
+Line 6 col 70 IdentifierName "alert" = (x: string) => void
+Line 6 col 76 InvocationExpression "value.toString()" = string
+Line 6 col 76 MemberAccessExpression "value.toString" = (radix?: number) => string
+Line 6 col 76 IdentifierName "value" = number
+Line 6 col 82 IdentifierName "toString" = (radix?: number) => string
+Line 7 col 0 InvocationExpression "_.map([1, 2, 3], (num) => num * 3)" = any
+Line 7 col 0 MemberAccessExpression "_.map" = any
+Line 7 col 0 IdentifierName "_" = any
+Line 8 col 2 IdentifierName "map" = any
+Line 8 col 6 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 8 col 17 ParenthesizedArrowFunctionExpression "(num) => num * 3" = (num: any) => number
+Line 8 col 18 IdentifierName "num" = any
+Line 8 col 26 MultiplyExpression "num * 3" = number
+Line 8 col 26 IdentifierName "num" = any
+Line 9 col 0 InvocationExpression "_.map({ one: 1, two: 2, three: 3 }, (value: number, key?: string) => value * 3)" = any
+Line 9 col 0 MemberAccessExpression "_.map" = any
+Line 9 col 0 IdentifierName "_" = any
+Line 9 col 2 IdentifierName "map" = any
+Line 9 col 6 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 9 col 36 ParenthesizedArrowFunctionExpression "(value: number, key?: string) => value * 3" = (value: number, key?: string) => number
+Line 9 col 37 IdentifierName "value" = any
+Line 9 col 52 IdentifierName "key" = any
+Line 9 col 69 MultiplyExpression "value * 3" = number
+Line 9 col 69 IdentifierName "value" = number
+Line 11 col 10 InvocationExpression "_.reduce([1, 2, 3], (memo, num) => memo + num, 0)" = any
+Line 11 col 10 MemberAccessExpression "_.reduce" = any
+Line 11 col 10 IdentifierName "_" = any
+Line 11 col 12 IdentifierName "reduce" = any
+Line 11 col 19 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 11 col 30 ParenthesizedArrowFunctionExpression "(memo, num) => memo + num" = (memo: any, num: any) => any
+Line 11 col 31 IdentifierName "memo" = any
+Line 11 col 37 IdentifierName "num" = any
+Line 11 col 45 AddExpression "memo + num" = any
+Line 11 col 45 IdentifierName "memo" = any
+Line 11 col 52 IdentifierName "num" = any
+Line 13 col 11 ArrayLiteralExpression "[[0, 1], [2, 3], [4, 5]]" = number[][]
+Line 13 col 12 ArrayLiteralExpression "[0, 1]" = number[]
+Line 13 col 20 ArrayLiteralExpression "[2, 3]" = number[]
+Line 13 col 28 ArrayLiteralExpression "[4, 5]" = number[]
+Line 14 col 11 InvocationExpression "_.reduceRight(list, (a, b) => a.concat(b), [])" = any
+Line 14 col 11 MemberAccessExpression "_.reduceRight" = any
+Line 14 col 11 IdentifierName "_" = any
+Line 14 col 13 IdentifierName "reduceRight" = any
+Line 14 col 25 IdentifierName "list" = number[][]
+Line 14 col 31 ParenthesizedArrowFunctionExpression "(a, b) => a.concat(b)" = (a: any, b: any) => any
+Line 14 col 32 IdentifierName "a" = any
+Line 14 col 35 IdentifierName "b" = any
+Line 14 col 41 InvocationExpression "a.concat(b)" = any
+Line 14 col 41 MemberAccessExpression "a.concat" = any
+Line 14 col 41 IdentifierName "a" = any
+Line 14 col 43 IdentifierName "concat" = any
+Line 14 col 50 IdentifierName "b" = any
+Line 14 col 54 ArrayLiteralExpression "[]" = any[]
+Line 16 col 11 InvocationExpression "_.find([1, 2, 3, 4, 5, 6], (num) => num % 2 == 0)" = any
+Line 16 col 11 MemberAccessExpression "_.find" = any
+Line 16 col 11 IdentifierName "_" = any
+Line 16 col 13 IdentifierName "find" = any
+Line 16 col 18 ArrayLiteralExpression "[1, 2, 3, 4, 5, 6]" = number[]
+Line 16 col 38 ParenthesizedArrowFunctionExpression "(num) => num % 2 == 0" = (num: any) => boolean
+Line 16 col 39 IdentifierName "num" = any
+Line 16 col 47 EqualsWithTypeConversionExpression "num % 2 == 0" = boolean
+Line 16 col 47 ModuloExpression "num % 2" = number
+Line 16 col 47 IdentifierName "num" = any
+Line 18 col 12 InvocationExpression "_.filter([1, 2, 3, 4, 5, 6], (num) => num % 2 == 0)" = any
+Line 18 col 12 MemberAccessExpression "_.filter" = any
+Line 18 col 12 IdentifierName "_" = any
+Line 18 col 14 IdentifierName "filter" = any
+Line 18 col 21 ArrayLiteralExpression "[1, 2, 3, 4, 5, 6]" = number[]
+Line 18 col 41 ParenthesizedArrowFunctionExpression "(num) => num % 2 == 0" = (num: any) => boolean
+Line 18 col 42 IdentifierName "num" = any
+Line 18 col 50 EqualsWithTypeConversionExpression "num % 2 == 0" = boolean
+Line 18 col 50 ModuloExpression "num % 2" = number
+Line 18 col 50 IdentifierName "num" = any
+Line 20 col 18 ArrayLiteralExpression "[{ title: "Cymbeline", author: "Shakespeare", year: 1611 }, { title: "The Tempest", author: "Shakespeare", year: 1611 }, { title: "Other", author: "Not Shakespeare", year: 2012 }]" = { title: string; author: string; year: number; }[]
+Line 20 col 19 ObjectLiteralExpression "{ title: "Cymbeline", author: "Shakespeare", year: 1611 }" = { title: string; author: string; year: number; }
+Line 20 col 78 ObjectLiteralExpression "{ title: "The Tempest", author: "Shakespeare", year: 1611 }" = { title: string; author: string; year: number; }
+Line 20 col 139 ObjectLiteralExpression "{ title: "Other", author: "Not Shakespeare", year: 2012 }" = { title: string; author: string; year: number; }
+Line 21 col 0 InvocationExpression "_.where(listOfPlays, { author: "Shakespeare", year: 1611 })" = any
+Line 21 col 0 MemberAccessExpression "_.where" = any
+Line 21 col 0 IdentifierName "_" = any
+Line 21 col 2 IdentifierName "where" = any
+Line 21 col 8 IdentifierName "listOfPlays" = { title: string; author: string; year: number; }[]
+Line 21 col 21 ObjectLiteralExpression "{ author: "Shakespeare", year: 1611 }" = { author: string; year: number; }
+Line 23 col 11 InvocationExpression "_.reject([1, 2, 3, 4, 5, 6], (num) => num % 2 == 0)" = any
+Line 23 col 11 MemberAccessExpression "_.reject" = any
+Line 23 col 11 IdentifierName "_" = any
+Line 23 col 13 IdentifierName "reject" = any
+Line 23 col 20 ArrayLiteralExpression "[1, 2, 3, 4, 5, 6]" = number[]
+Line 23 col 40 ParenthesizedArrowFunctionExpression "(num) => num % 2 == 0" = (num: any) => boolean
+Line 23 col 41 IdentifierName "num" = any
+Line 23 col 49 EqualsWithTypeConversionExpression "num % 2 == 0" = boolean
+Line 23 col 49 ModuloExpression "num % 2" = number
+Line 23 col 49 IdentifierName "num" = any
+Line 24 col 0 InvocationExpression "//_.all([true, 1, null, 'yes'], _.identity);
+
+_.any([null, 0, 'yes', false])" = any
+Line 24 col 0 MemberAccessExpression "//_.all([true, 1, null, 'yes'], _.identity);
+
+_.any" = any
+Line 24 col 0 IdentifierName "//_.all([true, 1, null, 'yes'], _.identity);
+
+_" = any
+Line 27 col 2 IdentifierName "any" = any
+Line 27 col 6 ArrayLiteralExpression "[null, 0, 'yes', false]" = {}[]
+Line 28 col 0 InvocationExpression "_.contains([1, 2, 3], 3)" = any
+Line 28 col 0 MemberAccessExpression "_.contains" = any
+Line 28 col 0 IdentifierName "_" = any
+Line 29 col 2 IdentifierName "contains" = any
+Line 29 col 11 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 30 col 0 InvocationExpression "_.invoke([[5, 1, 7], [3, 2, 1]], 'sort')" = any
+Line 30 col 0 MemberAccessExpression "_.invoke" = any
+Line 30 col 0 IdentifierName "_" = any
+Line 31 col 2 IdentifierName "invoke" = any
+Line 31 col 9 ArrayLiteralExpression "[[5, 1, 7], [3, 2, 1]]" = number[][]
+Line 31 col 10 ArrayLiteralExpression "[5, 1, 7]" = number[]
+Line 31 col 21 ArrayLiteralExpression "[3, 2, 1]" = number[]
+Line 33 col 14 ArrayLiteralExpression "[{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }]" = { name: string; age: number; }[]
+Line 33 col 15 ObjectLiteralExpression "{ name: 'moe', age: 40 }" = { name: string; age: number; }
+Line 33 col 41 ObjectLiteralExpression "{ name: 'larry', age: 50 }" = { name: string; age: number; }
+Line 33 col 69 ObjectLiteralExpression "{ name: 'curly', age: 60 }" = { name: string; age: number; }
+Line 34 col 0 InvocationExpression "_.pluck(stooges, 'name')" = any
+Line 34 col 0 MemberAccessExpression "_.pluck" = any
+Line 34 col 0 IdentifierName "_" = any
+Line 34 col 2 IdentifierName "pluck" = any
+Line 34 col 8 IdentifierName "stooges" = { name: string; age: number; }[]
+Line 35 col 0 InvocationExpression "_.max(stooges, (stooge) => stooge.age)" = any
+Line 35 col 0 MemberAccessExpression "_.max" = any
+Line 35 col 0 IdentifierName "_" = any
+Line 36 col 2 IdentifierName "max" = any
+Line 36 col 6 IdentifierName "stooges" = { name: string; age: number; }[]
+Line 36 col 15 ParenthesizedArrowFunctionExpression "(stooge) => stooge.age" = (stooge: any) => any
+Line 36 col 16 IdentifierName "stooge" = any
+Line 36 col 27 MemberAccessExpression "stooge.age" = any
+Line 36 col 27 IdentifierName "stooge" = any
+Line 36 col 34 IdentifierName "age" = any
+Line 38 col 14 ArrayLiteralExpression "[10, 5, 100, 2, 1000]" = number[]
+Line 39 col 0 InvocationExpression "_.min(numbers)" = any
+Line 39 col 0 MemberAccessExpression "_.min" = any
+Line 39 col 0 IdentifierName "_" = any
+Line 39 col 2 IdentifierName "min" = any
+Line 39 col 6 IdentifierName "numbers" = number[]
+Line 40 col 0 InvocationExpression "_.sortBy([1, 2, 3, 4, 5, 6], (num) => Math.sin(num))" = any
+Line 40 col 0 MemberAccessExpression "_.sortBy" = any
+Line 40 col 0 IdentifierName "_" = any
+Line 41 col 2 IdentifierName "sortBy" = any
+Line 41 col 9 ArrayLiteralExpression "[1, 2, 3, 4, 5, 6]" = number[]
+Line 41 col 29 ParenthesizedArrowFunctionExpression "(num) => Math.sin(num)" = (num: any) => number
+Line 41 col 30 IdentifierName "num" = any
+Line 41 col 38 InvocationExpression "Math.sin(num)" = number
+Line 41 col 38 MemberAccessExpression "Math.sin" = (x: number) => number
+Line 41 col 38 IdentifierName "Math" = Math
+Line 41 col 43 IdentifierName "sin" = (x: number) => number
+Line 41 col 47 IdentifierName "num" = any
+Line 42 col 0 InvocationExpression "// not sure how this is typechecking at all.. Math.floor(e) is number not string..?
+_([1.3, 2.1, 2.4]).groupBy((e: number, i?: number, list?: number[]) => Math.floor(e))" = any
+Line 42 col 0 MemberAccessExpression "// not sure how this is typechecking at all.. Math.floor(e) is number not string..?
+_([1.3, 2.1, 2.4]).groupBy" = any
+Line 42 col 0 InvocationExpression "// not sure how this is typechecking at all.. Math.floor(e) is number not string..?
+_([1.3, 2.1, 2.4])" = any
+Line 42 col 0 IdentifierName "// not sure how this is typechecking at all.. Math.floor(e) is number not string..?
+_" = any
+Line 45 col 2 ArrayLiteralExpression "[1.3, 2.1, 2.4]" = number[]
+Line 45 col 19 IdentifierName "groupBy" = any
+Line 45 col 27 ParenthesizedArrowFunctionExpression "(e: number, i?: number, list?: number[]) => Math.floor(e)" = (e: number, i?: number, list?: number[]) => number
+Line 45 col 28 IdentifierName "e" = any
+Line 45 col 39 IdentifierName "i" = any
+Line 45 col 51 IdentifierName "list" = number[][]
+Line 45 col 71 InvocationExpression "Math.floor(e)" = number
+Line 45 col 71 MemberAccessExpression "Math.floor" = (x: number) => number
+Line 45 col 71 IdentifierName "Math" = Math
+Line 45 col 76 IdentifierName "floor" = (x: number) => number
+Line 45 col 82 IdentifierName "e" = number
+Line 46 col 0 InvocationExpression "_.groupBy([1.3, 2.1, 2.4], (num: number) => Math.floor(num))" = any
+Line 46 col 0 MemberAccessExpression "_.groupBy" = any
+Line 46 col 0 IdentifierName "_" = any
+Line 46 col 2 IdentifierName "groupBy" = any
+Line 46 col 10 ArrayLiteralExpression "[1.3, 2.1, 2.4]" = number[]
+Line 46 col 27 ParenthesizedArrowFunctionExpression "(num: number) => Math.floor(num)" = (num: number) => number
+Line 46 col 28 IdentifierName "num" = any
+Line 46 col 44 InvocationExpression "Math.floor(num)" = number
+Line 46 col 44 MemberAccessExpression "Math.floor" = (x: number) => number
+Line 46 col 44 IdentifierName "Math" = Math
+Line 46 col 49 IdentifierName "floor" = (x: number) => number
+Line 46 col 55 IdentifierName "num" = number
+Line 47 col 0 InvocationExpression "_.groupBy(['one', 'two', 'three'], 'length')" = any
+Line 47 col 0 MemberAccessExpression "_.groupBy" = any
+Line 47 col 0 IdentifierName "_" = any
+Line 47 col 2 IdentifierName "groupBy" = any
+Line 47 col 10 ArrayLiteralExpression "['one', 'two', 'three']" = string[]
+Line 48 col 0 InvocationExpression "_.countBy([1, 2, 3, 4, 5], (num) => num % 2 == 0 ? 'even' : 'odd')" = any
+Line 48 col 0 MemberAccessExpression "_.countBy" = any
+Line 48 col 0 IdentifierName "_" = any
+Line 49 col 2 IdentifierName "countBy" = any
+Line 49 col 10 ArrayLiteralExpression "[1, 2, 3, 4, 5]" = number[]
+Line 49 col 27 ParenthesizedArrowFunctionExpression "(num) => num % 2 == 0 ? 'even' : 'odd'" = (num: any) => string
+Line 49 col 28 IdentifierName "num" = any
+Line 49 col 36 ConditionalExpression "num % 2 == 0 ? 'even' : 'odd'" = string
+Line 49 col 36 EqualsWithTypeConversionExpression "num % 2 == 0" = boolean
+Line 49 col 36 ModuloExpression "num % 2" = number
+Line 49 col 36 IdentifierName "num" = any
+Line 50 col 0 InvocationExpression "_.shuffle([1, 2, 3, 4, 5, 6])" = any
+Line 50 col 0 MemberAccessExpression "_.shuffle" = any
+Line 50 col 0 IdentifierName "_" = any
+Line 51 col 2 IdentifierName "shuffle" = any
+Line 51 col 10 ArrayLiteralExpression "[1, 2, 3, 4, 5, 6]" = number[]
+Line 52 col 0 InvocationExpression "// (function(){ return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
+
+_.size({ one: 1, two: 2, three: 3 })" = any
+Line 52 col 0 MemberAccessExpression "// (function(){ return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
+
+_.size" = any
+Line 52 col 0 IdentifierName "// (function(){ return _.toArray(arguments).slice(1); })(1, 2, 3, 4);
+
+_" = any
+Line 55 col 2 IdentifierName "size" = any
+Line 55 col 7 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 56 col 0 InvocationExpression "///////////////////////////////////////////////////////////////////////////////////////
+
+_.first([5, 4, 3, 2, 1])" = any
+Line 56 col 0 MemberAccessExpression "///////////////////////////////////////////////////////////////////////////////////////
+
+_.first" = any
+Line 56 col 0 IdentifierName "///////////////////////////////////////////////////////////////////////////////////////
+
+_" = any
+Line 59 col 2 IdentifierName "first" = any
+Line 59 col 8 ArrayLiteralExpression "[5, 4, 3, 2, 1]" = number[]
+Line 60 col 0 InvocationExpression "_.initial([5, 4, 3, 2, 1])" = any
+Line 60 col 0 MemberAccessExpression "_.initial" = any
+Line 60 col 0 IdentifierName "_" = any
+Line 60 col 2 IdentifierName "initial" = any
+Line 60 col 10 ArrayLiteralExpression "[5, 4, 3, 2, 1]" = number[]
+Line 61 col 0 InvocationExpression "_.last([5, 4, 3, 2, 1])" = any
+Line 61 col 0 MemberAccessExpression "_.last" = any
+Line 61 col 0 IdentifierName "_" = any
+Line 61 col 2 IdentifierName "last" = any
+Line 61 col 7 ArrayLiteralExpression "[5, 4, 3, 2, 1]" = number[]
+Line 62 col 0 InvocationExpression "_.rest([5, 4, 3, 2, 1])" = any
+Line 62 col 0 MemberAccessExpression "_.rest" = any
+Line 62 col 0 IdentifierName "_" = any
+Line 62 col 2 IdentifierName "rest" = any
+Line 62 col 7 ArrayLiteralExpression "[5, 4, 3, 2, 1]" = number[]
+Line 63 col 0 InvocationExpression "_.compact([0, 1, false, 2, '', 3])" = any
+Line 63 col 0 MemberAccessExpression "_.compact" = any
+Line 63 col 0 IdentifierName "_" = any
+Line 63 col 2 IdentifierName "compact" = any
+Line 63 col 10 ArrayLiteralExpression "[0, 1, false, 2, '', 3]" = {}[]
+Line 64 col 0 InvocationExpression "_.flatten([1, 2, 3, 4])" = any
+Line 64 col 0 MemberAccessExpression "_.flatten" = any
+Line 64 col 0 IdentifierName "_" = any
+Line 65 col 2 IdentifierName "flatten" = any
+Line 65 col 10 ArrayLiteralExpression "[1, 2, 3, 4]" = number[]
+Line 66 col 0 InvocationExpression "_.flatten([1, [2]])" = any
+Line 66 col 0 MemberAccessExpression "_.flatten" = any
+Line 66 col 0 IdentifierName "_" = any
+Line 66 col 2 IdentifierName "flatten" = any
+Line 66 col 10 ArrayLiteralExpression "[1, [2]]" = {}[]
+Line 66 col 14 ArrayLiteralExpression "[2]" = number[]
+Line 67 col 0 InvocationExpression "// typescript doesn't like the elements being different
+_.flatten([1, [2], [3, [[4]]]])" = any
+Line 67 col 0 MemberAccessExpression "// typescript doesn't like the elements being different
+_.flatten" = any
+Line 67 col 0 IdentifierName "// typescript doesn't like the elements being different
+_" = any
+Line 69 col 2 IdentifierName "flatten" = any
+Line 69 col 10 ArrayLiteralExpression "[1, [2], [3, [[4]]]]" = {}[]
+Line 69 col 14 ArrayLiteralExpression "[2]" = number[]
+Line 69 col 19 ArrayLiteralExpression "[3, [[4]]]" = {}[]
+Line 69 col 23 ArrayLiteralExpression "[[4]]" = number[][]
+Line 69 col 24 ArrayLiteralExpression "[4]" = number[]
+Line 70 col 0 InvocationExpression "_.flatten([1, [2], [3, [[4]]]], true)" = any
+Line 70 col 0 MemberAccessExpression "_.flatten" = any
+Line 70 col 0 IdentifierName "_" = any
+Line 70 col 2 IdentifierName "flatten" = any
+Line 70 col 10 ArrayLiteralExpression "[1, [2], [3, [[4]]]]" = {}[]
+Line 70 col 14 ArrayLiteralExpression "[2]" = number[]
+Line 70 col 19 ArrayLiteralExpression "[3, [[4]]]" = {}[]
+Line 70 col 23 ArrayLiteralExpression "[[4]]" = number[][]
+Line 70 col 24 ArrayLiteralExpression "[4]" = number[]
+Line 71 col 0 InvocationExpression "_.without([1, 2, 1, 0, 3, 1, 4], 0, 1)" = any
+Line 71 col 0 MemberAccessExpression "_.without" = any
+Line 71 col 0 IdentifierName "_" = any
+Line 71 col 2 IdentifierName "without" = any
+Line 71 col 10 ArrayLiteralExpression "[1, 2, 1, 0, 3, 1, 4]" = number[]
+Line 72 col 0 InvocationExpression "_.union([1, 2, 3], [101, 2, 1, 10], [2, 1])" = any
+Line 72 col 0 MemberAccessExpression "_.union" = any
+Line 72 col 0 IdentifierName "_" = any
+Line 72 col 2 IdentifierName "union" = any
+Line 72 col 8 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 72 col 19 ArrayLiteralExpression "[101, 2, 1, 10]" = number[]
+Line 72 col 36 ArrayLiteralExpression "[2, 1]" = number[]
+Line 73 col 0 InvocationExpression "_.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1])" = any
+Line 73 col 0 MemberAccessExpression "_.intersection" = any
+Line 73 col 0 IdentifierName "_" = any
+Line 73 col 2 IdentifierName "intersection" = any
+Line 73 col 15 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 73 col 26 ArrayLiteralExpression "[101, 2, 1, 10]" = number[]
+Line 73 col 43 ArrayLiteralExpression "[2, 1]" = number[]
+Line 74 col 0 InvocationExpression "_.difference([1, 2, 3, 4, 5], [5, 2, 10])" = any
+Line 74 col 0 MemberAccessExpression "_.difference" = any
+Line 74 col 0 IdentifierName "_" = any
+Line 74 col 2 IdentifierName "difference" = any
+Line 74 col 13 ArrayLiteralExpression "[1, 2, 3, 4, 5]" = number[]
+Line 74 col 30 ArrayLiteralExpression "[5, 2, 10]" = number[]
+Line 75 col 0 InvocationExpression "_.uniq([1, 2, 1, 3, 1, 4])" = any
+Line 75 col 0 MemberAccessExpression "_.uniq" = any
+Line 75 col 0 IdentifierName "_" = any
+Line 75 col 2 IdentifierName "uniq" = any
+Line 75 col 7 ArrayLiteralExpression "[1, 2, 1, 3, 1, 4]" = number[]
+Line 76 col 0 InvocationExpression "_.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false])" = any
+Line 76 col 0 MemberAccessExpression "_.zip" = any
+Line 76 col 0 IdentifierName "_" = any
+Line 76 col 2 IdentifierName "zip" = any
+Line 76 col 6 ArrayLiteralExpression "['moe', 'larry', 'curly']" = string[]
+Line 76 col 33 ArrayLiteralExpression "[30, 40, 50]" = number[]
+Line 76 col 47 ArrayLiteralExpression "[true, false, false]" = boolean[]
+Line 77 col 0 InvocationExpression "_.object(['moe', 'larry', 'curly'], [30, 40, 50])" = any
+Line 77 col 0 MemberAccessExpression "_.object" = any
+Line 77 col 0 IdentifierName "_" = any
+Line 77 col 2 IdentifierName "object" = any
+Line 77 col 9 ArrayLiteralExpression "['moe', 'larry', 'curly']" = string[]
+Line 77 col 36 ArrayLiteralExpression "[30, 40, 50]" = number[]
+Line 78 col 0 InvocationExpression "_.object([['moe', 30], ['larry', 40], ['curly', 50]])" = any
+Line 78 col 0 MemberAccessExpression "_.object" = any
+Line 78 col 0 IdentifierName "_" = any
+Line 78 col 2 IdentifierName "object" = any
+Line 78 col 9 ArrayLiteralExpression "[['moe', 30], ['larry', 40], ['curly', 50]]" = {}[][]
+Line 78 col 10 ArrayLiteralExpression "['moe', 30]" = {}[]
+Line 78 col 23 ArrayLiteralExpression "['larry', 40]" = {}[]
+Line 78 col 38 ArrayLiteralExpression "['curly', 50]" = {}[]
+Line 79 col 0 InvocationExpression "_.indexOf([1, 2, 3], 2)" = any
+Line 79 col 0 MemberAccessExpression "_.indexOf" = any
+Line 79 col 0 IdentifierName "_" = any
+Line 79 col 2 IdentifierName "indexOf" = any
+Line 79 col 10 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 80 col 0 InvocationExpression "_.lastIndexOf([1, 2, 3, 1, 2, 3], 2)" = any
+Line 80 col 0 MemberAccessExpression "_.lastIndexOf" = any
+Line 80 col 0 IdentifierName "_" = any
+Line 80 col 2 IdentifierName "lastIndexOf" = any
+Line 80 col 14 ArrayLiteralExpression "[1, 2, 3, 1, 2, 3]" = number[]
+Line 81 col 0 InvocationExpression "_.sortedIndex([10, 20, 30, 40, 50], 35)" = any
+Line 81 col 0 MemberAccessExpression "_.sortedIndex" = any
+Line 81 col 0 IdentifierName "_" = any
+Line 81 col 2 IdentifierName "sortedIndex" = any
+Line 81 col 14 ArrayLiteralExpression "[10, 20, 30, 40, 50]" = number[]
+Line 82 col 0 InvocationExpression "_.range(10)" = any
+Line 82 col 0 MemberAccessExpression "_.range" = any
+Line 82 col 0 IdentifierName "_" = any
+Line 82 col 2 IdentifierName "range" = any
+Line 83 col 0 InvocationExpression "_.range(1, 11)" = any
+Line 83 col 0 MemberAccessExpression "_.range" = any
+Line 83 col 0 IdentifierName "_" = any
+Line 83 col 2 IdentifierName "range" = any
+Line 84 col 0 InvocationExpression "_.range(0, 30, 5)" = any
+Line 84 col 0 MemberAccessExpression "_.range" = any
+Line 84 col 0 IdentifierName "_" = any
+Line 84 col 2 IdentifierName "range" = any
+Line 85 col 0 InvocationExpression "_.range(0, 30, 5)" = any
+Line 85 col 0 MemberAccessExpression "_.range" = any
+Line 85 col 0 IdentifierName "_" = any
+Line 85 col 2 IdentifierName "range" = any
+Line 86 col 0 InvocationExpression "_.range(0)" = any
+Line 86 col 0 MemberAccessExpression "_.range" = any
+Line 86 col 0 IdentifierName "_" = any
+Line 86 col 2 IdentifierName "range" = any
+Line 90 col 11 FunctionExpression "function (greeting) { return greeting + ': ' + this.name }" = (greeting: any) => string
+Line 90 col 21 IdentifierName "greeting" = any
+Line 90 col 40 AddExpression "greeting + ': ' + this.name" = string
+Line 90 col 40 AddExpression "greeting + ': '" = string
+Line 90 col 40 IdentifierName "greeting" = any
+Line 90 col 58 MemberAccessExpression "this.name" = any
+Line 90 col 58 ThisKeyword "this" = any
+Line 90 col 63 IdentifierName "name" = any
+Line 93 col 12 InvocationExpression "_.bind(func, { name: 'moe' }, 'hi')" = any
+Line 93 col 12 MemberAccessExpression "_.bind" = any
+Line 93 col 12 IdentifierName "_" = any
+Line 93 col 14 IdentifierName "bind" = any
+Line 93 col 19 IdentifierName "func" = (greeting: any) => string
+Line 93 col 25 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 94 col 0 InvocationExpression "func2()" = any
+Line 94 col 0 IdentifierName "func2" = any
+Line 96 col 17 ObjectLiteralExpression "{
+    label: 'underscore',
+    onClick: function () { alert('clicked: ' + this.label); },
+    onHover: function () { alert('hovering: ' + this.label); }
+}" = { label: string; onClick: () => void; onHover: () => void; }
+Line 98 col 13 FunctionExpression "function () { alert('clicked: ' + this.label); }" = () => void
+Line 98 col 27 InvocationExpression "alert('clicked: ' + this.label)" = void
+Line 98 col 27 IdentifierName "alert" = (x: string) => void
+Line 98 col 33 AddExpression "'clicked: ' + this.label" = string
+Line 98 col 47 MemberAccessExpression "this.label" = any
+Line 98 col 47 ThisKeyword "this" = any
+Line 98 col 52 IdentifierName "label" = any
+Line 99 col 13 FunctionExpression "function () { alert('hovering: ' + this.label); }" = () => void
+Line 99 col 27 InvocationExpression "alert('hovering: ' + this.label)" = void
+Line 99 col 27 IdentifierName "alert" = (x: string) => void
+Line 99 col 33 AddExpression "'hovering: ' + this.label" = string
+Line 99 col 48 MemberAccessExpression "this.label" = any
+Line 99 col 48 ThisKeyword "this" = any
+Line 99 col 53 IdentifierName "label" = any
+Line 101 col 0 InvocationExpression "_.bindAll(buttonView)" = any
+Line 101 col 0 MemberAccessExpression "_.bindAll" = any
+Line 101 col 0 IdentifierName "_" = any
+Line 101 col 2 IdentifierName "bindAll" = any
+Line 101 col 10 IdentifierName "buttonView" = { label: string; onClick: () => void; onHover: () => void; }
+Line 102 col 0 InvocationExpression "$('#underscore_button').bind('click', buttonView.onClick)" = any
+Line 102 col 0 MemberAccessExpression "$('#underscore_button').bind" = any
+Line 102 col 0 InvocationExpression "$('#underscore_button')" = any
+Line 102 col 0 IdentifierName "$" = any
+Line 102 col 24 IdentifierName "bind" = any
+Line 102 col 38 MemberAccessExpression "buttonView.onClick" = () => void
+Line 102 col 38 IdentifierName "buttonView" = { label: string; onClick: () => void; onHover: () => void; }
+Line 102 col 49 IdentifierName "onClick" = () => void
+Line 104 col 16 InvocationExpression "_.memoize(function (n) {
+    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+})" = any
+Line 104 col 16 MemberAccessExpression "_.memoize" = any
+Line 104 col 16 IdentifierName "_" = any
+Line 104 col 18 IdentifierName "memoize" = any
+Line 104 col 26 FunctionExpression "function (n) {
+    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+}" = (n: any) => any
+Line 104 col 36 IdentifierName "n" = any
+Line 105 col 11 ConditionalExpression "n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2)" = any
+Line 105 col 11 LessThanExpression "n < 2" = boolean
+Line 105 col 11 IdentifierName "n" = any
+Line 105 col 19 IdentifierName "n" = any
+Line 105 col 23 AddExpression "fibonacci(n - 1) + fibonacci(n - 2)" = any
+Line 105 col 23 InvocationExpression "fibonacci(n - 1)" = any
+Line 105 col 23 IdentifierName "fibonacci" = any
+Line 105 col 33 SubtractExpression "n - 1" = number
+Line 105 col 33 IdentifierName "n" = any
+Line 105 col 42 InvocationExpression "fibonacci(n - 2)" = any
+Line 105 col 42 IdentifierName "fibonacci" = any
+Line 105 col 52 SubtractExpression "n - 2" = number
+Line 105 col 52 IdentifierName "n" = any
+Line 108 col 10 InvocationExpression "_.bind((message?: string, ...rest: string[]) => { }, Date)" = any
+Line 108 col 10 MemberAccessExpression "_.bind" = any
+Line 108 col 10 IdentifierName "_" = any
+Line 108 col 12 IdentifierName "bind" = any
+Line 108 col 17 ParenthesizedArrowFunctionExpression "(message?: string, ...rest: string[]) => { }" = (message?: string, ...rest: string[]) => void
+Line 108 col 18 IdentifierName "message" = any
+Line 108 col 39 IdentifierName "rest" = any
+Line 108 col 63 IdentifierName "Date" = { prototype: Date; parse(s: string): number; UTC(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): number; now(): number; (): string; new(): Date; new(value: number): Date; new(value: string): Date; new(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): Date; }
+Line 109 col 0 InvocationExpression "_.delay(log, 1000, 'logged later')" = any
+Line 109 col 0 MemberAccessExpression "_.delay" = any
+Line 109 col 0 IdentifierName "_" = any
+Line 109 col 2 IdentifierName "delay" = any
+Line 109 col 8 IdentifierName "log" = any
+Line 110 col 0 InvocationExpression "_.defer(function () { alert('deferred'); })" = any
+Line 110 col 0 MemberAccessExpression "_.defer" = any
+Line 110 col 0 IdentifierName "_" = any
+Line 111 col 2 IdentifierName "defer" = any
+Line 111 col 8 FunctionExpression "function () { alert('deferred'); }" = () => void
+Line 111 col 22 InvocationExpression "alert('deferred')" = void
+Line 111 col 22 IdentifierName "alert" = (x: string) => void
+Line 113 col 21 ParenthesizedArrowFunctionExpression "() => alert('updating position...')" = () => void
+Line 113 col 27 InvocationExpression "alert('updating position...')" = void
+Line 113 col 27 IdentifierName "alert" = (x: string) => void
+Line 114 col 16 InvocationExpression "_.throttle(updatePosition, 100)" = any
+Line 114 col 16 MemberAccessExpression "_.throttle" = any
+Line 114 col 16 IdentifierName "_" = any
+Line 114 col 18 IdentifierName "throttle" = any
+Line 114 col 27 IdentifierName "updatePosition" = () => void
+Line 115 col 0 InvocationExpression "$(null).scroll(throttled)" = any
+Line 115 col 0 MemberAccessExpression "$(null).scroll" = any
+Line 115 col 0 InvocationExpression "$(null)" = any
+Line 115 col 0 IdentifierName "$" = any
+Line 115 col 8 IdentifierName "scroll" = any
+Line 115 col 15 IdentifierName "throttled" = any
+Line 117 col 22 ParenthesizedArrowFunctionExpression "() => alert('calculating layout...')" = () => void
+Line 117 col 28 InvocationExpression "alert('calculating layout...')" = void
+Line 117 col 28 IdentifierName "alert" = (x: string) => void
+Line 118 col 17 InvocationExpression "_.debounce(calculateLayout, 300)" = any
+Line 118 col 17 MemberAccessExpression "_.debounce" = any
+Line 118 col 17 IdentifierName "_" = any
+Line 118 col 19 IdentifierName "debounce" = any
+Line 118 col 28 IdentifierName "calculateLayout" = () => void
+Line 119 col 0 InvocationExpression "$(null).resize(lazyLayout)" = any
+Line 119 col 0 MemberAccessExpression "$(null).resize" = any
+Line 119 col 0 InvocationExpression "$(null)" = any
+Line 119 col 0 IdentifierName "$" = any
+Line 119 col 8 IdentifierName "resize" = any
+Line 119 col 15 IdentifierName "lazyLayout" = any
+Line 121 col 24 ParenthesizedArrowFunctionExpression "() => alert('creating application...')" = () => void
+Line 121 col 30 InvocationExpression "alert('creating application...')" = void
+Line 121 col 30 IdentifierName "alert" = (x: string) => void
+Line 122 col 17 InvocationExpression "_.once(createApplication)" = any
+Line 122 col 17 MemberAccessExpression "_.once" = any
+Line 122 col 17 IdentifierName "_" = any
+Line 122 col 19 IdentifierName "once" = any
+Line 122 col 24 IdentifierName "createApplication" = () => void
+Line 123 col 0 InvocationExpression "initialize()" = any
+Line 123 col 0 IdentifierName "initialize" = any
+Line 124 col 0 InvocationExpression "initialize()" = any
+Line 124 col 0 IdentifierName "initialize" = any
+Line 127 col 13 ParenthesizedArrowFunctionExpression "() => alert("rendering...")" = () => void
+Line 127 col 19 InvocationExpression "alert("rendering...")" = void
+Line 127 col 19 IdentifierName "alert" = (x: string) => void
+Line 128 col 18 InvocationExpression "_.after(notes.length, render)" = any
+Line 128 col 18 MemberAccessExpression "_.after" = any
+Line 128 col 18 IdentifierName "_" = any
+Line 128 col 20 IdentifierName "after" = any
+Line 128 col 26 MemberAccessExpression "notes.length" = number
+Line 128 col 26 IdentifierName "notes" = any[]
+Line 128 col 32 IdentifierName "length" = number
+Line 128 col 40 IdentifierName "render" = () => void
+Line 129 col 0 InvocationExpression "_.each(notes, (note) => note.asyncSave({ success: renderNotes }))" = any
+Line 129 col 0 MemberAccessExpression "_.each" = any
+Line 129 col 0 IdentifierName "_" = any
+Line 129 col 2 IdentifierName "each" = any
+Line 129 col 7 IdentifierName "notes" = any[]
+Line 129 col 14 ParenthesizedArrowFunctionExpression "(note) => note.asyncSave({ success: renderNotes })" = (note: any) => any
+Line 129 col 15 IdentifierName "note" = any
+Line 129 col 24 InvocationExpression "note.asyncSave({ success: renderNotes })" = any
+Line 129 col 24 MemberAccessExpression "note.asyncSave" = any
+Line 129 col 24 IdentifierName "note" = any
+Line 129 col 29 IdentifierName "asyncSave" = any
+Line 129 col 39 ObjectLiteralExpression "{ success: renderNotes }" = { success: any; }
+Line 129 col 50 IdentifierName "renderNotes" = any
+Line 131 col 12 FunctionExpression "function (name) { return "hello: " + name; }" = (name: any) => string
+Line 131 col 22 IdentifierName "name" = any
+Line 131 col 37 AddExpression ""hello: " + name" = string
+Line 131 col 49 IdentifierName "name" = any
+Line 132 col 0 AssignmentExpression "hello = _.wrap(hello, (func, arg) => { return "before, " + func(arg) + ", after"; })" = any
+Line 132 col 0 IdentifierName "hello" = (name: any) => string
+Line 132 col 8 InvocationExpression "_.wrap(hello, (func, arg) => { return "before, " + func(arg) + ", after"; })" = any
+Line 132 col 8 MemberAccessExpression "_.wrap" = any
+Line 132 col 8 IdentifierName "_" = any
+Line 132 col 10 IdentifierName "wrap" = any
+Line 132 col 15 IdentifierName "hello" = (name: any) => string
+Line 132 col 22 ParenthesizedArrowFunctionExpression "(func, arg) => { return "before, " + func(arg) + ", after"; }" = (func: any, arg: any) => string
+Line 132 col 23 IdentifierName "func" = (greeting: any) => string
+Line 132 col 29 IdentifierName "arg" = any
+Line 132 col 46 AddExpression ""before, " + func(arg) + ", after"" = string
+Line 132 col 46 AddExpression ""before, " + func(arg)" = string
+Line 132 col 59 InvocationExpression "func(arg)" = string
+Line 132 col 59 IdentifierName "func" = (greeting: any) => string
+Line 132 col 64 IdentifierName "arg" = any
+Line 133 col 0 InvocationExpression "hello("moe")" = string
+Line 133 col 0 IdentifierName "hello" = (name: any) => string
+Line 135 col 12 FunctionExpression "function (name) { return "hi: " + name; }" = (name: any) => string
+Line 135 col 22 IdentifierName "name" = any
+Line 135 col 37 AddExpression ""hi: " + name" = string
+Line 135 col 46 IdentifierName "name" = any
+Line 136 col 14 FunctionExpression "function (statement) { return statement + "!"; }" = (statement: any) => string
+Line 136 col 24 IdentifierName "statement" = any
+Line 136 col 44 AddExpression "statement + "!"" = string
+Line 136 col 44 IdentifierName "statement" = any
+Line 137 col 14 InvocationExpression "_.compose(exclaim, greet)" = any
+Line 137 col 14 MemberAccessExpression "_.compose" = any
+Line 137 col 14 IdentifierName "_" = any
+Line 137 col 16 IdentifierName "compose" = any
+Line 137 col 24 IdentifierName "exclaim" = (statement: any) => string
+Line 137 col 33 IdentifierName "greet" = (name: any) => string
+Line 138 col 0 InvocationExpression "welcome('moe')" = any
+Line 138 col 0 IdentifierName "welcome" = any
+Line 139 col 0 InvocationExpression "///////////////////////////////////////////////////////////////////////////////////////
+
+_.keys({ one: 1, two: 2, three: 3 })" = any
+Line 139 col 0 MemberAccessExpression "///////////////////////////////////////////////////////////////////////////////////////
+
+_.keys" = any
+Line 139 col 0 IdentifierName "///////////////////////////////////////////////////////////////////////////////////////
+
+_" = any
+Line 142 col 2 IdentifierName "keys" = any
+Line 142 col 7 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 143 col 0 InvocationExpression "_.values({ one: 1, two: 2, three: 3 })" = any
+Line 143 col 0 MemberAccessExpression "_.values" = any
+Line 143 col 0 IdentifierName "_" = any
+Line 143 col 2 IdentifierName "values" = any
+Line 143 col 9 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 144 col 0 InvocationExpression "_.pairs({ one: 1, two: 2, three: 3 })" = any
+Line 144 col 0 MemberAccessExpression "_.pairs" = any
+Line 144 col 0 IdentifierName "_" = any
+Line 144 col 2 IdentifierName "pairs" = any
+Line 144 col 8 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 145 col 0 InvocationExpression "_.invert({ Moe: "Moses", Larry: "Louis", Curly: "Jerome" })" = any
+Line 145 col 0 MemberAccessExpression "_.invert" = any
+Line 145 col 0 IdentifierName "_" = any
+Line 145 col 2 IdentifierName "invert" = any
+Line 145 col 9 ObjectLiteralExpression "{ Moe: "Moses", Larry: "Louis", Curly: "Jerome" }" = { Moe: string; Larry: string; Curly: string; }
+Line 146 col 0 InvocationExpression "_.functions(_)" = any
+Line 146 col 0 MemberAccessExpression "_.functions" = any
+Line 146 col 0 IdentifierName "_" = any
+Line 146 col 2 IdentifierName "functions" = any
+Line 146 col 12 IdentifierName "_" = any
+Line 147 col 0 InvocationExpression "_.extend({ name: 'moe' }, { age: 50 })" = any
+Line 147 col 0 MemberAccessExpression "_.extend" = any
+Line 147 col 0 IdentifierName "_" = any
+Line 147 col 2 IdentifierName "extend" = any
+Line 147 col 9 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 147 col 26 ObjectLiteralExpression "{ age: 50 }" = { age: number; }
+Line 148 col 0 InvocationExpression "_.pick({ name: 'moe', age: 50, userid: 'moe1' }, 'name', 'age')" = any
+Line 148 col 0 MemberAccessExpression "_.pick" = any
+Line 148 col 0 IdentifierName "_" = any
+Line 148 col 2 IdentifierName "pick" = any
+Line 148 col 7 ObjectLiteralExpression "{ name: 'moe', age: 50, userid: 'moe1' }" = { name: string; age: number; userid: string; }
+Line 149 col 0 InvocationExpression "_.omit({ name: 'moe', age: 50, userid: 'moe1' }, 'userid')" = any
+Line 149 col 0 MemberAccessExpression "_.omit" = any
+Line 149 col 0 IdentifierName "_" = any
+Line 149 col 2 IdentifierName "omit" = any
+Line 149 col 7 ObjectLiteralExpression "{ name: 'moe', age: 50, userid: 'moe1' }" = { name: string; age: number; userid: string; }
+Line 151 col 15 ObjectLiteralExpression "{ flavor: "chocolate" }" = { flavor: string; }
+Line 152 col 0 InvocationExpression "_.defaults(iceCream, { flavor: "vanilla", sprinkles: "lots" })" = any
+Line 152 col 0 MemberAccessExpression "_.defaults" = any
+Line 152 col 0 IdentifierName "_" = any
+Line 152 col 2 IdentifierName "defaults" = any
+Line 152 col 11 IdentifierName "iceCream" = { flavor: string; }
+Line 152 col 21 ObjectLiteralExpression "{ flavor: "vanilla", sprinkles: "lots" }" = { flavor: string; sprinkles: string; }
+Line 153 col 0 InvocationExpression "_.clone({ name: 'moe' })" = any
+Line 153 col 0 MemberAccessExpression "_.clone" = any
+Line 153 col 0 IdentifierName "_" = any
+Line 154 col 2 IdentifierName "clone" = any
+Line 154 col 8 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 155 col 0 InvocationExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })
+    .tap(<any>alert)
+    .map(function (num) { return num * num })
+    .value()" = any
+Line 155 col 0 MemberAccessExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })
+    .tap(<any>alert)
+    .map(function (num) { return num * num })
+    .value" = any
+Line 155 col 0 InvocationExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })
+    .tap(<any>alert)
+    .map(function (num) { return num * num })" = any
+Line 155 col 0 MemberAccessExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })
+    .tap(<any>alert)
+    .map" = any
+Line 155 col 0 InvocationExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })
+    .tap(<any>alert)" = any
+Line 155 col 0 MemberAccessExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })
+    .tap" = any
+Line 155 col 0 InvocationExpression "_.chain([1, 2, 3, 200])
+    .filter(function (num) { return num % 2 == 0; })" = any
+Line 155 col 0 MemberAccessExpression "_.chain([1, 2, 3, 200])
+    .filter" = any
+Line 155 col 0 InvocationExpression "_.chain([1, 2, 3, 200])" = any
+Line 155 col 0 MemberAccessExpression "_.chain" = any
+Line 155 col 0 IdentifierName "_" = any
+Line 156 col 2 IdentifierName "chain" = any
+Line 156 col 8 ArrayLiteralExpression "[1, 2, 3, 200]" = number[]
+Line 157 col 5 IdentifierName "filter" = any
+Line 157 col 12 FunctionExpression "function (num) { return num % 2 == 0; }" = (num: any) => boolean
+Line 157 col 22 IdentifierName "num" = any
+Line 157 col 36 EqualsWithTypeConversionExpression "num % 2 == 0" = boolean
+Line 157 col 36 ModuloExpression "num % 2" = number
+Line 157 col 36 IdentifierName "num" = any
+Line 158 col 5 IdentifierName "tap" = any
+Line 158 col 9 CastExpression "<any>alert" = any
+Line 158 col 14 IdentifierName "alert" = (x: string) => void
+Line 159 col 5 IdentifierName "map" = any
+Line 159 col 9 FunctionExpression "function (num) { return num * num }" = (num: any) => number
+Line 159 col 19 IdentifierName "num" = any
+Line 159 col 33 MultiplyExpression "num * num" = number
+Line 159 col 33 IdentifierName "num" = any
+Line 159 col 39 IdentifierName "num" = any
+Line 160 col 5 IdentifierName "value" = any
+Line 161 col 0 InvocationExpression "_.has({ a: 1, b: 2, c: 3 }, "b")" = any
+Line 161 col 0 MemberAccessExpression "_.has" = any
+Line 161 col 0 IdentifierName "_" = any
+Line 162 col 2 IdentifierName "has" = any
+Line 162 col 6 ObjectLiteralExpression "{ a: 1, b: 2, c: 3 }" = { a: number; b: number; c: number; }
+Line 164 col 10 ObjectLiteralExpression "{ name: 'moe', luckyNumbers: [13, 27, 34] }" = { name: string; luckyNumbers: number[]; }
+Line 164 col 39 ArrayLiteralExpression "[13, 27, 34]" = number[]
+Line 165 col 12 ObjectLiteralExpression "{ name: 'moe', luckyNumbers: [13, 27, 34] }" = { name: string; luckyNumbers: number[]; }
+Line 165 col 41 ArrayLiteralExpression "[13, 27, 34]" = number[]
+Line 166 col 0 EqualsWithTypeConversionExpression "moe == clone" = boolean
+Line 166 col 0 IdentifierName "moe" = { name: string; luckyNumbers: number[]; }
+Line 166 col 7 IdentifierName "clone" = { name: string; luckyNumbers: number[]; }
+Line 167 col 0 InvocationExpression "_.isEqual(moe, clone)" = any
+Line 167 col 0 MemberAccessExpression "_.isEqual" = any
+Line 167 col 0 IdentifierName "_" = any
+Line 167 col 2 IdentifierName "isEqual" = any
+Line 167 col 10 IdentifierName "moe" = { name: string; luckyNumbers: number[]; }
+Line 167 col 15 IdentifierName "clone" = { name: string; luckyNumbers: number[]; }
+Line 168 col 0 InvocationExpression "_.isEmpty([1, 2, 3])" = any
+Line 168 col 0 MemberAccessExpression "_.isEmpty" = any
+Line 168 col 0 IdentifierName "_" = any
+Line 169 col 2 IdentifierName "isEmpty" = any
+Line 169 col 10 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 170 col 0 InvocationExpression "_.isEmpty({})" = any
+Line 170 col 0 MemberAccessExpression "_.isEmpty" = any
+Line 170 col 0 IdentifierName "_" = any
+Line 170 col 2 IdentifierName "isEmpty" = any
+Line 170 col 10 ObjectLiteralExpression "{}" = {}
+Line 171 col 0 InvocationExpression "_.isElement($('body')[0])" = any
+Line 171 col 0 MemberAccessExpression "_.isElement" = any
+Line 171 col 0 IdentifierName "_" = any
+Line 172 col 2 IdentifierName "isElement" = any
+Line 172 col 12 ElementAccessExpression "$('body')[0]" = any
+Line 172 col 12 InvocationExpression "$('body')" = any
+Line 172 col 12 IdentifierName "$" = any
+Line 173 col 0 InvocationExpression "(function () { return _.isArray(arguments); })()" = any
+Line 173 col 0 ParenthesizedExpression "(function () { return _.isArray(arguments); })" = () => any
+Line 174 col 1 FunctionExpression "function () { return _.isArray(arguments); }" = () => any
+Line 174 col 22 InvocationExpression "_.isArray(arguments)" = any
+Line 174 col 22 MemberAccessExpression "_.isArray" = any
+Line 174 col 22 IdentifierName "_" = any
+Line 174 col 24 IdentifierName "isArray" = any
+Line 174 col 32 IdentifierName "arguments" = IArguments
+Line 175 col 0 InvocationExpression "_.isArray([1, 2, 3])" = any
+Line 175 col 0 MemberAccessExpression "_.isArray" = any
+Line 175 col 0 IdentifierName "_" = any
+Line 175 col 2 IdentifierName "isArray" = any
+Line 175 col 10 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 176 col 0 InvocationExpression "_.isObject({})" = any
+Line 176 col 0 MemberAccessExpression "_.isObject" = any
+Line 176 col 0 IdentifierName "_" = any
+Line 177 col 2 IdentifierName "isObject" = any
+Line 177 col 11 ObjectLiteralExpression "{}" = {}
+Line 178 col 0 InvocationExpression "_.isObject(1)" = any
+Line 178 col 0 MemberAccessExpression "_.isObject" = any
+Line 178 col 0 IdentifierName "_" = any
+Line 178 col 2 IdentifierName "isObject" = any
+Line 179 col 0 InvocationExpression "// (() => { return _.isArguments(arguments); })(1, 2, 3);
+_.isArguments([1, 2, 3])" = any
+Line 179 col 0 MemberAccessExpression "// (() => { return _.isArguments(arguments); })(1, 2, 3);
+_.isArguments" = any
+Line 179 col 0 IdentifierName "// (() => { return _.isArguments(arguments); })(1, 2, 3);
+_" = any
+Line 182 col 2 IdentifierName "isArguments" = any
+Line 182 col 14 ArrayLiteralExpression "[1, 2, 3]" = number[]
+Line 183 col 0 InvocationExpression "_.isFunction(alert)" = any
+Line 183 col 0 MemberAccessExpression "_.isFunction" = any
+Line 183 col 0 IdentifierName "_" = any
+Line 184 col 2 IdentifierName "isFunction" = any
+Line 184 col 13 IdentifierName "alert" = (x: string) => void
+Line 185 col 0 InvocationExpression "_.isString("moe")" = any
+Line 185 col 0 MemberAccessExpression "_.isString" = any
+Line 185 col 0 IdentifierName "_" = any
+Line 186 col 2 IdentifierName "isString" = any
+Line 187 col 0 InvocationExpression "_.isNumber(8.4 * 5)" = any
+Line 187 col 0 MemberAccessExpression "_.isNumber" = any
+Line 187 col 0 IdentifierName "_" = any
+Line 188 col 2 IdentifierName "isNumber" = any
+Line 188 col 11 MultiplyExpression "8.4 * 5" = number
+Line 189 col 0 InvocationExpression "_.isFinite(-101)" = any
+Line 189 col 0 MemberAccessExpression "_.isFinite" = any
+Line 189 col 0 IdentifierName "_" = any
+Line 190 col 2 IdentifierName "isFinite" = any
+Line 190 col 11 NegateExpression "-101" = number
+Line 191 col 0 InvocationExpression "_.isFinite(-Infinity)" = any
+Line 191 col 0 MemberAccessExpression "_.isFinite" = any
+Line 191 col 0 IdentifierName "_" = any
+Line 192 col 2 IdentifierName "isFinite" = any
+Line 192 col 11 NegateExpression "-Infinity" = number
+Line 192 col 12 IdentifierName "Infinity" = number
+Line 193 col 0 InvocationExpression "_.isBoolean(null)" = any
+Line 193 col 0 MemberAccessExpression "_.isBoolean" = any
+Line 193 col 0 IdentifierName "_" = any
+Line 194 col 2 IdentifierName "isBoolean" = any
+Line 195 col 0 InvocationExpression "_.isDate(new Date())" = any
+Line 195 col 0 MemberAccessExpression "_.isDate" = any
+Line 195 col 0 IdentifierName "_" = any
+Line 196 col 2 IdentifierName "isDate" = any
+Line 196 col 9 ObjectCreationExpression "new Date()" = Date
+Line 196 col 13 IdentifierName "Date" = { prototype: Date; parse(s: string): number; UTC(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): number; now(): number; (): string; new(): Date; new(value: number): Date; new(value: string): Date; new(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): Date; }
+Line 197 col 0 InvocationExpression "_.isRegExp(/moe/)" = any
+Line 197 col 0 MemberAccessExpression "_.isRegExp" = any
+Line 197 col 0 IdentifierName "_" = any
+Line 198 col 2 IdentifierName "isRegExp" = any
+Line 199 col 0 InvocationExpression "_.isNaN(NaN)" = any
+Line 199 col 0 MemberAccessExpression "_.isNaN" = any
+Line 199 col 0 IdentifierName "_" = any
+Line 200 col 2 IdentifierName "isNaN" = any
+Line 200 col 8 IdentifierName "NaN" = number
+Line 201 col 0 InvocationExpression "isNaN(undefined)" = boolean
+Line 201 col 0 IdentifierName "isNaN" = (number: number) => boolean
+Line 201 col 6 IdentifierName "undefined" = undefined
+Line 202 col 0 InvocationExpression "_.isNaN(undefined)" = any
+Line 202 col 0 MemberAccessExpression "_.isNaN" = any
+Line 202 col 0 IdentifierName "_" = any
+Line 202 col 2 IdentifierName "isNaN" = any
+Line 202 col 8 IdentifierName "undefined" = undefined
+Line 203 col 0 InvocationExpression "_.isNull(null)" = any
+Line 203 col 0 MemberAccessExpression "_.isNull" = any
+Line 203 col 0 IdentifierName "_" = any
+Line 204 col 2 IdentifierName "isNull" = any
+Line 205 col 0 InvocationExpression "_.isNull(undefined)" = any
+Line 205 col 0 MemberAccessExpression "_.isNull" = any
+Line 205 col 0 IdentifierName "_" = any
+Line 205 col 2 IdentifierName "isNull" = any
+Line 205 col 9 IdentifierName "undefined" = undefined
+Line 206 col 0 InvocationExpression "_.isUndefined((<any>null).missingVariable)" = any
+Line 206 col 0 MemberAccessExpression "_.isUndefined" = any
+Line 206 col 0 IdentifierName "_" = any
+Line 207 col 2 IdentifierName "isUndefined" = any
+Line 207 col 14 MemberAccessExpression "(<any>null).missingVariable" = any
+Line 207 col 14 ParenthesizedExpression "(<any>null)" = any
+Line 207 col 15 CastExpression "<any>null" = any
+Line 207 col 26 IdentifierName "missingVariable" = any
+Line 211 col 17 InvocationExpression "_.noConflict()" = any
+Line 211 col 17 MemberAccessExpression "_.noConflict" = any
+Line 211 col 17 IdentifierName "_" = any
+Line 211 col 19 IdentifierName "noConflict" = any
+Line 213 col 11 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 214 col 0 EqualsExpression "moe2 === _.identity(moe)" = boolean
+Line 214 col 0 IdentifierName "moe2" = { name: string; }
+Line 214 col 9 InvocationExpression "_.identity(moe)" = any
+Line 214 col 9 MemberAccessExpression "_.identity" = any
+Line 214 col 9 IdentifierName "_" = any
+Line 214 col 11 IdentifierName "identity" = any
+Line 214 col 20 IdentifierName "moe" = { name: string; luckyNumbers: number[]; }
+Line 217 col 0 InvocationExpression "_.times(3, function (n) { genie.grantWishNumber(n); })" = any
+Line 217 col 0 MemberAccessExpression "_.times" = any
+Line 217 col 0 IdentifierName "_" = any
+Line 218 col 2 IdentifierName "times" = any
+Line 218 col 11 FunctionExpression "function (n) { genie.grantWishNumber(n); }" = (n: any) => void
+Line 218 col 21 IdentifierName "n" = any
+Line 218 col 26 InvocationExpression "genie.grantWishNumber(n)" = any
+Line 218 col 26 MemberAccessExpression "genie.grantWishNumber" = any
+Line 218 col 26 IdentifierName "genie" = any
+Line 218 col 32 IdentifierName "grantWishNumber" = any
+Line 218 col 48 IdentifierName "n" = any
+Line 219 col 0 InvocationExpression "_.random(0, 100)" = any
+Line 219 col 0 MemberAccessExpression "_.random" = any
+Line 219 col 0 IdentifierName "_" = any
+Line 220 col 2 IdentifierName "random" = any
+Line 221 col 0 InvocationExpression "_.mixin({
+    capitalize: function (string) {
+        return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+    }
+})" = any
+Line 221 col 0 MemberAccessExpression "_.mixin" = any
+Line 221 col 0 IdentifierName "_" = any
+Line 222 col 2 IdentifierName "mixin" = any
+Line 222 col 8 ObjectLiteralExpression "{
+    capitalize: function (string) {
+        return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+    }
+}" = { capitalize: (string: any) => any; }
+Line 223 col 16 FunctionExpression "function (string) {
+        return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+    }" = (string: any) => any
+Line 223 col 26 IdentifierName "string" = any
+Line 224 col 15 AddExpression "string.charAt(0).toUpperCase() + string.substring(1).toLowerCase()" = any
+Line 224 col 15 InvocationExpression "string.charAt(0).toUpperCase()" = any
+Line 224 col 15 MemberAccessExpression "string.charAt(0).toUpperCase" = any
+Line 224 col 15 InvocationExpression "string.charAt(0)" = any
+Line 224 col 15 MemberAccessExpression "string.charAt" = any
+Line 224 col 15 IdentifierName "string" = any
+Line 224 col 22 IdentifierName "charAt" = any
+Line 224 col 32 IdentifierName "toUpperCase" = any
+Line 224 col 48 InvocationExpression "string.substring(1).toLowerCase()" = any
+Line 224 col 48 MemberAccessExpression "string.substring(1).toLowerCase" = any
+Line 224 col 48 InvocationExpression "string.substring(1)" = any
+Line 224 col 48 MemberAccessExpression "string.substring" = any
+Line 224 col 48 IdentifierName "string" = any
+Line 224 col 55 IdentifierName "substring" = any
+Line 224 col 68 IdentifierName "toLowerCase" = any
+Line 227 col 0 InvocationExpression "(<any>_("fabio")).capitalize()" = any
+Line 227 col 0 MemberAccessExpression "(<any>_("fabio")).capitalize" = any
+Line 227 col 0 ParenthesizedExpression "(<any>_("fabio"))" = any
+Line 227 col 1 CastExpression "<any>_("fabio")" = any
+Line 227 col 6 InvocationExpression "_("fabio")" = any
+Line 227 col 6 IdentifierName "_" = any
+Line 227 col 18 IdentifierName "capitalize" = any
+Line 228 col 0 InvocationExpression "_.uniqueId('contact_')" = any
+Line 228 col 0 MemberAccessExpression "_.uniqueId" = any
+Line 228 col 0 IdentifierName "_" = any
+Line 229 col 2 IdentifierName "uniqueId" = any
+Line 230 col 0 InvocationExpression "_.escape('Curly, Larry & Moe')" = any
+Line 230 col 0 MemberAccessExpression "_.escape" = any
+Line 230 col 0 IdentifierName "_" = any
+Line 231 col 2 IdentifierName "escape" = any
+Line 233 col 13 ObjectLiteralExpression "{ cheese: 'crumpets', stuff: function () { return 'nonsense'; } }" = { cheese: string; stuff: () => string; }
+Line 233 col 42 FunctionExpression "function () { return 'nonsense'; }" = () => string
+Line 234 col 0 InvocationExpression "_.result(object, 'cheese')" = any
+Line 234 col 0 MemberAccessExpression "_.result" = any
+Line 234 col 0 IdentifierName "_" = any
+Line 234 col 2 IdentifierName "result" = any
+Line 234 col 9 IdentifierName "object" = { cheese: string; stuff: () => string; }
+Line 235 col 0 InvocationExpression "_.result(object, 'stuff')" = any
+Line 235 col 0 MemberAccessExpression "_.result" = any
+Line 235 col 0 IdentifierName "_" = any
+Line 236 col 2 IdentifierName "result" = any
+Line 236 col 9 IdentifierName "object" = { cheese: string; stuff: () => string; }
+Line 238 col 15 InvocationExpression "_.template("hello: <%= name %>")" = any
+Line 238 col 15 MemberAccessExpression "_.template" = any
+Line 238 col 15 IdentifierName "_" = any
+Line 238 col 17 IdentifierName "template" = any
+Line 239 col 0 InvocationExpression "compiled({ name: 'moe' })" = any
+Line 239 col 0 IdentifierName "compiled" = any
+Line 239 col 9 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 241 col 0 InvocationExpression "_.template(list2, { people: ['moe', 'curly', 'larry'] })" = any
+Line 241 col 0 MemberAccessExpression "_.template" = any
+Line 241 col 0 IdentifierName "_" = any
+Line 241 col 2 IdentifierName "template" = any
+Line 241 col 11 IdentifierName "list2" = string
+Line 241 col 18 ObjectLiteralExpression "{ people: ['moe', 'curly', 'larry'] }" = { people: string[]; }
+Line 241 col 28 ArrayLiteralExpression "['moe', 'curly', 'larry']" = string[]
+Line 242 col 15 InvocationExpression "_.template("<b><%- value %></b>")" = any
+Line 242 col 15 MemberAccessExpression "_.template" = any
+Line 242 col 15 IdentifierName "_" = any
+Line 242 col 17 IdentifierName "template" = any
+Line 243 col 0 InvocationExpression "template({ value: '<script>' })" = any
+Line 243 col 0 IdentifierName "template" = any
+Line 243 col 9 ObjectLiteralExpression "{ value: '<script>' }" = { value: string; }
+Line 244 col 16 InvocationExpression "_.template("<% print('Hello ' + epithet); %>")" = any
+Line 244 col 16 MemberAccessExpression "_.template" = any
+Line 244 col 16 IdentifierName "_" = any
+Line 244 col 18 IdentifierName "template" = any
+Line 245 col 0 InvocationExpression "compiled2({ epithet: "stooge" })" = any
+Line 245 col 0 IdentifierName "compiled2" = any
+Line 245 col 10 ObjectLiteralExpression "{ epithet: "stooge" }" = { epithet: string; }
+Line 246 col 0 AssignmentExpression "_.templateSettings = {
+    interpolate: /\{\{(.+?)\}\}/g
+}" = { interpolate: RegExp; }
+Line 246 col 0 MemberAccessExpression "_.templateSettings" = any
+Line 246 col 0 IdentifierName "_" = any
+Line 246 col 2 IdentifierName "templateSettings" = any
+Line 246 col 21 ObjectLiteralExpression "{
+    interpolate: /\{\{(.+?)\}\}/g
+}" = { interpolate: RegExp; }
+Line 249 col 16 InvocationExpression "_.template("Hello {{ name }}!")" = any
+Line 249 col 16 MemberAccessExpression "_.template" = any
+Line 249 col 16 IdentifierName "_" = any
+Line 249 col 18 IdentifierName "template" = any
+Line 250 col 0 InvocationExpression "template2({ name: "Mustache" })" = any
+Line 250 col 0 IdentifierName "template2" = any
+Line 250 col 10 ObjectLiteralExpression "{ name: "Mustache" }" = { name: string; }
+Line 251 col 0 InvocationExpression "_.template("Using 'with': <%= data.answer %>", { answer: 'no' }, { variable: 'data' })" = any
+Line 251 col 0 MemberAccessExpression "_.template" = any
+Line 251 col 0 IdentifierName "_" = any
+Line 251 col 2 IdentifierName "template" = any
+Line 251 col 47 ObjectLiteralExpression "{ answer: 'no' }" = { answer: string; }
+Line 251 col 65 ObjectLiteralExpression "{ variable: 'data' }" = { variable: string; }

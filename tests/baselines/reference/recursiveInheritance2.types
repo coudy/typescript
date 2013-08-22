@@ -1,0 +1,16 @@
+=== tests/cases/compiler/recursiveInheritance2.ts ===
+Line 0 col 18 IdentifierName "B" = B
+Line 1 col 15 IdentifierName "A" = A
+Line 2 col 8 InvocationExpression "a()" = B
+Line 2 col 8 IdentifierName "a" = A
+Line 4 col 18 IdentifierName "C" = C
+Line 5 col 15 IdentifierName "B" = B
+Line 6 col 8 InvocationExpression "b()" = C
+Line 6 col 8 IdentifierName "b" = B
+Line 8 col 18 IdentifierName "A" = A
+Line 9 col 15 IdentifierName "C" = C
+Line 10 col 8 InvocationExpression "c()" = A
+Line 10 col 8 IdentifierName "c" = C
+Line 11 col 0 AssignmentExpression "x = y" = C
+Line 11 col 0 IdentifierName "x" = B
+Line 12 col 4 IdentifierName "y" = C

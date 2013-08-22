@@ -1,0 +1,11 @@
+=== tests/cases/compiler/declFileObjectLiteralWithOnlyGetter.ts ===
+Line 1 col 24 IdentifierName "x" = number
+Line 2 col 11 ObjectLiteralExpression "{
+        get x() { return x; },
+    }" = { x: number; }
+Line 3 col 25 IdentifierName "x" = number
+Line 6 col 17 InvocationExpression "makePoint(2)" = { x: number; }
+Line 6 col 17 IdentifierName "makePoint" = (x: number) => { x: number; }
+Line 7 col 13 MemberAccessExpression "point./*3*/x" = number
+Line 7 col 13 IdentifierName "point" = { x: number; }
+Line 7 col 24 IdentifierName "x" = number

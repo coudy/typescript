@@ -1,0 +1,9 @@
+=== tests/cases/compiler/internalAliasClassInsideLocalModuleWithoutExport.ts ===
+Line 2 col 12 IdentifierName "a" = any
+Line 3 col 19 IdentifierName "a" = number
+Line 11 col 27 ObjectCreationExpression "new c()" = x.c
+Line 11 col 31 IdentifierName "c" = new() => x.c
+Line 12 col 25 InvocationExpression "cProp.foo(10)" = number
+Line 12 col 25 MemberAccessExpression "cProp.foo" = (a: number) => number
+Line 12 col 25 IdentifierName "cProp" = x.c
+Line 12 col 31 IdentifierName "foo" = (a: number) => number

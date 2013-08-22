@@ -1,0 +1,15 @@
+=== tests/cases/compiler/superAccessInFatArrow1.ts ===
+Line 5 col 27 IdentifierName "A" = test.A
+Line 6 col 12 IdentifierName "callback" = any
+Line 9 col 0 InvocationExpression "this.bar(() => {
+                super.foo();
+            })" = void
+Line 9 col 0 MemberAccessExpression "this.bar" = (callback: () => void) => void
+Line 9 col 0 ThisKeyword "this" = test.B
+Line 9 col 17 IdentifierName "bar" = (callback: () => void) => void
+Line 9 col 21 ParenthesizedArrowFunctionExpression "() => {
+                super.foo();
+            }" = () => void
+Line 10 col 0 InvocationExpression "super.foo()" = void
+Line 10 col 0 MemberAccessExpression "super.foo" = () => void
+Line 10 col 22 IdentifierName "foo" = () => void

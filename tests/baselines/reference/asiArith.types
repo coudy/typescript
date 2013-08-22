@@ -1,0 +1,39 @@
+=== tests/cases/compiler/asiArith.ts ===
+Line 5 col 0 AddExpression "x
+
++
+
++
+
++
+
+y" = number
+Line 5 col 0 IdentifierName "x" = number
+Line 9 col 0 PlusExpression "+
+
++
+
+y" = number
+Line 11 col 0 PlusExpression "+
+
+y" = number
+Line 13 col 0 IdentifierName "y" = number
+Line 22 col 0 SubtractExpression "x
+
+-
+
+-
+
+-
+
+y" = number
+Line 22 col 0 IdentifierName "x" = number
+Line 26 col 0 NegateExpression "-
+
+-
+
+y" = number
+Line 28 col 0 NegateExpression "-
+
+y" = number
+Line 30 col 0 IdentifierName "y" = number

@@ -1,0 +1,8 @@
+=== tests/cases/compiler/genericCallWithFixedArguments.ts ===
+Line 3 col 11 IdentifierName "T" = any
+Line 3 col 14 IdentifierName "U" = any
+Line 3 col 17 IdentifierName "x" = any
+Line 4 col 0 InvocationExpression "g<A, B>(7) // the parameter list is fixed, so this should not error" = void
+Line 4 col 0 IdentifierName "g" = <T, U>(x: any) => void
+Line 4 col 2 IdentifierName "A" = A
+Line 4 col 5 IdentifierName "B" = B

@@ -1,0 +1,29 @@
+=== tests/cases/compiler/getterSetterNonAccessor.ts ===
+Line 1 col 17 IdentifierName "v" = any
+Line 2 col 0 InvocationExpression "Object.defineProperty({}, "0", <PropertyDescriptor>({
+          get: getFunc,
+          set: setFunc,
+          configurable: true
+      }))" = any
+Line 2 col 0 MemberAccessExpression "Object.defineProperty" = (o: any, p: string, attributes: PropertyDescriptor) => any
+Line 2 col 0 IdentifierName "Object" = { prototype: Object; getPrototypeOf(o: any): any; getOwnPropertyDescriptor(o: any, p: string): PropertyDescriptor; getOwnPropertyNames(o: any): string[]; create(o: any, properties?: PropertyDescriptorMap): any; defineProperty(o: any, p: string, attributes: PropertyDescriptor): any; defineProperties(o: any, properties: PropertyDescriptorMap): any; seal(o: any): any; freeze(o: any): any; preventExtensions(o: any): any; isSealed(o: any): boolean; isFrozen(o: any): boolean; isExtensible(o: any): boolean; keys(o: any): string[]; (): any; (value: any): any; new(value?: any): Object; }
+Line 3 col 7 IdentifierName "defineProperty" = (o: any, p: string, attributes: PropertyDescriptor) => any
+Line 3 col 22 ObjectLiteralExpression "{}" = {}
+Line 3 col 31 CastExpression "<PropertyDescriptor>({
+          get: getFunc,
+          set: setFunc,
+          configurable: true
+      })" = PropertyDescriptor
+Line 3 col 32 IdentifierName "PropertyDescriptor" = PropertyDescriptor
+Line 3 col 51 ParenthesizedExpression "({
+          get: getFunc,
+          set: setFunc,
+          configurable: true
+      })" = { get: () => any; set: (v: any) => void; configurable: boolean; }
+Line 3 col 52 ObjectLiteralExpression "{
+          get: getFunc,
+          set: setFunc,
+          configurable: true
+      }" = { get: () => any; set: (v: any) => void; configurable: boolean; }
+Line 4 col 15 IdentifierName "getFunc" = () => any
+Line 5 col 15 IdentifierName "setFunc" = (v: any) => void

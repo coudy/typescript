@@ -1,0 +1,18 @@
+=== tests/cases/compiler/inheritedGenericCallSignature.ts ===
+Line 1 col 13 IdentifierName "T" = any
+Line 3 col 5 IdentifierName "a" = any
+Line 3 col 8 IdentifierName "T" = T
+Line 3 col 12 IdentifierName "T" = T
+Line 12 col 13 IdentifierName "T" = any
+Line 12 col 24 IdentifierName "I1" = I1<T>
+Line 12 col 27 IdentifierName "T" = T
+Line 13 col 0 IdentifierName "b" = T
+Line 14 col 7 IdentifierName "T" = T
+Line 20 col 7 IdentifierName "I2" = I2<T>
+Line 20 col 10 IdentifierName "Date" = Date
+Line 24 col 8 InvocationExpression "x(undefined)" = Date[]
+Line 24 col 8 IdentifierName "x" = I2<Date>
+Line 24 col 10 IdentifierName "undefined" = undefined
+Line 25 col 0 MemberAccessExpression "y.length" = number
+Line 25 col 0 IdentifierName "y" = Date[]
+Line 26 col 2 IdentifierName "length" = number

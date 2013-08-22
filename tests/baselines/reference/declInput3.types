@@ -1,0 +1,11 @@
+=== tests/cases/compiler/declInput3.ts ===
+Line 6 col 22 ObjectLiteralExpression "{a: <bar>null, b: undefined, c: void 4 }" = { a: bar; b: any; c: any; }
+Line 6 col 26 CastExpression "<bar>null" = bar
+Line 6 col 27 IdentifierName "bar" = bar
+Line 6 col 40 IdentifierName "undefined" = undefined
+Line 6 col 54 VoidExpression "void 4" = undefined
+Line 7 col 11 IdentifierName "x" = any
+Line 7 col 18 IdentifierName "y" = any
+Line 7 col 28 IdentifierName "z" = any
+Line 7 col 38 PostIncrementExpression "x++" = number
+Line 7 col 38 IdentifierName "x" = number

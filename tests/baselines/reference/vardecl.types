@@ -1,0 +1,41 @@
+=== tests/cases/compiler/vardecl.ts ===
+Line 8 col 27 ObjectLiteralExpression "{ x: 30, y: 70, desc: "position" }" = { x: number; y: number; desc: string; }
+Line 16 col 25 ArrayLiteralExpression "['a', 'b']" = string[]
+Line 18 col 27 IdentifierName "x" = number
+Line 18 col 38 IdentifierName "y" = string
+Line 19 col 0 InvocationExpression "complicatedArrayVar.push({ x: 30, y : 'hello world' })" = number
+Line 19 col 0 MemberAccessExpression "complicatedArrayVar.push" = (...items: { x: number; y: string; }[]) => number
+Line 19 col 0 IdentifierName "complicatedArrayVar" = { x: number; y: string; }[]
+Line 19 col 20 IdentifierName "push" = (...items: { x: number; y: string; }[]) => number
+Line 19 col 25 ObjectLiteralExpression "{ x: 30, y : 'hello world' }" = { x: number; y: string; }
+Line 21 col 11 IdentifierName "s" = any
+Line 24 col 0 IdentifierName "new" = () => any
+Line 28 col 0 IdentifierName "foo" = () => { x: number; }
+Line 29 col 0 IdentifierName "x" = number
+Line 34 col 0 IdentifierName "foo" = () => { x: number; y: number; }
+Line 35 col 0 IdentifierName "x" = number
+Line 36 col 0 IdentifierName "y" = number
+Line 41 col 0 IdentifierName "foo" = () => { x: number; }
+Line 42 col 0 IdentifierName "x" = number
+Line 54 col 0 IdentifierName "foo" = (n: string, x: { x: number; y: number; }) => { x: number; y: number; }
+Line 54 col 8 IdentifierName "n" = any
+Line 54 col 19 IdentifierName "x" = any
+Line 54 col 24 IdentifierName "x" = number
+Line 54 col 35 IdentifierName "y" = number
+Line 55 col 0 IdentifierName "x" = number
+Line 56 col 0 IdentifierName "y" = number
+Line 68 col 28 IdentifierName "b" = any
+Line 73 col 28 IdentifierName "b" = any
+Line 96 col 13 IdentifierName "a2" = any
+Line 100 col 23 LessThanExpression "i < 10" = boolean
+Line 100 col 23 IdentifierName "i" = number
+Line 100 col 31 PostIncrementExpression "i++" = number
+Line 100 col 31 IdentifierName "i" = number
+Line 101 col 0 PostIncrementExpression "j++" = number
+Line 101 col 0 IdentifierName "j" = number
+Line 105 col 16 LessThanExpression "k < 30" = boolean
+Line 105 col 16 IdentifierName "k" = number
+Line 105 col 24 PostIncrementExpression "k++" = number
+Line 105 col 24 IdentifierName "k" = number
+Line 106 col 0 PostIncrementExpression "k++" = number
+Line 106 col 0 IdentifierName "k" = number

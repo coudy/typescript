@@ -1,0 +1,10 @@
+=== tests/cases/compiler/null.ts ===
+Line 1 col 6 AddExpression "3+x" = any
+Line 1 col 8 IdentifierName "x" = any
+Line 2 col 6 AddExpression "3+null" = number
+Line 7 col 11 ObjectCreationExpression "new C()" = C
+Line 7 col 15 IdentifierName "C" = new() => C
+Line 14 col 0 IdentifierName "x" = any
+Line 15 col 0 IdentifierName "y" = number
+Line 17 col 6 IdentifierName "I" = I
+Line 17 col 8 ObjectLiteralExpression "{x:null,y:3}" = { x: any; y: number; }

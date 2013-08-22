@@ -1,0 +1,10 @@
+=== tests/cases/compiler/arrayAugment.ts ===
+Line 0 col 16 IdentifierName "T" = any
+Line 1 col 0 IdentifierName "split" = (parts: number) => Array<T>[]
+Line 1 col 12 IdentifierName "parts" = any
+Line 1 col 30 IdentifierName "T" = T
+Line 4 col 8 ArrayLiteralExpression "['']" = string[]
+Line 5 col 8 InvocationExpression "x.split(4)" = string[][]
+Line 5 col 8 MemberAccessExpression "x.split" = (parts: number) => string[][]
+Line 5 col 8 IdentifierName "x" = string[]
+Line 5 col 10 IdentifierName "split" = (parts: number) => string[][]

@@ -1,0 +1,16 @@
+=== tests/cases/compiler/newArrays.ts ===
+Line 3 col 13 IdentifierName "Foo" = M.Foo
+Line 8 col 0 AssignmentExpression "this.fa = new Array<Foo>(this.x * this.y)" = M.Foo[]
+Line 8 col 0 MemberAccessExpression "this.fa" = M.Foo[]
+Line 8 col 0 ThisKeyword "this" = M.Gar
+Line 8 col 8 IdentifierName "fa" = M.Foo[]
+Line 8 col 13 ObjectCreationExpression "new Array<Foo>(this.x * this.y)" = M.Foo[]
+Line 8 col 17 IdentifierName "Array" = { isArray(arg: any): boolean; prototype: any[]; <T>(arrayLength: number): T[]; <T>(...items: T[]): T[]; new<T>(arrayLength: number): T[]; new<T>(...items: T[]): T[]; }
+Line 8 col 23 IdentifierName "Foo" = M.Foo
+Line 8 col 28 MultiplyExpression "this.x * this.y" = number
+Line 8 col 28 MemberAccessExpression "this.x" = number
+Line 8 col 28 ThisKeyword "this" = M.Gar
+Line 8 col 33 IdentifierName "x" = number
+Line 8 col 37 MemberAccessExpression "this.y" = number
+Line 8 col 37 ThisKeyword "this" = M.Gar
+Line 8 col 42 IdentifierName "y" = number

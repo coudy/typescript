@@ -1,0 +1,27 @@
+=== tests/cases/compiler/interfaceContextualType.ts ===
+Line 1 col 0 IdentifierName "italic" = boolean
+Line 2 col 0 IdentifierName "bold" = boolean
+Line 5 col 5 IdentifierName "s" = any
+Line 5 col 17 IdentifierName "IOptions" = IOptions
+Line 9 col 19 IdentifierName "IMap" = IMap
+Line 11 col 0 AssignmentExpression "this.values = {}" = {}
+Line 11 col 0 MemberAccessExpression "this.values" = IMap
+Line 11 col 0 ThisKeyword "this" = Bug
+Line 11 col 13 IdentifierName "values" = IMap
+Line 11 col 22 ObjectLiteralExpression "{}" = {}
+Line 12 col 0 AssignmentExpression "this.values['comments'] = { italic: true }" = { italic: boolean; }
+Line 12 col 0 ElementAccessExpression "this.values['comments']" = IOptions
+Line 12 col 0 MemberAccessExpression "this.values" = IMap
+Line 12 col 0 ThisKeyword "this" = Bug
+Line 12 col 13 IdentifierName "values" = IMap
+Line 12 col 34 ObjectLiteralExpression "{ italic: true }" = { italic: boolean; }
+Line 15 col 0 AssignmentExpression "this.values = {
+            comments: { italic: true }
+        }" = { comments: { italic: boolean; }; }
+Line 15 col 0 MemberAccessExpression "this.values" = IMap
+Line 15 col 0 ThisKeyword "this" = Bug
+Line 15 col 13 IdentifierName "values" = IMap
+Line 15 col 22 ObjectLiteralExpression "{
+            comments: { italic: true }
+        }" = { comments: { italic: boolean; }; }
+Line 16 col 22 ObjectLiteralExpression "{ italic: true }" = { italic: boolean; }

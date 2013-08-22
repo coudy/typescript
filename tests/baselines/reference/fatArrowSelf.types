@@ -1,0 +1,22 @@
+=== tests/cases/compiler/fatArrowSelf.ts ===
+Line 2 col 9 IdentifierName "value" = any
+Line 5 col 28 IdentifierName "type" = any
+Line 5 col 41 IdentifierName "listener" = any
+Line 5 col 50 IdentifierName "ListenerCallback" = Events.ListenerCallback
+Line 12 col 29 IdentifierName "emitter" = Events.EventEmitter
+Line 15 col 0 InvocationExpression "this.emitter.addListener('change', (e) => {
+                this.changed();
+            })" = void
+Line 15 col 0 MemberAccessExpression "this.emitter.addListener" = (type: string, listener: Events.ListenerCallback) => void
+Line 15 col 0 MemberAccessExpression "this.emitter" = Events.EventEmitter
+Line 15 col 0 ThisKeyword "this" = Consumer.EventEmitterConsummer
+Line 15 col 17 IdentifierName "emitter" = Events.EventEmitter
+Line 15 col 25 IdentifierName "addListener" = (type: string, listener: Events.ListenerCallback) => void
+Line 15 col 47 ParenthesizedArrowFunctionExpression "(e) => {
+                this.changed();
+            }" = (e: any) => void
+Line 15 col 48 IdentifierName "e" = any
+Line 16 col 0 InvocationExpression "this.changed()" = void
+Line 16 col 0 MemberAccessExpression "this.changed" = () => void
+Line 16 col 0 ThisKeyword "this" = Consumer.EventEmitterConsummer
+Line 16 col 21 IdentifierName "changed" = () => void

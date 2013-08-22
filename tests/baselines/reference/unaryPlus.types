@@ -1,0 +1,14 @@
+=== tests/cases/compiler/unaryPlus.ts ===
+Line 1 col 8 PlusExpression "+1" = number
+Line 2 col 8 PlusExpression "+(<any>"")" = number
+Line 2 col 9 ParenthesizedExpression "(<any>"")" = any
+Line 2 col 10 CastExpression "<any>""" = any
+Line 3 col 9 IdentifierName "some" = E
+Line 3 col 15 IdentifierName "thing" = E
+Line 4 col 8 PlusExpression "+E.some" = number
+Line 4 col 9 MemberAccessExpression "E.some" = E
+Line 4 col 9 IdentifierName "E" = { some: E; thing: E; [x: number]: string; }
+Line 4 col 11 IdentifierName "some" = E
+Line 7 col 8 PlusExpression "+"3"" = number
+Line 8 col 8 NegateExpression "-"3"" = number
+Line 9 col 8 BitwiseNotExpression "~"3"" = number

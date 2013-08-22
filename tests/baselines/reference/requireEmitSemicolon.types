@@ -1,0 +1,9 @@
+=== tests/cases/compiler/requireEmitSemicolon.ts ===
+Line 3 col 15 IdentifierName "name" = any
+Line 12 col 23 IdentifierName "id" = any
+Line 13 col 16 ObjectCreationExpression "new P.Models.Person("Rock")" = "Person".Models.Person
+Line 13 col 20 MemberAccessExpression "P.Models.Person" = new(name: string) => "Person".Models.Person
+Line 13 col 20 MemberAccessExpression "P.Models" = { Person: new(name: string) => "Person".Models.Person; }
+Line 13 col 20 IdentifierName "P" = P
+Line 13 col 22 IdentifierName "Models" = { Person: new(name: string) => "Person".Models.Person; }
+Line 13 col 29 IdentifierName "Person" = new(name: string) => "Person".Models.Person

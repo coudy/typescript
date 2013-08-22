@@ -1,0 +1,49 @@
+=== tests/cases/compiler/moduleVisibilityTest1.ts ===
+Line 3 col 50 NegateExpression "-1" = number
+Line 15 col 51 NegateExpression "-2" = number
+Line 19 col 0 IdentifierName "A" = M.E
+Line 20 col 0 IdentifierName "B" = M.E
+Line 21 col 0 IdentifierName "C" = M.E
+Line 27 col 9 AddExpression "x + x" = number
+Line 27 col 9 IdentifierName "x" = number
+Line 27 col 13 IdentifierName "x" = number
+Line 31 col 0 IdentifierName "someMethod" = () => number
+Line 36 col 28 IdentifierName "I" = M.I
+Line 37 col 52 InvocationExpression "OuterInnerAlias.someExportedOuterInnerFunc()" = string
+Line 37 col 52 MemberAccessExpression "OuterInnerAlias.someExportedOuterInnerFunc" = () => string
+Line 37 col 52 IdentifierName "OuterInnerAlias" = { someExportedOuterInnerFunc(): string; }
+Line 37 col 68 IdentifierName "someExportedOuterInnerFunc" = () => string
+Line 38 col 52 InvocationExpression "InnerMod.someExportedInnerFunc()" = number
+Line 38 col 52 MemberAccessExpression "InnerMod.someExportedInnerFunc" = () => number
+Line 38 col 52 IdentifierName "InnerMod" = { someExportedInnerFunc(): number; }
+Line 38 col 61 IdentifierName "someExportedInnerFunc" = () => number
+Line 39 col 57 InvocationExpression "OuterMod.someExportedOuterFunc()" = number
+Line 39 col 57 MemberAccessExpression "OuterMod.someExportedOuterFunc" = () => number
+Line 39 col 57 IdentifierName "OuterMod" = { someExportedOuterFunc(): number; OuterInnerMod: { someExportedOuterInnerFunc(): string; }; }
+Line 39 col 66 IdentifierName "someExportedOuterFunc" = () => number
+Line 55 col 16 IdentifierName "x" = number
+Line 56 col 18 MemberAccessExpression "M.E.B" = M.E
+Line 56 col 18 MemberAccessExpression "M.E" = { A: M.E; B: M.E; C: M.E; [x: number]: string; }
+Line 56 col 18 IdentifierName "M" = { InnerMod: { someExportedInnerFunc(): number; }; E: { A: M.E; B: M.E; C: M.E; [x: number]: string; }; x: number; exported_var: any; C: new() => M.C; c: number; meb: M.E; }
+Line 56 col 20 IdentifierName "E" = { A: M.E; B: M.E; C: M.E; [x: number]: string; }
+Line 56 col 22 IdentifierName "B" = M.E
+Line 59 col 19 CastExpression "<M.I>null" = M.I
+Line 61 col 8 ObjectCreationExpression "new M.C()" = M.C
+Line 61 col 12 MemberAccessExpression "M.C" = new() => M.C
+Line 61 col 12 IdentifierName "M" = { InnerMod: { someExportedInnerFunc(): number; }; E: { A: M.E; B: M.E; C: M.E; [x: number]: string; }; x: number; exported_var: any; C: new() => M.C; c: number; meb: M.E; }
+Line 61 col 14 IdentifierName "C" = new() => M.C
+Line 62 col 8 MemberAccessExpression "M.x" = number
+Line 62 col 8 IdentifierName "M" = { InnerMod: { someExportedInnerFunc(): number; }; E: { A: M.E; B: M.E; C: M.E; [x: number]: string; }; x: number; exported_var: any; C: new() => M.C; c: number; meb: M.E; }
+Line 62 col 10 IdentifierName "x" = number
+Line 63 col 12 MemberAccessExpression "M.E.A" = M.E
+Line 63 col 12 MemberAccessExpression "M.E" = { A: M.E; B: M.E; C: M.E; [x: number]: string; }
+Line 63 col 12 IdentifierName "M" = { InnerMod: { someExportedInnerFunc(): number; }; E: { A: M.E; B: M.E; C: M.E; [x: number]: string; }; x: number; exported_var: any; C: new() => M.C; c: number; meb: M.E; }
+Line 63 col 14 IdentifierName "E" = { A: M.E; B: M.E; C: M.E; [x: number]: string; }
+Line 63 col 16 IdentifierName "A" = M.E
+Line 64 col 12 MemberAccessExpression "M.exported_var" = any
+Line 64 col 12 IdentifierName "M" = { InnerMod: { someExportedInnerFunc(): number; }; E: { A: M.E; B: M.E; C: M.E; [x: number]: string; }; x: number; exported_var: any; C: new() => M.C; c: number; meb: M.E; }
+Line 64 col 14 IdentifierName "exported_var" = any
+Line 65 col 0 InvocationExpression "c.someMethodThatCallsAnOuterMethod()" = string
+Line 65 col 0 MemberAccessExpression "c.someMethodThatCallsAnOuterMethod" = () => string
+Line 65 col 0 IdentifierName "c" = M.C
+Line 65 col 2 IdentifierName "someMethodThatCallsAnOuterMethod" = () => string

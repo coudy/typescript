@@ -1,0 +1,10 @@
+=== tests/cases/compiler/multiModuleFundule1.ts ===
+Line 0 col 11 IdentifierName "x" = any
+Line 9 col 8 InvocationExpression "C(2)" = void
+Line 9 col 8 IdentifierName "C" = { x: number; foo(): void; (x: number): void; }
+Line 10 col 9 ObjectCreationExpression "new C(2)" = any
+Line 10 col 13 IdentifierName "C" = { x: number; foo(): void; (x: number): void; }
+Line 11 col 9 InvocationExpression "C.foo()" = void
+Line 11 col 9 MemberAccessExpression "C.foo" = () => void
+Line 11 col 9 IdentifierName "C" = { x: number; foo(): void; (x: number): void; }
+Line 11 col 11 IdentifierName "foo" = () => void

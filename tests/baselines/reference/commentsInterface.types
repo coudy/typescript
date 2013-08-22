@@ -1,0 +1,141 @@
+=== tests/cases/compiler/commentsInterface.ts ===
+Line 3 col 10 IdentifierName "i1" = i1
+Line 6 col 13 IdentifierName "nc_i1" = nc_i1
+Line 9 col 0 IdentifierName "/** this is x*/
+    x" = number
+Line 11 col 0 IdentifierName "/** this is foo*/
+    foo" = (b: number) => string
+Line 12 col 25 IdentifierName "b" = any
+Line 14 col 22 IdentifierName "i" = any
+Line 16 col 20 IdentifierName "i" = any
+Line 16 col 23 IdentifierName "i1" = i1
+Line 17 col 0 IdentifierName "nc_x" = number
+Line 18 col 0 IdentifierName "nc_foo" = (b: number) => string
+Line 18 col 13 IdentifierName "b" = any
+Line 19 col 5 IdentifierName "i" = any
+Line 21 col 21 IdentifierName "a" = any
+Line 21 col 48 IdentifierName "b" = any
+Line 22 col 0 IdentifierName "/** this is fnfoo*/
+    fnfoo" = (b: number) => string
+Line 23 col 25 IdentifierName "b" = any
+Line 24 col 0 IdentifierName "nc_fnfoo" = (b: number) => string
+Line 24 col 13 IdentifierName "b" = any
+Line 25 col 0 IdentifierName "// nc_y
+    nc_y" = number
+Line 28 col 10 IdentifierName "i2" = i2
+Line 29 col 13 MemberAccessExpression "i2_i.x" = number
+Line 29 col 13 IdentifierName "i2_i" = i2
+Line 29 col 18 IdentifierName "x" = number
+Line 30 col 15 MemberAccessExpression "i2_i.foo" = (b: number) => string
+Line 30 col 15 IdentifierName "i2_i" = i2
+Line 30 col 20 IdentifierName "foo" = (b: number) => string
+Line 31 col 17 InvocationExpression "i2_i.foo(30)" = string
+Line 31 col 17 MemberAccessExpression "i2_i.foo" = (b: number) => string
+Line 31 col 17 IdentifierName "i2_i" = i2
+Line 31 col 22 IdentifierName "foo" = (b: number) => string
+Line 32 col 17 ElementAccessExpression "i2_i["hello"]" = any
+Line 32 col 17 IdentifierName "i2_i" = i2
+Line 33 col 17 ElementAccessExpression "i2_i[30]" = number
+Line 33 col 17 IdentifierName "i2_i" = i2
+Line 34 col 13 ObjectCreationExpression "new i2_i(i1_i)" = any
+Line 34 col 17 IdentifierName "i2_i" = i2
+Line 34 col 22 IdentifierName "i1_i" = i1
+Line 35 col 16 MemberAccessExpression "i2_i.nc_x" = number
+Line 35 col 16 IdentifierName "i2_i" = i2
+Line 35 col 21 IdentifierName "nc_x" = number
+Line 36 col 18 MemberAccessExpression "i2_i.nc_foo" = (b: number) => string
+Line 36 col 18 IdentifierName "i2_i" = i2
+Line 36 col 23 IdentifierName "nc_foo" = (b: number) => string
+Line 37 col 20 InvocationExpression "i2_i.nc_foo(30)" = string
+Line 37 col 20 MemberAccessExpression "i2_i.nc_foo" = (b: number) => string
+Line 37 col 20 IdentifierName "i2_i" = i2
+Line 37 col 25 IdentifierName "nc_foo" = (b: number) => string
+Line 38 col 13 InvocationExpression "i2_i(10, 20)" = number
+Line 38 col 13 IdentifierName "i2_i" = i2
+Line 39 col 17 MemberAccessExpression "i2_i.fnfoo" = (b: number) => string
+Line 39 col 17 IdentifierName "i2_i" = i2
+Line 39 col 22 IdentifierName "fnfoo" = (b: number) => string
+Line 40 col 19 InvocationExpression "i2_i.fnfoo(10)" = string
+Line 40 col 19 MemberAccessExpression "i2_i.fnfoo" = (b: number) => string
+Line 40 col 19 IdentifierName "i2_i" = i2
+Line 40 col 24 IdentifierName "fnfoo" = (b: number) => string
+Line 41 col 20 MemberAccessExpression "i2_i.nc_fnfoo" = (b: number) => string
+Line 41 col 20 IdentifierName "i2_i" = i2
+Line 41 col 25 IdentifierName "nc_fnfoo" = (b: number) => string
+Line 42 col 22 InvocationExpression "i2_i.nc_fnfoo(10)" = string
+Line 42 col 22 MemberAccessExpression "i2_i.nc_fnfoo" = (b: number) => string
+Line 42 col 22 IdentifierName "i2_i" = i2
+Line 42 col 27 IdentifierName "nc_fnfoo" = (b: number) => string
+Line 44 col 0 IdentifierName "/** Comment i3 x*/
+    x" = number
+Line 46 col 0 IdentifierName "/** Function i3 f*/
+    f" = (a: number) => string
+Line 47 col 27 IdentifierName "a" = any
+Line 48 col 0 IdentifierName "/** i3 l*/
+    l" = (b: number) => string
+Line 49 col 27 IdentifierName "b" = any
+Line 50 col 0 IdentifierName "nc_x" = number
+Line 51 col 0 IdentifierName "nc_f" = (a: number) => string
+Line 51 col 9 IdentifierName "a" = any
+Line 52 col 0 IdentifierName "nc_l" = (b: number) => string
+Line 52 col 11 IdentifierName "b" = any
+Line 54 col 10 IdentifierName "i3" = i3
+Line 55 col 0 AssignmentExpression "i3_i = {
+    f: /**own f*/ (/**i3_i a*/a: number) => "Hello" + a,
+    l: this.f,
+    /** own x*/
+    x: this.f(10),
+    nc_x: this.l(this.x),
+    nc_f: this.f,
+    nc_l: this.l
+}" = { f: (a: number) => string; l: any; x: any; nc_x: any; nc_f: any; nc_l: any; }
+Line 55 col 0 IdentifierName "i3_i" = i3
+Line 55 col 7 ObjectLiteralExpression "{
+    f: /**own f*/ (/**i3_i a*/a: number) => "Hello" + a,
+    l: this.f,
+    /** own x*/
+    x: this.f(10),
+    nc_x: this.l(this.x),
+    nc_f: this.f,
+    nc_l: this.l
+}" = { f: (a: number) => string; l: any; x: any; nc_x: any; nc_f: any; nc_l: any; }
+Line 56 col 18 ParenthesizedArrowFunctionExpression "(/**i3_i a*/a: number) => "Hello" + a" = (a: number) => string
+Line 56 col 30 IdentifierName "a" = any
+Line 56 col 44 AddExpression ""Hello" + a" = string
+Line 56 col 54 IdentifierName "a" = number
+Line 57 col 7 MemberAccessExpression "this.f" = any
+Line 57 col 7 ThisKeyword "this" = any
+Line 57 col 12 IdentifierName "f" = any
+Line 59 col 7 InvocationExpression "this.f(10)" = any
+Line 59 col 7 MemberAccessExpression "this.f" = any
+Line 59 col 7 ThisKeyword "this" = any
+Line 59 col 12 IdentifierName "f" = any
+Line 60 col 10 InvocationExpression "this.l(this.x)" = any
+Line 60 col 10 MemberAccessExpression "this.l" = any
+Line 60 col 10 ThisKeyword "this" = any
+Line 60 col 15 IdentifierName "l" = any
+Line 60 col 17 MemberAccessExpression "this.x" = any
+Line 60 col 17 ThisKeyword "this" = any
+Line 60 col 22 IdentifierName "x" = any
+Line 61 col 10 MemberAccessExpression "this.f" = any
+Line 61 col 10 ThisKeyword "this" = any
+Line 61 col 15 IdentifierName "f" = any
+Line 62 col 10 MemberAccessExpression "this.l" = any
+Line 62 col 10 ThisKeyword "this" = any
+Line 62 col 15 IdentifierName "l" = any
+Line 64 col 0 InvocationExpression "i3_i.f(10)" = string
+Line 64 col 0 MemberAccessExpression "i3_i.f" = (a: number) => string
+Line 64 col 0 IdentifierName "i3_i" = i3
+Line 64 col 5 IdentifierName "f" = (a: number) => string
+Line 65 col 0 InvocationExpression "i3_i.l(10)" = string
+Line 65 col 0 MemberAccessExpression "i3_i.l" = (b: number) => string
+Line 65 col 0 IdentifierName "i3_i" = i3
+Line 65 col 5 IdentifierName "l" = (b: number) => string
+Line 66 col 0 InvocationExpression "i3_i.nc_f(10)" = string
+Line 66 col 0 MemberAccessExpression "i3_i.nc_f" = (a: number) => string
+Line 66 col 0 IdentifierName "i3_i" = i3
+Line 66 col 5 IdentifierName "nc_f" = (a: number) => string
+Line 67 col 0 InvocationExpression "i3_i.nc_l(10)" = string
+Line 67 col 0 MemberAccessExpression "i3_i.nc_l" = (b: number) => string
+Line 67 col 0 IdentifierName "i3_i" = i3
+Line 67 col 5 IdentifierName "nc_l" = (b: number) => string

@@ -1,0 +1,55 @@
+=== tests/cases/compiler/thisBinding2.ts ===
+Line 3 col 0 AssignmentExpression "this.x = () => {
+   var x = 1;
+   return this.x;
+  }()" = number
+Line 3 col 0 MemberAccessExpression "this.x" = number
+Line 3 col 0 ThisKeyword "this" = C
+Line 3 col 13 IdentifierName "x" = number
+Line 3 col 17 InvocationExpression "() => {
+   var x = 1;
+   return this.x;
+  }()" = number
+Line 3 col 17 ParenthesizedArrowFunctionExpression "() => {
+   var x = 1;
+   return this.x;
+  }" = () => number
+Line 5 col 10 MemberAccessExpression "this.x" = number
+Line 5 col 10 ThisKeyword "this" = C
+Line 5 col 15 IdentifierName "x" = number
+Line 7 col 0 AssignmentExpression "this.x = function() {
+   var x = 1;
+   return this.x;
+  }()" = any
+Line 7 col 0 MemberAccessExpression "this.x" = number
+Line 7 col 0 ThisKeyword "this" = C
+Line 7 col 7 IdentifierName "x" = number
+Line 7 col 11 InvocationExpression "function() {
+   var x = 1;
+   return this.x;
+  }()" = any
+Line 7 col 11 FunctionExpression "function() {
+   var x = 1;
+   return this.x;
+  }" = () => any
+Line 9 col 10 MemberAccessExpression "this.x" = any
+Line 9 col 10 ThisKeyword "this" = any
+Line 9 col 15 IdentifierName "x" = any
+Line 13 col 28 IdentifierName "expression" = any
+Line 13 col 45 IdentifierName "msec" = any
+Line 13 col 60 IdentifierName "language" = any
+Line 14 col 16 ObjectLiteralExpression "{
+    message: "Hello World",
+    start: function () {
+        return setTimeout(() => { var x = this.message; }, 3000);
+    }
+}" = { message: string; start: () => number; }
+Line 16 col 11 FunctionExpression "function () {
+        return setTimeout(() => { var x = this.message; }, 3000);
+    }" = () => number
+Line 17 col 15 InvocationExpression "setTimeout(() => { var x = this.message; }, 3000)" = number
+Line 17 col 15 IdentifierName "setTimeout" = (expression: any, msec?: number, language?: any) => number
+Line 17 col 26 ParenthesizedArrowFunctionExpression "() => { var x = this.message; }" = () => void
+Line 17 col 42 MemberAccessExpression "this.message" = any
+Line 17 col 42 ThisKeyword "this" = any
+Line 17 col 47 IdentifierName "message" = any

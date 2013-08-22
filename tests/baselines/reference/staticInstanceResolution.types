@@ -1,0 +1,13 @@
+=== tests/cases/compiler/staticInstanceResolution.ts ===
+Line 7 col 29 IdentifierName "comments" = any
+Line 7 col 39 IdentifierName "Comment" = Comment
+Line 9 col 0 InvocationExpression "comments[0].getDocCommentText()" = void
+Line 9 col 0 MemberAccessExpression "comments[0].getDocCommentText" = () => void
+Line 9 col 0 ElementAccessExpression "comments[0]" = Comment
+Line 9 col 0 IdentifierName "comments" = Comment[]
+Line 9 col 20 IdentifierName "getDocCommentText" = () => void
+Line 10 col 15 IdentifierName "Comment" = Comment
+Line 11 col 0 InvocationExpression "c.getDocCommentText()" = void
+Line 11 col 0 MemberAccessExpression "c.getDocCommentText" = () => void
+Line 11 col 0 IdentifierName "c" = Comment
+Line 11 col 10 IdentifierName "getDocCommentText" = () => void

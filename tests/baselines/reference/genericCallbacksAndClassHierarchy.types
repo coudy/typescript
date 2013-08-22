@@ -1,0 +1,44 @@
+=== tests/cases/compiler/genericCallbacksAndClassHierarchy.ts ===
+Line 1 col 23 IdentifierName "T" = any
+Line 2 col 0 IdentifierName "subscribe" = (callback: (newValue: T) => void) => any
+Line 2 col 18 IdentifierName "callback" = any
+Line 2 col 29 IdentifierName "newValue" = any
+Line 2 col 39 IdentifierName "T" = T
+Line 4 col 20 IdentifierName "T" = any
+Line 5 col 22 IdentifierName "I" = M.I<T>
+Line 5 col 24 IdentifierName "T" = T
+Line 7 col 19 IdentifierName "T" = any
+Line 10 col 19 IdentifierName "T" = any
+Line 10 col 30 IdentifierName "C1" = M.C1<T>
+Line 10 col 33 IdentifierName "A" = M.A<T>
+Line 10 col 35 IdentifierName "T" = T
+Line 11 col 19 IdentifierName "T" = any
+Line 12 col 19 IdentifierName "viewModel" = any
+Line 12 col 30 IdentifierName "B" = M.B<T>
+Line 12 col 32 IdentifierName "T" = T
+Line 13 col 20 ParenthesizedArrowFunctionExpression "(newValue: A<T>) => { }" = (newValue: M.A<T>) => void
+Line 13 col 21 IdentifierName "newValue" = any
+Line 13 col 31 IdentifierName "A" = M.A<T>
+Line 13 col 33 IdentifierName "T" = T
+Line 15 col 19 IdentifierName "I" = M.I<T>
+Line 15 col 21 IdentifierName "A" = M.A<T>
+Line 15 col 23 IdentifierName "T" = T
+Line 15 col 29 MemberAccessExpression "viewModel.value" = M.I<M.A<T>>
+Line 15 col 29 IdentifierName "viewModel" = M.B<T>
+Line 15 col 39 IdentifierName "value" = M.I<M.A<T>>
+Line 16 col 0 InvocationExpression "// both of these should work
+            v.subscribe(f)" = any
+Line 16 col 0 MemberAccessExpression "// both of these should work
+            v.subscribe" = (callback: (newValue: M.A<T>) => void) => any
+Line 16 col 0 IdentifierName "// both of these should work
+            v" = M.I<M.A<T>>
+Line 18 col 14 IdentifierName "subscribe" = (callback: (newValue: M.A<T>) => void) => any
+Line 18 col 24 IdentifierName "f" = (newValue: M.A<T>) => void
+Line 19 col 0 InvocationExpression "v.subscribe((newValue: A<T>) => { })" = any
+Line 19 col 0 MemberAccessExpression "v.subscribe" = (callback: (newValue: M.A<T>) => void) => any
+Line 19 col 0 IdentifierName "v" = M.I<M.A<T>>
+Line 19 col 14 IdentifierName "subscribe" = (callback: (newValue: M.A<T>) => void) => any
+Line 19 col 24 ParenthesizedArrowFunctionExpression "(newValue: A<T>) => { }" = (newValue: M.A<T>) => void
+Line 19 col 25 IdentifierName "newValue" = any
+Line 19 col 35 IdentifierName "A" = M.A<T>
+Line 19 col 37 IdentifierName "T" = T

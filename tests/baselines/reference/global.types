@@ -1,0 +1,9 @@
+=== tests/cases/compiler/global.ts ===
+Line 1 col 22 IdentifierName "y" = any
+Line 2 col 15 AddExpression "x+y" = number
+Line 2 col 15 IdentifierName "x" = number
+Line 2 col 17 IdentifierName "y" = number
+Line 7 col 0 InvocationExpression "M.f(3)" = number
+Line 7 col 0 MemberAccessExpression "M.f" = (y: number) => number
+Line 7 col 0 IdentifierName "M" = { f(y: number): number; }
+Line 7 col 2 IdentifierName "f" = (y: number) => number

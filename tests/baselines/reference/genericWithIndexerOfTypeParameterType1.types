@@ -1,0 +1,16 @@
+=== tests/cases/compiler/genericWithIndexerOfTypeParameterType1.ts ===
+Line 0 col 16 IdentifierName "T" = any
+Line 1 col 22 CastExpression "<{ [objectId: string]: T; }>{}" = { [objectId: string]: T; }
+Line 1 col 26 IdentifierName "objectId" = any
+Line 1 col 45 IdentifierName "T" = T
+Line 1 col 50 ObjectLiteralExpression "{}" = {}
+Line 3 col 15 MemberAccessExpression "this.objects" = { [objectId: string]: T; }
+Line 3 col 15 ThisKeyword "this" = LazyArray<T>
+Line 3 col 20 IdentifierName "objects" = { [objectId: string]: T; }
+Line 6 col 16 ObjectCreationExpression "new LazyArray<string>()" = LazyArray<string>
+Line 6 col 20 IdentifierName "LazyArray" = new<T>() => LazyArray<T>
+Line 7 col 20 ElementAccessExpression "lazyArray.array()["test"]" = string
+Line 7 col 20 InvocationExpression "lazyArray.array()" = { [objectId: string]: string; }
+Line 7 col 20 MemberAccessExpression "lazyArray.array" = () => { [objectId: string]: string; }
+Line 7 col 20 IdentifierName "lazyArray" = LazyArray<string>
+Line 7 col 30 IdentifierName "array" = () => { [objectId: string]: string; }

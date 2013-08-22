@@ -1,0 +1,17 @@
+=== tests/cases/compiler/privacyCheckAnonymousFunctionParameter.ts ===
+Line 1 col 19 IdentifierName "T" = any
+Line 5 col 32 IdentifierName "T" = any
+Line 5 col 35 IdentifierName "doWhile" = any
+Line 5 col 45 IdentifierName "test" = any
+Line 5 col 51 IdentifierName "Iterator" = Iterator<T>
+Line 5 col 60 IdentifierName "T" = T
+Line 5 col 77 IdentifierName "Iterator" = Iterator<T>
+Line 5 col 86 IdentifierName "T" = T
+Line 10 col 15 InvocationExpression "fromDoWhile(test => {
+            return true;
+        })" = Iterator<any>
+Line 10 col 15 IdentifierName "fromDoWhile" = <T>(doWhile: (test: Iterator<T>) => boolean) => Iterator<T>
+Line 10 col 27 SimpleArrowFunctionExpression "test => {
+            return true;
+        }" = (test: Iterator<any>) => boolean
+Line 10 col 27 IdentifierName "test" = any

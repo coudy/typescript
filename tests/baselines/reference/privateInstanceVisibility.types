@@ -1,0 +1,17 @@
+=== tests/cases/compiler/privateInstanceVisibility.ts ===
+Line 10 col 23 ThisKeyword "this" = Test.Example
+Line 14 col 26 MemberAccessExpression "that.someNumber" = number
+Line 14 col 26 IdentifierName "that" = Test.Example
+Line 14 col 31 IdentifierName "someNumber" = number
+Line 30 col 20 MemberAccessExpression "this.x" = number
+Line 30 col 20 ThisKeyword "this" = C
+Line 30 col 25 IdentifierName "x" = number
+Line 32 col 10 IdentifierName "other" = any
+Line 32 col 17 IdentifierName "C" = C
+Line 33 col 0 AssignmentExpression "this.x = other.x" = number
+Line 33 col 0 MemberAccessExpression "this.x" = number
+Line 33 col 0 ThisKeyword "this" = C
+Line 33 col 13 IdentifierName "x" = number
+Line 33 col 17 MemberAccessExpression "other.x" = number
+Line 33 col 17 IdentifierName "other" = C
+Line 33 col 23 IdentifierName "x" = number

@@ -1,0 +1,14 @@
+=== tests/cases/compiler/cloduleTest1.ts ===
+Line 0 col 21 IdentifierName "selector" = any
+Line 0 col 40 IdentifierName "$" = $
+Line 2 col 0 IdentifierName "addClass" = (className: string) => $
+Line 2 col 15 IdentifierName "className" = any
+Line 2 col 35 IdentifierName "$" = $
+Line 7 col 25 IdentifierName "options" = any
+Line 7 col 34 IdentifierName "AjaxSettings" = $.AjaxSettings
+Line 9 col 10 IdentifierName "$" = $
+Line 9 col 14 InvocationExpression "$('.foo').addClass('bar')" = $
+Line 9 col 14 MemberAccessExpression "$('.foo').addClass" = (className: string) => $
+Line 9 col 14 InvocationExpression "$('.foo')" = $
+Line 9 col 14 IdentifierName "$" = { ajax(options: $.AjaxSettings): void; (selector: string): $; }
+Line 9 col 24 IdentifierName "addClass" = (className: string) => $

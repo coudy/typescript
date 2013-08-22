@@ -1,0 +1,5 @@
+=== tests/cases/compiler/cyclicModuleImport.ts ===
+Line 5 col 21 IdentifierName "MainModule" = "SubModule".MainModule
+Line 8 col 13 IdentifierName "SubModule" = any
+Line 13 col 26 IdentifierName "SubModule" = "MainModule".SubModule
+Line 16 col 13 IdentifierName "MainModule" = any

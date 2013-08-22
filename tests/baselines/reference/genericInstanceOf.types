@@ -1,0 +1,13 @@
+=== tests/cases/compiler/genericInstanceOf.ts ===
+Line 4 col 8 IdentifierName "T" = any
+Line 5 col 23 IdentifierName "a" = T
+Line 5 col 26 IdentifierName "T" = T
+Line 5 col 36 IdentifierName "b" = F
+Line 5 col 39 IdentifierName "F" = F
+Line 7 col 12 InstanceOfExpression "this.a instanceof this.b" = boolean
+Line 7 col 12 MemberAccessExpression "this.a" = T
+Line 7 col 12 ThisKeyword "this" = C<T>
+Line 7 col 17 IdentifierName "a" = T
+Line 7 col 30 MemberAccessExpression "this.b" = F
+Line 7 col 30 ThisKeyword "this" = C<T>
+Line 7 col 35 IdentifierName "b" = F

@@ -1,0 +1,37 @@
+=== tests/cases/compiler/assignmentCompatBug3.ts ===
+Line 0 col 19 IdentifierName "x" = any
+Line 0 col 30 IdentifierName "y" = any
+Line 1 col 11 ObjectLiteralExpression "{
+        get x() { return x;}, // shouldn't be "void"
+        get y() { return y;}, // shouldn't be "void"
+        //x: "yo",
+        //y: "boo",
+        dist: function () {
+			return Math.sqrt(x*x+y*y); // shouldn't be picking up "x" and "y" from the object lit
+		}
+	}" = { x: number; y: number; dist: () => number; }
+Line 2 col 25 IdentifierName "x" = number
+Line 3 col 25 IdentifierName "y" = number
+Line 6 col 14 FunctionExpression "function () {
+			return Math.sqrt(x*x+y*y); // shouldn't be picking up "x" and "y" from the object lit
+		}" = () => number
+Line 7 col 10 InvocationExpression "Math.sqrt(x*x+y*y)" = number
+Line 7 col 10 MemberAccessExpression "Math.sqrt" = (x: number) => number
+Line 7 col 10 IdentifierName "Math" = Math
+Line 7 col 15 IdentifierName "sqrt" = (x: number) => number
+Line 7 col 20 AddExpression "x*x+y*y" = number
+Line 7 col 20 MultiplyExpression "x*x" = number
+Line 7 col 20 IdentifierName "x" = number
+Line 7 col 22 IdentifierName "x" = number
+Line 7 col 24 MultiplyExpression "y*y" = number
+Line 7 col 24 IdentifierName "y" = number
+Line 7 col 26 IdentifierName "y" = number
+Line 18 col 13 IdentifierName "test" = any
+Line 22 col 0 InvocationExpression "foo(x)" = void
+Line 22 col 0 IdentifierName "foo" = (test: string) => void
+Line 23 col 4 IdentifierName "x" = any
+Line 24 col 0 InvocationExpression "foo(x + y)" = void
+Line 24 col 0 IdentifierName "foo" = (test: string) => void
+Line 24 col 4 AddExpression "x + y" = any
+Line 24 col 4 IdentifierName "x" = any
+Line 24 col 8 IdentifierName "y" = any

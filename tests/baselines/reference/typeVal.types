@@ -1,0 +1,8 @@
+=== tests/cases/compiler/typeVal.ts ===
+Line 1 col 0 IdentifierName "I" = number
+Line 4 col 6 IdentifierName "I" = I
+Line 4 col 10 ObjectLiteralExpression "{ I: 3}" = { I: number; }
+Line 5 col 0 AssignmentExpression "I.I=4" = number
+Line 5 col 0 MemberAccessExpression "I.I" = number
+Line 5 col 0 IdentifierName "I" = I
+Line 5 col 2 IdentifierName "I" = number

@@ -1,0 +1,6 @@
+=== tests/cases/compiler/internalAliasUninitializedModuleInsideTopLevelModuleWithoutExport.ts ===
+Line 3 col 0 IdentifierName "foo" = () => any
+Line 10 col 0 InvocationExpression "x.foo()" = any
+Line 10 col 0 MemberAccessExpression "x.foo" = () => any
+Line 10 col 0 IdentifierName "x" = a.b.I
+Line 10 col 2 IdentifierName "foo" = () => any

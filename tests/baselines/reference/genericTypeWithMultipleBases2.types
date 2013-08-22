@@ -1,0 +1,20 @@
+=== tests/cases/compiler/genericTypeWithMultipleBases2.ts ===
+Line 1 col 0 IdentifierName "m1" = () => void
+Line 5 col 0 IdentifierName "m2" = () => void
+Line 8 col 20 IdentifierName "T" = any
+Line 8 col 31 IdentifierName "I2" = I2
+Line 8 col 35 IdentifierName "I1" = I1
+Line 9 col 0 IdentifierName "p1" = T
+Line 9 col 8 IdentifierName "T" = T
+Line 12 col 7 IdentifierName "I3" = I3<T>
+Line 13 col 0 MemberAccessExpression "x.p1" = number
+Line 13 col 0 IdentifierName "x" = I3<number>
+Line 13 col 2 IdentifierName "p1" = number
+Line 14 col 0 InvocationExpression "x.m1()" = void
+Line 14 col 0 MemberAccessExpression "x.m1" = () => void
+Line 14 col 0 IdentifierName "x" = I3<number>
+Line 14 col 2 IdentifierName "m1" = () => void
+Line 15 col 0 InvocationExpression "x.m2()" = void
+Line 15 col 0 MemberAccessExpression "x.m2" = () => void
+Line 15 col 0 IdentifierName "x" = I3<number>
+Line 15 col 2 IdentifierName "m2" = () => void

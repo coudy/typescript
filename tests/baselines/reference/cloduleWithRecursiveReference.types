@@ -1,0 +1,4 @@
+=== tests/cases/compiler/cloduleWithRecursiveReference.ts ===
+Line 4 col 19 MemberAccessExpression "M.C" = { C: typeof M.C; new(): M.C; }
+Line 4 col 19 IdentifierName "M" = { C: { C: typeof M.C; new(): M.C; }; }
+Line 4 col 21 IdentifierName "C" = { C: typeof M.C; new(): M.C; }

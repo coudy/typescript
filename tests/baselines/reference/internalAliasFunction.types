@@ -1,0 +1,6 @@
+=== tests/cases/compiler/internalAliasFunction.ts ===
+Line 1 col 24 IdentifierName "x" = any
+Line 2 col 15 IdentifierName "x" = number
+Line 8 col 22 InvocationExpression "b(10)" = number
+Line 8 col 22 IdentifierName "b" = (x: number) => number
+Line 9 col 23 IdentifierName "b" = (x: number) => number

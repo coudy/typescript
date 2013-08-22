@@ -1,0 +1,14 @@
+=== tests/cases/compiler/reservedWords.ts ===
+Line 0 col 10 ObjectLiteralExpression "{
+    if: 0,
+    debugger: 2,
+    break: 3,
+    function: 4
+}" = { if: number; debugger: number; break: number; function: number; }
+Line 9 col 11 ObjectLiteralExpression "{
+    if: 0,
+    while: 1,
+    debugger: 2,
+    break: 3,
+    function: 4
+}" = { if: number; while: number; debugger: number; break: number; function: number; }

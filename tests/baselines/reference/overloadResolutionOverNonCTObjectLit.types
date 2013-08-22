@@ -1,0 +1,23 @@
+=== tests/cases/compiler/overloadResolutionOverNonCTObjectLit.ts ===
+Line 2 col 0 IdentifierName "startIndex" = number
+Line 3 col 0 IdentifierName "type" = string
+Line 4 col 0 IdentifierName "bracket" = number
+Line 10 col 53 IdentifierName "IToken" = Bugs.IToken
+Line 11 col 0 IdentifierName "state" = Bugs.IState
+Line 11 col 39 IdentifierName "IState" = Bugs.IState
+Line 12 col 0 IdentifierName "length" = number
+Line 16 col 43 IdentifierName "IToken" = Bugs.IToken
+Line 16 col 53 ArrayLiteralExpression "[]" = Bugs.IToken[]
+Line 17 col 0 InvocationExpression "tokens.push({ startIndex: 1, type: '', bracket: 3 })" = number
+Line 17 col 0 MemberAccessExpression "tokens.push" = (...items: Bugs.IToken[]) => number
+Line 17 col 0 IdentifierName "tokens" = Bugs.IToken[]
+Line 17 col 39 IdentifierName "push" = (...items: Bugs.IToken[]) => number
+Line 17 col 44 ObjectLiteralExpression "{ startIndex: 1, type: '', bracket: 3 }" = { startIndex: number; type: string; bracket: number; }
+Line 18 col 0 InvocationExpression "tokens.push(<IToken>({ startIndex: 1, type: '', bracket: 3, state: null, length: 10 }))" = number
+Line 18 col 0 MemberAccessExpression "tokens.push" = (...items: Bugs.IToken[]) => number
+Line 18 col 0 IdentifierName "tokens" = Bugs.IToken[]
+Line 18 col 39 IdentifierName "push" = (...items: Bugs.IToken[]) => number
+Line 18 col 44 CastExpression "<IToken>({ startIndex: 1, type: '', bracket: 3, state: null, length: 10 })" = Bugs.IToken
+Line 18 col 45 IdentifierName "IToken" = Bugs.IToken
+Line 18 col 52 ParenthesizedExpression "({ startIndex: 1, type: '', bracket: 3, state: null, length: 10 })" = { startIndex: number; type: string; bracket: number; state: any; length: number; }
+Line 18 col 53 ObjectLiteralExpression "{ startIndex: 1, type: '', bracket: 3, state: null, length: 10 }" = { startIndex: number; type: string; bracket: number; state: any; length: number; }

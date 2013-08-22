@@ -1,0 +1,51 @@
+=== tests/cases/compiler/varArgParamTypeCheck.ts ===
+Line 0 col 21 IdentifierName "sequences" = any
+Line 3 col 18 IdentifierName "clb" = any
+Line 5 col 0 InvocationExpression "sequence(
+    function bar() {
+    },
+    function foo() {
+        callback(()=>{
+            this();
+        });
+    },
+    function baz() {
+        callback(()=>{
+            this();
+        });
+    }
+)" = void
+Line 5 col 0 IdentifierName "sequence" = (...sequences: { (): void; }[]) => void
+Line 7 col 0 FunctionExpression "function bar() {
+    }" = () => void
+Line 7 col 13 IdentifierName "bar" = () => void
+Line 9 col 0 FunctionExpression "function foo() {
+        callback(()=>{
+            this();
+        });
+    }" = () => void
+Line 9 col 13 IdentifierName "foo" = () => void
+Line 10 col 0 InvocationExpression "callback(()=>{
+            this();
+        })" = void
+Line 10 col 0 IdentifierName "callback" = (clb: () => void) => void
+Line 10 col 17 ParenthesizedArrowFunctionExpression "()=>{
+            this();
+        }" = () => void
+Line 11 col 0 InvocationExpression "this()" = any
+Line 11 col 0 ThisKeyword "this" = any
+Line 14 col 0 FunctionExpression "function baz() {
+        callback(()=>{
+            this();
+        });
+    }" = () => void
+Line 14 col 13 IdentifierName "baz" = () => void
+Line 15 col 0 InvocationExpression "callback(()=>{
+            this();
+        })" = void
+Line 15 col 0 IdentifierName "callback" = (clb: () => void) => void
+Line 15 col 17 ParenthesizedArrowFunctionExpression "()=>{
+            this();
+        }" = () => void
+Line 16 col 0 InvocationExpression "this()" = any
+Line 16 col 0 ThisKeyword "this" = any

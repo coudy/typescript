@@ -1,0 +1,5 @@
+=== tests/cases/compiler/castNewObjectBug.ts ===
+Line 1 col 9 CastExpression "<Foo> new Object()" = Foo
+Line 1 col 10 IdentifierName "Foo" = Foo
+Line 1 col 15 ObjectCreationExpression "new Object()" = Object
+Line 1 col 19 IdentifierName "Object" = { prototype: Object; getPrototypeOf(o: any): any; getOwnPropertyDescriptor(o: any, p: string): PropertyDescriptor; getOwnPropertyNames(o: any): string[]; create(o: any, properties?: PropertyDescriptorMap): any; defineProperty(o: any, p: string, attributes: PropertyDescriptor): any; defineProperties(o: any, properties: PropertyDescriptorMap): any; seal(o: any): any; freeze(o: any): any; preventExtensions(o: any): any; isSealed(o: any): boolean; isFrozen(o: any): boolean; isExtensible(o: any): boolean; keys(o: any): string[]; (): any; (value: any): any; new(value?: any): Object; }

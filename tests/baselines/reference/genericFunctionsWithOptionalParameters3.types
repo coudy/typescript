@@ -1,0 +1,74 @@
+=== tests/cases/compiler/genericFunctionsWithOptionalParameters3.ts ===
+Line 0 col 17 IdentifierName "T" = any
+Line 1 col 15 IdentifierName "x" = any
+Line 1 col 18 IdentifierName "T" = T
+Line 4 col 0 IdentifierName "fold" = <T, S>(c?: Collection<T>, folder?: (s: S, t: T) => T, init?: S) => T
+Line 4 col 9 IdentifierName "T" = any
+Line 4 col 12 IdentifierName "S" = any
+Line 4 col 15 IdentifierName "c" = Collection<string>
+Line 4 col 19 IdentifierName "Collection" = Collection<T>
+Line 4 col 30 IdentifierName "T" = T
+Line 4 col 34 IdentifierName "folder" = any
+Line 4 col 44 IdentifierName "s" = any
+Line 4 col 47 IdentifierName "S" = S
+Line 4 col 50 IdentifierName "t" = any
+Line 4 col 53 IdentifierName "T" = T
+Line 4 col 59 IdentifierName "T" = T
+Line 4 col 62 IdentifierName "init" = any
+Line 4 col 69 IdentifierName "S" = S
+Line 4 col 73 IdentifierName "T" = T
+Line 5 col 0 IdentifierName "mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 5 col 14 IdentifierName "T" = any
+Line 5 col 17 IdentifierName "U" = any
+Line 5 col 20 IdentifierName "V" = any
+Line 5 col 23 IdentifierName "c" = Collection<string>
+Line 5 col 26 IdentifierName "Collection" = Collection<T>
+Line 5 col 37 IdentifierName "T" = T
+Line 5 col 41 IdentifierName "mapper" = any
+Line 5 col 50 IdentifierName "x" = any
+Line 5 col 53 IdentifierName "T" = T
+Line 5 col 59 IdentifierName "U" = U
+Line 5 col 62 IdentifierName "reducer" = any
+Line 5 col 72 IdentifierName "y" = any
+Line 5 col 75 IdentifierName "U" = U
+Line 5 col 81 IdentifierName "V" = V
+Line 5 col 85 IdentifierName "Collection" = Collection<T>
+Line 5 col 96 IdentifierName "V" = V
+Line 7 col 11 IdentifierName "Utils" = Utils
+Line 8 col 8 ObjectCreationExpression "new Collection<string>()" = Collection<string>
+Line 8 col 12 IdentifierName "Collection" = new<T>() => Collection<T>
+Line 9 col 9 InvocationExpression "utils.mapReduce(c, (x) => { return 1 }, (y) => { return new Date() })" = Collection<Date>
+Line 9 col 9 MemberAccessExpression "utils.mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 9 col 9 IdentifierName "utils" = Utils
+Line 9 col 15 IdentifierName "mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 9 col 25 IdentifierName "c" = Collection<string>
+Line 9 col 28 ParenthesizedArrowFunctionExpression "(x) => { return 1 }" = (x: string) => number
+Line 9 col 29 IdentifierName "x" = any
+Line 9 col 49 ParenthesizedArrowFunctionExpression "(y) => { return new Date() }" = (y: number) => Date
+Line 9 col 50 IdentifierName "y" = any
+Line 9 col 65 ObjectCreationExpression "new Date()" = Date
+Line 9 col 69 IdentifierName "Date" = { prototype: Date; parse(s: string): number; UTC(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): number; now(): number; (): string; new(): Date; new(value: number): Date; new(value: string): Date; new(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): Date; }
+Line 10 col 9 InvocationExpression "utils.mapReduce(c, (x: string) => { return 1 }, (y: number) => { return new Date() })" = Collection<Date>
+Line 10 col 9 MemberAccessExpression "utils.mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 10 col 9 IdentifierName "utils" = Utils
+Line 10 col 15 IdentifierName "mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 10 col 25 IdentifierName "c" = Collection<string>
+Line 10 col 28 ParenthesizedArrowFunctionExpression "(x: string) => { return 1 }" = (x: string) => number
+Line 10 col 29 IdentifierName "x" = any
+Line 10 col 57 ParenthesizedArrowFunctionExpression "(y: number) => { return new Date() }" = (y: number) => Date
+Line 10 col 58 IdentifierName "y" = any
+Line 10 col 81 ObjectCreationExpression "new Date()" = Date
+Line 10 col 85 IdentifierName "Date" = { prototype: Date; parse(s: string): number; UTC(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): number; now(): number; (): string; new(): Date; new(value: number): Date; new(value: string): Date; new(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): Date; }
+Line 11 col 9 ParenthesizedArrowFunctionExpression "(x: string) => { return 1 }" = (x: string) => number
+Line 11 col 10 IdentifierName "x" = any
+Line 12 col 9 ParenthesizedArrowFunctionExpression "(y: number) => { return new Date() }" = (y: number) => Date
+Line 12 col 10 IdentifierName "y" = any
+Line 12 col 33 ObjectCreationExpression "new Date()" = Date
+Line 12 col 37 IdentifierName "Date" = { prototype: Date; parse(s: string): number; UTC(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): number; now(): number; (): string; new(): Date; new(value: number): Date; new(value: string): Date; new(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number, ms?: number): Date; }
+Line 13 col 9 InvocationExpression "utils.mapReduce(c, f1, f2)" = Collection<Date>
+Line 13 col 9 MemberAccessExpression "utils.mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 13 col 9 IdentifierName "utils" = Utils
+Line 13 col 15 IdentifierName "mapReduce" = <T, U, V>(c: Collection<T>, mapper: (x: T) => U, reducer: (y: U) => V) => Collection<V>
+Line 13 col 25 IdentifierName "c" = Collection<string>
+Line 13 col 28 IdentifierName "f1" = (x: string) => number
+Line 13 col 32 IdentifierName "f2" = (y: number) => Date
