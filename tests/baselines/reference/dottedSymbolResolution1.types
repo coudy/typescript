@@ -21,7 +21,9 @@ Line 14 col 14 IdentifierName "collection" = any
 Line 14 col 31 IdentifierName "callback" = any
 Line 14 col 42 IdentifierName "indexInArray" = any
 Line 14 col 61 IdentifierName "valueOfElement" = any
+Line 19 col 8 IdentifierName "x" = JQuery
 Line 19 col 11 IdentifierName "JQuery" = JQuery
+Line 19 col 19 IdentifierName "$" = JQueryStatic
 Line 19 col 22 IdentifierName "JQueryStatic" = JQueryStatic
 Line 20 col 0 InvocationExpression "each(x.find(" "), function () {
         var $this: JQuery = $(''),
@@ -36,9 +38,11 @@ Line 20 col 22 FunctionExpression "function () {
         var $this: JQuery = $(''),
             thisBar = $this.find(".fx-usagebars-calloutbar-this"); // bug lead to 'could not find dotted symbol' here
     }" = () => void
+Line 21 col 12 IdentifierName "$this" = JQuery
 Line 21 col 19 IdentifierName "JQuery" = JQuery
 Line 21 col 28 InvocationExpression "$('')" = JQuery
 Line 21 col 28 IdentifierName "$" = JQueryStatic
+Line 22 col 0 IdentifierName "thisBar" = JQuery
 Line 22 col 22 InvocationExpression "$this.find(".fx-usagebars-calloutbar-this")" = JQuery
 Line 22 col 22 MemberAccessExpression "$this.find" = (selector: string) => JQuery
 Line 22 col 22 IdentifierName "$this" = JQuery

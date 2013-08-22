@@ -1,5 +1,7 @@
 === tests/cases/compiler/commentsInterface.ts ===
+Line 3 col 4 IdentifierName "i1_i" = i1
 Line 3 col 10 IdentifierName "i1" = i1
+Line 6 col 4 IdentifierName "nc_i1_i" = nc_i1
 Line 6 col 13 IdentifierName "nc_i1" = nc_i1
 Line 9 col 0 IdentifierName "/** this is x*/
     x" = number
@@ -22,46 +24,61 @@ Line 24 col 0 IdentifierName "nc_fnfoo" = (b: number) => string
 Line 24 col 13 IdentifierName "b" = any
 Line 25 col 0 IdentifierName "// nc_y
     nc_y" = number
+Line 28 col 4 IdentifierName "i2_i" = i2
 Line 28 col 10 IdentifierName "i2" = i2
+Line 29 col 4 IdentifierName "i2_i_x" = number
 Line 29 col 13 MemberAccessExpression "i2_i.x" = number
 Line 29 col 13 IdentifierName "i2_i" = i2
 Line 29 col 18 IdentifierName "x" = number
+Line 30 col 4 IdentifierName "i2_i_foo" = (b: number) => string
 Line 30 col 15 MemberAccessExpression "i2_i.foo" = (b: number) => string
 Line 30 col 15 IdentifierName "i2_i" = i2
 Line 30 col 20 IdentifierName "foo" = (b: number) => string
+Line 31 col 4 IdentifierName "i2_i_foo_r" = string
 Line 31 col 17 InvocationExpression "i2_i.foo(30)" = string
 Line 31 col 17 MemberAccessExpression "i2_i.foo" = (b: number) => string
 Line 31 col 17 IdentifierName "i2_i" = i2
 Line 31 col 22 IdentifierName "foo" = (b: number) => string
+Line 32 col 4 IdentifierName "i2_i_i2_si" = any
 Line 32 col 17 ElementAccessExpression "i2_i["hello"]" = any
 Line 32 col 17 IdentifierName "i2_i" = i2
+Line 33 col 4 IdentifierName "i2_i_i2_ii" = number
 Line 33 col 17 ElementAccessExpression "i2_i[30]" = number
 Line 33 col 17 IdentifierName "i2_i" = i2
+Line 34 col 4 IdentifierName "i2_i_n" = any
 Line 34 col 13 ObjectCreationExpression "new i2_i(i1_i)" = any
 Line 34 col 17 IdentifierName "i2_i" = i2
 Line 34 col 22 IdentifierName "i1_i" = i1
+Line 35 col 4 IdentifierName "i2_i_nc_x" = number
 Line 35 col 16 MemberAccessExpression "i2_i.nc_x" = number
 Line 35 col 16 IdentifierName "i2_i" = i2
 Line 35 col 21 IdentifierName "nc_x" = number
+Line 36 col 4 IdentifierName "i2_i_nc_foo" = (b: number) => string
 Line 36 col 18 MemberAccessExpression "i2_i.nc_foo" = (b: number) => string
 Line 36 col 18 IdentifierName "i2_i" = i2
 Line 36 col 23 IdentifierName "nc_foo" = (b: number) => string
+Line 37 col 4 IdentifierName "i2_i_nc_foo_r" = string
 Line 37 col 20 InvocationExpression "i2_i.nc_foo(30)" = string
 Line 37 col 20 MemberAccessExpression "i2_i.nc_foo" = (b: number) => string
 Line 37 col 20 IdentifierName "i2_i" = i2
 Line 37 col 25 IdentifierName "nc_foo" = (b: number) => string
+Line 38 col 4 IdentifierName "i2_i_r" = number
 Line 38 col 13 InvocationExpression "i2_i(10, 20)" = number
 Line 38 col 13 IdentifierName "i2_i" = i2
+Line 39 col 4 IdentifierName "i2_i_fnfoo" = (b: number) => string
 Line 39 col 17 MemberAccessExpression "i2_i.fnfoo" = (b: number) => string
 Line 39 col 17 IdentifierName "i2_i" = i2
 Line 39 col 22 IdentifierName "fnfoo" = (b: number) => string
+Line 40 col 4 IdentifierName "i2_i_fnfoo_r" = string
 Line 40 col 19 InvocationExpression "i2_i.fnfoo(10)" = string
 Line 40 col 19 MemberAccessExpression "i2_i.fnfoo" = (b: number) => string
 Line 40 col 19 IdentifierName "i2_i" = i2
 Line 40 col 24 IdentifierName "fnfoo" = (b: number) => string
+Line 41 col 4 IdentifierName "i2_i_nc_fnfoo" = (b: number) => string
 Line 41 col 20 MemberAccessExpression "i2_i.nc_fnfoo" = (b: number) => string
 Line 41 col 20 IdentifierName "i2_i" = i2
 Line 41 col 25 IdentifierName "nc_fnfoo" = (b: number) => string
+Line 42 col 4 IdentifierName "i2_i_nc_fnfoo_r" = string
 Line 42 col 22 InvocationExpression "i2_i.nc_fnfoo(10)" = string
 Line 42 col 22 MemberAccessExpression "i2_i.nc_fnfoo" = (b: number) => string
 Line 42 col 22 IdentifierName "i2_i" = i2
@@ -79,6 +96,7 @@ Line 51 col 0 IdentifierName "nc_f" = (a: number) => string
 Line 51 col 9 IdentifierName "a" = any
 Line 52 col 0 IdentifierName "nc_l" = (b: number) => string
 Line 52 col 11 IdentifierName "b" = any
+Line 54 col 4 IdentifierName "i3_i" = i3
 Line 54 col 10 IdentifierName "i3" = i3
 Line 55 col 0 AssignmentExpression "i3_i = {
     f: /**own f*/ (/**i3_i a*/a: number) => "Hello" + a,

@@ -1,6 +1,11 @@
 === tests/cases/compiler/getAndSetAsMemberNames.ts ===
+Line 1 col 0 IdentifierName "set" = boolean
+Line 2 col 0 IdentifierName "get" = number
+Line 5 col 0 IdentifierName "set" = any
 Line 8 col 9 IdentifierName "x" = any
 Line 9 col 15 AddExpression "x + 1" = any
 Line 9 col 15 IdentifierName "x" = any
+Line 13 col 0 IdentifierName "get" = boolean
+Line 16 col 11 IdentifierName "set" = () => boolean
 Line 16 col 32 FunctionExpression "function () { return true; }" = () => boolean
 Line 18 col 10 IdentifierName "x" = any

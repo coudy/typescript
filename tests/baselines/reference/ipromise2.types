@@ -63,6 +63,8 @@ Line 6 col 74 IdentifierName "progress" = any
 Line 6 col 86 IdentifierName "progress" = any
 Line 7 col 0 IdentifierName "value" = T
 Line 7 col 15 IdentifierName "T" = any
+Line 11 col 4 IdentifierName "p" = Windows.Foundation.IPromise<string>
+Line 13 col 4 IdentifierName "p2" = Windows.Foundation.IPromise<number>
 Line 13 col 9 InvocationExpression "p.then(function (s) {
     return 34;
 } )" = Windows.Foundation.IPromise<number>
@@ -73,6 +75,7 @@ Line 13 col 16 FunctionExpression "function (s) {
     return 34;
 }" = (s: string) => number
 Line 13 col 26 IdentifierName "s" = any
+Line 18 col 4 IdentifierName "x" = number
 Line 18 col 16 MemberAccessExpression "p2.value" = number
 Line 18 col 16 IdentifierName "p2" = Windows.Foundation.IPromise<number>
 Line 18 col 19 IdentifierName "value" = number

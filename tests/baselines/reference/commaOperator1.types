@@ -1,4 +1,5 @@
 === tests/cases/compiler/commaOperator1.ts ===
+Line 0 col 4 IdentifierName "v1" = number
 Line 0 col 9 ParenthesizedExpression "((1, 2, 3), 4, 5, (6, 7))" = void
 Line 0 col 10 CommaExpression "(1, 2, 3), 4, 5, (6, 7)" = void
 Line 0 col 10 CommaExpression "(1, 2, 3), 4, 5" = void
@@ -8,6 +9,7 @@ Line 0 col 11 CommaExpression "1, 2, 3" = void
 Line 0 col 11 CommaExpression "1, 2" = void
 Line 0 col 27 ParenthesizedExpression "(6, 7)" = void
 Line 0 col 28 CommaExpression "6, 7" = void
+Line 2 col 8 IdentifierName "a" = number
 Line 3 col 11 CommaExpression "a, v1, a" = void
 Line 3 col 11 CommaExpression "a, v1" = void
 Line 3 col 11 IdentifierName "a" = number

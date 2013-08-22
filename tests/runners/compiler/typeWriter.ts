@@ -58,32 +58,6 @@ class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
                 return (<TypeScript.BreakStatementSyntax>parent).identifier === token;
             case TypeScript.SyntaxKind.LabeledStatement:
                 return (<TypeScript.LabeledStatementSyntax>parent).identifier === token;
-            case TypeScript.SyntaxKind.ClassDeclaration:
-                return (<TypeScript.ClassDeclarationSyntax>parent).identifier === token;
-            case TypeScript.SyntaxKind.EnumDeclaration:
-                return (<TypeScript.EnumDeclarationSyntax>parent).identifier === token;
-            case TypeScript.SyntaxKind.FunctionDeclaration:
-                return (<TypeScript.FunctionDeclarationSyntax>parent).identifier === token;
-            case TypeScript.SyntaxKind.GetMemberAccessorDeclaration:
-                return (<TypeScript.GetMemberAccessorDeclarationSyntax>parent).propertyName === token;
-            case TypeScript.SyntaxKind.SetMemberAccessorDeclaration:
-                return (<TypeScript.SetMemberAccessorDeclarationSyntax>parent).propertyName === token;
-            case TypeScript.SyntaxKind.ImportDeclaration:
-                return (<TypeScript.ImportDeclarationSyntax>parent).identifier === token;
-            case TypeScript.SyntaxKind.InterfaceDeclaration:
-                return (<TypeScript.InterfaceDeclarationSyntax>parent).identifier === token;
-            case TypeScript.SyntaxKind.MemberFunctionDeclaration:
-                return (<TypeScript.MemberFunctionDeclarationSyntax>parent).propertyName === token;
-            case TypeScript.SyntaxKind.ModuleDeclaration:
-                return (<TypeScript.ModuleDeclarationSyntax>parent).moduleName === token;
-            case TypeScript.SyntaxKind.SimplePropertyAssignment:
-            case TypeScript.SyntaxKind.GetAccessorPropertyAssignment:
-            case TypeScript.SyntaxKind.SetAccessorPropertyAssignment:
-                return (<TypeScript.SimplePropertyAssignmentSyntax>parent).propertyName === token;
-            case TypeScript.SyntaxKind.QualifiedName:
-                return true; // TODO: Could be anything actually? Review later if needed
-            case TypeScript.SyntaxKind.VariableDeclarator:
-                return (<TypeScript.VariableDeclaratorSyntax>parent).identifier === token;
         }
         return false;
     }

@@ -1,4 +1,6 @@
 === tests/cases/compiler/thisInPropertyBoundDeclarations.ts ===
+Line 1 col 12 IdentifierName "name" = string
+Line 3 col 19 IdentifierName "func" = Function[]
 Line 3 col 25 IdentifierName "Function" = Function
 Line 3 col 38 ArrayLiteralExpression "[
      (that: Bug, name: string) => {
@@ -22,10 +24,12 @@ Line 10 col 0 MemberAccessExpression "this.name" = string
 Line 10 col 0 ThisKeyword "this" = Bug
 Line 10 col 13 IdentifierName "name" = string
 Line 10 col 20 IdentifierName "name" = string
+Line 16 col 0 IdentifierName "prop1" = () => void
 Line 16 col 12 FunctionExpression "function() {
         this;
     }" = () => void
 Line 17 col 0 ThisKeyword "this" = any
+Line 19 col 0 IdentifierName "prop2" = () => void
 Line 20 col 12 FunctionExpression "function() {
         function inner() {
             this;
@@ -35,17 +39,20 @@ Line 20 col 12 FunctionExpression "function() {
 Line 22 col 0 ThisKeyword "this" = any
 Line 24 col 0 ParenthesizedArrowFunctionExpression "() => this" = () => any
 Line 24 col 14 ThisKeyword "this" = any
+Line 26 col 0 IdentifierName "prop3" = () => void
 Line 27 col 12 ParenthesizedArrowFunctionExpression "() => {
         function inner() {
             this;
         }
     }" = () => void
 Line 29 col 0 ThisKeyword "this" = any
+Line 32 col 0 IdentifierName "prop4" = { a: () => any; }
 Line 33 col 12 ObjectLiteralExpression "{
         a: function() { return this; },
     }" = { a: () => any; }
 Line 34 col 11 FunctionExpression "function() { return this; }" = () => any
 Line 34 col 31 ThisKeyword "this" = any
+Line 36 col 0 IdentifierName "prop5" = () => { a: () => any; }
 Line 37 col 12 ParenthesizedArrowFunctionExpression "() => {
         return {
             a: function() { return this; },
@@ -56,14 +63,18 @@ Line 38 col 15 ObjectLiteralExpression "{
         }" = { a: () => any; }
 Line 39 col 15 FunctionExpression "function() { return this; }" = () => any
 Line 39 col 35 ThisKeyword "this" = any
+Line 45 col 0 IdentifierName "prop1" = B
 Line 45 col 12 ThisKeyword "this" = B
+Line 46 col 0 IdentifierName "prop2" = () => B
 Line 47 col 12 ParenthesizedArrowFunctionExpression "() => this" = () => B
 Line 47 col 18 ThisKeyword "this" = B
+Line 48 col 0 IdentifierName "prop3" = () => () => () => () => B
 Line 49 col 12 ParenthesizedArrowFunctionExpression "() => () => () => () => this" = () => () => () => () => B
 Line 49 col 18 ParenthesizedArrowFunctionExpression "() => () => () => this" = () => () => () => B
 Line 49 col 24 ParenthesizedArrowFunctionExpression "() => () => this" = () => () => B
 Line 49 col 30 ParenthesizedArrowFunctionExpression "() => this" = () => B
 Line 49 col 36 ThisKeyword "this" = B
+Line 50 col 0 IdentifierName "prop4" = string
 Line 51 col 12 AddExpression "'  ' +
     function() {
     } +
@@ -82,11 +93,13 @@ Line 55 col 0 ParenthesizedArrowFunctionExpression "() => () => () => this" = ()
 Line 55 col 10 ParenthesizedArrowFunctionExpression "() => () => this" = () => () => B
 Line 55 col 16 ParenthesizedArrowFunctionExpression "() => this" = () => B
 Line 55 col 22 ThisKeyword "this" = B
+Line 56 col 0 IdentifierName "prop5" = { a: () => B; }
 Line 57 col 12 ObjectLiteralExpression "{
         a: () => { return this; }
     }" = { a: () => B; }
 Line 58 col 11 ParenthesizedArrowFunctionExpression "() => { return this; }" = () => B
 Line 58 col 26 ThisKeyword "this" = B
+Line 60 col 0 IdentifierName "prop6" = () => { a: () => B; }
 Line 61 col 12 ParenthesizedArrowFunctionExpression "() => {
         return {
             a: () => { return this; }

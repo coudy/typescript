@@ -1,5 +1,6 @@
 === tests/cases/compiler/m7Bugs.ts ===
 Line 2 col 0 IdentifierName "something" = number
+Line 5 col 4 IdentifierName "s" = ISomething
 Line 5 col 7 IdentifierName "ISomething" = ISomething
 Line 5 col 20 CastExpression "<ISomething>({ })" = ISomething
 Line 5 col 21 IdentifierName "ISomething" = ISomething
@@ -7,19 +8,24 @@ Line 5 col 32 ParenthesizedExpression "({ })" = {}
 Line 5 col 33 ObjectLiteralExpression "{ }" = {}
 Line 9 col 14 IdentifierName "x" = string
 Line 11 col 20 IdentifierName "A" = A
+Line 13 col 4 IdentifierName "x" = B
 Line 13 col 7 IdentifierName "B" = B
 Line 13 col 11 CastExpression "<B>{ }" = B
 Line 13 col 12 IdentifierName "B" = B
 Line 13 col 14 ObjectLiteralExpression "{ }" = {}
+Line 16 col 8 IdentifierName "x" = string
 Line 19 col 17 IdentifierName "C1" = C1
+Line 21 col 4 IdentifierName "y1" = C1
 Line 21 col 8 IdentifierName "C1" = C1
 Line 21 col 13 ObjectCreationExpression "new C2()" = C2
 Line 21 col 17 IdentifierName "C2" = new() => C2
+Line 22 col 4 IdentifierName "y2" = C1
 Line 22 col 8 IdentifierName "C1" = C1
 Line 22 col 13 CastExpression "<C1> new C2()" = C1
 Line 22 col 14 IdentifierName "C1" = C1
 Line 22 col 18 ObjectCreationExpression "new C2()" = C2
 Line 22 col 22 IdentifierName "C2" = new() => C2
+Line 23 col 4 IdentifierName "y3" = C1
 Line 23 col 8 IdentifierName "C1" = C1
 Line 23 col 13 CastExpression "<C1> {}" = C1
 Line 23 col 14 IdentifierName "C1" = C1

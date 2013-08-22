@@ -1,6 +1,8 @@
 === tests/cases/compiler/internalAliasFunctionInsideTopLevelModuleWithoutExport.ts ===
 Line 1 col 24 IdentifierName "x" = any
 Line 2 col 15 IdentifierName "x" = number
+Line 7 col 11 IdentifierName "bVal" = number
 Line 7 col 18 InvocationExpression "b(10)" = number
 Line 7 col 18 IdentifierName "b" = (x: number) => number
+Line 8 col 11 IdentifierName "bVal2" = (x: number) => number
 Line 8 col 19 IdentifierName "b" = (x: number) => number

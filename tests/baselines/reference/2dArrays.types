@@ -1,5 +1,8 @@
 === tests/cases/compiler/2dArrays.ts ===
+Line 4 col 0 IdentifierName "isSunk" = boolean
+Line 8 col 0 IdentifierName "ships" = Ship[]
 Line 8 col 11 IdentifierName "Ship" = Ship
+Line 9 col 0 IdentifierName "cells" = Cell[]
 Line 9 col 11 IdentifierName "Cell" = Cell
 Line 12 col 15 InvocationExpression "this.ships.every(function (val) { return val.isSunk; })" = boolean
 Line 12 col 15 MemberAccessExpression "this.ships.every" = (callbackfn: (value: Ship, index: number, array: Ship[]) => boolean, thisArg?: any) => boolean

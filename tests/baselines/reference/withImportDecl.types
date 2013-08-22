@@ -1,11 +1,23 @@
 === tests/cases/compiler/withImportDecl.ts ===
+Line 0 col 4 IdentifierName "simpleVar" = any
+Line 2 col 4 IdentifierName "anotherVar" = any
+Line 3 col 4 IdentifierName "varWithSimpleType" = number
+Line 4 col 4 IdentifierName "varWithArrayType" = number[]
+Line 6 col 4 IdentifierName "varWithInitialValue" = number
+Line 8 col 4 IdentifierName "withComplicatedValue" = { x: number; y: number; desc: string; }
 Line 8 col 27 ObjectLiteralExpression "{ x: 30, y: 70, desc: "position" }" = { x: number; y: number; desc: string; }
+Line 10 col 12 IdentifierName "declaredVar" = any
+Line 11 col 12 IdentifierName "declareVar2" = any
+Line 13 col 12 IdentifierName "declaredVar" = any
+Line 14 col 12 IdentifierName "deckareVarWithType" = number
+Line 16 col 4 IdentifierName "arrayVar" = string[]
 Line 16 col 25 ArrayLiteralExpression "['a', 'b']" = string[]
 Line 20 col 11 ObjectLiteralExpression "{
         x: "Hello",
         y: "word",
         n: 2
     }" = { x: string; y: string; n: number; }
+Line 41 col 4 IdentifierName "b" = "m1".A
 Line 41 col 8 ObjectCreationExpression "new m3.A()" = "m1".A
 Line 41 col 12 MemberAccessExpression "m3.A" = new() => "m1".A
 Line 41 col 12 IdentifierName "m3" = m3

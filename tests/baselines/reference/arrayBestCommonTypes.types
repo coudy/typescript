@@ -123,6 +123,7 @@ Line 27 col 32 ElementAccessExpression "[[3,4],[null]][0]" = number[]
 Line 27 col 32 ArrayLiteralExpression "[[3,4],[null]]" = number[][]
 Line 27 col 33 ArrayLiteralExpression "[3,4]" = number[]
 Line 27 col 39 ArrayLiteralExpression "[null]" = null[]
+Line 30 col 12 IdentifierName "t1" = { x: number; y: base; }[]
 Line 30 col 18 IdentifierName "x" = number
 Line 30 col 29 IdentifierName "y" = base
 Line 30 col 32 IdentifierName "base" = base
@@ -133,6 +134,7 @@ Line 30 col 61 IdentifierName "derived" = new() => derived
 Line 30 col 74 ObjectLiteralExpression "{ x: 5, y: new base() }" = { x: number; y: base; }
 Line 30 col 85 ObjectCreationExpression "new base()" = base
 Line 30 col 89 IdentifierName "base" = new() => base
+Line 31 col 12 IdentifierName "t2" = { x: boolean; y: base; }[]
 Line 31 col 18 IdentifierName "x" = boolean
 Line 31 col 30 IdentifierName "y" = base
 Line 31 col 33 IdentifierName "base" = base
@@ -143,6 +145,7 @@ Line 31 col 65 IdentifierName "derived" = new() => derived
 Line 31 col 78 ObjectLiteralExpression "{ x: false, y: new base() }" = { x: boolean; y: base; }
 Line 31 col 93 ObjectCreationExpression "new base()" = base
 Line 31 col 97 IdentifierName "base" = new() => base
+Line 32 col 12 IdentifierName "t3" = { x: string; y: base; }[]
 Line 32 col 18 IdentifierName "x" = string
 Line 32 col 29 IdentifierName "y" = base
 Line 32 col 32 IdentifierName "base" = base
@@ -154,38 +157,49 @@ Line 32 col 69 IdentifierName "base" = new() => base
 Line 32 col 79 ObjectLiteralExpression "{ x: '', y: new derived() }" = { x: string; y: derived; }
 Line 32 col 91 ObjectCreationExpression "new derived()" = derived
 Line 32 col 95 IdentifierName "derived" = new() => derived
+Line 34 col 12 IdentifierName "anyObj" = any
+Line 36 col 12 IdentifierName "a1" = { x: any; y: string; }[]
 Line 36 col 17 ArrayLiteralExpression "[ {x: 0, y: 'a'}, {x: 'a', y: 'a'}, {x: anyObj, y: 'a'} ]" = { x: any; y: string; }[]
 Line 36 col 19 ObjectLiteralExpression "{x: 0, y: 'a'}" = { x: number; y: string; }
 Line 36 col 35 ObjectLiteralExpression "{x: 'a', y: 'a'}" = { x: string; y: string; }
 Line 36 col 53 ObjectLiteralExpression "{x: anyObj, y: 'a'}" = { x: any; y: string; }
 Line 36 col 57 IdentifierName "anyObj" = any
+Line 37 col 12 IdentifierName "a2" = { x: any; y: string; }[]
 Line 37 col 17 ArrayLiteralExpression "[ {x: anyObj, y: 'a'}, {x: 0, y: 'a'}, {x: 'a', y: 'a'} ]" = { x: any; y: string; }[]
 Line 37 col 19 ObjectLiteralExpression "{x: anyObj, y: 'a'}" = { x: any; y: string; }
 Line 37 col 23 IdentifierName "anyObj" = any
 Line 37 col 40 ObjectLiteralExpression "{x: 0, y: 'a'}" = { x: number; y: string; }
 Line 37 col 56 ObjectLiteralExpression "{x: 'a', y: 'a'}" = { x: string; y: string; }
+Line 38 col 12 IdentifierName "a3" = { x: any; y: string; }[]
 Line 38 col 17 ArrayLiteralExpression "[ {x: 0, y: 'a'}, {x: anyObj, y: 'a'}, {x: 'a', y: 'a'} ]" = { x: any; y: string; }[]
 Line 38 col 19 ObjectLiteralExpression "{x: 0, y: 'a'}" = { x: number; y: string; }
 Line 38 col 35 ObjectLiteralExpression "{x: anyObj, y: 'a'}" = { x: any; y: string; }
 Line 38 col 39 IdentifierName "anyObj" = any
 Line 38 col 56 ObjectLiteralExpression "{x: 'a', y: 'a'}" = { x: string; y: string; }
+Line 40 col 12 IdentifierName "ifaceObj" = iface
 Line 40 col 22 IdentifierName "iface" = iface
+Line 41 col 12 IdentifierName "baseObj" = base
 Line 41 col 22 ObjectCreationExpression "new base()" = base
 Line 41 col 26 IdentifierName "base" = new() => base
+Line 42 col 12 IdentifierName "base2Obj" = base2
 Line 42 col 23 ObjectCreationExpression "new base2()" = base2
 Line 42 col 27 IdentifierName "base2" = new() => base2
+Line 44 col 12 IdentifierName "b1" = iface[]
 Line 44 col 17 ArrayLiteralExpression "[ baseObj, base2Obj, ifaceObj ]" = iface[]
 Line 44 col 19 IdentifierName "baseObj" = base
 Line 44 col 28 IdentifierName "base2Obj" = base2
 Line 44 col 38 IdentifierName "ifaceObj" = iface
+Line 45 col 12 IdentifierName "b2" = iface[]
 Line 45 col 17 ArrayLiteralExpression "[ base2Obj, baseObj, ifaceObj ]" = iface[]
 Line 45 col 19 IdentifierName "base2Obj" = base2
 Line 45 col 29 IdentifierName "baseObj" = base
 Line 45 col 38 IdentifierName "ifaceObj" = iface
+Line 46 col 12 IdentifierName "b3" = base2[]
 Line 46 col 17 ArrayLiteralExpression "[ baseObj, ifaceObj, base2Obj ]" = base2[]
 Line 46 col 19 IdentifierName "baseObj" = base
 Line 46 col 28 IdentifierName "ifaceObj" = iface
 Line 46 col 38 IdentifierName "base2Obj" = base2
+Line 47 col 12 IdentifierName "b4" = base2[]
 Line 47 col 17 ArrayLiteralExpression "[ ifaceObj, baseObj, base2Obj ]" = base2[]
 Line 47 col 19 IdentifierName "ifaceObj" = iface
 Line 47 col 29 IdentifierName "baseObj" = base

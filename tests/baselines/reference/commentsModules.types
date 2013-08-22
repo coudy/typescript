@@ -1,5 +1,7 @@
 === tests/cases/compiler/commentsModules.ts ===
+Line 3 col 15 IdentifierName "b" = number
 Line 6 col 15 IdentifierName "b" = number
+Line 14 col 19 IdentifierName "i" = m1.m2.c
 Line 14 col 23 ObjectCreationExpression "new c()" = m1.m2.c
 Line 14 col 27 IdentifierName "c" = new() => m1.m2.c
 Line 18 col 15 InvocationExpression "foo()" = number
@@ -9,6 +11,7 @@ Line 37 col 0 InvocationExpression "m1.fooExport()" = number
 Line 37 col 0 MemberAccessExpression "m1.fooExport" = () => number
 Line 37 col 0 IdentifierName "m1" = { b: number; m2: { c: new() => m1.m2.c; i: m1.m2.c; }; fooExport(): number; foo2Export(a: string): void; foo3Export(): void; }
 Line 37 col 3 IdentifierName "fooExport" = () => number
+Line 38 col 4 IdentifierName "myvar" = m1.m2.c
 Line 38 col 12 ObjectCreationExpression "new m1.m2.c()" = m1.m2.c
 Line 38 col 16 MemberAccessExpression "m1.m2.c" = new() => m1.m2.c
 Line 38 col 16 MemberAccessExpression "m1.m2" = { c: new() => m1.m2.c; i: m1.m2.c; }

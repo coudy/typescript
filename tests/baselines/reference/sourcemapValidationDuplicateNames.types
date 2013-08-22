@@ -1,4 +1,6 @@
 === tests/cases/compiler/sourcemapValidationDuplicateNames.ts ===
+Line 1 col 8 IdentifierName "x" = number
+Line 6 col 8 IdentifierName "b" = m1.c
 Line 6 col 12 ObjectCreationExpression "new m1.c()" = m1.c
 Line 6 col 16 MemberAccessExpression "m1.c" = new() => m1.c
 Line 6 col 16 IdentifierName "m1" = { c: new() => m1.c; }

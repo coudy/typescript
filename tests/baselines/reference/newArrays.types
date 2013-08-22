@@ -1,5 +1,8 @@
 === tests/cases/compiler/newArrays.ts ===
+Line 3 col 9 IdentifierName "fa" = M.Foo[]
 Line 3 col 13 IdentifierName "Foo" = M.Foo
+Line 4 col 9 IdentifierName "x" = number
+Line 5 col 9 IdentifierName "y" = number
 Line 8 col 0 AssignmentExpression "this.fa = new Array<Foo>(this.x * this.y)" = M.Foo[]
 Line 8 col 0 MemberAccessExpression "this.fa" = M.Foo[]
 Line 8 col 0 ThisKeyword "this" = M.Gar

@@ -1,10 +1,18 @@
 === tests/cases/compiler/duplicateVariablesByScope.ts ===
+Line 3 col 13 IdentifierName "j" = number
 Line 3 col 20 LessThanExpression "j < 10" = boolean
 Line 3 col 20 IdentifierName "j" = number
 Line 3 col 28 PostIncrementExpression "j++" = number
 Line 3 col 28 IdentifierName "j" = number
+Line 6 col 13 IdentifierName "j" = number
 Line 6 col 20 LessThanExpression "j < 10" = boolean
 Line 6 col 20 IdentifierName "j" = number
 Line 6 col 28 PostIncrementExpression "j++" = number
 Line 6 col 28 IdentifierName "j" = number
+Line 11 col 8 IdentifierName "x" = number
+Line 12 col 8 IdentifierName "x" = number
+Line 14 col 12 IdentifierName "result" = number
+Line 17 col 12 IdentifierName "result" = number
+Line 24 col 16 IdentifierName "x" = number
 Line 26 col 15 IdentifierName "e" = any
+Line 27 col 16 IdentifierName "x" = number

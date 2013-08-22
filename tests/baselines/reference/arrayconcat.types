@@ -7,6 +7,7 @@ Line 5 col 0 IdentifierName "set" = (s: string) => void
 Line 5 col 11 IdentifierName "s" = any
 Line 6 col 0 IdentifierName "type" = string
 Line 7 col 0 IdentifierName "experimental" = boolean
+Line 11 col 8 IdentifierName "options" = IOptions[]
 Line 11 col 17 IdentifierName "IOptions" = IOptions
 Line 14 col 0 AssignmentExpression "this.options = this.options.sort(function(a, b) {
             var aName = a.name.toLowerCase();
@@ -54,12 +55,14 @@ Line 14 col 35 FunctionExpression "function(a, b) {
         }" = (a: IOptions, b: IOptions) => number
 Line 14 col 44 IdentifierName "a" = any
 Line 14 col 47 IdentifierName "b" = any
+Line 15 col 16 IdentifierName "aName" = string
 Line 15 col 24 InvocationExpression "a.name.toLowerCase()" = string
 Line 15 col 24 MemberAccessExpression "a.name.toLowerCase" = () => string
 Line 15 col 24 MemberAccessExpression "a.name" = string
 Line 15 col 24 IdentifierName "a" = IOptions
 Line 15 col 26 IdentifierName "name" = string
 Line 15 col 31 IdentifierName "toLowerCase" = () => string
+Line 16 col 16 IdentifierName "bName" = string
 Line 16 col 24 InvocationExpression "b.name.toLowerCase()" = string
 Line 16 col 24 MemberAccessExpression "b.name.toLowerCase" = () => string
 Line 16 col 24 MemberAccessExpression "b.name" = string

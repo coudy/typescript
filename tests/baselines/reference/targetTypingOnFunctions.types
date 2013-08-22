@@ -1,4 +1,5 @@
 === tests/cases/compiler/targetTypingOnFunctions.ts ===
+Line 0 col 4 IdentifierName "fu" = (s: string) => string
 Line 0 col 9 IdentifierName "s" = any
 Line 0 col 32 FunctionExpression "function (s) { return s.toLowerCase() }" = (s: string) => string
 Line 0 col 42 IdentifierName "s" = any
@@ -6,6 +7,7 @@ Line 0 col 54 InvocationExpression "s.toLowerCase()" = string
 Line 0 col 54 MemberAccessExpression "s.toLowerCase" = () => string
 Line 0 col 54 IdentifierName "s" = string
 Line 0 col 56 IdentifierName "toLowerCase" = () => string
+Line 2 col 4 IdentifierName "zu" = (s: string) => string
 Line 2 col 9 AssignmentExpression "fu = function (s) { return s.toLowerCase() }" = (s: string) => string
 Line 2 col 9 IdentifierName "fu" = (s: string) => string
 Line 2 col 14 FunctionExpression "function (s) { return s.toLowerCase() }" = (s: string) => string

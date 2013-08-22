@@ -1,4 +1,6 @@
 === tests/cases/compiler/targetTypeObjectLiteralToAny.ts ===
+Line 1 col 5 IdentifierName "TypeScriptKeywords" = string[]
+Line 2 col 5 IdentifierName "result" = any
 Line 3 col 0 InvocationExpression "TypeScriptKeywords.forEach(function(keyword) {						
 		result.push({text:keyword, type:"keyword"}); // this should not cause a crash - push should be typed to any
 	})" = void

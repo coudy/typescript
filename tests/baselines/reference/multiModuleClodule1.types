@@ -1,5 +1,8 @@
 === tests/cases/compiler/multiModuleClodule1.ts ===
 Line 1 col 16 IdentifierName "x" = any
+Line 8 col 15 IdentifierName "x" = number
+Line 9 col 8 IdentifierName "y" = number
+Line 16 col 4 IdentifierName "c" = C
 Line 16 col 8 ObjectCreationExpression "new C(C.x)" = C
 Line 16 col 12 IdentifierName "C" = { boo(): void; x: number; foo(): void; new(x: number): C; }
 Line 16 col 14 MemberAccessExpression "C.x" = number

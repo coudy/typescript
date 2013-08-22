@@ -1,9 +1,12 @@
 === tests/cases/compiler/enumOperations.ts ===
 Line 0 col 12 IdentifierName "None" = Enum
+Line 1 col 4 IdentifierName "enumType" = Enum
 Line 1 col 14 IdentifierName "Enum" = Enum
 Line 1 col 21 MemberAccessExpression "Enum.None" = Enum
 Line 1 col 21 IdentifierName "Enum" = { None: Enum; [x: number]: string; }
 Line 1 col 26 IdentifierName "None" = Enum
+Line 2 col 4 IdentifierName "numberType" = number
+Line 3 col 4 IdentifierName "anyType" = any
 Line 4 col 0 BitwiseExclusiveOrExpression "enumType ^ numberType" = number
 Line 4 col 0 IdentifierName "enumType" = Enum
 Line 5 col 11 IdentifierName "numberType" = number

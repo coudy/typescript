@@ -1,5 +1,6 @@
 === tests/cases/compiler/genericClassesInModule.ts ===
 Line 3 col 19 IdentifierName "T" = any
+Line 8 col 4 IdentifierName "a" = Foo.B<Foo.A>
 Line 8 col 8 ObjectCreationExpression "new Foo.B<Foo.A>()" = Foo.B<Foo.A>
 Line 8 col 12 MemberAccessExpression "Foo.B" = new<T>() => Foo.B<T>
 Line 8 col 12 IdentifierName "Foo" = { B: new<T>() => Foo.B<T>; A: new() => Foo.A; }

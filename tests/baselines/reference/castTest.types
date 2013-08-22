@@ -1,15 +1,25 @@
 === tests/cases/compiler/castTest.ts ===
+Line 1 col 4 IdentifierName "x" = any
+Line 2 col 4 IdentifierName "z" = number
 Line 2 col 8 CastExpression "<number> x" = number
 Line 2 col 17 IdentifierName "x" = any
+Line 3 col 4 IdentifierName "y" = any
 Line 3 col 8 AddExpression "x + z" = any
 Line 3 col 8 IdentifierName "x" = any
 Line 3 col 12 IdentifierName "z" = number
+Line 5 col 4 IdentifierName "a" = any
 Line 5 col 8 CastExpression "<any>0" = any
+Line 6 col 4 IdentifierName "b" = boolean
 Line 6 col 8 CastExpression "<boolean>true" = boolean
+Line 7 col 4 IdentifierName "s" = string
 Line 7 col 8 CastExpression "<string>""" = string
+Line 9 col 4 IdentifierName "ar" = any[]
 Line 9 col 9 CastExpression "<any[]>null" = any[]
+Line 11 col 4 IdentifierName "f" = (res: number) => void
 Line 11 col 8 CastExpression "<(res : number) => void>null" = (res: number) => void
 Line 11 col 10 IdentifierName "res" = any
+Line 15 col 0 IdentifierName "x" = number
+Line 16 col 0 IdentifierName "y" = number
 Line 17 col 8 IdentifierName "dx" = any
 Line 17 col 20 IdentifierName "dy" = any
 Line 17 col 33 IdentifierName "Point" = Point
@@ -18,6 +28,7 @@ Line 18 col 12 IdentifierName "Point" = Point
 Line 18 col 20 IdentifierName "Point" = Point
 Line 19 col 16 IdentifierName "x" = any
 Line 19 col 27 IdentifierName "y" = any
+Line 22 col 4 IdentifierName "p_cast" = Point
 Line 22 col 13 CastExpression "<Point> ({
     x: 0,
     y: 0,

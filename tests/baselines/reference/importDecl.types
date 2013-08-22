@@ -1,76 +1,100 @@
 === tests/cases/compiler/importDecl.ts ===
+Line 3 col 8 IdentifierName "x" = "m4".d
 Line 3 col 11 IdentifierName "d" = "m4".d
 Line 4 col 27 IdentifierName "d" = "m4".d
+Line 8 col 11 IdentifierName "x4" = "m4".d
 Line 8 col 16 MemberAccessExpression "m4.x" = "m4".d
 Line 8 col 16 IdentifierName "m4" = m4
 Line 8 col 19 IdentifierName "x" = "m4".d
+Line 9 col 11 IdentifierName "d4" = new() => "m4".d
 Line 9 col 16 MemberAccessExpression "m4.d" = new() => "m4".d
 Line 9 col 16 IdentifierName "m4" = m4
 Line 9 col 19 IdentifierName "d" = new() => "m4".d
+Line 10 col 11 IdentifierName "f4" = "m4".d
 Line 10 col 16 InvocationExpression "m4.foo()" = "m4".d
 Line 10 col 16 MemberAccessExpression "m4.foo" = () => "m4".d
 Line 10 col 16 IdentifierName "m4" = m4
 Line 10 col 19 IdentifierName "foo" = () => "m4".d
+Line 13 col 15 IdentifierName "x2" = "m4".d
 Line 13 col 20 MemberAccessExpression "m4.x" = "m4".d
 Line 13 col 20 IdentifierName "m4" = m4
 Line 13 col 23 IdentifierName "x" = "m4".d
+Line 14 col 15 IdentifierName "d2" = new() => "m4".d
 Line 14 col 20 MemberAccessExpression "m4.d" = new() => "m4".d
 Line 14 col 20 IdentifierName "m4" = m4
 Line 14 col 23 IdentifierName "d" = new() => "m4".d
+Line 15 col 15 IdentifierName "f2" = "m4".d
 Line 15 col 20 InvocationExpression "m4.foo()" = "m4".d
 Line 15 col 20 MemberAccessExpression "m4.foo" = () => "m4".d
 Line 15 col 20 IdentifierName "m4" = m4
 Line 15 col 23 IdentifierName "foo" = () => "m4".d
+Line 17 col 8 IdentifierName "x3" = "m4".d
 Line 17 col 13 MemberAccessExpression "m4.x" = "m4".d
 Line 17 col 13 IdentifierName "m4" = m4
 Line 17 col 16 IdentifierName "x" = "m4".d
+Line 18 col 8 IdentifierName "d3" = new() => "m4".d
 Line 18 col 13 MemberAccessExpression "m4.d" = new() => "m4".d
 Line 18 col 13 IdentifierName "m4" = m4
 Line 18 col 16 IdentifierName "d" = new() => "m4".d
+Line 19 col 8 IdentifierName "f3" = "m4".d
 Line 19 col 13 InvocationExpression "m4.foo()" = "m4".d
 Line 19 col 13 MemberAccessExpression "m4.foo" = () => "m4".d
 Line 19 col 13 IdentifierName "m4" = m4
 Line 19 col 16 IdentifierName "foo" = () => "m4".d
+Line 26 col 8 IdentifierName "x" = "glo_m4".d
 Line 26 col 11 IdentifierName "d" = "glo_m4".d
 Line 27 col 27 IdentifierName "d" = "glo_m4".d
+Line 30 col 11 IdentifierName "useGlo_m4_x4" = "glo_m4".d
 Line 30 col 26 MemberAccessExpression "glo_m4.x" = "glo_m4".d
 Line 30 col 26 IdentifierName "glo_m4" = glo_m4
 Line 30 col 33 IdentifierName "x" = "glo_m4".d
+Line 31 col 11 IdentifierName "useGlo_m4_d4" = new() => "glo_m4".d
 Line 31 col 26 MemberAccessExpression "glo_m4.d" = new() => "glo_m4".d
 Line 31 col 26 IdentifierName "glo_m4" = glo_m4
 Line 31 col 33 IdentifierName "d" = new() => "glo_m4".d
+Line 32 col 11 IdentifierName "useGlo_m4_f4" = "glo_m4".d
 Line 32 col 26 InvocationExpression "glo_m4.foo()" = "glo_m4".d
 Line 32 col 26 MemberAccessExpression "glo_m4.foo" = () => "glo_m4".d
 Line 32 col 26 IdentifierName "glo_m4" = glo_m4
 Line 32 col 33 IdentifierName "foo" = () => "glo_m4".d
+Line 38 col 8 IdentifierName "x" = "fncOnly_m4".d
 Line 38 col 11 IdentifierName "d" = "fncOnly_m4".d
 Line 39 col 27 IdentifierName "d" = "fncOnly_m4".d
+Line 42 col 11 IdentifierName "useFncOnly_m4_f4" = "fncOnly_m4".d
 Line 42 col 30 InvocationExpression "fncOnly_m4.foo()" = "fncOnly_m4".d
 Line 42 col 30 MemberAccessExpression "fncOnly_m4.foo" = () => "fncOnly_m4".d
 Line 42 col 30 IdentifierName "fncOnly_m4" = fncOnly_m4
 Line 42 col 41 IdentifierName "foo" = () => "fncOnly_m4".d
+Line 47 col 15 IdentifierName "x" = "private_m4".d
 Line 47 col 18 IdentifierName "d" = "private_m4".d
 Line 48 col 27 IdentifierName "d" = "private_m4".d
+Line 54 col 8 IdentifierName "x3" = "private_m4".d
 Line 54 col 13 MemberAccessExpression "private_m4.x" = "private_m4".d
 Line 54 col 13 IdentifierName "private_m4" = private_m4
 Line 54 col 24 IdentifierName "x" = "private_m4".d
+Line 55 col 8 IdentifierName "d3" = new() => "private_m4".d
 Line 55 col 13 MemberAccessExpression "private_m4.d" = new() => "private_m4".d
 Line 55 col 13 IdentifierName "private_m4" = private_m4
 Line 55 col 24 IdentifierName "d" = new() => "private_m4".d
+Line 56 col 8 IdentifierName "f3" = "private_m4".d
 Line 56 col 13 InvocationExpression "private_m4.foo()" = "private_m4".d
 Line 56 col 13 MemberAccessExpression "private_m4.foo" = () => "private_m4".d
 Line 56 col 13 IdentifierName "private_m4" = private_m4
 Line 56 col 24 IdentifierName "foo" = () => "private_m4".d
+Line 65 col 11 IdentifierName "d" = "m4".d
 Line 65 col 15 InvocationExpression "m5.foo2()" = "m4".d
 Line 65 col 15 MemberAccessExpression "m5.foo2" = () => "m4".d
 Line 65 col 15 IdentifierName "m5" = m5
 Line 65 col 18 IdentifierName "foo2" = () => "m4".d
+Line 69 col 11 IdentifierName "useMultiImport_m4_x4" = "m4".d
 Line 69 col 34 MemberAccessExpression "multiImport_m4.x" = "m4".d
 Line 69 col 34 IdentifierName "multiImport_m4" = multiImport_m4
 Line 69 col 49 IdentifierName "x" = "m4".d
+Line 70 col 11 IdentifierName "useMultiImport_m4_d4" = new() => "m4".d
 Line 70 col 34 MemberAccessExpression "multiImport_m4.d" = new() => "m4".d
 Line 70 col 34 IdentifierName "multiImport_m4" = multiImport_m4
 Line 70 col 49 IdentifierName "d" = new() => "m4".d
+Line 71 col 11 IdentifierName "useMultiImport_m4_f4" = "m4".d
 Line 71 col 34 InvocationExpression "multiImport_m4.foo()" = "m4".d
 Line 71 col 34 MemberAccessExpression "multiImport_m4.foo" = () => "m4".d
 Line 71 col 34 IdentifierName "multiImport_m4" = multiImport_m4

@@ -1,5 +1,6 @@
 === tests/cases/compiler/specializationOfExportedClass.ts ===
 Line 2 col 15 IdentifierName "T" = any
+Line 6 col 4 IdentifierName "x" = M.C<string>
 Line 6 col 8 ObjectCreationExpression "new M.C<string>()" = M.C<string>
 Line 6 col 12 MemberAccessExpression "M.C" = new<T>() => M.C<T>
 Line 6 col 12 IdentifierName "M" = { C: new<T>() => M.C<T>; }

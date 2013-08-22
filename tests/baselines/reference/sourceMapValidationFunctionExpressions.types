@@ -1,4 +1,6 @@
 === tests/cases/compiler/sourceMapValidationFunctionExpressions.ts ===
+Line 0 col 4 IdentifierName "greetings" = number
+Line 1 col 4 IdentifierName "greet" = (greeting: string) => number
 Line 1 col 12 ParenthesizedArrowFunctionExpression "(greeting: string): number => {
     greetings++;
     return greetings;
@@ -9,6 +11,7 @@ Line 2 col 0 IdentifierName "greetings" = number
 Line 3 col 11 IdentifierName "greetings" = number
 Line 5 col 0 InvocationExpression "greet("Hello")" = number
 Line 5 col 0 IdentifierName "greet" = (greeting: string) => number
+Line 6 col 4 IdentifierName "incrGreetings" = () => number
 Line 6 col 20 ParenthesizedArrowFunctionExpression "() => greetings++" = () => number
 Line 6 col 26 PostIncrementExpression "greetings++" = number
 Line 6 col 26 IdentifierName "greetings" = number

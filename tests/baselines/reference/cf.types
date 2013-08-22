@@ -1,4 +1,8 @@
 === tests/cases/compiler/cf.ts ===
+Line 1 col 8 IdentifierName "z" = any
+Line 2 col 8 IdentifierName "x" = number
+Line 3 col 8 IdentifierName "y" = number
+Line 5 col 17 IdentifierName "i" = number
 Line 5 col 21 LessThanExpression "i<19" = boolean
 Line 5 col 21 IdentifierName "i" = number
 Line 5 col 26 PostIncrementExpression "i++" = number
@@ -43,6 +47,7 @@ Line 42 col 0 AddAssignmentExpression "x+=3" = number
 Line 42 col 0 IdentifierName "x" = number
 Line 44 col 0 PostIncrementExpression "y++" = number
 Line 44 col 0 IdentifierName "y" = number
+Line 45 col 13 IdentifierName "k" = number
 Line 45 col 17 LessThanExpression "k<10" = boolean
 Line 45 col 17 IdentifierName "k" = number
 Line 45 col 22 PostIncrementExpression "k++" = number

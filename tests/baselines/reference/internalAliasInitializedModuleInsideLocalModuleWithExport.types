@@ -1,4 +1,5 @@
 === tests/cases/compiler/internalAliasInitializedModuleInsideLocalModuleWithExport.ts ===
+Line 9 col 15 IdentifierName "x" = a.b.c
 Line 9 col 24 ObjectCreationExpression "new b.c()" = a.b.c
 Line 9 col 28 MemberAccessExpression "b.c" = new() => a.b.c
 Line 9 col 28 IdentifierName "b" = { c: new() => a.b.c; }

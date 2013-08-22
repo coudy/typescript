@@ -1,10 +1,13 @@
 === tests/cases/compiler/genericMethodOverspecialization.ts ===
+Line 0 col 4 IdentifierName "names" = string[]
 Line 0 col 12 ArrayLiteralExpression "["list", "table1", "table2", "table3", "summary"]" = string[]
 Line 3 col 0 IdentifierName "clientWidth" = number
+Line 6 col 12 IdentifierName "document" = Document
 Line 6 col 22 IdentifierName "Document" = Document
 Line 8 col 0 IdentifierName "getElementById" = (elementId: string) => HTMLElement
 Line 8 col 19 IdentifierName "elementId" = any
 Line 8 col 39 IdentifierName "HTMLElement" = HTMLElement
+Line 11 col 4 IdentifierName "elements" = HTMLElement[]
 Line 11 col 15 InvocationExpression "names.map(function (name) {
     return document.getElementById(name);
 })" = HTMLElement[]
@@ -20,6 +23,7 @@ Line 12 col 11 MemberAccessExpression "document.getElementById" = (elementId: st
 Line 12 col 11 IdentifierName "document" = Document
 Line 12 col 20 IdentifierName "getElementById" = (elementId: string) => HTMLElement
 Line 12 col 35 IdentifierName "name" = any
+Line 16 col 4 IdentifierName "xxx" = HTMLElement[]
 Line 16 col 10 InvocationExpression "elements.filter(function (e) {
     return !e.isDisabled;
 })" = HTMLElement[]
@@ -34,6 +38,7 @@ Line 17 col 11 LogicalNotExpression "!e.isDisabled" = boolean
 Line 17 col 12 MemberAccessExpression "e.isDisabled" = any
 Line 17 col 12 IdentifierName "e" = any
 Line 17 col 14 IdentifierName "isDisabled" = any
+Line 20 col 4 IdentifierName "widths" = number[]
 Line 20 col 22 InvocationExpression "elements.map(function (e) { // should not error
     return e.clientWidth;
 })" = number[]

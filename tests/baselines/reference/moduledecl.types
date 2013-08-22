@@ -5,6 +5,10 @@ Line 13 col 16 IdentifierName "a" = a
 Line 21 col 16 IdentifierName "s" = any
 Line 22 col 16 IdentifierName "n" = any
 Line 23 col 16 IdentifierName "ns" = any
+Line 27 col 15 IdentifierName "a" = () => string
+Line 28 col 16 IdentifierName "b" = () => number
+Line 29 col 23 IdentifierName "s1" = any
+Line 30 col 22 IdentifierName "s2" = any
 Line 34 col 13 IdentifierName "Object" = Object
 Line 35 col 9 IdentifierName "n" = any
 Line 35 col 21 IdentifierName "c1" = m0.c1
@@ -14,6 +18,11 @@ Line 41 col 16 IdentifierName "c" = c
 Line 50 col 23 IdentifierName "s" = any
 Line 51 col 23 IdentifierName "n" = any
 Line 52 col 23 IdentifierName "ns" = any
+Line 56 col 15 IdentifierName "a" = () => string
+Line 57 col 16 IdentifierName "b" = () => number
+Line 58 col 23 IdentifierName "s1" = any
+Line 59 col 22 IdentifierName "s2" = any
+Line 65 col 15 IdentifierName "e" = { x: number; y: string; }
 Line 65 col 20 IdentifierName "x" = number
 Line 65 col 31 IdentifierName "y" = string
 Line 66 col 28 IdentifierName "n" = any
@@ -26,6 +35,16 @@ Line 72 col 21 IdentifierName "c1" = m1.c1
 Line 75 col 16 IdentifierName "a" = a
 Line 76 col 16 IdentifierName "b" = b
 Line 78 col 16 IdentifierName "c" = c
+Line 85 col 12 IdentifierName "a" = number
+Line 86 col 19 IdentifierName "b" = number
+Line 90 col 19 IdentifierName "c" = number
+Line 98 col 23 IdentifierName "c" = number
+Line 107 col 27 IdentifierName "c" = number
+Line 118 col 15 IdentifierName "b" = any
+Line 122 col 15 IdentifierName "c" = any
+Line 126 col 15 IdentifierName "b" = any
+Line 130 col 15 IdentifierName "c" = any
+Line 134 col 15 IdentifierName "b" = number
 Line 159 col 19 ObjectCreationExpression "new C2_private()" = exportTests.C2_private
 Line 159 col 23 IdentifierName "C2_private" = new() => exportTests.C2_private
 Line 161 col 30 IdentifierName "arg" = any
@@ -38,7 +57,9 @@ Line 169 col 28 IdentifierName "arg" = any
 Line 169 col 33 IdentifierName "C1_public" = exportTests.C1_public
 Line 172 col 19 ObjectCreationExpression "new C1_public()" = exportTests.C1_public
 Line 172 col 23 IdentifierName "C1_public" = new() => exportTests.C1_public
+Line 179 col 15 IdentifierName "myProp" = number
 Line 182 col 21 IdentifierName "C" = mAmbient.C
+Line 183 col 8 IdentifierName "aVar" = mAmbient.C
 Line 183 col 14 IdentifierName "C" = mAmbient.C
 Line 185 col 0 IdentifierName "x" = number
 Line 186 col 0 IdentifierName "y" = mAmbient.C
@@ -46,7 +67,9 @@ Line 186 col 11 IdentifierName "C" = mAmbient.C
 Line 189 col 0 IdentifierName "x" = mAmbient.e
 Line 190 col 0 IdentifierName "y" = mAmbient.e
 Line 191 col 0 IdentifierName "z" = mAmbient.e
+Line 196 col 19 IdentifierName "myProp" = number
 Line 199 col 24 IdentifierName "C" = mAmbient.m3.C
+Line 200 col 12 IdentifierName "aVar" = mAmbient.m3.C
 Line 200 col 18 IdentifierName "C" = mAmbient.m3.C
 Line 202 col 0 IdentifierName "x" = number
 Line 203 col 0 IdentifierName "y" = mAmbient.m3.C
@@ -58,27 +81,35 @@ Line 214 col 11 InvocationExpression "mAmbient.foo()" = mAmbient.C
 Line 214 col 11 MemberAccessExpression "mAmbient.foo" = () => mAmbient.C
 Line 214 col 11 IdentifierName "mAmbient" = { C: new() => mAmbient.C; foo(): mAmbient.C; aVar: mAmbient.C; e: { x: mAmbient.e; y: mAmbient.e; z: mAmbient.e; [x: number]: string; }; m3: { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }; }
 Line 214 col 20 IdentifierName "foo" = () => mAmbient.C
+Line 217 col 4 IdentifierName "cVar" = mAmbient.C
 Line 217 col 11 ObjectCreationExpression "new mAmbient.C()" = mAmbient.C
 Line 217 col 15 MemberAccessExpression "mAmbient.C" = new() => mAmbient.C
 Line 217 col 15 IdentifierName "mAmbient" = { C: new() => mAmbient.C; foo(): mAmbient.C; aVar: mAmbient.C; e: { x: mAmbient.e; y: mAmbient.e; z: mAmbient.e; [x: number]: string; }; m3: { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }; }
 Line 217 col 24 IdentifierName "C" = new() => mAmbient.C
+Line 218 col 4 IdentifierName "aVar" = mAmbient.C
 Line 218 col 11 MemberAccessExpression "mAmbient.aVar" = mAmbient.C
 Line 218 col 11 IdentifierName "mAmbient" = { C: new() => mAmbient.C; foo(): mAmbient.C; aVar: mAmbient.C; e: { x: mAmbient.e; y: mAmbient.e; z: mAmbient.e; [x: number]: string; }; m3: { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }; }
 Line 218 col 20 IdentifierName "aVar" = mAmbient.C
+Line 219 col 4 IdentifierName "bB" = mAmbient.B
+Line 220 col 4 IdentifierName "eVar" = mAmbient.e
 Line 223 col 11 InvocationExpression "mAmbient.m3.foo()" = mAmbient.m3.C
 Line 223 col 11 MemberAccessExpression "mAmbient.m3.foo" = () => mAmbient.m3.C
 Line 223 col 11 MemberAccessExpression "mAmbient.m3" = { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }
 Line 223 col 11 IdentifierName "mAmbient" = { C: new() => mAmbient.C; foo(): mAmbient.C; aVar: mAmbient.C; e: { x: mAmbient.e; y: mAmbient.e; z: mAmbient.e; [x: number]: string; }; m3: { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }; }
 Line 223 col 20 IdentifierName "m3" = { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }
 Line 223 col 23 IdentifierName "foo" = () => mAmbient.m3.C
+Line 226 col 4 IdentifierName "m3cVar" = mAmbient.m3.C
 Line 226 col 13 ObjectCreationExpression "new mAmbient.m3.C()" = mAmbient.m3.C
 Line 226 col 17 MemberAccessExpression "mAmbient.m3.C" = new() => mAmbient.m3.C
 Line 226 col 17 MemberAccessExpression "mAmbient.m3" = { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }
 Line 226 col 17 IdentifierName "mAmbient" = { C: new() => mAmbient.C; foo(): mAmbient.C; aVar: mAmbient.C; e: { x: mAmbient.e; y: mAmbient.e; z: mAmbient.e; [x: number]: string; }; m3: { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }; }
 Line 226 col 26 IdentifierName "m3" = { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }
 Line 226 col 29 IdentifierName "C" = new() => mAmbient.m3.C
+Line 227 col 4 IdentifierName "m3aVar" = mAmbient.m3.C
 Line 227 col 13 MemberAccessExpression "mAmbient.m3.aVar" = mAmbient.m3.C
 Line 227 col 13 MemberAccessExpression "mAmbient.m3" = { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }
 Line 227 col 13 IdentifierName "mAmbient" = { C: new() => mAmbient.C; foo(): mAmbient.C; aVar: mAmbient.C; e: { x: mAmbient.e; y: mAmbient.e; z: mAmbient.e; [x: number]: string; }; m3: { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }; }
 Line 227 col 22 IdentifierName "m3" = { C: new() => mAmbient.m3.C; foo(): mAmbient.m3.C; aVar: mAmbient.m3.C; e: { x: mAmbient.m3.e; y: mAmbient.m3.e; z: mAmbient.m3.e; [x: number]: string; }; }
 Line 227 col 25 IdentifierName "aVar" = mAmbient.m3.C
+Line 228 col 4 IdentifierName "m3bB" = mAmbient.m3.B
+Line 229 col 4 IdentifierName "m3eVar" = mAmbient.m3.e

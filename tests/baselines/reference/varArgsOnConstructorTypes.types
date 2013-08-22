@@ -1,6 +1,8 @@
 === tests/cases/compiler/varArgsOnConstructorTypes.ts ===
 Line 1 col 16 IdentifierName "ctor" = any
 Line 4 col 23 IdentifierName "A" = A
+Line 5 col 12 IdentifierName "p1" = number
+Line 6 col 12 IdentifierName "p2" = string
 Line 8 col 16 IdentifierName "element" = any
 Line 8 col 30 IdentifierName "url" = any
 Line 9 col 0 InvocationExpression "super(element)" = void
@@ -23,6 +25,7 @@ Line 17 col 0 IdentifierName "register" = { (inputClass: new(...params: any[]) =
 Line 17 col 13 IdentifierName "inputClass" = any
 Line 17 col 35 IdentifierName "params" = any
 Line 17 col 51 IdentifierName "A" = A
+Line 21 col 4 IdentifierName "reg" = I1
 Line 21 col 9 IdentifierName "I1" = I1
 Line 22 col 0 InvocationExpression "reg.register(B)" = any
 Line 22 col 0 MemberAccessExpression "reg.register" = { (inputClass: new(...params: any[]) => A): any; (inputClass: { new(...params: any[]): A; }[]): any; }

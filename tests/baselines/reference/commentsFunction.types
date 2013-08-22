@@ -4,21 +4,25 @@ Line 4 col 0 IdentifierName "foo" = () => void
 Line 6 col 56 IdentifierName "a" = any
 Line 7 col 0 IdentifierName "/** this is comment for b*/
     b" = any
+Line 9 col 8 IdentifierName "d" = string
 Line 9 col 12 IdentifierName "a" = string
 Line 11 col 0 InvocationExpression "fooWithParameters("a", 10)" = void
 Line 11 col 0 IdentifierName "fooWithParameters" = (a: string, b: number) => void
+Line 15 col 4 IdentifierName "fooFunc" = (b: string) => string
 Line 15 col 14 FunctionExpression "function FooFunctionValue(/** fooFunctionValue param */ b: string) {
     return b;
 }" = (b: string) => string
 Line 15 col 23 IdentifierName "FooFunctionValue" = (b: string) => string
 Line 15 col 70 IdentifierName "b" = any
 Line 16 col 11 IdentifierName "b" = string
+Line 20 col 4 IdentifierName "lambdaFoo" = (a: number, b: number) => number
 Line 20 col 45 ParenthesizedArrowFunctionExpression "(/**param a*/a: number, /**param b*/b: number) => a + b" = (a: number, b: number) => number
 Line 20 col 58 IdentifierName "a" = any
 Line 20 col 81 IdentifierName "b" = any
 Line 20 col 95 AddExpression "a + b" = number
 Line 20 col 95 IdentifierName "a" = number
 Line 20 col 99 IdentifierName "b" = number
+Line 21 col 4 IdentifierName "lambddaNoVarComment" = (a: number, b: number) => number
 Line 21 col 62 ParenthesizedArrowFunctionExpression "(/**param a*/a: number, /**param b*/b: number) => a * b" = (a: number, b: number) => number
 Line 21 col 75 IdentifierName "a" = any
 Line 21 col 98 IdentifierName "b" = any

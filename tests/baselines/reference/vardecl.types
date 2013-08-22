@@ -1,6 +1,18 @@
 === tests/cases/compiler/vardecl.ts ===
+Line 0 col 4 IdentifierName "simpleVar" = any
+Line 2 col 4 IdentifierName "anotherVar" = any
+Line 3 col 4 IdentifierName "varWithSimpleType" = number
+Line 4 col 4 IdentifierName "varWithArrayType" = number[]
+Line 6 col 4 IdentifierName "varWithInitialValue" = number
+Line 8 col 4 IdentifierName "withComplicatedValue" = { x: number; y: number; desc: string; }
 Line 8 col 27 ObjectLiteralExpression "{ x: 30, y: 70, desc: "position" }" = { x: number; y: number; desc: string; }
+Line 10 col 12 IdentifierName "declaredVar" = any
+Line 11 col 12 IdentifierName "declareVar2" = any
+Line 13 col 12 IdentifierName "declaredVar3" = any
+Line 14 col 12 IdentifierName "deckareVarWithType" = number
+Line 16 col 4 IdentifierName "arrayVar" = string[]
 Line 16 col 25 ArrayLiteralExpression "['a', 'b']" = string[]
+Line 18 col 4 IdentifierName "complicatedArrayVar" = { x: number; y: string; }[]
 Line 18 col 27 IdentifierName "x" = number
 Line 18 col 38 IdentifierName "y" = string
 Line 19 col 0 InvocationExpression "complicatedArrayVar.push({ x: 30, y : 'hello world' })" = number
@@ -8,15 +20,23 @@ Line 19 col 0 MemberAccessExpression "complicatedArrayVar.push" = (...items: { x
 Line 19 col 0 IdentifierName "complicatedArrayVar" = { x: number; y: string; }[]
 Line 19 col 20 IdentifierName "push" = (...items: { x: number; y: string; }[]) => number
 Line 19 col 25 ObjectLiteralExpression "{ x: 30, y : 'hello world' }" = { x: number; y: string; }
+Line 21 col 4 IdentifierName "n1" = { [s: string]: number; }
 Line 21 col 11 IdentifierName "s" = any
+Line 23 col 4 IdentifierName "c" = { new?(): any; }
 Line 24 col 0 IdentifierName "new" = () => any
+Line 27 col 4 IdentifierName "d" = { foo?(): { x: number; }; }
 Line 28 col 0 IdentifierName "foo" = () => { x: number; }
 Line 29 col 0 IdentifierName "x" = number
+Line 33 col 4 IdentifierName "d3" = { foo(): { x: number; y: number; }; }
 Line 34 col 0 IdentifierName "foo" = () => { x: number; y: number; }
 Line 35 col 0 IdentifierName "x" = number
 Line 36 col 0 IdentifierName "y" = number
+Line 40 col 4 IdentifierName "d2" = { foo(): { x: number; }; }
 Line 41 col 0 IdentifierName "foo" = () => { x: number; }
 Line 42 col 0 IdentifierName "x" = number
+Line 46 col 4 IdentifierName "n2" = () => void
+Line 49 col 4 IdentifierName "n4" = { (): void; }[]
+Line 53 col 4 IdentifierName "d4" = { foo(n: string, x: { x: number; y: number; }): { x: number; y: number; }; }
 Line 54 col 0 IdentifierName "foo" = (n: string, x: { x: number; y: number; }) => { x: number; y: number; }
 Line 54 col 8 IdentifierName "n" = any
 Line 54 col 19 IdentifierName "x" = any
@@ -24,18 +44,52 @@ Line 54 col 24 IdentifierName "x" = number
 Line 54 col 35 IdentifierName "y" = number
 Line 55 col 0 IdentifierName "x" = number
 Line 56 col 0 IdentifierName "y" = number
+Line 62 col 15 IdentifierName "a" = any
+Line 62 col 18 IdentifierName "b2" = number
+Line 62 col 35 IdentifierName "b" = any
+Line 63 col 8 IdentifierName "m1" = any
+Line 64 col 8 IdentifierName "a2" = any
+Line 64 col 12 IdentifierName "b22" = number
+Line 64 col 30 IdentifierName "b222" = any
+Line 65 col 8 IdentifierName "m3" = any
 Line 68 col 28 IdentifierName "b" = any
 Line 73 col 28 IdentifierName "b" = any
+Line 76 col 8 IdentifierName "m" = any
+Line 77 col 16 IdentifierName "d1" = any
+Line 77 col 20 IdentifierName "d2" = any
+Line 78 col 8 IdentifierName "b23" = any
+Line 79 col 16 IdentifierName "v1" = any
+Line 80 col 15 IdentifierName "mE" = any
+Line 81 col 23 IdentifierName "d1E" = any
+Line 81 col 28 IdentifierName "d2E" = any
+Line 82 col 15 IdentifierName "b2E" = any
+Line 83 col 23 IdentifierName "v1E" = any
+Line 86 col 4 IdentifierName "a22" = any
+Line 86 col 9 IdentifierName "b22" = number
+Line 86 col 19 IdentifierName "c22" = number
+Line 87 col 4 IdentifierName "nn" = any
+Line 89 col 12 IdentifierName "da1" = any
+Line 89 col 17 IdentifierName "da2" = any
+Line 90 col 4 IdentifierName "normalVar" = any
+Line 91 col 12 IdentifierName "dv1" = any
+Line 92 col 4 IdentifierName "xl" = any
+Line 93 col 4 IdentifierName "x" = any
+Line 94 col 4 IdentifierName "z" = any
 Line 96 col 13 IdentifierName "a2" = any
+Line 97 col 8 IdentifierName "a" = number
+Line 100 col 9 IdentifierName "i" = number
+Line 100 col 16 IdentifierName "j" = number
 Line 100 col 23 LessThanExpression "i < 10" = boolean
 Line 100 col 23 IdentifierName "i" = number
 Line 100 col 31 PostIncrementExpression "i++" = number
 Line 100 col 31 IdentifierName "i" = number
 Line 101 col 0 PostIncrementExpression "j++" = number
 Line 101 col 0 IdentifierName "j" = number
+Line 105 col 9 IdentifierName "k" = number
 Line 105 col 16 LessThanExpression "k < 30" = boolean
 Line 105 col 16 IdentifierName "k" = number
 Line 105 col 24 PostIncrementExpression "k++" = number
 Line 105 col 24 IdentifierName "k" = number
 Line 106 col 0 PostIncrementExpression "k++" = number
 Line 106 col 0 IdentifierName "k" = number
+Line 108 col 4 IdentifierName "b" = number

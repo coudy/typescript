@@ -1,5 +1,7 @@
 === tests/cases/compiler/exportedVariable1.ts ===
+Line 0 col 11 IdentifierName "foo" = { name: string; }
 Line 0 col 17 ObjectLiteralExpression "{name: "Bill"}" = { name: string; }
+Line 1 col 4 IdentifierName "upper" = string
 Line 1 col 12 InvocationExpression "foo.name.toUpperCase()" = string
 Line 1 col 12 MemberAccessExpression "foo.name.toUpperCase" = () => string
 Line 1 col 12 MemberAccessExpression "foo.name" = string

@@ -2,6 +2,7 @@
 Line 0 col 28 IdentifierName "expression" = any
 Line 0 col 45 IdentifierName "msec" = any
 Line 0 col 60 IdentifierName "language" = any
+Line 2 col 4 IdentifierName "messenger" = { message: string; start: () => void; }
 Line 2 col 16 ObjectLiteralExpression "{
     message: "Hello World",
     start: function() {
@@ -17,6 +18,7 @@ Line 4 col 11 FunctionExpression "function() {
             _self.message.toString(); 
         }, 3000); 
     }" = () => void
+Line 5 col 12 IdentifierName "_self" = any
 Line 5 col 20 ThisKeyword "this" = any
 Line 6 col 0 InvocationExpression "setTimeout(function() {
             _self.message.toString(); 

@@ -1,10 +1,12 @@
 === tests/cases/compiler/selfInLambdas.ts ===
 Line 1 col 0 IdentifierName "x" = number
 Line 2 col 0 IdentifierName "y" = number
+Line 5 col 12 IdentifierName "window" = Window
 Line 5 col 20 IdentifierName "Window" = Window
 Line 7 col 0 IdentifierName "onmousemove" = (ev: MouseEvent) => any
 Line 7 col 18 IdentifierName "ev" = any
 Line 7 col 22 IdentifierName "MouseEvent" = MouseEvent
+Line 10 col 4 IdentifierName "o" = { counter: number; start: () => void; }
 Line 10 col 8 ObjectLiteralExpression "{
 
     counter: 0,
@@ -46,10 +48,13 @@ Line 17 col 0 PostIncrementExpression "this.counter++" = number
 Line 17 col 0 MemberAccessExpression "this.counter" = any
 Line 17 col 0 ThisKeyword "this" = any
 Line 17 col 17 IdentifierName "counter" = any
+Line 18 col 16 IdentifierName "f" = () => any
 Line 18 col 20 ParenthesizedArrowFunctionExpression "() => this.counter" = () => any
 Line 18 col 26 MemberAccessExpression "this.counter" = any
 Line 18 col 26 ThisKeyword "this" = any
 Line 18 col 31 IdentifierName "counter" = any
+Line 29 col 9 IdentifierName "value" = string
+Line 32 col 6 IdentifierName "outer" = () => void
 Line 32 col 13 ParenthesizedArrowFunctionExpression "() => {
             var x = this.value;
             var inner = () => {
@@ -59,12 +64,15 @@ Line 32 col 13 ParenthesizedArrowFunctionExpression "() => {
 			inner();
 
 		}" = () => void
+Line 33 col 16 IdentifierName "x" = string
 Line 33 col 20 MemberAccessExpression "this.value" = string
 Line 33 col 20 ThisKeyword "this" = X
 Line 33 col 25 IdentifierName "value" = string
+Line 34 col 16 IdentifierName "inner" = () => void
 Line 34 col 24 ParenthesizedArrowFunctionExpression "() => {
                 var y = this.value;
 			}" = () => void
+Line 35 col 20 IdentifierName "y" = string
 Line 35 col 24 MemberAccessExpression "this.value" = string
 Line 35 col 24 ThisKeyword "this" = X
 Line 35 col 29 IdentifierName "value" = string

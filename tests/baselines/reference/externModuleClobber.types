@@ -1,4 +1,6 @@
 === tests/cases/compiler/externModuleClobber.ts ===
+Line 8 col 4 IdentifierName "x" = EM.Position
+Line 9 col 4 IdentifierName "ec" = EM.EC
 Line 9 col 15 ObjectCreationExpression "new EM.EC()" = EM.EC
 Line 9 col 19 MemberAccessExpression "EM.EC" = new() => EM.EC
 Line 9 col 19 IdentifierName "EM" = { Position: new() => EM.Position; EC: new() => EM.EC; }

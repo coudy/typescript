@@ -33,6 +33,7 @@ Line 8 col 31 IdentifierName "f" = any
 Line 8 col 35 IdentifierName "a" = any
 Line 8 col 38 IdentifierName "A" = A
 Line 8 col 41 IdentifierName "n" = any
+Line 9 col 13 IdentifierName "i" = number
 Line 9 col 20 LessThanExpression "i < list.length" = boolean
 Line 9 col 20 IdentifierName "i" = number
 Line 9 col 24 MemberAccessExpression "list.length" = number
@@ -53,6 +54,7 @@ Line 15 col 26 IdentifierName "A" = A
 Line 15 col 41 IdentifierName "ar" = any
 Line 15 col 45 IdentifierName "A" = A
 Line 15 col 51 IdentifierName "A" = A
+Line 16 col 8 IdentifierName "ret" = any[]
 Line 16 col 14 ArrayLiteralExpression "[]" = undefined[]
 Line 17 col 0 InvocationExpression "forEach(ar, (el) => {
         if (f(el)) {
@@ -112,6 +114,7 @@ Line 35 col 19 InvocationExpression "f(ay, by)" = C
 Line 35 col 19 IdentifierName "f" = (a: A, b: B) => C
 Line 35 col 21 IdentifierName "ay" = A
 Line 35 col 25 IdentifierName "by" = B
+Line 40 col 4 IdentifierName "cfilter" = (ax: (a: any) => boolean) => (bx: any[]) => any[]
 Line 40 col 14 InvocationExpression "curry1(filter)" = (ax: (a: any) => boolean) => (bx: any[]) => any[]
 Line 40 col 14 IdentifierName "curry1" = <A, B, C>(f: (a: A, b: B) => C) => (ax: A) => (bx: B) => C
 Line 40 col 21 IdentifierName "filter" = <A>(f: (a: A) => boolean, ar: A[]) => A[]
@@ -133,6 +136,7 @@ Line 52 col 32 IdentifierName "a" = any
 Line 52 col 35 IdentifierName "A" = A
 Line 52 col 52 IdentifierName "a" = any
 Line 52 col 55 IdentifierName "A" = A
+Line 53 col 8 IdentifierName "where" = (bx: any[]) => any[]
 Line 53 col 16 InvocationExpression "cfilter(pred)" = (bx: any[]) => any[]
 Line 53 col 16 IdentifierName "cfilter" = (ax: (a: any) => boolean) => (bx: any[]) => any[]
 Line 53 col 24 IdentifierName "pred" = (a: A) => boolean
