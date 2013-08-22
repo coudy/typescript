@@ -654,7 +654,7 @@ module TypeScript {
             }
 
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
-            var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, /*includePrivate*/ false);
+            var members: PullSymbol[] = contextualTypeSymbol.getAllMembers(declSearchKind, GetAllMembersVisiblity.externallyVisible);
 
             for (var i = 0; i < members.length; i++) {
                 members[i].setUnresolved();
@@ -692,7 +692,7 @@ module TypeScript {
             }
 
             // Figure out if privates are available under the current scope
-            var includePrivate = false;
+            var memberVisibilty = GetAllMembersVisiblity.externallyVisible;
             var containerSymbol = lhsType;
             if (containerSymbol.kind === PullElementKind.ConstructorType) {
                 containerSymbol = containerSymbol.getConstructSignatures()[0].returnType;
@@ -705,7 +705,7 @@ module TypeScript {
                     for (var i = 0, n = declarations.length; i < n; i++) {
                         var declaration = declarations[i];
                         if (declPath.indexOf(declaration) >= 0) {
-                            includePrivate = true;
+                            memberVisibilty = GetAllMembersVisiblity.internallyVisible;
                             break;
                         }
                     }
@@ -729,7 +729,7 @@ module TypeScript {
 
                 if (constraint) {
                     lhsType = constraint;
-                    members = lhsType.getAllMembers(declSearchKind, /*includePrivate*/ false);
+                    members = lhsType.getAllMembers(declSearchKind, GetAllMembersVisiblity.externallyVisible);
                 }
             }
             else {
@@ -763,7 +763,7 @@ module TypeScript {
                     }
                 }
 
-                members = lhsType.getAllMembers(declSearchKind, includePrivate);
+                members = lhsType.getAllMembers(declSearchKind, memberVisibilty);
 
                 if (lhsType.isContainer()) {
                     if (lhsType.isAlias()) {
@@ -775,7 +775,7 @@ module TypeScript {
                         if (!instanceType.isResolved) {
                             this.resolveDeclaredSymbol(instanceType, enclosingDecl, context);
                         }
-                        var instanceMembers = instanceType.getAllMembers(declSearchKind, includePrivate);
+                        var instanceMembers = instanceType.getAllMembers(declSearchKind, memberVisibilty);
                         members = members.concat(instanceMembers);
 
                         if (instanceType.isConstructor()) {
@@ -786,7 +786,7 @@ module TypeScript {
 
                     var exportedContainer = (<PullContainerSymbol>lhsType).getExportAssignedContainerSymbol();
                     if (exportedContainer) {
-                        var exportedContainerMembers = exportedContainer.getAllMembers(declSearchKind, includePrivate);
+                        var exportedContainerMembers = exportedContainer.getAllMembers(declSearchKind, memberVisibilty);
                         members = members.concat(exportedContainerMembers);
                     }
                 }
@@ -801,7 +801,7 @@ module TypeScript {
                         if (!containerType.isResolved) {
                             this.resolveDeclaredSymbol(containerType, enclosingDecl, context);
                         }
-                        var containerMembers = containerType.getAllMembers(declSearchKind, includePrivate);
+                        var containerMembers = containerType.getAllMembers(declSearchKind, memberVisibilty);
                         members = members.concat(containerMembers);
                     }
                 }
@@ -809,7 +809,7 @@ module TypeScript {
 
             // could be a function symbol
             if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) { 
-                members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, /*includePrivate*/ false));
+                members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, GetAllMembersVisiblity.externallyVisible));
             }
 
             return members;
@@ -2951,7 +2951,7 @@ module TypeScript {
                         }
 
                         // Check that property names comply with indexer constraints (both string and numeric)
-                        var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, /*includePrivate*/ true);
+                        var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
                         for (var i = 0; i < allMembers.length; i++) {
                             var name = allMembers[i].name;
                             if (name) {
@@ -7903,7 +7903,7 @@ module TypeScript {
 
         private sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
             comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
-            var targetProps = target.getAllMembers(PullElementKind.SomeValue, true);
+             var targetProps = target.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
             for (var itargetProp = 0; itargetProp < targetProps.length; itargetProp++) {
 
@@ -10367,7 +10367,7 @@ module TypeScript {
 
         private checkPropertyTypeIdentityBetweenBases(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext): void {
             // Check that all the extended base types have compatible members (members of the same name must have identical types)
-            var allMembers = typeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, false);
+            var allMembers = typeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.externallyVisible);
             var membersBag = new BlockIntrinsics();
             for (var i = 0; i < allMembers.length; i++) {
                 var member = allMembers[i];

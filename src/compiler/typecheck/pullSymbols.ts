@@ -8,7 +8,7 @@ module TypeScript {
     export var globalTyvarID = 0;
     export var sentinelEmptyArray: any[] = [];
 
-    export class PullSymbol {
+     export class PullSymbol {
 
         // private state
         public pullSymbolID = pullSymbolID++;
@@ -1804,7 +1804,7 @@ module TypeScript {
             return memberSymbol;
         }
 
-        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
+        public getAllMembers(searchDeclKind: PullElementKind, memberVisiblity: GetAllMembersVisiblity): PullSymbol[] {
 
             var allMembers: PullSymbol[] = [];
 
@@ -1818,7 +1818,7 @@ module TypeScript {
 
                 for (var i = 0, n = this._members.length; i < n; i++) {
                     var member = this._members[i];
-                    if ((member.kind & searchDeclKind) && (includePrivate || !member.hasFlag(PullElementFlags.Private))) {
+                    if ((member.kind & searchDeclKind) && (memberVisiblity !== GetAllMembersVisiblity.externallyVisible || !member.hasFlag(PullElementFlags.Private))) {
                         allMembers[allMembers.length] = member;
                     }
                 }
@@ -1826,9 +1826,11 @@ module TypeScript {
 
             // Add parent members
             if (this._extendedTypes) {
+                // Do not look for the parent's private members unless we need to enumerate all members
+                var extenedMembersVisibility = memberVisiblity !== GetAllMembersVisiblity.all ? GetAllMembersVisiblity.externallyVisible : GetAllMembersVisiblity.all;
 
-                for (var i = 0 , n = this._extendedTypes.length; i < n; i++) {
-                    var extendedMembers = this._extendedTypes[i].getAllMembers(searchDeclKind, includePrivate);
+                for (var i = 0, n = this._extendedTypes.length; i < n; i++) {
+                    var extendedMembers = this._extendedTypes[i].getAllMembers(searchDeclKind, /*memberVisiblity*/ extenedMembersVisibility);
 
                     for (var j = 0 , m = extendedMembers.length; j < m; j++) {
                         var extendedMember = extendedMembers[j];
@@ -2346,9 +2348,9 @@ module TypeScript {
             return null;
         }
 
-        public getAllMembers(searchDeclKind: PullElementKind, includePrivate: boolean): PullSymbol[] {
+        public getAllMembers(searchDeclKind: PullElementKind, memberVisibility: GetAllMembersVisiblity): PullSymbol[] {
             if (this.assignedType) {
-                return this.assignedType.getAllMembers(searchDeclKind, includePrivate);
+                return this.assignedType.getAllMembers(searchDeclKind, memberVisibility);
             }
 
             return sentinelEmptyArray;
@@ -3437,5 +3439,17 @@ module TypeScript {
         }
 
         return substitution;
+    }
+
+    export enum GetAllMembersVisiblity {
+        // All properties of the type regardless of their accessibility level
+        all = 0,
+
+        // Only properties that are accessible on a class instance, i.e. public and private members of 
+        // the current class, and only public members of any bases it extends
+        internallyVisible = 1,
+
+        // Only public members of classes
+        externallyVisible = 2,
     }
 }
