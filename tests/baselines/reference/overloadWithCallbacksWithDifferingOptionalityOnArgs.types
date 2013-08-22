@@ -1,8 +1,11 @@
 === tests/cases/compiler/overloadWithCallbacksWithDifferingOptionalityOnArgs.ts ===
+Line 0 col 9 IdentifierName "x2" = { (callback: (x?: number) => number): any; (callback: (x: string) => number): any; }
 Line 0 col 12 IdentifierName "callback" = any
 Line 0 col 23 IdentifierName "x" = any
+Line 1 col 9 IdentifierName "x2" = { (callback: (x?: number) => number): any; (callback: (x: string) => number): any; }
 Line 1 col 12 IdentifierName "callback" = any
 Line 1 col 23 IdentifierName "x" = any
+Line 2 col 9 IdentifierName "x2" = { (callback: (x?: number) => number): any; (callback: (x: string) => number): any; }
 Line 2 col 12 IdentifierName "callback" = any
 Line 2 col 23 IdentifierName "x" = any
 Line 3 col 0 InvocationExpression "x2(() => 1)" = any

@@ -1,7 +1,15 @@
 === tests/cases/compiler/exportAssignClassAndModule.ts ===
+Line 1 col 10 IdentifierName "Foo" = "foo".Foo
 Line 2 col 0 IdentifierName "x" = "foo".Foo.Bar
+Line 2 col 11 IdentifierName "Foo" = "foo".Foo
+Line 2 col 15 IdentifierName "Bar" = any
+Line 4 col 11 IdentifierName "Foo" = "foo".Foo
+Line 5 col 25 IdentifierName "Bar" = "foo".Foo.Bar
 Line 8 col 13 IdentifierName "Foo" = any
+Line 11 col 7 IdentifierName "Foo" = any
 Line 13 col 4 IdentifierName "z" = "foo".Foo.Bar
+Line 13 col 7 IdentifierName "Foo" = Foo
+Line 13 col 11 IdentifierName "Bar" = any
 Line 14 col 4 IdentifierName "zz" = "foo".Foo
 Line 14 col 8 IdentifierName "Foo" = Foo
 Line 15 col 0 MemberAccessExpression "zz.x" = "foo".Foo.Bar

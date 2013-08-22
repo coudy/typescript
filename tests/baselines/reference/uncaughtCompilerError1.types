@@ -3,6 +3,7 @@ Line 0 col 12 IdentifierName "index" = any
 Line 0 col 19 IdentifierName "lineTokens" = any
 Line 0 col 31 IdentifierName "token" = any
 Line 0 col 38 IdentifierName "tokens" = any
+Line 2 col 9 IdentifierName "f" = () => { appendText: string; advanceCount: number; }
 Line 3 col 8 LogicalAndExpression "lineTokens[index].trim() === '=' && index > 0 && token.type === '' && tokens[index - 1].type === 'attribute.name.html'" = boolean
 Line 3 col 8 LogicalAndExpression "lineTokens[index].trim() === '=' && index > 0 && token.type === ''" = boolean
 Line 3 col 8 LogicalAndExpression "lineTokens[index].trim() === '=' && index > 0" = boolean
@@ -34,6 +35,8 @@ Line 4 col 23 MemberAccessExpression "tokens.length" = any
 Line 4 col 23 IdentifierName "tokens" = any
 Line 4 col 30 IdentifierName "length" = any
 Line 5 col 19 ObjectLiteralExpression "{ appendText: '\"\"', advanceCount: 1 }" = { appendText: string; advanceCount: number; }
+Line 5 col 21 IdentifierName "appendText" = string
+Line 5 col 41 IdentifierName "advanceCount" = number
 Line 7 col 17 LogicalAndExpression "tokens[index + 1].type !== 'attribute.value.html' && tokens[index + 1].type !== ''" = boolean
 Line 7 col 17 NotEqualsExpression "tokens[index + 1].type !== 'attribute.value.html'" = boolean
 Line 7 col 17 MemberAccessExpression "tokens[index + 1].type" = any
@@ -50,3 +53,5 @@ Line 7 col 77 AddExpression "index + 1" = any
 Line 7 col 77 IdentifierName "index" = any
 Line 7 col 88 IdentifierName "type" = any
 Line 8 col 19 ObjectLiteralExpression "{ appendText: '\"\"', advanceCount: 1 }" = { appendText: string; advanceCount: number; }
+Line 8 col 21 IdentifierName "appendText" = string
+Line 8 col 41 IdentifierName "advanceCount" = number

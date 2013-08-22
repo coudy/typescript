@@ -1,8 +1,10 @@
 === tests/cases/compiler/selfInLambdas.ts ===
+Line 0 col 10 IdentifierName "MouseEvent" = MouseEvent
 Line 1 col 0 IdentifierName "x" = number
 Line 2 col 0 IdentifierName "y" = number
 Line 5 col 12 IdentifierName "window" = Window
 Line 5 col 20 IdentifierName "Window" = Window
+Line 6 col 10 IdentifierName "Window" = Window
 Line 7 col 0 IdentifierName "onmousemove" = (ev: MouseEvent) => any
 Line 7 col 18 IdentifierName "ev" = any
 Line 7 col 22 IdentifierName "MouseEvent" = MouseEvent
@@ -22,6 +24,8 @@ Line 10 col 8 ObjectLiteralExpression "{
     }
 
 }" = { counter: number; start: () => void; }
+Line 11 col 0 IdentifierName "counter" = number
+Line 13 col 0 IdentifierName "start" = () => void
 Line 14 col 11 FunctionExpression "function() {
 
         window.onmousemove = () => {
@@ -53,7 +57,9 @@ Line 18 col 20 ParenthesizedArrowFunctionExpression "() => this.counter" = () =>
 Line 18 col 26 MemberAccessExpression "this.counter" = any
 Line 18 col 26 ThisKeyword "this" = any
 Line 18 col 31 IdentifierName "counter" = any
+Line 28 col 6 IdentifierName "X" = X
 Line 29 col 9 IdentifierName "value" = string
+Line 31 col 8 IdentifierName "foo" = () => void
 Line 32 col 6 IdentifierName "outer" = () => void
 Line 32 col 13 ParenthesizedArrowFunctionExpression "() => {
             var x = this.value;

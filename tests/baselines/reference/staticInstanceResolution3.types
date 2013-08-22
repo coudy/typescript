@@ -1,6 +1,9 @@
 === tests/cases/compiler/staticInstanceResolution3.ts ===
+Line 1 col 17 IdentifierName "Promise" = "winjs".Promise
+Line 2 col 15 IdentifierName "timeout" = (delay: number) => "winjs".Promise
 Line 2 col 23 IdentifierName "delay" = any
 Line 2 col 39 IdentifierName "Promise" = "winjs".Promise
+Line 6 col 7 IdentifierName "WinJS" = any
 Line 7 col 0 InvocationExpression "WinJS.Promise.timeout(10)" = "winjs".Promise
 Line 7 col 0 MemberAccessExpression "WinJS.Promise.timeout" = (delay: number) => "winjs".Promise
 Line 7 col 0 MemberAccessExpression "WinJS.Promise" = { timeout(delay: number): "winjs".Promise; new(): "winjs".Promise; }

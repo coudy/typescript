@@ -1,8 +1,11 @@
 === tests/cases/compiler/commentsInterface.ts ===
+Line 1 col 10 IdentifierName "i1" = i1
 Line 3 col 4 IdentifierName "i1_i" = i1
 Line 3 col 10 IdentifierName "i1" = i1
+Line 4 col 10 IdentifierName "nc_i1" = nc_i1
 Line 6 col 4 IdentifierName "nc_i1_i" = nc_i1
 Line 6 col 13 IdentifierName "nc_i1" = nc_i1
+Line 8 col 10 IdentifierName "i2" = i2
 Line 9 col 0 IdentifierName "/** this is x*/
     x" = number
 Line 11 col 0 IdentifierName "/** this is foo*/
@@ -83,6 +86,7 @@ Line 42 col 22 InvocationExpression "i2_i.nc_fnfoo(10)" = string
 Line 42 col 22 MemberAccessExpression "i2_i.nc_fnfoo" = (b: number) => string
 Line 42 col 22 IdentifierName "i2_i" = i2
 Line 42 col 27 IdentifierName "nc_fnfoo" = (b: number) => string
+Line 43 col 10 IdentifierName "i3" = i3
 Line 44 col 0 IdentifierName "/** Comment i3 x*/
     x" = number
 Line 46 col 0 IdentifierName "/** Function i3 f*/
@@ -117,17 +121,22 @@ Line 55 col 7 ObjectLiteralExpression "{
     nc_f: this.f,
     nc_l: this.l
 }" = { f: (a: number) => string; l: any; x: any; nc_x: any; nc_f: any; nc_l: any; }
+Line 56 col 0 IdentifierName "f" = (a: number) => string
 Line 56 col 18 ParenthesizedArrowFunctionExpression "(/**i3_i a*/a: number) => "Hello" + a" = (a: number) => string
 Line 56 col 30 IdentifierName "a" = any
 Line 56 col 44 AddExpression ""Hello" + a" = string
 Line 56 col 54 IdentifierName "a" = number
+Line 57 col 0 IdentifierName "l" = any
 Line 57 col 7 MemberAccessExpression "this.f" = any
 Line 57 col 7 ThisKeyword "this" = any
 Line 57 col 12 IdentifierName "f" = any
+Line 58 col 0 IdentifierName "/** own x*/
+    x" = any
 Line 59 col 7 InvocationExpression "this.f(10)" = any
 Line 59 col 7 MemberAccessExpression "this.f" = any
 Line 59 col 7 ThisKeyword "this" = any
 Line 59 col 12 IdentifierName "f" = any
+Line 60 col 0 IdentifierName "nc_x" = any
 Line 60 col 10 InvocationExpression "this.l(this.x)" = any
 Line 60 col 10 MemberAccessExpression "this.l" = any
 Line 60 col 10 ThisKeyword "this" = any
@@ -135,9 +144,11 @@ Line 60 col 15 IdentifierName "l" = any
 Line 60 col 17 MemberAccessExpression "this.x" = any
 Line 60 col 17 ThisKeyword "this" = any
 Line 60 col 22 IdentifierName "x" = any
+Line 61 col 0 IdentifierName "nc_f" = any
 Line 61 col 10 MemberAccessExpression "this.f" = any
 Line 61 col 10 ThisKeyword "this" = any
 Line 61 col 15 IdentifierName "f" = any
+Line 62 col 0 IdentifierName "nc_l" = any
 Line 62 col 10 MemberAccessExpression "this.l" = any
 Line 62 col 10 ThisKeyword "this" = any
 Line 62 col 15 IdentifierName "l" = any

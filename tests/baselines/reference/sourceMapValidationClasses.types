@@ -1,10 +1,15 @@
 === tests/cases/compiler/sourceMapValidationClasses.ts ===
+Line 0 col 7 IdentifierName "Foo" = Foo
+Line 0 col 11 IdentifierName "Bar" = Foo.Bar
+Line 3 col 10 IdentifierName "Greeter" = Foo.Bar.Greeter
 Line 4 col 27 IdentifierName "greeting" = string
+Line 6 col 0 IdentifierName "greet" = () => string
 Line 8 col 19 AddExpression ""<h1>" + this.greeting + "</h1>"" = string
 Line 8 col 19 AddExpression ""<h1>" + this.greeting" = string
 Line 8 col 28 MemberAccessExpression "this.greeting" = string
 Line 8 col 28 ThisKeyword "this" = Foo.Bar.Greeter
 Line 8 col 33 IdentifierName "greeting" = string
+Line 13 col 13 IdentifierName "foo" = (greeting: string) => Foo.Bar.Greeter
 Line 13 col 17 IdentifierName "greeting" = any
 Line 13 col 36 IdentifierName "Greeter" = Foo.Bar.Greeter
 Line 14 col 15 ObjectCreationExpression "new Greeter(greeting)" = Foo.Bar.Greeter
@@ -18,6 +23,7 @@ Line 18 col 14 InvocationExpression "greeter.greet()" = string
 Line 18 col 14 MemberAccessExpression "greeter.greet" = () => string
 Line 18 col 14 IdentifierName "greeter" = Foo.Bar.Greeter
 Line 18 col 22 IdentifierName "greet" = () => string
+Line 20 col 13 IdentifierName "foo2" = (greeting: string, ...restGreetings: string[]) => Foo.Bar.Greeter[]
 Line 20 col 18 IdentifierName "greeting" = any
 Line 20 col 39 IdentifierName "restGreetings /* more greeting */" = any
 Line 21 col 12 IdentifierName "greeters" = Foo.Bar.Greeter[]

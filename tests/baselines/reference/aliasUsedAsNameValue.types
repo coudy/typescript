@@ -1,6 +1,9 @@
 === tests/cases/compiler/aliasUsedAsNameValue.ts ===
 Line 1 col 5 IdentifierName "id" = number
+Line 5 col 10 IdentifierName "b" = (a: any) => any
 Line 5 col 12 IdentifierName "a" = any
+Line 8 col 7 IdentifierName "mod" = any
+Line 9 col 7 IdentifierName "b" = any
 Line 11 col 11 IdentifierName "a" = () => void
 Line 11 col 15 FunctionExpression "function () {
     //var x = mod.id; // TODO needed hack that mod is loaded

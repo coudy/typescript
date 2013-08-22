@@ -1,7 +1,10 @@
 === tests/cases/compiler/constructorOverloads2.ts ===
+Line 0 col 6 IdentifierName "FooBase" = FooBase
 Line 1 col 16 IdentifierName "s" = any
 Line 2 col 16 IdentifierName "n" = any
 Line 3 col 16 IdentifierName "x" = any
+Line 5 col 0 IdentifierName "bar1" = () => void
+Line 8 col 6 IdentifierName "Foo" = Foo
 Line 8 col 18 IdentifierName "FooBase" = FooBase
 Line 9 col 16 IdentifierName "s" = any
 Line 10 col 16 IdentifierName "n" = any
@@ -10,6 +13,7 @@ Line 12 col 16 IdentifierName "x" = any
 Line 12 col 24 IdentifierName "y" = any
 Line 13 col 0 InvocationExpression "super(x)" = void
 Line 13 col 14 IdentifierName "x" = any
+Line 15 col 0 IdentifierName "bar1" = () => void
 Line 18 col 4 IdentifierName "f1" = Foo
 Line 18 col 9 ObjectCreationExpression "new Foo("hey")" = Foo
 Line 18 col 13 IdentifierName "Foo" = { new(s: string): Foo; new(n: number): Foo; new(a: any): Foo; }

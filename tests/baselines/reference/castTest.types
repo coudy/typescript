@@ -18,11 +18,14 @@ Line 9 col 9 CastExpression "<any[]>null" = any[]
 Line 11 col 4 IdentifierName "f" = (res: number) => void
 Line 11 col 8 CastExpression "<(res : number) => void>null" = (res: number) => void
 Line 11 col 10 IdentifierName "res" = any
+Line 13 col 14 IdentifierName "Point" = Point
 Line 15 col 0 IdentifierName "x" = number
 Line 16 col 0 IdentifierName "y" = number
+Line 17 col 0 IdentifierName "add" = (dx: number, dy: number) => Point
 Line 17 col 8 IdentifierName "dx" = any
 Line 17 col 20 IdentifierName "dy" = any
 Line 17 col 33 IdentifierName "Point" = Point
+Line 18 col 0 IdentifierName "mult" = (p: Point) => Point
 Line 18 col 9 IdentifierName "p" = any
 Line 18 col 12 IdentifierName "Point" = Point
 Line 18 col 20 IdentifierName "Point" = Point
@@ -54,6 +57,9 @@ Line 22 col 22 ObjectLiteralExpression "{
     },
     mult: function(p) { return p; }
 }" = { x: number; y: number; add: (dx: any, dy: any) => Point; mult: (p: any) => any; }
+Line 23 col 0 IdentifierName "x" = number
+Line 24 col 0 IdentifierName "y" = number
+Line 25 col 0 IdentifierName "add" = (dx: any, dy: any) => Point
 Line 25 col 9 FunctionExpression "function(dx, dy) {
         return new Point(this.x + dx, this.y + dy);
     }" = (dx: any, dy: any) => Point
@@ -71,6 +77,7 @@ Line 26 col 38 MemberAccessExpression "this.y" = any
 Line 26 col 38 ThisKeyword "this" = any
 Line 26 col 43 IdentifierName "y" = any
 Line 26 col 47 IdentifierName "dy" = any
+Line 28 col 0 IdentifierName "mult" = (p: any) => any
 Line 28 col 10 FunctionExpression "function(p) { return p; }" = (p: any) => any
 Line 28 col 19 IdentifierName "p" = any
 Line 28 col 31 IdentifierName "p" = any

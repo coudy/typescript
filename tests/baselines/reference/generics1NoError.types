@@ -1,9 +1,13 @@
 === tests/cases/compiler/generics1NoError.ts ===
+Line 0 col 10 IdentifierName "A" = A
 Line 0 col 14 IdentifierName "a" = string
+Line 1 col 10 IdentifierName "B" = B
 Line 1 col 20 IdentifierName "A" = A
 Line 1 col 24 IdentifierName "b" = string
+Line 2 col 10 IdentifierName "C" = C
 Line 2 col 20 IdentifierName "B" = B
 Line 2 col 24 IdentifierName "c" = string
+Line 3 col 10 IdentifierName "G" = G<T, U>
 Line 3 col 12 IdentifierName "T" = any
 Line 3 col 15 IdentifierName "U" = any
 Line 3 col 25 IdentifierName "B" = B

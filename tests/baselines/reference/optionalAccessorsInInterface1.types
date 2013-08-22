@@ -1,7 +1,9 @@
 === tests/cases/compiler/optionalAccessorsInInterface1.ts ===
+Line 0 col 10 IdentifierName "MyPropertyDescriptor" = MyPropertyDescriptor
 Line 1 col 0 IdentifierName "get" = () => any
 Line 2 col 0 IdentifierName "set" = (v: any) => void
 Line 2 col 10 IdentifierName "v" = any
+Line 5 col 17 IdentifierName "defineMyProperty" = (o: any, p: string, attributes: MyPropertyDescriptor) => any
 Line 5 col 34 IdentifierName "o" = any
 Line 5 col 42 IdentifierName "p" = any
 Line 5 col 53 IdentifierName "attributes" = any
@@ -10,10 +12,13 @@ Line 6 col 0 InvocationExpression "defineMyProperty({}, "name", { get: function 
 Line 6 col 0 IdentifierName "defineMyProperty" = (o: any, p: string, attributes: MyPropertyDescriptor) => any
 Line 6 col 17 ObjectLiteralExpression "{}" = {}
 Line 6 col 29 ObjectLiteralExpression "{ get: function () { return 5; } }" = { get: () => number; }
+Line 6 col 31 IdentifierName "get" = () => number
 Line 6 col 36 FunctionExpression "function () { return 5; }" = () => number
+Line 8 col 10 IdentifierName "MyPropertyDescriptor2" = MyPropertyDescriptor2
 Line 9 col 0 IdentifierName "get" = () => any
 Line 10 col 0 IdentifierName "set" = (v: any) => void
 Line 10 col 11 IdentifierName "v" = any
+Line 13 col 17 IdentifierName "defineMyProperty2" = (o: any, p: string, attributes: MyPropertyDescriptor2) => any
 Line 13 col 35 IdentifierName "o" = any
 Line 13 col 43 IdentifierName "p" = any
 Line 13 col 54 IdentifierName "attributes" = any
@@ -22,4 +27,5 @@ Line 14 col 0 InvocationExpression "defineMyProperty2({}, "name", { get: functio
 Line 14 col 0 IdentifierName "defineMyProperty2" = (o: any, p: string, attributes: MyPropertyDescriptor2) => any
 Line 14 col 18 ObjectLiteralExpression "{}" = {}
 Line 14 col 30 ObjectLiteralExpression "{ get: function () { return 5; } }" = { get: () => number; }
+Line 14 col 32 IdentifierName "get" = () => number
 Line 14 col 37 FunctionExpression "function () { return 5; }" = () => number

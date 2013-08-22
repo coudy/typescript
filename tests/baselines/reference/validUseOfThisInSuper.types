@@ -1,6 +1,8 @@
 === tests/cases/compiler/validUseOfThisInSuper.ts ===
+Line 0 col 6 IdentifierName "Base" = Base
 Line 1 col 23 IdentifierName "b" = Base
 Line 1 col 26 IdentifierName "Base" = Base
+Line 4 col 6 IdentifierName "Super" = Super
 Line 4 col 20 IdentifierName "Base" = Base
 Line 6 col 0 InvocationExpression "super((() => this)())" = void
 Line 6 col 14 InvocationExpression "(() => this)()" = Super

@@ -1,4 +1,5 @@
 === tests/cases/compiler/fatarrowfunctionsInFunctions.ts ===
+Line 0 col 17 IdentifierName "setTimeout" = (expression: any, msec?: number, language?: any) => number
 Line 0 col 28 IdentifierName "expression" = any
 Line 0 col 45 IdentifierName "msec" = any
 Line 0 col 60 IdentifierName "language" = any
@@ -12,6 +13,8 @@ Line 2 col 16 ObjectLiteralExpression "{
         }, 3000); 
     }
 }" = { message: string; start: () => void; }
+Line 3 col 0 IdentifierName "message" = string
+Line 4 col 0 IdentifierName "start" = () => void
 Line 4 col 11 FunctionExpression "function() {
         var _self = this;
         setTimeout(function() {

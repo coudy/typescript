@@ -1,8 +1,13 @@
 === tests/cases/compiler/sourceMap-FileWithComments.ts ===
+Line 2 col 10 IdentifierName "IPoint" = IPoint
 Line 3 col 0 IdentifierName "getDist" = () => number
+Line 7 col 7 IdentifierName "Shapes" = Shapes
+Line 10 col 17 IdentifierName "Point" = Shapes.Point
 Line 10 col 34 IdentifierName "IPoint" = IPoint
 Line 12 col 27 IdentifierName "x" = number
 Line 12 col 45 IdentifierName "y" = number
+Line 13 col 0 IdentifierName "// Instance member
+        getDist" = () => number
 Line 15 col 27 InvocationExpression "Math.sqrt(this.x * this.x + this.y * this.y)" = number
 Line 15 col 27 MemberAccessExpression "Math.sqrt" = (x: number) => number
 Line 15 col 27 IdentifierName "Math" = Math
@@ -26,6 +31,7 @@ Line 18 col 15 IdentifierName "origin" = Shapes.Point
 Line 18 col 24 ObjectCreationExpression "new Point(0, 0)" = Shapes.Point
 Line 18 col 28 IdentifierName "Point" = { origin: Shapes.Point; new(x: number, y: number): Shapes.Point; }
 Line 22 col 8 IdentifierName "a" = number
+Line 24 col 20 IdentifierName "foo" = () => void
 Line 30 col 8 IdentifierName "b" = number
 Line 34 col 4 IdentifierName "p" = IPoint
 Line 34 col 7 IdentifierName "IPoint" = IPoint

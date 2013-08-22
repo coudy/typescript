@@ -1,12 +1,15 @@
 === tests/cases/compiler/declFileEnums.ts ===
+Line 1 col 5 IdentifierName "e1" = e1
 Line 2 col 0 IdentifierName "a" = e1
 Line 3 col 0 IdentifierName "b" = e1
 Line 4 col 0 IdentifierName "c" = e1
+Line 7 col 5 IdentifierName "e2" = e2
 Line 8 col 0 IdentifierName "a" = e2
 Line 9 col 0 IdentifierName "b" = e2
 Line 9 col 8 AddExpression "a + 2" = number
 Line 9 col 8 IdentifierName "a" = e2
 Line 10 col 0 IdentifierName "c" = e2
+Line 13 col 5 IdentifierName "e3" = e3
 Line 14 col 0 IdentifierName "a" = e3
 Line 15 col 0 IdentifierName "b" = e3
 Line 15 col 8 MemberAccessExpression "Math.PI" = number
@@ -15,8 +18,10 @@ Line 15 col 13 IdentifierName "PI" = number
 Line 16 col 0 IdentifierName "c" = e3
 Line 16 col 8 AddExpression "a + 3" = number
 Line 16 col 8 IdentifierName "a" = e3
+Line 19 col 5 IdentifierName "e4" = e4
 Line 20 col 0 IdentifierName "a" = e4
 Line 21 col 0 IdentifierName "b" = e4
 Line 22 col 0 IdentifierName "c" = e4
 Line 23 col 0 IdentifierName "d" = e4
 Line 24 col 0 IdentifierName "e" = e4
+Line 27 col 5 IdentifierName "e5" = e5

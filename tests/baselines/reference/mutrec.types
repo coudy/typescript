@@ -1,8 +1,11 @@
 === tests/cases/compiler/mutrec.ts ===
+Line 0 col 10 IdentifierName "A" = A
 Line 1 col 0 IdentifierName "x" = B[]
 Line 1 col 6 IdentifierName "B" = B
+Line 4 col 10 IdentifierName "B" = B
 Line 5 col 0 IdentifierName "x" = A[]
 Line 5 col 6 IdentifierName "A" = A
+Line 8 col 9 IdentifierName "f" = (p: A) => A
 Line 8 col 11 IdentifierName "p" = any
 Line 8 col 14 IdentifierName "A" = A
 Line 8 col 26 IdentifierName "p" = A
@@ -11,12 +14,16 @@ Line 9 col 6 IdentifierName "B" = B
 Line 10 col 0 InvocationExpression "f(b)" = A
 Line 10 col 0 IdentifierName "f" = (p: A) => A
 Line 10 col 2 IdentifierName "b" = B
+Line 12 col 10 IdentifierName "I1" = I1
 Line 13 col 0 IdentifierName "y" = I2
 Line 13 col 6 IdentifierName "I2" = I2
+Line 16 col 10 IdentifierName "I2" = I2
 Line 17 col 0 IdentifierName "y" = I3
 Line 17 col 6 IdentifierName "I3" = I3
+Line 20 col 10 IdentifierName "I3" = I3
 Line 21 col 0 IdentifierName "y" = I1
 Line 21 col 6 IdentifierName "I1" = I1
+Line 24 col 9 IdentifierName "g" = (p: I1) => I1
 Line 24 col 11 IdentifierName "p" = any
 Line 24 col 14 IdentifierName "I1" = I1
 Line 24 col 27 IdentifierName "p" = I1
@@ -30,8 +37,10 @@ Line 27 col 7 IdentifierName "I3" = I3
 Line 28 col 0 InvocationExpression "g(i3)" = I1
 Line 28 col 0 IdentifierName "g" = (p: I1) => I1
 Line 28 col 2 IdentifierName "i3" = I3
+Line 30 col 10 IdentifierName "I4" = I4
 Line 31 col 0 IdentifierName "y" = I5
 Line 31 col 6 IdentifierName "I5" = I5
+Line 34 col 10 IdentifierName "I5" = I5
 Line 35 col 0 IdentifierName "y" = I4
 Line 35 col 6 IdentifierName "I4" = I4
 Line 38 col 4 IdentifierName "i4" = I4

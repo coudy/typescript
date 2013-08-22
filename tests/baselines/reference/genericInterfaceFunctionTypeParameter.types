@@ -1,5 +1,7 @@
 === tests/cases/compiler/genericInterfaceFunctionTypeParameter.ts ===
+Line 0 col 17 IdentifierName "IFoo" = IFoo<A>
 Line 0 col 22 IdentifierName "A" = any
+Line 1 col 16 IdentifierName "foo" = <A>(fn: (ifoo: IFoo<A>) => void) => void
 Line 1 col 20 IdentifierName "A" = any
 Line 1 col 23 IdentifierName "fn" = any
 Line 1 col 28 IdentifierName "ifoo" = any

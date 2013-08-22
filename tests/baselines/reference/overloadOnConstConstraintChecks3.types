@@ -1,12 +1,20 @@
 === tests/cases/compiler/overloadOnConstConstraintChecks3.ts ===
+Line 0 col 6 IdentifierName "A" = A
 Line 0 col 18 IdentifierName "x" = number
+Line 1 col 6 IdentifierName "B" = B
 Line 1 col 16 IdentifierName "A" = A
+Line 2 col 6 IdentifierName "C" = C
 Line 2 col 16 IdentifierName "A" = A
+Line 3 col 11 IdentifierName "foo" = () => void
+Line 5 col 9 IdentifierName "foo" = { (name: 'hi'): B; (name: 'bye'): C; (name: string): A; }
 Line 5 col 13 IdentifierName "name" = any
 Line 5 col 26 IdentifierName "B" = B
+Line 6 col 9 IdentifierName "foo" = { (name: 'hi'): B; (name: 'bye'): C; (name: string): A; }
 Line 6 col 13 IdentifierName "name" = any
 Line 6 col 27 IdentifierName "C" = C
+Line 7 col 9 IdentifierName "foo" = { (name: 'hi'): B; (name: 'bye'): C; (name: string): A; }
 Line 7 col 13 IdentifierName "name" = any
 Line 7 col 28 IdentifierName "A" = A
+Line 8 col 9 IdentifierName "foo" = { (name: 'hi'): B; (name: 'bye'): C; (name: string): A; }
 Line 8 col 13 IdentifierName "name" = any
 Line 8 col 25 IdentifierName "A" = A

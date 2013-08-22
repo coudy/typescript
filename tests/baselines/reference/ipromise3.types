@@ -1,4 +1,5 @@
 === tests/cases/compiler/ipromise3.ts ===
+Line 0 col 10 IdentifierName "IPromise3" = IPromise3<T>
 Line 0 col 20 IdentifierName "T" = any
 Line 1 col 0 IdentifierName "then" = { <U>(success?: (value: T) => IPromise3<U>, error?: (error: any) => IPromise3<U>, progress?: (progress: any) => void): IPromise3<U>; <U>(success?: (value: T) => IPromise3<U>, error?: (error: any) => U, progress?: (progress: any) => void): IPromise3<U>; <U>(success?: (value: T) => U, error?: (error: any) => IPromise3<U>, progress?: (progress: any) => void): IPromise3<U>; <U>(success?: (value: T) => U, error?: (error: any) => U, progress?: (progress: any) => void): IPromise3<U>; }
 Line 1 col 5 IdentifierName "U" = any

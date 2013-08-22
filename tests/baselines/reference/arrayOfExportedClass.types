@@ -1,7 +1,11 @@
 === tests/cases/compiler/arrayOfExportedClass.ts ===
+Line 1 col 10 IdentifierName "Car" = 'Car'.Car
 Line 5 col 13 IdentifierName "Car" = any
+Line 8 col 7 IdentifierName "Car" = any
+Line 10 col 6 IdentifierName "Road" = Road
 Line 12 col 11 IdentifierName "cars" = Car[]
 Line 12 col 17 IdentifierName "Car" = Car
+Line 14 col 11 IdentifierName "AddCars" = (cars: Car[]) => void
 Line 14 col 19 IdentifierName "cars" = any
 Line 14 col 25 IdentifierName "Car" = Car
 Line 15 col 0 AssignmentExpression "this.cars = cars" = Car[]

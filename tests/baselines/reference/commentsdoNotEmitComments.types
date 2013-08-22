@@ -1,26 +1,34 @@
 === tests/cases/compiler/commentsdoNotEmitComments.ts ===
 Line 2 col 4 IdentifierName "myVariable" = number
+Line 5 col 9 IdentifierName "foo" = (p: number) => void
 Line 5 col 36 IdentifierName "p" = any
 Line 9 col 4 IdentifierName "fooVar" = () => void
 Line 10 col 0 InvocationExpression "foo(50)" = void
 Line 10 col 0 IdentifierName "foo" = (p: number) => void
 Line 11 col 0 InvocationExpression "fooVar()" = void
 Line 11 col 0 IdentifierName "fooVar" = () => void
+Line 14 col 6 IdentifierName "c" = c
 Line 20 col 11 IdentifierName "b" = number
+Line 23 col 11 IdentifierName "myFoo" = () => number
 Line 24 col 15 MemberAccessExpression "this.b" = number
 Line 24 col 15 ThisKeyword "this" = c
 Line 24 col 20 IdentifierName "b" = number
+Line 28 col 15 IdentifierName "prop1" = () => number
 Line 29 col 15 MemberAccessExpression "this.b" = number
 Line 29 col 15 ThisKeyword "this" = c
 Line 29 col 20 IdentifierName "b" = number
+Line 33 col 15 IdentifierName "prop1" = (val: number) => any
 Line 33 col 21 IdentifierName "val" = any
 Line 34 col 0 AssignmentExpression "this.b = val" = number
 Line 34 col 0 MemberAccessExpression "this.b" = number
 Line 34 col 0 ThisKeyword "this" = c
 Line 34 col 13 IdentifierName "b" = number
 Line 34 col 17 IdentifierName "val" = number
+Line 38 col 11 IdentifierName "foo1" = { (a: number): string; (b: string): string; }
 Line 38 col 16 IdentifierName "a" = any
+Line 40 col 11 IdentifierName "foo1" = { (a: number): string; (b: string): string; }
 Line 40 col 16 IdentifierName "b" = any
+Line 42 col 11 IdentifierName "foo1" = { (a: number): string; (b: string): string; }
 Line 42 col 16 IdentifierName "aOrb" = any
 Line 43 col 15 InvocationExpression "aOrb.toString()" = any
 Line 43 col 15 MemberAccessExpression "aOrb.toString" = any
@@ -29,6 +37,7 @@ Line 43 col 20 IdentifierName "toString" = any
 Line 48 col 4 IdentifierName "i" = c
 Line 48 col 8 ObjectCreationExpression "new c()" = c
 Line 48 col 12 IdentifierName "c" = new() => c
+Line 51 col 10 IdentifierName "i1" = i1
 Line 53 col 5 IdentifierName "a" = any
 Line 56 col 9 IdentifierName "b" = any
 Line 59 col 5 IdentifierName "a" = any
@@ -39,5 +48,8 @@ Line 63 col 0 IdentifierName "/** prop*/
     prop" = string
 Line 69 col 4 IdentifierName "i1_i" = i1
 Line 69 col 10 IdentifierName "i1" = i1
+Line 72 col 7 IdentifierName "m1" = m1
+Line 74 col 17 IdentifierName "b" = m1.b
 Line 75 col 27 IdentifierName "x" = number
+Line 81 col 18 IdentifierName "m2" = m1.m2
 Line 86 col 12 IdentifierName "x" = any

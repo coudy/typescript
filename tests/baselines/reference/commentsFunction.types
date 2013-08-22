@@ -1,6 +1,8 @@
 === tests/cases/compiler/commentsFunction.ts ===
+Line 2 col 9 IdentifierName "foo" = () => void
 Line 4 col 0 InvocationExpression "foo()" = void
 Line 4 col 0 IdentifierName "foo" = () => void
+Line 6 col 9 IdentifierName "fooWithParameters" = (a: string, b: number) => void
 Line 6 col 56 IdentifierName "a" = any
 Line 7 col 0 IdentifierName "/** this is comment for b*/
     b" = any

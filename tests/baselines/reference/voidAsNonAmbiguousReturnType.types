@@ -1,8 +1,12 @@
 === tests/cases/compiler/voidAsNonAmbiguousReturnType.ts ===
+Line 1 col 20 IdentifierName "mkdirSync" = { (path: string, mode?: number): void; (path: string, mode?: string): void; }
 Line 1 col 30 IdentifierName "path" = any
 Line 1 col 44 IdentifierName "mode" = any
+Line 2 col 20 IdentifierName "mkdirSync" = { (path: string, mode?: number): void; (path: string, mode?: string): void; }
 Line 2 col 30 IdentifierName "path" = any
 Line 2 col 44 IdentifierName "mode" = any
+Line 5 col 7 IdentifierName "fs" = any
+Line 7 col 9 IdentifierName "main" = () => void
 Line 8 col 0 InvocationExpression "fs.mkdirSync('test')" = void
 Line 8 col 0 MemberAccessExpression "fs.mkdirSync" = { (path: string, mode?: number): void; (path: string, mode?: string): void; }
 Line 8 col 0 IdentifierName "fs" = fs

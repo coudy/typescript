@@ -5,10 +5,16 @@ Line 1 col 6 AddExpression "3+x" = any
 Line 1 col 8 IdentifierName "x" = any
 Line 2 col 4 IdentifierName "z" = number
 Line 2 col 6 AddExpression "3+null" = number
+Line 3 col 6 IdentifierName "C" = C
+Line 5 col 9 IdentifierName "f" = () => C
 Line 7 col 11 ObjectCreationExpression "new C()" = C
 Line 7 col 15 IdentifierName "C" = new() => C
+Line 9 col 9 IdentifierName "g" = () => number
+Line 13 col 10 IdentifierName "I" = I
 Line 14 col 0 IdentifierName "x" = any
 Line 15 col 0 IdentifierName "y" = number
 Line 17 col 4 IdentifierName "w" = I
 Line 17 col 6 IdentifierName "I" = I
 Line 17 col 8 ObjectLiteralExpression "{x:null,y:3}" = { x: any; y: number; }
+Line 17 col 9 IdentifierName "x" = any
+Line 17 col 16 IdentifierName "y" = number

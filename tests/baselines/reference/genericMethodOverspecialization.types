@@ -1,9 +1,11 @@
 === tests/cases/compiler/genericMethodOverspecialization.ts ===
 Line 0 col 4 IdentifierName "names" = string[]
 Line 0 col 12 ArrayLiteralExpression "["list", "table1", "table2", "table3", "summary"]" = string[]
+Line 2 col 10 IdentifierName "HTMLElement" = HTMLElement
 Line 3 col 0 IdentifierName "clientWidth" = number
 Line 6 col 12 IdentifierName "document" = Document
 Line 6 col 22 IdentifierName "Document" = Document
+Line 7 col 10 IdentifierName "Document" = Document
 Line 8 col 0 IdentifierName "getElementById" = (elementId: string) => HTMLElement
 Line 8 col 19 IdentifierName "elementId" = any
 Line 8 col 39 IdentifierName "HTMLElement" = HTMLElement

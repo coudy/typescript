@@ -38,12 +38,14 @@ Line 1 col 75 ObjectLiteralExpression "{
                 set: function (v) {
                 }
             }" = { get: () => number; set: (v: any) => void; }
+Line 2 col 0 IdentifierName "get" = () => number
 Line 2 col 21 FunctionExpression "function () {
                     eval("public = 1;");
                     return 11;
                 }" = () => number
 Line 3 col 0 InvocationExpression "eval("public = 1;")" = any
 Line 3 col 0 IdentifierName "eval" = (x: string) => any
+Line 6 col 0 IdentifierName "set" = (v: any) => void
 Line 6 col 21 FunctionExpression "function (v) {
                 }" = (v: any) => void
 Line 6 col 31 IdentifierName "v" = any

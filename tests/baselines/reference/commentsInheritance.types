@@ -1,4 +1,5 @@
 === tests/cases/compiler/commentsInheritance.ts ===
+Line 2 col 10 IdentifierName "i1" = i1
 Line 3 col 0 IdentifierName "/** i1_p1*/
     i1_p1" = number
 Line 5 col 0 IdentifierName "/** i1_f1*/
@@ -15,14 +16,19 @@ Line 15 col 0 IdentifierName "l1" = () => void
 Line 16 col 0 IdentifierName "nc_p1" = number
 Line 17 col 0 IdentifierName "nc_f1" = () => void
 Line 18 col 0 IdentifierName "nc_l1" = () => void
+Line 20 col 6 IdentifierName "c1" = c1
 Line 20 col 20 IdentifierName "i1" = i1
 Line 21 col 11 IdentifierName "i1_p1" = number
+Line 23 col 11 IdentifierName "i1_f1" = () => void
 Line 25 col 11 IdentifierName "i1_l1" = () => void
 Line 26 col 11 IdentifierName "i1_nc_p1" = number
+Line 27 col 11 IdentifierName "i1_nc_f1" = () => void
 Line 29 col 11 IdentifierName "i1_nc_l1" = () => void
 Line 31 col 11 IdentifierName "p1" = number
+Line 33 col 11 IdentifierName "f1" = () => void
 Line 36 col 11 IdentifierName "l1" = () => void
 Line 38 col 11 IdentifierName "nc_p1" = number
+Line 40 col 11 IdentifierName "nc_f1" = () => void
 Line 43 col 11 IdentifierName "nc_l1" = () => void
 Line 45 col 4 IdentifierName "i1_i" = i1
 Line 45 col 10 IdentifierName "i1" = i1
@@ -34,20 +40,34 @@ i1_i = c1_i" = c1
 Line 47 col 0 IdentifierName "// assign to interface
 i1_i" = i1
 Line 48 col 7 IdentifierName "c1_i" = c1
+Line 49 col 6 IdentifierName "c2" = c2
 Line 51 col 11 IdentifierName "c2_p1" = number
+Line 53 col 11 IdentifierName "c2_f1" = () => void
+Line 56 col 15 IdentifierName "c2_prop" = () => number
 Line 59 col 11 IdentifierName "c2_nc_p1" = number
+Line 60 col 11 IdentifierName "c2_nc_f1" = () => void
+Line 62 col 15 IdentifierName "c2_nc_prop" = () => number
 Line 66 col 11 IdentifierName "p1" = number
+Line 68 col 11 IdentifierName "f1" = () => void
+Line 71 col 15 IdentifierName "prop" = () => number
 Line 74 col 11 IdentifierName "nc_p1" = number
+Line 75 col 11 IdentifierName "nc_f1" = () => void
+Line 77 col 15 IdentifierName "nc_prop" = () => number
 Line 81 col 16 IdentifierName "a" = any
 Line 82 col 0 AssignmentExpression "this.c2_p1 = a" = number
 Line 82 col 0 MemberAccessExpression "this.c2_p1" = number
 Line 82 col 0 ThisKeyword "this" = c2
 Line 82 col 13 IdentifierName "c2_p1" = number
 Line 82 col 21 IdentifierName "a" = number
+Line 85 col 6 IdentifierName "c3" = c3
 Line 85 col 17 IdentifierName "c2" = c2
 Line 87 col 0 InvocationExpression "super(10)" = void
 Line 90 col 11 IdentifierName "p1" = number
+Line 92 col 11 IdentifierName "f1" = () => void
+Line 95 col 15 IdentifierName "prop" = () => number
 Line 98 col 11 IdentifierName "nc_p1" = number
+Line 99 col 11 IdentifierName "nc_f1" = () => void
+Line 101 col 15 IdentifierName "nc_prop" = () => number
 Line 105 col 4 IdentifierName "c2_i" = c2
 Line 105 col 11 ObjectCreationExpression "new c2(10)" = c2
 Line 105 col 15 IdentifierName "c2" = new(a: number) => c2
@@ -59,10 +79,12 @@ c2_i = c3_i" = c3
 Line 107 col 0 IdentifierName "// assign
 c2_i" = c2
 Line 108 col 7 IdentifierName "c3_i" = c3
+Line 109 col 6 IdentifierName "c4" = c4
 Line 109 col 17 IdentifierName "c2" = c2
 Line 111 col 4 IdentifierName "c4_i" = c4
 Line 111 col 11 ObjectCreationExpression "new c4(10)" = c4
 Line 111 col 15 IdentifierName "c4" = new(a: number) => c4
+Line 112 col 10 IdentifierName "i2" = i2
 Line 113 col 0 IdentifierName "/** i2_p1*/
     i2_p1" = number
 Line 115 col 0 IdentifierName "/** i2_f1*/
@@ -82,6 +104,7 @@ Line 127 col 0 IdentifierName "/** i2 l1*/
 Line 129 col 0 IdentifierName "nc_p1" = number
 Line 130 col 0 IdentifierName "nc_f1" = () => void
 Line 131 col 0 IdentifierName "nc_l1" = () => void
+Line 133 col 10 IdentifierName "i3" = i3
 Line 133 col 21 IdentifierName "i2" = i2
 Line 134 col 0 IdentifierName "/** i3 p1 */
     p1" = number

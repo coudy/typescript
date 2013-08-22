@@ -1,4 +1,5 @@
 === tests/cases/compiler/classOrderBug.ts ===
+Line 0 col 6 IdentifierName "bar" = bar
 Line 1 col 11 IdentifierName "baz" = foo
 Line 1 col 16 IdentifierName "foo" = foo
 Line 3 col 0 AssignmentExpression "this.baz = new foo()" = foo
@@ -7,4 +8,6 @@ Line 3 col 0 ThisKeyword "this" = bar
 Line 4 col 13 IdentifierName "baz" = foo
 Line 4 col 19 ObjectCreationExpression "new foo()" = foo
 Line 4 col 23 IdentifierName "foo" = new() => foo
+Line 10 col 6 IdentifierName "baz" = baz
+Line 11 col 6 IdentifierName "foo" = foo
 Line 11 col 18 IdentifierName "baz" = baz

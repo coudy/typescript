@@ -1,6 +1,8 @@
 === tests/cases/compiler/es6ClassTest8.ts ===
+Line 0 col 9 IdentifierName "f1" = (x: any) => any
 Line 0 col 12 IdentifierName "x" = any
 Line 0 col 27 IdentifierName "x" = any
+Line 2 col 6 IdentifierName "C" = C
 Line 4 col 12 IdentifierName "bar" = any
 Line 4 col 22 ParenthesizedExpression "(function() {
             return bar; // 'bar' should be resolvable
@@ -15,19 +17,24 @@ Line 7 col 16 IdentifierName "f1" = (x: any) => any
 Line 7 col 19 InvocationExpression "f1(bar)" = any
 Line 7 col 19 IdentifierName "f1" = (x: any) => any
 Line 7 col 22 IdentifierName "bar" = any
+Line 12 col 6 IdentifierName "Vector" = Vector
+Line 13 col 11 IdentifierName "norm" = (v: Vector) => Vector
 Line 13 col 16 IdentifierName "v" = any
 Line 13 col 18 IdentifierName "Vector" = Vector
 Line 13 col 26 IdentifierName "Vector" = Vector
+Line 14 col 11 IdentifierName "minus" = (v1: Vector, v2: Vector) => Vector
 Line 14 col 17 IdentifierName "v1" = any
 Line 14 col 20 IdentifierName "Vector" = Vector
 Line 14 col 28 IdentifierName "v2" = any
 Line 14 col 31 IdentifierName "Vector" = Vector
 Line 14 col 39 IdentifierName "Vector" = Vector
+Line 15 col 11 IdentifierName "times" = (v1: Vector, v2: Vector) => Vector
 Line 15 col 17 IdentifierName "v1" = any
 Line 15 col 20 IdentifierName "Vector" = Vector
 Line 15 col 28 IdentifierName "v2" = any
 Line 15 col 31 IdentifierName "Vector" = Vector
 Line 15 col 39 IdentifierName "Vector" = Vector
+Line 16 col 11 IdentifierName "cross" = (v1: Vector, v2: Vector) => Vector
 Line 16 col 17 IdentifierName "v1" = any
 Line 16 col 20 IdentifierName "Vector" = Vector
 Line 16 col 28 IdentifierName "v2" = any
@@ -36,11 +43,13 @@ Line 16 col 39 IdentifierName "Vector" = Vector
 Line 18 col 23 IdentifierName "x" = number
 Line 19 col 23 IdentifierName "y" = number
 Line 20 col 23 IdentifierName "z" = number
+Line 23 col 11 IdentifierName "dot" = (v1: Vector, v2: Vector) => Vector
 Line 23 col 15 IdentifierName "v1" = any
 Line 23 col 18 IdentifierName "Vector" = Vector
 Line 23 col 26 IdentifierName "v2" = any
 Line 23 col 29 IdentifierName "Vector" = Vector
 Line 23 col 37 IdentifierName "Vector" = Vector
+Line 27 col 6 IdentifierName "Camera" = Camera
 Line 28 col 11 IdentifierName "forward" = Vector
 Line 28 col 20 IdentifierName "Vector" = Vector
 Line 29 col 11 IdentifierName "right" = Vector

@@ -1,5 +1,7 @@
 === tests/cases/compiler/derivedClasses.ts ===
+Line 0 col 6 IdentifierName "Red" = Red
 Line 0 col 18 IdentifierName "Color" = Color
+Line 1 col 11 IdentifierName "shade" = () => string
 Line 2 col 9 IdentifierName "getHue" = () => string
 Line 2 col 18 ParenthesizedArrowFunctionExpression "() => { return this.hue(); }" = () => string
 Line 2 col 33 InvocationExpression "this.hue()" = string
@@ -9,7 +11,12 @@ Line 2 col 38 IdentifierName "hue" = () => string
 Line 3 col 12 AddExpression "getHue() + " red"" = string
 Line 3 col 12 InvocationExpression "getHue()" = string
 Line 3 col 12 IdentifierName "getHue" = () => string
+Line 7 col 6 IdentifierName "Color" = Color
+Line 8 col 11 IdentifierName "shade" = () => string
+Line 9 col 11 IdentifierName "hue" = () => string
+Line 12 col 6 IdentifierName "Blue" = Blue
 Line 12 col 19 IdentifierName "Color" = Color
+Line 14 col 11 IdentifierName "shade" = () => string
 Line 15 col 9 IdentifierName "getHue" = () => string
 Line 15 col 18 ParenthesizedArrowFunctionExpression "() => { return this.hue(); }" = () => string
 Line 15 col 33 InvocationExpression "this.hue()" = string

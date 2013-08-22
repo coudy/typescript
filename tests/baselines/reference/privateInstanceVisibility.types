@@ -1,15 +1,22 @@
 === tests/cases/compiler/privateInstanceVisibility.ts ===
+Line 0 col 7 IdentifierName "Test" = Test
+Line 2 col 17 IdentifierName "Example" = Test.Example
 Line 4 col 16 IdentifierName "someNumber" = number
+Line 8 col 15 IdentifierName "doSomething" = () => void
 Line 10 col 16 IdentifierName "that" = Test.Example
 Line 10 col 23 ThisKeyword "this" = Test.Example
+Line 12 col 21 IdentifierName "innerFunction" = () => void
 Line 14 col 20 IdentifierName "num" = number
 Line 14 col 26 MemberAccessExpression "that.someNumber" = number
 Line 14 col 26 IdentifierName "that" = Test.Example
 Line 14 col 31 IdentifierName "someNumber" = number
+Line 26 col 6 IdentifierName "C" = C
 Line 28 col 12 IdentifierName "x" = number
+Line 29 col 0 IdentifierName "getX" = () => number
 Line 30 col 20 MemberAccessExpression "this.x" = number
 Line 30 col 20 ThisKeyword "this" = C
 Line 30 col 25 IdentifierName "x" = number
+Line 31 col 0 IdentifierName "clone" = (other: C) => void
 Line 32 col 10 IdentifierName "other" = any
 Line 32 col 17 IdentifierName "C" = C
 Line 33 col 0 AssignmentExpression "this.x = other.x" = number

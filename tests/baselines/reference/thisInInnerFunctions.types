@@ -1,5 +1,8 @@
 === tests/cases/compiler/thisInInnerFunctions.ts ===
+Line 0 col 6 IdentifierName "Foo" = Foo
 Line 1 col 0 IdentifierName "x" = string
+Line 2 col 0 IdentifierName "bar" = () => void
+Line 3 col 17 IdentifierName "inner" = () => void
 Line 4 col 0 AssignmentExpression "this.y = "hi"" = string
 Line 4 col 0 MemberAccessExpression "this.y" = any
 Line 4 col 0 ThisKeyword "this" = any
@@ -9,6 +12,7 @@ Line 5 col 20 ParenthesizedArrowFunctionExpression "() => this.y" = () => any
 Line 5 col 26 MemberAccessExpression "this.y" = any
 Line 5 col 26 ThisKeyword "this" = any
 Line 5 col 31 IdentifierName "y" = any
+Line 10 col 9 IdentifierName "test" = () => void
 Line 11 col 8 IdentifierName "x" = () => void
 Line 11 col 12 ParenthesizedArrowFunctionExpression "() => {
         (() => this)();

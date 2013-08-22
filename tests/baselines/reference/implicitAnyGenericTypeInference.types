@@ -1,4 +1,5 @@
 === tests/cases/compiler/implicitAnyGenericTypeInference.ts ===
+Line 1 col 10 IdentifierName "Comparer" = Comparer<T>
 Line 1 col 19 IdentifierName "T" = any
 Line 2 col 0 IdentifierName "compareTo" = <U>(x: T, y: U) => U
 Line 2 col 14 IdentifierName "U" = any
@@ -12,6 +13,7 @@ Line 5 col 7 IdentifierName "Comparer" = Comparer<T>
 Line 6 col 0 AssignmentExpression "c = { compareTo: (x, y) => { return y; } }" = { compareTo: (x: any, y: U) => U; }
 Line 6 col 0 IdentifierName "c" = Comparer<any>
 Line 6 col 4 ObjectLiteralExpression "{ compareTo: (x, y) => { return y; } }" = { compareTo: (x: any, y: U) => U; }
+Line 6 col 6 IdentifierName "compareTo" = (x: any, y: U) => U
 Line 6 col 17 ParenthesizedArrowFunctionExpression "(x, y) => { return y; }" = (x: any, y: U) => U
 Line 6 col 18 IdentifierName "x" = any
 Line 6 col 21 IdentifierName "y" = any

@@ -1,7 +1,13 @@
 === tests/cases/compiler/internalAliasEnumInsideLocalModuleWithExport.ts ===
+Line 0 col 14 IdentifierName "a" = a
+Line 1 col 16 IdentifierName "weekend" = a.weekend
 Line 2 col 0 IdentifierName "Friday" = a.weekend
 Line 3 col 0 IdentifierName "Saturday" = a.weekend
 Line 4 col 0 IdentifierName "Sunday" = a.weekend
+Line 8 col 14 IdentifierName "c" = c
+Line 9 col 18 IdentifierName "b" = any
+Line 9 col 22 IdentifierName "a" = any
+Line 9 col 24 IdentifierName "weekend" = any
 Line 10 col 15 IdentifierName "bVal" = a.weekend
 Line 10 col 21 IdentifierName "b" = a.weekend
 Line 10 col 25 MemberAccessExpression "b.Sunday" = a.weekend

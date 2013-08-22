@@ -1,4 +1,5 @@
 === tests/cases/compiler/callbacksDontShareTypes.ts ===
+Line 0 col 10 IdentifierName "Collection" = Collection<T>
 Line 0 col 21 IdentifierName "T" = any
 Line 1 col 0 IdentifierName "length" = number
 Line 2 col 0 IdentifierName "add" = (x: T) => void
@@ -7,6 +8,7 @@ Line 2 col 11 IdentifierName "T" = T
 Line 3 col 0 IdentifierName "remove" = (x: T) => boolean
 Line 3 col 11 IdentifierName "x" = any
 Line 3 col 14 IdentifierName "T" = T
+Line 5 col 10 IdentifierName "Combinators" = Combinators
 Line 6 col 0 IdentifierName "map" = { <T>(c: Collection<T>, f: (x: T) => any): Collection<any>; <T, U>(c: Collection<T>, f: (x: T) => U): Collection<U>; }
 Line 6 col 8 IdentifierName "T" = any
 Line 6 col 11 IdentifierName "c" = any

@@ -1,4 +1,5 @@
 === tests/cases/compiler/avoid.ts ===
+Line 0 col 9 IdentifierName "f" = () => void
 Line 1 col 8 IdentifierName "x" = number
 Line 4 col 4 IdentifierName "y" = void
 Line 4 col 6 InvocationExpression "f()" = void
@@ -11,6 +12,8 @@ Line 7 col 0 AssignmentExpression "w=f()" = void
 Line 7 col 0 IdentifierName "w" = any
 Line 7 col 2 InvocationExpression "f()" = void
 Line 7 col 2 IdentifierName "f" = () => void
+Line 9 col 6 IdentifierName "C" = C
+Line 10 col 0 IdentifierName "g" = () => void
 Line 15 col 4 IdentifierName "z" = void
 Line 15 col 6 InvocationExpression "new C().g()" = void
 Line 15 col 6 MemberAccessExpression "new C().g" = () => void

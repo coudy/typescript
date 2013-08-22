@@ -1,4 +1,5 @@
 === tests/cases/compiler/genericSpecializationToTypeLiteral1.ts ===
+Line 0 col 10 IdentifierName "IEnumerable" = IEnumerable<T>
 Line 0 col 22 IdentifierName "T" = any
 Line 1 col 0 IdentifierName "zip" = { <TResult>(second: IEnumerable<T>, resultSelector: (first: T, second: T, index: number) => TResult): IEnumerable<TResult>; <TResult>(second: T[], resultSelector: (first: T, second: T, index: number) => TResult): IEnumerable<TResult>; <TResult>(...params: any[]): IEnumerable<TResult>; }
 Line 2 col 8 IdentifierName "TResult" = any
@@ -128,6 +129,7 @@ Line 22 col 149 IdentifierName "TCompare" = TCompare
 Line 22 col 160 IdentifierName "IDictionary" = IDictionary<TKey, TValue>
 Line 22 col 172 IdentifierName "TKey" = TKey
 Line 22 col 178 IdentifierName "TValue" = TValue
+Line 25 col 10 IdentifierName "IDictionary" = IDictionary<TKey, TValue>
 Line 25 col 22 IdentifierName "TKey" = any
 Line 25 col 28 IdentifierName "TValue" = any
 Line 26 col 0 IdentifierName "toEnumerable" = () => IEnumerable<{ key: TKey; value: TValue; }>

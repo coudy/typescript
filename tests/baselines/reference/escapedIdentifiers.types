@@ -9,7 +9,9 @@ Line 17 col 0 PostIncrementExpression "b ++" = number
 Line 17 col 0 IdentifierName "b" = number
 Line 18 col 0 PostIncrementExpression "\u0062 ++" = number
 Line 18 col 0 IdentifierName "\u0062" = number
+Line 21 col 7 IdentifierName "moduleType1" = moduleType1
 Line 22 col 15 IdentifierName "baz1" = number
+Line 24 col 7 IdentifierName "moduleType\u0032" = moduleType\u0032
 Line 25 col 15 IdentifierName "baz2" = number
 Line 27 col 0 AssignmentExpression "moduleType1.baz1 = 3" = number
 Line 27 col 0 MemberAccessExpression "moduleType1.baz1" = number
@@ -27,7 +29,9 @@ Line 31 col 0 AssignmentExpression "moduleType\u0032.baz2 = 3" = number
 Line 31 col 0 MemberAccessExpression "moduleType\u0032.baz2" = number
 Line 31 col 0 IdentifierName "moduleType\u0032" = { baz2: number; }
 Line 31 col 17 IdentifierName "baz2" = number
+Line 35 col 6 IdentifierName "classType1" = classType1
 Line 36 col 11 IdentifierName "foo1" = number
+Line 38 col 6 IdentifierName "classType\u0032" = classType\u0032
 Line 39 col 11 IdentifierName "foo2" = number
 Line 42 col 4 IdentifierName "classType1Object1" = classType1
 Line 42 col 24 ObjectCreationExpression "new classType1()" = classType1
@@ -57,12 +61,15 @@ Line 49 col 0 AssignmentExpression "classType2Object2.foo2 = 2" = number
 Line 49 col 0 MemberAccessExpression "classType2Object2.foo2" = number
 Line 49 col 0 IdentifierName "classType2Object2" = classType\u0032
 Line 49 col 18 IdentifierName "foo2" = number
+Line 52 col 10 IdentifierName "interfaceType1" = interfaceType1
 Line 53 col 0 IdentifierName "bar1" = number
+Line 55 col 10 IdentifierName "interfaceType\u0032" = interfaceType\u0032
 Line 56 col 0 IdentifierName "bar2" = number
 Line 59 col 4 IdentifierName "interfaceType1Object1" = interfaceType1
 Line 59 col 28 CastExpression "<interfaceType1>{ bar1: 0 }" = interfaceType1
 Line 59 col 29 IdentifierName "interfaceType1" = interfaceType1
 Line 59 col 44 ObjectLiteralExpression "{ bar1: 0 }" = { bar1: number; }
+Line 59 col 46 IdentifierName "bar1" = number
 Line 60 col 0 AssignmentExpression "interfaceType1Object1.bar1 = 2" = number
 Line 60 col 0 MemberAccessExpression "interfaceType1Object1.bar1" = number
 Line 60 col 0 IdentifierName "interfaceType1Object1" = interfaceType1
@@ -71,6 +78,7 @@ Line 61 col 4 IdentifierName "interfaceType1Object2" = interfaceType1
 Line 61 col 28 CastExpression "<interfaceType\u0031>{ bar1: 0 }" = interfaceType1
 Line 61 col 29 IdentifierName "interfaceType\u0031" = interfaceType1
 Line 61 col 49 ObjectLiteralExpression "{ bar1: 0 }" = { bar1: number; }
+Line 61 col 51 IdentifierName "bar1" = number
 Line 62 col 0 AssignmentExpression "interfaceType1Object2.bar1 = 2" = number
 Line 62 col 0 MemberAccessExpression "interfaceType1Object2.bar1" = number
 Line 62 col 0 IdentifierName "interfaceType1Object2" = interfaceType1
@@ -79,6 +87,7 @@ Line 63 col 4 IdentifierName "interfaceType2Object1" = interfaceType\u0032
 Line 63 col 28 CastExpression "<interfaceType2>{ bar2: 0 }" = interfaceType\u0032
 Line 63 col 29 IdentifierName "interfaceType2" = interfaceType\u0032
 Line 63 col 44 ObjectLiteralExpression "{ bar2: 0 }" = { bar2: number; }
+Line 63 col 46 IdentifierName "bar2" = number
 Line 64 col 0 AssignmentExpression "interfaceType2Object1.bar2 = 2" = number
 Line 64 col 0 MemberAccessExpression "interfaceType2Object1.bar2" = number
 Line 64 col 0 IdentifierName "interfaceType2Object1" = interfaceType\u0032
@@ -87,10 +96,13 @@ Line 65 col 4 IdentifierName "interfaceType2Object2" = interfaceType\u0032
 Line 65 col 28 CastExpression "<interfaceType\u0032>{ bar2: 0 }" = interfaceType\u0032
 Line 65 col 29 IdentifierName "interfaceType\u0032" = interfaceType\u0032
 Line 65 col 49 ObjectLiteralExpression "{ bar2: 0 }" = { bar2: number; }
+Line 65 col 51 IdentifierName "bar2" = number
 Line 66 col 0 AssignmentExpression "interfaceType2Object2.bar2 = 2" = number
 Line 66 col 0 MemberAccessExpression "interfaceType2Object2.bar2" = number
 Line 66 col 0 IdentifierName "interfaceType2Object2" = interfaceType\u0032
 Line 66 col 22 IdentifierName "bar2" = number
+Line 70 col 6 IdentifierName "testClass" = testClass
+Line 71 col 11 IdentifierName "func" = (arg1: number, arg\u0032: string, arg\u0033: boolean, arg4: number) => void
 Line 71 col 16 IdentifierName "arg1" = any
 Line 71 col 30 IdentifierName "arg\u0032" = any
 Line 71 col 49 IdentifierName "arg\u0033" = any
@@ -103,6 +115,7 @@ Line 74 col 0 AssignmentExpression "arg\u0033 = true" = boolean
 Line 74 col 0 IdentifierName "arg\u0033" = boolean
 Line 75 col 0 AssignmentExpression "arg4 = 2" = number
 Line 75 col 0 IdentifierName "arg4" = number
+Line 80 col 6 IdentifierName "constructorTestClass" = constructorTestClass
 Line 81 col 24 IdentifierName "arg1" = number
 Line 81 col 44 IdentifierName "arg\u0032" = string
 Line 81 col 69 IdentifierName "arg\u0033" = boolean

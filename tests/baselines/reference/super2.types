@@ -1,14 +1,28 @@
 === tests/cases/compiler/super2.ts ===
+Line 1 col 6 IdentifierName "Base5" = Base5
+Line 2 col 11 IdentifierName "x" = () => string
+Line 6 col 11 IdentifierName "y" = () => string
+Line 11 col 6 IdentifierName "Sub5" = Sub5
 Line 11 col 19 IdentifierName "Base5" = Base5
+Line 12 col 11 IdentifierName "x" = () => string
+Line 17 col 6 IdentifierName "SubSub5" = SubSub5
 Line 17 col 22 IdentifierName "Sub5" = Sub5
+Line 18 col 11 IdentifierName "x" = () => string
 Line 19 col 15 InvocationExpression "super.x()" = string
 Line 19 col 15 MemberAccessExpression "super.x" = () => string
 Line 19 col 21 IdentifierName "x" = () => string
+Line 21 col 11 IdentifierName "y" = () => string
 Line 22 col 15 InvocationExpression "super.y()" = string
 Line 22 col 15 MemberAccessExpression "super.y" = () => string
 Line 22 col 21 IdentifierName "y" = () => string
+Line 27 col 6 IdentifierName "Base6" = Base6
+Line 28 col 11 IdentifierName "x" = () => string
+Line 33 col 6 IdentifierName "Sub6" = Sub6
 Line 33 col 19 IdentifierName "Base6" = Base6
+Line 34 col 11 IdentifierName "y" = () => string
+Line 39 col 6 IdentifierName "SubSub6" = SubSub6
 Line 39 col 22 IdentifierName "Sub6" = Sub6
+Line 40 col 11 IdentifierName "y" = () => string
 Line 41 col 15 InvocationExpression "super.y()" = string
 Line 41 col 15 MemberAccessExpression "super.y" = () => string
 Line 41 col 21 IdentifierName "y" = () => string

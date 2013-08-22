@@ -1,4 +1,5 @@
 === tests/cases/compiler/genericClassesInModule2.ts ===
+Line 0 col 13 IdentifierName "A" = A<T1>
 Line 0 col 15 IdentifierName "T1" = any
 Line 1 col 24 IdentifierName "callback" = (self: A<T1>) => void
 Line 1 col 35 IdentifierName "self" = any
@@ -8,6 +9,7 @@ Line 2 col 12 IdentifierName "child" = B<A<any>>
 Line 2 col 20 ObjectCreationExpression "new B(this)" = B<A<any>>
 Line 2 col 24 IdentifierName "B" = new<T2>(parent: T2) => B<T2>
 Line 2 col 26 ThisKeyword "this" = A<T1>
+Line 4 col 0 IdentifierName "AAA" = (callback: (self: A<T1>) => void) => void
 Line 4 col 9 IdentifierName "callback" = any
 Line 4 col 20 IdentifierName "self" = any
 Line 4 col 26 IdentifierName "A" = A<T1>
@@ -16,6 +18,7 @@ Line 5 col 12 IdentifierName "child" = B<A<any>>
 Line 5 col 20 ObjectCreationExpression "new B(this)" = B<A<any>>
 Line 5 col 24 IdentifierName "B" = new<T2>(parent: T2) => B<T2>
 Line 5 col 26 ThisKeyword "this" = A<T1>
+Line 9 col 17 IdentifierName "C" = C<T1>
 Line 9 col 19 IdentifierName "T1" = any
 Line 10 col 0 IdentifierName "child" = B<T1>
 Line 10 col 11 IdentifierName "B" = B<T2>
@@ -27,6 +30,7 @@ Line 12 col 8 IdentifierName "callback" = any
 Line 12 col 19 IdentifierName "self" = any
 Line 12 col 25 IdentifierName "C" = C<T1>
 Line 12 col 27 IdentifierName "T1" = T1
+Line 15 col 13 IdentifierName "B" = B<T2>
 Line 15 col 15 IdentifierName "T2" = any
 Line 16 col 23 IdentifierName "parent" = T2
 Line 16 col 31 IdentifierName "T2" = T2

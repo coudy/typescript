@@ -1,9 +1,11 @@
 === tests/cases/compiler/privateVisibles.ts ===
+Line 0 col 6 IdentifierName "Foo" = Foo
 Line 1 col 9 IdentifierName "pvar" = number
 Line 3 col 9 IdentifierName "n" = number
 Line 3 col 13 MemberAccessExpression "this.pvar" = number
 Line 3 col 13 ThisKeyword "this" = Foo
 Line 3 col 18 IdentifierName "pvar" = number
+Line 6 col 8 IdentifierName "meth" = () => void
 Line 6 col 21 IdentifierName "q" = number
 Line 6 col 25 MemberAccessExpression "this.pvar" = number
 Line 6 col 25 ThisKeyword "this" = Foo

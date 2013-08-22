@@ -1,4 +1,5 @@
 === tests/cases/compiler/tooFewArgumentsInGenericFunctionTypedArgument.ts ===
+Line 0 col 10 IdentifierName "Collection" = Collection<T, U>
 Line 0 col 21 IdentifierName "T" = any
 Line 0 col 24 IdentifierName "U" = any
 Line 1 col 0 IdentifierName "length" = number
@@ -12,6 +13,7 @@ Line 3 col 11 IdentifierName "x" = any
 Line 3 col 14 IdentifierName "T" = T
 Line 3 col 17 IdentifierName "y" = any
 Line 3 col 20 IdentifierName "U" = U
+Line 5 col 10 IdentifierName "Combinators" = Combinators
 Line 6 col 0 IdentifierName "map" = { <T, U>(c: Collection<T, U>, f: (x: T, y: U) => any): Collection<any, any>; <T, U, V>(c: Collection<T, U>, f: (x: T, y: U) => V): Collection<T, V>; }
 Line 6 col 8 IdentifierName "T" = any
 Line 6 col 11 IdentifierName "U" = any

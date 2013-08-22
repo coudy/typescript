@@ -1,5 +1,6 @@
 === tests/cases/compiler/underscoreTest1_underscoreTests.ts ===
 Line 2 col 12 IdentifierName "$" = any
+Line 3 col 17 IdentifierName "alert" = (x: string) => void
 Line 3 col 23 IdentifierName "x" = any
 Line 4 col 0 InvocationExpression "_.each([1, 2, 3], (num) => alert(num.toString()))" = any
 Line 4 col 0 MemberAccessExpression "_.each" = any
@@ -19,6 +20,9 @@ Line 6 col 0 MemberAccessExpression "_.each" = any
 Line 6 col 0 IdentifierName "_" = any
 Line 6 col 2 IdentifierName "each" = any
 Line 6 col 7 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 6 col 9 IdentifierName "one" = number
+Line 6 col 17 IdentifierName "two" = number
+Line 6 col 25 IdentifierName "three" = number
 Line 6 col 37 ParenthesizedArrowFunctionExpression "(value: number, key?: string) => alert(value.toString())" = (value: number, key?: string) => void
 Line 6 col 38 IdentifierName "value" = any
 Line 6 col 53 IdentifierName "key" = any
@@ -42,6 +46,9 @@ Line 9 col 0 MemberAccessExpression "_.map" = any
 Line 9 col 0 IdentifierName "_" = any
 Line 9 col 2 IdentifierName "map" = any
 Line 9 col 6 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 9 col 8 IdentifierName "one" = number
+Line 9 col 16 IdentifierName "two" = number
+Line 9 col 24 IdentifierName "three" = number
 Line 9 col 36 ParenthesizedArrowFunctionExpression "(value: number, key?: string) => value * 3" = (value: number, key?: string) => number
 Line 9 col 37 IdentifierName "value" = any
 Line 9 col 52 IdentifierName "key" = any
@@ -104,14 +111,25 @@ Line 18 col 50 IdentifierName "num" = any
 Line 20 col 4 IdentifierName "listOfPlays" = { title: string; author: string; year: number; }[]
 Line 20 col 18 ArrayLiteralExpression "[{ title: "Cymbeline", author: "Shakespeare", year: 1611 }, { title: "The Tempest", author: "Shakespeare", year: 1611 }, { title: "Other", author: "Not Shakespeare", year: 2012 }]" = { title: string; author: string; year: number; }[]
 Line 20 col 19 ObjectLiteralExpression "{ title: "Cymbeline", author: "Shakespeare", year: 1611 }" = { title: string; author: string; year: number; }
+Line 20 col 21 IdentifierName "title" = string
+Line 20 col 41 IdentifierName "author" = string
+Line 20 col 64 IdentifierName "year" = number
 Line 20 col 78 ObjectLiteralExpression "{ title: "The Tempest", author: "Shakespeare", year: 1611 }" = { title: string; author: string; year: number; }
+Line 20 col 80 IdentifierName "title" = string
+Line 20 col 102 IdentifierName "author" = string
+Line 20 col 125 IdentifierName "year" = number
 Line 20 col 139 ObjectLiteralExpression "{ title: "Other", author: "Not Shakespeare", year: 2012 }" = { title: string; author: string; year: number; }
+Line 20 col 141 IdentifierName "title" = string
+Line 20 col 157 IdentifierName "author" = string
+Line 20 col 184 IdentifierName "year" = number
 Line 21 col 0 InvocationExpression "_.where(listOfPlays, { author: "Shakespeare", year: 1611 })" = any
 Line 21 col 0 MemberAccessExpression "_.where" = any
 Line 21 col 0 IdentifierName "_" = any
 Line 21 col 2 IdentifierName "where" = any
 Line 21 col 8 IdentifierName "listOfPlays" = { title: string; author: string; year: number; }[]
 Line 21 col 21 ObjectLiteralExpression "{ author: "Shakespeare", year: 1611 }" = { author: string; year: number; }
+Line 21 col 23 IdentifierName "author" = string
+Line 21 col 46 IdentifierName "year" = number
 Line 23 col 4 IdentifierName "odds" = any
 Line 23 col 11 InvocationExpression "_.reject([1, 2, 3, 4, 5, 6], (num) => num % 2 == 0)" = any
 Line 23 col 11 MemberAccessExpression "_.reject" = any
@@ -149,8 +167,14 @@ Line 31 col 21 ArrayLiteralExpression "[3, 2, 1]" = number[]
 Line 33 col 4 IdentifierName "stooges" = { name: string; age: number; }[]
 Line 33 col 14 ArrayLiteralExpression "[{ name: 'moe', age: 40 }, { name: 'larry', age: 50 }, { name: 'curly', age: 60 }]" = { name: string; age: number; }[]
 Line 33 col 15 ObjectLiteralExpression "{ name: 'moe', age: 40 }" = { name: string; age: number; }
+Line 33 col 17 IdentifierName "name" = string
+Line 33 col 30 IdentifierName "age" = number
 Line 33 col 41 ObjectLiteralExpression "{ name: 'larry', age: 50 }" = { name: string; age: number; }
+Line 33 col 43 IdentifierName "name" = string
+Line 33 col 58 IdentifierName "age" = number
 Line 33 col 69 ObjectLiteralExpression "{ name: 'curly', age: 60 }" = { name: string; age: number; }
+Line 33 col 71 IdentifierName "name" = string
+Line 33 col 86 IdentifierName "age" = number
 Line 34 col 0 InvocationExpression "_.pluck(stooges, 'name')" = any
 Line 34 col 0 MemberAccessExpression "_.pluck" = any
 Line 34 col 0 IdentifierName "_" = any
@@ -248,6 +272,9 @@ Line 52 col 0 IdentifierName "// (function(){ return _.toArray(arguments).slice(
 _" = any
 Line 55 col 2 IdentifierName "size" = any
 Line 55 col 7 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 55 col 9 IdentifierName "one" = number
+Line 55 col 17 IdentifierName "two" = number
+Line 55 col 25 IdentifierName "three" = number
 Line 56 col 0 InvocationExpression "///////////////////////////////////////////////////////////////////////////////////////
 
 _.first([5, 4, 3, 2, 1])" = any
@@ -413,6 +440,7 @@ Line 93 col 12 IdentifierName "_" = any
 Line 93 col 14 IdentifierName "bind" = any
 Line 93 col 19 IdentifierName "func" = (greeting: any) => string
 Line 93 col 25 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 93 col 27 IdentifierName "name" = string
 Line 94 col 0 InvocationExpression "func2()" = any
 Line 94 col 0 IdentifierName "func2" = any
 Line 96 col 4 IdentifierName "buttonView" = { label: string; onClick: () => void; onHover: () => void; }
@@ -421,6 +449,8 @@ Line 96 col 17 ObjectLiteralExpression "{
     onClick: function () { alert('clicked: ' + this.label); },
     onHover: function () { alert('hovering: ' + this.label); }
 }" = { label: string; onClick: () => void; onHover: () => void; }
+Line 97 col 0 IdentifierName "label" = string
+Line 98 col 0 IdentifierName "onClick" = () => void
 Line 98 col 13 FunctionExpression "function () { alert('clicked: ' + this.label); }" = () => void
 Line 98 col 27 InvocationExpression "alert('clicked: ' + this.label)" = void
 Line 98 col 27 IdentifierName "alert" = (x: string) => void
@@ -428,6 +458,7 @@ Line 98 col 33 AddExpression "'clicked: ' + this.label" = string
 Line 98 col 47 MemberAccessExpression "this.label" = any
 Line 98 col 47 ThisKeyword "this" = any
 Line 98 col 52 IdentifierName "label" = any
+Line 99 col 0 IdentifierName "onHover" = () => void
 Line 99 col 13 FunctionExpression "function () { alert('hovering: ' + this.label); }" = () => void
 Line 99 col 27 InvocationExpression "alert('hovering: ' + this.label)" = void
 Line 99 col 27 IdentifierName "alert" = (x: string) => void
@@ -565,6 +596,7 @@ Line 129 col 24 MemberAccessExpression "note.asyncSave" = any
 Line 129 col 24 IdentifierName "note" = any
 Line 129 col 29 IdentifierName "asyncSave" = any
 Line 129 col 39 ObjectLiteralExpression "{ success: renderNotes }" = { success: any; }
+Line 129 col 41 IdentifierName "success" = any
 Line 129 col 50 IdentifierName "renderNotes" = any
 Line 131 col 4 IdentifierName "hello" = (name: any) => string
 Line 131 col 12 FunctionExpression "function (name) { return "hello: " + name; }" = (name: any) => string
@@ -618,21 +650,33 @@ Line 139 col 0 IdentifierName "/////////////////////////////////////////////////
 _" = any
 Line 142 col 2 IdentifierName "keys" = any
 Line 142 col 7 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 142 col 9 IdentifierName "one" = number
+Line 142 col 17 IdentifierName "two" = number
+Line 142 col 25 IdentifierName "three" = number
 Line 143 col 0 InvocationExpression "_.values({ one: 1, two: 2, three: 3 })" = any
 Line 143 col 0 MemberAccessExpression "_.values" = any
 Line 143 col 0 IdentifierName "_" = any
 Line 143 col 2 IdentifierName "values" = any
 Line 143 col 9 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 143 col 11 IdentifierName "one" = number
+Line 143 col 19 IdentifierName "two" = number
+Line 143 col 27 IdentifierName "three" = number
 Line 144 col 0 InvocationExpression "_.pairs({ one: 1, two: 2, three: 3 })" = any
 Line 144 col 0 MemberAccessExpression "_.pairs" = any
 Line 144 col 0 IdentifierName "_" = any
 Line 144 col 2 IdentifierName "pairs" = any
 Line 144 col 8 ObjectLiteralExpression "{ one: 1, two: 2, three: 3 }" = { one: number; two: number; three: number; }
+Line 144 col 10 IdentifierName "one" = number
+Line 144 col 18 IdentifierName "two" = number
+Line 144 col 26 IdentifierName "three" = number
 Line 145 col 0 InvocationExpression "_.invert({ Moe: "Moses", Larry: "Louis", Curly: "Jerome" })" = any
 Line 145 col 0 MemberAccessExpression "_.invert" = any
 Line 145 col 0 IdentifierName "_" = any
 Line 145 col 2 IdentifierName "invert" = any
 Line 145 col 9 ObjectLiteralExpression "{ Moe: "Moses", Larry: "Louis", Curly: "Jerome" }" = { Moe: string; Larry: string; Curly: string; }
+Line 145 col 11 IdentifierName "Moe" = string
+Line 145 col 25 IdentifierName "Larry" = string
+Line 145 col 41 IdentifierName "Curly" = string
 Line 146 col 0 InvocationExpression "_.functions(_)" = any
 Line 146 col 0 MemberAccessExpression "_.functions" = any
 Line 146 col 0 IdentifierName "_" = any
@@ -643,30 +687,42 @@ Line 147 col 0 MemberAccessExpression "_.extend" = any
 Line 147 col 0 IdentifierName "_" = any
 Line 147 col 2 IdentifierName "extend" = any
 Line 147 col 9 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 147 col 11 IdentifierName "name" = string
 Line 147 col 26 ObjectLiteralExpression "{ age: 50 }" = { age: number; }
+Line 147 col 28 IdentifierName "age" = number
 Line 148 col 0 InvocationExpression "_.pick({ name: 'moe', age: 50, userid: 'moe1' }, 'name', 'age')" = any
 Line 148 col 0 MemberAccessExpression "_.pick" = any
 Line 148 col 0 IdentifierName "_" = any
 Line 148 col 2 IdentifierName "pick" = any
 Line 148 col 7 ObjectLiteralExpression "{ name: 'moe', age: 50, userid: 'moe1' }" = { name: string; age: number; userid: string; }
+Line 148 col 9 IdentifierName "name" = string
+Line 148 col 22 IdentifierName "age" = number
+Line 148 col 31 IdentifierName "userid" = string
 Line 149 col 0 InvocationExpression "_.omit({ name: 'moe', age: 50, userid: 'moe1' }, 'userid')" = any
 Line 149 col 0 MemberAccessExpression "_.omit" = any
 Line 149 col 0 IdentifierName "_" = any
 Line 149 col 2 IdentifierName "omit" = any
 Line 149 col 7 ObjectLiteralExpression "{ name: 'moe', age: 50, userid: 'moe1' }" = { name: string; age: number; userid: string; }
+Line 149 col 9 IdentifierName "name" = string
+Line 149 col 22 IdentifierName "age" = number
+Line 149 col 31 IdentifierName "userid" = string
 Line 151 col 4 IdentifierName "iceCream" = { flavor: string; }
 Line 151 col 15 ObjectLiteralExpression "{ flavor: "chocolate" }" = { flavor: string; }
+Line 151 col 17 IdentifierName "flavor" = string
 Line 152 col 0 InvocationExpression "_.defaults(iceCream, { flavor: "vanilla", sprinkles: "lots" })" = any
 Line 152 col 0 MemberAccessExpression "_.defaults" = any
 Line 152 col 0 IdentifierName "_" = any
 Line 152 col 2 IdentifierName "defaults" = any
 Line 152 col 11 IdentifierName "iceCream" = { flavor: string; }
 Line 152 col 21 ObjectLiteralExpression "{ flavor: "vanilla", sprinkles: "lots" }" = { flavor: string; sprinkles: string; }
+Line 152 col 23 IdentifierName "flavor" = string
+Line 152 col 42 IdentifierName "sprinkles" = string
 Line 153 col 0 InvocationExpression "_.clone({ name: 'moe' })" = any
 Line 153 col 0 MemberAccessExpression "_.clone" = any
 Line 153 col 0 IdentifierName "_" = any
 Line 154 col 2 IdentifierName "clone" = any
 Line 154 col 8 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 154 col 10 IdentifierName "name" = string
 Line 155 col 0 InvocationExpression "_.chain([1, 2, 3, 200])
     .filter(function (num) { return num % 2 == 0; })
     .tap(<any>alert)
@@ -721,11 +777,18 @@ Line 161 col 0 MemberAccessExpression "_.has" = any
 Line 161 col 0 IdentifierName "_" = any
 Line 162 col 2 IdentifierName "has" = any
 Line 162 col 6 ObjectLiteralExpression "{ a: 1, b: 2, c: 3 }" = { a: number; b: number; c: number; }
+Line 162 col 8 IdentifierName "a" = number
+Line 162 col 14 IdentifierName "b" = number
+Line 162 col 20 IdentifierName "c" = number
 Line 164 col 4 IdentifierName "moe" = { name: string; luckyNumbers: number[]; }
 Line 164 col 10 ObjectLiteralExpression "{ name: 'moe', luckyNumbers: [13, 27, 34] }" = { name: string; luckyNumbers: number[]; }
+Line 164 col 12 IdentifierName "name" = string
+Line 164 col 25 IdentifierName "luckyNumbers" = number[]
 Line 164 col 39 ArrayLiteralExpression "[13, 27, 34]" = number[]
 Line 165 col 4 IdentifierName "clone" = { name: string; luckyNumbers: number[]; }
 Line 165 col 12 ObjectLiteralExpression "{ name: 'moe', luckyNumbers: [13, 27, 34] }" = { name: string; luckyNumbers: number[]; }
+Line 165 col 14 IdentifierName "name" = string
+Line 165 col 27 IdentifierName "luckyNumbers" = number[]
 Line 165 col 41 ArrayLiteralExpression "[13, 27, 34]" = number[]
 Line 166 col 0 EqualsWithTypeConversionExpression "moe == clone" = boolean
 Line 166 col 0 IdentifierName "moe" = { name: string; luckyNumbers: number[]; }
@@ -859,6 +922,7 @@ Line 211 col 17 IdentifierName "_" = any
 Line 211 col 19 IdentifierName "noConflict" = any
 Line 213 col 4 IdentifierName "moe2" = { name: string; }
 Line 213 col 11 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 213 col 13 IdentifierName "name" = string
 Line 214 col 0 EqualsExpression "moe2 === _.identity(moe)" = boolean
 Line 214 col 0 IdentifierName "moe2" = { name: string; }
 Line 214 col 9 InvocationExpression "_.identity(moe)" = any
@@ -895,6 +959,7 @@ Line 222 col 8 ObjectLiteralExpression "{
         return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
     }
 }" = { capitalize: (string: any) => any; }
+Line 223 col 0 IdentifierName "capitalize" = (string: any) => any
 Line 223 col 16 FunctionExpression "function (string) {
         return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
     }" = (string: any) => any
@@ -931,6 +996,8 @@ Line 230 col 0 IdentifierName "_" = any
 Line 231 col 2 IdentifierName "escape" = any
 Line 233 col 4 IdentifierName "object" = { cheese: string; stuff: () => string; }
 Line 233 col 13 ObjectLiteralExpression "{ cheese: 'crumpets', stuff: function () { return 'nonsense'; } }" = { cheese: string; stuff: () => string; }
+Line 233 col 15 IdentifierName "cheese" = string
+Line 233 col 35 IdentifierName "stuff" = () => string
 Line 233 col 42 FunctionExpression "function () { return 'nonsense'; }" = () => string
 Line 234 col 0 InvocationExpression "_.result(object, 'cheese')" = any
 Line 234 col 0 MemberAccessExpression "_.result" = any
@@ -950,6 +1017,7 @@ Line 238 col 17 IdentifierName "template" = any
 Line 239 col 0 InvocationExpression "compiled({ name: 'moe' })" = any
 Line 239 col 0 IdentifierName "compiled" = any
 Line 239 col 9 ObjectLiteralExpression "{ name: 'moe' }" = { name: string; }
+Line 239 col 11 IdentifierName "name" = string
 Line 240 col 4 IdentifierName "list2" = string
 Line 241 col 0 InvocationExpression "_.template(list2, { people: ['moe', 'curly', 'larry'] })" = any
 Line 241 col 0 MemberAccessExpression "_.template" = any
@@ -957,6 +1025,7 @@ Line 241 col 0 IdentifierName "_" = any
 Line 241 col 2 IdentifierName "template" = any
 Line 241 col 11 IdentifierName "list2" = string
 Line 241 col 18 ObjectLiteralExpression "{ people: ['moe', 'curly', 'larry'] }" = { people: string[]; }
+Line 241 col 20 IdentifierName "people" = string[]
 Line 241 col 28 ArrayLiteralExpression "['moe', 'curly', 'larry']" = string[]
 Line 242 col 4 IdentifierName "template" = any
 Line 242 col 15 InvocationExpression "_.template("<b><%- value %></b>")" = any
@@ -966,6 +1035,7 @@ Line 242 col 17 IdentifierName "template" = any
 Line 243 col 0 InvocationExpression "template({ value: '<script>' })" = any
 Line 243 col 0 IdentifierName "template" = any
 Line 243 col 9 ObjectLiteralExpression "{ value: '<script>' }" = { value: string; }
+Line 243 col 11 IdentifierName "value" = string
 Line 244 col 4 IdentifierName "compiled2" = any
 Line 244 col 16 InvocationExpression "_.template("<% print('Hello ' + epithet); %>")" = any
 Line 244 col 16 MemberAccessExpression "_.template" = any
@@ -974,6 +1044,7 @@ Line 244 col 18 IdentifierName "template" = any
 Line 245 col 0 InvocationExpression "compiled2({ epithet: "stooge" })" = any
 Line 245 col 0 IdentifierName "compiled2" = any
 Line 245 col 10 ObjectLiteralExpression "{ epithet: "stooge" }" = { epithet: string; }
+Line 245 col 12 IdentifierName "epithet" = string
 Line 246 col 0 AssignmentExpression "_.templateSettings = {
     interpolate: /\{\{(.+?)\}\}/g
 }" = { interpolate: RegExp; }
@@ -983,6 +1054,7 @@ Line 246 col 2 IdentifierName "templateSettings" = any
 Line 246 col 21 ObjectLiteralExpression "{
     interpolate: /\{\{(.+?)\}\}/g
 }" = { interpolate: RegExp; }
+Line 247 col 0 IdentifierName "interpolate" = RegExp
 Line 249 col 4 IdentifierName "template2" = any
 Line 249 col 16 InvocationExpression "_.template("Hello {{ name }}!")" = any
 Line 249 col 16 MemberAccessExpression "_.template" = any
@@ -991,9 +1063,12 @@ Line 249 col 18 IdentifierName "template" = any
 Line 250 col 0 InvocationExpression "template2({ name: "Mustache" })" = any
 Line 250 col 0 IdentifierName "template2" = any
 Line 250 col 10 ObjectLiteralExpression "{ name: "Mustache" }" = { name: string; }
+Line 250 col 12 IdentifierName "name" = string
 Line 251 col 0 InvocationExpression "_.template("Using 'with': <%= data.answer %>", { answer: 'no' }, { variable: 'data' })" = any
 Line 251 col 0 MemberAccessExpression "_.template" = any
 Line 251 col 0 IdentifierName "_" = any
 Line 251 col 2 IdentifierName "template" = any
 Line 251 col 47 ObjectLiteralExpression "{ answer: 'no' }" = { answer: string; }
+Line 251 col 49 IdentifierName "answer" = string
 Line 251 col 65 ObjectLiteralExpression "{ variable: 'data' }" = { variable: string; }
+Line 251 col 67 IdentifierName "variable" = string

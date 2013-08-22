@@ -1,14 +1,19 @@
 === tests/cases/compiler/declFileGenericClassWithGenericExtendedClass.ts ===
+Line 0 col 10 IdentifierName "IFoo" = IFoo
 Line 1 col 0 IdentifierName "baz" = Baz
 Line 1 col 9 IdentifierName "Baz" = Baz
+Line 3 col 6 IdentifierName "Base" = Base<T>
 Line 3 col 11 IdentifierName "T" = any
+Line 4 col 6 IdentifierName "Derived" = Derived<T>
 Line 4 col 14 IdentifierName "T" = any
 Line 4 col 25 IdentifierName "Base" = new<T>() => Base<T>
 Line 4 col 30 IdentifierName "T" = any
+Line 5 col 10 IdentifierName "IBar" = IBar<T>
 Line 5 col 15 IdentifierName "T" = any
 Line 6 col 0 IdentifierName "derived" = Derived<T>
 Line 6 col 13 IdentifierName "Derived" = new<T>() => Derived<T>
 Line 6 col 21 IdentifierName "T" = any
+Line 8 col 6 IdentifierName "Baz" = Baz
 Line 8 col 21 IdentifierName "IBar" = IBar<T>
 Line 8 col 26 IdentifierName "Baz" = Baz
 Line 9 col 0 IdentifierName "derived" = Derived<Baz>

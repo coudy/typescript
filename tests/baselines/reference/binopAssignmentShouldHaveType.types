@@ -1,5 +1,9 @@
 === tests/cases/compiler/binopAssignmentShouldHaveType.ts ===
 Line 0 col 12 IdentifierName "console" = any
+Line 2 col 7 IdentifierName "Test" = Test
+Line 3 col 14 IdentifierName "Bug" = Test.Bug
+Line 4 col 0 IdentifierName "getName" = () => string
+Line 7 col 0 IdentifierName "bug" = () => void
 Line 8 col 7 IdentifierName "name" = string
 Line 9 col 7 GreaterThanExpression "(name= this.getName()).length > 0" = boolean
 Line 9 col 7 MemberAccessExpression "(name= this.getName()).length" = number

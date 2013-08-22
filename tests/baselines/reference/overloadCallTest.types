@@ -1,5 +1,9 @@
 === tests/cases/compiler/overloadCallTest.ts ===
+Line 0 col 6 IdentifierName "foo" = foo
+Line 2 col 17 IdentifierName "bar" = { (): string; (s: string): any; }
+Line 3 col 17 IdentifierName "bar" = { (): string; (s: string): any; }
 Line 3 col 21 IdentifierName "s" = any
+Line 4 col 17 IdentifierName "bar" = { (): string; (s: string): any; }
 Line 4 col 21 IdentifierName "foo" = new() => foo
 Line 6 col 12 IdentifierName "test" = any
 Line 6 col 19 InvocationExpression "bar("test")" = any

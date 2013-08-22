@@ -1,9 +1,13 @@
 === tests/cases/compiler/classOrder2.ts ===
+Line 1 col 6 IdentifierName "A" = A
 Line 1 col 16 IdentifierName "B" = B
+Line 2 col 0 IdentifierName "foo" = () => void
 Line 3 col 10 InvocationExpression "this.bar()" = void
 Line 3 col 10 MemberAccessExpression "this.bar" = () => void
 Line 3 col 10 ThisKeyword "this" = A
 Line 3 col 15 IdentifierName "bar" = () => void
+Line 7 col 6 IdentifierName "B" = B
+Line 8 col 0 IdentifierName "bar" = () => void
 Line 14 col 4 IdentifierName "a" = A
 Line 14 col 8 ObjectCreationExpression "new A()" = A
 Line 14 col 12 IdentifierName "A" = new() => A

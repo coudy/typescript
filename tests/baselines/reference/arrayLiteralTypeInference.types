@@ -1,7 +1,10 @@
 === tests/cases/compiler/arrayLiteralTypeInference.ts ===
+Line 0 col 6 IdentifierName "Action" = Action
 Line 1 col 0 IdentifierName "id" = number
+Line 4 col 6 IdentifierName "ActionA" = ActionA
 Line 4 col 22 IdentifierName "Action" = Action
 Line 5 col 0 IdentifierName "value" = string
+Line 8 col 6 IdentifierName "ActionB" = ActionB
 Line 8 col 22 IdentifierName "Action" = Action
 Line 9 col 0 IdentifierName "trueNess" = boolean
 Line 12 col 4 IdentifierName "x1" = Action[]
@@ -11,7 +14,11 @@ Line 12 col 19 ArrayLiteralExpression "[
     { id: 3, name: "three" }
 ]" = Action[]
 Line 13 col 0 ObjectLiteralExpression "{ id: 2, trueness: false }" = { id: number; trueness: boolean; }
+Line 13 col 6 IdentifierName "id" = number
+Line 13 col 13 IdentifierName "trueness" = boolean
 Line 14 col 0 ObjectLiteralExpression "{ id: 3, name: "three" }" = { id: number; name: string; }
+Line 14 col 6 IdentifierName "id" = number
+Line 14 col 13 IdentifierName "name" = string
 Line 17 col 4 IdentifierName "x2" = Action[]
 Line 17 col 8 IdentifierName "Action" = Action
 Line 17 col 19 ArrayLiteralExpression "[
@@ -42,7 +49,11 @@ Line 29 col 0 ArrayLiteralExpression "[
         { id: 3, name: "three" }
     ]" = { id: number; }[]
 Line 30 col 0 ObjectLiteralExpression "{ id: 2, trueness: false }" = { id: number; trueness: boolean; }
+Line 30 col 10 IdentifierName "id" = number
+Line 30 col 17 IdentifierName "trueness" = boolean
 Line 31 col 0 ObjectLiteralExpression "{ id: 3, name: "three" }" = { id: number; name: string; }
+Line 31 col 10 IdentifierName "id" = number
+Line 31 col 17 IdentifierName "name" = string
 Line 34 col 4 IdentifierName "z2" = { id: number; }[]
 Line 34 col 10 IdentifierName "id" = number
 Line 35 col 0 ArrayLiteralExpression "[

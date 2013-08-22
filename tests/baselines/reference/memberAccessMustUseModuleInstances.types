@@ -1,6 +1,9 @@
 === tests/cases/compiler/memberAccessMustUseModuleInstances.ts ===
+Line 2 col 13 IdentifierName "Promise" = "winjs".Promise
+Line 4 col 7 IdentifierName "timeout" = (delay: number) => "winjs".Promise
 Line 4 col 15 IdentifierName "delay" = any
 Line 4 col 31 IdentifierName "Promise" = "winjs".Promise
+Line 14 col 7 IdentifierName "WinJS" = any
 Line 15 col 0 InvocationExpression "WinJS.Promise.timeout(10)" = "winjs".Promise
 Line 15 col 0 MemberAccessExpression "WinJS.Promise.timeout" = (delay: number) => "winjs".Promise
 Line 15 col 0 MemberAccessExpression "WinJS.Promise" = { timeout(delay: number): "winjs".Promise; new(): "winjs".Promise; }
