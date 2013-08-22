@@ -155,7 +155,22 @@ class CompilerBaselineRunner extends RunnerBase {
 
                     // check js output
                     Harness.Baseline.runBaseline('Correct JS output for ' + fileName, justName.replace(/\.ts/, '.js'), () => {
-                        return result.files[0].code;
+                        var code = '';
+                        for (var i = 0; i < result.files.length; i++) {
+                            if (result.files.length > 1 || result.declFilesCode.length > 0) {
+                                code += '//// [' + Harness.getFileName(result.files[i].fileName) + ']\r\n';
+                            }
+                            code += result.files[i].code;
+                        }
+
+                        if (result.declFilesCode.length > 0) {
+                            code += '\r\n\r\n';
+                            for (var i = 0; i < result.files.length; i++) {
+                                //code += '//// [' + Harness.getFileName(result.files[i].fileName).replace('.ts', '.d.ts') + ']\r\n';
+                                code += result.declFilesCode[i].code;
+                            }
+                        }
+                        return code;
                     });
 
                     // Check sourcemap output
