@@ -1,3 +1,4 @@
+//// [out-flag.js]
 //// @out: bin\
 // my class comments
 var MyClass = (function () {
@@ -14,3 +15,10 @@ var MyClass = (function () {
     return MyClass;
 })();
 //# sourceMappingURL=out-flag.js.map
+
+
+////[out-flag.d.ts]
+declare class MyClass {
+    public Count(): number;
+    public SetCount(value: number): void;
+}

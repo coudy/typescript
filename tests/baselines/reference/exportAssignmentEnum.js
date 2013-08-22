@@ -1,3 +1,4 @@
+//// [exportAssignmentEnum_A.js]
 var E;
 (function (E) {
     E[E["A"] = 0] = "A";
@@ -7,4 +8,11 @@ var E;
 
 
 module.exports = E;
+
+//// [exportAssignmentEnum_B.js]
+var EnumE = require("exportAssignmentEnum_A");
+
+var a = EnumE.A;
+var b = EnumE.B;
+var c = EnumE.C;
 

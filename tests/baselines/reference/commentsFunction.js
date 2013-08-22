@@ -1,3 +1,4 @@
+//// [commentsFunction.js]
 /** This comment should appear for foo*/
 function foo() {
 }
@@ -26,3 +27,17 @@ var lambddaNoVarComment = /** this is lambda multiplication*/ function (/**param
 };
 lambdaFoo(10, 20);
 lambddaNoVarComment(10, 20);
+
+
+////[commentsFunction.d.ts]
+/** This comment should appear for foo*/
+declare function foo(): void;
+/** This is comment for function signature*/
+declare function fooWithParameters(/** this is comment about a*/ a: string, /** this is comment for b*/
+    b: number): void;
+/** fooFunc
+* comment
+*/
+declare var fooFunc: (b: string) => string;
+declare var lambdaFoo: (a: number, b: number) => number;
+declare var lambddaNoVarComment: (a: number, b: number) => number;

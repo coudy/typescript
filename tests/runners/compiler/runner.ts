@@ -166,7 +166,6 @@ class CompilerBaselineRunner extends RunnerBase {
                         if (result.declFilesCode.length > 0) {
                             code += '\r\n\r\n';
                             for (var i = 0; i < result.files.length; i++) {
-                                //code += '//// [' + Harness.getFileName(result.files[i].fileName).replace('.ts', '.d.ts') + ']\r\n';
                                 code += result.declFilesCode[i].code;
                             }
                         }

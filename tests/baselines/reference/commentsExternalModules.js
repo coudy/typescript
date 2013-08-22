@@ -1,3 +1,4 @@
+//// [commentsExternalModules_0.js]
 define(["require", "exports"], function(require, exports) {
     /** Module comment*/
     (function (m1) {
@@ -73,3 +74,47 @@ define(["require", "exports"], function(require, exports) {
     m4.fooExport();
     var myvar2 = new m4.m2.c();
 });
+//// [commentsExternalModules_1.js]
+define(["require", "exports", "commentsExternalModules_0"], function(require, exports, __extMod__) {
+    /**This is on import declaration*/
+    var extMod = __extMod__;
+    extMod.m1.fooExport();
+    var newVar = new extMod.m1.m2.c();
+    extMod.m4.fooExport();
+    var newVar2 = new extMod.m4.m2.c();
+});
+
+
+////[commentsExternalModules_0.d.ts]
+/** Module comment*/
+export declare module m1 {
+    /** b's comment*/
+    var b: number;
+    /** m2 comments*/
+    module m2 {
+        /** class comment;*/
+        class c {
+        }
+        /** i*/
+        var i: c;
+    }
+    /** exported function*/
+    function fooExport(): number;
+}
+/** Module comment */
+export declare module m4 {
+    /** b's comment */
+    var b: number;
+    /** m2 comments
+    */
+    module m2 {
+        /** class comment; */
+        class c {
+        }
+        /** i */
+        var i: c;
+    }
+    /** exported function */
+    function fooExport(): number;
+}
+////[commentsExternalModules_1.d.ts]

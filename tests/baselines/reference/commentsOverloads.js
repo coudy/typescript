@@ -1,3 +1,4 @@
+//// [commentsOverloads.js]
 
 
 function f1(aOrb) {
@@ -100,3 +101,125 @@ var c4_i_1 = new c4(10);
 var c4_i_2 = new c4("hello");
 var c5_i_1 = new c5(10);
 var c5_i_2 = new c5("hello");
+
+
+////[commentsOverloads.d.ts]
+/** this is signature 1*/
+declare function f1(/**param a*/ a: number): number;
+declare function f1(b: string): number;
+declare function f2(a: number): number;
+/** this is signature 2*/
+declare function f2(b: string): number;
+declare function f3(a: number): number;
+declare function f3(b: string): number;
+/** this is signature 4 - with number parameter*/
+declare function f4(/**param a*/ a: number): number;
+/** this is signature 4 - with string parameter*/
+declare function f4(b: string): number;
+interface i1 {
+    /**this signature 1*/
+    (/**param a*/ a: number): number;
+    /**this is signature 2*/
+    (b: string): number;
+    /** foo 1*/
+    foo(a: number): number;
+    /** foo 2*/
+    foo(b: string): number;
+    foo(arr: number[]): number;
+    /** foo 4 */
+    foo(arr: string[]): number;
+    foo2(a: number): number;
+    /** foo2 2*/
+    foo2(b: string): number;
+    foo3(a: number): number;
+    foo3(b: string): number;
+    /** foo4 1*/
+    foo4(a: number): number;
+    foo4(b: string): number;
+    /** foo4 any */
+    foo4(c: any): any;
+    new(a: string): any;
+    /** new 1*/
+    new(b: number): any;
+}
+declare var i1_i: i1;
+interface i2 {
+    new(a: string): any;
+    /** new 2*/
+    new(b: number): any;
+    (a: number): number;
+    /**this is signature 2*/
+    (b: string): number;
+}
+declare var i2_i: i2;
+interface i3 {
+    /** new 1*/
+    new(a: string): any;
+    /** new 2*/
+    new(b: number): any;
+    /**this is signature 1*/
+    (a: number): number;
+    (b: string): number;
+}
+declare var i3_i: i3;
+interface i4 {
+    new(a: string): any;
+    new(b: number): any;
+    (a: number): number;
+    (b: string): number;
+}
+declare class c {
+    public prop1(a: number): number;
+    public prop1(b: string): number;
+    /** prop2 1*/
+    public prop2(a: number): number;
+    public prop2(b: string): number;
+    public prop3(a: number): number;
+    /** prop3 2*/
+    public prop3(b: string): number;
+    /** prop4 1*/
+    public prop4(a: number): number;
+    /** prop4 2*/
+    public prop4(b: string): number;
+    /** prop5 1*/
+    public prop5(a: number): number;
+    /** prop5 2*/
+    public prop5(b: string): number;
+}
+declare class c1 {
+    constructor(a: number);
+    constructor(b: string);
+}
+declare class c2 {
+    /** c2 1*/
+    constructor(a: number);
+    constructor(b: string);
+}
+declare class c3 {
+    constructor(a: number);
+    /** c3 2*/
+    constructor(b: string);
+}
+declare class c4 {
+    /** c4 1*/
+    constructor(a: number);
+    /** c4 2*/
+    constructor(b: string);
+}
+declare class c5 {
+    /** c5 1*/
+    constructor(a: number);
+    /** c5 2*/
+    constructor(b: string);
+}
+declare var c_i: c;
+declare var c1_i_1: c1;
+declare var c1_i_2: c1;
+declare var c2_i_1: c2;
+declare var c2_i_2: c2;
+declare var c3_i_1: c3;
+declare var c3_i_2: c3;
+declare var c4_i_1: c4;
+declare var c4_i_2: c4;
+declare var c5_i_1: c5;
+declare var c5_i_2: c5;

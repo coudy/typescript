@@ -1,3 +1,4 @@
+//// [properties.js]
 var MyClass = (function () {
     function MyClass() {
     }
@@ -15,3 +16,9 @@ var MyClass = (function () {
     return MyClass;
 })();
 //# sourceMappingURL=properties.js.map
+
+
+////[properties.d.ts]
+declare class MyClass {
+    public Count : number;
+}

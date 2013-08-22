@@ -1,3 +1,4 @@
+//// [commentsEnums.js]
 /** Enum of colors*/
 var Colors;
 (function (Colors) {
@@ -9,3 +10,14 @@ var Colors;
 })(Colors || (Colors = {}));
 var x = Colors.Cornflower;
 x = Colors.FancyPink;
+
+
+////[commentsEnums.d.ts]
+/** Enum of colors*/
+declare enum Colors {
+    /** Fancy name for 'blue'*/
+    Cornflower,
+    /** Fancy name for 'pink'*/
+    FancyPink,
+}
+declare var x: Colors;

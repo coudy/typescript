@@ -1,3 +1,4 @@
+//// [commentsMultiModuleMultiFile_0.js]
 define(["require", "exports"], function(require, exports) {
     /** this is multi declare module*/
     (function (multiM) {
@@ -34,3 +35,37 @@ define(["require", "exports"], function(require, exports) {
     new multiM.b();
     new multiM.c();
 });
+//// [commentsMultiModuleMultiFile_1.js]
+define(["require", "exports"], function(require, exports) {
+    
+
+    /** this is multi module 3 comment*/
+    var multiM;
+    (function (multiM) {
+        /** class d comment*/
+        var d = (function () {
+            function d() {
+            }
+            return d;
+        })();
+        multiM.d = d;
+
+        /// class f comment
+        var f = (function () {
+            function f() {
+            }
+            return f;
+        })();
+        multiM.f = f;
+    })(multiM || (multiM = {}));
+    new multiM.d();
+});
+
+
+////[commentsMultiModuleMultiFile_0.d.ts]
+/** this is multi declare module*/
+export declare module multiM {
+    class b {
+    }
+}
+////[commentsMultiModuleMultiFile_1.d.ts]

@@ -1,3 +1,4 @@
+//// [es5-declaration-amd.js]
 var A = (function () {
     function A() {
     }
@@ -6,3 +7,10 @@ var A = (function () {
     };
     return A;
 })();
+
+
+////[es5-declaration-amd.d.ts]
+declare class A {
+    constructor();
+    public B(): number;
+}

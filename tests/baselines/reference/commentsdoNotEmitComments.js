@@ -1,3 +1,4 @@
+//// [commentsdoNotEmitComments.js]
 var myVariable = 10;
 
 function foo(p) {
@@ -53,3 +54,34 @@ var m1;
 })(m1 || (m1 = {}));
 
 
+
+
+////[commentsdoNotEmitComments.d.ts]
+declare var myVariable: number;
+declare function foo(p: number): void;
+declare var fooVar: () => void;
+declare class c {
+    constructor();
+    public b: number;
+    public myFoo(): number;
+    public prop1 : number;
+    public foo1(a: number): string;
+    public foo1(b: string): string;
+}
+declare var i: c;
+interface i1 {
+    (a: number): number;
+    new(b: string): any;
+    [a: number]: string;
+    myFoo(a: number): string;
+    prop: string;
+}
+declare var i1_i: i1;
+declare module m1 {
+    class b {
+        public x: number;
+        constructor(x: number);
+    }
+    module m2 {
+    }
+}

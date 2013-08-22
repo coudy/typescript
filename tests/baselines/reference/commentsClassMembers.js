@@ -1,3 +1,4 @@
+//// [commentsClassMembers.js]
 /** This is comment for c1*/
 var c1 = (function () {
     /** Constructor method*/
@@ -281,3 +282,115 @@ var cProperties = (function () {
 var cProperties_i = new cProperties();
 cProperties_i.p2 = cProperties_i.p1;
 cProperties_i.nc_p2 = cProperties_i.nc_p1;
+
+
+////[commentsClassMembers.d.ts]
+/** This is comment for c1*/
+declare class c1 {
+    /** p1 is property of c1*/
+    public p1: number;
+    /** sum with property*/
+    public p2(/** number to add*/ b: number): number;
+    /** getter property*/
+    /** setter property*/
+    public p3 : number;
+    /** pp1 is property of c1*/
+    private pp1;
+    /** sum with property*/
+    private pp2(/** number to add*/ b);
+    /** getter property*/
+    /** setter property*/
+    private pp3;
+    /** Constructor method*/
+    constructor();
+    /** s1 is static property of c1*/
+    static s1: number;
+    /** static sum with property*/
+    static s2(/** number to add*/ b: number): number;
+    /** static getter property*/
+    /** setter property*/
+    static s3 : number;
+    public nc_p1: number;
+    public nc_p2(b: number): number;
+    public nc_p3 : number;
+    private nc_pp1;
+    private nc_pp2(b);
+    private nc_pp3;
+    static nc_s1: number;
+    static nc_s2(b: number): number;
+    static nc_s3 : number;
+    public a_p1: number;
+    public a_p2(b: number): number;
+    public a_p3 : number;
+    private a_pp1;
+    private a_pp2(b);
+    private a_pp3;
+    static a_s1: number;
+    static a_s2(b: number): number;
+    static a_s3 : number;
+    /** p1 is property of c1 */
+    public b_p1: number;
+    /** sum with property */
+    public b_p2(b: number): number;
+    /** getter property */
+    /** setter property */
+    public b_p3 : number;
+    /** pp1 is property of c1 */
+    private b_pp1;
+    /** sum with property */
+    private b_pp2(b);
+    /** getter property */
+    /** setter property */
+    private b_pp3;
+    /** s1 is static property of c1 */
+    static b_s1: number;
+    /** static sum with property */
+    static b_s2(b: number): number;
+    /** static getter property
+    */
+    /** setter property
+    */
+    static b_s3 : number;
+}
+declare var i1: c1;
+declare var i1_p: number;
+declare var i1_f: (b: number) => number;
+declare var i1_r: number;
+declare var i1_prop: number;
+declare var i1_nc_p: number;
+declare var i1_ncf: (b: number) => number;
+declare var i1_ncr: number;
+declare var i1_ncprop: number;
+declare var i1_s_p: number;
+declare var i1_s_f: (b: number) => number;
+declare var i1_s_r: number;
+declare var i1_s_prop: number;
+declare var i1_s_nc_p: number;
+declare var i1_s_ncf: (b: number) => number;
+declare var i1_s_ncr: number;
+declare var i1_s_ncprop: number;
+declare var i1_c: {
+    s1: number;
+    s2(b: number): number;
+    s3: number;
+    nc_s1: number;
+    nc_s2(b: number): number;
+    nc_s3: number;
+    a_s1: number;
+    a_s2(b: number): number;
+    a_s3: number;
+    b_s1: number;
+    b_s2(b: number): number;
+    b_s3: number;
+    new(): c1;
+};
+declare class cProperties {
+    private val;
+    /** getter only property*/
+    public p1 : number;
+    public nc_p1 : number;
+    /**setter only property*/
+    public p2 : number;
+    public nc_p2 : number;
+}
+declare var cProperties_i: cProperties;
