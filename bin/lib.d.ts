@@ -787,7 +787,7 @@ interface String {
     localeCompare(that: string, locale: string, options?: Intl.CollatorOptions): number;
 }
 
-interface Numer {
+interface Number {
     toLocaleString(locales: string[], options?: Intl.NumberFormatOptions): string;
     toLocaleString(locale: string, options?: Intl.NumberFormatOptions): string;
 }
