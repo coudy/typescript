@@ -149,8 +149,8 @@ function findImage(bodyHtml: string) {
         return keep;
     });
     imgs.forEach(function (img, i) {
-        <any>img.attributes["width"].value *= (1 - (i / imgs.length) / 2);
-        <any>img.attributes["height"].value *= (1 - (i / imgs.length) / 2);
+        img.attributes["width"].value *= (1 - (i / imgs.length) / 2);
+        img.attributes["height"].value *= (1 - (i / imgs.length) / 2);
     });
     imgs.sort(function (img1, img2) {
         var awidth = +img1.attributes["width"].value;
