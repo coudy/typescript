@@ -10408,28 +10408,42 @@ module TypeScript {
             }
         }
 
-        private isValidLHS(ast: AST, expressionSymbol: PullSymbol): boolean {
-            var expressionTypeSymbol = expressionSymbol.type;
+        private isValidLHS(ast: AST, astSymbol: PullSymbol): boolean {
+            // References are the subset of expressions that are permitted as the target of an 
+            // assignment.Specifically, references are combinations of identifiers(section 4.3),
+            // parentheses(section 4.7), and property accesses(section 4.10).All other expression
+            //  constructs described in this chapter are classified as values.
 
             if (ast.nodeType() === NodeType.ParenthesizedExpression) {
                 // A parenthesized LHS is valid if the expression it wraps is valid.
-                return this.isValidLHS((<ParenthesizedExpression>ast).expression, expressionSymbol);
+                return this.isValidLHS((<ParenthesizedExpression>ast).expression, astSymbol);
             }
 
-            if (ast.nodeType() === NodeType.CommaExpression) {
-                // A comma expression is a value, not a reference, and is thus never a valid LHS
+            if (ast.nodeType() !== NodeType.Name && ast.nodeType() !== NodeType.MemberAccessExpression && ast.nodeType() !== NodeType.ElementAccessExpression) {
                 return false;
             }
 
-            if (ast.nodeType() === NodeType.ElementAccessExpression ||
-                this.isAnyOrEquivalent(expressionTypeSymbol)) {
-                return true;
-            }
-            else if (!expressionSymbol.isType() || expressionTypeSymbol.isArray()) {
-                return ((expressionSymbol.kind & PullElementKind.SomeLHS) != 0) && !expressionSymbol.hasFlag(TypeScript.PullElementFlags.Enum);
+            // Disallow assignment to an enum, class or module variables.
+            if (ast.nodeType() === NodeType.Name) {
+                if (astSymbol.kind === PullElementKind.Variable && astSymbol.hasFlag(PullElementFlags.Enum)) {
+                    return false;
+                }
+
+                if (astSymbol.kind === PullElementKind.Variable && astSymbol.hasFlag(PullElementFlags.SomeInitializedModule)) {
+                    return false;
+                }
+
+                if (astSymbol.kind === PullElementKind.ConstructorMethod) {
+                    return false;
+                }
             }
 
-            return false;
+            // Disallow assignment to an enum member.
+            if (ast.nodeType() === NodeType.MemberAccessExpression && astSymbol.kind === PullElementKind.EnumMember) {
+                return false;
+            }
+
+            return true;
         }
 
         private checkForSuperMemberAccess(memberAccessExpression: BinaryExpression,
