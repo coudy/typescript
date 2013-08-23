@@ -178,7 +178,7 @@ module TypeScript {
 
         public specializingToAny = false;
         public isResolvingClassExtendedType = false; 
-        public isSpecializingSignatureAtCallSite = false;
+        public isSpecializingSignatureTypeParameters = false;
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
         public isResolvingSuperConstructorTarget = false;

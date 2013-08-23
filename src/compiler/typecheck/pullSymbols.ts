@@ -2569,6 +2569,17 @@ module TypeScript {
             }
         }
 
+        if (!wrapsType && (type.kind & (PullElementKind.ObjectType | PullElementKind.ObjectLiteral))) {
+            var members = type.getMembers();
+
+            for (var i = 0; i < members.length; i++) {
+                if (members[i].type && typeWrapsTypeParameter(members[i].type, typeParameter)) {
+                    wrapsType = true;
+                    break;
+                }
+            }
+        } 
+
         type.inWrapCheck = false;
 
         return wrapsType;
@@ -2679,13 +2690,13 @@ module TypeScript {
 
             if (substitution != typeToSpecialize) {
 
-                if (context.isSpecializingSignatureAtCallSite || shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeToSpecialize)) {
+                if (context.isSpecializingSignatureTypeParameters || shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeToSpecialize)) {
                     return substitution;
                 }
             }
 
             if (typeArguments && typeArguments.length) {
-                if (context.isSpecializingSignatureAtCallSite || shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {
+                if (context.isSpecializingSignatureTypeParameters || shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>typeArguments[0], <PullTypeParameterSymbol>typeToSpecialize)) {
                     return typeArguments[0];
                 }
             }
@@ -2826,6 +2837,10 @@ module TypeScript {
         newType.setTypeArguments(typeArguments);
 
         rootType.addSpecialization(newType, typeArguments);
+
+        if ((rootType.kind == PullElementKind.ObjectType) && rootType.getHasGenericMember()) {
+            newType.setHasGenericMember();
+        }
 
         if (isArray) {
             newType.setElementType(typeArguments[0]);
@@ -2976,7 +2991,10 @@ module TypeScript {
                 signature.setIsBeingSpecialized();
                 newSignature.setRootSymbol(signature);
                 placeHolderSignature = newSignature;
-                newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
+
+                // If we're specializing a constructor method in the context of its parent class, we *do* want to specialize its type parameters as well, given
+                // that there's a pre-existing specialization
+                newSignature = specializeSignature(newSignature, !context.isSpecializingConstructorMethod, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
 
                 context.recursiveSignatureSpecializationDepth--;
@@ -3058,7 +3076,7 @@ module TypeScript {
                 signature.setIsBeingSpecialized();
                 newSignature.setRootSymbol(signature);
                 placeHolderSignature = newSignature;
-                newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
+                newSignature = specializeSignature(newSignature, !context.isSpecializingConstructorMethod, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
                 context.recursiveSignatureSpecializationDepth--;
 
@@ -3139,7 +3157,7 @@ module TypeScript {
                 signature.setIsBeingSpecialized();
                 newSignature.setRootSymbol(signature);
                 placeHolderSignature = newSignature;
-                newSignature = specializeSignature(newSignature, true, typeReplacementMap, null, resolver, newTypeDecl, context);
+                newSignature = specializeSignature(newSignature, !context.isSpecializingConstructorMethod, typeReplacementMap, null, resolver, newTypeDecl, context);
                 signature.setIsSpecialized();
                 context.recursiveSignatureSpecializationDepth--;
 
@@ -3242,17 +3260,19 @@ module TypeScript {
         if (typeToSpecialize.isClass()) {
             var constructorMethod = typeToSpecialize.getConstructorMethod();
 
+            var prevIsSpecializingConstructorMethod = context.isSpecializingConstructorMethod;
+            context.isSpecializingConstructorMethod = true;
+
             // If we haven't yet resolved the constructor method, we need to resolve it *without* substituting
             // for any type variables, so as to avoid accidentally specializing the root declaration
             if (!constructorMethod.isResolved) {
-                var prevIsSpecializingConstructorMethod = context.isSpecializingConstructorMethod;
-                context.isSpecializingConstructorMethod = true;
                 resolver.resolveDeclaredSymbol(constructorMethod, enclosingDecl, context);
-                context.isSpecializingConstructorMethod = prevIsSpecializingConstructorMethod;
             }
 
             var newConstructorMethod = new PullSymbol(constructorMethod.name, PullElementKind.ConstructorMethod);
-            var newConstructorType = specializeType(constructorMethod.type, typeArguments, resolver, newTypeDecl, context, ast);
+            var newConstructorType = specializeType(constructorMethod.type, typeArguments, resolver, newTypeDecl, context, ast);         
+
+            context.isSpecializingConstructorMethod = prevIsSpecializingConstructorMethod;
 
             newConstructorMethod.type = newConstructorType;
 
@@ -3350,6 +3370,7 @@ module TypeScript {
                 if (!localSkipMap) {
                     localSkipMap = {};
                 }
+
                 localSkipMap[typeParameters[i].pullSymbolIDString] = typeParameters[i];
             }
         }

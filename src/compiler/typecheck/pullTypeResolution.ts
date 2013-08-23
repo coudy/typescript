@@ -871,6 +871,10 @@ module TypeScript {
                 return true;
             }
 
+            if (type.kind & (PullElementKind.ObjectLiteral | PullElementKind.ObjectType)) {
+                return type.getHasGenericMember();
+            }
+
             return false;
         }
 
@@ -4824,7 +4828,7 @@ module TypeScript {
                 context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             }
 
-            if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite && !context.isSpecializingConstructorMethod)) {
+            if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {
                 var substitution = context.findSpecializationForType(typeNameSymbol);
 
                 if (typeNameSymbol.isTypeParameter() && (substitution != typeNameSymbol)) {
@@ -4957,7 +4961,7 @@ module TypeScript {
                             typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
                         }
 
-                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureAtCallSite && !context.isSpecializingConstructorMethod)) {   
+                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {   
                             typeArgs[i] = context.findSpecializationForType(typeArg);   
                         }   
                         else {   
@@ -6281,7 +6285,7 @@ module TypeScript {
                 var typeParameters: PullTypeParameterSymbol[];
                 var typeConstraint: PullTypeSymbol = null;
                 var prevSpecializingToAny = context.specializingToAny;
-                var prevSpecializing: boolean = context.isSpecializingSignatureAtCallSite;
+                var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
                 var beforeResolutionSignatures = signatures;
 
                 for (var i = 0; i < signatures.length; i++) {
@@ -6370,10 +6374,10 @@ module TypeScript {
                                 continue;
                             }
 
-                            context.isSpecializingSignatureAtCallSite = true;
+                            context.isSpecializingSignatureTypeParameters = true;
                             specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
 
-                            context.isSpecializingSignatureAtCallSite = prevSpecializing;
+                            context.isSpecializingSignatureTypeParameters = prevSpecializing;
                             context.specializingToAny = prevSpecializingToAny;
 
                             if (specializedSignature) {
@@ -6658,7 +6662,7 @@ module TypeScript {
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
                     var prevSpecializingToAny = context.specializingToAny;
-                    var prevIsSpecializing = context.isSpecializingSignatureAtCallSite = true;
+                    var prevIsSpecializing = context.isSpecializingSignatureTypeParameters = true;
                     var triedToInferTypeArgs: boolean;
 
                     for (var i = 0; i < constructSignatures.length; i++) {
@@ -6744,11 +6748,11 @@ module TypeScript {
                                     continue;
                                 }
 
-                                context.isSpecializingSignatureAtCallSite = true;
+                                context.isSpecializingSignatureTypeParameters = true;
                                 specializedSignature = specializeSignature(constructSignatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
 
                                 context.specializingToAny = prevSpecializingToAny;
-                                context.isSpecializingSignatureAtCallSite = prevIsSpecializing;
+                                context.isSpecializingSignatureTypeParameters = prevIsSpecializing;
 
                                 if (specializedSignature) {
                                     resolvedSignatures[resolvedSignatures.length] = specializedSignature;
