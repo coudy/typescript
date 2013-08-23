@@ -1,4 +1,5 @@
 === tests/cases/compiler/chainedSpecializationToObjectTypeLiteral.ts ===
+Line 0 col 10 IdentifierName "Sequence" = Sequence<T>
 Line 0 col 19 IdentifierName "T" = any
 Line 1 col 0 IdentifierName "each" = (iterator: (value: T) => void) => void
 Line 1 col 9 IdentifierName "iterator" = any
@@ -29,7 +30,9 @@ Line 4 col 57 IdentifierName "key" = K
 Line 4 col 62 IdentifierName "K" = any
 Line 4 col 65 IdentifierName "items" = T[]
 Line 4 col 72 IdentifierName "T" = any
+Line 7 col 4 IdentifierName "s" = Sequence<string>
 Line 7 col 7 IdentifierName "Sequence" = Sequence<T>
+Line 8 col 4 IdentifierName "s2" = Sequence<{ key: number; items: string[]; }>
 Line 8 col 9 InvocationExpression "s.groupBy(s => s.length)" = Sequence<{ key: number; items: string[]; }>
 Line 8 col 9 MemberAccessExpression "s.groupBy" = <K>(keySelector: (value: string) => K) => Sequence<{ key: K; items: string[]; }>
 Line 8 col 9 IdentifierName "s" = Sequence<string>
@@ -39,6 +42,7 @@ Line 8 col 19 IdentifierName "s" = Sequence<string>
 Line 8 col 24 MemberAccessExpression "s.length" = number
 Line 8 col 24 IdentifierName "s" = string
 Line 8 col 26 IdentifierName "length" = number
+Line 9 col 4 IdentifierName "s3" = void
 Line 9 col 9 InvocationExpression "s2.each(x => { x.key /* Type is K, should be number */ })" = void
 Line 9 col 9 MemberAccessExpression "s2.each" = (iterator: (value: { key: number; items: string[]; }) => void) => void
 Line 9 col 9 IdentifierName "s2" = Sequence<{ key: number; items: string[]; }>
