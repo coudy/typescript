@@ -193,6 +193,7 @@ module TypeScript.Formatting {
                 case SyntaxKind.MemberFunctionDeclaration:
                 case SyntaxKind.GetMemberAccessorDeclaration:
                 case SyntaxKind.SetMemberAccessorDeclaration:
+                case SyntaxKind.MemberIndexerDeclaration:
                 case SyntaxKind.CatchClause:
                 // Statements introducing []
                 case SyntaxKind.ArrayLiteralExpression:
