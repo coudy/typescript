@@ -5792,7 +5792,8 @@ module TypeScript {
 
                 elementType = elementType ? this.findBestCommonType(elementType, null, collection, context, comparisonInfo) : elementType;
 
-                if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
+                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
                     if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
                         context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                     }
@@ -10409,6 +10410,16 @@ module TypeScript {
 
         private isValidLHS(ast: AST, expressionSymbol: PullSymbol): boolean {
             var expressionTypeSymbol = expressionSymbol.type;
+
+            if (ast.nodeType() === NodeType.ParenthesizedExpression) {
+                // A parenthesized LHS is valid if the expression it wraps is valid.
+                return this.isValidLHS((<ParenthesizedExpression>ast).expression, expressionSymbol);
+            }
+
+            if (ast.nodeType() === NodeType.CommaExpression) {
+                // A comma expression is a value, not a reference, and is thus never a valid LHS
+                return false;
+            }
 
             if (ast.nodeType() === NodeType.ElementAccessExpression ||
                 this.isAnyOrEquivalent(expressionTypeSymbol)) {
