@@ -1556,7 +1556,7 @@ module FourSlash {
         // Stuff related to the subfile we're parsing
         var currentFileContent: string = null;
         var currentFileName = fileName;
-        var currentFileOptions = {};
+        var currentFileOptions: { [s: string]: string } = {};
 
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];

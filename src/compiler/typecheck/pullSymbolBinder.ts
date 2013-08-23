@@ -393,18 +393,35 @@ module TypeScript {
                 }
             }
 
-            // if it's an enum, freshen the index signature
+            // if it's an enum, create an index signature and a decl for it
             if (isEnum) {
 
                 moduleInstanceTypeSymbol = moduleContainerTypeSymbol.getInstanceSymbol().type;
 
+                var enumIndexParamName = "x";
                 var enumIndexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
-                var enumIndexParameterSymbol = new PullSymbol("x", PullElementKind.Parameter);
+                var enumIndexParameterSymbol = new PullSymbol(enumIndexParamName, PullElementKind.Parameter);
                 enumIndexParameterSymbol.type = this.semanticInfoChain.numberTypeSymbol;
                 enumIndexSignature.addParameter(enumIndexParameterSymbol);
                 enumIndexSignature.returnType = this.semanticInfoChain.stringTypeSymbol;
 
                 moduleInstanceTypeSymbol.addIndexSignature(enumIndexSignature);
+
+                var moduleNameSpan = TextSpan.fromBounds(moduleAST.name.minChar, moduleAST.name.limChar);
+                var enumIndexSigDecl = new PullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, moduleNameSpan, this.semanticInfo.getPath());
+                var enumIndexParamDecl = new PullDecl(enumIndexParamName, enumIndexParamName, PullElementKind.Parameter, PullElementFlags.None, moduleNameSpan, this.semanticInfo.getPath());
+                enumIndexSigDecl.addChildDecl(enumIndexParamDecl);
+                enumIndexParamDecl.setParentDecl(enumIndexSigDecl);
+                this.semanticInfo.addSynthesizedDecl(enumIndexSigDecl);
+                this.semanticInfo.addSynthesizedDecl(enumIndexParamDecl);
+                enumIndexSigDecl.setSignatureSymbol(enumIndexSignature);
+                enumIndexParamDecl.setSymbol(enumIndexParameterSymbol);
+                enumIndexSignature.addDeclaration(enumIndexSigDecl);
+                enumIndexParameterSymbol.addDeclaration(enumIndexParamDecl);
+                this.semanticInfo.setASTForDecl(enumIndexSigDecl, moduleAST.name);
+                this.semanticInfo.setASTForDecl(enumIndexParamDecl, moduleAST.name);
+                enumIndexSigDecl.setIsBound(true);
+                enumIndexParamDecl.setIsBound(true);
             }
 
             var valueDecl = moduleContainerDecl.getValueDecl();

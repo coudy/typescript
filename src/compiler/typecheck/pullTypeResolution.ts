@@ -5982,7 +5982,7 @@ module TypeScript {
         public resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             var symbol = this.getSymbolForAST(expressionAST);
 
-            if (!symbol || additionalResults || this.canTypeCheckAST(expressionAST, context)) {
+            if (!symbol || !symbol.isResolved || additionalResults || this.canTypeCheckAST(expressionAST, context)) {
                 if (this.canTypeCheckAST(expressionAST, context)) {
                     this.setTypeChecked(expressionAST, context);
                 }
@@ -6039,6 +6039,12 @@ module TypeScript {
                 var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
                 var stringSignature = indexSignatures.stringSignature;
                 var numberSignature = indexSignatures.numericSignature;
+                if (stringSignature) {
+                    typeSymbol.addIndexSignature(stringSignature);
+                }
+                if (numberSignature) {
+                    typeSymbol.addIndexSignature(numberSignature);
+                }
             }
 
             if (memberDecls) {
@@ -6246,7 +6252,7 @@ module TypeScript {
                 }
             }
 
-            // Find the elment type
+            // Find the element type
             if (contextualElementType && !contextualElementType.isTypeParameter()) {
                 // If there is a contextual type, assume the elemet type is the contextual type, this also applies for zero-length array litrals
                 elementType = contextualElementType;
@@ -8941,18 +8947,37 @@ module TypeScript {
             context.inProvisionalAnyContext = true;
 
             if (application.nodeType() === NodeType.InvocationExpression || application.nodeType() === NodeType.ObjectCreationExpression) {
-                var callEx = <InvocationExpression>application;
-
-                args = callEx.arguments;
-                target = this.getLastIdentifierInTarget(callEx);
-
-                if (callEx.arguments) {
-                    var len = callEx.arguments.members.length;
-
-                    for (var i = 0; i < len; i++) {
-                        var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
-                        actuals[i] = argSym.type;
+                for (var j = 0, groupLen = group.length; j < groupLen; j++) {
+                    signature = group[j];
+                    if ((hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())) {
+                        continue;
                     }
+
+                    returnType = signature.returnType;
+
+                    var callEx = <InvocationExpression>application;
+
+                    args = callEx.arguments;
+                    target = this.getLastIdentifierInTarget(callEx);
+
+                    if (callEx.arguments) {
+                        var len = callEx.arguments.members.length;
+
+                        for (var i = 0; i < len; i++) {
+                            var signatureHasParameterI = signature.parameters.length > i;
+                            if (signatureHasParameterI) {
+                                this.resolveDeclaredSymbol(signature.parameters[i], enclosingDecl, context);
+                                context.pushContextualType(signature.parameters[i].type, true, null);
+                            }
+                            var argSym = this.resolveAST(callEx.arguments.members[i], true, enclosingDecl, context);
+                            actuals[i] = argSym.type;
+                            if (signatureHasParameterI) {
+                                context.popContextualType();
+                            }
+                        }
+                    }
+
+                    this.getCandidateSignatures(signature, actuals, args, exactCandidates, conversionCandidates, enclosingDecl, context, comparisonInfo);
                 }
             }
             else if (application.nodeType() === NodeType.ElementAccessExpression) {
@@ -8968,16 +8993,6 @@ module TypeScript {
             var returnType: PullTypeSymbol;
             var candidateInfo: { sig: PullSignatureSymbol; ambiguous: boolean; };
 
-            for (var j = 0, groupLen = group.length; j < groupLen; j++) {
-                signature = group[j];
-                if ((hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())) {
-                    continue;
-                }
-
-                returnType = signature.returnType;
-
-                this.getCandidateSignatures(signature, actuals, args, exactCandidates, conversionCandidates, enclosingDecl, context, comparisonInfo);
-            }
             if (exactCandidates.length === 0) {
                 var applicableCandidates = this.getApplicableSignaturesFromCandidates(conversionCandidates, args, comparisonInfo, enclosingDecl, context);
                 if (applicableCandidates.length > 0) {

@@ -17,7 +17,7 @@ module TypeScript {
 
         private symbol: PullSymbol = null;
 
-        private declGroups: { [s: string]: PullDeclGroup; } = new BlockIntrinsics();
+        private declGroups: { [s: string]: PullDeclGroup; } = <{ [s: string]: PullDeclGroup; }><{}> new BlockIntrinsics();
 
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
