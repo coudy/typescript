@@ -7317,10 +7317,6 @@ module TypeScript {
                 return false;
             }
 
-            if (t1.isClass()) {
-                return false;
-            }
-
             if (t1.isError() && t2.isError()) {
                 return true;
             }
