@@ -3756,7 +3756,21 @@ module TypeScript.Parser {
         }
 
         private parseCallExpressionOrLower(): IUnaryExpressionSyntax {
-            var expression = this.parseMemberExpressionOrLower(/*inObjectCreation:*/ false);
+            var expression: IUnaryExpressionSyntax;
+            if (this.currentToken().tokenKind === SyntaxKind.SuperKeyword) {
+                expression = this.eatKeyword(SyntaxKind.SuperKeyword);
+
+                // If we have seen "super" it must be followed by '(' or '.'.
+                // If it wasn't then just try to parse out a '.' and report an error.
+                var currentTokenKind = this.currentToken().tokenKind;
+                if (currentTokenKind !== SyntaxKind.OpenParenToken && currentTokenKind !== SyntaxKind.DotToken) {
+                    expression = this.factory.memberAccessExpression(
+                        expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
+                }
+            }
+            else {
+                expression = this.parseMemberExpressionOrLower(/*inObjectCreation:*/ false);
+            }
 
             return this.parseCallOrMemberExpressionRest(expression, /*allowArguments:*/ true, /*inObjectCreation:*/ false);
         }
@@ -3764,16 +3778,6 @@ module TypeScript.Parser {
         private parseCallOrMemberExpressionRest(expression: IUnaryExpressionSyntax, allowArguments: boolean, inObjectCreation: boolean): IUnaryExpressionSyntax  {
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
-
-                // If we have seen "super" it must be followed by '(' or '.'.
-                // If it wasn't then just try to parse out a '.' and report an error.
-                if (expression.kind() === SyntaxKind.SuperKeyword) {
-                    if (currentTokenKind !== SyntaxKind.OpenParenToken && currentTokenKind !== SyntaxKind.DotToken) {
-                        expression = this.factory.memberAccessExpression(
-                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
-                        continue;
-                    }
-                }
 
                 switch (currentTokenKind) {
                     case SyntaxKind.OpenParenToken:
@@ -3976,9 +3980,6 @@ module TypeScript.Parser {
 
                 case SyntaxKind.FunctionKeyword:
                     return this.parseFunctionExpression();
-
-                case SyntaxKind.SuperKeyword:
-                    return this.parseSuperExpression();
 
                 case SyntaxKind.NumericLiteral:
                     return this.parseLiteralExpression();
