@@ -3547,25 +3547,37 @@ module TypeScript.Parser {
             return this.parseSubExpression(ExpressionPrecedence.AssignmentExpressionPrecedence, allowIn);
         }
 
-        private parseUnaryExpression(): IUnaryExpressionSyntax {
+        private parseUnaryExpressionOrLower(): IUnaryExpressionSyntax {
             var currentTokenKind = this.currentToken().tokenKind; 
             if (SyntaxFacts.isPrefixUnaryExpressionOperatorToken(currentTokenKind)) {
                 var operatorKind = SyntaxFacts.getPrefixUnaryExpressionFromOperatorToken(currentTokenKind);
 
                 var operatorToken = this.eatAnyToken();
 
-                var operand = this.parseUnaryExpression();
+                var operand = this.parseUnaryExpressionOrLower();
                 return this.factory.prefixUnaryExpression(operatorKind, operatorToken, operand);
             }
+            else if (currentTokenKind === SyntaxKind.TypeOfKeyword) {
+                return this.parseTypeOfExpression();
+            }
+            else if (currentTokenKind === SyntaxKind.VoidKeyword) {
+                return this.parseVoidExpression();
+            }
+            else if (currentTokenKind === SyntaxKind.DeleteKeyword) {
+                return this.parseDeleteExpression();
+            }
+            else if (currentTokenKind === SyntaxKind.LessThanToken) {
+                return this.parseCastOrArrowFunctionExpression();
+            }
             else {
-                return this.parseTerm(/*inObjectCreation*/ false);
+                return this.parsePostfixExpressionOrLower();
             }
         }
 
         private parseSubExpression(precedence: ExpressionPrecedence, allowIn: boolean): IExpressionSyntax {
             // Because unary expression have the highest precedence, we can always parse one, regardless 
             // of what precedence was passed in.
-            var leftOperand: IExpressionSyntax = this.parseUnaryExpression();
+            var leftOperand: IExpressionSyntax = this.parseUnaryExpressionOrLower();
             leftOperand = this.parseBinaryOrConditionalExpressions(precedence, allowIn, leftOperand);
 
             return leftOperand;
@@ -3729,21 +3741,27 @@ module TypeScript.Parser {
             }
         }
 
-        private parseTerm(inObjectCreation: boolean): IUnaryExpressionSyntax {
-            // NOTE: allowInvocation and insideObjectCreation are always the negation of the other.
-            // We could remove one of them and just use the other.  However, i think this is much
-            // easier to read and understand in this form.
+        private parseMemberExpressionOrLower(inObjectCreation: boolean): IUnaryExpressionSyntax {
+            if (this.currentToken().tokenKind === SyntaxKind.NewKeyword) {
+                return this.parseObjectCreationExpression();
+            }
 
-            var term = this.parseTermWorker();
-            if (term === null) {
+            var expression = this.parsePrimaryExpression();
+            if (expression === null) {
                 // Nothing else worked, just try to consume an identifier so we report an error.
                 return this.eatIdentifierToken();
             }
 
-            return this.parsePostFixExpression(term, inObjectCreation);
+            return this.parseCallOrMemberExpressionRest(expression, /*allowArguments:*/ false, /*inObjectCreation:*/ inObjectCreation);
         }
 
-        private parsePostFixExpression(expression: IUnaryExpressionSyntax, inObjectCreation: boolean): IUnaryExpressionSyntax {
+        private parseCallExpressionOrLower(): IUnaryExpressionSyntax {
+            var expression = this.parseMemberExpressionOrLower(/*inObjectCreation:*/ false);
+
+            return this.parseCallOrMemberExpressionRest(expression, /*allowArguments:*/ true, /*inObjectCreation:*/ false);
+        }
+
+        private parseCallOrMemberExpressionRest(expression: IUnaryExpressionSyntax, allowArguments: boolean, inObjectCreation: boolean): IUnaryExpressionSyntax  {
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
 
@@ -3759,7 +3777,7 @@ module TypeScript.Parser {
 
                 switch (currentTokenKind) {
                     case SyntaxKind.OpenParenToken:
-                        if (inObjectCreation) {
+                        if (!allowArguments) {
                             return expression;
                         }
 
@@ -3767,7 +3785,7 @@ module TypeScript.Parser {
                         continue;
 
                     case SyntaxKind.LessThanToken:
-                        if (inObjectCreation) {
+                        if (!allowArguments) {
                             return expression;
                         }
 
@@ -3787,6 +3805,36 @@ module TypeScript.Parser {
                         expression = this.parseElementAccessExpression(expression, inObjectCreation);
                         continue;
 
+                    case SyntaxKind.DotToken:
+                        expression = this.factory.memberAccessExpression(
+                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
+                        continue;
+                }
+
+                return expression;
+            }
+        }
+
+        private parseLeftHandSideExpressionOrLower(): IUnaryExpressionSyntax {
+            if (this.currentToken().tokenKind === SyntaxKind.NewKeyword) {
+                return this.parseObjectCreationExpression();
+            }
+            else {
+                return this.parseCallExpressionOrLower();
+            }
+        }
+
+        private parsePostfixExpressionOrLower(): IUnaryExpressionSyntax {
+            var expression = this.parseLeftHandSideExpressionOrLower();
+            if (expression === null) {
+                // Nothing else worked, just try to consume an identifier so we report an error.
+                return this.eatIdentifierToken();
+            }
+
+            while (true) {
+                var currentTokenKind = this.currentToken().tokenKind;
+
+                switch (currentTokenKind) {
                     case SyntaxKind.PlusPlusToken:
                     case SyntaxKind.MinusMinusToken:
                         // Because of automatic semicolon insertion, we should only consume the ++ or -- 
@@ -3797,11 +3845,6 @@ module TypeScript.Parser {
 
                         expression = this.factory.postfixUnaryExpression(
                             SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
-                        continue;
-
-                    case SyntaxKind.DotToken:
-                        expression = this.factory.memberAccessExpression(
-                            expression, this.eatToken(SyntaxKind.DotToken), this.eatIdentifierNameToken());
                         continue;
                 }
 
@@ -3899,7 +3942,7 @@ module TypeScript.Parser {
             return this.factory.elementAccessExpression(expression, openBracketToken, argumentExpression, closeBracketToken);
         }
 
-        private parseTermWorker(): IUnaryExpressionSyntax {
+        private parsePrimaryExpression(): IUnaryExpressionSyntax {
             var currentToken = this.currentToken();
 
             // ERROR RECOVERY TWEAK:
@@ -3931,23 +3974,11 @@ module TypeScript.Parser {
                 case SyntaxKind.NullKeyword:
                     return this.parseLiteralExpression();
 
-                case SyntaxKind.NewKeyword:
-                    return this.parseObjectCreationExpression();
-
                 case SyntaxKind.FunctionKeyword:
                     return this.parseFunctionExpression();
 
                 case SyntaxKind.SuperKeyword:
                     return this.parseSuperExpression();
-
-                case SyntaxKind.TypeOfKeyword:
-                    return this.parseTypeOfExpression();
-
-                case SyntaxKind.DeleteKeyword:
-                    return this.parseDeleteExpression();
-
-                case SyntaxKind.VoidKeyword:
-                    return this.parseVoidExpression();
 
                 case SyntaxKind.NumericLiteral:
                     return this.parseLiteralExpression();
@@ -3966,9 +3997,6 @@ module TypeScript.Parser {
 
                 case SyntaxKind.OpenParenToken:
                     return this.parseParenthesizedOrArrowFunctionExpression();
-
-                case SyntaxKind.LessThanToken:
-                    return this.parseCastOrArrowFunctionExpression();
 
                 case SyntaxKind.SlashToken:
                 case SyntaxKind.SlashEqualsToken:
@@ -4063,7 +4091,7 @@ module TypeScript.Parser {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.TypeOfKeyword);
 
             var typeOfKeyword = this.eatKeyword(SyntaxKind.TypeOfKeyword);
-            var expression = this.parseUnaryExpression();
+            var expression = this.parseUnaryExpressionOrLower();
 
             return this.factory.typeOfExpression(typeOfKeyword, expression);
         }
@@ -4072,7 +4100,7 @@ module TypeScript.Parser {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.DeleteKeyword);
 
             var deleteKeyword = this.eatKeyword(SyntaxKind.DeleteKeyword);
-            var expression = this.parseUnaryExpression();
+            var expression = this.parseUnaryExpressionOrLower();
 
             return this.factory.deleteExpression(deleteKeyword, expression);
         }
@@ -4081,7 +4109,7 @@ module TypeScript.Parser {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.VoidKeyword);
 
             var voidKeyword = this.eatKeyword(SyntaxKind.VoidKeyword);
-            var expression = this.parseUnaryExpression();
+            var expression = this.parseUnaryExpressionOrLower();
 
             return this.factory.voidExpression(voidKeyword, expression);
         }
@@ -4109,16 +4137,26 @@ module TypeScript.Parser {
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         }
 
-        private parseObjectCreationExpression(): ObjectCreationExpressionSyntax {
+        private parseObjectCreationExpression(): IUnaryExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.NewKeyword);
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
 
             // While parsing the sub term we don't want to allow invocations to be parsed.  that's because
             // we want "new Foo()" to parse as "new Foo()" (one node), not "new (Foo())".
-            var expression = this.parseTerm(/*inObjectCreation:*/ true);
+            var expression = this.parseObjectCreationExpressionOrLower(/*inObjectCreation:*/ true);
             var argumentList = this.tryParseArgumentList();
 
-            return this.factory.objectCreationExpression(newKeyword, expression, argumentList);
+            var result = this.factory.objectCreationExpression(newKeyword, expression, argumentList);
+            return this.parseCallOrMemberExpressionRest(result, /*allowArguments:*/ true, /*inObjectCreation:*/ false); 
+        }
+
+        private parseObjectCreationExpressionOrLower(inObjectCreation: boolean): IUnaryExpressionSyntax {
+            if (this.currentToken().tokenKind === SyntaxKind.NewKeyword) {
+                return this.parseObjectCreationExpression();
+            }
+            else {
+                return this.parseMemberExpressionOrLower(inObjectCreation);
+            }
         }
 
         private parseCastOrArrowFunctionExpression(): IUnaryExpressionSyntax {
@@ -4149,7 +4187,7 @@ module TypeScript.Parser {
             var lessThanToken = this.eatToken(SyntaxKind.LessThanToken);
             var type = this.parseType();
             var greaterThanToken = this.eatToken(SyntaxKind.GreaterThanToken);
-            var expression = this.parseUnaryExpression();
+            var expression = this.parseUnaryExpressionOrLower();
 
             return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
         }

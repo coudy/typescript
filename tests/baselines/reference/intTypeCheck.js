@@ -33,7 +33,7 @@ var obj6 = function () {
 
 //var obj7: i1 = function foo() { };
 var obj8 = anyVar;
-var obj9 = new anyVar();
+var obj9 = new () < i1 > anyVar;
 var obj10 = new {}();
 
 //
@@ -51,7 +51,7 @@ var obj17 = function () {
 
 //var obj18: i2 = function foo() { };
 var obj19 = anyVar;
-var obj20 = new anyVar();
+var obj20 = new () < i2 > anyVar;
 var obj21 = new {}();
 
 //
@@ -68,7 +68,7 @@ var obj28 = function () {
 
 //var obj29: i3 = function foo() { };
 var obj30 = anyVar;
-var obj31 = new anyVar();
+var obj31 = new () < i3 > anyVar;
 var obj32 = new {}();
 
 //
@@ -85,7 +85,7 @@ var obj39 = function () {
 
 //var obj40: i4 = function foo() { };
 var obj41 = anyVar;
-var obj42 = new anyVar();
+var obj42 = new () < i4 > anyVar;
 var obj43 = new {}();
 
 //
@@ -102,7 +102,7 @@ var obj50 = function () {
 
 //var obj51: i5 = function foo() { };
 var obj52 = anyVar;
-var obj53 = new anyVar();
+var obj53 = new () < i5 > anyVar;
 var obj54 = new {}();
 
 //
@@ -119,7 +119,7 @@ var obj61 = function () {
 
 //var obj62: i6 = function foo() { };
 var obj63 = anyVar;
-var obj64 = new anyVar();
+var obj64 = new () < i6 > anyVar;
 var obj65 = new {}();
 
 //
@@ -136,7 +136,7 @@ var obj72 = function () {
 
 //var obj73: i7 = function foo() { };
 var obj74 = anyVar;
-var obj75 = new anyVar();
+var obj75 = new () < i7 > anyVar;
 var obj76 = new {}();
 
 //
@@ -153,5 +153,5 @@ var obj83 = function () {
 
 //var obj84: i8 = function foo() { };
 var obj85 = anyVar;
-var obj86 = new anyVar();
+var obj86 = new () < i8 > anyVar;
 var obj87 = new {}();

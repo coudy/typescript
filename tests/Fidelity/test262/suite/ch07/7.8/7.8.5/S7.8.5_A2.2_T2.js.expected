@@ -18,11 +18,11 @@
         "moduleElements": [
             {
                 "kind": "ExpressionStatement",
-                "fullWidth": 281,
+                "fullWidth": 289,
                 "isIncrementallyUnusable": true,
                 "expression": {
                     "kind": "DivideExpression",
-                    "fullWidth": 281,
+                    "fullWidth": 287,
                     "isIncrementallyUnusable": true,
                     "left": {
                         "kind": "RegularExpressionLiteral",
@@ -80,46 +80,34 @@
                     "operatorToken": {
                         "kind": "SlashToken",
                         "width": 1,
-                        "fullWidth": 2,
                         "text": "/",
                         "value": "/",
-                        "valueText": "/",
-                        "hasTrailingTrivia": true,
-                        "hasTrailingSkippedText": true,
-                        "trailingTrivia": [
-                            {
-                                "kind": "SkippedTokenTrivia",
-                                "skippedToken": {
-                                    "kind": "DotToken",
-                                    "width": 1,
-                                    "text": ".",
-                                    "value": ".",
-                                    "valueText": "."
-                                }
-                            }
-                        ]
+                        "valueText": "/"
                     },
                     "right": {
-                        "kind": "IdentifierName",
-                        "width": 0,
-                        "text": ""
+                        "kind": "MemberAccessExpression",
+                        "fullWidth": 7,
+                        "isIncrementallyUnusable": true,
+                        "expression": {
+                            "kind": "IdentifierName",
+                            "width": 0,
+                            "text": ""
+                        },
+                        "dotToken": {
+                            "kind": "DotToken",
+                            "width": 1,
+                            "text": ".",
+                            "value": ".",
+                            "valueText": "."
+                        },
+                        "name": {
+                            "kind": "IdentifierName",
+                            "width": 6,
+                            "text": "source",
+                            "value": "source",
+                            "valueText": "source"
+                        }
                     }
-                },
-                "semicolonToken": {
-                    "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
-                }
-            },
-            {
-                "kind": "ExpressionStatement",
-                "fullWidth": 8,
-                "expression": {
-                    "kind": "IdentifierName",
-                    "width": 6,
-                    "text": "source",
-                    "value": "source",
-                    "valueText": "source"
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
