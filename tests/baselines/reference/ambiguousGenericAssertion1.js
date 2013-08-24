@@ -5,6 +5,7 @@ var r = function (x) {
     return x;
 };
 var r2 = f;
-var r3 =  << T > function (x) {
+var r3 =  << T > (x), T;
+(function (__missing) {
     return T > f;
-};
+});

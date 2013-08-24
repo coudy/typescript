@@ -329,7 +329,7 @@ module TypeScript {
             var newTextAndChange = withDelete(oldText, index, " => 1".length);
 
             // Note the decreased reuse of nodes compared to testStrictMode3
-            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 4);
+            compareTrees(oldText, newTextAndChange.text, newTextAndChange.textChangeRange, 6);
         }
 
         public static testGenerics3() {

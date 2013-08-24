@@ -65,13 +65,13 @@ var B = (function () {
             };
         };
         this.prop4 = '  ' + function () {
-        } + ' ' + function () {
+        } + ' ' + (function () {
             return function () {
                 return function () {
                     return _this;
                 };
             };
-        };
+        });
         this.prop5 = {
             a: function () {
                 return _this;

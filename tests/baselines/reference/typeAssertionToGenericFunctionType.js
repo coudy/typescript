@@ -1,7 +1,7 @@
 var x = {
-    a: function (x) {
+    a: (function (x) {
         return 1;
-    },
+    }),
     b: function (x) {
         x;
     }

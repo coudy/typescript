@@ -82,7 +82,7 @@ false ? null : (...arg: number[]) => 68;
 
 
 // nested ternary expressions
-(a?) => { return a; } ? (b? ) => { return b; } : (c? ) => { return c; };
+((a?) => { return a; }) ? (b? ) => { return b; } : (c? ) => { return c; };
 
 //multiple levels
 (a?) => { return a; } ? (b)=>(c)=>81 : (c)=>(d)=>82;
@@ -97,16 +97,16 @@ false ? null : (...arg: number[]) => 68;
 ((arg?: number) => 95) instanceof Function;
 ((...arg: number[]) => 96) instanceof Function;
 
-'' + (arg) => 100;
-((arg) => 0) + '' + (arg) => 101;
-((arg = 1) => 0) + '' + (arg = 2) => 102;
-((arg?) => 0) + '' + (arg?) => 103;
-((arg:number) => 0) + '' + (arg:number) => 104;
-((arg:number = 1) => 0) + '' + (arg:number = 2) => 105;
-((arg?:number = 1) => 0) + '' + (arg?:number = 2) => 106;
-((...arg:number[]) => 0) + '' + (...arg:number[]) => 107;
-((arg1, arg2?) => 0) + '' + (arg1,arg2?) => 108;
-((arg1, ...arg2:number[]) => 0) + '' + (arg1, ...arg2:number[]) => 108;
+'' + ((arg) => 100);
+((arg) => 0) + '' + ((arg) => 101);
+((arg = 1) => 0) + '' + ((arg = 2) => 102);
+((arg?) => 0) + '' + ((arg?) => 103);
+((arg:number) => 0) + '' + ((arg:number) => 104);
+((arg:number = 1) => 0) + '' + ((arg:number = 2) => 105);
+((arg?:number = 1) => 0) + '' + ((arg?:number = 2) => 106);
+((...arg:number[]) => 0) + '' + ((...arg:number[]) => 107);
+((arg1, arg2?) => 0) + '' + ((arg1,arg2?) => 108);
+((arg1, ...arg2:number[]) => 0) + '' + ((arg1, ...arg2:number[]) => 108);
 
 
 // Function Parameters

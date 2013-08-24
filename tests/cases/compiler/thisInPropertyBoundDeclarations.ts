@@ -53,7 +53,7 @@ class B {
     function() {
     } +
     ' ' +
-    () => () => () => this;
+    (() => () => () => this);
 
     prop5 = {
         a: () => { return this; }

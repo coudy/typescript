@@ -228,28 +228,29 @@ false ? null : function () {
 };
 
 // nested ternary expressions
-// nested ternary expressions
-function (a) {
+(function (a) {
     return a;
-} ? function (b) {
+}) ? function (b) {
     return b;
 } : function (c) {
     return c;
 };
 
 //multiple levels
-//multiple levels
+(//multiple levels
 function (a) {
     return a;
-} ? function (b) {
+});
+(function (b) {
     return function (c) {
         return 81;
     };
-} : function (c) {
+});
+(function (c) {
     return function (d) {
         return 82;
     };
-};
+});
 
 // In Expressions
 (function (arg) {
@@ -280,76 +281,76 @@ function (a) {
     return 96;
 }) instanceof Function;
 
-'' + function (arg) {
+'' + (function (arg) {
     return 100;
-};
+});
 (function (arg) {
     return 0;
-}) + '' + function (arg) {
+}) + '' + (function (arg) {
     return 101;
-};
+});
 (function (arg) {
     if (typeof arg === "undefined") { arg = 1; }
     return 0;
-}) + '' + function (arg) {
+}) + '' + (function (arg) {
     if (typeof arg === "undefined") { arg = 2; }
     return 102;
-};
+});
 (function (arg) {
     return 0;
-}) + '' + function (arg) {
+}) + '' + (function (arg) {
     return 103;
-};
+});
 (function (arg) {
     return 0;
-}) + '' + function (arg) {
+}) + '' + (function (arg) {
     return 104;
-};
+});
 (function (arg) {
     if (typeof arg === "undefined") { arg = 1; }
     return 0;
-}) + '' + function (arg) {
+}) + '' + (function (arg) {
     if (typeof arg === "undefined") { arg = 2; }
     return 105;
-};
+});
 (function (arg) {
     if (typeof arg === "undefined") { arg = 1; }
     return 0;
-}) + '' + function (arg) {
+}) + '' + (function (arg) {
     if (typeof arg === "undefined") { arg = 2; }
     return 106;
-};
+});
 (function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
     }
     return 0;
-}) + '' + function () {
+}) + '' + (function () {
     var arg = [];
     for (var _i = 0; _i < (arguments.length - 0); _i++) {
         arg[_i] = arguments[_i + 0];
     }
     return 107;
-};
+});
 (function (arg1, arg2) {
     return 0;
-}) + '' + function (arg1, arg2) {
+}) + '' + (function (arg1, arg2) {
     return 108;
-};
+});
 (function (arg1) {
     var arg2 = [];
     for (var _i = 0; _i < (arguments.length - 1); _i++) {
         arg2[_i] = arguments[_i + 1];
     }
     return 0;
-}) + '' + function (arg1) {
+}) + '' + (function (arg1) {
     var arg2 = [];
     for (var _i = 0; _i < (arguments.length - 1); _i++) {
         arg2[_i] = arguments[_i + 1];
     }
     return 108;
-};
+});
 
 // Function Parameters
 function foo() {

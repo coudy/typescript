@@ -1,10 +1,10 @@
 class C {
  x: number;
     constructor() {
-        this.x = () => {
+        this.x = (() => {
    var x = 1;
    return this.x;
-  }();
+  })();
   this.x = function() {
    var x = 1;
    return this.x;

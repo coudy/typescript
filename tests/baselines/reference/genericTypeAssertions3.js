@@ -1,6 +1,6 @@
-var r = function (x) {
+var r = (function (x) {
     return null;
-};
-var s = function (x) {
+});
+var s = (function (x) {
     return null;
-};
+});

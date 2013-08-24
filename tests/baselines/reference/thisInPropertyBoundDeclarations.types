@@ -87,7 +87,7 @@ Line 51 col 12 AddExpression "'  ' +
     function() {
     } +
     ' ' +
-    () => () => () => this" = string
+    (() => () => () => this)" = string
 Line 51 col 12 AddExpression "'  ' +
     function() {
     } +
@@ -97,10 +97,11 @@ Line 51 col 12 AddExpression "'  ' +
     }" = string
 Line 52 col 0 FunctionExpression "function() {
     }" = () => void
-Line 55 col 0 ParenthesizedArrowFunctionExpression "() => () => () => this" = () => () => () => B
-Line 55 col 10 ParenthesizedArrowFunctionExpression "() => () => this" = () => () => B
-Line 55 col 16 ParenthesizedArrowFunctionExpression "() => this" = () => B
-Line 55 col 22 ThisKeyword "this" = B
+Line 55 col 0 ParenthesizedExpression "(() => () => () => this)" = () => () => () => B
+Line 55 col 5 ParenthesizedArrowFunctionExpression "() => () => () => this" = () => () => () => B
+Line 55 col 11 ParenthesizedArrowFunctionExpression "() => () => this" = () => () => B
+Line 55 col 17 ParenthesizedArrowFunctionExpression "() => this" = () => B
+Line 55 col 23 ThisKeyword "this" = B
 Line 56 col 0 IdentifierName "prop5" = { a: () => B; }
 Line 57 col 12 ObjectLiteralExpression "{
         a: () => { return this; }

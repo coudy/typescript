@@ -3567,7 +3567,7 @@ module TypeScript.Parser {
                 return this.parseDeleteExpression();
             }
             else if (currentTokenKind === SyntaxKind.LessThanToken) {
-                return this.parseCastOrArrowFunctionExpression();
+                return this.parseCastExpression();
             }
             else {
                 return this.parsePostfixExpressionOrLower();
@@ -3575,12 +3575,20 @@ module TypeScript.Parser {
         }
 
         private parseSubExpression(precedence: ExpressionPrecedence, allowIn: boolean): IExpressionSyntax {
-            // Because unary expression have the highest precedence, we can always parse one, regardless 
-            // of what precedence was passed in.
-            var leftOperand: IExpressionSyntax = this.parseUnaryExpressionOrLower();
-            leftOperand = this.parseBinaryOrConditionalExpressions(precedence, allowIn, leftOperand);
+            if (precedence <= ExpressionPrecedence.AssignmentExpressionPrecedence) {
+                if (this.isSimpleArrowFunctionExpression()) {
+                    return this.parseSimpleArrowFunctionExpression();
+                }
 
-            return leftOperand;
+                var parethesizedArrowFunction = this.tryParseParenthesizedArrowFunctionExpression();
+                if (parethesizedArrowFunction !== null) {
+                    return parethesizedArrowFunction;
+                }
+           }
+
+            // Parse out an expression that has higher precedence than all binary and ternary operators.
+            var leftOperand = this.parseUnaryExpressionOrLower();
+            return this.parseBinaryOrConditionalExpressions(precedence, allowIn, leftOperand);
         }
 
         private parseBinaryOrConditionalExpressions(precedence: number, allowIn: boolean, leftOperand: IExpressionSyntax): IExpressionSyntax {
@@ -3949,21 +3957,8 @@ module TypeScript.Parser {
         private parsePrimaryExpression(): IUnaryExpressionSyntax {
             var currentToken = this.currentToken();
 
-            // ERROR RECOVERY TWEAK:
-            // If we see a standalone => try to parse it as an arrow function as that's likely what
-            // the user intended to write.
-            if (currentToken.tokenKind === SyntaxKind.EqualsGreaterThanToken) {
-                return this.parseSimpleArrowFunctionExpression();
-            }
-
             if (this.isIdentifier(currentToken)) {
-                if (this.isSimpleArrowFunctionExpression()) {
-                    return this.parseSimpleArrowFunctionExpression();
-                }
-                else {
-                    var identifier = this.eatIdentifierToken();
-                    return identifier;
-                }
+                return this.eatIdentifierToken();
             }
 
             var currentTokenKind = currentToken.tokenKind;
@@ -3997,7 +3992,7 @@ module TypeScript.Parser {
                     return this.parseObjectLiteralExpression();
 
                 case SyntaxKind.OpenParenToken:
-                    return this.parseParenthesizedOrArrowFunctionExpression();
+                    return this.parseParenthesizedExpression();
 
                 case SyntaxKind.SlashToken:
                 case SyntaxKind.SlashEqualsToken:
@@ -4160,28 +4155,6 @@ module TypeScript.Parser {
             }
         }
 
-        private parseCastOrArrowFunctionExpression(): IUnaryExpressionSyntax {
-            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
-
-            // We've got a '<'.  that could start a cast or an arrow function.  As it is highly
-            // ambiguous, we need to check for enough data to indicate that's it's an arrow 
-            // function.  Otherwise, we assume it's a cast.
-            var rewindPoint = this.getRewindPoint();
-            try {
-                var arrowFunction = this.tryParseArrowFunctionExpression();
-                if (arrowFunction !== null) {
-                    return arrowFunction;
-                }
-
-                // wasn't an arrow function.  Try again as a cast expression.
-                this.rewind(rewindPoint);
-                return this.parseCastExpression();
-            }
-            finally {
-                this.releaseRewindPoint(rewindPoint);
-            }
-        }
-        
         private parseCastExpression(): CastExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
 
@@ -4193,15 +4166,7 @@ module TypeScript.Parser {
             return this.factory.castExpression(lessThanToken, type, greaterThanToken, expression);
         }
 
-        private parseParenthesizedOrArrowFunctionExpression(): IUnaryExpressionSyntax {
-            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.OpenParenToken);
-
-            var result = this.tryParseArrowFunctionExpression();
-            if (result !== null) {
-                return result;
-            }
-
-            // Doesn't look like an arrow function, so parse this as a parenthesized expression.
+        private parseParenthesizedExpression(): ParenthesizedExpressionSyntax {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var expression = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
@@ -4209,9 +4174,11 @@ module TypeScript.Parser {
             return this.factory.parenthesizedExpression(openParenToken, expression, closeParenToken);
         }
 
-        private tryParseArrowFunctionExpression(): ArrowFunctionExpressionSyntax {
+        private tryParseParenthesizedArrowFunctionExpression(): ParenthesizedArrowFunctionExpressionSyntax {
             var tokenKind = this.currentToken().tokenKind;
-            // Debug.assert(tokenKind === SyntaxKind.OpenParenToken || tokenKind === SyntaxKind.LessThanToken);
+            if (tokenKind !== SyntaxKind.OpenParenToken && tokenKind !== SyntaxKind.LessThanToken) {
+                return null;
+            }
 
             // Because arrow functions and parenthesized expressions look similar, we have to check far
             // enough ahead to be sure we've actually got an arrow function. For example, both nodes can
@@ -4294,6 +4261,8 @@ module TypeScript.Parser {
 
         private isSimpleArrowFunctionExpression(): boolean {
             // ERROR RECOVERY TWEAK:
+            // If we see a standalone => try to parse it as an arrow function as that's likely what
+            // the user intended to write.
             if (this.currentToken().tokenKind === SyntaxKind.EqualsGreaterThanToken) {
                 return true;
             }

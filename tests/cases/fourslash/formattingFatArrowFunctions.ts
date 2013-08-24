@@ -64,10 +64,10 @@
 ////
 ////
 ////// nested ternary expressions
-////    (        a    ?        )           =>    { return a  ;    }     ?            (        b    ?         )           =>    { return b  ;    }     :        (        c    ?         )           =>    { return c  ;    }  ;/*51*/
+////    ((        a    ?        )           =>    { return a  ;    })     ?            (        b    ?         )           =>    { return b  ;    }     :        (        c    ?         )           =>    { return c  ;    }  ;/*51*/
 ////
 //////multiple levels
-////    (        a    ?        )           =>    { return a  ;    }     ?            (        b )          =>       (        c )          =>   81     :        (        c )          =>       (        d )          =>   82  ;/*52*/
+////    ((        a    ?        )           =>    { return a  ;    })     ?            (        b )          =>       (        c )          =>   81     :        (        c )          =>       (        d )          =>   82  ;/*52*/
 ////
 ////
 ////// In Expressions
@@ -79,16 +79,16 @@
 ////        (            (        arg    ?           :    number )           =>    95 )     instanceof Function  ;/*58*/
 ////      (            (                 ...     arg    :    number   [      ]    )           =>    96 )     instanceof Function  ;/*59*/
 ////
-////''    +        (        arg )           =>    100  ;/*60*/
-////        (            (        arg )           =>    0 )        +    ''    +        (        arg )           =>    101  ;/*61*/
-////          (            (        arg     = 1 )           =>    0 )        +    ''    +        (        arg     = 2 )           =>    102  ;/*62*/
-////    (            (        arg    ?        )           =>    0 )        +    ''    +        (        arg    ?        )           =>    103  ;/*63*/
-////      (            (        arg    :   number )           =>    0 )        +    ''    +        (        arg    :   number )           =>    104  ;/*64*/
-////        (            (        arg    :   number     = 1 )           =>    0 )        +    ''    +        (        arg    :   number     = 2 )           =>    105  ;/*65*/
-////    (            (        arg    ?           :   number     )           =>    0 )        +    ''    +        (        arg    ?           :   number     )           =>    106  ;/*66*/
-////      (            (                 ...     arg    :   number   [      ]    )           =>    0 )        +    ''    +        (                 ...     arg    :   number   [      ]    )           =>    107  ;/*67*/
-////    (            (        arg1   ,    arg2    ?        )           =>    0 )        +    ''    +        (        arg1   ,   arg2    ?        )           =>    108  ;/*68*/
-////      (            (        arg1   ,             ...     arg2    :   number   [      ]    )           =>    0 )        +    ''    +        (        arg1   ,             ...     arg2    :   number   [      ]    )           =>    108  ;/*69*/
+////''    +        ((        arg )           =>    100)  ;/*60*/
+////        (            (        arg )           =>    0 )        +    ''    +        ((        arg )           =>    101)  ;/*61*/
+////          (            (        arg     = 1 )           =>    0 )        +    ''    +        ((        arg     = 2 )           =>    102)  ;/*62*/
+////    (            (        arg    ?        )           =>    0 )        +    ''    +        ((        arg    ?        )           =>    103)  ;/*63*/
+////      (            (        arg    :   number )           =>    0 )        +    ''    +        ((        arg    :   number )           =>    104)  ;/*64*/
+////        (            (        arg    :   number     = 1 )           =>    0 )        +    ''    +        ((        arg    :   number     = 2 )           =>    105)  ;/*65*/
+////    (            (        arg    ?           :   number     )           =>    0 )        +    ''    +        ((        arg    ?           :   number     )           =>    106)  ;/*66*/
+////      (            (                 ...     arg    :   number   [      ]    )           =>    0 )        +    ''    +        ((                 ...     arg    :   number   [      ]    )           =>    107)  ;/*67*/
+////    (            (        arg1   ,    arg2    ?        )           =>    0 )        +    ''    +        ((        arg1   ,   arg2    ?        )           =>    108)  ;/*68*/
+////      (            (        arg1   ,             ...     arg2    :   number   [      ]    )           =>    0 )        +    ''    +        ((        arg1   ,             ...     arg2    :   number   [      ]    )           =>    108)  ;/*69*/
 ////
 ////
 ////// Function Parameters
@@ -240,9 +240,9 @@ verify.currentLineContentIs("false ? null : (arg?: number     = 0) => 67;");
 goTo.marker("50");
 verify.currentLineContentIs("false ? null : (...arg: number[]) => 68;");
 goTo.marker("51");
-verify.currentLineContentIs("(a?) => { return a; } ? (b?) => { return b; } : (c?) => { return c; };");
+verify.currentLineContentIs("((a?) => { return a; }) ? (b?) => { return b; } : (c?) => { return c; };");
 goTo.marker("52");
-verify.currentLineContentIs("(a?) => { return a; } ? (b) => (c) => 81 : (c) => (d) => 82;");
+verify.currentLineContentIs("((a?) => { return a; }) ? (b) => (c) => 81 : (c) => (d) => 82;");
 goTo.marker("53");
 verify.currentLineContentIs("((arg) => 90) instanceof Function;");
 goTo.marker("54");
@@ -262,30 +262,30 @@ verify.currentLineContentIs("((arg?: number) => 95) instanceof Function;");
 goTo.marker("59");
 verify.currentLineContentIs("((...arg: number[]) => 96) instanceof Function;");
 goTo.marker("60");
-verify.currentLineContentIs("'' + (arg) => 100;");
+verify.currentLineContentIs("'' + ((arg) => 100);");
 
 goTo.marker("61");
-verify.currentLineContentIs("((arg) => 0) + '' + (arg) => 101;");
+verify.currentLineContentIs("((arg) => 0) + '' + ((arg) => 101);");
 goTo.marker("62");
 //bug 696460 expect result: "((arg = 1) => 0) + '' + (arg = 2) => 102;", actual result: "((arg     = 1) => 0) + '' + (arg     = 2) => 102;"
 //verify.currentLineContentIs("((arg = 1) => 0) + '' + (arg = 2) => 102;");
-verify.currentLineContentIs("((arg     = 1) => 0) + '' + (arg     = 2) => 102;");
+verify.currentLineContentIs("((arg     = 1) => 0) + '' + ((arg     = 2) => 102);");
 goTo.marker("63");
-verify.currentLineContentIs("((arg?) => 0) + '' + (arg?) => 103;");
+verify.currentLineContentIs("((arg?) => 0) + '' + ((arg?) => 103);");
 goTo.marker("64");
-verify.currentLineContentIs("((arg: number) => 0) + '' + (arg: number) => 104;");
+verify.currentLineContentIs("((arg: number) => 0) + '' + ((arg: number) => 104);");
 goTo.marker("65");
 //bug 696460 expect result: "((arg: number = 1) => 0) + '' + (arg: number = 2) => 105;", actual result: "((arg: number     = 1) => 0) + '' + (arg: number     = 2) => 105;"
 //verify.currentLineContentIs("((arg: number = 1) => 0) + '' + (arg: number = 2) => 105;");
-verify.currentLineContentIs("((arg: number     = 1) => 0) + '' + (arg: number     = 2) => 105;");
+verify.currentLineContentIs("((arg: number     = 1) => 0) + '' + ((arg: number     = 2) => 105);");
 goTo.marker("66");
-verify.currentLineContentIs("((arg?: number) => 0) + '' + (arg?: number) => 106;");
+verify.currentLineContentIs("((arg?: number) => 0) + '' + ((arg?: number) => 106);");
 goTo.marker("67");
-verify.currentLineContentIs("((...arg: number[]) => 0) + '' + (...arg: number[]) => 107;");
+verify.currentLineContentIs("((...arg: number[]) => 0) + '' + ((...arg: number[]) => 107);");
 goTo.marker("68");
-verify.currentLineContentIs("((arg1, arg2?) => 0) + '' + (arg1, arg2?) => 108;");
+verify.currentLineContentIs("((arg1, arg2?) => 0) + '' + ((arg1, arg2?) => 108);");
 goTo.marker("69");
-verify.currentLineContentIs("((arg1, ...arg2: number[]) => 0) + '' + (arg1, ...arg2: number[]) => 108;");
+verify.currentLineContentIs("((arg1, ...arg2: number[]) => 0) + '' + ((arg1, ...arg2: number[]) => 108);");
 goTo.marker("70");
 verify.currentLineContentIs("function foo(...arg: any[]) { }");
 goTo.marker("71");
