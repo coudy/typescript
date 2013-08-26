@@ -53,8 +53,8 @@ intTypeCheck.ts line 132 col 5: error TS2012: Cannot convert 'boolean' to 'i3':
 	Type 'i3' requires a construct signature, but type 'Boolean' lacks one.
 intTypeCheck.ts line 132 col 22: error TS2095: Could not find symbol 'i3'.
 intTypeCheck.ts line 133 col 21: error TS2083: Invalid 'new' expression.
-intTypeCheck.ts line 138 col 5: error TS2012: Cannot convert '{}' to 'i4':
-	Type '{}' is missing property 'p3' from type 'i4'.
+intTypeCheck.ts line 138 col 5: error TS2012: Cannot convert '{ [p1: string]: any; }' to 'i4':
+	Type '{ [p1: string]: any; }' is missing property 'p3' from type 'i4'.
 intTypeCheck.ts line 139 col 5: error TS2012: Cannot convert 'Object' to 'i4':
 	Type 'Object' is missing property 'p3' from type 'i4'.
 intTypeCheck.ts line 140 col 21: error TS2083: Invalid 'new' expression.
@@ -105,8 +105,8 @@ intTypeCheck.ts line 188 col 5: error TS2012: Cannot convert 'boolean' to 'i7':
 	Type 'i7' requires a construct signature, but type 'Boolean' lacks one.
 intTypeCheck.ts line 188 col 22: error TS2095: Could not find symbol 'i7'.
 intTypeCheck.ts line 189 col 21: error TS2083: Invalid 'new' expression.
-intTypeCheck.ts line 194 col 5: error TS2012: Cannot convert '{}' to 'i8':
-	Type '{}' is missing property 'p3' from type 'i8'.
+intTypeCheck.ts line 194 col 5: error TS2012: Cannot convert '{ [p1: string]: any; }' to 'i8':
+	Type '{ [p1: string]: any; }' is missing property 'p3' from type 'i8'.
 intTypeCheck.ts line 195 col 5: error TS2012: Cannot convert 'Object' to 'i8':
 	Type 'Object' is missing property 'p3' from type 'i8'.
 intTypeCheck.ts line 196 col 21: error TS2083: Invalid 'new' expression.

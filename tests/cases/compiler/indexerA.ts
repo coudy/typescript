@@ -7,5 +7,4 @@ class JQuery {
 }
 
 var jq:JQuery={ 0: { id : "a" }, 1: { id : "b" } };
-// BUG 766379
-//jq[0].id;
+jq[0].id;

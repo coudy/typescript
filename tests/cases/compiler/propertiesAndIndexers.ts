@@ -32,7 +32,7 @@ interface C extends A {
 
 interface D extends B, C {
     2: Z;
-    Inifinity: number;
+    Infinity: number;
     zoo: string;
 }
 
