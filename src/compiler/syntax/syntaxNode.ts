@@ -342,6 +342,10 @@ module TypeScript {
             return false;
         }
 
+        public isExpression(): boolean {
+            return false;
+        }
+
         public isSwitchClause(): boolean {
             return false;
         }

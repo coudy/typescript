@@ -91,7 +91,16 @@ module TypeScript {
     export interface IUnaryExpressionSyntax extends IExpressionSyntax {
     }
 
-    export interface ITypeSyntax extends IUnaryExpressionSyntax {
+    export interface IPostfixExpressionSyntax extends IUnaryExpressionSyntax {
+    }
+
+    export interface IMemberExpressionSyntax extends IPostfixExpressionSyntax {
+    }
+
+    export interface IPrimaryExpressionSyntax extends IMemberExpressionSyntax {
+    }
+
+    export interface ITypeSyntax extends ISyntaxNodeOrToken {
     }
 
     export interface INameSyntax extends ITypeSyntax {

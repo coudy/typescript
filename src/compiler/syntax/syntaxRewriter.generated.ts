@@ -301,7 +301,7 @@ module TypeScript {
         public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): any {
             return node.update(
                 node.kind(),
-                <IExpressionSyntax>this.visitNodeOrToken(node.operand),
+                <IMemberExpressionSyntax>this.visitNodeOrToken(node.operand),
                 this.visitToken(node.operatorToken));
         }
 
@@ -315,7 +315,7 @@ module TypeScript {
 
         public visitInvocationExpression(node: InvocationExpressionSyntax): any {
             return node.update(
-                <IExpressionSyntax>this.visitNodeOrToken(node.expression),
+                <IMemberExpressionSyntax>this.visitNodeOrToken(node.expression),
                 <ArgumentListSyntax>this.visitNode(node.argumentList));
         }
 
@@ -493,7 +493,7 @@ module TypeScript {
         public visitObjectCreationExpression(node: ObjectCreationExpressionSyntax): any {
             return node.update(
                 this.visitToken(node.newKeyword),
-                <IExpressionSyntax>this.visitNodeOrToken(node.expression),
+                <IMemberExpressionSyntax>this.visitNodeOrToken(node.expression),
                 node.argumentList === null ? null : <ArgumentListSyntax>this.visitNode(node.argumentList));
         }
 
@@ -704,19 +704,19 @@ module TypeScript {
         public visitTypeOfExpression(node: TypeOfExpressionSyntax): any {
             return node.update(
                 this.visitToken(node.typeOfKeyword),
-                <IExpressionSyntax>this.visitNodeOrToken(node.expression));
+                <IUnaryExpressionSyntax>this.visitNodeOrToken(node.expression));
         }
 
         public visitDeleteExpression(node: DeleteExpressionSyntax): any {
             return node.update(
                 this.visitToken(node.deleteKeyword),
-                <IExpressionSyntax>this.visitNodeOrToken(node.expression));
+                <IUnaryExpressionSyntax>this.visitNodeOrToken(node.expression));
         }
 
         public visitVoidExpression(node: VoidExpressionSyntax): any {
             return node.update(
                 this.visitToken(node.voidKeyword),
-                <IExpressionSyntax>this.visitNodeOrToken(node.expression));
+                <IUnaryExpressionSyntax>this.visitNodeOrToken(node.expression));
         }
 
         public visitDebuggerStatement(node: DebuggerStatementSyntax): any {

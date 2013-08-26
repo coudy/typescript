@@ -3749,7 +3749,7 @@ module TypeScript.Parser {
             }
         }
 
-        private parseMemberExpressionOrLower(inObjectCreation: boolean): IUnaryExpressionSyntax {
+        private parseMemberExpressionOrLower(inObjectCreation: boolean): IMemberExpressionSyntax {
             if (this.currentToken().tokenKind === SyntaxKind.NewKeyword) {
                 return this.parseObjectCreationExpression();
             }
@@ -3760,11 +3760,11 @@ module TypeScript.Parser {
                 return this.eatIdentifierToken();
             }
 
-            return this.parseCallOrMemberExpressionRest(expression, /*allowArguments:*/ false, /*inObjectCreation:*/ inObjectCreation);
+            return this.parseMemberExpressionRest(expression, /*allowArguments:*/ false, /*inObjectCreation:*/ inObjectCreation);
         }
 
         private parseCallExpressionOrLower(): IUnaryExpressionSyntax {
-            var expression: IUnaryExpressionSyntax;
+            var expression: IMemberExpressionSyntax;
             if (this.currentToken().tokenKind === SyntaxKind.SuperKeyword) {
                 expression = this.eatKeyword(SyntaxKind.SuperKeyword);
 
@@ -3780,10 +3780,10 @@ module TypeScript.Parser {
                 expression = this.parseMemberExpressionOrLower(/*inObjectCreation:*/ false);
             }
 
-            return this.parseCallOrMemberExpressionRest(expression, /*allowArguments:*/ true, /*inObjectCreation:*/ false);
+            return this.parseMemberExpressionRest(expression, /*allowArguments:*/ true, /*inObjectCreation:*/ false);
         }
 
-        private parseCallOrMemberExpressionRest(expression: IUnaryExpressionSyntax, allowArguments: boolean, inObjectCreation: boolean): IUnaryExpressionSyntax  {
+        private parseMemberExpressionRest(expression: IMemberExpressionSyntax, allowArguments: boolean, inObjectCreation: boolean): IMemberExpressionSyntax  {
             while (true) {
                 var currentTokenKind = this.currentToken().tokenKind;
 
@@ -3827,7 +3827,7 @@ module TypeScript.Parser {
             }
         }
 
-        private parseLeftHandSideExpressionOrLower(): IUnaryExpressionSyntax {
+        private parseLeftHandSideExpressionOrLower(): IMemberExpressionSyntax {
             if (this.currentToken().tokenKind === SyntaxKind.NewKeyword) {
                 return this.parseObjectCreationExpression();
             }
@@ -3836,32 +3836,29 @@ module TypeScript.Parser {
             }
         }
 
-        private parsePostfixExpressionOrLower(): IUnaryExpressionSyntax {
+        private parsePostfixExpressionOrLower(): IPostfixExpressionSyntax {
             var expression = this.parseLeftHandSideExpressionOrLower();
             if (expression === null) {
                 // Nothing else worked, just try to consume an identifier so we report an error.
                 return this.eatIdentifierToken();
             }
 
-            while (true) {
-                var currentTokenKind = this.currentToken().tokenKind;
+            var currentTokenKind = this.currentToken().tokenKind;
 
-                switch (currentTokenKind) {
-                    case SyntaxKind.PlusPlusToken:
-                    case SyntaxKind.MinusMinusToken:
-                        // Because of automatic semicolon insertion, we should only consume the ++ or -- 
-                        // if it is on the same line as the previous token.
-                        if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
-                            break;
-                        }
+            switch (currentTokenKind) {
+                case SyntaxKind.PlusPlusToken:
+                case SyntaxKind.MinusMinusToken:
+                    // Because of automatic semicolon insertion, we should only consume the ++ or -- 
+                    // if it is on the same line as the previous token.
+                    if (this.previousToken() !== null && this.previousToken().hasTrailingNewLine()) {
+                        break;
+                    }
 
-                        expression = this.factory.postfixUnaryExpression(
-                            SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
-                        continue;
-                }
-
-                return expression;
+                    return this.factory.postfixUnaryExpression(
+                        SyntaxFacts.getPostfixUnaryExpressionFromOperatorToken(currentTokenKind), expression, this.eatAnyToken());
             }
+
+            return expression;
         }
 
         private tryParseArgumentList(): ArgumentListSyntax {
@@ -3954,7 +3951,7 @@ module TypeScript.Parser {
             return this.factory.elementAccessExpression(expression, openBracketToken, argumentExpression, closeBracketToken);
         }
 
-        private parsePrimaryExpression(): IUnaryExpressionSyntax {
+        private parsePrimaryExpression(): IPrimaryExpressionSyntax {
             var currentToken = this.currentToken();
 
             if (this.isIdentifier(currentToken)) {
@@ -4143,10 +4140,10 @@ module TypeScript.Parser {
             var argumentList = this.tryParseArgumentList();
 
             var result = this.factory.objectCreationExpression(newKeyword, expression, argumentList);
-            return this.parseCallOrMemberExpressionRest(result, /*allowArguments:*/ true, /*inObjectCreation:*/ false); 
+            return this.parseMemberExpressionRest(result, /*allowArguments:*/ true, /*inObjectCreation:*/ false); 
         }
 
-        private parseObjectCreationExpressionOrLower(inObjectCreation: boolean): IUnaryExpressionSyntax {
+        private parseObjectCreationExpressionOrLower(inObjectCreation: boolean): IMemberExpressionSyntax {
             if (this.currentToken().tokenKind === SyntaxKind.NewKeyword) {
                 return this.parseObjectCreationExpression();
             }

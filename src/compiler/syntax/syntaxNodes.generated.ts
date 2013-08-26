@@ -1731,14 +1731,6 @@ module TypeScript {
         return true;
     }
 
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
-        return true;
-    }
-
     public update(left: INameSyntax,
                   dotToken: ISyntaxToken,
                   right: ISyntaxToken): QualifiedNameSyntax {
@@ -1897,14 +1889,6 @@ module TypeScript {
         return true;
     }
 
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
-        return true;
-    }
-
     public update(newKeyword: ISyntaxToken,
                   typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
@@ -1998,14 +1982,6 @@ module TypeScript {
         return true;
     }
 
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
-        return true;
-    }
-
     public update(typeParameterList: TypeParameterListSyntax,
                   parameterList: ParameterListSyntax,
                   equalsGreaterThanToken: ISyntaxToken,
@@ -2088,14 +2064,6 @@ module TypeScript {
     }
 
     public isType(): boolean {
-        return true;
-    }
-
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
         return true;
     }
 
@@ -2182,14 +2150,6 @@ module TypeScript {
         return true;
     }
 
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
-        return true;
-    }
-
     public update(type: ITypeSyntax,
                   openBracketToken: ISyntaxToken,
                   closeBracketToken: ISyntaxToken): ArrayTypeSyntax {
@@ -2262,14 +2222,6 @@ module TypeScript {
         return true;
     }
 
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
-        return true;
-    }
-
     public update(name: INameSyntax,
                   typeArgumentList: TypeArgumentListSyntax): GenericTypeSyntax {
         if (this.name === name && this.typeArgumentList === typeArgumentList) {
@@ -2334,14 +2286,6 @@ module TypeScript {
     }
 
     public isType(): boolean {
-        return true;
-    }
-
-    public isUnaryExpression(): boolean {
-        return true;
-    }
-
-    public isExpression(): boolean {
         return true;
     }
 
@@ -2630,7 +2574,7 @@ module TypeScript {
     }
     }
 
-    export class MemberAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class MemberAccessExpressionSyntax extends SyntaxNode implements IMemberExpressionSyntax {
 
         constructor(public expression: IExpressionSyntax,
                     public dotToken: ISyntaxToken,
@@ -2659,6 +2603,14 @@ module TypeScript {
             case 2: return this.name;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
     }
 
     public isUnaryExpression(): boolean {
@@ -2710,11 +2662,11 @@ module TypeScript {
     }
     }
 
-    export class PostfixUnaryExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class PostfixUnaryExpressionSyntax extends SyntaxNode implements IPostfixExpressionSyntax {
     private _kind: SyntaxKind;
 
         constructor(kind: SyntaxKind,
-                    public operand: IExpressionSyntax,
+                    public operand: IMemberExpressionSyntax,
                     public operatorToken: ISyntaxToken,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
@@ -2738,6 +2690,10 @@ module TypeScript {
         }
     }
 
+    public isPostfixExpression(): boolean {
+        return true;
+    }
+
     public isUnaryExpression(): boolean {
         return true;
     }
@@ -2751,7 +2707,7 @@ module TypeScript {
     }
 
     public update(kind: SyntaxKind,
-                  operand: IExpressionSyntax,
+                  operand: IMemberExpressionSyntax,
                   operatorToken: ISyntaxToken): PostfixUnaryExpressionSyntax {
         if (this._kind === kind && this.operand === operand && this.operatorToken === operatorToken) {
             return this;
@@ -2772,7 +2728,7 @@ module TypeScript {
         return this.update(kind, this.operand, this.operatorToken);
     }
 
-    public withOperand(operand: IExpressionSyntax): PostfixUnaryExpressionSyntax {
+    public withOperand(operand: IMemberExpressionSyntax): PostfixUnaryExpressionSyntax {
         return this.update(this._kind, operand, this.operatorToken);
     }
 
@@ -2786,7 +2742,7 @@ module TypeScript {
     }
     }
 
-    export class ElementAccessExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ElementAccessExpressionSyntax extends SyntaxNode implements IMemberExpressionSyntax {
 
         constructor(public expression: IExpressionSyntax,
                     public openBracketToken: ISyntaxToken,
@@ -2817,6 +2773,14 @@ module TypeScript {
             case 3: return this.closeBracketToken;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
     }
 
     public isUnaryExpression(): boolean {
@@ -2874,9 +2838,9 @@ module TypeScript {
     }
     }
 
-    export class InvocationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class InvocationExpressionSyntax extends SyntaxNode implements IMemberExpressionSyntax {
 
-        constructor(public expression: IExpressionSyntax,
+        constructor(public expression: IMemberExpressionSyntax,
                     public argumentList: ArgumentListSyntax,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
@@ -2903,6 +2867,14 @@ module TypeScript {
         }
     }
 
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
+    }
+
     public isUnaryExpression(): boolean {
         return true;
     }
@@ -2911,7 +2883,7 @@ module TypeScript {
         return true;
     }
 
-    public update(expression: IExpressionSyntax,
+    public update(expression: IMemberExpressionSyntax,
                   argumentList: ArgumentListSyntax): InvocationExpressionSyntax {
         if (this.expression === expression && this.argumentList === argumentList) {
             return this;
@@ -2920,7 +2892,7 @@ module TypeScript {
         return new InvocationExpressionSyntax(expression, argumentList, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(expression: IExpressionSyntax): InvocationExpressionSyntax {
+    public static create1(expression: IMemberExpressionSyntax): InvocationExpressionSyntax {
         return new InvocationExpressionSyntax(expression, ArgumentListSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
@@ -2932,7 +2904,7 @@ module TypeScript {
         return <InvocationExpressionSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withExpression(expression: IExpressionSyntax): InvocationExpressionSyntax {
+    public withExpression(expression: IMemberExpressionSyntax): InvocationExpressionSyntax {
         return this.update(expression, this.argumentList);
     }
 
@@ -4868,10 +4840,10 @@ module TypeScript {
     }
     }
 
-    export class ObjectCreationExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ObjectCreationExpressionSyntax extends SyntaxNode implements IMemberExpressionSyntax {
 
         constructor(public newKeyword: ISyntaxToken,
-                    public expression: IExpressionSyntax,
+                    public expression: IMemberExpressionSyntax,
                     public argumentList: ArgumentListSyntax,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
@@ -4899,6 +4871,14 @@ module TypeScript {
         }
     }
 
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
+    }
+
     public isUnaryExpression(): boolean {
         return true;
     }
@@ -4908,7 +4888,7 @@ module TypeScript {
     }
 
     public update(newKeyword: ISyntaxToken,
-                  expression: IExpressionSyntax,
+                  expression: IMemberExpressionSyntax,
                   argumentList: ArgumentListSyntax): ObjectCreationExpressionSyntax {
         if (this.newKeyword === newKeyword && this.expression === expression && this.argumentList === argumentList) {
             return this;
@@ -4918,11 +4898,11 @@ module TypeScript {
     }
 
     public static create(newKeyword: ISyntaxToken,
-                         expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
+                         expression: IMemberExpressionSyntax): ObjectCreationExpressionSyntax {
         return new ObjectCreationExpressionSyntax(newKeyword, expression, null, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
+    public static create1(expression: IMemberExpressionSyntax): ObjectCreationExpressionSyntax {
         return new ObjectCreationExpressionSyntax(Syntax.token(SyntaxKind.NewKeyword), expression, null, /*parsedInStrictMode:*/ false);
     }
 
@@ -4938,7 +4918,7 @@ module TypeScript {
         return this.update(newKeyword, this.expression, this.argumentList);
     }
 
-    public withExpression(expression: IExpressionSyntax): ObjectCreationExpressionSyntax {
+    public withExpression(expression: IMemberExpressionSyntax): ObjectCreationExpressionSyntax {
         return this.update(this.newKeyword, expression, this.argumentList);
     }
 
@@ -6651,7 +6631,7 @@ module TypeScript {
     }
     }
 
-    export class FunctionExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class FunctionExpressionSyntax extends SyntaxNode implements IPrimaryExpressionSyntax {
 
         constructor(public functionKeyword: ISyntaxToken,
                     public identifier: ISyntaxToken,
@@ -6684,11 +6664,11 @@ module TypeScript {
         }
     }
 
-    public isUnaryExpression(): boolean {
+    public isPrimaryExpression(): boolean {
         return true;
     }
 
-    public isExpression(): boolean {
+    public isMemberExpression(): boolean {
         return true;
     }
 
@@ -7250,7 +7230,7 @@ module TypeScript {
     export class TypeOfExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
         constructor(public typeOfKeyword: ISyntaxToken,
-                    public expression: IExpressionSyntax,
+                    public expression: IUnaryExpressionSyntax,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
 
@@ -7285,7 +7265,7 @@ module TypeScript {
     }
 
     public update(typeOfKeyword: ISyntaxToken,
-                  expression: IExpressionSyntax): TypeOfExpressionSyntax {
+                  expression: IUnaryExpressionSyntax): TypeOfExpressionSyntax {
         if (this.typeOfKeyword === typeOfKeyword && this.expression === expression) {
             return this;
         }
@@ -7293,7 +7273,7 @@ module TypeScript {
         return new TypeOfExpressionSyntax(typeOfKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(expression: IExpressionSyntax): TypeOfExpressionSyntax {
+    public static create1(expression: IUnaryExpressionSyntax): TypeOfExpressionSyntax {
         return new TypeOfExpressionSyntax(Syntax.token(SyntaxKind.TypeOfKeyword), expression, /*parsedInStrictMode:*/ false);
     }
 
@@ -7309,7 +7289,7 @@ module TypeScript {
         return this.update(typeOfKeyword, this.expression);
     }
 
-    public withExpression(expression: IExpressionSyntax): TypeOfExpressionSyntax {
+    public withExpression(expression: IUnaryExpressionSyntax): TypeOfExpressionSyntax {
         return this.update(this.typeOfKeyword, expression);
     }
 
@@ -7322,7 +7302,7 @@ module TypeScript {
     export class DeleteExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
         constructor(public deleteKeyword: ISyntaxToken,
-                    public expression: IExpressionSyntax,
+                    public expression: IUnaryExpressionSyntax,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
 
@@ -7357,7 +7337,7 @@ module TypeScript {
     }
 
     public update(deleteKeyword: ISyntaxToken,
-                  expression: IExpressionSyntax): DeleteExpressionSyntax {
+                  expression: IUnaryExpressionSyntax): DeleteExpressionSyntax {
         if (this.deleteKeyword === deleteKeyword && this.expression === expression) {
             return this;
         }
@@ -7365,7 +7345,7 @@ module TypeScript {
         return new DeleteExpressionSyntax(deleteKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(expression: IExpressionSyntax): DeleteExpressionSyntax {
+    public static create1(expression: IUnaryExpressionSyntax): DeleteExpressionSyntax {
         return new DeleteExpressionSyntax(Syntax.token(SyntaxKind.DeleteKeyword), expression, /*parsedInStrictMode:*/ false);
     }
 
@@ -7381,7 +7361,7 @@ module TypeScript {
         return this.update(deleteKeyword, this.expression);
     }
 
-    public withExpression(expression: IExpressionSyntax): DeleteExpressionSyntax {
+    public withExpression(expression: IUnaryExpressionSyntax): DeleteExpressionSyntax {
         return this.update(this.deleteKeyword, expression);
     }
 
@@ -7394,7 +7374,7 @@ module TypeScript {
     export class VoidExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
 
         constructor(public voidKeyword: ISyntaxToken,
-                    public expression: IExpressionSyntax,
+                    public expression: IUnaryExpressionSyntax,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
 
@@ -7429,7 +7409,7 @@ module TypeScript {
     }
 
     public update(voidKeyword: ISyntaxToken,
-                  expression: IExpressionSyntax): VoidExpressionSyntax {
+                  expression: IUnaryExpressionSyntax): VoidExpressionSyntax {
         if (this.voidKeyword === voidKeyword && this.expression === expression) {
             return this;
         }
@@ -7437,7 +7417,7 @@ module TypeScript {
         return new VoidExpressionSyntax(voidKeyword, expression, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(expression: IExpressionSyntax): VoidExpressionSyntax {
+    public static create1(expression: IUnaryExpressionSyntax): VoidExpressionSyntax {
         return new VoidExpressionSyntax(Syntax.token(SyntaxKind.VoidKeyword), expression, /*parsedInStrictMode:*/ false);
     }
 
@@ -7453,7 +7433,7 @@ module TypeScript {
         return this.update(voidKeyword, this.expression);
     }
 
-    public withExpression(expression: IExpressionSyntax): VoidExpressionSyntax {
+    public withExpression(expression: IUnaryExpressionSyntax): VoidExpressionSyntax {
         return this.update(this.voidKeyword, expression);
     }
 
