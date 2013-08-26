@@ -2232,9 +2232,12 @@ module TypeScript.Parser {
 
             // If we got an errant => then we want to parse what's coming up without requiring an
             // open brace.
+            var parseBlockEvenWithNoOpenBrace = false;
             var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken(callSignature);
-            var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
-            callSignature = newCallSignature;
+            if (newCallSignature !== callSignature) {
+                parseBlockEvenWithNoOpenBrace = true;
+                callSignature = newCallSignature;
+            }
 
             var block: BlockSyntax = null;
             var semicolon: ISyntaxToken = null;
@@ -2349,16 +2352,20 @@ module TypeScript.Parser {
 
             var hasEqualsGreaterThanToken = token0.tokenKind === SyntaxKind.EqualsGreaterThanToken;
             if (hasEqualsGreaterThanToken) {
-                // Previously the language allowed "function f() => expr;" as a shorthand for 
-                // "function f() { return expr; }.
-                // 
-                // Detect if the user is typing this and attempt recovery.
-                var diagnostic = new Diagnostic(this.fileName,
-                    this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_0_expected, [SyntaxFacts.getText(SyntaxKind.OpenBraceToken)]);
-                this.addDiagnostic(diagnostic);
+                // We can only do this if the call signature actually contains a final token that we 
+                // could add the => to.
+                if (callSignature.lastToken()) {
+                    // Previously the language allowed "function f() => expr;" as a shorthand for 
+                    // "function f() { return expr; }.
+                    // 
+                    // Detect if the user is typing this and attempt recovery.
+                    var diagnostic = new Diagnostic(this.fileName,
+                        this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_0_expected, [SyntaxFacts.getText(SyntaxKind.OpenBraceToken)]);
+                    this.addDiagnostic(diagnostic);
 
-                var token = this.eatAnyToken();
-                return <CallSignatureSyntax>this.addSkippedTokenAfterNode(callSignature, token0);
+                    var token = this.eatAnyToken();
+                    return <CallSignatureSyntax>this.addSkippedTokenAfterNode(callSignature, token0);
+                }
             }
 
             return callSignature;
@@ -2379,9 +2386,12 @@ module TypeScript.Parser {
 
             // If we got an errant => then we want to parse what's coming up without requiring an
             // open brace.
+            var parseBlockEvenWithNoOpenBrace = false;
             var newCallSignature = this.tryAddUnexpectedEqualsGreaterThanToken(callSignature);
-            var parseBlockEvenWithNoOpenBrace = callSignature !== newCallSignature;
-            callSignature = newCallSignature;
+            if (newCallSignature !== callSignature) {
+                parseBlockEvenWithNoOpenBrace = true;
+                callSignature = newCallSignature;
+            }
 
             var semicolonToken: ISyntaxToken = null;
             var block: BlockSyntax = null;
