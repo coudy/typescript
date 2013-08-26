@@ -1,3 +1,4 @@
+//// [importDecl.js]
 var m4 = require("m4");
 exports.x4 = m4.x;
 exports.d4 = m4.d;
@@ -43,3 +44,45 @@ exports.useMultiImport_m4_x4 = multiImport_m4.x;
 exports.useMultiImport_m4_d4 = multiImport_m4.d;
 exports.useMultiImport_m4_f4 = multiImport_m4.foo();
 
+
+
+////[importDecl.d.ts]
+export declare module "m4" {
+    class d {
+    }
+    var x: d;
+    function foo(): d;
+}
+import m4 = require("m4");
+export declare var x4: m4.d;
+export declare var d4: new() => m4.d;
+export declare var f4: m4.d;
+export declare module m1 {
+    var x2: m4.d;
+    var d2: new() => m4.d;
+    var f2: m4.d;
+}
+export declare module "glo_m4" {
+    class d {
+    }
+    var x: d;
+    function foo(): d;
+}
+import glo_m4 = require("glo_m4");
+export declare var useGlo_m4_x4: glo_m4.d;
+export declare var useGlo_m4_d4: new() => glo_m4.d;
+export declare var useGlo_m4_f4: glo_m4.d;
+export declare module "fncOnly_m4" {
+    class d {
+    }
+    var x: d;
+    function foo(): d;
+}
+import fncOnly_m4 = require("fncOnly_m4");
+export declare var useFncOnly_m4_f4: fncOnly_m4.d;
+export declare module usePrivate_m4_m1 {
+}
+export declare var d: m4.d;
+export declare var useMultiImport_m4_x4: m4.d;
+export declare var useMultiImport_m4_d4: new() => m4.d;
+export declare var useMultiImport_m4_f4: m4.d;

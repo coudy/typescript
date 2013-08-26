@@ -1,3 +1,4 @@
+//// [genericArray1.js]
 /*
 var n: number[];
 
@@ -12,3 +13,7 @@ length: number;
 var lengths = ["a", "b", "c"].map(function (x) {
     return x.length;
 });
+
+
+////[genericArray1.d.ts]
+declare var lengths: number[];

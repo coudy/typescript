@@ -1,3 +1,4 @@
+//// [internalAliasEnum.js]
 var a;
 (function (a) {
     (function (weekend) {
@@ -13,3 +14,16 @@ var c;
     var b = a.weekend;
     c.bVal = b.Sunday;
 })(c || (c = {}));
+
+
+////[internalAliasEnum.d.ts]
+declare module a {
+    enum weekend {
+        Friday,
+        Saturday,
+        Sunday,
+    }
+}
+declare module c {
+    var bVal: a.weekend;
+}

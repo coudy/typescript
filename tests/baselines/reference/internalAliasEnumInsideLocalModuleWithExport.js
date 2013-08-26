@@ -1,3 +1,4 @@
+//// [internalAliasEnumInsideLocalModuleWithExport.js]
 (function (a) {
     (function (weekend) {
         weekend[weekend["Friday"] = 0] = "Friday";
@@ -15,3 +16,17 @@ var a = exports.a;
 })(exports.c || (exports.c = {}));
 var c = exports.c;
 
+
+
+////[internalAliasEnumInsideLocalModuleWithExport.d.ts]
+export declare module a {
+    enum weekend {
+        Friday,
+        Saturday,
+        Sunday,
+    }
+}
+export declare module c {
+    export import b = a.weekend;
+    var bVal: a.weekend;
+}

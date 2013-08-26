@@ -1,3 +1,4 @@
+//// [declInput.js]
 var bar = (function () {
     function bar() {
     }
@@ -15,3 +16,17 @@ var bar = (function () {
     };
     return bar;
 })();
+
+
+////[declInput.d.ts]
+interface bar {
+}
+declare class bar {
+    public f(): string;
+    public g(): {
+        a: bar;
+        b: any;
+        c: any;
+    };
+    public h(x?: number, y?: any, z?: string): void;
+}

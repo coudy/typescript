@@ -1,3 +1,4 @@
+//// [internalAliasClassInsideTopLevelModuleWithoutExport.js]
 (function (x) {
     var c = (function () {
         function c() {
@@ -15,3 +16,12 @@ var xc = x.c;
 exports.cProp = new xc();
 var cReturnVal = exports.cProp.foo(10);
 
+
+
+////[internalAliasClassInsideTopLevelModuleWithoutExport.d.ts]
+export declare module x {
+    class c {
+        public foo(a: number): number;
+    }
+}
+export declare var cProp: x.c;

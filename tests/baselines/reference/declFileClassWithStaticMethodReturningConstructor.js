@@ -1,3 +1,4 @@
+//// [declFileClassWithStaticMethodReturningConstructor.js]
 var Enhancement = (function () {
     function Enhancement() {
     }
@@ -8,3 +9,12 @@ var Enhancement = (function () {
 })();
 exports.Enhancement = Enhancement;
 
+
+
+////[declFileClassWithStaticMethodReturningConstructor.d.ts]
+export declare class Enhancement {
+    static getType(): {
+        getType(): typeof Enhancement;
+        new(): Enhancement;
+    };
+}

@@ -103,6 +103,7 @@ class CompilerBaselineRunner extends RunnerBase {
             harnessCompiler.compileFiles(toBeCompiled, otherFiles, moduleTarget, function (compileResult) {
                 result = compileResult;
             }, function (settings) {
+                harnessCompiler.setCompilerSettings(tcSettings);
                 settings.mapSourceFiles = emittingSourceMap;
             });
 
@@ -125,7 +126,7 @@ class CompilerBaselineRunner extends RunnerBase {
             }
 
             // if the .d.ts is non-empty, confirm it compiles correctly as well
-            if (this.decl && result.declFilesCode.length > 0) {
+            if (this.decl && result.declFilesCode.length > 0 && result.errors.length === 0) {
                 var declErrors: string[] = undefined;
                 result.declFilesCode.forEach(file => {
                     // don't want to use the fullpath for the unitName or the file won't be resolved correctly

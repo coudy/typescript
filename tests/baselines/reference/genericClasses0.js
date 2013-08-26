@@ -1,3 +1,4 @@
+//// [genericClasses0.js]
 var C = (function () {
     function C() {
     }
@@ -7,3 +8,11 @@ var C = (function () {
 var v1;
 
 var y = v1.x;
+
+
+////[genericClasses0.d.ts]
+declare class C<T> {
+    public x: T;
+}
+declare var v1: C<string>;
+declare var y: string;

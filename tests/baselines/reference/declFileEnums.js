@@ -1,3 +1,4 @@
+//// [declFileEnums.js]
 var e1;
 (function (e1) {
     e1[e1["a"] = 0] = "a";
@@ -35,3 +36,34 @@ var e5;
     e5[e5["Sunday"] = 2] = "Sunday";
     e5[e5["Weekend days"] = 3] = "Weekend days";
 })(e5 || (e5 = {}));
+
+
+////[declFileEnums.d.ts]
+declare enum e1 {
+    a,
+    b,
+    c,
+}
+declare enum e2 {
+    a = 10,
+    b,
+    c = 10,
+}
+declare enum e3 {
+    a = 10,
+    b,
+    c,
+}
+declare enum e4 {
+    a,
+    b,
+    c,
+    d = 10,
+    e,
+}
+declare enum e5 {
+    "Friday",
+    "Saturday",
+    "Sunday",
+    "Weekend days",
+}

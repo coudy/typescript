@@ -1,3 +1,4 @@
+//// [internalAliasClassInsideLocalModuleWithoutExport.js]
 (function (x) {
     var c = (function () {
         function c() {
@@ -21,3 +22,14 @@ var x = exports.x;
 })(exports.m2 || (exports.m2 = {}));
 var m2 = exports.m2;
 
+
+
+////[internalAliasClassInsideLocalModuleWithoutExport.d.ts]
+export declare module x {
+    class c {
+        public foo(a: number): number;
+    }
+}
+export declare module m2.m3 {
+    var cProp: x.c;
+}

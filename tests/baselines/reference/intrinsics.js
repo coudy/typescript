@@ -1,3 +1,4 @@
+//// [intrinsics.js]
 var hasOwnProperty;
 
 var m1;
@@ -20,3 +21,13 @@ var Foo = (function () {
     return Foo;
 })();
 var foo;
+
+
+////[intrinsics.d.ts]
+declare var hasOwnProperty: any;
+declare module m1 {
+    var __proto__: any;
+}
+declare class Foo<__proto__> {
+}
+declare var foo: (__proto__: number) => void;

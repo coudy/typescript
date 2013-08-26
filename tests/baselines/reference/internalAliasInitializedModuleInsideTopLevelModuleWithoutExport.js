@@ -1,3 +1,4 @@
+//// [internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.js]
 define(["require", "exports"], function(require, exports) {
     (function (a) {
         (function (b) {
@@ -15,3 +16,11 @@ define(["require", "exports"], function(require, exports) {
     var b = a.b;
     exports.x = new b.c();
 });
+
+
+////[internalAliasInitializedModuleInsideTopLevelModuleWithoutExport.d.ts]
+export declare module a.b {
+    class c {
+    }
+}
+export declare var x: a.b.c;

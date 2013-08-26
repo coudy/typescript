@@ -1,3 +1,4 @@
+//// [privacyCheckTypeOfInvisibleModuleNoError.js]
 var Outer;
 (function (Outer) {
     var Inner;
@@ -7,3 +8,11 @@ var Outer;
 
     Outer.f;
 })(Outer || (Outer = {}));
+
+
+////[privacyCheckTypeOfInvisibleModuleNoError.d.ts]
+declare module Outer {
+    var f: {
+        m: number;
+    };
+}

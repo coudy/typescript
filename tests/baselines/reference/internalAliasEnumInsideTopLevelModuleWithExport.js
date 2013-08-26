@@ -1,3 +1,4 @@
+//// [internalAliasEnumInsideTopLevelModuleWithExport.js]
 define(["require", "exports"], function(require, exports) {
     (function (a) {
         (function (weekend) {
@@ -13,3 +14,15 @@ define(["require", "exports"], function(require, exports) {
     exports.b = b;
     exports.bVal = exports.b.Sunday;
 });
+
+
+////[internalAliasEnumInsideTopLevelModuleWithExport.d.ts]
+export declare module a {
+    enum weekend {
+        Friday,
+        Saturday,
+        Sunday,
+    }
+}
+export import b = a.weekend;
+export declare var bVal: a.weekend;

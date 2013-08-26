@@ -1,3 +1,4 @@
+//// [internalAliasVarInsideLocalModuleWithExport.js]
 define(["require", "exports"], function(require, exports) {
     (function (a) {
         a.x = 10;
@@ -10,3 +11,13 @@ define(["require", "exports"], function(require, exports) {
     })(exports.c || (exports.c = {}));
     var c = exports.c;
 });
+
+
+////[internalAliasVarInsideLocalModuleWithExport.d.ts]
+export declare module a {
+    var x: number;
+}
+export declare module c {
+    export import b = a.x;
+    var bVal: number;
+}

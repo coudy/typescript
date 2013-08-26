@@ -1,3 +1,4 @@
+//// [declFileGenericType.js]
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -81,3 +82,35 @@ exports.h = h;
 
 exports.j = C.F6;
 
+
+
+////[declFileGenericType.d.ts]
+export declare module C {
+    class A<T> {
+    }
+    class B {
+    }
+    function F<T>(x: T): A<B>;
+    function F2<T>(x: T): A<B>;
+    function F3<T>(x: T): A<B>[];
+    function F4<T extends A<B>>(x: T): A<B>[];
+    function F5<T>(): T;
+    function F6<T extends A<B>>(x: T): T;
+    class D<T> {
+        public val: T;
+        constructor(val: T);
+    }
+}
+export declare var a: C.A<C.B>;
+export declare var b: <T>(x: T) => C.A<C.B>;
+export declare var c: <T>(x: T) => C.A<C.B>;
+export declare var d: <T>(x: T) => C.A<C.B>[];
+export declare var e: <T extends C.A<C.B>>(x: T) => C.A<C.B>[];
+export declare var x: C.A<C.B>;
+export declare function f<T extends C.A<C.B>>(): void;
+export declare var g: C.A<C.B>;
+export declare class h extends C.A<C.B> {
+}
+export interface i extends C.A<C.B> {
+}
+export declare var j: <T extends C.A<C.B>>(x: T) => T;

@@ -1,3 +1,4 @@
+//// [internalAliasFunctionInsideLocalModuleWithoutExport.js]
 (function (a) {
     function foo(x) {
         return x;
@@ -13,3 +14,12 @@ var a = exports.a;
 })(exports.c || (exports.c = {}));
 var c = exports.c;
 
+
+
+////[internalAliasFunctionInsideLocalModuleWithoutExport.d.ts]
+export declare module a {
+    function foo(x: number): number;
+}
+export declare module c {
+    var bVal2: (x: number) => number;
+}

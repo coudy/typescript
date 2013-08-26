@@ -1,3 +1,4 @@
+//// [internalAliasInitializedModule.js]
 var a;
 (function (a) {
     (function (b) {
@@ -16,3 +17,13 @@ var c;
     var b = a.b;
     c.x = new b.c();
 })(c || (c = {}));
+
+
+////[internalAliasInitializedModule.d.ts]
+declare module a.b {
+    class c {
+    }
+}
+declare module c {
+    var x: a.b.c;
+}

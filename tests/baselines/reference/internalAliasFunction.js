@@ -1,3 +1,4 @@
+//// [internalAliasFunction.js]
 var a;
 (function (a) {
     function foo(x) {
@@ -12,3 +13,13 @@ var c;
     c.bVal = b(10);
     c.bVal2 = b;
 })(c || (c = {}));
+
+
+////[internalAliasFunction.d.ts]
+declare module a {
+    function foo(x: number): number;
+}
+declare module c {
+    var bVal: number;
+    var bVal2: (x: number) => number;
+}

@@ -1,3 +1,4 @@
+//// [internalAliasFunctionInsideTopLevelModuleWithExport.js]
 define(["require", "exports"], function(require, exports) {
     (function (a) {
         function foo(x) {
@@ -12,3 +13,12 @@ define(["require", "exports"], function(require, exports) {
     exports.bVal = exports.b(10);
     exports.bVal2 = exports.b;
 });
+
+
+////[internalAliasFunctionInsideTopLevelModuleWithExport.d.ts]
+export declare module a {
+    function foo(x: number): number;
+}
+export import b = a.foo;
+export declare var bVal: number;
+export declare var bVal2: (x: number) => number;

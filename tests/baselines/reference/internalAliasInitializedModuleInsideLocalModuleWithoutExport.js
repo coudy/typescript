@@ -1,3 +1,4 @@
+//// [internalAliasInitializedModuleInsideLocalModuleWithoutExport.js]
 (function (a) {
     (function (b) {
         var c = (function () {
@@ -17,3 +18,13 @@ var a = exports.a;
 })(exports.c || (exports.c = {}));
 var c = exports.c;
 
+
+
+////[internalAliasInitializedModuleInsideLocalModuleWithoutExport.d.ts]
+export declare module a.b {
+    class c {
+    }
+}
+export declare module c {
+    var x: a.b.c;
+}

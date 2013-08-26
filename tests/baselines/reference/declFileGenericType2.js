@@ -1,3 +1,4 @@
+//// [declFileGenericType2.js]
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -45,3 +46,38 @@ var templa;
     })(templa.dom || (templa.dom = {}));
     var dom = templa.dom;
 })(templa || (templa = {}));
+
+
+////[declFileGenericType2.d.ts]
+declare module templa.mvc {
+    interface IModel {
+    }
+}
+declare module templa.mvc {
+    interface IController<ModelType extends mvc.IModel> {
+    }
+}
+declare module templa.mvc {
+    class AbstractController<ModelType extends mvc.IModel> implements mvc.IController<ModelType> {
+    }
+}
+declare module templa.mvc.composite {
+    interface ICompositeControllerModel extends mvc.IModel {
+        getControllers(): mvc.IController<mvc.IModel>[];
+    }
+}
+declare module templa.dom.mvc {
+    interface IElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.IController<ModelType> {
+    }
+}
+declare module templa.dom.mvc {
+    class AbstractElementController<ModelType extends templa.mvc.IModel> extends templa.mvc.AbstractController<ModelType> implements mvc.IElementController<ModelType> {
+        constructor();
+    }
+}
+declare module templa.dom.mvc.composite {
+    class AbstractCompositeElementController<ModelType extends templa.mvc.composite.ICompositeControllerModel> extends mvc.AbstractElementController<ModelType> {
+        public _controllers: templa.mvc.IController<templa.mvc.IModel>[];
+        constructor();
+    }
+}

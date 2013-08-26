@@ -1,3 +1,4 @@
+//// [internalAliasInitializedModuleInsideLocalModuleWithExport.js]
 define(["require", "exports"], function(require, exports) {
     (function (a) {
         (function (b) {
@@ -19,3 +20,14 @@ define(["require", "exports"], function(require, exports) {
     })(exports.c || (exports.c = {}));
     var c = exports.c;
 });
+
+
+////[internalAliasInitializedModuleInsideLocalModuleWithExport.d.ts]
+export declare module a.b {
+    class c {
+    }
+}
+export declare module c {
+    export import b = a.b;
+    var x: a.b.c;
+}

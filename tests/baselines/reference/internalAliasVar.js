@@ -1,3 +1,4 @@
+//// [internalAliasVar.js]
 var a;
 (function (a) {
     a.x = 10;
@@ -8,3 +9,12 @@ var c;
     var b = a.x;
     c.bVal = b;
 })(c || (c = {}));
+
+
+////[internalAliasVar.d.ts]
+declare module a {
+    var x: number;
+}
+declare module c {
+    var bVal: number;
+}

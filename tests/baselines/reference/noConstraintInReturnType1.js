@@ -1,3 +1,4 @@
+//// [noConstraintInReturnType1.js]
 var List = (function () {
     function List() {
     }
@@ -6,3 +7,9 @@ var List = (function () {
     };
     return List;
 })();
+
+
+////[noConstraintInReturnType1.d.ts]
+declare class List<T extends {}> {
+    static empty<T extends {}>(): List<T>;
+}

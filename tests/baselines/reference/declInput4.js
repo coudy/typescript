@@ -1,3 +1,4 @@
+//// [declInput4.js]
 var M;
 (function (M) {
     var C = (function () {
@@ -27,3 +28,21 @@ var M;
     })();
     M.D = D;
 })(M || (M = {}));
+
+
+////[declInput4.d.ts]
+declare module M {
+    class E {
+    }
+    interface I1 {
+    }
+    class D {
+        public m1: number;
+        public m2: string;
+        public m23: E;
+        public m24: I1;
+        public m232(): E;
+        public m242(): I1;
+        public m26(i: I1): void;
+    }
+}

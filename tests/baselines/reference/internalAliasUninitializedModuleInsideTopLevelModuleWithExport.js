@@ -1,5 +1,16 @@
+//// [internalAliasUninitializedModuleInsideTopLevelModuleWithExport.js]
 define(["require", "exports"], function(require, exports) {
     
     exports.x;
     exports.x.foo();
 });
+
+
+////[internalAliasUninitializedModuleInsideTopLevelModuleWithExport.d.ts]
+export declare module a.b {
+    interface I {
+        foo(): any;
+    }
+}
+export import b = a.b;
+export declare var x: a.b.I;

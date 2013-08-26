@@ -1,3 +1,4 @@
+//// [declFileModuleContinuation.js]
 var A;
 (function (A) {
     (function (B) {
@@ -13,3 +14,14 @@ var A;
     })(A.B || (A.B = {}));
     var B = A.B;
 })(A || (A = {}));
+
+
+////[declFileModuleContinuation.d.ts]
+declare module A.C {
+    interface Z {
+    }
+}
+declare module A.B.C {
+    class W implements A.C.Z {
+    }
+}

@@ -1,3 +1,4 @@
+//// [declFileObjectLiteralWithOnlySetter.js]
 function makePoint(x) {
     return {
         b: 10,
@@ -9,3 +10,14 @@ function makePoint(x) {
 ;
 var point = makePoint(2);
 point.x = 30;
+
+
+////[declFileObjectLiteralWithOnlySetter.d.ts]
+declare function makePoint(x: number): {
+    b: number;
+    x: number;
+};
+declare var point: {
+    b: number;
+    x: number;
+};
