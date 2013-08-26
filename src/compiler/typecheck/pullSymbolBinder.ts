@@ -2056,7 +2056,9 @@ module TypeScript {
 
                 case PullElementKind.Parameter:
                 case PullElementKind.TypeParameter:
-                    // parameters are bound by their enclosing function or type
+                    // parameters are bound by their enclosing function or type.  Ensure that that
+                    // decl is bound.
+                    decl.getParentDecl().getSymbol();
                     break;
 
                 case PullElementKind.CatchBlock:
