@@ -683,12 +683,16 @@ module TypeScript {
                 return null;
             }
 
-            if (this.isAnyOrEquivalent(lhsType)) {
-                return null;
-            }
-
             if (!lhsType.isResolved) {
                 this.resolveDeclaredSymbol(lhsType, enclosingDecl, context);
+            }
+
+            if (lhsType.isContainer() && lhsType.isAlias()) {
+                lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
+            }
+
+            if (this.isAnyOrEquivalent(lhsType)) {
+                return null;
             }
 
             // Figure out if privates are available under the current scope
@@ -766,9 +770,6 @@ module TypeScript {
                 members = lhsType.getAllMembers(declSearchKind, memberVisibilty);
 
                 if (lhsType.isContainer()) {
-                    if (lhsType.isAlias()) {
-                        lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
-                    }
                     var associatedInstance = (<PullContainerSymbol>lhsType).getInstanceSymbol();
                     if (associatedInstance) {
                         var instanceType = associatedInstance.type;
