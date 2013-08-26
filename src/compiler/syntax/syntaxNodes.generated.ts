@@ -1314,7 +1314,7 @@ module TypeScript {
     }
     }
 
-    export class ArrayLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ArrayLiteralExpressionSyntax extends SyntaxNode implements IPrimaryExpressionSyntax {
 
         constructor(public openBracketToken: ISyntaxToken,
                     public expressions: ISeparatedSyntaxList,
@@ -1343,6 +1343,18 @@ module TypeScript {
             case 2: return this.closeBracketToken;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isPrimaryExpression(): boolean {
+        return true;
+    }
+
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
     }
 
     public isUnaryExpression(): boolean {
@@ -1444,7 +1456,7 @@ module TypeScript {
     }
     }
 
-    export class ParenthesizedExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ParenthesizedExpressionSyntax extends SyntaxNode implements IPrimaryExpressionSyntax {
 
         constructor(public openParenToken: ISyntaxToken,
                     public expression: IExpressionSyntax,
@@ -1473,6 +1485,18 @@ module TypeScript {
             case 2: return this.closeParenToken;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isPrimaryExpression(): boolean {
+        return true;
+    }
+
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
     }
 
     public isUnaryExpression(): boolean {
@@ -6163,7 +6187,7 @@ module TypeScript {
     }
     }
 
-    export class ObjectLiteralExpressionSyntax extends SyntaxNode implements IUnaryExpressionSyntax {
+    export class ObjectLiteralExpressionSyntax extends SyntaxNode implements IPrimaryExpressionSyntax {
 
         constructor(public openBraceToken: ISyntaxToken,
                     public propertyAssignments: ISeparatedSyntaxList,
@@ -6192,6 +6216,18 @@ module TypeScript {
             case 2: return this.closeBraceToken;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isPrimaryExpression(): boolean {
+        return true;
+    }
+
+    public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
     }
 
     public isUnaryExpression(): boolean {
@@ -6669,6 +6705,18 @@ module TypeScript {
     }
 
     public isMemberExpression(): boolean {
+        return true;
+    }
+
+    public isPostfixExpression(): boolean {
+        return true;
+    }
+
+    public isUnaryExpression(): boolean {
+        return true;
+    }
+
+    public isExpression(): boolean {
         return true;
     }
 

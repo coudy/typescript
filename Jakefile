@@ -416,7 +416,9 @@ task("baseline-accept", function() {
 // Syntax Generator
 var syntaxGeneratorOutFile = compilerDirectory + "syntax/SyntaxGenerator.js";
 var syntaxGeneratorInFile = compilerDirectory + "syntax/SyntaxGenerator.ts";
-compileFile(syntaxGeneratorOutFile, [syntaxGeneratorInFile], [tscFile], [], true);
+file(compilerDirectory + "syntax/syntaxKind.ts");
+file(compilerDirectory + "syntax/syntaxFacts.ts");
+compileFile(syntaxGeneratorOutFile, [syntaxGeneratorInFile], [syntaxGeneratorInFile, compilerDirectory + "syntax/syntaxKind.ts", compilerDirectory + "syntax/syntaxFacts.ts"], [], /*useBuiltCompiler:*/ false);
 
 desc("Builds and runs the syntax generator");
 task("run-syntax-generator", [syntaxGeneratorOutFile], function() {

@@ -40,6 +40,11 @@ module TypeScript {
 }
 
 module TypeScript.Syntax {
+    export function isPrimaryExpression(token: ISyntaxToken): boolean {
+        // TODO: implement this.
+        return false;
+    }
+
     export function realizeToken(token: ISyntaxToken): ISyntaxToken {
         return new RealizedToken(token.tokenKind,
             token.leadingTrivia(), token.text(), token.value(), token.valueText(), token.trailingTrivia());
@@ -351,6 +356,23 @@ module TypeScript.Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
         }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
     }
 
     export function emptyToken(kind: SyntaxKind): ISyntaxToken {
@@ -455,6 +477,22 @@ module TypeScript.Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return new RealizedToken(
                 this.tokenKind,  this._leadingTrivia, this._text, this._value, this._valueText, trailingTrivia);
+        }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
         }
     }
 

@@ -3763,7 +3763,7 @@ module TypeScript.Parser {
             return this.parseMemberExpressionRest(expression, /*allowArguments:*/ false, /*inObjectCreation:*/ inObjectCreation);
         }
 
-        private parseCallExpressionOrLower(): IUnaryExpressionSyntax {
+        private parseCallExpressionOrLower(): IMemberExpressionSyntax {
             var expression: IMemberExpressionSyntax;
             if (this.currentToken().tokenKind === SyntaxKind.SuperKeyword) {
                 expression = this.eatKeyword(SyntaxKind.SuperKeyword);
@@ -4008,7 +4008,7 @@ module TypeScript.Parser {
             return null;
         }
 
-        private tryReparseDivideAsRegularExpression(): IUnaryExpressionSyntax {
+        private tryReparseDivideAsRegularExpression(): IPrimaryExpressionSyntax {
             // If we see a / or /= token, then that may actually be the start of a regex in certain 
             // contexts.
 
@@ -4130,7 +4130,7 @@ module TypeScript.Parser {
             return this.factory.functionExpression(functionKeyword, identifier, callSignature, block);
         }
 
-        private parseObjectCreationExpression(): IUnaryExpressionSyntax {
+        private parseObjectCreationExpression(): IMemberExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.NewKeyword);
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
 
@@ -4583,15 +4583,14 @@ module TypeScript.Parser {
             return this.factory.arrayLiteralExpression(openBracketToken, expressions, closeBracketToken);
         }
 
-        private parseLiteralExpression(): IUnaryExpressionSyntax {
+        private parseLiteralExpression(): IPrimaryExpressionSyntax {
             // TODO: add appropriate asserts here.
             return this.eatAnyToken();
         }
 
-        private parseThisExpression(): IUnaryExpressionSyntax {
+        private parseThisExpression(): IPrimaryExpressionSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.ThisKeyword);
-            var thisKeyword = this.eatKeyword(SyntaxKind.ThisKeyword);
-            return thisKeyword;
+            return this.eatKeyword(SyntaxKind.ThisKeyword);
         }
 
         private parseBlock(parseBlockEvenWithNoOpenBrace: boolean, checkForStrictMode: boolean): BlockSyntax {

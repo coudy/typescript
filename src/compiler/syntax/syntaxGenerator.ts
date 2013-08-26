@@ -36,8 +36,10 @@ var interfaces = {
     INameSyntax: 'ITypeSyntax',
     IUnaryExpressionSyntax: 'IExpressionSyntax',
     IPostfixExpressionSyntax: 'IUnaryExpressionSyntax',
+    // Note: for simplicity's sake, we merge CallExpression, NewExpression and MemberExpression 
+    // into IMemberExpression.
     IMemberExpressionSyntax: 'IPostfixExpressionSyntax',
-    IPrimaryExpressionSyntax: 'IMemberExpression',
+    IPrimaryExpressionSyntax: 'IMemberExpressionSyntax',
 };
 
 var definitions:ITypeDefinition[] = [
@@ -217,7 +219,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'ArrayLiteralExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: ['IUnaryExpressionSyntax'],
+        interfaces: ['IPrimaryExpressionSyntax'],
         children: [
             <any>{ name: 'openBracketToken', isToken: true },
             <any>{ name: 'expressions', isSeparatedList: true, elementType: 'IExpressionSyntax' },
@@ -233,7 +235,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'ParenthesizedExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: ['IUnaryExpressionSyntax'],
+        interfaces: ['IPrimaryExpressionSyntax'],
         children: [
             <any>{ name: 'openParenToken', isToken: true },
             <any>{ name: 'expression', type: 'IExpressionSyntax' },
@@ -863,7 +865,7 @@ var definitions:ITypeDefinition[] = [
     <any>{
         name: 'ObjectLiteralExpressionSyntax',
         baseType: 'SyntaxNode',
-        interfaces: ['IUnaryExpressionSyntax'],
+        interfaces: ['IPrimaryExpressionSyntax'],
         children: [
             <any>{ name: 'openBraceToken', isToken: true },
             <any>{ name: 'propertyAssignments', isSeparatedList: true, elementType: 'PropertyAssignmentSyntax' },
@@ -2471,13 +2473,29 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
 "            return new PositionedToken(parent, this, fullStart);\r\n" +
 "        }\r\n\r\n";
 
-    result += 
+    result +=
 "        public withLeadingTrivia(leadingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" +
 "            return this.realize().withLeadingTrivia(leadingTrivia);\r\n" +
 "        }\r\n" +
 "\r\n" +
 "        public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {\r\n" +
 "            return this.realize().withTrailingTrivia(trailingTrivia);\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        public isPrimaryExpression(): boolean {\r\n" +
+"            return isPrimaryExpression(this);\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        public isMemberExpression(): boolean {\r\n" +
+"            return this.isPrimaryExpression();\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        public isPostfixExpression(): boolean {\r\n" +
+"            return this.isPrimaryExpression();\r\n" +
+"        }\r\n" +
+"\r\n" +
+"        public isUnaryExpression(): boolean {\r\n" +
+"            return this.isPrimaryExpression();\r\n" +
 "        }\r\n"
 
 

@@ -100,6 +100,22 @@ module TypeScript.Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
         }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
     }
 
     export class VariableWidthTokenWithLeadingTrivia implements ISyntaxToken {
@@ -204,6 +220,22 @@ module TypeScript.Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
         }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
     }
 
     export class VariableWidthTokenWithTrailingTrivia implements ISyntaxToken {
@@ -307,6 +339,22 @@ module TypeScript.Syntax {
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
+        }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
         }
     }
 
@@ -415,6 +463,22 @@ module TypeScript.Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
         }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
     }
 
     export class FixedWidthTokenWithNoTrivia implements ISyntaxToken {
@@ -480,6 +544,22 @@ module TypeScript.Syntax {
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
+        }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
         }
     }
 
@@ -559,6 +639,22 @@ module TypeScript.Syntax {
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
         }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
     }
 
     export class FixedWidthTokenWithTrailingTrivia implements ISyntaxToken {
@@ -636,6 +732,22 @@ module TypeScript.Syntax {
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
+        }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
         }
     }
 
@@ -717,6 +829,22 @@ module TypeScript.Syntax {
 
         public withTrailingTrivia(trailingTrivia: ISyntaxTriviaList): ISyntaxToken {
             return this.realize().withTrailingTrivia(trailingTrivia);
+        }
+
+        public isPrimaryExpression(): boolean {
+            return isPrimaryExpression(this);
+        }
+
+        public isMemberExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isPostfixExpression(): boolean {
+            return this.isPrimaryExpression();
+        }
+
+        public isUnaryExpression(): boolean {
+            return this.isPrimaryExpression();
         }
     }
 

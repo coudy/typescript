@@ -89,15 +89,19 @@ module TypeScript {
     }
 
     export interface IUnaryExpressionSyntax extends IExpressionSyntax {
+        isUnaryExpression(): boolean;
     }
 
     export interface IPostfixExpressionSyntax extends IUnaryExpressionSyntax {
+        isPostfixExpression(): boolean;
     }
 
     export interface IMemberExpressionSyntax extends IPostfixExpressionSyntax {
+        isMemberExpression(): boolean;
     }
 
     export interface IPrimaryExpressionSyntax extends IMemberExpressionSyntax {
+        isPrimaryExpression(): boolean;
     }
 
     export interface ITypeSyntax extends ISyntaxNodeOrToken {
