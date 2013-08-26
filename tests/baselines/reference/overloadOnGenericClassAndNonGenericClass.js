@@ -32,14 +32,7 @@ var X2 = (function () {
 function f(a) {
 }
 
-//var x1: X1;
-//var x2: X2;
 var xs;
 
-//var xn: X<number>;
-//var t1 = f(x1);
-//var t1: A; // OK
-//var t2 = f(x2);
-//var t2: A; // OK
 var t3 = f(xs);
 var t3;

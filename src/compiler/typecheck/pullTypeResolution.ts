@@ -5138,7 +5138,7 @@ module TypeScript {
 
             if (functionDecl && functionDecl.hasSymbol()) {
                 funcDeclSymbol = functionDecl.getSymbol();
-                if (funcDeclSymbol.isResolved) {
+                if (funcDeclSymbol.isResolved || funcDeclSymbol.inResolution) {
                     return funcDeclSymbol;
                 }
             }
