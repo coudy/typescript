@@ -28,7 +28,7 @@ Line 11 col 17 InvocationExpression "foo.reject(arg)" = void
 Line 11 col 17 MemberAccessExpression "foo.reject" = (arg: string) => void
 Line 11 col 17 IdentifierName "foo" = Foo<string>
 Line 11 col 21 IdentifierName "reject" = (arg: string) => void
-Line 11 col 28 IdentifierName "arg" = any
+Line 11 col 28 IdentifierName "arg" = string
 Line 12 col 0 InvocationExpression "test.fail2(arg => foo.reject(arg))" = void
 Line 12 col 0 MemberAccessExpression "test.fail2" = (func2: (arg: string) => void) => void
 Line 12 col 0 IdentifierName "test" = bar<string>
@@ -39,4 +39,4 @@ Line 12 col 18 InvocationExpression "foo.reject(arg)" = void
 Line 12 col 18 MemberAccessExpression "foo.reject" = (arg: string) => void
 Line 12 col 18 IdentifierName "foo" = Foo<string>
 Line 12 col 22 IdentifierName "reject" = (arg: string) => void
-Line 12 col 29 IdentifierName "arg" = any
+Line 12 col 29 IdentifierName "arg" = string

@@ -190,7 +190,7 @@ module TypeScript {
         public recursiveMemberSpecializationDepth = 0;
         public recursiveSignatureSpecializationDepth = 0;
 
-        constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }
+        constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public typeCheckUnitPath?: string) { }
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
@@ -250,7 +250,6 @@ module TypeScript {
         }
 
         public inSpecialization = false;
-        public suppressErrors = false;
         private inBaseTypeResolution = false;
 
         public isInBaseTypeResolution() { return this.inBaseTypeResolution; }
@@ -308,13 +307,13 @@ module TypeScript {
             if (this.inProvisionalResolution()) {
                 (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
             }
-            else if (this.inTypeCheck && !this.suppressErrors && this.resolver) {
+            else if (this.inTypeCheck && this.resolver) {
                 this.resolver.currentUnit.addDiagnostic(diagnostic);
             }
         }
 
         public typeCheck() {
-            return this.inTypeCheck && !this.inSpecialization;
+            return this.inTypeCheck && !this.inSpecialization && !(this.inProvisionalResolution() || this.inProvisionalAnyContext);
         }
 
         public startResolvingTypeArguments(ast: AST) {

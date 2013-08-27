@@ -6,7 +6,7 @@ module TypeScript {
             return Object.prototype.toString.apply(value, []) === '[object Array]';
         }
 
-        public static sequenceEquals(array1: any[], array2: any[], equals: (v1: any, v2: any) => boolean) {
+        public static sequenceEquals<T>(array1: T[], array2: T[], equals: (v1: T, v2: T) => boolean) {
             if (array1 === array2) {
                 return true;
             }
@@ -28,7 +28,7 @@ module TypeScript {
             return true;
         }
 
-        public static contains(array: any[], value: any): boolean {
+        public static contains<T>(array: T[], value: T): boolean {
             for (var i = 0; i < array.length; i++) {
                 if (array[i] === value) {
                     return true;
@@ -53,7 +53,27 @@ module TypeScript {
             return result;
         }
 
-        public static min(array: any[], func: (v: any) => number): number {
+
+        // Gets uniue element array
+        public static getUnique<T>(array: T[], equalsFn?: (a: T, b: T) => boolean): T[] {
+            var result: T[] = [];
+
+            for (var i = 0, n = array.length; i < n; i++) {
+                for (var j = 0; j < result.length; j++) {
+                    if (equalsFn(result[j], array[i])) {
+                        break;
+                    }
+                }
+
+                if (j == result.length) {
+                    result.push(array[i]);
+                }
+            }
+
+            return result;
+        }
+
+        public static min<T>(array: T[], func: (v: T) => number): number {
             // Debug.assert(array.length > 0);
             var min = func(array[0]);
 
@@ -67,7 +87,7 @@ module TypeScript {
             return min;
         }
 
-        public static max(array: any[], func: (v: any) => number): number {
+        public static max<T>(array: T[], func: (v: T) => number): number {
             // Debug.assert(array.length > 0);
             var max = func(array[0]);
 

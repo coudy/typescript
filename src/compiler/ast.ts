@@ -68,6 +68,7 @@ module TypeScript {
         private _flags = ASTFlags.None;
 
         public typeCheckPhase = -1;
+
         public astIDString: string = astID.toString();
         public astID: number = astID++;
 
