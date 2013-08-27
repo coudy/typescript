@@ -1635,7 +1635,7 @@ module TypeScript.Parser {
                    this.isStatement(inErrorRecovery);
         }
         
-        private parseModuleElement(): IModuleElementSyntax {
+        private parseModuleElement(inErrorRecovery: boolean): IModuleElementSyntax {
             if (this.currentNode() !== null && this.currentNode().isModuleElement()) {
                 return <IModuleElementSyntax>this.eatNode();
             }
@@ -1658,8 +1658,8 @@ module TypeScript.Parser {
             else if (this.isEnumDeclaration()) {
                 return this.parseEnumDeclaration();
             }
-            else if (this.isStatement(/*inErrorRecovery:*/ false)) {
-                return this.parseStatement();
+            else if (this.isStatement(inErrorRecovery)) {
+                return this.parseStatement(inErrorRecovery);
             }
             else {
                 throw Errors.invalidOperation();
@@ -2515,7 +2515,7 @@ module TypeScript.Parser {
                    this.isPropertySignature(inErrorRecovery);
         }
 
-        private parseTypeMember(): ITypeMemberSyntax {
+        private parseTypeMember(inErrorRecovery: boolean): ITypeMemberSyntax {
             if (this.currentNode() !== null && this.currentNode().isTypeMember()) {
                 return <ITypeMemberSyntax>this.eatNode();
             }
@@ -2529,12 +2529,12 @@ module TypeScript.Parser {
             else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
             }
-            else if (this.isMethodSignature(/*inErrorRecovery:*/ false)) {
+            else if (this.isMethodSignature(inErrorRecovery)) {
                 // Note: it is important that isFunctionSignature is called before isPropertySignature.
                 // isPropertySignature checks for a subset of isFunctionSignature.
                 return this.parseMethodSignature();
             }
-            else if (this.isPropertySignature(/*inErrorRecovery:*/ false)) {
+            else if (this.isPropertySignature(inErrorRecovery)) {
                 return this.parsePropertySignature();
             }
             else {
@@ -2722,7 +2722,7 @@ module TypeScript.Parser {
                    this.isDebuggerStatement();
         }
 
-        private parseStatement(): IStatementSyntax {
+        private parseStatement(inErrorRecovery: boolean): IStatementSyntax {
             if (this.currentNode() !== null && this.currentNode().isStatement()) {
                 return <IStatementSyntax>this.eatNode();
             }
@@ -2760,7 +2760,7 @@ module TypeScript.Parser {
             else if (this.isForOrForInStatement()) {
                 return this.parseForOrForInStatement();
             }
-            else if (this.isEmptyStatement(/*inErrorRecovery:*/ false)) {
+            else if (this.isEmptyStatement(inErrorRecovery)) {
                 return this.parseEmptyStatement();
             }
             else if (this.isWhileStatement()) {
@@ -2805,7 +2805,7 @@ module TypeScript.Parser {
             // Debug.assert(this.isDoStatement());
 
             var doKeyword = this.eatKeyword(SyntaxKind.DoKeyword);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
             var whileKeyword = this.eatKeyword(SyntaxKind.WhileKeyword);
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
@@ -2829,7 +2829,7 @@ module TypeScript.Parser {
 
             var identifier = this.eatIdentifierToken();
             var colonToken = this.eatToken(SyntaxKind.ColonToken);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             return this.factory.labeledStatement(identifier, colonToken, statement);
         }
@@ -2906,7 +2906,7 @@ module TypeScript.Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             return this.factory.withStatement(withKeyword, openParenToken, condition, closeParenToken, statement);
         }
@@ -2922,7 +2922,7 @@ module TypeScript.Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             return this.factory.whileStatement(whileKeyword, openParenToken, condition, closeParenToken, statement);
         }
@@ -3002,7 +3002,7 @@ module TypeScript.Parser {
             var inKeyword = this.eatKeyword(SyntaxKind.InKeyword);
             var expression = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             return this.factory.forInStatement(forKeyword, openParenToken, variableDeclaration,
                 initializer, inKeyword, expression, closeParenToken, statement);
@@ -3067,7 +3067,7 @@ module TypeScript.Parser {
             }
 
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             return this.factory.forStatement(forKeyword, openParenToken, variableDeclaration, initializer,
                 firstSemicolonToken, condition, secondSemicolonToken, incrementor, closeParenToken, statement);
@@ -3383,7 +3383,7 @@ module TypeScript.Parser {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
             var condition = this.parseExpression(/*allowIn:*/ true);
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             var elseClause: ElseClauseSyntax = null;
             if (this.isElseClause()) {
@@ -3401,7 +3401,7 @@ module TypeScript.Parser {
             // Debug.assert(this.isElseClause());
 
             var elseKeyword = this.eatKeyword(SyntaxKind.ElseKeyword);
-            var statement = this.parseStatement();
+            var statement = this.parseStatement(/*inErrorRecovery:*/ false);
 
             return this.factory.elseClause(elseKeyword, statement);
         }
@@ -4451,19 +4451,19 @@ module TypeScript.Parser {
                 openBraceToken, propertyAssignments, closeBraceToken);
         }
 
-        private parsePropertyAssignment(): PropertyAssignmentSyntax {
+        private parsePropertyAssignment(inErrorRecovery: boolean): PropertyAssignmentSyntax {
             // Debug.assert(this.isPropertyAssignment(/*inErrorRecovery:*/ false));
 
-            if (this.isGetAccessorPropertyAssignment(/*inErrorRecovery:*/ false)) {
+            if (this.isGetAccessorPropertyAssignment(inErrorRecovery)) {
                 return this.parseGetAccessorPropertyAssignment();
             }
-            else if (this.isSetAccessorPropertyAssignment(/*inErrorRecovery:*/ false)) {
+            else if (this.isSetAccessorPropertyAssignment(inErrorRecovery)) {
                 return this.parseSetAccessorPropertyAssignment();
             }
-            else if (this.isFunctionPropertyAssignment(/*inErrorRecovery:*/ false)) {
+            else if (this.isFunctionPropertyAssignment(inErrorRecovery)) {
                 return this.parseFunctionPropertyAssignment();
             }
-            else if (this.isSimplePropertyAssignment(/*inErrorRecovery:*/ false)) {
+            else if (this.isSimplePropertyAssignment(inErrorRecovery)) {
                 return this.parseSimplePropertyAssignment();
             }
             else {
@@ -4977,7 +4977,7 @@ module TypeScript.Parser {
                                          items: ISyntaxElement[],
                                          processItems: (parser: ParserImpl, items: any[]) => void ): void {
             if (this.isExpectedListItem(currentListType, inErrorRecovery)) {
-                var item = this.parseExpectedListItem(currentListType);
+                var item = this.parseExpectedListItem(currentListType, inErrorRecovery);
                 // Debug.assert(item !== null);
 
                 items.push(item);
@@ -5542,34 +5542,34 @@ module TypeScript.Parser {
             return false;
         }
 
-        private parseExpectedListItem(currentListType: ListParsingState): ISyntaxNodeOrToken {
+        private parseExpectedListItem(currentListType: ListParsingState, inErrorRecovery: boolean): ISyntaxNodeOrToken {
             switch (currentListType) {
                 case ListParsingState.SourceUnit_ModuleElements:
-                    return this.parseModuleElement();
+                    return this.parseModuleElement(inErrorRecovery);
 
                 case ListParsingState.ClassOrInterfaceDeclaration_HeritageClauses:
                     return this.parseHeritageClause();
 
                 case ListParsingState.ClassDeclaration_ClassElements:
-                    return this.parseClassElement(/*inErrorRecovery:*/ false);
+                    return this.parseClassElement(inErrorRecovery);
 
                 case ListParsingState.ModuleDeclaration_ModuleElements:
-                    return this.parseModuleElement();
+                    return this.parseModuleElement(inErrorRecovery);
 
                 case ListParsingState.SwitchStatement_SwitchClauses:
                     return this.parseSwitchClause();
 
                 case ListParsingState.SwitchClause_Statements:
-                    return this.parseStatement();
+                    return this.parseStatement(inErrorRecovery);
 
                 case ListParsingState.Block_Statements:
-                    return this.parseStatement();
+                    return this.parseStatement(inErrorRecovery);
 
                 case ListParsingState.EnumDeclaration_EnumElements:
                     return this.parseEnumElement();
 
                 case ListParsingState.ObjectType_TypeMembers:
-                    return this.parseTypeMember();
+                    return this.parseTypeMember(inErrorRecovery);
 
                 case ListParsingState.ArgumentList_AssignmentExpressions:
                     return this.parseAssignmentExpression(/*allowIn:*/ true);
@@ -5584,7 +5584,7 @@ module TypeScript.Parser {
                     return this.parseVariableDeclarator(/*allowIn:*/ false, /*allowIdentifierName:*/ false);
 
                 case ListParsingState.ObjectLiteralExpression_PropertyAssignments:
-                    return this.parsePropertyAssignment();
+                    return this.parsePropertyAssignment(inErrorRecovery);
 
                 case ListParsingState.ArrayLiteralExpression_AssignmentExpressions:
                     return this.parseAssignmentOrOmittedExpression();
