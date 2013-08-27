@@ -2996,18 +2996,11 @@ module TypeScript {
             this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
 
             var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
-            //if (context.inTypeCheck && (!context.inSpecialization || !signature.isGeneric())) {
             PullTypeResolver.typeCheckCallBacks.push(() => {
-                //if (signature.hasBeenChecked || signature.getRootSymbol() != signature) {
-                //    return;
-                //}
-
                 var currentUnitPath = this.unitPath;
                 this.setUnitPath(funcDecl.getScriptName());
 
-
                 this.validateVariableDeclarationGroups(funcDecl, context);
-
 
                 var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
@@ -3021,51 +3014,29 @@ module TypeScript {
                 // Is it an indexer?
                 else if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.IndexerMember)) {
 
-                    var allIndexSignatures = enclosingDecl.getSymbol().type.getIndexSignatures();
+                    var allIndexSignatures = this.getBothKindsOfIndexSignatures(enclosingDecl.getSymbol().type, context);
+                    var stringIndexSignature = allIndexSignatures.stringSignature;
+                    var numberIndexSignature = allIndexSignatures.numericSignature;
+                    var isNumericIndexer = numberIndexSignature === signature;
 
-                    for (var i = 0; i < allIndexSignatures.length; i++) {
-                        if (!allIndexSignatures[i].isResolved) {
-                            this.resolveDeclaredSymbol(allIndexSignatures[i], allIndexSignatures[i].getDeclarations()[0].getParentDecl(), context);
-                        }
-
-                        if (allIndexSignatures[i].parameters[0].type !== parameters[0].type) {
-                            var stringIndexSignature: PullSignatureSymbol = null;
-                            var numberIndexSignature: PullSignatureSymbol = null;
-
-                            var indexSignature = signature;
-
-                            var isNumericIndexer = parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
-
-                            if (isNumericIndexer) {
-                                numberIndexSignature = indexSignature;
-                                stringIndexSignature = allIndexSignatures[i];
+                    // Check that the number signature is a subtype of the string index signature. To ensure that we only check this once,
+                    // we make sure that if the two signatures share a container, we only check this when type checking the number signature.
+                    if (numberIndexSignature && stringIndexSignature &&
+                        (isNumericIndexer || stringIndexSignature.getDeclarations()[0].getParentDecl() !== numberIndexSignature.getDeclarations()[0].getParentDecl())) {
+                        var comparisonInfo = new TypeComparisonInfo();
+                        var resolutionContext = new PullTypeResolutionContext(this);
+                        if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
+                            if (comparisonInfo.message) {
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
+                                    [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]);
+                            } else {
+                                context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
+                                    [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()]);
                             }
-                            else {
-                                numberIndexSignature = allIndexSignatures[i];
-                                stringIndexSignature = indexSignature;
-
-                                // If we are a string indexer sharing a container with a number index signature, the number will report the error
-                                // TODO: use indexSignature.getContainer() and allIndexSignatures[i].getContainer() once the symbol container relationship stabilizes
-                                if (enclosingDecl.getSymbol() === numberIndexSignature.getDeclarations()[0].getParentDecl().getSymbol()) {
-                                    break;
-                                }
-                            }
-                            var comparisonInfo = new TypeComparisonInfo();
-                            var resolutionContext = new PullTypeResolutionContext(this);
-                            if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
-                                if (comparisonInfo.message) {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
-                                        [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]);
-                                } else {
-                                    context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
-                                        [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()]);
-                                }
-                            }
-                            break;
                         }
                     }
 
-                    // Check that property names comply with indexer constraints (both string and numeric)
+                    // Check that property names comply with indexer constraints (either string or numeric)
                     var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
                     for (var i = 0; i < allMembers.length; i++) {
                         var name = allMembers[i].name;
@@ -3075,16 +3046,17 @@ module TypeScript {
                             }
                             // Skip members in the same container, they will be checked during their member type check
                             if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
-                                // Check if the member name is numerical
+                                // Check if the member name kind (number or string), matches the index signature kind. If it does give an error.
+                                // If it doesn't we only want to give an error if this is a string signature, and we don't have a numeric signature
                                 var isMemberNumeric = isFinite(+name);
-                                if (isNumericIndexer === isMemberNumeric) {
-                                    this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], indexSignature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
+                                if (isNumericIndexer === isMemberNumeric ||
+                                    (!isNumericIndexer && !numberIndexSignature)) {
+                                    this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], signature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
                                 }
                             }
                         }
                     }
                 }
-
                 // It's just a conventional function or method
                 else {
 
@@ -4465,7 +4437,7 @@ module TypeScript {
                     return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.CastExpression:
-                    return this.resolveTypeAssertionExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveTypeAssertionExpression(<UnaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.TypeRef:
                     return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
@@ -4490,7 +4462,7 @@ module TypeScript {
 
                 // assignment
                 case NodeType.AssignmentExpression:
-                    return this.resolveAssignmentStatement(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveAssignmentStatement(<BinaryExpression>ast, enclosingDecl, context);
 
                 // boolean operations
                 case NodeType.LogicalNotExpression:
@@ -4510,8 +4482,7 @@ module TypeScript {
 
                 case NodeType.AddExpression:
                 case NodeType.AddAssignmentExpression:
-                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-
+                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
@@ -4723,7 +4694,7 @@ module TypeScript {
 
                 case NodeType.CastExpression:
                     /* resolveTypeAssertionExpression will take care of correctly walking and resolving/typeChecking actions */
-                    return this.resolveTypeAssertionExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveTypeAssertionExpression(<UnaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.TypeRef:
                     return this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
@@ -6063,6 +6034,13 @@ module TypeScript {
                 this.resolveDeclaredSymbol(contextualType, enclosingDecl, context);
             }
 
+            // Get the index signatures for contextual typing
+            if (contextualType) {
+                var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
+                var stringSignature = indexSignatures.stringSignature;
+                var numberSignature = indexSignatures.numericSignature;
+            }
+
             if (memberDecls) {
                 var binex: BinaryExpression;
                 var memberSymbol: PullSymbol;
@@ -6409,36 +6387,15 @@ module TypeScript {
                 }
             }
 
-            var signatures = targetTypeSymbol.getIndexSignatures();
-
-            var stringSignature: PullSignatureSymbol = null;
-            var numberSignature: PullSignatureSymbol = null;
-            var signature: PullSignatureSymbol = null;
-            var paramSymbols: PullSymbol[];
-            var paramType: PullTypeSymbol;
-
-            for (var i = 0; i < signatures.length; i++) {
-                if (stringSignature && numberSignature) {
-                    break;
-                }
-
-                signature = signatures[i];
-
-                paramSymbols = signature.parameters;
-
-                if (paramSymbols.length) {
-                    paramType = paramSymbols[0].type;
-
-                    if (!stringSignature && paramType === this.semanticInfoChain.stringTypeSymbol) {
-                        stringSignature = signatures[i];
-                        continue;
-                    }
-                    else if (!numberSignature && (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum)) {
-                        numberSignature = signatures[i];
-                        continue;
-                    }
-                }
+            // Substitute the String interface type if the target type is a string (it has a numeric index signature)
+            if (targetTypeSymbol == this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
+                targetTypeSymbol = this.cachedStringInterfaceType();
             }
+
+            var signatures = this.getBothKindsOfIndexSignatures(targetTypeSymbol, context);
+
+            var stringSignature = signatures.stringSignature;
+            var numberSignature = signatures.numericSignature;
 
             // otherwise, if the object expression has a numeric index signature and the index expression is
             // of type Any, the Number primitive type or an enum type, the property access is of the type of that index
@@ -6477,43 +6434,48 @@ module TypeScript {
             }
         }
 
-        private resolveBitwiseOperator(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private getBothKindsOfIndexSignatures(enclosingType: PullTypeSymbol, context: PullTypeResolutionContext): { numericSignature: PullSignatureSymbol; stringSignature: PullSignatureSymbol } {
+            var signatures = enclosingType.getIndexSignatures();
 
-            var binex = <BinaryExpression>expressionAST;
+            var stringSignature: PullSignatureSymbol = null;
+            var numberSignature: PullSignatureSymbol = null;
+            var signature: PullSignatureSymbol = null;
+            var paramSymbols: PullSymbol[];
+            var paramType: PullTypeSymbol;
 
-            var leftType = <PullTypeSymbol>this.resolveAST(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).type;
-            var rightType = <PullTypeSymbol>this.resolveAST(binex.operand2, inContextuallyTypedAssignment, enclosingDecl, context).type;
+            for (var i = 0; i < signatures.length; i++) {
+                if (stringSignature && numberSignature) {
+                    break;
+                }
 
-            if (this.sourceIsSubtypeOfTarget(leftType, this.semanticInfoChain.numberTypeSymbol, context) &&
-                this.sourceIsSubtypeOfTarget(rightType, this.semanticInfoChain.numberTypeSymbol, context)) {
+                signature = signatures[i];
+                if (!signature.isResolved) {
+                    this.resolveDeclaredSymbol(signature, signature.getDeclarations()[0].getParentDecl(), context);
+                }
 
-                return this.semanticInfoChain.numberTypeSymbol;
-            }
-            else if ((leftType === this.semanticInfoChain.booleanTypeSymbol) &&
-                (rightType === this.semanticInfoChain.booleanTypeSymbol)) {
+                paramSymbols = signature.parameters;
 
-                return this.semanticInfoChain.booleanTypeSymbol;
-            }
-            else if (this.isAnyOrEquivalent(leftType)) {
-                if ((this.isAnyOrEquivalent(rightType) ||
-                    (rightType === this.semanticInfoChain.numberTypeSymbol) ||
-                    (rightType === this.semanticInfoChain.booleanTypeSymbol))) {
+                if (paramSymbols.length) {
+                    paramType = paramSymbols[0].type;
 
-                    return this.semanticInfoChain.anyTypeSymbol;
+                    if (!stringSignature && paramType === this.semanticInfoChain.stringTypeSymbol) {
+                        stringSignature = signatures[i];
+                        continue;
+                    }
+                    else if (!numberSignature && (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum)) {
+                        numberSignature = signatures[i];
+                        continue;
+                    }
                 }
             }
-            else if (this.isAnyOrEquivalent(rightType)) {
-                if ((leftType === this.semanticInfoChain.numberTypeSymbol) ||
-                    (leftType === this.semanticInfoChain.booleanTypeSymbol)) {
 
-                    return this.semanticInfoChain.anyTypeSymbol;
-                }
-            }
-
-            return this.semanticInfoChain.anyTypeSymbol;
+            return {
+                numericSignature: numberSignature,
+                stringSignature: stringSignature
+            };
         }
 
-        private resolveBinaryAdditionOperation(binaryExpression: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveBinaryAdditionOperation(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var lhsType = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type;
             var rhsType = this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type;
@@ -7577,7 +7539,7 @@ module TypeScript {
             return this.getNewErrorTypeSymbol();
         }
 
-        public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var returnType = <PullTypeSymbol>this.getSymbolForAST(assertionExpression);
             var canTypeCheckAST = this.canTypeCheckAST(assertionExpression, context);
             if (!returnType) {
@@ -7619,7 +7581,7 @@ module TypeScript {
             return returnType;
         }
 
-        private resolveAssignmentStatement(binaryExpression: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveAssignmentStatement(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var leftExpr = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context);
             var leftType = leftExpr.type;
@@ -8751,59 +8713,14 @@ module TypeScript {
             assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo): boolean {
 
-            var targetIndexSigs = target.getIndexSignatures();
+            var targetIndexSigs = this.getBothKindsOfIndexSignatures(target, context);
+            var targetStringSig = targetIndexSigs.stringSignature;
+            var targetNumberSig = targetIndexSigs.numericSignature;
 
-            if (targetIndexSigs.length) {
-                var sourceIndexSigs = source.getIndexSignatures();
-
-                var targetIndex = !targetIndexSigs.length && this.cachedObjectInterfaceType() ? this.cachedObjectInterfaceType().getIndexSignatures() : targetIndexSigs;
-                var sourceIndex = !sourceIndexSigs.length && this.cachedObjectInterfaceType() ? this.cachedObjectInterfaceType().getIndexSignatures() : sourceIndexSigs;
-
-                var sourceStringSig: PullSignatureSymbol = null;
-                var sourceNumberSig: PullSignatureSymbol = null;
-
-                var targetStringSig: PullSignatureSymbol = null;
-                var targetNumberSig: PullSignatureSymbol = null;
-
-                var params: PullSymbol[];
-
-                for (var i = 0; i < targetIndex.length; i++) {
-                    if (targetStringSig && targetNumberSig) {
-                        break;
-                    }
-
-                    params = targetIndex[i].parameters;
-
-                    if (params.length) {
-                        if (!targetStringSig && params[0].type === this.semanticInfoChain.stringTypeSymbol) {
-                            targetStringSig = targetIndex[i];
-                            continue;
-                        }
-                        else if (!targetNumberSig && params[0].type === this.semanticInfoChain.numberTypeSymbol) {
-                            targetNumberSig = targetIndex[i];
-                            continue;
-                        }
-                    }
-                }
-
-                for (var i = 0; i < sourceIndex.length; i++) {
-                    if (sourceStringSig && sourceNumberSig) {
-                        break;
-                    }
-
-                    params = sourceIndex[i].parameters;
-
-                    if (params.length) {
-                        if (!sourceStringSig && params[0].type === this.semanticInfoChain.stringTypeSymbol) {
-                            sourceStringSig = sourceIndex[i];
-                            continue;
-                        }
-                        else if (!sourceNumberSig && params[0].type === this.semanticInfoChain.numberTypeSymbol) {
-                            sourceNumberSig = sourceIndex[i];
-                            continue;
-                        }
-                    }
-                }
+            if (targetStringSig || targetNumberSig) {
+                var sourceIndexSigs = this.getBothKindsOfIndexSignatures(source, context);
+                var sourceStringSig = sourceIndexSigs.stringSignature;
+                var sourceNumberSig = sourceIndexSigs.numericSignature;
 
                 var comparable = true;
                 var comparisonInfoSignatuesTypeCheck: TypeComparisonInfo = null;
@@ -10670,10 +10587,18 @@ module TypeScript {
 
         private typeCheckMembersAgainstIndexer(containerType: PullTypeSymbol, containerTypeDecl: PullDecl, context: PullTypeResolutionContext) {
             // Check all the members defined in this symbol's declarations (no base classes)
-            var indexSignatures = containerType.getIndexSignatures();
+            var indexSignatures = this.getBothKindsOfIndexSignatures(containerType, context);
+            var stringSignature = indexSignatures.stringSignature;
+            var numberSignature = indexSignatures.numericSignature;
 
-            if (indexSignatures.length > 0) {
+            if (stringSignature || numberSignature) {
                 var members = containerTypeDecl.getChildDecls();
+                if (stringSignature && !stringSignature.isResolved) {
+                    this.resolveDeclaredSymbol(stringSignature, stringSignature.getDeclarations()[0].getParentDecl(), context);
+                }
+                if (numberSignature && !numberSignature.isResolved) {
+                    this.resolveDeclaredSymbol(numberSignature, numberSignature.getDeclarations()[0].getParentDecl(), context);
+                }
                 for (var i = 0; i < members.length; i++) {
                     // Nothing to check if the member has no name or is a signature
                     var member = members[i];
@@ -10681,16 +10606,13 @@ module TypeScript {
                         continue;
                     }
 
-                    // Get all index signatures, and check against the first that matters for this field name (string vs number)
+                    // Decide whether to check against the number or string signature
                     var isMemberNumeric = isFinite(+member.name);
-                    for (var j = 0; j < indexSignatures.length; j++) {
-                        if (!indexSignatures[j].isResolved) {
-                            this.resolveDeclaredSymbol(indexSignatures[j], indexSignatures[j].getDeclarations()[0].getParentDecl(), context);
-                        }
-                        if ((indexSignatures[j].parameters[0].type === this.semanticInfoChain.numberTypeSymbol) === isMemberNumeric) {
-                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), indexSignatures[j], this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, isMemberNumeric);
-                            break;
-                        }
+                    if (isMemberNumeric && numberSignature) {
+                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), numberSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, true);
+                    }
+                    else if (stringSignature) {
+                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), stringSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, false);
                     }
                 }
             }
