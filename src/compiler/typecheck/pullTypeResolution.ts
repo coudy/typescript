@@ -17,60 +17,10 @@ module TypeScript {
         id: number;
     }
 
-    export class PullResolutionDataCache {
-        private cacheSize = 16;
-        private rdCache: IPullResolutionData[] = [];
-        private nextUp: number = 0;
-
-        constructor() {
-            for (var i = 0; i < this.cacheSize; i++) {
-                this.rdCache[i] = {
-                    actuals: <PullTypeSymbol[]>[],
-                    exactCandidates: <PullSignatureSymbol[]>[],
-                    conversionCandidates: <PullSignatureSymbol[]>[],
-                    id: i
-                };
-            }
-        }
-
-        public getResolutionData(): IPullResolutionData {
-            var rd: IPullResolutionData = null;
-
-            if (this.nextUp < this.cacheSize) {
-                rd = this.rdCache[this.nextUp];
-            }
-
-            if (rd === null) {
-                this.cacheSize++;
-                rd = {
-                    actuals: <PullTypeSymbol[]>[],
-                    exactCandidates: <PullSignatureSymbol[]>[],
-                    conversionCandidates: <PullSignatureSymbol[]>[],
-                    id: this.cacheSize
-                };
-                this.rdCache[this.cacheSize] = rd;
-            }
-
-            // cache operates as a stack - RD is always served up in-order
-            this.nextUp++;
-
-            return rd;
-        }
-
-        public returnResolutionData(rd: IPullResolutionData) {
-            // Pop to save on array allocations, which are a bottleneck
-            // REVIEW: On some VMs, Array.pop doesn't always pop the last value in the array
-            rd.actuals.length = 0;
-            rd.exactCandidates.length = 0;
-            rd.conversionCandidates.length = 0;
-
-            this.nextUp = rd.id;
-        }
-    }
-
     export interface PullApplicableSignature {
         signature: PullSignatureSymbol;
         hadProvisionalErrors: boolean;
+        correspondingArgumentTypes: PullTypeSymbol[];
     }
 
     export class PullAdditionalCallResolutionData {
@@ -106,8 +56,6 @@ module TypeScript {
         private assignableCache: any[] = <any>{};
         private subtypeCache: any[] = <any>{};
         private identicalCache: any[] = <any>{};
-
-        private resolutionDataCache = new PullResolutionDataCache();
 
         public currentUnit: SemanticInfo = null;
 
@@ -5756,7 +5704,7 @@ module TypeScript {
             }
             // reset the type to the one we already had, 
             // this makes sure if we had short - circuited the type of this symbol to any, we would get back to the function type
-            funcDeclSymbol.type = funcDeclType;
+            context.setTypeInContext(funcDeclSymbol, funcDeclType);
             funcDeclSymbol.setResolved();
 
             if (this.canTypeCheckAST(funcDeclAST, context) && !context.inProvisionalResolution()) {
@@ -6109,16 +6057,28 @@ module TypeScript {
                     if (contextualType) {
                         assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, contextualType);
 
+                        // Consider index signatures as potential contextual types
+                        if (!assigningSymbol) {
+                            var memberIsNumeric = isFinite(+text);
+                            if (numberSignature && memberIsNumeric) {
+                                assigningSymbol = numberSignature;
+                            }
+                            else if (stringSignature) {
+                                assigningSymbol = stringSignature;
+                            }
+                        }
+
                         if (assigningSymbol) {
 
                             this.resolveDeclaredSymbol(assigningSymbol, enclosingDecl, context);
 
-                            context.pushContextualType(assigningSymbol.type, context.inProvisionalResolution(), null);
+                            var contextualMemberType = assigningSymbol.kind === PullElementKind.IndexSignature ? (<PullSignatureSymbol>assigningSymbol).returnType : assigningSymbol.type;
+                            context.pushContextualType(contextualMemberType, context.inProvisionalResolution(), null);
 
                             acceptedContextualType = true;
 
                             if (additionalResults) {
-                                additionalResults.membersContextTypeSymbols[i] = assigningSymbol.type;
+                                additionalResults.membersContextTypeSymbols[i] = contextualMemberType;
                             }
                         }
                     }
@@ -6147,7 +6107,7 @@ module TypeScript {
                         }
                     }
 
-                    var memberExpr = this.widenType(this.resolveAST(binex.operand2, assigningSymbol != null, enclosingDecl, context).type, enclosingDecl, context);
+                    var memberExpr = this.widenType(this.resolveAST(binex.operand2, contextualMemberType != null, enclosingDecl, context).type, enclosingDecl, context);
 
                     if (memberExpr.type && memberExpr.type.isGeneric()) {
                         typeSymbol.setHasGenericMember();
@@ -6252,68 +6212,36 @@ module TypeScript {
                 }
             }
 
-            // Find the element type
-            if (contextualElementType && !contextualElementType.isTypeParameter()) {
-                // If there is a contextual type, assume the elemet type is the contextual type, this also applies for zero-length array litrals
+            // If there is no contextual type to apply attempt to find the best common type
+            if (contextualElementType) {
                 elementType = contextualElementType;
+            }
+            else if (elementTypes.length) {
+                elementType = elementTypes[0];
+            }
 
-                // verify that this assumption is correct
-                for (var i = 0; i < elementTypes.length; i++) {
-                    var comparisonInfo = new TypeComparisonInfo();
-                    var currentElementType = elementTypes[i];
-                    var currentElementAST = elements.members[i];
-                    if (!this.sourceIsAssignableToTarget(currentElementType, contextualElementType, context, comparisonInfo)) {
-                        if (comparisonInfo.message) {
-                            context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [currentElementType.toString(), contextualElementType.toString(), comparisonInfo.message]);
-                        } else {
-                            context.postError(this.getUnitPath(), currentElementAST.minChar, currentElementAST.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [currentElementType.toString(), contextualElementType.toString()]);
-                        }
+            var collection: IPullTypeCollection = {
+                getLength: () => { return elements.members.length; },
+                setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; },
+                getTypeAtIndex: (index: number) => { return elementTypes[index]; }
+            };
 
-                        // POST message
-                        return this.getNewErrorTypeSymbol();
-                    }
+            elementType = elementType ? this.findBestCommonType(elementType, null, collection, context, comparisonInfo) : elementType;
+
+            if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
+                // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
+                    context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                 }
             }
-            else {
-                // If there is no contextual type to apply attempt to find the best common type
-                if (elementTypes.length) {
-                    elementType = elementTypes[0];
+
+            if (!elementType) {
+                elementType = this.semanticInfoChain.undefinedTypeSymbol;
+
+                // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
+                if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
+                    context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                 }
-                else if (contextualElementType) {
-                    elementType = contextualElementType;
-                }
-
-                var collection: IPullTypeCollection = {
-                    getLength: () => { return elements.members.length; },
-                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; },
-                    getTypeAtIndex: (index: number) => { return elementTypes[index]; }
-                };
-
-                elementType = elementType ? this.findBestCommonType(elementType, null, collection, context, comparisonInfo) : elementType;
-
-                if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
-                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
-                        context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
-                    }
-                }
-
-                if (!elementType) {
-                    elementType = this.semanticInfoChain.undefinedTypeSymbol;
-
-                    // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                    if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
-                        context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
-                    }
-                }
-                else if (contextualElementType && !contextualElementType.isTypeParameter()) {
-                    // for the case of zero-length 'any' arrays, we still want to set the contextual type, if   
-                    // need be   
-                    if (this.sourceIsAssignableToTarget(elementType, contextualElementType, context)) {
-                        elementType = contextualType;
-                    }
-                }
-
             }
 
             var arraySymbol = elementType.getArrayType();
@@ -7118,7 +7046,17 @@ module TypeScript {
                         actualParametersContextTypeSymbols[i] = contextualType;
                     }
 
+                    var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+
+                    if (isSuperCall) {
+                        context.isResolvingSuperConstructorTarget = true;
+                    }
+
                     this.resolveAST(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
+
+                    if (isSuperCall) {
+                        context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+                    }
 
                     if (contextualType) {
                         context.popContextualType();
@@ -8933,92 +8871,40 @@ module TypeScript {
             haveTypeArgumentsAtCallSite: boolean,
             context: PullTypeResolutionContext,
             diagnostics: Diagnostic[]): PullSignatureSymbol {
-            var rd = this.resolutionDataCache.getResolutionData();
-            var actuals = rd.actuals;
-            var exactCandidates = rd.exactCandidates;
-            var conversionCandidates = rd.conversionCandidates;
-            var candidate: PullSignatureSymbol = null;
+            var finalDecision: PullSignatureSymbol = null;
             var hasOverloads = group.length > 1;
             var comparisonInfo = new TypeComparisonInfo();
-            var args: ASTList = null;
-            var target: AST = null;
+            var callEx = <InvocationExpression>application;
+            var args: ASTList = callEx.arguments;
+            var target: AST = this.getLastIdentifierInTarget(callEx);
 
             var originalInProvisionalAnyContext = context.inProvisionalAnyContext;
             context.inProvisionalAnyContext = true;
 
-            if (application.nodeType() === NodeType.InvocationExpression || application.nodeType() === NodeType.ObjectCreationExpression) {
-                var callEx = <InvocationExpression>application;
-
-                args = callEx.arguments;
-                target = this.getLastIdentifierInTarget(callEx);
-
-                if (callEx.arguments) {
-                    var len = callEx.arguments.members.length;
-
-                    for (var i = 0; i < len; i++) {
-                        var argSym = this.resolveAST(callEx.arguments.members[i], false, enclosingDecl, context);
-                        actuals[i] = argSym.type;
-                    }
-                }
-            }
-
             var signature: PullSignatureSymbol;
             var returnType: PullTypeSymbol;
-            var candidateInfo: { sig: PullSignatureSymbol; ambiguous: boolean; };
+            var initialCandidates = group.filter(signature => 
+                // Filter out definition if overloads are available, and nongeneric signatures if type arguments are supplied
+                !(hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())
+            );
 
-            for (var j = 0, groupLen = group.length; j < groupLen; j++) {
-                signature = group[j];
-                if ((hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())) {
-                    continue;
-                }
-
-                returnType = signature.returnType;
-
-                this.getCandidateSignatures(signature, actuals, args, exactCandidates, conversionCandidates, enclosingDecl, context, comparisonInfo);
-            }
-            if (exactCandidates.length === 0) {
-                var applicableCandidates = this.getApplicableSignaturesFromCandidates(conversionCandidates, args, comparisonInfo, enclosingDecl, context);
-                if (applicableCandidates.length > 0) {
-                    candidateInfo = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
-                    //if (candidateInfo.ambiguous) {
-                    //    //this.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
-                    //    context.postError(application.minChar, application.getLength(), this.unitPath, "Ambiguous call expression - could not choose overload", enclosingDecl, true);
-                    //}
-                    candidate = candidateInfo.sig;
-                }
-                else {
-                    if (comparisonInfo.message) {
-                        diagnostics.push(new Diagnostic(this.unitPath, target.minChar, target.getLength(),
-                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target_NL_0, [comparisonInfo.message]));
-                    }
-                    else {
-                        diagnostics.push(new Diagnostic(this.unitPath, target.minChar, target.getLength(),
-                            DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null));
-                    }
-                }
+            var applicableCandidates = this.getApplicableSignaturesFromCandidates(initialCandidates, args, comparisonInfo, enclosingDecl, context);
+            if (applicableCandidates.length > 0) {
+                finalDecision = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
             }
             else {
-                if (exactCandidates.length > 1) {
-                    var applicableSigs: PullApplicableSignature[] = [];
-                    for (var i = 0; i < exactCandidates.length; i++) {
-                        applicableSigs[i] = { signature: exactCandidates[i], hadProvisionalErrors: false };
-                    }
-                    candidateInfo = this.findMostApplicableSignature(applicableSigs, args, enclosingDecl, context);
-                    //if (candidateInfo.ambiguous) {
-                    //    //this.checker.errorReporter.simpleError(target, "Ambiguous call expression - could not choose overload");
-                    //    context.postError(application.minChar, application.getLength(), this.unitPath, "Ambiguous call expression - could not choose overload", enclosingDecl, true);
-                    //}
-                    candidate = candidateInfo.sig;
+                if (comparisonInfo.message) {
+                    diagnostics.push(new Diagnostic(this.unitPath, target.minChar, target.getLength(),
+                        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target_NL_0, [comparisonInfo.message]));
                 }
                 else {
-                    candidate = exactCandidates[0];
+                    diagnostics.push(new Diagnostic(this.unitPath, target.minChar, target.getLength(),
+                        DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target, null));
                 }
             }
 
             context.inProvisionalAnyContext = originalInProvisionalAnyContext;
-
-            this.resolutionDataCache.returnResolutionData(rd);
-            return candidate;
+            return finalDecision;
         }
 
         private getLastIdentifierInTarget(callEx: ICallExpression): AST {
@@ -9113,8 +8999,8 @@ module TypeScript {
             context: PullTypeResolutionContext): PullApplicableSignature[] {
 
             var applicableSigs: PullApplicableSignature[] = [];
-            var memberType: PullTypeSymbol = null;
-            var miss = false;
+            var paramType: PullTypeSymbol = null;
+            var signatureIsApplicable = false;
             var cxt: PullContextualTypeContext = null;
             var hadProvisionalErrors = false;
 
@@ -9123,43 +9009,56 @@ module TypeScript {
             var argSym: PullSymbol;
 
             for (var i = 0; i < candidateSignatures.length; i++) {
-                miss = false;
+                signatureIsApplicable = true;
 
                 signature = candidateSignatures[i];
                 parameters = signature.parameters;
 
+                // Check arity bounds
+                if (args.members.length < signature.nonOptionalParamCount || (!signature.hasVarArgs && args.members.length > parameters.length)) {
+                    signatureIsApplicable = false;
+                    continue;
+                }
+
+                var isInVarArg = false;
+                var correspondingArgumentTypes = new Array<PullTypeSymbol>(args.members.length);
+
                 for (var j = 0; j < args.members.length; j++) {
 
-                    if (j >= parameters.length) {
+                    if (j >= parameters.length && !signature.hasVarArgs) {
                         continue;
                     }
 
-                    if (!parameters[j].isResolved) {
-                        this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
+                    if (!isInVarArg) {
+                        if (!parameters[j].isResolved) {
+                            this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
+                        }
+
+                        if (parameters[j].isVarArg) {
+                            paramType = parameters[j].type.getElementType() || parameters[j].type;
+                            isInVarArg = true;
+                        }
+                        else {
+                            paramType = parameters[j].type;
+                        }
                     }
 
-                    memberType = parameters[j].type;
-
-                    // account for varargs
-                    if (signature.hasVarArgs && (j >= signature.nonOptionalParamCount) && memberType.isArray()) {
-                        memberType = memberType.getElementType();
-                    }
-
-                    if (this.isAnyOrEquivalent(memberType)) {
+                    if (this.isAnyOrEquivalent(paramType)) {
                         continue;
                     }
                     else if (args.members[j].nodeType() === NodeType.FunctionDeclaration) {
 
-                        if (this.cachedFunctionInterfaceType() && memberType === this.cachedFunctionInterfaceType()) {
+                        if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
                             continue;
                         }
 
                         argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], false, enclosingDecl, context);
 
-                        if (!this.canApplyContextualTypeToFunction(memberType, <FunctionDeclaration>args.members[j], true)) {
+                        if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], true)) {
                             // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                            if (this.canApplyContextualTypeToFunction(memberType, <FunctionDeclaration>args.members[j], false)) {
-                                if (!this.sourceIsAssignableToTarget(argSym.type, memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                            if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], false)) {
+                                if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                                    signatureIsApplicable = false;
                                     break;
                                 }
                             }
@@ -9169,43 +9068,43 @@ module TypeScript {
                         }
                         else { // if it can be contextually typed, try it out...
                             argSym.invalidate();
-                            context.pushContextualType(memberType, true, null);
+                            context.pushContextualType(paramType, true, null);
 
                             argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], true, enclosingDecl, context);
 
-                            if (!this.sourceIsAssignableToTarget(argSym.type, memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                if (comparisonInfo) {
-                                    comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                        [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                                if (comparisonInfo && !comparisonInfo.message) {
+                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                        [paramType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
-                                miss = true;
+                                signatureIsApplicable = false;
                             }
                             argSym.invalidate();
                             cxt = context.popContextualType();
                             hadProvisionalErrors = cxt.hadProvisionalErrors();
 
                             //this.resetProvisionalErrors();
-                            if (miss) {
+                            if (!signatureIsApplicable) {
                                 break;
                             }
                         }
                     }
                     else if (args.members[j].nodeType() === NodeType.ObjectLiteralExpression) {
                         // now actually attempt to typecheck as the contextual type
-                        if (this.cachedObjectInterfaceType() && memberType === this.cachedObjectInterfaceType()) {
+                        if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
                             continue;
                         }
 
-                        context.pushContextualType(memberType, true, null);
+                        context.pushContextualType(paramType, true, null);
                         argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
 
-                        if (!this.sourceIsAssignableToTarget(argSym.type, memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                            if (comparisonInfo) {
-                                comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                    [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                        if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                            if (comparisonInfo && !comparisonInfo.message) {
+                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                    [paramType.toString(), (j + 1), argSym.getTypeName()]));
                             }
 
-                            miss = true;
+                            signatureIsApplicable = false;
                         }
 
                         argSym.invalidate();
@@ -9213,25 +9112,25 @@ module TypeScript {
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
 
                         //this.resetProvisionalErrors();
-                        if (miss) {
+                        if (!signatureIsApplicable) {
                             break;
                         }
                     }
                     else if (args.members[j].nodeType() === NodeType.ArrayLiteralExpression) {
                         // attempt to contextually type the array literal
-                        if (memberType === this.cachedArrayInterfaceType()) {
+                        if (paramType === this.cachedArrayInterfaceType()) {
                             continue;
                         }
 
-                        context.pushContextualType(memberType, true, null);
+                        context.pushContextualType(paramType, true, null);
                         var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>args.members[j], true, enclosingDecl, context);
 
-                        if (!this.sourceIsAssignableToTarget(argSym.type, memberType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                            if (comparisonInfo) {
-                                comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                    [memberType.toString(), (j + 1), argSym.getTypeName()]));
+                        if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                            if (comparisonInfo && !comparisonInfo.message) {
+                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                    [paramType.toString(), (j + 1), argSym.getTypeName()]));
                             }
-                            break;
+                            signatureIsApplicable = false;
                         }
 
                         argSym.invalidate();
@@ -9239,14 +9138,29 @@ module TypeScript {
 
                         hadProvisionalErrors = cxt.hadProvisionalErrors();
 
-                        if (miss) {
+                        if (!signatureIsApplicable) {
                             break;
                         }
                     }
+                    else {
+                        // No need to contextually type or mark as provisional
+                        var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
+
+                        if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                            if (comparisonInfo && !comparisonInfo.message) {
+                                comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                    [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                            }
+                            signatureIsApplicable = false;
+                            break;
+                        }
+                    }
+
+                    correspondingArgumentTypes[j] = argSym && argSym.type;
                 }
 
-                if (j === args.members.length) {
-                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors };
+                if (signatureIsApplicable) {
+                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors, correspondingArgumentTypes: correspondingArgumentTypes };
                 }
 
                 hadProvisionalErrors = false;
@@ -9255,10 +9169,10 @@ module TypeScript {
             return applicableSigs;
         }
 
-        private findMostApplicableSignature(signatures: PullApplicableSignature[], args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext): { sig: PullSignatureSymbol; ambiguous: boolean; } {
+        private findMostApplicableSignature(signatures: PullApplicableSignature[], args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
 
             if (signatures.length === 1) {
-                return { sig: signatures[0].signature, ambiguous: false };
+                return signatures[0].signature;
             }
 
             var best: PullApplicableSignature = signatures[0];
@@ -9273,18 +9187,21 @@ module TypeScript {
             var bestParams: PullSymbol[];
             var qParams: PullSymbol[];
 
+            // Make sure the first signature has every parameter resolved
+            for (var p = 0; p < best.signature.parameters.length; p++) {
+                if (!best.signature.parameters[p].isResolved) {
+                    this.resolveDeclaredSymbol(best.signature.parameters[p], enclosingDecl, context);
+                }
+            }
+
             for (var qSig = 1; qSig < signatures.length; qSig++) {
                 Q = signatures[qSig];
 
                 // find the better conversion
                 for (var i = 0; args && i < args.members.length; i++) {
 
-                    var argSym = this.resolveAST(args.members[i], false, enclosingDecl, context);
-
-                    AType = argSym.type;
-
-                    // invalidate the argument so that we may correctly resolve it later as part of the call expression
-                    argSym.invalidate();
+                    var argTypeContextuallyTypedByP = best.correspondingArgumentTypes[i];
+                    var argTypeContextuallyTypedByQ = Q.correspondingArgumentTypes[i];
 
                     bestParams = best.signature.parameters;
                     qParams = Q.signature.parameters;
@@ -9307,10 +9224,10 @@ module TypeScript {
                         stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>QType).name)) {
                         best = Q;
                     }
-                    else if (this.typesAreIdentical(AType, PType)) {
+                    else if (this.typesAreIdentical(argTypeContextuallyTypedByP, PType)) {
                         break;
                     }
-                    else if (this.typesAreIdentical(AType, QType)) {
+                    else if (this.typesAreIdentical(argTypeContextuallyTypedByQ, QType)) {
                         best = Q;
                         break;
                     }
@@ -9329,24 +9246,9 @@ module TypeScript {
                         break;
                     }
                 }
-
-                if (!args || i === args.members.length) {
-                    var collection: IPullTypeCollection = {
-                        getLength: () => { return 2; },
-                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
-                        getTypeAtIndex: (index: number) => { return index ? Q.signature.returnType : best.signature.returnType; } // we only want the "second" type - the "first" is skipped
-                    };
-                    var bct = this.findBestCommonType(best.signature.returnType, null, collection, context);
-                    ambiguous = !bct;
-                }
-                else {
-                    ambiguous = false;
-                }
             }
 
-            // double-check if the 
-
-            return { sig: best.signature, ambiguous: ambiguous };
+            return best.signature;
         }
 
         private canApplyContextualTypeToFunction(candidateType: PullTypeSymbol, funcDecl: FunctionDeclaration, beStringent: boolean): boolean {

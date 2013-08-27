@@ -1,11 +1,10 @@
 assignmentCompatBug5.ts line 2 col 1: error TS2082: Supplied parameters do not match any signature of call target:
 	Type '{ b: number; }' is missing property 'a' from type '{ a: number; }'.
 assignmentCompatBug5.ts line 2 col 1: error TS2087: Could not select overload for 'call' expression.
-assignmentCompatBug5.ts line 5 col 1: error TS2081: Supplied parameters do not match any signature of call target.
-assignmentCompatBug5.ts line 5 col 1: error TS2087: Could not select overload for 'call' expression.
+assignmentCompatBug5.ts line 5 col 7: error TS2011: Cannot convert 'string' to 'number'.
 assignmentCompatBug5.ts line 8 col 1: error TS2082: Supplied parameters do not match any signature of call target:
 	Call signatures of types '(s: string) => void' and '(n: number) => number' are incompatible.
 assignmentCompatBug5.ts line 8 col 1: error TS2087: Could not select overload for 'call' expression.
 assignmentCompatBug5.ts line 9 col 1: error TS2082: Supplied parameters do not match any signature of call target:
-	Call signatures of types '(n: any) => void' and '(n: number) => number' are incompatible.
+	Call signatures of types '(n: number) => void' and '(n: number) => number' are incompatible.
 assignmentCompatBug5.ts line 9 col 1: error TS2087: Could not select overload for 'call' expression.
