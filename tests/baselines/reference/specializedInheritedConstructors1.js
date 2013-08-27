@@ -15,7 +15,6 @@ var Model = (function () {
     }
     return Model;
 })();
-
 var MyView = (function (_super) {
     __extends(MyView, _super);
     function MyView() {
@@ -25,7 +24,6 @@ var MyView = (function (_super) {
 })(View);
 
 var m = { model: new Model() };
-
-//var aView = new View({ model: new Model() }); // no error
-//var aView2 = new View(m); // no error, causes next line to no longer be an error
+var aView = new View({ model: new Model() });
+var aView2 = new View(m);
 var myView = new MyView(m);
