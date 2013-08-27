@@ -906,11 +906,11 @@ module Harness {
                 this.addInputFiles(inputFiles);
                 otherFiles.forEach(file => this.registerFile(file.unitName, file.content));
 
+                this.compiler.emitOptions.compilationSettings.moduleGenTarget = moduleTarget;
                 if (settingsCallback) {
                     settingsCallback(this.compiler.settings);
                     this.compiler.emitOptions = new TypeScript.EmitOptions(this.compiler.settings);
-                }
-                this.compiler.emitOptions.compilationSettings.moduleGenTarget = moduleTarget;
+                }                
 
                 try {
                     this.compile(/*resolve?*/ !noResolve);

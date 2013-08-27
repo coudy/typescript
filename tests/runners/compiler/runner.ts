@@ -137,6 +137,10 @@ class CompilerBaselineRunner extends RunnerBase {
                         TypeScript.ModuleGenTarget.Unspecified,
                         function (result) {
                             declErrors = result.errors.map(err => Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message + '\r\n');
+                        },
+                        function (settings) {
+                            harnessCompiler.setCompilerSettings(tcSettings);
+                            settings.mapSourceFiles = emittingSourceMap;
                         }
                     );
 
