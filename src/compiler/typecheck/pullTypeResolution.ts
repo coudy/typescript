@@ -7544,10 +7544,6 @@ module TypeScript {
                 return this.substituteUpperBoundForType(constraint);
             }
 
-            if (this.cachedObjectInterfaceType()) {
-                return this.cachedObjectInterfaceType();
-            }
-
             return type;
         }
 
@@ -7850,7 +7846,7 @@ module TypeScript {
                         return this.symbolsShareDeclaration(target, source);
                     }
                     else {
-                        return true;
+                        return this.typesAreIdentical(target, sourceSubstitution);
                     }
                 }
                 else {
@@ -7860,7 +7856,7 @@ module TypeScript {
                         target = this.substituteUpperBoundForType(target);
                     }
                     else {
-                        return false;
+                        return this.typesAreIdentical(target, sourceSubstitution);
                     }
                 }
             }

@@ -1,0 +1,12 @@
+=== tests/cases/compiler/typeParameterAssignmentWithConstraints.ts ===
+Line 0 col 9 IdentifierName "f" = <A, B extends A>() => void
+Line 0 col 11 IdentifierName "A" = any
+Line 0 col 14 IdentifierName "B" = any
+Line 0 col 24 IdentifierName "A" = A
+Line 1 col 8 IdentifierName "a" = A
+Line 1 col 11 IdentifierName "A" = A
+Line 2 col 8 IdentifierName "b" = B
+Line 2 col 11 IdentifierName "B" = B
+Line 3 col 0 AssignmentExpression "a = b" = B
+Line 3 col 0 IdentifierName "a" = A
+Line 3 col 8 IdentifierName "b" = B
