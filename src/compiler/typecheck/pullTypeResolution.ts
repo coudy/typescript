@@ -2827,7 +2827,7 @@ module TypeScript {
                         }
                     };
 
-                    returnType = this.findBestCommonType(returnExpressionSymbols[0], null, collection, context, new TypeComparisonInfo());
+                    returnType = this.findBestCommonType(returnExpressionSymbols[0], collection, context, new TypeComparisonInfo());
 
                     if (useContextualType && returnType == this.semanticInfoChain.anyTypeSymbol) {
                         var contextualType = context.getContextualType();
@@ -6226,7 +6226,7 @@ module TypeScript {
                 getTypeAtIndex: (index: number) => { return elementTypes[index]; }
             };
 
-            elementType = elementType ? this.findBestCommonType(elementType, null, collection, context, comparisonInfo) : elementType;
+            elementType = elementType ? this.findBestCommonType(elementType, collection, context, comparisonInfo) : elementType;
 
             if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                 // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
@@ -6587,7 +6587,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
                 };
 
-                var bestCommonType = this.findBestCommonType(leftType, null, collection, context);
+                var bestCommonType = this.findBestCommonType(leftType, collection, context);
 
                 if (bestCommonType) {
                     symbol = bestCommonType;
@@ -7763,19 +7763,11 @@ module TypeScript {
             return false;
         }
 
-        public findBestCommonType(initialType: PullTypeSymbol, targetType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
-            var nlastChecked = 0;
+            // Take into account when the initial type is not the first in the collection (like when it is a contextual type)
+            var nlastChecked = (len && collection.getTypeAtIndex(0) === initialType) ? 0 : -1;
             var bestCommonType = initialType;
-
-            if (targetType && this.canApplyContextualType(bestCommonType)) {
-                if (bestCommonType) {
-                    bestCommonType = this.mergeOrdered(bestCommonType, targetType, context);
-                }
-                else {
-                    bestCommonType = targetType;
-                }
-            }
 
             // it's important that we set the convergence type here, and not in the loop,
             // since the first element considered may be the contextual type
@@ -7796,12 +7788,6 @@ module TypeScript {
 
                     if (bestCommonType === null || this.isAnyOrEquivalent(bestCommonType)) {
                         break;
-                    }
-                    // set the element type to the target type
-                    // If the contextual type is a type parameter, but the BCT is not, we won't set the BCT
-                    // to the contextual type, so as not to short-circuit type argument inference calculations
-                    else if (targetType && !(bestCommonType.isTypeParameter() || targetType.isTypeParameter())) {
-                        collection.setTypeAtIndex(i, targetType);
                     }
                 }
 
@@ -8888,7 +8874,7 @@ module TypeScript {
                 !(hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())
             );
 
-            var applicableCandidates = this.getApplicableSignaturesFromCandidates(initialCandidates, args, comparisonInfo, enclosingDecl, context);
+            var applicableCandidates = this.getApplicableSignatures(initialCandidates, args, comparisonInfo, enclosingDecl, context);
             if (applicableCandidates.length > 0) {
                 finalDecision = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
             }
@@ -8911,88 +8897,7 @@ module TypeScript {
             return (callEx.target.nodeType() === NodeType.MemberAccessExpression) ? (<BinaryExpression>callEx.target).operand2 : callEx.target;
         }
 
-        private getCandidateSignatures(signature: PullSignatureSymbol, actuals: PullTypeSymbol[], args: ASTList, exactCandidates: PullSignatureSymbol[], conversionCandidates: PullSignatureSymbol[], enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
-            var parameters = signature.parameters;
-            var lowerBound = signature.nonOptionalParamCount; // required parameters
-            var upperBound = parameters.length; // required and optional parameters
-            var formalLen = lowerBound;
-            var acceptable = false;
-
-            var actualsLength = args && actuals.length == args.separatorCount && actuals.length ? args.separatorCount + 1 : actuals.length;
-            if ((actualsLength >= lowerBound) && (signature.hasVarArgs || actualsLength <= upperBound)) {
-                formalLen = (signature.hasVarArgs ? parameters.length : actuals.length);
-                acceptable = true;
-            }
-
-            var repeatType: PullTypeSymbol = null;
-
-            if (acceptable) {
-                // assumed structure here is checked when signature is formed
-                if (signature.hasVarArgs) {
-                    formalLen -= 1;
-                    repeatType = parameters[formalLen].type;
-                    repeatType = repeatType.getElementType();
-                    acceptable = actualsLength >= (formalLen < lowerBound ? formalLen : lowerBound);
-                }
-                var len = actuals.length;
-
-                var exact = acceptable;
-                var convert = acceptable;
-
-                var typeA: PullTypeSymbol;
-                var typeB: PullTypeSymbol;
-
-                for (var i = 0; i < len; i++) {
-
-                    if (i < formalLen) {
-                        typeA = parameters[i].type;
-                    }
-                    else {
-                        typeA = repeatType;
-                    }
-
-                    typeB = actuals[i];
-
-                    if (typeB.isAlias()) {
-                        (<PullTypeAliasSymbol>typeB).isUsedAsValue = true;
-                        typeB = (<PullTypeAliasSymbol>typeB).getExportAssignedTypeSymbol();
-                    }
-
-                    if (typeA && !typeA.isResolved) {
-                        this.resolveDeclaredSymbol(typeA, enclosingDecl, context);
-                    }
-
-                    if (typeB && !typeB.isResolved) {
-                        this.resolveDeclaredSymbol(typeB, enclosingDecl, context);
-                    }
-
-                    if (!typeA || !typeB || !(this.typesAreIdentical(typeA, typeB, args.members[i]))) {
-                        exact = false;
-                    }
-
-                    comparisonInfo.stringConstantVal = args.members[i];
-
-                    // is the argument assignable to the parameter?
-                    if (!this.sourceIsAssignableToTarget(typeB, typeA, context, comparisonInfo)) {
-                        convert = false;
-                    }
-
-                    comparisonInfo.stringConstantVal = null;
-
-                    if (!(exact || convert)) {
-                        break;
-                    }
-                }
-                if (exact) {
-                    exactCandidates[exactCandidates.length] = signature;
-                }
-                else if (convert && (exactCandidates.length === 0)) {
-                    conversionCandidates[conversionCandidates.length] = signature;
-                }
-            }
-        }
-
-        private getApplicableSignaturesFromCandidates(candidateSignatures: PullSignatureSymbol[],
+        private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
             enclosingDecl: PullDecl,
