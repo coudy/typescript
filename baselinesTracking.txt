@@ -12,6 +12,7 @@ tests/cases/compiler/interfaceDeclaration1.ts
 tests/cases/compiler/noImplicitAnyWithOverloads.ts
 tests/cases/compiler/objectCreationOfElementAccessExpression.ts
 tests/cases/compiler/objectLiteralArraySpecialization.ts
+tests/cases/compiler/overloadResolutionOverNonCTObjectLit.ts
 tests/cases/compiler/recursiveInheritance.ts
 tests/cases/compiler/recursiveInheritance3.ts
 tests/cases/compiler/returnTypeTypeArguments.ts
@@ -26,21 +27,23 @@ goToDefinitionPartialImplementation.ts
 malformedObjectLiteral.ts
 
 Jason:
-tests/cases/compiler/anyInferenceAnonymousFunctions.ts
-tests/cases/compiler/arraySigChecking.ts
-tests/cases/compiler/assignmentCompatBug5.ts
-tests/cases/compiler/contextualTypingOfArrayLiterals1.ts
-tests/cases/compiler/functionOverloadAmbiguity1.ts
-tests/cases/compiler/noImplicitAnyWithOverloads.ts
-tests/cases/compiler/overloadingOnConstants1.ts
-tests/cases/compiler/overloadingOnConstants2.ts
-tests/cases/compiler/overloadOnConstNoAnyImplementation.ts
+//tests/cases/compiler/anyInferenceAnonymousFunctions.ts
+//tests/cases/compiler/arraySigChecking.ts
+//tests/cases/compiler/assignmentCompatBug5.ts
+//tests/cases/compiler/contextualTypingOfArrayLiterals1.ts
+//tests/cases/compiler/functionOverloadAmbiguity1.ts
+tests/cases/compiler/functionAssignment.ts
+tests/cases/compiler/moduleAliasAsFunctionArgument.ts
+//tests/cases/compiler/noImplicitAnyWithOverloads.ts
+//tests/cases/compiler/overloadingOnConstants1.ts
+//tests/cases/compiler/overloadingOnConstants2.ts
+//tests/cases/compiler/overloadOnConstNoAnyImplementation.ts
 tests/cases/compiler/overloadResolutionOverNonCTObjectLit.ts
-tests/cases/compiler/overloadResolutionTest1.ts
+//tests/cases/compiler/overloadResolutionTest1.ts
 tests/cases/compiler/stringHasStringValuedNumericIndexer.ts
-tests/cases/compiler/targetTypeTest3.ts
-tests/cases/compiler/trailingCommaInHeterogenousArrayLiteral1.ts
-tests/cases/compiler/typeArgInferenceWithErrorForAny.ts
+//tests/cases/compiler/targetTypeTest3.ts
+//tests/cases/compiler/trailingCommaInHeterogenousArrayLiteral1.ts
+//tests/cases/compiler/typeArgInferenceWithErrorForAny.ts
 tests/cases/compiler/underscoreTest1.ts
 
 Jason to verify his old test baselines for:
@@ -64,7 +67,7 @@ tests/cases/compiler/extendsTypeArgFixesSuperConstructorTypes.ts
 tests/cases/compiler/genericCallbackInvokedInsideItsContainingFunction1.ts 
 tests/cases/compiler/genericCombinators2.ts 
 tests/cases/compiler/genericRestArgs.ts 
-tests/cases/compiler/genericWithIndexerOfTypeParameterType1.ts
+//tests/cases/compiler/genericWithIndexerOfTypeParameterType1.ts
 tests/cases/compiler/genericWithOpenTypeParameters1.ts 
 tests/cases/compiler/indexer.ts 
 tests/cases/compiler/indexer2.ts 

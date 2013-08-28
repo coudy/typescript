@@ -5984,10 +5984,10 @@ module TypeScript {
                 var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
                 var stringSignature = indexSignatures.stringSignature;
                 var numberSignature = indexSignatures.numericSignature;
-                if (stringSignature) {
+                if (stringSignature && !stringSignature.returnType.isTypeParameter()) {
                     typeSymbol.addIndexSignature(stringSignature);
                 }
-                if (numberSignature) {
+                if (numberSignature && !numberSignature.returnType.isTypeParameter()) {
                     typeSymbol.addIndexSignature(numberSignature);
                 }
             }
