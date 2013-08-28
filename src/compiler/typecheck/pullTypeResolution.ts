@@ -1148,7 +1148,7 @@ module TypeScript {
                         this.setSymbolForAST(typeDeclAST.extendsList.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
                         if (parentType.isGeneric() && parentType.isResolved && !parentType.getIsSpecialized()) {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
-                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
+                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.extendsList.members[i].minChar, typeDeclAST.extendsList.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
                         if (!typeDeclSymbol.hasBase(parentType)) {
                             typeDeclSymbol.addExtendedType(parentType);
@@ -1171,13 +1171,14 @@ module TypeScript {
                 var extendsCount = typeDeclAST.extendsList ? typeDeclAST.extendsList.members.length : 0;
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < typeDeclAST.implementsList.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var implementedType = this.resolveTypeReference(new TypeReference(typeDeclAST.implementsList.members[i - extendsCount], 0), typeDecl, context);
+                    var implementedTypeAST = typeDeclAST.implementsList.members[i - extendsCount];
+                    var implementedType = this.resolveTypeReference(new TypeReference(implementedTypeAST, 0), typeDecl, context);
                     
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
                         this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
                         if (implementedType.isGeneric() && implementedType.isResolved && !implementedType.getIsSpecialized()) {
                             implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
-                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.minChar, typeDeclAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
+                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), implementedTypeAST.minChar, implementedTypeAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
 
                         if (!typeDeclSymbol.hasBase(implementedType)) {
