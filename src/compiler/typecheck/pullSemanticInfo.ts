@@ -440,10 +440,10 @@ module TypeScript {
 
                     if (unit) {
                         // the dynamic module will be the only child
-                        var decl = unit.getTopLevelDecls()[0].getChildDecls()[0];
+                        var childDecls = unit.getTopLevelDecls()[0].getChildDecls();
 
-                        if (decl.kind == PullElementKind.DynamicModule) {
-                            return [decl];
+                        if (childDecls.length === 1 && childDecls[0].kind == PullElementKind.DynamicModule) {
+                            return childDecls;
                         }
                     }
 
