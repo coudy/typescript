@@ -5704,7 +5704,7 @@ module TypeScript {
             context.setTypeInContext(funcDeclSymbol, funcDeclType);
             funcDeclSymbol.setResolved();
 
-            if (this.canTypeCheckAST(funcDeclAST, context) && !context.inProvisionalResolution()) {
+            if (this.canTypeCheckAST(funcDeclAST, context)) {
                 this.typeCheckFunctionExpression(funcDeclAST, context);
             }
 
