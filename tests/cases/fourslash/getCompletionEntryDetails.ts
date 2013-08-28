@@ -8,7 +8,7 @@
 /////*1*/
 
 // Disable test triggered type check
-edit.disableIncrementalUpdateValidation();
+diagnostics.setEditValidation(IncrementalEditValidation.None);
 
 goTo.marker("1");
 verify.completionListContains("aaa");

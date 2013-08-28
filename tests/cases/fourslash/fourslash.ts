@@ -29,6 +29,14 @@
 // type 'fs.' as an alternate way of accessing the top-level objects
 // (e.g. 'fs.goTo.eof();')
 
+declare var FourSlash;
+
+enum IncrementalEditValidation {
+    None = FourSlash.IncrementalEditValidation.None,
+    SyntacticOnly = FourSlash.IncrementalEditValidation.SyntacticOnly,
+    Complete = FourSlash.IncrementalEditValidation.Complete
+}
+
 module FourSlashInterface {
     declare var FourSlash;
 
@@ -63,6 +71,10 @@ module FourSlashInterface {
     export class diagnostics {
         public validateTypesAtPositions(...positions: number[]) {
             return FourSlash.currentTestState.verifyTypesAgainstFullCheckAtPositions(positions);
+        }
+
+        public setEditValidation(validation: IncrementalEditValidation) {
+            FourSlash.currentTestState.editValidation = validation;
         }
     }
 
@@ -363,14 +375,6 @@ module FourSlashInterface {
 
         public disableFormatting() {
             FourSlash.currentTestState.enableFormatting = false;
-        }
-
-        public enableIncrementalUpdateValidation() {
-            FourSlash.currentTestState.enableIncrementalUpdateValidation = true;
-        }
-
-        public disableIncrementalUpdateValidation() {
-            FourSlash.currentTestState.enableIncrementalUpdateValidation = false;
         }
     }
 
