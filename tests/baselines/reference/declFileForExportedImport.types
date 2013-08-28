@@ -1,0 +1,13 @@
+=== tests/cases/compiler/declFileForExportedImport.ts ===
+Line 2 col 15 IdentifierName "x" = number
+Line 5 col 14 IdentifierName "a" = any
+Line 6 col 4 IdentifierName "y" = number
+Line 6 col 8 MemberAccessExpression "a.x" = number
+Line 6 col 8 IdentifierName "a" = a
+Line 6 col 10 IdentifierName "x" = number
+Line 8 col 14 IdentifierName "b" = any
+Line 8 col 18 IdentifierName "a" = 'm'
+Line 9 col 4 IdentifierName "z" = number
+Line 9 col 8 MemberAccessExpression "b.x" = number
+Line 9 col 8 IdentifierName "b" = b
+Line 9 col 10 IdentifierName "x" = number

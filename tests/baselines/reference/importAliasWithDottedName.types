@@ -1,0 +1,19 @@
+=== tests/cases/compiler/importAliasWithDottedName.ts ===
+Line 0 col 7 IdentifierName "M" = M
+Line 1 col 15 IdentifierName "x" = number
+Line 2 col 18 IdentifierName "N" = M.N
+Line 3 col 19 IdentifierName "y" = number
+Line 7 col 7 IdentifierName "A" = A
+Line 8 col 11 IdentifierName "N" = any
+Line 8 col 15 IdentifierName "M" = { x: number; N: { y: number; }; }
+Line 8 col 17 IdentifierName "N" = any
+Line 9 col 8 IdentifierName "r" = number
+Line 9 col 12 MemberAccessExpression "N.y" = number
+Line 9 col 12 IdentifierName "N" = { y: number; }
+Line 9 col 14 IdentifierName "y" = number
+Line 10 col 8 IdentifierName "r2" = number
+Line 10 col 13 MemberAccessExpression "M.N.y" = number
+Line 10 col 13 MemberAccessExpression "M.N" = { y: number; }
+Line 10 col 13 IdentifierName "M" = { x: number; N: { y: number; }; }
+Line 10 col 15 IdentifierName "N" = { y: number; }
+Line 10 col 17 IdentifierName "y" = number
