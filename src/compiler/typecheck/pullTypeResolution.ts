@@ -1376,12 +1376,11 @@ module TypeScript {
         }
 
         private resolveInterfaceDeclaration(interfaceDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var interfaceDecl: PullDecl = this.getDeclForAST(interfaceDeclAST);
-            var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
-
             this.resolveReferenceTypeDeclaration(interfaceDeclAST, context);
 
-            if (this.canTypeCheckAST(interfaceDeclAST, context)) {
+            var interfaceDecl: PullDecl = this.getDeclForAST(interfaceDeclAST);
+            var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
+            if (interfaceDeclSymbol.isResolved && this.canTypeCheckAST(interfaceDeclAST, context)) {
                 this.typeCheckInterfaceDeclaration(interfaceDeclAST, context);
             }
 
