@@ -1876,6 +1876,7 @@ module TypeScript {
             }
             
             this._knownBaseTypeCount = 0;
+            this._allIndexSignatures = null;
 
             super.invalidate();
         }

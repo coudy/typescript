@@ -5983,10 +5983,10 @@ module TypeScript {
                 var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
                 var stringSignature = indexSignatures.stringSignature;
                 var numberSignature = indexSignatures.numericSignature;
-                if (stringSignature && !stringSignature.returnType.isTypeParameter()) {
+                if (stringSignature && !(stringSignature.returnType && stringSignature.returnType.isTypeParameter())) {
                     typeSymbol.addIndexSignature(stringSignature);
                 }
-                if (numberSignature && !numberSignature.returnType.isTypeParameter()) {
+                if (numberSignature && !(numberSignature.returnType && numberSignature.returnType.isTypeParameter())) {
                     typeSymbol.addIndexSignature(numberSignature);
                 }
             }
@@ -8874,7 +8874,7 @@ module TypeScript {
             var returnType: PullTypeSymbol;
             var initialCandidates = ArrayUtilities.where(group, signature => 
                 // Filter out definition if overloads are available, and nongeneric signatures if type arguments are supplied
-                !(hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())
+                !(hasOverloads && signature.isDefinition() || (haveTypeArgumentsAtCallSite && !signature.isGeneric()))
             );
 
             var applicableCandidates = this.getApplicableSignatures(initialCandidates, args, comparisonInfo, enclosingDecl, context);
@@ -8922,70 +8922,104 @@ module TypeScript {
                 signature = candidateSignatures[i];
                 parameters = signature.parameters;
 
-                // Check arity bounds
-                if (args.members.length < signature.nonOptionalParamCount || (!signature.hasVarArgs && args.members.length > parameters.length)) {
-                    signatureIsApplicable = false;
-                    continue;
+                if (args == null) {
+                    signatureIsApplicable = signature.nonOptionalParamCount === 0;
                 }
-
-                var isInVarArg = false;
-
-                for (var j = 0; j < args.members.length; j++) {
-
-                    if (j >= parameters.length && !signature.hasVarArgs) {
+                else {
+                    // Check arity bounds
+                    if ((args == null && signature.nonOptionalParamCount > 0) ||
+                        (args.members.length < signature.nonOptionalParamCount) ||
+                        (!signature.hasVarArgs && args.members.length > parameters.length)) {
+                        signatureIsApplicable = false;
                         continue;
                     }
 
-                    if (!isInVarArg) {
-                        if (!parameters[j].isResolved) {
-                            this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
-                        }
+                    var isInVarArg = false;
 
-                        if (parameters[j].isVarArg) {
-                            paramType = parameters[j].type.getElementType() || parameters[j].type;
-                            isInVarArg = true;
-                        }
-                        else {
-                            paramType = parameters[j].type;
-                        }
-                    }
+                    for (var j = 0; j < args.members.length; j++) {
 
-                    if (this.isAnyOrEquivalent(paramType)) {
-                        continue;
-                    }
-                    else if (args.members[j].nodeType() === NodeType.FunctionDeclaration) {
-
-                        if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
+                        if (j >= parameters.length && !signature.hasVarArgs) {
                             continue;
                         }
 
-                        argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], false, enclosingDecl, context);
+                        if (!isInVarArg) {
+                            if (!parameters[j].isResolved) {
+                                this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
+                            }
 
-                        if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], true)) {
-                            // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                            if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], false)) {
-                                if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                    signatureIsApplicable = false;
+                            if (parameters[j].isVarArg) {
+                                paramType = parameters[j].type.getElementType() || parameters[j].type;
+                                isInVarArg = true;
+                            }
+                            else {
+                                paramType = parameters[j].type;
+                            }
+                        }
+
+                        if (this.isAnyOrEquivalent(paramType)) {
+                            continue;
+                        }
+                        else if (args.members[j].nodeType() === NodeType.FunctionDeclaration) {
+
+                            if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
+                                continue;
+                            }
+
+                            argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], false, enclosingDecl, context);
+
+                            if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], true)) {
+                                // if it's just annotations that are blocking us, typecheck the function and add it to the list
+                                if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], false)) {
+                                    if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                                        signatureIsApplicable = false;
+                                        break;
+                                    }
+                                }
+                                else {
                                     break;
                                 }
                             }
-                            else {
-                                break;
+                            else { // if it can be contextually typed, try it out...
+                                argSym.invalidate();
+                                context.pushContextualType(paramType, true, null);
+
+                                argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], true, enclosingDecl, context);
+
+                                if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                                    if (comparisonInfo && !comparisonInfo.message) {
+                                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                            [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                                    }
+                                    signatureIsApplicable = false;
+                                }
+                                argSym.invalidate();
+                                cxt = context.popContextualType();
+                                hadProvisionalErrors = cxt.hadProvisionalErrors();
+
+                                //this.resetProvisionalErrors();
+                                if (!signatureIsApplicable) {
+                                    break;
+                                }
                             }
                         }
-                        else { // if it can be contextually typed, try it out...
-                            argSym.invalidate();
-                            context.pushContextualType(paramType, true, null);
+                        else if (args.members[j].nodeType() === NodeType.ObjectLiteralExpression) {
+                            // now actually attempt to typecheck as the contextual type
+                            if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
+                                continue;
+                            }
 
-                            argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], true, enclosingDecl, context);
+                            context.pushContextualType(paramType, true, null);
+                            argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
 
                             if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                                 if (comparisonInfo && !comparisonInfo.message) {
                                     comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
                                         [paramType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
+
                                 signatureIsApplicable = false;
                             }
+
                             argSym.invalidate();
                             cxt = context.popContextualType();
                             hadProvisionalErrors = cxt.hadProvisionalErrors();
@@ -8995,72 +9029,45 @@ module TypeScript {
                                 break;
                             }
                         }
-                    }
-                    else if (args.members[j].nodeType() === NodeType.ObjectLiteralExpression) {
-                        // now actually attempt to typecheck as the contextual type
-                        if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
-                            continue;
-                        }
-
-                        context.pushContextualType(paramType, true, null);
-                        argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
-
-                        if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                            if (comparisonInfo && !comparisonInfo.message) {
-                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                    [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                        else if (args.members[j].nodeType() === NodeType.ArrayLiteralExpression) {
+                            // attempt to contextually type the array literal
+                            if (paramType === this.cachedArrayInterfaceType()) {
+                                continue;
                             }
 
-                            signatureIsApplicable = false;
-                        }
+                            context.pushContextualType(paramType, true, null);
+                            var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>args.members[j], true, enclosingDecl, context);
 
-                        argSym.invalidate();
-                        cxt = context.popContextualType();
-                        hadProvisionalErrors = cxt.hadProvisionalErrors();
-
-                        //this.resetProvisionalErrors();
-                        if (!signatureIsApplicable) {
-                            break;
-                        }
-                    }
-                    else if (args.members[j].nodeType() === NodeType.ArrayLiteralExpression) {
-                        // attempt to contextually type the array literal
-                        if (paramType === this.cachedArrayInterfaceType()) {
-                            continue;
-                        }
-
-                        context.pushContextualType(paramType, true, null);
-                        var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>args.members[j], true, enclosingDecl, context);
-
-                        if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                            if (comparisonInfo && !comparisonInfo.message) {
-                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                    [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                                if (comparisonInfo && !comparisonInfo.message) {
+                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                        [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                                }
+                                signatureIsApplicable = false;
                             }
-                            signatureIsApplicable = false;
-                        }
 
-                        argSym.invalidate();
-                        cxt = context.popContextualType();
+                            argSym.invalidate();
+                            cxt = context.popContextualType();
 
-                        hadProvisionalErrors = cxt.hadProvisionalErrors();
+                            hadProvisionalErrors = cxt.hadProvisionalErrors();
 
-                        if (!signatureIsApplicable) {
-                            break;
-                        }
-                    }
-                    else {
-                        // No need to contextually type or mark as provisional
-                        var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
-
-                        comparisonInfo.stringConstantVal = args.members[j];
-                        if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                            if (comparisonInfo && !comparisonInfo.message) {
-                                comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                    [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                            if (!signatureIsApplicable) {
+                                break;
                             }
-                            signatureIsApplicable = false;
-                            break;
+                        }
+                        else {
+                            // No need to contextually type or mark as provisional
+                            var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
+
+                            comparisonInfo.stringConstantVal = args.members[j];
+                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                                if (comparisonInfo && !comparisonInfo.message) {
+                                    comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                                        [paramType.toString(), (j + 1), argSym.getTypeName()]));
+                                }
+                                signatureIsApplicable = false;
+                                break;
+                            }
                         }
                     }
                 }
