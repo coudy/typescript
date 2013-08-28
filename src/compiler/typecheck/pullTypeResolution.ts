@@ -5,7 +5,6 @@ module TypeScript {
     export interface IPullTypeCollection {
         // returns null when types are exhausted
         getLength(): number;
-        setTypeAtIndex(index: number, type: PullTypeSymbol): void;
         getTypeAtIndex(index: number): PullTypeSymbol;
     }
 
@@ -2821,7 +2820,6 @@ module TypeScript {
                     // combine return expression types for best common type
                     var collection: IPullTypeCollection = {
                         getLength: () => { return returnExpressionSymbols.length; },
-                        setTypeAtIndex: (index: number, type: PullTypeSymbol) => { },
                         getTypeAtIndex: (index: number) => {
                             return returnExpressionSymbols[index].type;
                         }
@@ -6213,18 +6211,26 @@ module TypeScript {
             }
 
             // If there is no contextual type to apply attempt to find the best common type
-            if (contextualElementType) {
-                elementType = contextualElementType;
-            }
-            else if (elementTypes.length) {
+            if (elementTypes.length) {
                 elementType = elementTypes[0];
             }
-
-            var collection: IPullTypeCollection = {
-                getLength: () => { return elements.members.length; },
-                setTypeAtIndex: (index: number, type: PullTypeSymbol) => { elementTypes[index] = type; },
-                getTypeAtIndex: (index: number) => { return elementTypes[index]; }
-            };
+            var collection: IPullTypeCollection;
+            if (contextualElementType) {
+                if (!elementType) { // we have an empty array
+                    elementType = contextualElementType;
+                }
+                // Add the contextual type to the collection as one of the types to be considered for best common type
+                collection = {
+                    getLength: () => { return elements.members.length + 1; },
+                    getTypeAtIndex: (index: number) => { return index >= elementTypes.length ? contextualElementType : elementTypes[index]; }
+                };
+            }
+            else {
+                collection = {
+                    getLength: () => { return elements.members.length; },
+                    getTypeAtIndex: (index: number) => { return elementTypes[index]; }
+                };
+            }
 
             elementType = elementType ? this.findBestCommonType(elementType, collection, context, comparisonInfo) : elementType;
 
@@ -6583,7 +6589,6 @@ module TypeScript {
             else if (this.sourceIsSubtypeOfTarget(leftType, rightType, context) || this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
                 var collection: IPullTypeCollection = {
                     getLength: () => { return 2; },
-                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { }, // no contextual typing here, so no need to do anything
                     getTypeAtIndex: (index: number) => { return rightType; } // we only want the "second" type - the "first" is skipped
                 };
 
@@ -7766,7 +7771,7 @@ module TypeScript {
         public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
             // Take into account when the initial type is not the first in the collection (like when it is a contextual type)
-            var nlastChecked = (len && collection.getTypeAtIndex(0) === initialType) ? 0 : -1;
+            var nlastChecked = 0;
             var bestCommonType = initialType;
 
             // it's important that we set the convergence type here, and not in the loop,

@@ -105,7 +105,6 @@ module TypeScript {
 
                 collection = {
                     getLength: () => { return info.inferenceCandidates.length; },
-                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { },
                     getTypeAtIndex: (index: number) => {
                         return info.inferenceCandidates[index].type;
                     }
