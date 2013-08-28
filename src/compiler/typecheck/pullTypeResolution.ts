@@ -2370,9 +2370,6 @@ module TypeScript {
 
             declSymbol.startResolving();
 
-            var wrapperDecl = this.getEnclosingDecl(decl);
-            wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
-
             var typeExprSymbol: PullTypeSymbol = null;
             var initExprSymbol: PullSymbol = null;
             var inConstructorArgumentList = context.inConstructorArguments;
@@ -2389,55 +2386,6 @@ module TypeScript {
             // if we're lacking both a type annotation and an initialization expression, the type is 'any'
             if (!(varDecl.typeExpr || varDecl.init)) {
                 var defaultType = this.semanticInfoChain.anyTypeSymbol;
-
-                // if the noImplicitAny flag is set to be true, report an error
-                // Do not report an error if the variable declaration is declared in ForIn statement
-                if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext &&  !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
-
-                    // check what enclosingDecl the varDecl is in and report an appropriate error message
-                    // varDecl is a function/constructor/constructor-signature parameter
-                    if ((wrapperDecl.kind === TypeScript.PullElementKind.Function ||
-                         wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
-                         wrapperDecl.kind === TypeScript.PullElementKind.ConstructSignature)) {
-                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
-                    }
-                    // varDecl is a method paremeter
-                    else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
-                        // check if the parent of wrapperDecl is ambient class declaration
-                        var parentDecl = wrapperDecl.getParentDecl();
-                        // parentDecl is not an ambient declaration; so report an error
-                        if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
-                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
-                        }
-                        // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
-                        else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                                 !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
-                                context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                    DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
-                        }
-                    }
-                    // varDecl is a property in object type
-                    else if (wrapperDecl.kind === TypeScript.PullElementKind.ObjectType) {
-                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                            DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText]);
-                    }
-                    // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
-                    else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
-                        // varDecl is not declared in ambient declaration; so report an error
-                        if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
-                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
-                        }
-                        // varDecl is delcared in ambient declaration but it is not private; so report an error
-                        else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                                 !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.Private)) {
-                            context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
-                                DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
-                        }
-                    }
-                }
 
                 if (declSymbol.isVarArg) {
                     defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
@@ -2670,6 +2618,57 @@ module TypeScript {
                         } else {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [initTypeSymbol.toString(), typeExprSymbol.toString()]);
                         }
+                    }
+                }
+            } else if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext && !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
+                // if we're lacking both a type annotation and an initialization expression, the type is 'any'
+                // if the noImplicitAny flag is set to be true, report an error
+                // Do not report an error if the variable declaration is declared in ForIn statement
+
+                var wrapperDecl = this.getEnclosingDecl(decl);
+                wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
+
+                // check what enclosingDecl the varDecl is in and report an appropriate error message
+                // varDecl is a function/constructor/constructor-signature parameter
+                if ((wrapperDecl.kind === TypeScript.PullElementKind.Function ||
+                    wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
+                    wrapperDecl.kind === TypeScript.PullElementKind.ConstructSignature)) {
+                    context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                        DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                }
+                // varDecl is a method paremeter
+                else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
+                    // check if the parent of wrapperDecl is ambient class declaration
+                    var parentDecl = wrapperDecl.getParentDecl();
+                    // parentDecl is not an ambient declaration; so report an error
+                    if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                    }
+                    // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
+                    else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
+                        !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [varDecl.id.actualText, enclosingDecl.name]);
+                    }
+                }
+                // varDecl is a property in object type
+                else if (wrapperDecl.kind === TypeScript.PullElementKind.ObjectType) {
+                    context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                        DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [varDecl.id.actualText]);
+                }
+                // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
+                else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
+                    // varDecl is not declared in ambient declaration; so report an error
+                    if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
+                    }
+                    // varDecl is delcared in ambient declaration but it is not private; so report an error
+                    else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
+                        !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.Private)) {
+                        context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(),
+                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [varDecl.id.actualText]);
                     }
                 }
             }
