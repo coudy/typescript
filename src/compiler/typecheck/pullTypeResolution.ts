@@ -19,7 +19,6 @@ module TypeScript {
     export interface PullApplicableSignature {
         signature: PullSignatureSymbol;
         hadProvisionalErrors: boolean;
-        correspondingArgumentTypes: PullTypeSymbol[];
     }
 
     export class PullAdditionalCallResolutionData {
@@ -8931,7 +8930,6 @@ module TypeScript {
                 }
 
                 var isInVarArg = false;
-                var correspondingArgumentTypes = new Array<PullTypeSymbol>(args.members.length);
 
                 for (var j = 0; j < args.members.length; j++) {
 
@@ -9056,6 +9054,7 @@ module TypeScript {
                         // No need to contextually type or mark as provisional
                         var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
 
+                        comparisonInfo.stringConstantVal = args.members[j];
                         if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                             if (comparisonInfo && !comparisonInfo.message) {
                                 comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
@@ -9065,12 +9064,10 @@ module TypeScript {
                             break;
                         }
                     }
-
-                    correspondingArgumentTypes[j] = argSym && argSym.type;
                 }
 
                 if (signatureIsApplicable) {
-                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors, correspondingArgumentTypes: correspondingArgumentTypes };
+                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors };
                 }
 
                 hadProvisionalErrors = false;
@@ -9088,7 +9085,6 @@ module TypeScript {
             var best: PullApplicableSignature = signatures[0];
             var Q: PullApplicableSignature = null;
 
-            var AType: PullTypeSymbol = null;
             var PType: PullTypeSymbol = null;
             var QType: PullTypeSymbol = null;
 
@@ -9104,14 +9100,21 @@ module TypeScript {
                 }
             }
 
+            // Resolve the argument types with a provisional any (we need to clean out any contextual typing info that leaked into the argument types from filtering the candidates)
+            if (args) {
+                var ATypes = new Array<PullTypeSymbol>(args.members.length);
+                context.pushContextualType(this.semanticInfoChain.anyTypeSymbol, true, null);
+                for (var i = 0; i < args.members.length; i++) {
+                    ATypes[i] = this.resolveAST(args.members[i], true, enclosingDecl, context).type;
+                }
+                context.popContextualType();
+            }
+
             for (var qSig = 1; qSig < signatures.length; qSig++) {
                 Q = signatures[qSig];
 
                 // find the better conversion
                 for (var i = 0; args && i < args.members.length; i++) {
-
-                    var argTypeContextuallyTypedByP = best.correspondingArgumentTypes[i];
-                    var argTypeContextuallyTypedByQ = Q.correspondingArgumentTypes[i];
 
                     bestParams = best.signature.parameters;
                     qParams = Q.signature.parameters;
@@ -9134,10 +9137,10 @@ module TypeScript {
                         stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>QType).name)) {
                         best = Q;
                     }
-                    else if (this.typesAreIdentical(argTypeContextuallyTypedByP, PType)) {
+                    else if (this.typesAreIdentical(ATypes[i], PType)) {
                         break;
                     }
-                    else if (this.typesAreIdentical(argTypeContextuallyTypedByQ, QType)) {
+                    else if (this.typesAreIdentical(ATypes[i], QType)) {
                         best = Q;
                         break;
                     }
