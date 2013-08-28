@@ -8871,7 +8871,7 @@ module TypeScript {
 
             var signature: PullSignatureSymbol;
             var returnType: PullTypeSymbol;
-            var initialCandidates = group.filter(signature => 
+            var initialCandidates = ArrayUtilities.where(group, signature => 
                 // Filter out definition if overloads are available, and nongeneric signatures if type arguments are supplied
                 !(hasOverloads && signature.isDefinition()) || (haveTypeArgumentsAtCallSite && !signature.isGeneric())
             );
