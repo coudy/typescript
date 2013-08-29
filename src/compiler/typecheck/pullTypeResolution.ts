@@ -5968,10 +5968,11 @@ module TypeScript {
             var span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
             var objectLitDecl = this.getDeclForAST(expressionAST);
-            var isResolvingExistingDecl = !!objectLitDecl;
-            var typeSymbol: PullTypeSymbol = null;
-            if (!isResolvingExistingDecl) {
+            var typeSymbol = <PullTypeSymbol>this.getSymbolForAST(objectLitAST);
+            var isUsingExistingDecl = !!objectLitDecl;
+            var isUsingExistingSymbol = !!typeSymbol;
 
+            if (!objectLitDecl) {
                 objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
                 this.currentUnit.addSynthesizedDecl(objectLitDecl);
 
@@ -5981,11 +5982,12 @@ module TypeScript {
 
                 this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
                 this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
+            }
+
+            if (!isUsingExistingSymbol) {
                 var typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
                 typeSymbol.addDeclaration(objectLitDecl);
-                objectLitDecl.setSymbol(typeSymbol);
-            } else {
-                typeSymbol = <PullTypeSymbol>objectLitDecl.getSymbol();
+                this.setSymbolForAST(objectLitAST, typeSymbol, context);
             }
 
             var memberDecls = <ASTList>objectLitAST.operand;
@@ -6051,8 +6053,8 @@ module TypeScript {
 
                     var decl = this.getDeclForAST(binex);
                     if (!isAccessor) {
-                        if (!isResolvingExistingDecl) {
-                            var decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
+                        if (!isUsingExistingDecl) {
+                            decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
                             this.currentUnit.addSynthesizedDecl(decl);
 
                             objectLitDecl.addChildDecl(decl);
@@ -6061,8 +6063,10 @@ module TypeScript {
                             this.semanticInfoChain.getUnit(this.unitPath).setDeclForAST(binex, decl);
                             this.semanticInfoChain.getUnit(this.unitPath).setASTForDecl(decl, binex);
 
-                            memberSymbol = new PullSymbol(text, PullElementKind.Property);
+                        }
 
+                        if (!isUsingExistingSymbol) {
+                            memberSymbol = new PullSymbol(text, PullElementKind.Property);
                             memberSymbol.addDeclaration(decl);
                             decl.setSymbol(memberSymbol);
                         } else {
@@ -6100,26 +6104,30 @@ module TypeScript {
                     }
 
                     // if operand 2 is a getter or a setter, we need to resolve it properly
-                    if (isAccessor && !isResolvingExistingDecl) {
+                    if (isAccessor) {
                         var funcDeclAST = <FunctionDeclaration>binex.operand2;
-                        var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                        var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
+                        if (!isUsingExistingDecl) {
+                            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                            var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
 
-                        declCollectionContext.pushParent(objectLitDecl);
+                            declCollectionContext.pushParent(objectLitDecl);
 
-                        getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
-                        var functionDecl = this.getDeclForAST(funcDeclAST);
-                        this.currentUnit.addSynthesizedDecl(functionDecl);
-
-                        var binder = new PullSymbolBinder(this.semanticInfoChain);
-                        binder.setUnit(this.unitPath);
-
-                        if (funcDeclAST.isGetAccessor()) {
-                            binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
+                            var functionDecl = this.getDeclForAST(funcDeclAST);
+                            this.currentUnit.addSynthesizedDecl(functionDecl);
                         }
-                        else {
-                            binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
+
+                        if (!isUsingExistingSymbol) {
+                            var binder = new PullSymbolBinder(this.semanticInfoChain);
+                            binder.setUnit(this.unitPath);
+
+                            if (funcDeclAST.isGetAccessor()) {
+                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
+                            }
+                            else {
+                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
+                            }
                         }
                     }
 
@@ -6134,7 +6142,7 @@ module TypeScript {
                         acceptedContextualType = false;
                     }
 
-                    if (!isResolvingExistingDecl) {
+                    if (!isUsingExistingSymbol) {
                         if (isAccessor) {
                             this.setSymbolForAST(binex.operand1, memberExpr, context);
                         } else {
