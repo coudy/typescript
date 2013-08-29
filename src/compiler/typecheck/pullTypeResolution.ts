@@ -5988,6 +5988,7 @@ module TypeScript {
                 var typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
                 typeSymbol.addDeclaration(objectLitDecl);
                 this.setSymbolForAST(objectLitAST, typeSymbol, context);
+                objectLitDecl.setSymbol(typeSymbol);
             }
 
             var memberDecls = <ASTList>objectLitAST.operand;
@@ -6161,6 +6162,9 @@ module TypeScript {
                 }
             }
 
+            if (!this.getSymbolForAST(objectLitAST)) {
+                objectLitDecl.setSymbol(null);
+            }
             typeSymbol.setResolved();
             return typeSymbol;
         }
