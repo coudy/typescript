@@ -3843,11 +3843,13 @@ module TypeScript {
             // PERFREVIEW: Is this correct?  A comma expression cannot be an LHS, so it seems to mean that a comma exression should be void
             this.setSymbolForAST(ast, this.semanticInfoChain.voidTypeSymbol, context);
 
+            var rhsType = this.widenType(this.resolveAST((<BinaryExpression>ast).operand2, false, enclosingDecl, context).type, enclosingDecl, context);
+
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckCommaExpression(ast, enclosingDecl, context);
             }
 
-            return this.semanticInfoChain.voidTypeSymbol;
+            return rhsType;
         }
 
         private typeCheckCommaExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
