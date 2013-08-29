@@ -2152,17 +2152,17 @@ module TypeScript {
                         this.currentUnit.setAliasSymbolForAST(typeRef, aliasType);
                     }
                 }
-            }
 
-            if (type && !type.isError()) {
-                if ((type.kind & PullElementKind.SomeType) === 0) {
-                    // Provide some helper messages for common cases.
-                    if (type.kind & PullElementKind.SomeContainer) {
-                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
-                            DiagnosticCode.Type_reference_cannot_refer_to_container_0, [aliasType ? aliasType.toString() : type.toString()]);
-                    } else {
-                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
-                            DiagnosticCode.Type_reference_must_refer_to_type, null);
+                if (type && !type.isError()) {
+                    if ((type.kind & PullElementKind.SomeType) === 0) {
+                        // Provide some helper messages for common cases.
+                        if (type.kind & PullElementKind.SomeContainer) {
+                            context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
+                                DiagnosticCode.Type_reference_cannot_refer_to_container_0, [aliasType ? aliasType.toString() : type.toString()]);
+                        } else {
+                            context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
+                                DiagnosticCode.Type_reference_must_refer_to_type, null);
+                        }
                     }
                 }
             }
