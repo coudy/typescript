@@ -1,2 +1,1 @@
-// @declaration: true
-var str = ""[0];
+var str: string = ""[0];

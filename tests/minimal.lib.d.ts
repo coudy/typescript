@@ -413,6 +413,8 @@ interface String {
       * @param length The number of characters to include in the returned substring.
       */
     substr(from: number, length?: number): string;
+
+    [index: number]: string;
 }
 
 /** 

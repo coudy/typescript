@@ -9060,6 +9060,13 @@ module TypeScript {
                             // No need to contextually type or mark as provisional
                             var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
 
+                            // If it is an alias, get its type
+                            if (argSym.type.isAlias()) {
+                                var aliasSym = <PullTypeAliasSymbol>argSym.type;
+                                aliasSym.isUsedAsValue = true;
+                                argSym = aliasSym.getExportAssignedTypeSymbol();
+                            }
+
                             comparisonInfo.stringConstantVal = args.members[j];
                             if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                                 if (comparisonInfo && !comparisonInfo.message) {
