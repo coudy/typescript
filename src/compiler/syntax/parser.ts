@@ -4049,11 +4049,17 @@ module TypeScript.Parser {
                     case SyntaxKind.PlusPlusToken:
                     case SyntaxKind.MinusMinusToken:
                     case SyntaxKind.CloseBracketToken:
-                    case SyntaxKind.CloseBraceToken:
                         // A regular expression can't follow any of these.  It must be a divide. Note: this
                         // list *may* be incorrect (especially in the context of typescript).  We need to
                         // carefully review it.
                         return null;
+
+                    // case SyntaxKind.CloseBraceToken:
+                    // A regex can easily follow a close brace. Consider the simple case of:
+                    //
+                    // {
+                    // }
+                    // /regex/
 
                     // case SyntaxKind.CloseParenToken:
                     // It is tempting to say that if we have a slash after a close paren that it can't be 
