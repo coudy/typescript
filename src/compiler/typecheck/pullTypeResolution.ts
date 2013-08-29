@@ -8936,6 +8936,28 @@ module TypeScript {
             return (callEx.target.nodeType() === NodeType.MemberAccessExpression) ? (<BinaryExpression>callEx.target).operand2 : callEx.target;
         }
 
+        private overloadHasCorrectArity(signature: PullSignatureSymbol, args: ASTList): boolean {
+            if (args == null) {
+                return signature.nonOptionalParamCount === 0;
+            }
+
+            // First, figure out how many arguments there are. This is usually args.members.length, but if we have trailing separators,
+            // we need to pretend we have one more "phantom" argument that the user is currently typing. This is useful for signature help.
+            // Example: foo(1, 2, 
+            // should have 3 arguments
+            var numberOfArgs = (args.members.length && args.members.length === args.separatorCount) ?
+                args.separatorCount + 1 :
+                args.members.length;
+            if (numberOfArgs < signature.nonOptionalParamCount) {
+                return false;
+            }
+            if (!signature.hasVarArgs && numberOfArgs > signature.parameters.length) {
+                return false;
+            }
+
+            return true;
+        }
+
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
@@ -8963,9 +8985,7 @@ module TypeScript {
                 }
                 else {
                     // Check arity bounds
-                    if ((args == null && signature.nonOptionalParamCount > 0) ||
-                        (args.members.length < signature.nonOptionalParamCount) ||
-                        (!signature.hasVarArgs && args.members.length > parameters.length)) {
+                    if (!this.overloadHasCorrectArity(signature, args)) {
                         signatureIsApplicable = false;
                         continue;
                     }
