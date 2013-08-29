@@ -133,7 +133,7 @@ module TypeScript {
 
     export class PullContextualTypeContext {
         public provisionallyTypedSymbols: PullSymbol[] = [];
-        public provisionalDiagnostic: Diagnostic[] = [];
+        public hasProvisionalErrors = false;
 
         constructor(public contextualType: PullTypeSymbol,
                     public provisional: boolean,
@@ -147,14 +147,6 @@ module TypeScript {
             for (var i = 0; i < this.provisionallyTypedSymbols.length; i++) {
                 this.provisionallyTypedSymbols[i].invalidate();
             }
-        }
-
-        public postDiagnostic(error: Diagnostic) {
-            this.provisionalDiagnostic[this.provisionalDiagnostic.length] = error;
-        }
-
-        public hadProvisionalErrors() {
-            return this.provisionalDiagnostic.length > 0;
         }
     }
 
@@ -199,6 +191,10 @@ module TypeScript {
             var tc = this.contextStack.pop();
 
             tc.invalidateProvisionallyTypedSymbols();
+
+            if (tc.hasProvisionalErrors && this.inProvisionalResolution()) {
+                this.contextStack[this.contextStack.length - 1].hasProvisionalErrors = true;
+            }
 
             return tc;
         }
@@ -304,7 +300,7 @@ module TypeScript {
 
         public postDiagnostic(diagnostic: Diagnostic): void {
             if (this.inProvisionalResolution()) {
-                (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
+                (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
             }
             else if (this.inTypeCheck && this.resolver) {
                 this.resolver.currentUnit.addDiagnostic(diagnostic);

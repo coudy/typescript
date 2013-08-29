@@ -18,7 +18,7 @@ module TypeScript {
 
     export interface PullApplicableSignature {
         signature: PullSignatureSymbol;
-        hadProvisionalErrors: boolean;
+        hasProvisionalErrors: boolean;
     }
 
     export class PullAdditionalCallResolutionData {
@@ -8910,7 +8910,7 @@ module TypeScript {
             var paramType: PullTypeSymbol = null;
             var signatureIsApplicable = false;
             var cxt: PullContextualTypeContext = null;
-            var hadProvisionalErrors = false;
+            var hasProvisionalErrors = false;
 
             var parameters: PullSymbol[];
             var signature: PullSignatureSymbol;
@@ -8935,6 +8935,7 @@ module TypeScript {
                     }
 
                     var isInVarArg = false;
+                    hasProvisionalErrors = false;
 
                     for (var j = 0; j < args.members.length; j++) {
 
@@ -8994,7 +8995,7 @@ module TypeScript {
                                 }
                                 argSym.invalidate();
                                 cxt = context.popContextualType();
-                                hadProvisionalErrors = cxt.hadProvisionalErrors();
+                                hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
 
                                 //this.resetProvisionalErrors();
                                 if (!signatureIsApplicable) {
@@ -9022,7 +9023,7 @@ module TypeScript {
 
                             argSym.invalidate();
                             cxt = context.popContextualType();
-                            hadProvisionalErrors = cxt.hadProvisionalErrors();
+                            hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
 
                             //this.resetProvisionalErrors();
                             if (!signatureIsApplicable) {
@@ -9049,7 +9050,7 @@ module TypeScript {
                             argSym.invalidate();
                             cxt = context.popContextualType();
 
-                            hadProvisionalErrors = cxt.hadProvisionalErrors();
+                            hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
 
                             if (!signatureIsApplicable) {
                                 break;
@@ -9073,10 +9074,8 @@ module TypeScript {
                 }
 
                 if (signatureIsApplicable) {
-                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hadProvisionalErrors: hadProvisionalErrors };
+                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: hasProvisionalErrors };
                 }
-
-                hadProvisionalErrors = false;
             }
 
             return applicableSigs;
@@ -9157,10 +9156,10 @@ module TypeScript {
                         best = Q;
                         break;
                     }
-                    else if (Q.hadProvisionalErrors) {
+                    else if (Q.hasProvisionalErrors) {
                         break;
                     }
-                    else if (best.hadProvisionalErrors) {
+                    else if (best.hasProvisionalErrors) {
                         best = Q;
                         break;
                     }
@@ -9225,7 +9224,6 @@ module TypeScript {
             context: PullTypeResolutionContext): PullTypeSymbol[] {
 
             var cxt: PullContextualTypeContext = null;
-            var hadProvisionalErrors = false;
 
             var parameters = signature.parameters;
             var typeParameters = signature.getTypeParameters();
@@ -9277,8 +9275,6 @@ module TypeScript {
                         cxt = context.popContextualType();
 
                         argSym.invalidate();
-
-                        hadProvisionalErrors = cxt.hadProvisionalErrors();
                     }
                 }
                 else {
@@ -9290,12 +9286,8 @@ module TypeScript {
                     cxt = context.popContextualType();
 
                     argSym.invalidate();
-
-                    hadProvisionalErrors = cxt.hadProvisionalErrors();
                 }
             }
-
-            hadProvisionalErrors = false;
 
             var inferenceResults = argContext.inferArgumentTypes(this, enclosingDecl, context);
 
