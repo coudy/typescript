@@ -21,7 +21,7 @@ class I extends H {
 class J {
     [n: number]: {}
 }
-// BUG 765883
+
 class K extends J {
     [n: number]: A;
     [s: string]: B;
