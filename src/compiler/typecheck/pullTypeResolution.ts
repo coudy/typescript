@@ -5745,7 +5745,9 @@ module TypeScript {
 
             var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
             this.seenSuperConstructorCall = false;
+            context.pushContextualType(null, context.inProvisionalResolution(), null);
             this.resolveAST(funcDeclAST.block, false, functionDecl, context);
+            context.popContextualType();
             this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
 
             var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
