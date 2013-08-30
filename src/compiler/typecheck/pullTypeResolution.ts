@@ -1493,22 +1493,6 @@ module TypeScript {
                 return null;
             }
 
-            if (valueSymbol) {
-                if (!valueSymbol.isResolved) {
-                    this.resolveDeclaredSymbol(valueSymbol, enclosingDecl, context);
-                }
-            }
-            if (typeSymbol) {
-                if (!typeSymbol.isResolved) {
-                    this.resolveDeclaredSymbol(typeSymbol, enclosingDecl, context);
-                }
-            }
-            if (containerSymbol) {
-                if (!containerSymbol.isResolved) {
-                    this.resolveDeclaredSymbol(containerSymbol, enclosingDecl, context);
-                }
-            }
-
             if (!typeSymbol && containerSymbol) {
                 typeSymbol = containerSymbol;
             }
@@ -1655,6 +1639,16 @@ module TypeScript {
             }
 
             importDeclSymbol.setResolved();
+
+            if (importDeclSymbol.assignedValue && !importDeclSymbol.assignedValue.isResolved) {
+                this.resolveDeclaredSymbol(importDeclSymbol.assignedValue, enclosingDecl, context);
+            }
+            if (importDeclSymbol.assignedType && !importDeclSymbol.assignedType.isResolved) {
+                this.resolveDeclaredSymbol(importDeclSymbol.assignedType, enclosingDecl, context);
+            }
+            if (importDeclSymbol.assignedContainer && !importDeclSymbol.assignedContainer.isResolved) {
+                this.resolveDeclaredSymbol(importDeclSymbol.assignedContainer, enclosingDecl, context);
+            }
 
             if (this.canTypeCheckAST(importStatementAST, context)) {
                 this.typeCheckImportDeclaration(importStatementAST, context);
