@@ -13,9 +13,6 @@
 ////    }
 ////}
 
-// Disable incremental update validation to avoid having a full type check running after the edit.
-edit.disableIncrementalUpdateValidation();
-
 goTo.marker("local");
 edit.insertLine("");
 verify.completionListContains("xmlEvent");

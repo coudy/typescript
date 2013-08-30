@@ -194,6 +194,20 @@ module TypeScript.Syntax {
                             i += 4;
                             continue;
 
+                        case CharacterCodes.carriageReturn:
+                            var nextIndex = i + 1;
+                            if (nextIndex < text.length && text.charCodeAt(nextIndex) == CharacterCodes.lineFeed) {
+                                // Skip the entire \r\n sequence.
+                                i++;
+                            }
+                            continue;
+
+                        case CharacterCodes.lineFeed:
+                        case CharacterCodes.paragraphSeparator:
+                        case CharacterCodes.lineSeparator:
+                            // From ES5: LineContinuation is the empty character sequence.
+                            continue;
+
                         default:
                             // Any other character is ok as well.  As per rule:
                             // EscapeSequence :: CharacterEscapeSequence

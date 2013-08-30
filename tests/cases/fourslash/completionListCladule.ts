@@ -12,9 +12,6 @@
 ////var f = new Foo();
 ////f/*c3*/;
 
-// disable automatic type check
-edit.disableIncrementalUpdateValidation();
-
 goTo.marker("c1");
 edit.insert(".");
 verify.memberListContains("x");

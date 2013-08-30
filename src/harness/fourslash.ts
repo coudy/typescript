@@ -92,6 +92,12 @@ module FourSlash {
         end: number;
     }
 
+    export enum IncrementalEditValidation {
+        None,
+        SyntacticOnly,
+        Complete
+    }
+
     // List of allowed metadata names
     var fileMetadataNames = ['Filename'];
     var globalMetadataNames = ['Module', 'Target', 'BaselineFile']; // Note: Only BaselineFile is actually supported at the moment
@@ -116,9 +122,9 @@ module FourSlash {
         // Whether or not we should format on keystrokes
         public enableFormatting = true;
 
-        public enableIncrementalUpdateValidation = true;
-
         public formatCodeOptions: Services.FormatCodeOptions = null;
+
+        public editValidation = IncrementalEditValidation.Complete;
 
         constructor(public testData: FourSlashData) {
 
@@ -825,46 +831,50 @@ module FourSlash {
         }
 
         private checkPostEditInvariants() {
-            if (this.enableIncrementalUpdateValidation) {
-                // Get syntactic errors (to force a refresh)
-                var incrSyntaxErrs = JSON.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
+            if (this.editValidation === IncrementalEditValidation.None) {
+                return;
+            }
 
-                // Check syntactic structure
-                var compilationSettings = new TypeScript.CompilationSettings();
-                compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+            // Get syntactic errors (to force a refresh)
+            var incrSyntaxErrs = JSON.stringify(this.languageService.getSyntacticDiagnostics(this.activeFile.fileName));
 
-                var parseOptions = TypeScript.getParseOptions(compilationSettings);
-                var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
-                var content = snapshot.getText(0, snapshot.getLength());
-                var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), parseOptions);
-                var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
-                var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
+            // Check syntactic structure
+            var compilationSettings = new TypeScript.CompilationSettings();
+            compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+
+            var parseOptions = TypeScript.getParseOptions(compilationSettings);
+            var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
+            var content = snapshot.getText(0, snapshot.getLength());
+            var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), parseOptions);
+            var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
+            var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
+
+            if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
+                throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
+            }
+
+            if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
+                throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
+            }
+
+            if (incrSyntaxErrs !== fullSyntaxErrs) {
+                throw new Error('Mismatched incremental/full syntactic errors for file ' + this.activeFile.fileName + '.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
+            }
+
+            if (this.editValidation !== IncrementalEditValidation.SyntacticOnly) {
                 var compiler = new TypeScript.TypeScriptCompiler();
-
                 for (var i = 0; i < this.testData.files.length; i++) {
                     snapshot = this.languageServiceShimHost.getScriptSnapshot(this.testData.files[i].fileName);
                     compiler.addSourceUnit(this.testData.files[i].fileName, TypeScript.ScriptSnapshot.fromString(snapshot.getText(0, snapshot.getLength())), ByteOrderMark.None, 0, true);
                 }
 
                 compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal), ByteOrderMark.None, 0, true);
-
                 compiler.pullTypeCheck();
 
-                if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
-                    throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
-                }
-
-                if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
-                    throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
-                }
 
                 for (var i = 0; i < this.testData.files.length; i++) {
                     var refSemanticErrs = JSON.stringify(compiler.getSemanticDiagnostics(this.testData.files[i].fileName));
                     var incrSemanticErrs = JSON.stringify(this.languageService.getSemanticDiagnostics(this.testData.files[i].fileName));
-
-                    if (incrSyntaxErrs !== fullSyntaxErrs) {
-                        throw new Error('Mismatched incremental/full syntactic errors for file ' + this.testData.files[i].fileName + '.\n=== Incremental errors ===\n' + incrSyntaxErrs + '\n=== Full Errors ===\n' + fullSyntaxErrs);
-                    }
 
                     if (incrSemanticErrs !== refSemanticErrs) {
                         throw new Error('Mismatched incremental/full semantic errors for file ' + this.testData.files[i].fileName + '\n=== Incremental errors ===\n' + incrSemanticErrs + '\n=== Full Errors ===\n' + refSemanticErrs);

@@ -7,7 +7,7 @@
 ////}/*end*/
 
 // make sure no typeCheck is triggered after edit
-edit.disableIncrementalUpdateValidation();
+diagnostics.setEditValidation(IncrementalEditValidation.None);
 
 // Edit to invalidate the intial typeCheck state
 goTo.eof();
