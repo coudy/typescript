@@ -43,7 +43,6 @@ module TypeScript {
         private _cachedFunctionInterfaceType: PullTypeSymbol = null;
         private _cachedIArgumentsInterfaceType: PullTypeSymbol = null;
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
-        private inTypeCheckCall = false;
 
         static typeCheckCallBacks: { (): void; }[] = [];
 
@@ -192,7 +191,6 @@ module TypeScript {
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
-            this.inTypeCheckCall = inTypeCheck;
         }
 
         public getUnitPath() { return this.unitPath; }
@@ -201,10 +199,6 @@ module TypeScript {
             this.unitPath = unitPath;
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
-
-            if (!this.inTypeCheckCall && !this.currentUnit.hasBeenTypeChecked) {
-                this.currentUnit.hasPossiblePartialResolutionData = true;
-            }
         }
 
         public getDeclForAST(ast: AST): PullDecl {
@@ -9644,7 +9638,6 @@ module TypeScript {
 
             if (!unit.hasBeenTypeChecked) {
                 unit.hasBeenTypeChecked = true;
-                unit.hasPossiblePartialResolutionData = false;
 
                 var scriptDecl = unit.getTopLevelDecls()[0];
 

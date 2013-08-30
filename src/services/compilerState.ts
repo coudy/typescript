@@ -271,9 +271,6 @@ module Services {
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[]{
-            TypeScript.timeFunction(this.logger, "getSemanticInfoChain.cleanPartialResolutionData()", () => {
-                this.getSemanticInfoChain().cleanPartialResolutionData(TypeScript.switchToForwardSlashes(fileName));
-            });
             return this.compiler.getSemanticDiagnostics(TypeScript.switchToForwardSlashes(fileName));
         }
 

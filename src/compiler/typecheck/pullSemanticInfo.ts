@@ -33,7 +33,6 @@ module TypeScript {
         private symbolASTMap = new DataMap<AST>();
         private diagnostics: Diagnostic[] = null;
         public hasBeenTypeChecked = false;
-        public hasPossiblePartialResolutionData = false;
 
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
             Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
@@ -53,7 +52,6 @@ module TypeScript {
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
             this.importDeclarationNames = null;
             this.hasBeenTypeChecked = false;
-            this.hasPossiblePartialResolutionData = false;
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {
@@ -667,13 +665,6 @@ module TypeScript {
                     this.unitCache[unit].invalidate();
                 }
             } 
-        }
-
-        public cleanPartialResolutionData(fileName:string) {
-            var unit = this.getUnit(fileName);
-            if (unit.hasPossiblePartialResolutionData) {
-                this.update();
-            }
         }
 
         public invalidateUnit(compilationUnitPath: string) {
