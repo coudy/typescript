@@ -7,7 +7,7 @@ describe("Assignment compatibility Sanity Check", function() {
 
     describe("basic test", function () {
         it("assert assignment compatible with", function () {
-            singleObj1.assertAssignmentCompatibleWith([singleObj2]);
+            singleObj1.assertNotAssignmentCompatibleWith([singleObj2]);
         });
     });
 });

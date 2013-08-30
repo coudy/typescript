@@ -7523,22 +7523,22 @@ module TypeScript {
         }
 
         public resolveTypeAssertionExpression(assertionExpression: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var returnType = <PullTypeSymbol>this.getSymbolForAST(assertionExpression);
+            var typeAssertionType = <PullTypeSymbol>this.getSymbolForAST(assertionExpression);
             var canTypeCheckAST = this.canTypeCheckAST(assertionExpression, context);
-            if (!returnType) {
-                returnType = this.resolveAST(assertionExpression.castTerm, false, enclosingDecl, context).type;
-                this.setSymbolForAST(assertionExpression, returnType, context);
+            if (!typeAssertionType) {
+                typeAssertionType = this.resolveAST(assertionExpression.castTerm, false, enclosingDecl, context).type;
+                this.setSymbolForAST(assertionExpression, typeAssertionType, context);
             } else if (canTypeCheckAST) {
                 this.resolveAST(assertionExpression.castTerm, false, enclosingDecl, context);
             }
 
             if (canTypeCheckAST) {
-                if (returnType.isError()) {
-                    var symbolName = (<PullErrorTypeSymbol>returnType).name;
+                if (typeAssertionType.isError()) {
+                    var symbolName = (<PullErrorTypeSymbol>typeAssertionType).name;
                     context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Could_not_find_symbol_0, [symbolName]);
                 }
 
-                context.pushContextualType(returnType, context.inProvisionalResolution(), null);
+                context.pushContextualType(typeAssertionType, context.inProvisionalResolution(), null);
                 var exprType = this.resolveAST(assertionExpression.operand, true, enclosingDecl, context).type;
                 context.popContextualType();
 
@@ -7548,20 +7548,20 @@ module TypeScript {
 
                 var comparisonInfo = new TypeComparisonInfo();
 
-                var isAssignable = this.sourceIsAssignableToTarget(returnType, exprType, context, comparisonInfo) ||
-                    this.sourceIsAssignableToTarget(exprType, returnType, context, comparisonInfo);
+                var isAssignable = this.sourceIsAssignableToTarget(typeAssertionType, exprType, context, comparisonInfo) ||
+                    this.sourceIsAssignableToTarget(exprType, typeAssertionType, context, comparisonInfo);
 
                 if (!isAssignable) {
                     var message: string;
                     if (comparisonInfo.message) {
-                        context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [exprType.toString(), returnType.toString(), comparisonInfo.message]);
+                        context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [exprType.toString(), typeAssertionType.toString(), comparisonInfo.message]);
                     } else {
-                        context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [exprType.toString(), returnType.toString()]);
+                        context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [exprType.toString(), typeAssertionType.toString()]);
                     }
                 }
             }
 
-            return returnType;
+            return typeAssertionType;
         }
 
         private resolveAssignmentStatement(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {

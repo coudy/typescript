@@ -15,28 +15,6 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
     //    });
     //});
     
-    it("Calling an overload implementation should be invalid", function() {
-        var code  = 'function foo():string;'
-            code += 'function foo(bar:string):number;'
-            code += 'function foo(bar?:string):any{ return "" };'
-            code += 'var x = foo(5);'
-        Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.compilerWarning(result, 1, 106, 'error TS2081: Supplied parameters do not match any signature of call target.');
-            assert.equal(result.errors.length, 2);
-        });
-    });
-
-    it("Calling an overload implementation should be invalid - 2", function() {
-        var code  = 'function foo(bar:string):string;'
-            code += 'function foo(bar:number):number;'
-            code += 'function foo(bar:any):any{ return bar };'
-            code += 'var x = foo(true);'
-        Harness.Compiler.compileString(code, 'functionOverload', function(result) {
-            assert.compilerWarning(result, 1, 113, 'error TS2081: Supplied parameters do not match any signature of call target.');
-            assert.equal(result.errors.length, 2);
-        });
-    });
-
     it("Having only signature should be invalid", function() {
         var code  = 'function foo():string;';
         Harness.Compiler.compileString(code, 'functionOverload', function(result) {
@@ -316,17 +294,6 @@ describe('Compiling unittests\\compiler\\functionOverloads.ts', function() {
             code += "var x = foo(5);";
         var returnType = typeFactory.get(code, "x");
         assert.equal(returnType.type, "number");
-    });
-
-    it("Check the return type of overload with primitive types - 8", function() {
-        var code  = "function foo(bar:string):string;";
-            code += "function foo(bar:number):number;";
-            code += "function foo(bar:any):any{ return bar };";
-            code += "var x = foo(true);";
-        Harness.Compiler.compileString(code, 'overload', function(result) {     
-            assert.compilerWarning(result, 1, 113, 'error TS2081: Supplied parameters do not match any signature of call target.'); 
-            assert.equal(result.errors.length, 2);
-        });
     });
 
     it("Check the return type of overload with primitive types - 9", function() {
