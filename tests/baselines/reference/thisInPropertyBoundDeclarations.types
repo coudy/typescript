@@ -22,9 +22,9 @@ Line 5 col 18 IdentifierName "name" = string
 Line 9 col 12 IdentifierName "foo" = (name: string) => void
 Line 9 col 16 IdentifierName "name" = any
 Line 10 col 0 AssignmentExpression "this.name = name" = string
-Line 10 col 0 MemberAccessExpression "this.name" = any
-Line 10 col 0 ThisKeyword "this" = any
-Line 10 col 13 IdentifierName "name" = any
+Line 10 col 0 MemberAccessExpression "this.name" = string
+Line 10 col 0 ThisKeyword "this" = Bug
+Line 10 col 13 IdentifierName "name" = string
 Line 10 col 20 IdentifierName "name" = string
 Line 15 col 6 IdentifierName "A" = A
 Line 16 col 0 IdentifierName "prop1" = () => void
