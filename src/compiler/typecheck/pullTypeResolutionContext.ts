@@ -174,7 +174,6 @@ module TypeScript {
         public isComparingSpecializedSignatures = false;
         public isResolvingSuperConstructorTarget = false;
         public inConstructorArguments = false;
-        public inImportDeclaration = false;
         public isInStaticInitializer = false;
         public inProvisionalAnyContext = false;
         public resolvingTypeNameAsNameExpression = false;

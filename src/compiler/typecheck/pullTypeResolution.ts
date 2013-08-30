@@ -918,7 +918,24 @@ module TypeScript {
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = false;
 
+            var savedIsInStaticInitializer = context.isInStaticInitializer
+            context.isInStaticInitializer = false;
+
+            var savedIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+            context.isResolvingSuperConstructorTarget = false;
+
+            var savedInConstructorArguments = context.inConstructorArguments;
+            context.inConstructorArguments = false;
+
+            var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
+            context.resolvingTypeNameAsNameExpression = false;
+
             var result = this.resolveDeclaredSymbolWorker(symbol, enclosingDecl, context);
+
+            context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
+            context.inConstructorArguments = savedInConstructorArguments;
+            context.isResolvingSuperConstructorTarget = savedIsResolvingSuperConstructorTarget;
+            context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
 
             return result;
