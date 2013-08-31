@@ -1940,124 +1940,124 @@ interface NavigatorID {
 
 interface HTMLTableElement extends HTMLElement, MSDataBindingTableExtensions, MSDataBindingExtensions, DOML2DeprecatedBackgroundStyle, DOML2DeprecatedBackgroundColorStyle {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: string;
     /**
-     * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
-     */
+      * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
+      */
     borderColorLight: any;
     /**
-     * Sets or retrieves the amount of space between cells in a table.
-     */
+      * Sets or retrieves the amount of space between cells in a table.
+      */
     cellSpacing: string;
     /**
-     * Retrieves the tFoot object of the table.
-     */
+      * Retrieves the tFoot object of the table.
+      */
     tFoot: HTMLTableSectionElement;
     /**
-     * Sets or retrieves the way the border frame around the table is displayed.
-     */
+      * Sets or retrieves the way the border frame around the table is displayed.
+      */
     frame: string;
     /**
-     * Sets or retrieves the border color of the object. 
-     */
+      * Sets or retrieves the border color of the object. 
+      */
     borderColor: any;
     /**
-     * Sets or retrieves the number of horizontal rows contained in the object.
-     */
+      * Sets or retrieves the number of horizontal rows contained in the object.
+      */
     rows: HTMLCollection;
     /**
-     * Sets or retrieves which dividing lines (inner borders) are displayed.
-     */
+      * Sets or retrieves which dividing lines (inner borders) are displayed.
+      */
     rules: string;
     /**
-     * Sets or retrieves the number of columns in the table.
-     */
+      * Sets or retrieves the number of columns in the table.
+      */
     cols: number;
     /**
-     * Sets or retrieves a description and/or structure of the object.
-     */
+      * Sets or retrieves a description and/or structure of the object.
+      */
     summary: string;
     /**
-     * Retrieves the caption object of a table.
-     */
+      * Retrieves the caption object of a table.
+      */
     caption: HTMLTableCaptionElement;
     /**
-     * Retrieves a collection of all tBody objects in the table. Objects in this collection are in source order.
-     */
+      * Retrieves a collection of all tBody objects in the table. Objects in this collection are in source order.
+      */
     tBodies: HTMLCollection;
     /**
-     * Retrieves the tHead object of the table.
-     */
+      * Retrieves the tHead object of the table.
+      */
     tHead: HTMLTableSectionElement;
     /**
-     * Sets or retrieves a value that indicates the table alignment.
-     */
+      * Sets or retrieves a value that indicates the table alignment.
+      */
     align: string;
     /**
-     * Retrieves a collection of all cells in the table row or in the entire table.
-     */
+      * Retrieves a collection of all cells in the table row or in the entire table.
+      */
     cells: HTMLCollection;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: any;
     /**
-     * Sets or retrieves the amount of space between the border of the cell and the content of the cell.
-     */
+      * Sets or retrieves the amount of space between the border of the cell and the content of the cell.
+      */
     cellPadding: string;
     /**
-     * Sets or retrieves the width of the border to draw around the object.
-     */
+      * Sets or retrieves the width of the border to draw around the object.
+      */
     border: string;
     /**
-     * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
-     */
+      * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
+      */
     borderColorDark: any;
     /**
-     * Removes the specified row (tr) from the element and from the rows collection.
-     * @param index Number that specifies the zero-based position in the rows collection of the row to remove.
-     */
+      * Removes the specified row (tr) from the element and from the rows collection.
+      * @param index Number that specifies the zero-based position in the rows collection of the row to remove.
+      */
     deleteRow(index?: number): void;
     /**
-     * Creates an empty tBody element in the table.
-     */
+      * Creates an empty tBody element in the table.
+      */
     createTBody(): HTMLElement;
     /**
-     * Deletes the caption element and its contents from the table.
-     */
+      * Deletes the caption element and its contents from the table.
+      */
     deleteCaption(): void;
     /**
-     * Creates a new row (tr) in the table, and adds the row to the rows collection.
-     * @param index Number that specifies where to insert the row in the rows collection. The default value is -1, which appends the new row to the end of the rows collection.
-     */
+      * Creates a new row (tr) in the table, and adds the row to the rows collection.
+      * @param index Number that specifies where to insert the row in the rows collection. The default value is -1, which appends the new row to the end of the rows collection.
+      */
     insertRow(index?: number): HTMLElement;
     /**
-     * Deletes the tFoot element and its contents from the table.
-     */
+      * Deletes the tFoot element and its contents from the table.
+      */
     deleteTFoot(): void;
     /**
-     * Returns the tHead element object if successful, or null otherwise.
-     */
+      * Returns the tHead element object if successful, or null otherwise.
+      */
     createTHead(): HTMLElement;
     /**
-     * Deletes the tHead element and its contents from the table.
-     */
+      * Deletes the tHead element and its contents from the table.
+      */
     deleteTHead(): void;
     /**
-     * Creates an empty caption element in the table.
-     */
+      * Creates an empty caption element in the table.
+      */
     createCaption(): HTMLElement;
     /**
-     * Moves a table row to a new position.
-     * @param indexFrom Number that specifies the index in the rows collection of the table row that is moved.
-     * @param indexTo Number that specifies where the row is moved within the rows collection.
-     */
+      * Moves a table row to a new position.
+      * @param indexFrom Number that specifies the index in the rows collection of the table row that is moved.
+      * @param indexTo Number that specifies where the row is moved within the rows collection.
+      */
     moveRow(indexFrom?: number, indexTo?: number): Object;
     /**
-     * Creates an empty tFoot element in the table.
-     */
+      * Creates an empty tFoot element in the table.
+      */
     createTFoot(): HTMLElement;
 }
 declare var HTMLTableElement: {
@@ -2414,12 +2414,12 @@ declare var HTMLTableDataCellElement: {
 
 interface HTMLBaseElement extends HTMLElement {
     /**
-     * Sets or retrieves the window or frame at which to target content.
-     */
+      * Sets or retrieves the window or frame at which to target content.
+      */
     target: string;
     /**
-     * Gets or sets the baseline URL on which relative links are based.
-     */
+      * Gets or sets the baseline URL on which relative links are based.
+      */
     href: string;
 }
 declare var HTMLBaseElement: {
@@ -2636,8 +2636,8 @@ declare var SVGLineElement: {
 
 interface HTMLParagraphElement extends HTMLElement, DOML2DeprecatedTextFlowControl {
     /**
-     * Sets or retrieves how the object is aligned with adjacent text. 
-     */
+      * Sets or retrieves how the object is aligned with adjacent text. 
+      */
     align: string;
 }
 declare var HTMLParagraphElement: {
@@ -2647,12 +2647,12 @@ declare var HTMLParagraphElement: {
 
 interface HTMLAreasCollection extends HTMLCollection {
     /**
-     * Removes an element from the collection.
-     */
+      * Removes an element from the collection.
+      */
     remove(index?: number): void;
     /**
-     * Adds an element to the areas, controlRange, or options collection.
-     */
+      * Adds an element to the areas, controlRange, or options collection.
+      */
     add(element: HTMLElement, before?: any): void;
 }
 declare var HTMLAreasCollection: {
@@ -2828,67 +2828,67 @@ declare var SVGTextPositioningElement: {
 interface HTMLAppletElement extends HTMLElement, DOML2DeprecatedMarginStyle, DOML2DeprecatedBorderStyle, DOML2DeprecatedAlignmentStyle, MSDataBindingExtensions, MSDataBindingRecordSetExtensions {
     width: number;
     /**
-     * Sets or retrieves the Internet media type for the code associated with the object.
-     */
+      * Sets or retrieves the Internet media type for the code associated with the object.
+      */
     codeType: string;
     object: string;
     form: HTMLFormElement;
     code: string;
     /**
-     * Sets or retrieves a character string that can be used to implement your own archive functionality for the object.
-     */
+      * Sets or retrieves a character string that can be used to implement your own archive functionality for the object.
+      */
     archive: string;
     /**
-     * Sets or retrieves a text alternative to the graphic.
-     */
+      * Sets or retrieves a text alternative to the graphic.
+      */
     alt: string;
     /**
-     * Sets or retrieves a message to be displayed while an object is loading.
-     */
+      * Sets or retrieves a message to be displayed while an object is loading.
+      */
     standby: string;
     /**
-     * Sets or retrieves the class identifier for the object.
-     */
+      * Sets or retrieves the class identifier for the object.
+      */
     classid: string;
     /**
-     * Sets or retrieves the shape of the object.
-     */
+      * Sets or retrieves the shape of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
-     */
+      * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
+      */
     useMap: string;
     /**
-     * Sets or retrieves the URL that references the data of the object.
-     */
+      * Sets or retrieves the URL that references the data of the object.
+      */
     data: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: string;
     /**
-     * Gets or sets the optional alternative HTML script to execute if the object fails to load.
-     */
+      * Gets or sets the optional alternative HTML script to execute if the object fails to load.
+      */
     altHtml: string;
     /**
-     * Address of a pointer to the document this page or frame contains. If there is no document, then null will be returned.
-     */
+      * Address of a pointer to the document this page or frame contains. If there is no document, then null will be returned.
+      */
     contentDocument: Document;
     /**
-     * Sets or retrieves the URL of the component.
-     */
+      * Sets or retrieves the URL of the component.
+      */
     codeBase: string;
     /**
-     * Sets or retrieves a character string that can be used to implement your own declare functionality for the object.
-     */
+      * Sets or retrieves a character string that can be used to implement your own declare functionality for the object.
+      */
     declare: boolean;
     /**
-     * Returns the content type of the object.
-     */
+      * Returns the content type of the object.
+      */
     type: string;
     /**
-     * Retrieves a string of the URL where the object tag can be found. This is often the href of the document that the object is in, or the value set by a base element.
-     */
+      * Retrieves a string of the URL where the object tag can be found. This is often the href of the document that the object is in, or the value set by a base element.
+      */
     BaseHref: string;
 }
 declare var HTMLAppletElement: {
@@ -2910,8 +2910,8 @@ interface DocumentEvent {
 
 interface HTMLOListElement extends HTMLElement, DOML2DeprecatedListSpaceReduction, DOML2DeprecatedListNumberingAndBulletStyle {
     /**
-     * The starting number.
-     */
+      * The starting number.
+      */
     start: number;
 }
 declare var HTMLOListElement: {
@@ -2955,58 +2955,58 @@ declare var StyleMedia: {
 interface HTMLSelectElement extends HTMLElement, MSHTMLCollectionExtensions, MSDataBindingExtensions {
     options: HTMLSelectElement;
     /**
-     * Sets or retrieves the value which is returned to the server when the form control is submitted.
-     */
+      * Sets or retrieves the value which is returned to the server when the form control is submitted.
+      */
     value: string;
     /**
-     * Retrieves a reference to the form that the object is embedded in. 
-     */
+      * Retrieves a reference to the form that the object is embedded in. 
+      */
     form: HTMLFormElement;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves the number of rows in the list box. 
-     */
+      * Sets or retrieves the number of rows in the list box. 
+      */
     size: number;
     /**
-     * Sets or retrieves the number of objects in a collection.
-     */
+      * Sets or retrieves the number of objects in a collection.
+      */
     length: number;
     /**
-     * Sets or retrieves the index of the selected option in a select object.
-     */
+      * Sets or retrieves the index of the selected option in a select object.
+      */
     selectedIndex: number;
     /**
-     * Sets or retrieves the Boolean value indicating whether multiple items can be selected from a list.
-     */
+      * Sets or retrieves the Boolean value indicating whether multiple items can be selected from a list.
+      */
     multiple: boolean;
     /**
-     * Retrieves the type of select control based on the value of the MULTIPLE attribute.
-     */
+      * Retrieves the type of select control based on the value of the MULTIPLE attribute.
+      */
     type: string;
     /**
-     * Removes an element from the collection.
-     * @param index Number that specifies the zero-based index of the element to remove from the collection.
-     */
+      * Removes an element from the collection.
+      * @param index Number that specifies the zero-based index of the element to remove from the collection.
+      */
     remove(index?: number): void;
     /**
-     * Adds an element to the areas, controlRange, or options collection.
-     * @param element Variant of type Number that specifies the index position in the collection where the element is placed. If no value is given, the method places the element at the end of the collection.
-     * @param before Variant of type Object that specifies an element to insert before, or null to append the object to the collection. 
-     */
+      * Adds an element to the areas, controlRange, or options collection.
+      * @param element Variant of type Number that specifies the index position in the collection where the element is placed. If no value is given, the method places the element at the end of the collection.
+      * @param before Variant of type Object that specifies an element to insert before, or null to append the object to the collection. 
+      */
     add(element: HTMLElement, before?: any): void;
     /**
-     * Retrieves a select object or an object from an options collection.
-     * @param name Variant of type Number or String that specifies the object or collection to retrieve. If this parameter is an integer, it is the zero-based index of the object. If this parameter is a string, all objects with matching name or id properties are retrieved, and a collection is returned if more than one match is made.
-     * @param index Variant of type Number that specifies the zero-based index of the object to retrieve when a collection is returned.
-     */
+      * Retrieves a select object or an object from an options collection.
+      * @param name Variant of type Number or String that specifies the object or collection to retrieve. If this parameter is an integer, it is the zero-based index of the object. If this parameter is a string, all objects with matching name or id properties are retrieved, and a collection is returned if more than one match is made.
+      * @param index Variant of type Number that specifies the zero-based index of the object to retrieve when a collection is returned.
+      */
     item(name?: any, index?: any): any;
     /**
-     * Retrieves a select object or an object from an options collection.
-     * @param namedItem A String that specifies the name or id property of the object to retrieve. A collection is returned if more than one match is made.
-     */
+      * Retrieves a select object or an object from an options collection.
+      * @param namedItem A String that specifies the name or id property of the object to retrieve. A collection is returned if more than one match is made.
+      */
     namedItem(name: string): any;
     [name: string]: any;
 }
@@ -3068,12 +3068,12 @@ interface SVGTests {
 
 interface HTMLBlockElement extends HTMLElement, DOML2DeprecatedTextFlowControl {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: number;
     /**
-     * Sets or retrieves reference information about the object.
-     */
+      * Sets or retrieves reference information about the object.
+      */
     cite: string;
 }
 declare var HTMLBlockElement: {
@@ -3122,28 +3122,28 @@ declare var MSSelection: {
 
 interface HTMLMetaElement extends HTMLElement {
     /**
-     * Gets or sets information used to bind the value of a content attribute of a meta element to an HTTP response header.
-     */
+      * Gets or sets information used to bind the value of a content attribute of a meta element to an HTTP response header.
+      */
     httpEquiv: string;
     /**
-     * Sets or retrieves the value specified in the content attribute of the meta object.
-     */
+      * Sets or retrieves the value specified in the content attribute of the meta object.
+      */
     name: string;
     /**
-     * Gets or sets meta-information to associate with httpEquiv or name.
-     */
+      * Gets or sets meta-information to associate with httpEquiv or name.
+      */
     content: string;
     /**
-     * Sets or retrieves the URL property that will be loaded after the specified time has elapsed. 
-     */
+      * Sets or retrieves the URL property that will be loaded after the specified time has elapsed. 
+      */
     url: string;
     /**
-     * Sets or retrieves a scheme to be used in interpreting the value of a property specified for the object.
-     */
+      * Sets or retrieves a scheme to be used in interpreting the value of a property specified for the object.
+      */
     scheme: string;
     /**
-     * Sets or retrieves the character set used to encode the object.
-     */
+      * Sets or retrieves the character set used to encode the object.
+      */
     charset: string;
 }
 declare var HTMLMetaElement: {
@@ -3207,8 +3207,8 @@ declare var SVGScriptElement: {
 
 interface HTMLDDElement extends HTMLElement {
     /**
-     * Sets or retrieves whether the browser automatically performs wordwrap.
-     */
+      * Sets or retrieves whether the browser automatically performs wordwrap.
+      */
     noWrap: boolean;
 }
 declare var HTMLDDElement: {
@@ -3255,36 +3255,36 @@ declare var SVGViewElement: {
 
 interface HTMLLinkElement extends HTMLElement, LinkStyle {
     /**
-     * Sets or retrieves the relationship between the object and the destination of the link.
-     */
+      * Sets or retrieves the relationship between the object and the destination of the link.
+      */
     rel: string;
     /**
-     * Sets or retrieves the window or frame at which to target content.
-     */
+      * Sets or retrieves the window or frame at which to target content.
+      */
     target: string;
     /**
-     * Sets or retrieves a destination URL or an anchor point.
-     */
+      * Sets or retrieves a destination URL or an anchor point.
+      */
     href: string;
     /**
-     * Sets or retrieves the media type.
-     */
+      * Sets or retrieves the media type.
+      */
     media: string;
     /**
-     * Sets or retrieves the relationship between the object and the destination of the link.
-     */
+      * Sets or retrieves the relationship between the object and the destination of the link.
+      */
     rev: string;
     /**
-     * Sets or retrieves the MIME type of the object.
-     */
+      * Sets or retrieves the MIME type of the object.
+      */
     type: string;
     /**
-     * Sets or retrieves the character set used to encode the object.
-     */
+      * Sets or retrieves the character set used to encode the object.
+      */
     charset: string;
     /**
-     * Sets or retrieves the language code of the object.
-     */
+      * Sets or retrieves the language code of the object.
+      */
     hreflang: string;
 }
 declare var HTMLLinkElement: {
@@ -3303,8 +3303,8 @@ interface SVGLocatable {
 
 interface HTMLFontElement extends HTMLElement, DOML2DeprecatedColorProperty, DOML2DeprecatedSizeProperty {
     /**
-     * Sets or retrieves the current typeface family.
-     */
+      * Sets or retrieves the current typeface family.
+      */
     face: string;
 }
 declare var HTMLFontElement: {
@@ -3370,12 +3370,12 @@ declare var SVGAnimatedTransformList: {
 
 interface HTMLTableCaptionElement extends HTMLElement {
     /**
-     * Sets or retrieves the alignment of the caption or legend.
-     */
+      * Sets or retrieves the alignment of the caption or legend.
+      */
     align: string;
     /**
-     * Sets or retrieves whether the caption appears at the top or bottom of the table.
-     */
+      * Sets or retrieves whether the caption appears at the top or bottom of the table.
+      */
     vAlign: string;
 }
 declare var HTMLTableCaptionElement: {
@@ -3385,32 +3385,32 @@ declare var HTMLTableCaptionElement: {
 
 interface HTMLOptionElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the ordinal position of an option in a list box.
-     */
+      * Sets or retrieves the ordinal position of an option in a list box.
+      */
     index: number;
     /**
-     * Sets or retrieves the status of an option.
-     */
+      * Sets or retrieves the status of an option.
+      */
     defaultSelected: boolean;
     /**
-     * Sets or retrieves the value which is returned to the server when the form control is submitted.
-     */
+      * Sets or retrieves the value which is returned to the server when the form control is submitted.
+      */
     value: string;
     /**
-     * Sets or retrieves the text string specified by the option tag.
-     */
+      * Sets or retrieves the text string specified by the option tag.
+      */
     text: string;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
     /**
-     * Sets or retrieves a value that you can use to implement your own label functionality for the object.
-     */
+      * Sets or retrieves a value that you can use to implement your own label functionality for the object.
+      */
     label: string;
     /**
-     * Sets or retrieves whether the option in the list box is the default item.
-     */
+      * Sets or retrieves whether the option in the list box is the default item.
+      */
     selected: boolean;
     create(): HTMLOptionElement;
 }
@@ -3421,12 +3421,12 @@ declare var HTMLOptionElement: {
 
 interface HTMLMapElement extends HTMLElement {
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Retrieves a collection of the area objects defined for the given map object.
-     */
+      * Retrieves a collection of the area objects defined for the given map object.
+      */
     areas: HTMLAreasCollection;
 }
 declare var HTMLMapElement: {
@@ -3723,16 +3723,16 @@ declare var MSCSSProperties: {
 
 interface HTMLCollection extends MSHTMLCollectionExtensions {
     /**
-     * Sets or retrieves the number of objects in a collection.
-     */
+      * Sets or retrieves the number of objects in a collection.
+      */
     length: number;
     /**
-     * Retrieves an object from various collections.
-     */
+      * Retrieves an object from various collections.
+      */
     item(nameOrIndex?: any, optionalIndex?: any): Element;
     /**
-     * Retrieves a select object or an object from an options collection.
-     */
+      * Retrieves a select object or an object from an options collection.
+      */
     namedItem(name: string): Element;
     [name: number]: Element;
 }
@@ -3747,68 +3747,68 @@ interface SVGExternalResourcesRequired {
 
 interface HTMLImageElement extends HTMLElement, MSImageResourceExtensions, MSDataBindingExtensions, MSResourceMetadata {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: number;
     /**
-     * Sets or retrieves the vertical margin for the object.
-     */
+      * Sets or retrieves the vertical margin for the object.
+      */
     vspace: number;
     /**
-     * The original height of the image resource before sizing.
-     */
+      * The original height of the image resource before sizing.
+      */
     naturalHeight: number;
     /**
-     * Sets or retrieves a text alternative to the graphic.
-     */
+      * Sets or retrieves a text alternative to the graphic.
+      */
     alt: string;
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * The address or URL of the a media resource that is to be considered.
-     */
+      * The address or URL of the a media resource that is to be considered.
+      */
     src: string;
     /**
-     * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
-     */
+      * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
+      */
     useMap: string;
     /**
-     * The original width of the image resource before sizing.
-     */
+      * The original width of the image resource before sizing.
+      */
     naturalWidth: number;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: number;
     /**
-     * Specifies the properties of a border drawn around an object.
-     */
+      * Specifies the properties of a border drawn around an object.
+      */
     border: string;
     /**
-     * Sets or retrieves the width of the border to draw around the object.
-     */
+      * Sets or retrieves the width of the border to draw around the object.
+      */
     hspace: number;
     /**
-     * Sets or retrieves a Uniform Resource Identifier (URI) to a long description of the object.
-     */
+      * Sets or retrieves a Uniform Resource Identifier (URI) to a long description of the object.
+      */
     longDesc: string;
     /**
-     * Contains the hypertext reference (HREF) of the URL.
-     */
+      * Contains the hypertext reference (HREF) of the URL.
+      */
     href: string;
     /**
-     * Sets or retrieves whether the image is a server-side image map.
-     */
+      * Sets or retrieves whether the image is a server-side image map.
+      */
     isMap: boolean;
     /**
-     * Retrieves whether the object is fully loaded.
-     */
+      * Retrieves whether the object is fully loaded.
+      */
     complete: boolean;
     create(): HTMLImageElement;
 }
@@ -3819,60 +3819,60 @@ declare var HTMLImageElement: {
 
 interface HTMLAreaElement extends HTMLElement {
     /**
-     * Sets or retrieves the protocol portion of a URL.
-     */
+      * Sets or retrieves the protocol portion of a URL.
+      */
     protocol: string;
     /**
-     * Sets or retrieves the substring of the href property that follows the question mark.
-     */
+      * Sets or retrieves the substring of the href property that follows the question mark.
+      */
     search: string;
     /**
-     * Sets or retrieves a text alternative to the graphic.
-     */
+      * Sets or retrieves a text alternative to the graphic.
+      */
     alt: string;
     /**
-     * Sets or retrieves the coordinates of the object.
-     */
+      * Sets or retrieves the coordinates of the object.
+      */
     coords: string;
     /**
-     * Sets or retrieves the host name part of the location or URL. 
-     */
+      * Sets or retrieves the host name part of the location or URL. 
+      */
     hostname: string;
     /**
-     * Sets or retrieves the port number associated with a URL.
-     */
+      * Sets or retrieves the port number associated with a URL.
+      */
     port: string;
     /**
-     * Sets or retrieves the file name or path specified by the object.
-     */
+      * Sets or retrieves the file name or path specified by the object.
+      */
     pathname: string;
     /**
-     * Sets or retrieves the hostname and port number of the location or URL.
-     */
+      * Sets or retrieves the hostname and port number of the location or URL.
+      */
     host: string;
     /**
-     * Sets or retrieves the subsection of the href property that follows the number sign (#).
-     */
+      * Sets or retrieves the subsection of the href property that follows the number sign (#).
+      */
     hash: string;
     /**
-     * Sets or retrieves the window or frame at which to target content.
-     */
+      * Sets or retrieves the window or frame at which to target content.
+      */
     target: string;
     /**
-     * Sets or retrieves a destination URL or an anchor point.
-     */
+      * Sets or retrieves a destination URL or an anchor point.
+      */
     href: string;
     /**
-     * Sets or gets whether clicks in this region cause action.
-     */
+      * Sets or gets whether clicks in this region cause action.
+      */
     noHref: boolean;
     /**
-     * Sets or retrieves the shape of the object.
-     */
+      * Sets or retrieves the shape of the object.
+      */
     shape: string;
     /** 
-     * Returns a string representation of an object.
-     */
+      * Returns a string representation of an object.
+      */
     toString(): string;
 }
 declare var HTMLAreaElement: {
@@ -3911,25 +3911,25 @@ declare var SVGAngle: {
 
 interface HTMLButtonElement extends HTMLElement, MSDataBindingExtensions {
     /** 
-     * Sets or retrieves the default or selected value of the control.
-     */
+      * Sets or retrieves the default or selected value of the control.
+      */
     value: string;
     status: any;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
     /** 
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Gets the classification and default behavior of the button.
-     */
+      * Gets the classification and default behavior of the button.
+      */
     type: string;
     /**
-     * Creates a TextRange object for the element.
-     */
+      * Creates a TextRange object for the element.
+      */
     createTextRange(): TextRange;
 }
 declare var HTMLButtonElement: {
@@ -3939,11 +3939,11 @@ declare var HTMLButtonElement: {
 
 interface HTMLSourceElement extends HTMLElement {
     /**
-     * The address or URL of the a media resource that is to be considered.
-     */
+      * The address or URL of the a media resource that is to be considered.
+      */
     src: string;
     /**
-     * Gets or sets the intended media type of the media source.
+      * Gets or sets the intended media type of the media source.
      */
     media: string;
     /**
@@ -6896,32 +6896,32 @@ declare var SVGElement: {
 
 interface HTMLScriptElement extends HTMLElement {
     /**
-     * Sets or retrieves the status of the script.
-     */
+      * Sets or retrieves the status of the script.
+      */
     defer: boolean;
     /**
-     * Retrieves or sets the text of the object as a string. 
-     */
+      * Retrieves or sets the text of the object as a string. 
+      */
     text: string;
     /**
-     * Retrieves the URL to an external file that contains the source code or data.
-     */
+      * Retrieves the URL to an external file that contains the source code or data.
+      */
     src: string;
     /** 
-     * Sets or retrieves the object that is bound to the event script.
-     */
+      * Sets or retrieves the object that is bound to the event script.
+      */
     htmlFor: string;
     /**
-     * Sets or retrieves the character set used to encode the object.
-     */
+      * Sets or retrieves the character set used to encode the object.
+      */
     charset: string;
     /**
-     * Sets or retrieves the MIME type for the associated scripting engine.
-     */
+      * Sets or retrieves the MIME type for the associated scripting engine.
+      */
     type: string;
     /**
-     * Sets or retrieves the event for which the script is written. 
-     */
+      * Sets or retrieves the event for which the script is written. 
+      */
     event: string;
 }
 declare var HTMLScriptElement: {
@@ -6931,46 +6931,46 @@ declare var HTMLScriptElement: {
 
 interface HTMLTableRowElement extends HTMLElement, HTMLTableAlignment, DOML2DeprecatedBackgroundColorStyle {
     /**
-     * Retrieves the position of the object in the rows collection for the table.
-     */
+      * Retrieves the position of the object in the rows collection for the table.
+      */
     rowIndex: number;
     /**
-     * Retrieves a collection of all cells in the table row.
-     */
+      * Retrieves a collection of all cells in the table row.
+      */
     cells: HTMLCollection;
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
-     */
+      * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
+      */
     borderColorLight: any;
     /**
-     * Retrieves the position of the object in the collection.
-     */
+      * Retrieves the position of the object in the collection.
+      */
     sectionRowIndex: number;
     /**
-     * Sets or retrieves the border color of the object.
-     */
+      * Sets or retrieves the border color of the object.
+      */
     borderColor: any;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: any;
     /**
-     * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
-     */
+      * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
+      */
     borderColorDark: any;
     /**
-     * Removes the specified cell from the table row, as well as from the cells collection.
-     * @param index Number that specifies the zero-based position of the cell to remove from the table row. If no value is provided, the last cell in the cells collection is deleted.
-     */
+      * Removes the specified cell from the table row, as well as from the cells collection.
+      * @param index Number that specifies the zero-based position of the cell to remove from the table row. If no value is provided, the last cell in the cells collection is deleted.
+      */
     deleteCell(index?: number): void;
     /**
-     * Creates a new cell in the table row, and adds the cell to the cells collection.
-     * @param index Number that specifies where to insert the cell in the tr. The default value is -1, which appends the new cell to the end of the cells collection.
-     */
+      * Creates a new cell in the table row, and adds the cell to the cells collection.
+      * @param index Number that specifies where to insert the cell in the tr. The default value is -1, which appends the new cell to the end of the cells collection.
+      */
     insertCell(index?: number): HTMLElement;
 }
 declare var HTMLTableRowElement: {
@@ -7090,8 +7090,8 @@ declare var SVGTransformList: {
 
 interface HTMLHtmlElement extends HTMLElement {
     /**
-     * Sets or retrieves the DTD version that governs the current document.
-     */
+      * Sets or retrieves the DTD version that governs the current document.
+      */
     version: string;
 }
 declare var HTMLHtmlElement: {
@@ -7108,80 +7108,80 @@ declare var SVGPathSegClosePath: {
 
 interface HTMLFrameElement extends HTMLElement, GetSVGDocument, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: any;
     /**
-     * Sets or retrieves whether the frame can be scrolled.
-     */
+      * Sets or retrieves whether the frame can be scrolled.
+      */
     scrolling: string;
     /**
-     * Sets or retrieves the top and bottom margin heights before displaying the text in a frame.
-     */
+      * Sets or retrieves the top and bottom margin heights before displaying the text in a frame.
+      */
     marginHeight: string;
     /**
-     * Sets or retrieves the left and right margin widths before displaying the text in a frame.
-     */
+      * Sets or retrieves the left and right margin widths before displaying the text in a frame.
+      */
     marginWidth: string;
     /**
-     * Sets or retrieves the border color of the object.
-     */
+      * Sets or retrieves the border color of the object.
+      */
     borderColor: any;
     /**
-     * Sets or retrieves the amount of additional space between the frames.
-     */
+      * Sets or retrieves the amount of additional space between the frames.
+      */
     frameSpacing: any;
     /**
-     * Sets or retrieves whether to display a border for the frame.
-     */
+      * Sets or retrieves whether to display a border for the frame.
+      */
     frameBorder: string;
     /**
-     * Sets or retrieves whether the user can resize the frame.
-     */
+      * Sets or retrieves whether the user can resize the frame.
+      */
     noResize: boolean;
     /**
-     * Retrieves the object of the specified.
-     */
+      * Retrieves the object of the specified.
+      */
     contentWindow: Window;
     /**
-     * Sets or retrieves a URL to be loaded by the object.
-     */
+      * Sets or retrieves a URL to be loaded by the object.
+      */
     src: string;
     /**
-     * Sets or retrieves the frame name.
-     */
+      * Sets or retrieves the frame name.
+      */
     name: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: any;
     /**
-     * Retrieves the document object of the page or frame.
-     */
+      * Retrieves the document object of the page or frame.
+      */
     contentDocument: Document;
     /**
-     * Specifies the properties of a border drawn around an object.
-     */
+      * Specifies the properties of a border drawn around an object.
+      */
     border: string;
     /**
-     * Sets or retrieves a URI to a long description of the object.
-     */
+      * Sets or retrieves a URI to a long description of the object.
+      */
     longDesc: string;
     /**
-     * Raised when the object has been completely received from the server.
-     */
+      * Raised when the object has been completely received from the server.
+      */
     onload: (ev: Event) => any;
     addEventListener(type: "load", listener: (ev: Event) => any, useCapture?: boolean): void;
     /**
-     * Sets the value indicating whether the source file of a frame or iframe has specific security restrictions applied.
-     */
+      * Sets the value indicating whether the source file of a frame or iframe has specific security restrictions applied.
+      */
     security: any;
     /**
-     * Registers an event handler for the specified event type.
-     * @param type The type of event type to register.
-     * @param listener The event handler function to associate with the event.
-     * @param useCapture A Boolean value that specifies the event phase to add the event handler for. If true, register the event handler for the capturing phase. If false, Register the event handler for the bubbling phase. 
-     */
+      * Registers an event handler for the specified event type.
+      * @param type The type of event type to register.
+      * @param listener The event handler function to associate with the event.
+      * @param useCapture A Boolean value that specifies the event phase to add the event handler for. If true, register the event handler for the capturing phase. If false, Register the event handler for the bubbling phase. 
+      */
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
 declare var HTMLFrameElement: {
@@ -7212,12 +7212,12 @@ declare var SVGDefsElement: {
 
 interface HTMLQuoteElement extends HTMLElement {
     /**
-     * Sets or retrieves the date and time of a modification to the object.
-     */
+      * Sets or retrieves the date and time of a modification to the object.
+      */
     dateTime: string;
     /**
-     * Sets or retrieves reference information about the object.
-     */
+      * Sets or retrieves reference information about the object.
+      */
     cite: string;
 }
 declare var HTMLQuoteElement: {
@@ -7281,8 +7281,8 @@ declare var XMLHttpRequest: {
 
 interface HTMLTableHeaderCellElement extends HTMLTableCellElement {
     /**
-     * Sets or retrieves the group of cells in a table to which the object's information applies.
-     */
+      * Sets or retrieves the group of cells in a table to which the object's information applies.
+      */
     scope: string;
 }
 declare var HTMLTableHeaderCellElement: {
@@ -7343,29 +7343,29 @@ interface HTMLFrameSetElement extends HTMLElement {
     ononline: (ev: Event) => any;
     addEventListener(type: "online", listener: (ev: Event) => any, useCapture?: boolean): void;
     /**
-     * Sets or retrieves the border color of the object.
-     */
+      * Sets or retrieves the border color of the object.
+      */
     borderColor: any;
     /**
-     * Sets or retrieves the frame heights of the object.
-     */
+      * Sets or retrieves the frame heights of the object.
+      */
     rows: string;
     /**
-     * Sets or retrieves the frame widths of the object.
-     */
+      * Sets or retrieves the frame widths of the object.
+      */
     cols: string;
     /**
-     * Fires when the object loses the input focus.
-     */
+      * Fires when the object loses the input focus.
+      */
     onblur: (ev: FocusEvent) => any;
     addEventListener(type: "blur", listener: (ev: FocusEvent) => any, useCapture?: boolean): void;
     /**
-     * Sets or retrieves the amount of additional space between the frames.
-     */
+      * Sets or retrieves the amount of additional space between the frames.
+      */
     frameSpacing: any;
     /**
-     * Fires when the object receives focus.
-     */
+      * Fires when the object receives focus.
+      */
     onfocus: (ev: FocusEvent) => any;
     addEventListener(type: "focus", listener: (ev: FocusEvent) => any, useCapture?: boolean): void;
     onmessage: (ev: MessageEvent) => any;
@@ -7373,8 +7373,8 @@ interface HTMLFrameSetElement extends HTMLElement {
     onerror: (ev: Event) => any;
     addEventListener(type: "error", listener: (ev: Event) => any, useCapture?: boolean): void;
     /**
-     * Sets or retrieves whether to display a border for the frame.
-     */
+      * Sets or retrieves whether to display a border for the frame.
+      */
     frameBorder: string;
     onresize: (ev: UIEvent) => any;
     addEventListener(type: "resize", listener: (ev: UIEvent) => any, useCapture?: boolean): void;
@@ -7603,12 +7603,12 @@ declare var SVGSVGElement: {
 
 interface HTMLLabelElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the object to which the given label object is assigned.
-     */
+      * Sets or retrieves the object to which the given label object is assigned.
+      */
     htmlFor: string;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
 }
 declare var HTMLLabelElement: {
@@ -7628,12 +7628,12 @@ interface MSResourceMetadata {
 
 interface HTMLLegendElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     align: string;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
 }
 declare var HTMLLegendElement: {
@@ -7673,8 +7673,8 @@ declare var SVGTSpanElement: {
 
 interface HTMLLIElement extends HTMLElement, DOML2DeprecatedListNumberingAndBulletStyle {
     /**
-     * Sets or retrieves the value of a list item.
-     */
+      * Sets or retrieves the value of a list item.
+      */
     value: number;
 }
 declare var HTMLLIElement: {
@@ -7739,88 +7739,88 @@ declare var Storage: {
 
 interface HTMLIFrameElement extends HTMLElement, GetSVGDocument, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: string;
     /**
-     * Sets or retrieves whether the frame can be scrolled.
-     */
+      * Sets or retrieves whether the frame can be scrolled.
+      */
     scrolling: string;
     /**
-     * Sets or retrieves the top and bottom margin heights before displaying the text in a frame.
-     */
+      * Sets or retrieves the top and bottom margin heights before displaying the text in a frame.
+      */
     marginHeight: string;
     /**
-     * Sets or retrieves the left and right margin widths before displaying the text in a frame.
-     */
+      * Sets or retrieves the left and right margin widths before displaying the text in a frame.
+      */
     marginWidth: string;
     /**
-     * Sets or retrieves the amount of additional space between the frames.
-     */
+      * Sets or retrieves the amount of additional space between the frames.
+      */
     frameSpacing: any;
     /**
-     * Sets or retrieves whether to display a border for the frame.
-     */
+      * Sets or retrieves whether to display a border for the frame.
+      */
     frameBorder: string;
     /**
-     * Sets or retrieves whether the user can resize the frame.
-     */
+      * Sets or retrieves whether the user can resize the frame.
+      */
     noResize: boolean;
     /**
-     * Sets or retrieves the vertical margin for the object.
-     */
+      * Sets or retrieves the vertical margin for the object.
+      */
     vspace: number;
     /**
-     * Retrieves the object of the specified.
-     */
+      * Retrieves the object of the specified.
+      */
     contentWindow: Window;
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * Sets or retrieves a URL to be loaded by the object.
-     */
+      * Sets or retrieves a URL to be loaded by the object.
+      */
     src: string;
     /**
-     * Sets or retrieves the frame name.
-     */
+      * Sets or retrieves the frame name.
+      */
     name: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: string;
     /**
-     * Specifies the properties of a border drawn around an object.
-     */
+      * Specifies the properties of a border drawn around an object.
+      */
     border: string;
     /**
-     * Retrieves the document object of the page or frame.
-     */
+      * Retrieves the document object of the page or frame.
+      */
     contentDocument: Document;
     /**
-     * Sets or retrieves the horizontal margin for the object.
-     */
+      * Sets or retrieves the horizontal margin for the object.
+      */
     hspace: number;
     /**
-     * Sets or retrieves a URI to a long description of the object.
-     */
+      * Sets or retrieves a URI to a long description of the object.
+      */
     longDesc: string;
     /**
-     * Sets the value indicating whether the source file of a frame or iframe has specific security restrictions applied.
-     */
+      * Sets the value indicating whether the source file of a frame or iframe has specific security restrictions applied.
+      */
     security: any;
     /**
-     * Raised when the object has been completely received from the server.
-     */
+      * Raised when the object has been completely received from the server.
+      */
     onload: (ev: Event) => any;
     addEventListener(type: "load", listener: (ev: Event) => any, useCapture?: boolean): void;
     /**
-     * Registers an event handler for the specified event type.
-     * @param type The type of event type to register.
-     * @param listener The event handler function to associate with the event.
-     * @param useCapture A Boolean value that specifies the event phase to add the event handler for. If true, register the event handler for the capturing phase. If false, Register the event handler for the bubbling phase. 
-     */
+      * Registers an event handler for the specified event type.
+      * @param type The type of event type to register.
+      * @param listener The event handler function to associate with the event.
+      * @param useCapture A Boolean value that specifies the event phase to add the event handler for. If true, register the event handler for the capturing phase. If false, Register the event handler for the bubbling phase. 
+      */
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
 declare var HTMLIFrameElement: {
@@ -7941,28 +7941,28 @@ declare var DragEvent: {
 
 interface HTMLTableSectionElement extends HTMLElement, HTMLTableAlignment, DOML2DeprecatedBackgroundColorStyle {
     /**
-     * Sets or retrieves a value that indicates the table alignment.
-     */
+      * Sets or retrieves a value that indicates the table alignment.
+      */
     align: string;
     /**
-     * Sets or retrieves the number of horizontal rows contained in the object.
-     */
+      * Sets or retrieves the number of horizontal rows contained in the object.
+      */
     rows: HTMLCollection;
     /**
-     * Removes the specified row (tr) from the element and from the rows collection.
-     * @param index Number that specifies the zero-based position in the rows collection of the row to remove.
-     */
+      * Removes the specified row (tr) from the element and from the rows collection.
+      * @param index Number that specifies the zero-based position in the rows collection of the row to remove.
+      */
     deleteRow(index?: number): void;
     /**
-     * Moves a table row to a new position.
-     * @param indexFrom Number that specifies the index in the rows collection of the table row that is moved.
-     * @param indexTo Number that specifies where the row is moved within the rows collection.
-     */
+      * Moves a table row to a new position.
+      * @param indexFrom Number that specifies the index in the rows collection of the table row that is moved.
+      * @param indexTo Number that specifies where the row is moved within the rows collection.
+      */
     moveRow(indexFrom?: number, indexTo?: number): Object;
     /**
-     * Creates a new row (tr) in the table, and adds the row to the rows collection.
-     * @param index Number that specifies where to insert the row in the rows collection. The default value is -1, which appends the new row to the end of the rows collection.
-     */
+      * Creates a new row (tr) in the table, and adds the row to the rows collection.
+      * @param index Number that specifies where to insert the row in the rows collection. The default value is -1, which appends the new row to the end of the rows collection.
+      */
     insertRow(index?: number): HTMLElement;
 }
 declare var HTMLTableSectionElement: {
@@ -7976,117 +7976,117 @@ interface DOML2DeprecatedListNumberingAndBulletStyle {
 
 interface HTMLInputElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: string;
     status: boolean;
     /**
-     * Retrieves a reference to the form that the object is embedded in. 
-     */
+      * Retrieves a reference to the form that the object is embedded in. 
+      */
     form: HTMLFormElement;
     /**
-     * Gets or sets the starting position or offset of a text selection.
-     */
+      * Gets or sets the starting position or offset of a text selection.
+      */
     selectionStart: number;
     indeterminate: boolean;
     readOnly: boolean;
     size: number;
     loop: number;
     /**
-     * Gets or sets the end position or offset of a text selection.
-     */
+      * Gets or sets the end position or offset of a text selection.
+      */
     selectionEnd: number;
     /**
-     * Sets or retrieves the URL of the virtual reality modeling language (VRML) world to be displayed in the window.
-     */
+      * Sets or retrieves the URL of the virtual reality modeling language (VRML) world to be displayed in the window.
+      */
     vrml: string;
     /**
-     * Sets or retrieves a lower resolution image to display.
-     */
+      * Sets or retrieves a lower resolution image to display.
+      */
     lowsrc: string;
     /**
-     * Sets or retrieves the vertical margin for the object.
-     */
+      * Sets or retrieves the vertical margin for the object.
+      */
     vspace: number;
     /**
-     * Sets or retrieves a comma-separated list of content types.
-     */
+      * Sets or retrieves a comma-separated list of content types.
+      */
     accept: string;
     /**
-     * Sets or retrieves a text alternative to the graphic.
-     */
+      * Sets or retrieves a text alternative to the graphic.
+      */
     alt: string;
     /**
-     * Sets or retrieves the state of the check box or radio button.
-     */
+      * Sets or retrieves the state of the check box or radio button.
+      */
     defaultChecked: boolean;
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * Returns the value of the data at the cursor's current position.
-     */
+      * Returns the value of the data at the cursor's current position.
+      */
     value: string;
     /**
-     * The address or URL of the a media resource that is to be considered.
-     */
+      * The address or URL of the a media resource that is to be considered.
+      */
     src: string;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
-     */
+      * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
+      */
     useMap: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: string;
     /**
-     * Sets or retrieves the width of the border to draw around the object.
-     */
+      * Sets or retrieves the width of the border to draw around the object.
+      */
     border: string;
     dynsrc: string;
     /**
-     * Sets or retrieves the state of the check box or radio button.
-     */
+      * Sets or retrieves the state of the check box or radio button.
+      */
     checked: boolean;
     /**
-     * Sets or retrieves the width of the border to draw around the object.
-     */
+      * Sets or retrieves the width of the border to draw around the object.
+      */
     hspace: number;
     /**
-     * Sets or retrieves the maximum number of characters that the user can enter in a text control.
-     */
+      * Sets or retrieves the maximum number of characters that the user can enter in a text control.
+      */
     maxLength: number;
     /**
-     * Returns the content type of the object.
-     */
+      * Returns the content type of the object.
+      */
     type: string;
     /**
-     * Sets or retrieves the initial contents of the object.
-     */
+      * Sets or retrieves the initial contents of the object.
+      */
     defaultValue: string;
     /**
-     * Retrieves whether the object is fully loaded.
-     */
+      * Retrieves whether the object is fully loaded.
+      */
     complete: boolean;
     start: string;
     /**
-     * Creates a TextRange object for the element.
-     */
+      * Creates a TextRange object for the element.
+      */
     createTextRange(): TextRange;
     /**
-     * Sets the start and end positions of a selection in a text field.
-     * @param start The offset into the text field for the start of the selection.
-     * @param end The offset into the text field for the end of the selection.
-     */
+      * Sets the start and end positions of a selection in a text field.
+      * @param start The offset into the text field for the start of the selection.
+      * @param end The offset into the text field for the end of the selection.
+      */
     setSelectionRange(start: number, end: number): void;
     /**
-     * Makes the selection equal to the current object.
-     */
+      * Makes the selection equal to the current object.
+      */
     select(): void;
 }
 declare var HTMLInputElement: {
@@ -8096,78 +8096,78 @@ declare var HTMLInputElement: {
 
 interface HTMLAnchorElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the relationship between the object and the destination of the link.
-     */
+      * Sets or retrieves the relationship between the object and the destination of the link.
+      */
     rel: string;
     /**
-     * Contains the protocol of the URL.
-     */
+      * Contains the protocol of the URL.
+      */
     protocol: string;
     /**
-     * Sets or retrieves the substring of the href property that follows the question mark.
-     */
+      * Sets or retrieves the substring of the href property that follows the question mark.
+      */
     search: string;
     /**
-     * Sets or retrieves the coordinates of the object.
-     */
+      * Sets or retrieves the coordinates of the object.
+      */
     coords: string;
     /**
-     * Contains the hostname of a URL.
-     */
+      * Contains the hostname of a URL.
+      */
     hostname: string;
     /**
-     * Contains the pathname of the URL.
-     */
+      * Contains the pathname of the URL.
+      */
     pathname: string;
     Methods: string;
     /**
-     * Sets or retrieves the window or frame at which to target content.
-     */
+      * Sets or retrieves the window or frame at which to target content.
+      */
     target: string;
     protocolLong: string;
     /**
-     * Sets or retrieves a destination URL or an anchor point.
-     */
+      * Sets or retrieves a destination URL or an anchor point.
+      */
     href: string;
     /**
-     * Sets or retrieves the shape of the object.
-     */
+      * Sets or retrieves the shape of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves the character set used to encode the object.
-     */
+      * Sets or retrieves the character set used to encode the object.
+      */
     charset: string;
     /**
-     * Sets or retrieves the language code of the object.
-     */
+      * Sets or retrieves the language code of the object.
+      */
     hreflang: string;
     /**
-     * Sets or retrieves the port number associated with a URL.
-     */
+      * Sets or retrieves the port number associated with a URL.
+      */
     port: string;
     /**
-     * Contains the hostname and port values of the URL.
-     */
+      * Contains the hostname and port values of the URL.
+      */
     host: string;
     /**
-     * Contains the anchor portion of the URL including the hash sign (#).
-     */
+      * Contains the anchor portion of the URL including the hash sign (#).
+      */
     hash: string;
     nameProp: string;
     urn: string;
     /**
-     * Sets or retrieves the relationship between the object and the destination of the link.
-     */
+      * Sets or retrieves the relationship between the object and the destination of the link.
+      */
     rev: string;
     /**
-     * Sets or retrieves the shape of the object.
-     */
+      * Sets or retrieves the shape of the object.
+      */
     shape: string;
     type: string;
     mimeType: string;
     /** 
-     * Returns a string representation of an object.
-     */
+      * Returns a string representation of an object.
+      */
     toString(): string;
 }
 declare var HTMLAnchorElement: {
@@ -8177,20 +8177,20 @@ declare var HTMLAnchorElement: {
 
 interface HTMLParamElement extends HTMLElement {
     /**
-     * Sets or retrieves the value of an input parameter for an element.
-     */
+      * Sets or retrieves the value of an input parameter for an element.
+      */
     value: string;
     /**
-     * Sets or retrieves the name of an input parameter for an element.
-     */
+      * Sets or retrieves the name of an input parameter for an element.
+      */
     name: string;
     /**
-     * Sets or retrieves the content type of the resource designated by the value attribute.
-     */
+      * Sets or retrieves the content type of the resource designated by the value attribute.
+      */
     type: string;
     /**
-     * Sets or retrieves the data type of the value attribute.
-     */
+      * Sets or retrieves the data type of the value attribute.
+      */
     valueType: string;
 }
 declare var HTMLParamElement: {
@@ -8250,12 +8250,12 @@ declare var PerformanceTiming: {
 
 interface HTMLPreElement extends HTMLElement, DOML2DeprecatedTextFlowControl {
     /**
-     * Sets or gets a value that you can use to implement your own width functionality for the object.
-     */
+      * Sets or gets a value that you can use to implement your own width functionality for the object.
+      */
     width: number;
     /**
-     * Indicates a citation by rendering text in italic type.
-     */
+      * Indicates a citation by rendering text in italic type.
+      */
     cite: string;
 }
 declare var HTMLPreElement: {
@@ -8413,12 +8413,12 @@ declare var SVGPolygonElement: {
 
 interface HTMLPhraseElement extends HTMLElement {
     /**
-     * Sets or retrieves the date and time of a modification to the object.
-     */
+      * Sets or retrieves the date and time of a modification to the object.
+      */
     dateTime: string;
     /**
-     * Sets or retrieves reference information about the object.
-     */
+      * Sets or retrieves reference information about the object.
+      */
     cite: string;
 }
 declare var HTMLPhraseElement: {
@@ -8526,22 +8526,22 @@ interface DOML2DeprecatedColorProperty {
 
 interface HTMLCanvasElement extends HTMLElement {
     /**
-     * Gets or sets the width of a canvas element on a document.
-     */
+      * Gets or sets the width of a canvas element on a document.
+      */
     width: number;
     /**
-     * Gets or sets the height of a canvas element on a document.
-     */
+      * Gets or sets the height of a canvas element on a document.
+      */
     height: number;
     /**
-     * Returns the content of the current canvas as an image that you can use as a source for another canvas or an HTML element.
-     * @param type The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image.
-     */
+      * Returns the content of the current canvas as an image that you can use as a source for another canvas or an HTML element.
+      * @param type The standard MIME type for the image format to return. If you do not specify this parameter, the default value is a PNG format image.
+      */
     toDataURL(type?: string, ...args: any[]): string;
     /**
-     * Returns an object that provides methods and properties for drawing and manipulating images and graphics on a canvas element in a document. A context object includes information about colors, line widths, fonts, and other graphic parameters that can be drawn on a canvas.
-     * @param contextId The identifier (ID) of the type of canvas to create. Internet Explorer 9 and Internet Explorer 10 support only a 2-D context using canvas.getContext("2d"); IE11 Preview also supports 3-D or WebGL context using canvas.getContext("experimental-webgl");
-     */
+      * Returns an object that provides methods and properties for drawing and manipulating images and graphics on a canvas element in a document. A context object includes information about colors, line widths, fonts, and other graphic parameters that can be drawn on a canvas.
+      * @param contextId The identifier (ID) of the type of canvas to create. Internet Explorer 9 and Internet Explorer 10 support only a 2-D context using canvas.getContext("2d"); IE11 Preview also supports 3-D or WebGL context using canvas.getContext("experimental-webgl");
+      */
     getContext(contextId: string, ...args: any[]): any;
     getContext(contextId: "2d"): CanvasRenderingContext2D;
 }
@@ -8571,8 +8571,8 @@ declare var Location: {
 
 interface HTMLTitleElement extends HTMLElement {
     /**
-     * Retrieves or sets the text of the object as a string. 
-     */
+      * Retrieves or sets the text of the object as a string. 
+      */
     text: string;
 }
 declare var HTMLTitleElement: {
@@ -8582,12 +8582,12 @@ declare var HTMLTitleElement: {
 
 interface HTMLStyleElement extends HTMLElement, LinkStyle {
     /**
-     * Sets or retrieves the media type.
-     */
+      * Sets or retrieves the media type.
+      */
     media: string;
     /**
-     * Retrieves the CSS language in which the style sheet is written.
-     */
+      * Retrieves the CSS language in which the style sheet is written.
+      */
     type: string;
 }
 declare var HTMLStyleElement: {
@@ -8851,60 +8851,60 @@ declare var PositionError: {
 
 interface HTMLTableCellElement extends HTMLElement, HTMLTableAlignment, DOML2DeprecatedBackgroundStyle, DOML2DeprecatedBackgroundColorStyle {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: number;
     /**
-     * Sets or retrieves a list of header cells that provide information for the object.
-     */
+      * Sets or retrieves a list of header cells that provide information for the object.
+      */
     headers: string;
     /**
-     * Retrieves the position of the object in the cells collection of a row.
-     */
+      * Retrieves the position of the object in the cells collection of a row.
+      */
     cellIndex: number;
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
-     */
+      * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
+      */
     borderColorLight: any;
     /**
-     * Sets or retrieves the number columns in the table that the object should span.
-     */
+      * Sets or retrieves the number columns in the table that the object should span.
+      */
     colSpan: number;
     /**
-     * Sets or retrieves the border color of the object. 
-     */
+      * Sets or retrieves the border color of the object. 
+      */
     borderColor: any;
     /**
-     * Sets or retrieves a comma-delimited list of conceptual categories associated with the object.
-     */
+      * Sets or retrieves a comma-delimited list of conceptual categories associated with the object.
+      */
     axis: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: any;
     /**
-     * Sets or retrieves whether the browser automatically performs wordwrap.
-     */
+      * Sets or retrieves whether the browser automatically performs wordwrap.
+      */
     noWrap: boolean;
     /**
-     * Sets or retrieves abbreviated text for the object.
-     */
+      * Sets or retrieves abbreviated text for the object.
+      */
     abbr: string;
     /**
-     * Sets or retrieves how many rows in a table the cell should span.
-     */
+      * Sets or retrieves how many rows in a table the cell should span.
+      */
     rowSpan: number;
     /**
-     * Sets or retrieves the group of cells in a table to which the object's information applies.
-     */
+      * Sets or retrieves the group of cells in a table to which the object's information applies.
+      */
     scope: string;
     /**
-     * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
-     */
+      * Sets or retrieves the color for one of the two colors used to draw the 3-D border of the object.
+      */
     borderColorDark: any;
 }
 declare var HTMLTableCellElement: {
@@ -8979,12 +8979,12 @@ declare var CustomEvent: {
 
 interface HTMLBaseFontElement extends HTMLElement, DOML2DeprecatedColorProperty {
     /**
-     * Sets or retrieves the current typeface family.
-     */
+      * Sets or retrieves the current typeface family.
+      */
     face: string;
     /**
-     * Sets or retrieves the font size of the object.
-     */
+      * Sets or retrieves the font size of the object.
+      */
     size: number;
 }
 declare var HTMLBaseFontElement: {
@@ -8994,66 +8994,66 @@ declare var HTMLBaseFontElement: {
 
 interface HTMLTextAreaElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Retrieves or sets the text in the entry field of the textArea element.
-     */
+      * Retrieves or sets the text in the entry field of the textArea element.
+      */
     value: string;
     /**
-     * Sets or retrieves the value indicating whether the control is selected.
-     */
+      * Sets or retrieves the value indicating whether the control is selected.
+      */
     status: any;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Gets or sets the starting position or offset of a text selection.
-     */
+      * Gets or sets the starting position or offset of a text selection.
+      */
     selectionStart: number;
     /**
-     * Sets or retrieves the number of horizontal rows contained in the object.
-     */
+      * Sets or retrieves the number of horizontal rows contained in the object.
+      */
     rows: number;
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     cols: number;
     /**
-     * Sets or retrieves the value indicated whether the content of the object is read-only.
-     */
+      * Sets or retrieves the value indicated whether the content of the object is read-only.
+      */
     readOnly: boolean;
     /**
-     * Sets or retrieves how to handle wordwrapping in the object.
-     */
+      * Sets or retrieves how to handle wordwrapping in the object.
+      */
     wrap: string;
     /**
-     * Gets or sets the end position or offset of a text selection.
-     */
+      * Gets or sets the end position or offset of a text selection.
+      */
     selectionEnd: number;
     /**
-     * Retrieves the type of control.
-     */
+      * Retrieves the type of control.
+      */
     type: string;
     /**
-     * Sets or retrieves the initial contents of the object.
-     */
+      * Sets or retrieves the initial contents of the object.
+      */
     defaultValue: string;
     /**
-     * Creates a TextRange object for the element.
-     */
+      * Creates a TextRange object for the element.
+      */
     createTextRange(): TextRange;
     /**
-     * Sets the start and end positions of a selection in a text field.
-     * @param start The offset into the text field for the start of the selection.
-     * @param end The offset into the text field for the end of the selection.
-     */
+      * Sets the start and end positions of a selection in a text field.
+      * @param start The offset into the text field for the start of the selection.
+      * @param end The offset into the text field for the end of the selection.
+      */
     setSelectionRange(start: number, end: number): void;
     /**
-     * Highlights the input area of a form element.
-     */
+      * Highlights the input area of a form element.
+      */
     select(): void;
 }
 declare var HTMLTextAreaElement: {
@@ -9214,12 +9214,12 @@ declare var SVGPathSegLinetoAbs: {
 
 interface HTMLModElement extends HTMLElement {
     /**
-     * Sets or retrieves the date and time of a modification to the object.
-     */
+      * Sets or retrieves the date and time of a modification to the object.
+      */
     dateTime: string;
     /**
-     * Sets or retrieves reference information about the object.
-     */
+      * Sets or retrieves reference information about the object.
+      */
     cite: string;
 }
 declare var HTMLModElement: {
@@ -9323,16 +9323,16 @@ declare var ImageData: {
 
 interface HTMLTableColElement extends HTMLElement, HTMLTableAlignment {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: any;
     /**
-     * Sets or retrieves the alignment of the object relative to the display or table.
-     */
+      * Sets or retrieves the alignment of the object relative to the display or table.
+      */
     align: string;
     /**
-     * Sets or retrieves the number of columns in the group.
-     */
+      * Sets or retrieves the number of columns in the group.
+      */
     span: number;
 }
 declare var HTMLTableColElement: {
@@ -9369,16 +9369,16 @@ declare var SVGLinearGradientElement: {
 
 interface HTMLTableAlignment {
     /**
-     * Sets or retrieves a value that you can use to implement your own ch functionality for the object.
-     */
+      * Sets or retrieves a value that you can use to implement your own ch functionality for the object.
+      */
     ch: string;
     /**
-     * Sets or retrieves how text and other content are vertically aligned within the object that contains them.
-     */
+      * Sets or retrieves how text and other content are vertically aligned within the object that contains them.
+      */
     vAlign: string;
     /**
-     * Sets or retrieves a value that you can use to implement your own chOff functionality for the object.
-     */
+      * Sets or retrieves a value that you can use to implement your own chOff functionality for the object.
+      */
     chOff: string;
 }
 
@@ -9421,12 +9421,12 @@ interface ErrorEventHandler {
 
 interface HTMLDivElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Sets or retrieves how the object is aligned with adjacent text. 
-     */
+      * Sets or retrieves how the object is aligned with adjacent text. 
+      */
     align: string;
     /**
-     * Sets or retrieves whether the browser automatically performs wordwrap.
-     */
+      * Sets or retrieves whether the browser automatically performs wordwrap.
+      */
     noWrap: boolean;
 }
 declare var HTMLDivElement: {
@@ -9658,8 +9658,8 @@ declare var CSSPageRule: {
 
 interface HTMLBRElement extends HTMLElement {
     /**
-     * Sets or retrieves the side on which floating objects are not to be positioned when any IHTMLBlockElement is inserted into the document.
-     */
+      * Sets or retrieves the side on which floating objects are not to be positioned when any IHTMLBlockElement is inserted into the document.
+      */
     clear: string;
 }
 declare var HTMLBRElement: {
@@ -9699,8 +9699,8 @@ declare var HTMLHeadElement: {
 
 interface HTMLHeadingElement extends HTMLElement, DOML2DeprecatedTextFlowControl {
     /**
-     * Sets or retrieves a value that indicates the table alignment.
-     */
+      * Sets or retrieves a value that indicates the table alignment.
+      */
     align: string;
 }
 declare var HTMLHeadingElement: {
@@ -9710,58 +9710,58 @@ declare var HTMLHeadingElement: {
 
 interface HTMLFormElement extends HTMLElement, MSHTMLCollectionExtensions {
     /**
-     * Sets or retrieves the number of objects in a collection.
-     */
+      * Sets or retrieves the number of objects in a collection.
+      */
     length: number;
     /**
-     * Sets or retrieves the window or frame at which to target content.
-     */
+      * Sets or retrieves the window or frame at which to target content.
+      */
     target: string;
     /**
-     * Sets or retrieves a list of character encodings for input data that must be accepted by the server processing the form.
-     */
+      * Sets or retrieves a list of character encodings for input data that must be accepted by the server processing the form.
+      */
     acceptCharset: string;
     /**
-     * Sets or retrieves the encoding type for the form.
-     */
+      * Sets or retrieves the encoding type for the form.
+      */
     enctype: string;
     /**
-     * Retrieves a collection, in source order, of all controls in a given form.
-     */
+      * Retrieves a collection, in source order, of all controls in a given form.
+      */
     elements: HTMLCollection;
     /**
-     * Sets or retrieves the URL to which the form content is sent for processing.
-     */
+      * Sets or retrieves the URL to which the form content is sent for processing.
+      */
     action: string;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves how to send the form data to the server.
-     */
+      * Sets or retrieves how to send the form data to the server.
+      */
     method: string;
     /**
-     * Sets or retrieves the MIME encoding for the form.
-     */
+      * Sets or retrieves the MIME encoding for the form.
+      */
     encoding: string;
     /**
-     * Fires when the user resets a form.
-     */
+      * Fires when the user resets a form.
+      */
     reset(): void;
     /**
-     * Retrieves a form object or an object from an elements collection.
-     * @param name Variant of type Number or String that specifies the object or collection to retrieve. If this parameter is a Number, it is the zero-based index of the object. If this parameter is a string, all objects with matching name or id properties are retrieved, and a collection is returned if more than one match is made.
-     * @param index Variant of type Number that specifies the zero-based index of the object to retrieve when a collection is returned.
-     */
+      * Retrieves a form object or an object from an elements collection.
+      * @param name Variant of type Number or String that specifies the object or collection to retrieve. If this parameter is a Number, it is the zero-based index of the object. If this parameter is a string, all objects with matching name or id properties are retrieved, and a collection is returned if more than one match is made.
+      * @param index Variant of type Number that specifies the zero-based index of the object to retrieve when a collection is returned.
+      */
     item(name?: any, index?: any): any;
     /**
-     * Fires when a FORM is about to be submitted.
-     */
+      * Fires when a FORM is about to be submitted.
+      */
     submit(): void;
     /**
-     * Retrieves a form object or an object from an elements collection.
-     */
+      * Retrieves a form object or an object from an elements collection.
+      */
     namedItem(name: string): any;
     [name: string]: any;
 }
@@ -9786,109 +9786,109 @@ declare var SVGZoomAndPan: {
 
 interface HTMLMediaElement extends HTMLElement {
     /**
-     * Gets the earliest possible position, in seconds, that the playback can begin.
-     */
+      * Gets the earliest possible position, in seconds, that the playback can begin.
+      */
     initialTime: number;
     /**
-     * Gets TimeRanges for the current media resource that has been played.
-     */
+      * Gets TimeRanges for the current media resource that has been played.
+      */
     played: TimeRanges;
     /**
-     * Gets the address or URL of the current media resource that is selected by IHTMLMediaElement.
-     */
+      * Gets the address or URL of the current media resource that is selected by IHTMLMediaElement.
+      */
     currentSrc: string;
     readyState: any;
     /**
-     * The autobuffer element is not supported by Internet Explorer 9. Use the preload element instead.
-     */
+      * The autobuffer element is not supported by Internet Explorer 9. Use the preload element instead.
+      */
     autobuffer: boolean;
     /**
-     * Gets or sets a flag to specify whether playback should restart after it completes.
-     */
+      * Gets or sets a flag to specify whether playback should restart after it completes.
+      */
     loop: boolean;
     /**
-     * Gets information about whether the playback has ended or not.
-     */
+      * Gets information about whether the playback has ended or not.
+      */
     ended: boolean;
     /**
-     * Gets a collection of buffered time ranges.
-     */
+      * Gets a collection of buffered time ranges.
+      */
     buffered: TimeRanges;
     /**
-     * Returns an object representing the current error state of the audio or video element.
-     */
+      * Returns an object representing the current error state of the audio or video element.
+      */
     error: MediaError;
     /**
-     * Returns a TimeRanges object that represents the ranges of the current media resource that can be seeked.
-     */
+      * Returns a TimeRanges object that represents the ranges of the current media resource that can be seeked.
+      */
     seekable: TimeRanges;
     /**
-     * Gets or sets a value that indicates whether to start playing the media automatically.
-     */
+      * Gets or sets a value that indicates whether to start playing the media automatically.
+      */
     autoplay: boolean;
     /**
-     * Gets or sets a flag that indicates whether the client provides a set of controls for the media (in case the developer does not include controls for the player).
-     */
+      * Gets or sets a flag that indicates whether the client provides a set of controls for the media (in case the developer does not include controls for the player).
+      */
     controls: boolean;
     /**
-     * Gets or sets the volume level for audio portions of the media element.
-     */
+      * Gets or sets the volume level for audio portions of the media element.
+      */
     volume: number;
     /**
-     * The address or URL of the a media resource that is to be considered.
-     */
+      * The address or URL of the a media resource that is to be considered.
+      */
     src: string;
     /**
-     * Gets or sets the current rate of speed for the media resource to play. This speed is expressed as a multiple of the normal speed of the media resource.
-     */
+      * Gets or sets the current rate of speed for the media resource to play. This speed is expressed as a multiple of the normal speed of the media resource.
+      */
     playbackRate: number;
     /**
-     * Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming.
-     */
+      * Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming.
+      */
     duration: number;
     /**
-     * Gets or sets a flag that indicates whether the audio (either audio or the audio track on video media) is muted.
-     */
+      * Gets or sets a flag that indicates whether the audio (either audio or the audio track on video media) is muted.
+      */
     muted: boolean;
     /**
-     * Gets or sets the default playback rate when the user is not using fast forward or reverse for a video or audio resource.
-     */
+      * Gets or sets the default playback rate when the user is not using fast forward or reverse for a video or audio resource.
+      */
     defaultPlaybackRate: number;
     /**
-     * Gets a flag that specifies whether playback is paused.
-     */
+      * Gets a flag that specifies whether playback is paused.
+      */
     paused: boolean;
     /**
-     * Gets a flag that indicates whether the the client is currently moving to a new playback position in the media resource.
-     */
+      * Gets a flag that indicates whether the the client is currently moving to a new playback position in the media resource.
+      */
     seeking: boolean;
     /**
-     * Gets or sets the current playback position, in seconds.
-     */
+      * Gets or sets the current playback position, in seconds.
+      */
     currentTime: number;
     /**
-     * Gets or sets the current playback position, in seconds.
-     */
+      * Gets or sets the current playback position, in seconds.
+      */
     preload: string;
     /**
-     * Gets the current network activity for the element.
-     */
+      * Gets the current network activity for the element.
+      */
     networkState: number;
     /**
-     * Pauses the current playback and sets paused to TRUE. This can be used to test whether the media is playing or paused. You can also use the pause or play events to tell whether the media is playing or not.
-     */
+      * Pauses the current playback and sets paused to TRUE. This can be used to test whether the media is playing or paused. You can also use the pause or play events to tell whether the media is playing or not.
+      */
     pause(): void;
     /**
-     * Loads and starts playback of a media resource.
-     */
+      * Loads and starts playback of a media resource.
+      */
     play(): void;
     /**
-     * Fires immediately after the client loads the object.
-     */
+      * Fires immediately after the client loads the object.
+      */
     load(): void;
     /**
-     * Returns a string that specifies whether the client can play a given media resource type.
-     */
+      * Returns a string that specifies whether the client can play a given media resource type.
+      */
     canPlayType(type: string): string;
     HAVE_METADATA: number;
     HAVE_CURRENT_DATA: number;
@@ -9975,8 +9975,8 @@ declare var SVGTextPathElement: {
 
 interface HTMLDTElement extends HTMLElement {
     /**
-     * Sets or retrieves whether the browser automatically performs wordwrap.
-     */
+      * Sets or retrieves whether the browser automatically performs wordwrap.
+      */
     noWrap: boolean;
 }
 declare var HTMLDTElement: {
@@ -10106,12 +10106,12 @@ declare var MediaError: {
 
 interface HTMLFieldSetElement extends HTMLElement {
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
 }
 declare var HTMLFieldSetElement: {
@@ -10121,20 +10121,20 @@ declare var HTMLFieldSetElement: {
 
 interface HTMLBGSoundElement extends HTMLElement {
     /**
-     * Sets or gets the value indicating how the volume of the background sound is divided between the left speaker and the right speaker.
-     */
+      * Sets or gets the value indicating how the volume of the background sound is divided between the left speaker and the right speaker.
+      */
     balance: any;
     /**
-     * Sets or gets the volume setting for the sound. 
-     */
+      * Sets or gets the volume setting for the sound. 
+      */
     volume: any;
     /**
-     * Sets or gets the URL of a sound to play.
-     */
+      * Sets or gets the URL of a sound to play.
+      */
     src: string;
     /**
-     * Sets or retrieves the number of times a sound or video clip will loop when activated.
-     */
+      * Sets or retrieves the number of times a sound or video clip will loop when activated.
+      */
     loop: number;
 }
 declare var HTMLBGSoundElement: {
@@ -10429,16 +10429,16 @@ declare var CanvasPattern: {
 
 interface HTMLHRElement extends HTMLElement, DOML2DeprecatedColorProperty, DOML2DeprecatedSizeProperty {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: number;
     /**
-     * Sets or retrieves how the object is aligned with adjacent text.
-     */
+      * Sets or retrieves how the object is aligned with adjacent text.
+      */
     align: string;
     /**
-     * Sets or retrieves whether the horizontal rule is drawn with 3-D shading.
-     */
+      * Sets or retrieves whether the horizontal rule is drawn with 3-D shading.
+      */
     noShade: boolean;
 }
 declare var HTMLHRElement: {
@@ -10448,77 +10448,77 @@ declare var HTMLHRElement: {
 
 interface HTMLObjectElement extends HTMLElement, GetSVGDocument, DOML2DeprecatedMarginStyle, DOML2DeprecatedBorderStyle, DOML2DeprecatedAlignmentStyle, MSDataBindingExtensions, MSDataBindingRecordSetExtensions {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: string;
     /**
-     * Sets or retrieves the Internet media type for the code associated with the object.
-     */
+      * Sets or retrieves the Internet media type for the code associated with the object.
+      */
     codeType: string;
     /**
-     * Retrieves the contained object.
-     */
+      * Retrieves the contained object.
+      */
     object: Object;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
     /**
-     * Sets or retrieves the URL of the file containing the compiled Java class.
-     */
+      * Sets or retrieves the URL of the file containing the compiled Java class.
+      */
     code: string;
     /**
-     * Sets or retrieves a character string that can be used to implement your own archive functionality for the object.
-     */
+      * Sets or retrieves a character string that can be used to implement your own archive functionality for the object.
+      */
     archive: string;
     /**
-     * Sets or retrieves a message to be displayed while an object is loading.
-     */
+      * Sets or retrieves a message to be displayed while an object is loading.
+      */
     standby: string;
     /**
-     * Sets or retrieves a text alternative to the graphic.
-     */
+      * Sets or retrieves a text alternative to the graphic.
+      */
     alt: string;
     /**
-     * Sets or retrieves the class identifier for the object.
-     */
+      * Sets or retrieves the class identifier for the object.
+      */
     classid: string;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
-     */
+      * Sets or retrieves the URL, often with a bookmark extension (#name), to use as a client-side image map.
+      */
     useMap: string;
     /**
-     * Sets or retrieves the URL that references the data of the object.
-     */
+      * Sets or retrieves the URL that references the data of the object.
+      */
     data: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: string;
     /**
-     * Retrieves the document object of the page or frame.
-     */
+      * Retrieves the document object of the page or frame.
+      */
     contentDocument: Document;
     /**
-     * Gets or sets the optional alternative HTML script to execute if the object fails to load.
-     */
+      * Gets or sets the optional alternative HTML script to execute if the object fails to load.
+      */
     altHtml: string;
     /**
-     * Sets or retrieves the URL of the component.
-     */
+      * Sets or retrieves the URL of the component.
+      */
     codeBase: string;
     declare: boolean;
     /**
-     * Sets or retrieves the MIME type of the object.
-     */
+      * Sets or retrieves the MIME type of the object.
+      */
     type: string;
     /**
-     * Retrieves a string of the URL where the object tag can be found. This is often the href of the document that the object is in, or the value set by a base element.
-     */
+      * Retrieves a string of the URL where the object tag can be found. This is often the href of the document that the object is in, or the value set by a base element.
+      */
     BaseHref: string;
 }
 declare var HTMLObjectElement: {
@@ -10528,32 +10528,32 @@ declare var HTMLObjectElement: {
 
 interface HTMLEmbedElement extends HTMLElement, GetSVGDocument {
     /**
-     * Sets or retrieves the width of the object.
-     */
+      * Sets or retrieves the width of the object.
+      */
     width: string;
     /**
-     * Retrieves the palette used for the embedded document.
-     */
+      * Retrieves the palette used for the embedded document.
+      */
     palette: string;
     /**
-     * Sets or retrieves a URL to be loaded by the object.
-     */
+      * Sets or retrieves a URL to be loaded by the object.
+      */
     src: string;
     /**
-     * Sets or retrieves the name of the object.
-     */
+      * Sets or retrieves the name of the object.
+      */
     name: string;
     /**
-     * Retrieves the URL of the plug-in used to view an embedded document.
-     */
+      * Retrieves the URL of the plug-in used to view an embedded document.
+      */
     pluginspage: string;
     /**
-     * Sets or retrieves the height of the object.
-     */
+      * Sets or retrieves the height of the object.
+      */
     height: string;
     /**
-     * Sets or retrieves the height and width units of the embed object.
-     */
+      * Sets or retrieves the height and width units of the embed object.
+      */
     units: string;
 }
 declare var HTMLEmbedElement: {
@@ -10590,32 +10590,32 @@ declare var CharacterData: {
 
 interface HTMLOptGroupElement extends HTMLElement, MSDataBindingExtensions {
     /**
-     * Sets or retrieves the ordinal position of an option in a list box.
-     */
+      * Sets or retrieves the ordinal position of an option in a list box.
+      */
     index: number;
     /**
-     * Sets or retrieves the status of an option.
-     */
+      * Sets or retrieves the status of an option.
+      */
     defaultSelected: boolean;
     /**
-     * Sets or retrieves the text string specified by the option tag.
-     */
+      * Sets or retrieves the text string specified by the option tag.
+      */
     text: string;
     /**
-     * Sets or retrieves the value which is returned to the server when the form control is submitted.
-     */
+      * Sets or retrieves the value which is returned to the server when the form control is submitted.
+      */
     value: string;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
     /**
-     * Sets or retrieves a value that you can use to implement your own label functionality for the object.
-     */
+      * Sets or retrieves a value that you can use to implement your own label functionality for the object.
+      */
     label: string;
     /**
-     * Sets or retrieves whether the option in the list box is the default item.
-     */
+      * Sets or retrieves whether the option in the list box is the default item.
+      */
     selected: boolean;
 }
 declare var HTMLOptGroupElement: {
@@ -10625,12 +10625,12 @@ declare var HTMLOptGroupElement: {
 
 interface HTMLIsIndexElement extends HTMLElement {
     /**
-     * Retrieves a reference to the form that the object is embedded in. 
-     */
+      * Retrieves a reference to the form that the object is embedded in. 
+      */
     form: HTMLFormElement;
     /**
-     * Sets or retrieves the URL to which the form content is sent for processing.
-     */
+      * Sets or retrieves the URL to which the form content is sent for processing.
+      */
     action: string;
     prompt: string;
 }
@@ -10848,24 +10848,24 @@ interface LinkStyle {
 
 interface HTMLVideoElement extends HTMLMediaElement {
     /**
-     * Gets or sets the width of the video element.
-     */
+      * Gets or sets the width of the video element.
+      */
     width: number;
     /**
-     * Gets the intrinsic width of a video in CSS pixels, or zero if the dimensions are not known.
-     */
+      * Gets the intrinsic width of a video in CSS pixels, or zero if the dimensions are not known.
+      */
     videoWidth: number;
     /**
-     * Gets the intrinsic height of a video in CSS pixels, or zero if the dimensions are not known.
-     */
+      * Gets the intrinsic height of a video in CSS pixels, or zero if the dimensions are not known.
+      */
     videoHeight: number;
     /**
-     * Gets or sets the height of the video element.
-     */
+      * Gets or sets the height of the video element.
+      */
     height: number;
     /**
-     * Gets or sets a URL of an image to display, for example, like a movie poster. This can be a still frame from the video, or another image if no video data is available.
-     */
+      * Gets or sets a URL of an image to display, for example, like a movie poster. This can be a still frame from the video, or another image if no video data is available.
+      */
     poster: string;
 }
 declare var HTMLVideoElement: {
@@ -11166,110 +11166,110 @@ declare var MSGestureEvent: {
 
 interface HTMLAnchorElement {
     /**
-     * Retrieves or sets the text of the object as a string. 
-     */
+      * Retrieves or sets the text of the object as a string. 
+      */
     text: string;
 }
 
 interface HTMLInputElement {
     /**
-     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
-     */
+      * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
+      */
     validationMessage: string;
     /**
-     * Returns a FileList object on a file type input object.
-     */
+      * Returns a FileList object on a file type input object.
+      */
     files: FileList;
     /**
-     * Defines the maximum acceptable value for an input element with type="number".When used with the min and step attributes, lets you control the range and increment (such as only even numbers) that the user can enter into an input field.
-     */
+      * Defines the maximum acceptable value for an input element with type="number".When used with the min and step attributes, lets you control the range and increment (such as only even numbers) that the user can enter into an input field.
+      */
     max: string;
     /**
-     * Overrides the target attribute on a form element.
-     */
+      * Overrides the target attribute on a form element.
+      */
     formTarget: string;
     /**
-     * Returns whether an element will successfully validate based on forms validation rules and constraints.
-     */
+      * Returns whether an element will successfully validate based on forms validation rules and constraints.
+      */
     willValidate: boolean;
     /**
-     * Defines an increment or jump between values that you want to allow the user to enter. When used with the max and min attributes, lets you control the range and increment (for example, allow only even numbers) that the user can enter into an input field.
-     */
+      * Defines an increment or jump between values that you want to allow the user to enter. When used with the max and min attributes, lets you control the range and increment (for example, allow only even numbers) that the user can enter into an input field.
+      */
     step: string;
     /**
-     * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
-     */
+      * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
+      */
     autofocus: boolean;
     /**
-     * When present, marks an element that can't be submitted without a value.
-     */
+      * When present, marks an element that can't be submitted without a value.
+      */
     required: boolean;
     /**
-     * Used to override the encoding (formEnctype attribute) specified on the form element.
-     */
+      * Used to override the encoding (formEnctype attribute) specified on the form element.
+      */
     formEnctype: string;
     /**
-     * Returns the input field value as a number.
-     */
+      * Returns the input field value as a number.
+      */
     valueAsNumber: number;
     /**
-     * Gets or sets a text string that is displayed in an input field as a hint or prompt to users as the format or type of information they need to enter.The text appears in an input field until the user puts focus on the field.
-     */
+      * Gets or sets a text string that is displayed in an input field as a hint or prompt to users as the format or type of information they need to enter.The text appears in an input field until the user puts focus on the field.
+      */
     placeholder: string;
     /**
-     * Overrides the submit method attribute previously specified on a form element.
-     */
+      * Overrides the submit method attribute previously specified on a form element.
+      */
     formMethod: string;
     /**
-     * Specifies the ID of a pre-defined datalist of options for an input element.
-     */
+      * Specifies the ID of a pre-defined datalist of options for an input element.
+      */
     list: HTMLElement;
     /**
-     * Specifies whether autocomplete is applied to an editable text field.
-     */
+      * Specifies whether autocomplete is applied to an editable text field.
+      */
     autocomplete: string;
     /**
-     * Defines the minimum acceptable value for an input element with type="number". When used with the max and step attributes, lets you control the range and increment (such as even numbers only) that the user can enter into an input field.
-     */
+      * Defines the minimum acceptable value for an input element with type="number". When used with the max and step attributes, lets you control the range and increment (such as even numbers only) that the user can enter into an input field.
+      */
     min: string;
     /**
-     * Overrides the action attribute (where the data on a form is sent) on the parent form element.
-     */
+      * Overrides the action attribute (where the data on a form is sent) on the parent form element.
+      */
     formAction: string;
     /**
-     * Gets or sets a string containing a regular expression that the user's input must match.
-     */
+      * Gets or sets a string containing a regular expression that the user's input must match.
+      */
     pattern: string;
     /**
-     * Returns a  ValidityState object that represents the validity states of an element.
-     */
+      * Returns a  ValidityState object that represents the validity states of an element.
+      */
     validity: ValidityState;
     /**
-     * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"–type submit option.
-     */
+      * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"–type submit option.
+      */
     formNoValidate: string;
     /**
-     * Sets or retrieves the Boolean value indicating whether multiple items can be selected from a list.
-     */
+      * Sets or retrieves the Boolean value indicating whether multiple items can be selected from a list.
+      */
     multiple: boolean;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
     /**
-     * Decrements a range input control's value by the value given by the Step attribute. If the optional parameter is used, it will decrement the input control's step value multiplied by the parameter's value.
-     * @param n Value to decrement the value by.
-     */
+      * Decrements a range input control's value by the value given by the Step attribute. If the optional parameter is used, it will decrement the input control's step value multiplied by the parameter's value.
+      * @param n Value to decrement the value by.
+      */
     stepDown(n?: number): void;
     /**
-     * Increments a range input control's value by the value given by the Step attribute. If the optional parameter is used, will increment the input control's value by that value.
-     * @param n Value to increment the value by.
-     */
+      * Increments a range input control's value by the value given by the Step attribute. If the optional parameter is used, will increment the input control's value by that value.
+      * @param n Value to increment the value by.
+      */
     stepUp(n?: number): void;
     /**
-     * Sets a custom error message that is displayed when a form is submitted.
-     * @param error Sets a custom error message that is displayed when a form is submitted.
-     */
+      * Sets a custom error message that is displayed when a form is submitted.
+      * @param error Sets a custom error message that is displayed when a form is submitted.
+      */
     setCustomValidity(error: string): void;
 }
 
@@ -11692,8 +11692,8 @@ declare var IDBObjectStore: {
 
 interface HTMLCanvasElement {
     /**
-     * Returns a blob object encoded as a Portable Network Graphics (PNG) format from a canvas image or drawing.
-     */
+      * Returns a blob object encoded as a Portable Network Graphics (PNG) format from a canvas image or drawing.
+      */
     msToBlob(): Blob;
 }
 
@@ -11861,41 +11861,41 @@ declare var IDBCursorWithValue: {
 
 interface HTMLTextAreaElement {
     /**
-     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
-     */
+      * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
+      */
     validationMessage: string;
     /**
-     * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
-     */
+      * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
+      */
     autofocus: boolean;
     /**
-     * Returns a  ValidityState object that represents the validity states of an element.
-     */
+      * Returns a  ValidityState object that represents the validity states of an element.
+      */
     validity: ValidityState;
     /**
-     * When present, marks an element that can't be submitted without a value.
-     */
+      * When present, marks an element that can't be submitted without a value.
+      */
     required: boolean;
     /**
-     * Sets or retrieves the maximum number of characters that the user can enter in a text control.
-     */
+      * Sets or retrieves the maximum number of characters that the user can enter in a text control.
+      */
     maxLength: number;
     /**
-     * Returns whether an element will successfully validate based on forms validation rules and constraints.
-     */
+      * Returns whether an element will successfully validate based on forms validation rules and constraints.
+      */
     willValidate: boolean;
     /**
-     * Gets or sets a text string that is displayed in an input field as a hint or prompt to users as the format or type of information they need to enter.The text appears in an input field until the user puts focus on the field.
-     */
+      * Gets or sets a text string that is displayed in an input field as a hint or prompt to users as the format or type of information they need to enter.The text appears in an input field until the user puts focus on the field.
+      */
     placeholder: string;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
     /**
-     * Sets a custom error message that is displayed when a form is submitted.
-     * @param error Sets a custom error message that is displayed when a form is submitted.
-     */
+      * Sets a custom error message that is displayed when a form is submitted.
+      * @param error Sets a custom error message that is displayed when a form is submitted.
+      */
     setCustomValidity(error: string): void;
 }
 
@@ -11989,33 +11989,33 @@ declare var SVGFEMorphologyElement: {
 
 interface HTMLSelectElement {
     /**
-     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
-     */
+      * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
+      */
     validationMessage: string;
     /**
-     * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
-     */
+      * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
+      */
     autofocus: boolean;
     /**
-     * Returns a  ValidityState object that represents the validity states of an element.
-     */
+      * Returns a  ValidityState object that represents the validity states of an element.
+      */
     validity: ValidityState;
     /**
-     * When present, marks an element that can't be submitted without a value.
-     */
+      * When present, marks an element that can't be submitted without a value.
+      */
     required: boolean;
     /**
-     * Returns whether an element will successfully validate based on forms validation rules and constraints.
-     */
+      * Returns whether an element will successfully validate based on forms validation rules and constraints.
+      */
     willValidate: boolean;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
     /**
-     * Sets a custom error message that is displayed when a form is submitted.
-     * @param error Sets a custom error message that is displayed when a form is submitted.
-     */
+      * Sets a custom error message that is displayed when a form is submitted.
+      * @param error Sets a custom error message that is displayed when a form is submitted.
+      */
     setCustomValidity(error: string): void;
 }
 
@@ -12378,16 +12378,16 @@ declare var SVGFESpotLightElement: {
 
 interface HTMLImageElement {
     /**
-     * Gets or sets the primary DLNA PlayTo device.
-     */
+      * Gets or sets the primary DLNA PlayTo device.
+      */
     msPlayToPrimary: boolean;
     /**
-     * Gets or sets whether the DLNA PlayTo device is available.
-     */
+      * Gets or sets whether the DLNA PlayTo device is available.
+      */
     msPlayToDisabled: boolean;
     /**
-     * Gets the source associated with the media element for use by the PlayToManager.
-     */
+      * Gets the source associated with the media element for use by the PlayToManager.
+      */
     msPlayToSource: any;
 }
 
@@ -12428,49 +12428,49 @@ declare var DOMStringList: {
 
 interface HTMLButtonElement {
     /**
-     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
-     */
+      * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
+      */
     validationMessage: string;
     /**
-     * Overrides the target attribute on a form element.
-     */
+      * Overrides the target attribute on a form element.
+      */
     formTarget: string;
     /**
-     * Returns whether an element will successfully validate based on forms validation rules and constraints.
-     */
+      * Returns whether an element will successfully validate based on forms validation rules and constraints.
+      */
     willValidate: boolean;
     /**
-     * Overrides the action attribute (where the data on a form is sent) on the parent form element.
-     */
+      * Overrides the action attribute (where the data on a form is sent) on the parent form element.
+      */
     formAction: string;
     /**
-     * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
-     */
+      * Provides a way to direct a user to a specific field when a document loads. This can provide both direction and convenience for a user, reducing the need to click or tab to a field when a page opens. This attribute is true when present on an element, and false when missing.
+      */
     autofocus: boolean;
     /**
-     * Returns a  ValidityState object that represents the validity states of an element.
-     */
+      * Returns a  ValidityState object that represents the validity states of an element.
+      */
     validity: ValidityState;
     /**
-     * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"–type submit option.
-     */
+      * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"–type submit option.
+      */
     formNoValidate: string;
     /**
-     * Used to override the encoding (formEnctype attribute) specified on the form element.
-     */
+      * Used to override the encoding (formEnctype attribute) specified on the form element.
+      */
     formEnctype: string;
     /**
-     * Overrides the submit method attribute previously specified on a form element.
-     */
+      * Overrides the submit method attribute previously specified on a form element.
+      */
     formMethod: string;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
     /**
-     * Sets a custom error message that is displayed when a form is submitted.
-     * @param error Sets a custom error message that is displayed when a form is submitted.
-     */
+      * Sets a custom error message that is displayed when a form is submitted.
+      * @param error Sets a custom error message that is displayed when a form is submitted.
+      */
     setCustomValidity(error: string): void;
 }
 
@@ -12488,20 +12488,20 @@ declare var IDBOpenDBRequest: {
 
 interface HTMLProgressElement extends HTMLElement {
     /**
-     * Sets or gets the current value of a progress element. The value must be a non-negative number between 0 and the max value.
-     */
+      * Sets or gets the current value of a progress element. The value must be a non-negative number between 0 and the max value.
+      */
     value: number;
     /**
-     * Defines the maximum, or "done" value for a progress element.
-     */
+      * Defines the maximum, or "done" value for a progress element.
+      */
     max: number;
     /**
-     * Returns the quotient of value/max when the value attribute is set (determinate progress bar), or -1 when the value attribute is missing (indeterminate progress bar).
-     */
+      * Returns the quotient of value/max when the value attribute is set (determinate progress bar), or -1 when the value attribute is missing (indeterminate progress bar).
+      */
     position: number;
     /**
-     * Retrieves a reference to the form that the object is embedded in.
-     */
+      * Retrieves a reference to the form that the object is embedded in.
+      */
     form: HTMLFormElement;
 }
 declare var HTMLProgressElement: {
@@ -12525,16 +12525,16 @@ declare var SVGFEOffsetElement: {
 
 interface HTMLFormElement {
     /**
-     * Specifies whether autocomplete is applied to an editable text field.
-     */
+      * Specifies whether autocomplete is applied to an editable text field.
+      */
     autocomplete: string;
     /**
-     * Designates a form that is not validated when submitted.
-     */
+      * Designates a form that is not validated when submitted.
+      */
     noValidate: boolean;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
 }
 
@@ -12595,45 +12595,45 @@ interface HTMLScriptElement {
 
 interface HTMLMediaElement {
     /**
-     * Specifies the purpose of the audio or video media, such as background audio or alerts.
-     */
+      * Specifies the purpose of the audio or video media, such as background audio or alerts.
+      */
     msAudioCategory: string;
     /**
-     * Specifies whether or not to enable low-latency playback on the media element.
-     */
+      * Specifies whether or not to enable low-latency playback on the media element.
+      */
     msRealTime: boolean;
     /**
-     * Gets or sets the primary DLNA PlayTo device.
-     */
+      * Gets or sets the primary DLNA PlayTo device.
+      */
     msPlayToPrimary: boolean;
     textTracks: TextTrackList;
     /**
-     * Gets or sets whether the DLNA PlayTo device is available.
-     */
+      * Gets or sets whether the DLNA PlayTo device is available.
+      */
     msPlayToDisabled: boolean;
     /**
-     * Returns an AudioTrackList object with the audio tracks for a given video element.
-     */
+      * Returns an AudioTrackList object with the audio tracks for a given video element.
+      */
     audioTracks: AudioTrackList;
     /**
-     * Gets the source associated with the media element for use by the PlayToManager.
-     */
+      * Gets the source associated with the media element for use by the PlayToManager.
+      */
     msPlayToSource: any;
     /**
-     * Specifies the output device id that the audio will be sent to.
-     */
+      * Specifies the output device id that the audio will be sent to.
+      */
     msAudioDeviceType: string;
     /**
-     * Clears all effects from the media pipeline.
-     */
+      * Clears all effects from the media pipeline.
+      */
     msClearEffects(): void;
     /**
-     * Specifies the media protection manager for a given media pipeline.
-     */
+      * Specifies the media protection manager for a given media pipeline.
+      */
     msSetMediaProtectionManager(mediaProtectionManager?: any): void;
     /**
-     * Inserts the specified audio effect into media pipeline.
-     */
+      * Inserts the specified audio effect into media pipeline.
+      */
     msInsertAudioEffect(activatableClassId: string, effectRequired: boolean, config?: any): void;
 }
 
@@ -12835,25 +12835,25 @@ interface MediaError {
 
 interface HTMLFieldSetElement {
     /**
-     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
-     */
+      * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
+      */
     validationMessage: string;
     /**
-     * Returns a  ValidityState object that represents the validity states of an element.
-     */
+      * Returns a  ValidityState object that represents the validity states of an element.
+      */
     validity: ValidityState;
     /**
-     * Returns whether an element will successfully validate based on forms validation rules and constraints.
-     */
+      * Returns whether an element will successfully validate based on forms validation rules and constraints.
+      */
     willValidate: boolean;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
     /**
-     * Sets a custom error message that is displayed when a form is submitted.
-     * @param error Sets a custom error message that is displayed when a form is submitted.
-     */
+      * Sets a custom error message that is displayed when a form is submitted.
+      * @param error Sets a custom error message that is displayed when a form is submitted.
+      */
     setCustomValidity(error: string): void;
 }
 
@@ -12907,25 +12907,25 @@ interface Range {
 
 interface HTMLObjectElement {
     /**
-     * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
-     */
+      * Returns the error message that would be displayed if the user submits the form, or an empty string if no error message. It also triggers the standard error message, such as "this is a required field". The result is that the user sees validation messages without actually submitting.
+      */
     validationMessage: string;
     /**
-     * Returns a  ValidityState object that represents the validity states of an element.
-     */
+      * Returns a  ValidityState object that represents the validity states of an element.
+      */
     validity: ValidityState;
     /**
-     * Returns whether an element will successfully validate based on forms validation rules and constraints.
-     */
+      * Returns whether an element will successfully validate based on forms validation rules and constraints.
+      */
     willValidate: boolean;
     /**
-     * Returns whether a form will validate when it is submitted, without having to submit it.
-     */
+      * Returns whether a form will validate when it is submitted, without having to submit it.
+      */
     checkValidity(): boolean;
     /**
-     * Sets a custom error message that is displayed when a form is submitted.
-     * @param error Sets a custom error message that is displayed when a form is submitted.
-     */
+      * Sets a custom error message that is displayed when a form is submitted.
+      * @param error Sets a custom error message that is displayed when a form is submitted.
+      */
     setCustomValidity(error: string): void;
 }
 
@@ -13549,14 +13549,14 @@ declare var MimeTypeArray: {
 
 interface HTMLMediaElement {
     /**
-     * Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
-     */
+      * Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
+      */
     msPlayToPreferredSourceUri: string;
     onmsneedkey: (ev: MSMediaKeyNeededEvent) => any;
     addEventListener(type: "msneedkey", listener: (ev: MSMediaKeyNeededEvent) => any, useCapture?: boolean): void;
     /**
-     * Gets the MSMediaKeys object, which is used for decrypting media data, that is associated with this media element.
-     */
+      * Gets the MSMediaKeys object, which is used for decrypting media data, that is associated with this media element.
+      */
     msKeys: MSMediaKeys;
     msGraphicsTrustStatus: MSGraphicsTrust;
     msSetMediaKeys(mediaKeys: MSMediaKeys): void;
@@ -13876,39 +13876,39 @@ interface AudioTrackList {
 
 interface HTMLObjectElement {
     /**
-     * Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
-     */
+      * Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
+      */
     msPlayToPreferredSourceUri: string;
     /**
-     * Gets or sets the primary DLNA PlayTo device.
-     */
+      * Gets or sets the primary DLNA PlayTo device.
+      */
     msPlayToPrimary: boolean;
     /**
-     * Gets or sets whether the DLNA PlayTo device is available.
-     */
+      * Gets or sets whether the DLNA PlayTo device is available.
+      */
     msPlayToDisabled: boolean;
     /**
-     * Gets the source associated with the media element for use by the PlayToManager.
-     */
+      * Gets the source associated with the media element for use by the PlayToManager.
+      */
     msPlayToSource: any;
 }
 
 interface HTMLEmbedElement {
     /**
-     * Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
-     */
+      * Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
+      */
     msPlayToPreferredSourceUri: string;
     /**
-     * Gets or sets the primary DLNA PlayTo device.
-     */
+      * Gets or sets the primary DLNA PlayTo device.
+      */
     msPlayToPrimary: boolean;
     /**
-     * Gets or sets whether the DLNA PlayTo device is available.
-     */
+      * Gets or sets whether the DLNA PlayTo device is available.
+      */
     msPlayToDisabled: boolean;
     /**
-     * Gets the source associated with the media element for use by the PlayToManager.
-     */
+      * Gets the source associated with the media element for use by the PlayToManager.
+      */
     msPlayToSource: any;
 }
 
