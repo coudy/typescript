@@ -1208,10 +1208,25 @@ module TypeScript {
                 // Do not resolve members as yet
                 typeDeclSymbol.inResolution = false;
 
+                var typeDeclUnitPath = this.getUnitPath();
+
                 // Store off and resolve the reference type after we've finished checking the file
                 // (This way, we'll still properly resolve the type even if its parent was already resolved during
                 // base type resolution, making the type otherwise inaccessible).
-                PullTypeResolver.typeCheckCallBacks.push(() => { this.resolveDeclaredSymbol(typeDeclSymbol, enclosingDecl, context) });
+                PullTypeResolver.typeCheckCallBacks.push(() => {
+                    this.resolveDeclaredSymbol(typeDeclSymbol, enclosingDecl, context);
+
+                    var prevUnitPath = this.getUnitPath();
+                    this.setUnitPath(typeDeclUnitPath);
+                    if (this.canTypeCheckAST(typeDeclAST, context)) {
+                        if (typeDeclAST.nodeType() == NodeType.ClassDeclaration) {
+                            this.typeCheckClassDeclaration(<ClassDeclaration>typeDeclAST, context);
+                        } else {
+                            this.typeCheckInterfaceDeclaration(typeDeclAST, context);
+                        }
+                    }
+                    this.setUnitPath(prevUnitPath);
+                });
 
                 return typeDeclSymbol;
             }
@@ -1262,6 +1277,10 @@ module TypeScript {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (classDeclSymbol.isResolved) {
+                if (this.canTypeCheckAST(classDeclAST, context)) {
+                    this.typeCheckClassDeclaration(classDeclAST, context);
+                }
+
                 return classDeclSymbol;
             }
 
