@@ -52,8 +52,6 @@ interface Object {
     hasOwnProperty(v: string): boolean;
     isPrototypeOf(v: Object): boolean;
     propertyIsEnumerable(v: string): boolean;
-
-    [s: string]: any;
 }
 
 declare var Object: {
@@ -132,6 +130,8 @@ interface String {
     length: number;
 
     substr(from: number, length?: number): string;
+
+    [index: number]: string;
 }
 
 declare var String: {
