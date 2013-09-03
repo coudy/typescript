@@ -172,7 +172,7 @@ module TypeScript {
         public isSpecializingSignatureTypeParameters = false;
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
-        public isResolvingSuperConstructorTarget = false;
+        public isResolvingSuperConstructorCallArgument = false;
         public inConstructorArguments = false;
         public isInStaticInitializer = false;
         public inProvisionalAnyContext = false;

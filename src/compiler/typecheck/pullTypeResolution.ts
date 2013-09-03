@@ -3,7 +3,6 @@
 module TypeScript {
 
     export interface IPullTypeCollection {
-        // returns null when types are exhausted
         getLength(): number;
         getTypeAtIndex(index: number): PullTypeSymbol;
     }
@@ -921,8 +920,8 @@ module TypeScript {
             var savedIsInStaticInitializer = context.isInStaticInitializer
             context.isInStaticInitializer = false;
 
-            var savedIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
-            context.isResolvingSuperConstructorTarget = false;
+            var savedIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
+            context.isResolvingSuperConstructorCallArgument = false;
 
             var savedInConstructorArguments = context.inConstructorArguments;
             context.inConstructorArguments = false;
@@ -934,7 +933,7 @@ module TypeScript {
 
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
             context.inConstructorArguments = savedInConstructorArguments;
-            context.isResolvingSuperConstructorTarget = savedIsResolvingSuperConstructorTarget;
+            context.isResolvingSuperConstructorCallArgument = savedIsResolvingSuperConstructorCallArgument;
             context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
 
@@ -3016,9 +3015,11 @@ module TypeScript {
                             if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
                                 // Check if the member name kind (number or string), matches the index signature kind. If it does give an error.
                                 // If it doesn't we only want to give an error if this is a string signature, and we don't have a numeric signature
-                                var isMemberNumeric = isFinite(+name);
-                                if (isNumericIndexer === isMemberNumeric ||
-                                    (!isNumericIndexer && !numberIndexSignature)) {
+                                var isMemberNumeric = PullHelpers.isNameNumeric(name);
+                                var indexerKindMatchesMemberNameKind = isNumericIndexer === isMemberNumeric;
+                                var onlyStringIndexerIsPresent = !numberIndexSignature;
+
+                                if (indexerKindMatchesMemberNameKind || onlyStringIndexerIsPresent) {
                                     this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], signature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
                                 }
                             }
@@ -5786,7 +5787,7 @@ module TypeScript {
                     var thisExpressionAST = <ThisExpression>ast;
                     var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
 
-                    if (context.isResolvingSuperConstructorTarget &&
+                    if (context.isResolvingSuperConstructorCallArgument &&
                         this.superCallMustBeFirstStatementInConstructor(enclosingDecl, classDecl)) {
 
                         context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_current_location, null);
@@ -5917,7 +5918,7 @@ module TypeScript {
             if (nonLambdaEnclosingDecl) {
 
                 var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.kind;
-                var inSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+                var inSuperConstructorTarget = context.isResolvingSuperConstructorCallArgument;
 
                 // Super calls are not permitted outside constructors or in local functions inside constructors.
                 if (inSuperConstructorTarget && enclosingDecl.kind !== PullElementKind.ConstructorMethod) {
@@ -6076,7 +6077,7 @@ module TypeScript {
 
                         // Consider index signatures as potential contextual types
                         if (!assigningSymbol) {
-                            var memberIsNumeric = isFinite(+text);
+                            var memberIsNumeric = PullHelpers.isNameNumeric(text);
                             if (numberSignature && memberIsNumeric) {
                                 assigningSymbol = numberSignature;
                             }
@@ -6248,7 +6249,7 @@ module TypeScript {
                 // Add the contextual type to the collection as one of the types to be considered for best common type
                 collection = {
                     getLength: () => { return elements.members.length + 1; },
-                    getTypeAtIndex: (index: number) => { return index >= elementTypes.length ? contextualElementType : elementTypes[index]; }
+                    getTypeAtIndex: (index: number) => { return index === elementTypes.length ? contextualElementType : elementTypes[index]; }
                 };
             }
             else {
@@ -6425,11 +6426,11 @@ module TypeScript {
                     paramType = paramSymbols[0].type;
 
                     if (!stringSignature && paramType === this.semanticInfoChain.stringTypeSymbol) {
-                        stringSignature = signatures[i];
+                        stringSignature = signature;
                         continue;
                     }
-                    else if (!numberSignature && (paramType === this.semanticInfoChain.numberTypeSymbol || paramType.kind === PullElementKind.Enum)) {
-                        numberSignature = signatures[i];
+                    else if (!numberSignature && paramType === this.semanticInfoChain.numberTypeSymbol) {
+                        numberSignature = signature;
                         continue;
                     }
                 }
@@ -6703,16 +6704,16 @@ module TypeScript {
                     if (contextualType) {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                     }
-                    var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+                    var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
 
                     if (isSuperCall) {
-                        context.isResolvingSuperConstructorTarget = true;
+                        context.isResolvingSuperConstructorCallArgument = true;
                     }
 
                     this.resolveAST(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
 
                     if (isSuperCall) {
-                        context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+                        context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
                     }
 
                     if (contextualType) {
@@ -6726,7 +6727,7 @@ module TypeScript {
         public computeInvocationExpressionSymbol(callEx: InvocationExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
             // resolve the target
             var targetSymbol = this.resolveAST(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
-            var targetAST = this.getLastIdentifierInTarget(callEx);
+            var targetAST = this.getCallTargetErrorSpanAST(callEx);
 
             // don't be fooled
             //if (target === this.semanticInfoChain.anyTypeSymbol) {
@@ -6948,13 +6949,13 @@ module TypeScript {
 
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
 
-                var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+                var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
                 if (isSuperCall) {
-                    context.isResolvingSuperConstructorTarget = true;
+                    context.isResolvingSuperConstructorCallArgument = true;
                 }
                 this.resolveAST(callEx.arguments, inContextuallyTypedAssignment, enclosingDecl, context);
                 if (isSuperCall) {
-                    context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+                    context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
                 }
 
                 if (!couldNotFindGenericOverload) {
@@ -6982,17 +6983,17 @@ module TypeScript {
                 return errorCondition;
             }
 
-            var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+            var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
 
             if (isSuperCall) {
-                context.isResolvingSuperConstructorTarget = true;
+                context.isResolvingSuperConstructorCallArgument = true;
             }
 
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
             var useBeforeResolutionSignatures = signature == null;
 
             if (isSuperCall) {
-                context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+                context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
             }
 
             if (!signature) {
@@ -7077,16 +7078,16 @@ module TypeScript {
                         actualParametersContextTypeSymbols[i] = contextualType;
                     }
 
-                    var prevIsResolvingSuperConstructorTarget = context.isResolvingSuperConstructorTarget;
+                    var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
 
                     if (isSuperCall) {
-                        context.isResolvingSuperConstructorTarget = true;
+                        context.isResolvingSuperConstructorCallArgument = true;
                     }
 
                     this.resolveAST(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
 
                     if (isSuperCall) {
-                        context.isResolvingSuperConstructorTarget = prevIsResolvingSuperConstructorTarget;
+                        context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
                     }
 
                     if (contextualType) {
@@ -7183,7 +7184,7 @@ module TypeScript {
             var targetSymbol = this.resolveAST(callEx.target, inContextuallyTypedAssignment, enclosingDecl, context);
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.type;
 
-            var targetAST = this.getLastIdentifierInTarget(callEx);
+            var targetAST = this.getCallTargetErrorSpanAST(callEx);
 
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
 
@@ -7796,7 +7797,6 @@ module TypeScript {
 
         public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
-            // Take into account when the initial type is not the first in the collection (like when it is a contextual type)
             var nlastChecked = 0;
             var bestCommonType = initialType;
 
@@ -8883,7 +8883,8 @@ module TypeScript {
         // Overload resolution
 
         private resolveOverloads(
-            application: AST, group: PullSignatureSymbol[],
+            application: ICallExpression,
+            group: PullSignatureSymbol[],
             enclosingDecl: PullDecl,
             haveTypeArgumentsAtCallSite: boolean,
             context: PullTypeResolutionContext,
@@ -8891,9 +8892,7 @@ module TypeScript {
             var finalDecision: PullSignatureSymbol = null;
             var hasOverloads = group.length > 1;
             var comparisonInfo = new TypeComparisonInfo();
-            var callEx = <InvocationExpression>application;
-            var args: ASTList = callEx.arguments;
-            var target: AST = this.getLastIdentifierInTarget(callEx);
+            var args: ASTList = application.arguments;
 
             var originalInProvisionalAnyContext = context.inProvisionalAnyContext;
             context.inProvisionalAnyContext = true;
@@ -8910,6 +8909,7 @@ module TypeScript {
                 finalDecision = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
             }
             else {
+                var target: AST = this.getCallTargetErrorSpanAST(application);
                 if (comparisonInfo.message) {
                     diagnostics.push(new Diagnostic(this.unitPath, target.minChar, target.getLength(),
                         DiagnosticCode.Supplied_parameters_do_not_match_any_signature_of_call_target_NL_0, [comparisonInfo.message]));
@@ -8924,7 +8924,7 @@ module TypeScript {
             return finalDecision;
         }
 
-        private getLastIdentifierInTarget(callEx: ICallExpression): AST {
+        private getCallTargetErrorSpanAST(callEx: ICallExpression): AST {
             return (callEx.target.nodeType() === NodeType.MemberAccessExpression) ? (<BinaryExpression>callEx.target).operand2 : callEx.target;
         }
 
@@ -8950,6 +8950,14 @@ module TypeScript {
             return true;
         }
 
+        private signatureIsApplicableForFunctionExpressionArgument(paramTypeSymbol: PullTypeSymbol, argument: AST): boolean {
+
+        }
+
+        private signatureIsApplicableForArgument(paramTypeSymbol: PullTypeSymbol, argument: AST, shouldContextuallyType: boolean): boolean {
+
+        }
+
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
@@ -8958,38 +8966,33 @@ module TypeScript {
 
             var applicableSigs: PullApplicableSignature[] = [];
             var paramType: PullTypeSymbol = null;
-            var signatureIsApplicable = false;
             var cxt: PullContextualTypeContext = null;
-            var hasProvisionalErrors = false;
 
             var parameters: PullSymbol[];
             var signature: PullSignatureSymbol;
             var argSym: PullSymbol;
 
             for (var i = 0; i < candidateSignatures.length; i++) {
-                signatureIsApplicable = true;
-
                 signature = candidateSignatures[i];
                 parameters = signature.parameters;
 
                 if (args == null) {
-                    signatureIsApplicable = signature.nonOptionalParamCount === 0;
+                    // If arguments are required in this signature, the signature doesn't fit
+                    if (signature.nonOptionalParamCount > 0) {
+                        continue;
+                    }
                 }
                 else {
                     // Check arity bounds
                     if (!this.overloadHasCorrectArity(signature, args)) {
-                        signatureIsApplicable = false;
                         continue;
                     }
 
                     var isInVarArg = false;
-                    hasProvisionalErrors = false;
+                    var hasProvisionalErrors = false;
+                    var signatureIsNonApplicableForSomeArgument = false;
 
                     for (var j = 0; j < args.members.length; j++) {
-
-                        if (j >= parameters.length && !signature.hasVarArgs) {
-                            continue;
-                        }
 
                         if (!isInVarArg) {
                             if (!parameters[j].isResolved) {
@@ -9016,11 +9019,11 @@ module TypeScript {
 
                             argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], false, enclosingDecl, context);
 
-                            if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], true)) {
+                            if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], /*beStringent*/true)) {
                                 // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                                if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], false)) {
+                                if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], /*beStringent*/false)) {
                                     if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                        signatureIsApplicable = false;
+                                        signatureIsNonApplicableForSomeArgument = true;
                                         break;
                                     }
                                 }
@@ -9039,14 +9042,13 @@ module TypeScript {
                                         comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
                                             [paramType.toString(), (j + 1), argSym.getTypeName()]));
                                     }
-                                    signatureIsApplicable = false;
+                                    signatureIsNonApplicableForSomeArgument = true;
                                 }
-                                argSym.invalidate();
                                 cxt = context.popContextualType();
                                 hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
 
                                 //this.resetProvisionalErrors();
-                                if (!signatureIsApplicable) {
+                                if (signatureIsNonApplicableForSomeArgument) {
                                     break;
                                 }
                             }
@@ -9066,15 +9068,14 @@ module TypeScript {
                                         [paramType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
 
-                                signatureIsApplicable = false;
+                                signatureIsNonApplicableForSomeArgument = true;
                             }
 
-                            argSym.invalidate();
                             cxt = context.popContextualType();
                             hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
 
                             //this.resetProvisionalErrors();
-                            if (!signatureIsApplicable) {
+                            if (signatureIsNonApplicableForSomeArgument) {
                                 break;
                             }
                         }
@@ -9092,15 +9093,14 @@ module TypeScript {
                                     comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
                                         [paramType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
-                                signatureIsApplicable = false;
+                                signatureIsNonApplicableForSomeArgument = true;
                             }
 
-                            argSym.invalidate();
                             cxt = context.popContextualType();
 
                             hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
 
-                            if (!signatureIsApplicable) {
+                            if (signatureIsNonApplicableForSomeArgument) {
                                 break;
                             }
                         }
@@ -9121,14 +9121,14 @@ module TypeScript {
                                     comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
                                         [paramType.toString(), (j + 1), argSym.getTypeName()]));
                                 }
-                                signatureIsApplicable = false;
+                                signatureIsNonApplicableForSomeArgument = true;
                                 break;
                             }
                         }
                     }
                 }
 
-                if (signatureIsApplicable) {
+                if (!signatureIsNonApplicableForSomeArgument) {
                     applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: hasProvisionalErrors };
                 }
             }
@@ -10457,12 +10457,6 @@ module TypeScript {
 
             if (stringSignature || numberSignature) {
                 var members = containerTypeDecl.getChildDecls();
-                if (stringSignature && !stringSignature.isResolved) {
-                    this.resolveDeclaredSymbol(stringSignature, stringSignature.getDeclarations()[0].getParentDecl(), context);
-                }
-                if (numberSignature && !numberSignature.isResolved) {
-                    this.resolveDeclaredSymbol(numberSignature, numberSignature.getDeclarations()[0].getParentDecl(), context);
-                }
                 for (var i = 0; i < members.length; i++) {
                     // Nothing to check if the member has no name or is a signature
                     var member = members[i];
@@ -10471,12 +10465,12 @@ module TypeScript {
                     }
 
                     // Decide whether to check against the number or string signature
-                    var isMemberNumeric = isFinite(+member.name);
+                    var isMemberNumeric = PullHelpers.isNameNumeric(member.name);
                     if (isMemberNumeric && numberSignature) {
-                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), numberSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, true);
+                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), numberSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, /*isNumeric*/ true);
                     }
                     else if (stringSignature) {
-                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), stringSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, false);
+                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), stringSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, /*isNumeric*/ false);
                     }
                 }
             }

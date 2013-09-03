@@ -272,15 +272,7 @@ module TypeScript {
         }
 
         public invalidate() {
-
-            this.isResolved = false;
-
-            var declarations = this.getDeclarations();
-
-            // reset the errors for its decl
-            //for (var i = 0; i < declarations.length; i++) {
-            //    declarations[i].resetErrors();
-            //}
+            this.setUnresolved();
         }
 
         public hasFlag(flag: PullElementFlags): boolean {
@@ -1876,7 +1868,6 @@ module TypeScript {
             }
             
             this._knownBaseTypeCount = 0;
-            this._allIndexSignatures = null;
 
             super.invalidate();
         }
