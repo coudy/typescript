@@ -1974,11 +1974,6 @@ module TypeScript {
             }
 
             paramSymbol.setResolved();
-
-            // May be this is not needed since we always resolve the symbol ?
-            //if (this.canTypeCheckAST(argDeclAST, context)) {
-            //    this.setTypeChecked(argDeclAST, context);
-            //}
         }
 
         private resolveFunctionExpressionParameter(argDeclAST: Parameter, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
@@ -2075,11 +2070,6 @@ module TypeScript {
             }
 
             paramSymbol.setResolved();
-            
-            // May be this is not needed since we always resolve the symbol ?
-            //if (this.canTypeCheckAST(argDeclAST, context)) {
-            //    this.setTypeChecked(argDeclAST, context);
-            //}
         }
 
         public resolveInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -4641,10 +4631,10 @@ module TypeScript {
 
                 case NodeType.MemberAccessExpression:
                     if (context.resolvingTypeReference) {
-                        return this.typeCheckDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                        return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
                     }
                     else {
-                        return this.typeCheckDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
+                        return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
                     }
 
                 case NodeType.FunctionDeclaration:
@@ -5214,11 +5204,6 @@ module TypeScript {
             return nameSymbol;
         }
 
-        public typeCheckDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            this.setTypeChecked(dottedNameAST, context);
-            this.computeDottedNameExpressionSymbol(dottedNameAST, enclosingDecl, context, true);
-        }
-
         public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var typeNameSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST);
 
@@ -5450,12 +5435,6 @@ module TypeScript {
                 }
             }
 
-           
-            // May be this is not needed since we always resolve the symbol ?
-            //if (this.canTypeCheckAST(argDeclAST, context)) {
-            //    this.setTypeChecked(argDeclAST, context);
-            //}
-
             return specializedSymbol;
         }
 
@@ -5552,21 +5531,6 @@ module TypeScript {
             }
 
             return childTypeSymbol;
-        }
-
-        private typeCheckDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            this.setTypeChecked(dottedNameAST, context);
-            if (!(<Identifier>dottedNameAST.operand2).isMissing()) {
-                // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
-                // gotten into this code path if it was already set.
-                var savedResolvingTypeReference = context.resolvingTypeReference;
-                var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-                context.resolvingNamespaceMemberAccess = true;
-                context.resolvingTypeReference = true;
-                var lhs = this.resolveAST(dottedNameAST.operand1, false, enclosingDecl, context);
-                context.resolvingTypeReference = savedResolvingTypeReference;
-                context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
-            }
         }
 
         private resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -5769,6 +5733,7 @@ module TypeScript {
 
             var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
             this.seenSuperConstructorCall = false;
+            // Make sure there is no contextual type on the stack when resolving the block
             context.pushContextualType(null, context.inProvisionalResolution(), null);
             this.resolveAST(funcDeclAST.block, false, functionDecl, context);
             context.popContextualType();
@@ -5843,7 +5808,9 @@ module TypeScript {
                 this.setSymbolForAST(ast, thisTypeSymbol, context);
             }
 
-            this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
+            if (canTypeCheckAST) {
+                this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
+            }
 
             return thisTypeSymbol;
         }
@@ -5933,13 +5900,14 @@ module TypeScript {
                 this.typeCheckSuperExpression(ast, enclosingDecl, context);
             }
 
-            this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
-
             return superType;
         }
 
         private typeCheckSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
+
+            this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
+
             if (!enclosingDecl) {
                 return;
             }
@@ -6012,8 +5980,8 @@ module TypeScript {
                 this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
             }
 
-            if (!isUsingExistingSymbol) {
-                var typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
+            if (!typeSymbol) {
+                typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
                 typeSymbol.addDeclaration(objectLitDecl);
                 this.setSymbolForAST(objectLitAST, typeSymbol, context);
                 objectLitDecl.setSymbol(typeSymbol);
