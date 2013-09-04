@@ -1032,6 +1032,23 @@ module TypeScript {
             return symbol;
         }
 
+        private resolveOtherDeclarations(ast: AST, context: PullTypeResolutionContext) {
+            var resolvedDecl = this.getDeclForAST(ast);
+            var symbol = resolvedDecl.getSymbol();
+
+            var allDecls = symbol.getDeclarations();
+            for (var i = 0; i < allDecls.length; i++) {
+                var currentDecl = allDecls[i];
+                var astForCurrentDecl = this.getASTForDecl(currentDecl);
+                if (astForCurrentDecl != ast) {
+                    var unitPath = this.unitPath;
+                    this.setUnitPath(currentDecl.getScriptName());
+                    this.resolveAST(astForCurrentDecl, false, this.getEnclosingDecl(currentDecl), context);
+                    this.setUnitPath(unitPath);
+                }
+            }
+        }
+
         //
         // Resolve a module declaration
         //
@@ -1077,6 +1094,8 @@ module TypeScript {
             }
 
             containerSymbol.setResolved();
+
+            this.resolveOtherDeclarations(ast, context);
 
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckModuleDeclaration(ast, context);
@@ -1394,6 +1413,8 @@ module TypeScript {
                 }
             }
 
+            this.resolveOtherDeclarations(classDeclAST, context);
+
             if (this.canTypeCheckAST(classDeclAST, context)) {
                 this.typeCheckClassDeclaration(classDeclAST, context);
             }
@@ -1420,8 +1441,13 @@ module TypeScript {
 
             var interfaceDecl: PullDecl = this.getDeclForAST(interfaceDeclAST);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
-            if (interfaceDeclSymbol.isResolved && this.canTypeCheckAST(interfaceDeclAST, context)) {
-                this.typeCheckInterfaceDeclaration(interfaceDeclAST, context);
+
+            if (interfaceDeclSymbol.isResolved) {
+                this.resolveOtherDeclarations(interfaceDeclAST, context);
+
+                if (this.canTypeCheckAST(interfaceDeclAST, context)) {
+                    this.typeCheckInterfaceDeclaration(interfaceDeclAST, context);
+                }
             }
 
             return interfaceDeclSymbol;
@@ -3261,6 +3287,10 @@ module TypeScript {
                     }
                     signature.setResolved();
                 }
+            }
+
+            if (funcSymbol) {
+                this.resolveOtherDeclarations(funcDeclAST, context);
             }
 
             if (this.canTypeCheckAST(funcDeclAST, context)) {
@@ -9923,7 +9953,8 @@ module TypeScript {
                                     break;
                                 }
                             }
-                            symbol = symbolPath[symbolPath.length - 1];
+                            symbol = symbolPath.length > 1 &&
+                            symbolPath[symbolPath.length - 2].kind == PullElementKind.DynamicModule ? symbolPath[symbolPath.length - 2] : symbolPath[symbolPath.length - 1];
                         }
                     }
                 } else if (symbol.kind == PullElementKind.TypeAlias) {

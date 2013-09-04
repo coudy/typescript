@@ -1,5 +1,3 @@
-// @declaration: true
-
 class A {
     foo() { }
 }
@@ -20,8 +18,6 @@ interface J {
 class D implements I, J {
     baz() { }
     bat() { }
-    foo() { }
-    bar() { }
 }
 
 interface I extends A, B {

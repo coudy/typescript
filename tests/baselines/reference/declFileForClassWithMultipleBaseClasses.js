@@ -22,6 +22,10 @@ var D = (function () {
     };
     D.prototype.bat = function () {
     };
+    D.prototype.foo = function () {
+    };
+    D.prototype.bar = function () {
+    };
     return D;
 })();
 
@@ -42,6 +46,8 @@ interface J {
 declare class D implements I, J {
     public baz(): void;
     public bat(): void;
+    public foo(): void;
+    public bar(): void;
 }
 interface I extends A, B {
 }
