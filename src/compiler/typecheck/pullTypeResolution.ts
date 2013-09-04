@@ -8980,6 +8980,191 @@ module TypeScript {
             return true;
         }
 
+        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            if (args == null) {
+                // If arguments are required in this signature, the signature doesn't fit
+                if (signature.nonOptionalParamCount > 0) {
+                    return OverloadApplicabilityStatus.NotApplicable;
+                }
+                else {
+                    return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                }
+            }
+            else {
+                // Check arity bounds
+                if (!this.overloadHasCorrectArity(signature, args)) {
+                    return OverloadApplicabilityStatus.NotApplicable;
+                }
+
+                var isInVarArg = false;
+                var hasProvisionalErrors = false;
+                var parameters = signature.parameters;
+                var hasProvisionalErrors = false;
+                var paramType: PullTypeSymbol = null;
+
+                for (var i = 0; i < args.members.length; i++) {
+                    if (!isInVarArg) {
+                        if (!parameters[i].isResolved) {
+                            this.resolveDeclaredSymbol(parameters[i], enclosingDecl, context);
+                        }
+
+                        if (parameters[i].isVarArg) {
+                            // If the vararg has no element type, it is malformed, so just use the any symbol (we will have errored when resolving the signature).
+                            paramType = parameters[i].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
+                            isInVarArg = true;
+                        }
+                        else {
+                            paramType = parameters[i].type;
+                        }
+                    }
+
+                    var applicability = this.overloadIsApplicableForArgument(paramType, args.members[i], i, enclosingDecl, context, comparisonInfo);
+                    if (applicability === OverloadApplicabilityStatus.NotApplicable) {
+                        return applicability;
+                    }
+                    else {
+                        hasProvisionalErrors = hasProvisionalErrors || (applicability === OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors);
+                    }
+                }
+
+                return hasProvisionalErrors ?
+                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
+                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+        }
+
+        private overloadIsApplicableForArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            if (this.isAnyOrEquivalent(paramType)) {
+                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+            else if (arg.nodeType() === NodeType.FunctionDeclaration) {
+                return this.overloadIsApplicableForFunctionExpressionArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            }
+            else if (arg.nodeType() === NodeType.ObjectLiteralExpression) {
+                return this.overloadIsApplicableForObjectLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            }
+            else if (arg.nodeType() === NodeType.ArrayLiteralExpression) {
+                return this.overloadIsApplicableForArrayLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            }
+            else {
+                return this.overloadIsApplicableForOtherArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            }
+        }
+
+        private overloadIsApplicableForFunctionExpressionArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
+                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+
+            var argSym = this.resolveFunctionExpression(<FunctionDeclaration>arg, false, enclosingDecl, context);
+
+            if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>arg, /*beStringent*/true)) {
+                // if it's just annotations that are blocking us, typecheck the function and add it to the list
+                if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>arg, /*beStringent*/false)) {
+                    if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                        return OverloadApplicabilityStatus.NotApplicable;
+                    }
+                }
+                else {
+                    return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                }
+            }
+            else { // if it can be contextually typed, try it out...
+                argSym.invalidate();
+                context.pushContextualType(paramType, true, null);
+
+                argSym = this.resolveFunctionExpression(<FunctionDeclaration>arg, true, enclosingDecl, context);
+
+                var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+                var cxt = context.popContextualType();
+
+                if (applicable) {
+                    return cxt.hasProvisionalErrors ?
+                        OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
+                        OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                }
+                else {
+                    return OverloadApplicabilityStatus.NotApplicable;
+                }
+            }
+        }
+
+        private overloadIsApplicableForObjectLiteralArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            // attempt to contextually type the object literal
+            if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
+                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+
+            context.pushContextualType(paramType, true, null);
+            var argSym = this.resolveObjectLiteralExpression(arg, true, enclosingDecl, context);
+
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+
+            var cxt = context.popContextualType();
+            if (applicable) {
+                return cxt.hasProvisionalErrors ?
+                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
+                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+            else {
+                return OverloadApplicabilityStatus.NotApplicable;
+            }
+        }
+
+        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            // attempt to contextually type the array literal
+            if (paramType === this.cachedArrayInterfaceType()) {
+                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+
+            context.pushContextualType(paramType, true, null);
+            var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>arg, true, enclosingDecl, context);
+
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+
+            var cxt = context.popContextualType();
+
+            if (applicable) {
+                return cxt.hasProvisionalErrors ?
+                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
+                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+            }
+            else {
+                return OverloadApplicabilityStatus.NotApplicable;
+            }
+        }
+
+        private overloadIsApplicableForOtherArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            // No need to contextually type or mark as provisional
+            var argSym = this.resolveAST(arg, false, enclosingDecl, context);
+
+            // If it is an alias, get its type
+            if (argSym.type.isAlias()) {
+                var aliasSym = <PullTypeAliasSymbol>argSym.type;
+                argSym = aliasSym.getExportAssignedTypeSymbol();
+            }
+
+            // Just in case the argument is a string literal, and are checking overload on const, we set this stringConstantVal
+            // (sourceIsAssignableToTarget will internally check if the argument is actually a string)
+            comparisonInfo.stringConstantVal = arg;
+            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context) ?
+                OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors :
+                OverloadApplicabilityStatus.NotApplicable;
+        }
+
+        private overloadIsApplicableForArgumentHelper(paramType: PullTypeSymbol, argSym: PullSymbol, argumentIndex: number, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): boolean {
+            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                if (comparisonInfo && !comparisonInfo.message) {
+                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                        [paramType.toString(), (argumentIndex + 1), argSym.getTypeName()]));
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
@@ -8995,165 +9180,9 @@ module TypeScript {
             var argSym: PullSymbol;
 
             for (var i = 0; i < candidateSignatures.length; i++) {
-                signature = candidateSignatures[i];
-                parameters = signature.parameters;
-
-                if (args == null) {
-                    // If arguments are required in this signature, the signature doesn't fit
-                    if (signature.nonOptionalParamCount > 0) {
-                        continue;
-                    }
-                }
-                else {
-                    // Check arity bounds
-                    if (!this.overloadHasCorrectArity(signature, args)) {
-                        continue;
-                    }
-
-                    var isInVarArg = false;
-                    var hasProvisionalErrors = false;
-                    var signatureIsNonApplicableForSomeArgument = false;
-
-                    for (var j = 0; j < args.members.length; j++) {
-
-                        if (!isInVarArg) {
-                            if (!parameters[j].isResolved) {
-                                this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
-                            }
-
-                            if (parameters[j].isVarArg) {
-                                // If the vararg has no element type, it is malformed, so just use the any symbol (we will have errored when resolving the signature).
-                                paramType = parameters[j].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
-                                isInVarArg = true;
-                            }
-                            else {
-                                paramType = parameters[j].type;
-                            }
-                        }
-
-                        if (this.isAnyOrEquivalent(paramType)) {
-                            continue;
-                        }
-                        else if (args.members[j].nodeType() === NodeType.FunctionDeclaration) {
-
-                            if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
-                                continue;
-                            }
-
-                            argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], false, enclosingDecl, context);
-
-                            if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], /*beStringent*/true)) {
-                                // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                                if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>args.members[j], /*beStringent*/false)) {
-                                    if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                        signatureIsNonApplicableForSomeArgument = true;
-                                        break;
-                                    }
-                                }
-                                else {
-                                    break;
-                                }
-                            }
-                            else { // if it can be contextually typed, try it out...
-                                argSym.invalidate();
-                                context.pushContextualType(paramType, true, null);
-
-                                argSym = this.resolveFunctionExpression(<FunctionDeclaration>args.members[j], true, enclosingDecl, context);
-
-                                if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                    if (comparisonInfo && !comparisonInfo.message) {
-                                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                            [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                    }
-                                    signatureIsNonApplicableForSomeArgument = true;
-                                }
-                                cxt = context.popContextualType();
-                                hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
-
-                                //this.resetProvisionalErrors();
-                                if (signatureIsNonApplicableForSomeArgument) {
-                                    break;
-                                }
-                            }
-                        }
-                        else if (args.members[j].nodeType() === NodeType.ObjectLiteralExpression) {
-                            // now actually attempt to typecheck as the contextual type
-                            if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
-                                continue;
-                            }
-
-                            context.pushContextualType(paramType, true, null);
-                            argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
-
-                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                if (comparisonInfo && !comparisonInfo.message) {
-                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                        [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                }
-
-                                signatureIsNonApplicableForSomeArgument = true;
-                            }
-
-                            cxt = context.popContextualType();
-                            hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
-
-                            //this.resetProvisionalErrors();
-                            if (signatureIsNonApplicableForSomeArgument) {
-                                break;
-                            }
-                        }
-                        else if (args.members[j].nodeType() === NodeType.ArrayLiteralExpression) {
-                            // attempt to contextually type the array literal
-                            if (paramType === this.cachedArrayInterfaceType()) {
-                                continue;
-                            }
-
-                            context.pushContextualType(paramType, true, null);
-                            var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>args.members[j], true, enclosingDecl, context);
-
-                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                if (comparisonInfo && !comparisonInfo.message) {
-                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                        [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                }
-                                signatureIsNonApplicableForSomeArgument = true;
-                            }
-
-                            cxt = context.popContextualType();
-
-                            hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
-
-                            if (signatureIsNonApplicableForSomeArgument) {
-                                break;
-                            }
-                        }
-                        else {
-                            // No need to contextually type or mark as provisional
-                            var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
-
-                            // If it is an alias, get its type
-                            if (argSym.type.isAlias()) {
-                                var aliasSym = <PullTypeAliasSymbol>argSym.type;
-                                argSym = aliasSym.getExportAssignedTypeSymbol();
-                            }
-
-                            // Just in case the argument is a string literal, and are checking overload on const, we set this stringConstantVal
-                            // (sourceIsAssignableToTarget will internally check if the argument is actually a string)
-                            comparisonInfo.stringConstantVal = args.members[j];
-                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                                if (comparisonInfo && !comparisonInfo.message) {
-                                    comparisonInfo.setMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                                        [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                }
-                                signatureIsNonApplicableForSomeArgument = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (!signatureIsNonApplicableForSomeArgument) {
-                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: hasProvisionalErrors };
+                var applicability = this.overloadIsApplicable(candidateSignatures[i], args, enclosingDecl, context, comparisonInfo);
+                if (applicability !== OverloadApplicabilityStatus.NotApplicable) {
+                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: applicability === OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors };
                 }
             }
 
@@ -10990,5 +11019,11 @@ module TypeScript {
         public setMessage(message: string) {
             this.message = this.indentString() + message;
         }
+    }
+
+    enum OverloadApplicabilityStatus {
+        NotApplicable,
+        ApplicableButWithProvisionalErrors,
+        ApplicableWithNoProvisionalErrors
     }
 }
