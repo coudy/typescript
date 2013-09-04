@@ -8950,13 +8950,13 @@ module TypeScript {
             return true;
         }
 
-        private signatureIsApplicableForFunctionExpressionArgument(paramTypeSymbol: PullTypeSymbol, argument: AST): boolean {
+        //private signatureIsApplicableForFunctionExpressionArgument(paramTypeSymbol: PullTypeSymbol, argument: AST): boolean {
 
-        }
+        //}
 
-        private signatureIsApplicableForArgument(paramTypeSymbol: PullTypeSymbol, argument: AST, shouldContextuallyType: boolean): boolean {
+        //private signatureIsApplicableForArgument(paramTypeSymbol: PullTypeSymbol, argument: AST, shouldContextuallyType: boolean): boolean {
 
-        }
+        //}
 
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
@@ -9000,7 +9000,8 @@ module TypeScript {
                             }
 
                             if (parameters[j].isVarArg) {
-                                paramType = parameters[j].type.getElementType() || parameters[j].type;
+                                // If the vararg has no element type, it is malformed, so just use the any symbol (we will have errored when resolving the signature).
+                                paramType = parameters[j].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
                                 isInVarArg = true;
                             }
                             else {
@@ -9115,6 +9116,8 @@ module TypeScript {
                                 argSym = aliasSym.getExportAssignedTypeSymbol();
                             }
 
+                            // Just in case the argument is a string literal, and are checking overload on const, we set this stringConstantVal
+                            // (sourceIsAssignableToTarget will internally check if the argument is actually a string)
                             comparisonInfo.stringConstantVal = args.members[j];
                             if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
                                 if (comparisonInfo && !comparisonInfo.message) {
