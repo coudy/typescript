@@ -191,6 +191,9 @@ module TypeScript {
 
             tc.invalidateProvisionallyTypedSymbols();
 
+            // If the context we just popped off had provisional errors, and we are *still* in a provisional context,
+            // we need to not forget that we had provisional errors in a deeper context. We do this by setting the 
+            // hasProvisioanlErrors flag on the now top context on the stack. 
             if (tc.hasProvisionalErrors && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length - 1].hasProvisionalErrors = true;
             }

@@ -8946,6 +8946,14 @@ module TypeScript {
             return true;
         }
 
+        //private signatureIsApplicableForFunctionExpressionArgument(paramTypeSymbol: PullTypeSymbol, argument: AST): boolean {
+
+        //}
+
+        //private signatureIsApplicableForArgument(paramTypeSymbol: PullTypeSymbol, argument: AST, shouldContextuallyType: boolean): boolean {
+
+        //}
+
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
@@ -9100,7 +9108,6 @@ module TypeScript {
                             // If it is an alias, get its type
                             if (argSym.type.isAlias()) {
                                 var aliasSym = <PullTypeAliasSymbol>argSym.type;
-                                aliasSym.isUsedAsValue = true;
                                 argSym = aliasSym.getExportAssignedTypeSymbol();
                             }
 
@@ -9151,12 +9158,13 @@ module TypeScript {
                 }
             }
 
-            // Resolve the argument types with a provisional any (we need to clean out any contextual typing info that leaked into the argument types from filtering the candidates)
+            // Resolve the argument types with a provisional any (this is a hack to make sure the symbol does not get cached when we resolve the AST)
+            // Ideally, we would have a way to switch into provisional mode *without* pushing a contextual type on the stack
             if (args) {
                 var ATypes = new Array<PullTypeSymbol>(args.members.length);
-                context.pushContextualType(this.semanticInfoChain.anyTypeSymbol, true, null);
+                context.pushContextualType(this.semanticInfoChain.anyTypeSymbol, /*provisional*/ true, /*substitutions*/ null);
                 for (var i = 0; i < args.members.length; i++) {
-                    ATypes[i] = this.resolveAST(args.members[i], true, enclosingDecl, context).type;
+                    ATypes[i] = this.resolveAST(args.members[i], /*inContextuallyTypedAssignment*/ true, enclosingDecl, context).type;
                 }
                 context.popContextualType();
             }
