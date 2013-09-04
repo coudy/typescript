@@ -8946,14 +8946,6 @@ module TypeScript {
             return true;
         }
 
-        //private signatureIsApplicableForFunctionExpressionArgument(paramTypeSymbol: PullTypeSymbol, argument: AST): boolean {
-
-        //}
-
-        //private signatureIsApplicableForArgument(paramTypeSymbol: PullTypeSymbol, argument: AST, shouldContextuallyType: boolean): boolean {
-
-        //}
-
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
