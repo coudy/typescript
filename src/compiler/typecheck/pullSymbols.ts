@@ -2616,7 +2616,8 @@ module TypeScript {
             return typeToSpecialize;
         }
 
-        return typeToSpecialize.kind  == PullElementKind.Class || (typeToSpecialize.kind == PullElementKind.Interface && typeToSpecialize.name != "") ? <PullTypeSymbol>decl.getSymbol().type : typeToSpecialize;
+        // get type from the decl if class or interface (Interface declaration with no name is declaration for object literal)
+        return typeToSpecialize.kind == PullElementKind.Class || (typeToSpecialize.kind == PullElementKind.Interface && typeToSpecialize.name != "") ? <PullTypeSymbol>decl.getSymbol().type : typeToSpecialize;
     }
 
     export var nSpecializationsCreated = 0;

@@ -748,7 +748,7 @@ module TypeScript {
                 }
             }
 
-            errors = ArrayUtilities.getUnique(errors, (d1, d2) => Diagnostic.equals(d1, d2));
+            errors = ArrayUtilities.distinct(errors, Diagnostic.equals);
             errors.sort((d1, d2) => {
                 if (d1.fileName() < d2.fileName()) {
                     return -1;

@@ -54,19 +54,21 @@ module TypeScript {
         }
 
 
-        // Gets uniue element array
-        public static getUnique<T>(array: T[], equalsFn?: (a: T, b: T) => boolean): T[] {
+        // Gets unique element array
+        public static distinct<T>(array: T[], equalsFn?: (a: T, b: T) => boolean): T[] {
             var result: T[] = [];
 
+            // TODO: use map when available
             for (var i = 0, n = array.length; i < n; i++) {
+                var current = array[i];
                 for (var j = 0; j < result.length; j++) {
-                    if (equalsFn(result[j], array[i])) {
+                    if (equalsFn(result[j], current)) {
                         break;
                     }
                 }
 
-                if (j == result.length) {
-                    result.push(array[i]);
+                if (j === result.length) {
+                    result.push(current);
                 }
             }
 
