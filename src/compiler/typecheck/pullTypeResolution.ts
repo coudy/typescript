@@ -943,8 +943,12 @@ module TypeScript {
             var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = false;
 
+            var savedTypeSpecializationStack = context.getTypeSpecializationStack();
+            context.setTypeSpecializationStack([]);
+
             var result = this.resolveDeclaredSymbolWorker(symbol, enclosingDecl, context);
 
+            context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
             context.inConstructorArguments = savedInConstructorArguments;
             context.isResolvingSuperConstructorCallArgument = savedIsResolvingSuperConstructorCallArgument;

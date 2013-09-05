@@ -271,6 +271,14 @@ module TypeScript {
             }
         }
 
+        public getTypeSpecializationStack() {
+            return this.typeSpecializationStack;
+        }
+
+        public setTypeSpecializationStack(newStack: any[]) {
+            this.typeSpecializationStack = newStack;
+        }
+
         public pushTypeSpecializationCache(cache: any) {
             this.typeSpecializationStack[this.typeSpecializationStack.length] = cache;
         }
