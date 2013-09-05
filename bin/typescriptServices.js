@@ -44314,6 +44314,157 @@ var TypeScript;
             return true;
         };
 
+        PullTypeResolver.prototype.overloadIsApplicable = function (signature, args, enclosingDecl, context, comparisonInfo) {
+            if (args == null) {
+                if (signature.nonOptionalParamCount > 0) {
+                    return 0 /* NotApplicable */;
+                } else {
+                    return 2 /* ApplicableWithNoProvisionalErrors */;
+                }
+            } else {
+                if (!this.overloadHasCorrectArity(signature, args)) {
+                    return 0 /* NotApplicable */;
+                }
+
+                var isInVarArg = false;
+                var hasProvisionalErrors = false;
+                var parameters = signature.parameters;
+                var hasProvisionalErrors = false;
+                var paramType = null;
+
+                for (var i = 0; i < args.members.length; i++) {
+                    if (!isInVarArg) {
+                        if (!parameters[i].isResolved) {
+                            this.resolveDeclaredSymbol(parameters[i], enclosingDecl, context);
+                        }
+
+                        if (parameters[i].isVarArg) {
+                            paramType = parameters[i].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
+                            isInVarArg = true;
+                        } else {
+                            paramType = parameters[i].type;
+                        }
+                    }
+
+                    var applicability = this.overloadIsApplicableForArgument(paramType, args.members[i], i, enclosingDecl, context, comparisonInfo);
+                    if (applicability === 0 /* NotApplicable */) {
+                        return applicability;
+                    } else {
+                        hasProvisionalErrors = hasProvisionalErrors || (applicability === 1 /* ApplicableButWithProvisionalErrors */);
+                    }
+                }
+
+                return hasProvisionalErrors ? 1 /* ApplicableButWithProvisionalErrors */ : 2 /* ApplicableWithNoProvisionalErrors */;
+            }
+        };
+
+        PullTypeResolver.prototype.overloadIsApplicableForArgument = function (paramType, arg, argIndex, enclosingDecl, context, comparisonInfo) {
+            if (this.isAnyOrEquivalent(paramType)) {
+                return 2 /* ApplicableWithNoProvisionalErrors */;
+            } else if (arg.nodeType() === 13 /* FunctionDeclaration */) {
+                return this.overloadIsApplicableForFunctionExpressionArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            } else if (arg.nodeType() === 23 /* ObjectLiteralExpression */) {
+                return this.overloadIsApplicableForObjectLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            } else if (arg.nodeType() === 22 /* ArrayLiteralExpression */) {
+                return this.overloadIsApplicableForArrayLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            } else {
+                return this.overloadIsApplicableForOtherArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+            }
+        };
+
+        PullTypeResolver.prototype.overloadIsApplicableForFunctionExpressionArgument = function (paramType, arg, argIndex, enclosingDecl, context, comparisonInfo) {
+            if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
+                return 2 /* ApplicableWithNoProvisionalErrors */;
+            }
+
+            var argSym = this.resolveFunctionExpression(arg, false, enclosingDecl, context);
+
+            if (!this.canApplyContextualTypeToFunction(paramType, arg, true)) {
+                if (this.canApplyContextualTypeToFunction(paramType, arg, false)) {
+                    if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
+                        return 0 /* NotApplicable */;
+                    }
+                } else {
+                    return 2 /* ApplicableWithNoProvisionalErrors */;
+                }
+            } else {
+                argSym.invalidate();
+                context.pushContextualType(paramType, true, null);
+
+                argSym = this.resolveFunctionExpression(arg, true, enclosingDecl, context);
+
+                var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+                var cxt = context.popContextualType();
+
+                if (applicable) {
+                    return cxt.hasProvisionalErrors ? 1 /* ApplicableButWithProvisionalErrors */ : 2 /* ApplicableWithNoProvisionalErrors */;
+                } else {
+                    return 0 /* NotApplicable */;
+                }
+            }
+        };
+
+        PullTypeResolver.prototype.overloadIsApplicableForObjectLiteralArgument = function (paramType, arg, argIndex, enclosingDecl, context, comparisonInfo) {
+            if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
+                return 2 /* ApplicableWithNoProvisionalErrors */;
+            }
+
+            context.pushContextualType(paramType, true, null);
+            var argSym = this.resolveObjectLiteralExpression(arg, true, enclosingDecl, context);
+
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+
+            var cxt = context.popContextualType();
+            if (applicable) {
+                return cxt.hasProvisionalErrors ? 1 /* ApplicableButWithProvisionalErrors */ : 2 /* ApplicableWithNoProvisionalErrors */;
+            } else {
+                return 0 /* NotApplicable */;
+            }
+        };
+
+        PullTypeResolver.prototype.overloadIsApplicableForArrayLiteralArgument = function (paramType, arg, argIndex, enclosingDecl, context, comparisonInfo) {
+            if (paramType === this.cachedArrayInterfaceType()) {
+                return 2 /* ApplicableWithNoProvisionalErrors */;
+            }
+
+            context.pushContextualType(paramType, true, null);
+            var argSym = this.resolveArrayLiteralExpression(arg, true, enclosingDecl, context);
+
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+
+            var cxt = context.popContextualType();
+
+            if (applicable) {
+                return cxt.hasProvisionalErrors ? 1 /* ApplicableButWithProvisionalErrors */ : 2 /* ApplicableWithNoProvisionalErrors */;
+            } else {
+                return 0 /* NotApplicable */;
+            }
+        };
+
+        PullTypeResolver.prototype.overloadIsApplicableForOtherArgument = function (paramType, arg, argIndex, enclosingDecl, context, comparisonInfo) {
+            var argSym = this.resolveAST(arg, false, enclosingDecl, context);
+
+            if (argSym.type.isAlias()) {
+                var aliasSym = argSym.type;
+                argSym = aliasSym.getExportAssignedTypeSymbol();
+            }
+
+            comparisonInfo.stringConstantVal = arg;
+            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context) ? 2 /* ApplicableWithNoProvisionalErrors */ : 0 /* NotApplicable */;
+        };
+
+        PullTypeResolver.prototype.overloadIsApplicableForArgumentHelper = function (paramType, argSym, argumentIndex, comparisonInfo, context) {
+            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
+                if (comparisonInfo && !comparisonInfo.message) {
+                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2, [paramType.toString(), (argumentIndex + 1), argSym.getTypeName()]));
+                }
+
+                return false;
+            }
+
+            return true;
+        };
+
         PullTypeResolver.prototype.getApplicableSignatures = function (candidateSignatures, args, comparisonInfo, enclosingDecl, context) {
             var applicableSigs = [];
             var paramType = null;
@@ -44324,139 +44475,9 @@ var TypeScript;
             var argSym;
 
             for (var i = 0; i < candidateSignatures.length; i++) {
-                signature = candidateSignatures[i];
-                parameters = signature.parameters;
-
-                if (args == null) {
-                    if (signature.nonOptionalParamCount > 0) {
-                        continue;
-                    }
-                } else {
-                    if (!this.overloadHasCorrectArity(signature, args)) {
-                        continue;
-                    }
-
-                    var isInVarArg = false;
-                    var hasProvisionalErrors = false;
-                    var signatureIsNonApplicableForSomeArgument = false;
-
-                    for (var j = 0; j < args.members.length; j++) {
-                        if (!isInVarArg) {
-                            if (!parameters[j].isResolved) {
-                                this.resolveDeclaredSymbol(parameters[j], enclosingDecl, context);
-                            }
-
-                            if (parameters[j].isVarArg) {
-                                paramType = parameters[j].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
-                                isInVarArg = true;
-                            } else {
-                                paramType = parameters[j].type;
-                            }
-                        }
-
-                        if (this.isAnyOrEquivalent(paramType)) {
-                            continue;
-                        } else if (args.members[j].nodeType() === 13 /* FunctionDeclaration */) {
-                            if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
-                                continue;
-                            }
-
-                            argSym = this.resolveFunctionExpression(args.members[j], false, enclosingDecl, context);
-
-                            if (!this.canApplyContextualTypeToFunction(paramType, args.members[j], true)) {
-                                if (this.canApplyContextualTypeToFunction(paramType, args.members[j], false)) {
-                                    if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
-                                        signatureIsNonApplicableForSomeArgument = true;
-                                        break;
-                                    }
-                                } else {
-                                    break;
-                                }
-                            } else {
-                                argSym.invalidate();
-                                context.pushContextualType(paramType, true, null);
-
-                                argSym = this.resolveFunctionExpression(args.members[j], true, enclosingDecl, context);
-
-                                if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
-                                    if (comparisonInfo && !comparisonInfo.message) {
-                                        comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2, [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                    }
-                                    signatureIsNonApplicableForSomeArgument = true;
-                                }
-                                cxt = context.popContextualType();
-                                hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
-
-                                if (signatureIsNonApplicableForSomeArgument) {
-                                    break;
-                                }
-                            }
-                        } else if (args.members[j].nodeType() === 23 /* ObjectLiteralExpression */) {
-                            if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
-                                continue;
-                            }
-
-                            context.pushContextualType(paramType, true, null);
-                            argSym = this.resolveObjectLiteralExpression(args.members[j], true, enclosingDecl, context);
-
-                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
-                                if (comparisonInfo && !comparisonInfo.message) {
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2, [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                }
-
-                                signatureIsNonApplicableForSomeArgument = true;
-                            }
-
-                            cxt = context.popContextualType();
-                            hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
-
-                            if (signatureIsNonApplicableForSomeArgument) {
-                                break;
-                            }
-                        } else if (args.members[j].nodeType() === 22 /* ArrayLiteralExpression */) {
-                            if (paramType === this.cachedArrayInterfaceType()) {
-                                continue;
-                            }
-
-                            context.pushContextualType(paramType, true, null);
-                            var argSym = this.resolveArrayLiteralExpression(args.members[j], true, enclosingDecl, context);
-
-                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
-                                if (comparisonInfo && !comparisonInfo.message) {
-                                    comparisonInfo.addMessage(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2, [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                }
-                                signatureIsNonApplicableForSomeArgument = true;
-                            }
-
-                            cxt = context.popContextualType();
-
-                            hasProvisionalErrors = hasProvisionalErrors || cxt.hasProvisionalErrors;
-
-                            if (signatureIsNonApplicableForSomeArgument) {
-                                break;
-                            }
-                        } else {
-                            var argSym = this.resolveAST(args.members[j], false, enclosingDecl, context);
-
-                            if (argSym.type.isAlias()) {
-                                var aliasSym = argSym.type;
-                                argSym = aliasSym.getExportAssignedTypeSymbol();
-                            }
-
-                            comparisonInfo.stringConstantVal = args.members[j];
-                            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, true)) {
-                                if (comparisonInfo && !comparisonInfo.message) {
-                                    comparisonInfo.setMessage(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2, [paramType.toString(), (j + 1), argSym.getTypeName()]));
-                                }
-                                signatureIsNonApplicableForSomeArgument = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (!signatureIsNonApplicableForSomeArgument) {
-                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: hasProvisionalErrors };
+                var applicability = this.overloadIsApplicable(candidateSignatures[i], args, enclosingDecl, context, comparisonInfo);
+                if (applicability !== 0 /* NotApplicable */) {
+                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: applicability === 1 /* ApplicableButWithProvisionalErrors */ };
                 }
             }
 
@@ -46056,6 +46077,13 @@ var TypeScript;
         return TypeComparisonInfo;
     })();
     TypeScript.TypeComparisonInfo = TypeComparisonInfo;
+
+    var OverloadApplicabilityStatus;
+    (function (OverloadApplicabilityStatus) {
+        OverloadApplicabilityStatus[OverloadApplicabilityStatus["NotApplicable"] = 0] = "NotApplicable";
+        OverloadApplicabilityStatus[OverloadApplicabilityStatus["ApplicableButWithProvisionalErrors"] = 1] = "ApplicableButWithProvisionalErrors";
+        OverloadApplicabilityStatus[OverloadApplicabilityStatus["ApplicableWithNoProvisionalErrors"] = 2] = "ApplicableWithNoProvisionalErrors";
+    })(OverloadApplicabilityStatus || (OverloadApplicabilityStatus = {}));
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
