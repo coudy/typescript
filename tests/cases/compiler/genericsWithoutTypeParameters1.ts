@@ -26,3 +26,8 @@ interface J<T> {
     x: I;
     y: J;
 }
+
+class A<T> { }
+function f<T>(x: T): A {
+    return null;
+}

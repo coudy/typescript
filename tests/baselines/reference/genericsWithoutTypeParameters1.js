@@ -27,3 +27,12 @@ var D = (function () {
     }
     return D;
 })();
+
+var A = (function () {
+    function A() {
+    }
+    return A;
+})();
+function f(x) {
+    return null;
+}
