@@ -93,6 +93,10 @@ declare var withComplicatedValue: {
     y: number;
     desc: string;
 };
+declare var declaredVar: any;
+declare var declareVar2: any;
+declare var declaredVar3: any;
+declare var deckareVarWithType: number;
 declare var arrayVar: string[];
 declare var complicatedArrayVar: {
     x: number;
@@ -146,7 +150,9 @@ declare module m2 {
 }
 declare var a22: any, b22: number, c22: number;
 declare var nn: any;
+declare var da1: any, da2: any;
 declare var normalVar: any;
+declare var dv1: any;
 declare var xl: any;
 declare var x: any;
 declare var z: any;
