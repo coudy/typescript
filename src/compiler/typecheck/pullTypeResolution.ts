@@ -9972,38 +9972,23 @@ module TypeScript {
                 if (symbolIsVisible && symbol.kind != PullElementKind.Primitive && symbol.kind != PullElementKind.TypeParameter) {
                     var symbolPath = symbol.pathToRoot();
                     var declSymbolPath = declSymbol.pathToRoot();
-                    if (symbolPath[symbolPath.length - 1].kind === PullElementKind.DynamicModule && declSymbolPath[declSymbolPath.length - 1].kind == PullElementKind.DynamicModule) {
-                        // Type from the dynamic module
-                        var verifyAlias = false;
-                        // From different dynamic module 
-                        if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
-                            verifyAlias = true;
-                        } else if (symbolPath.length > 1 &&
-                            symbolPath[symbolPath.length - 2].kind == PullElementKind.DynamicModule) {
-
-                            // declSymbol and symbol are from same dynamic module but symbol is from ambient module declaration
-                            if (declSymbolPath.length < 2 ||
-                                declSymbolPath[declSymbolPath.length - 2] != symbolPath[symbolPath.length - 2]) {
-                                verifyAlias = true;
+                    // Symbols are from different dynamic modules
+                    if (symbolPath[symbolPath.length - 1].kind === PullElementKind.DynamicModule &&
+                        declSymbolPath[declSymbolPath.length - 1].kind == PullElementKind.DynamicModule &&
+                        declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
+                        // Declaration symbol is from different modules
+                        // Type may not be visible without import statement
+                        symbolIsVisible = false;
+                        for (var i = symbolPath.length - 1; i >= 0; i--) {
+                            var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
+                            if (aliasSymbol) {
+                                // Visible type.
+                                symbolIsVisible = true;
+                                aliasSymbol.typeUsedExternally = true;
+                                break;
                             }
                         }
-
-                        if (verifyAlias) {
-                            // Declaration symbol is from different unit
-                            // Type may not be visible without import statement
-                            symbolIsVisible = false;
-                            for (var i = symbolPath.length - 1; i >= 0; i--) {
-                                var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
-                                if (aliasSymbol) {
-                                    // Visible type.
-                                    symbolIsVisible = true;
-                                    aliasSymbol.typeUsedExternally = true;
-                                    break;
-                                }
-                            }
-                            symbol = symbolPath.length > 1 &&
-                            symbolPath[symbolPath.length - 2].kind == PullElementKind.DynamicModule ? symbolPath[symbolPath.length - 2] : symbolPath[symbolPath.length - 1];
-                        }
+                        symbol = symbolPath[symbolPath.length - 1];
                     }
                 } else if (symbol.kind == PullElementKind.TypeAlias) {
                     var aliasSymbol = <PullTypeAliasSymbol>symbol;

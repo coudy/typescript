@@ -130,14 +130,6 @@ module TypeScript {
             }
 
             var scopePath = scopeSymbol.pathToRoot();
-            if (scopePath.length > 1 && scopePath[scopePath.length - 2].kind === PullElementKind.DynamicModule) {
-                var decls = scopePath[scopePath.length - 2].getDeclarations();
-                var symbol = this.findAliasedType(decls);
-                if (symbol) {
-                    return symbol;
-                }
-            }
-
             if (scopePath.length && scopePath[scopePath.length - 1].kind === PullElementKind.DynamicModule) {
                 var decls = scopePath[scopePath.length - 1].getDeclarations();
                 var symbol = this.findAliasedType(decls);
