@@ -105,13 +105,12 @@ module TypeScript {
 
                 collection = {
                     getLength: () => { return info.inferenceCandidates.length; },
-                    setTypeAtIndex: (index: number, type: PullTypeSymbol) => { },
                     getTypeAtIndex: (index: number) => {
                         return info.inferenceCandidates[index].type;
                     }
                 };
 
-                bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], null, collection, context, new TypeComparisonInfo()), enclosingDecl, context);
+                bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()), enclosingDecl, context);
 
                 if (!bestCommonType) {
                     unfit = true;
@@ -134,7 +133,7 @@ module TypeScript {
 
     export class PullContextualTypeContext {
         public provisionallyTypedSymbols: PullSymbol[] = [];
-        public provisionalDiagnostic: Diagnostic[] = [];
+        public hasProvisionalErrors = false;
 
         constructor(public contextualType: PullTypeSymbol,
                     public provisional: boolean,
@@ -148,14 +147,6 @@ module TypeScript {
             for (var i = 0; i < this.provisionallyTypedSymbols.length; i++) {
                 this.provisionallyTypedSymbols[i].invalidate();
             }
-        }
-
-        public postDiagnostic(error: Diagnostic) {
-            this.provisionalDiagnostic[this.provisionalDiagnostic.length] = error;
-        }
-
-        public hadProvisionalErrors() {
-            return this.provisionalDiagnostic.length > 0;
         }
     }
 
@@ -181,16 +172,15 @@ module TypeScript {
         public isSpecializingSignatureTypeParameters = false;
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
-        public isResolvingSuperConstructorTarget = false;
+        public isResolvingSuperConstructorCallArgument = false;
         public inConstructorArguments = false;
-        public inImportDeclaration = false;
         public isInStaticInitializer = false;
         public inProvisionalAnyContext = false;
         public resolvingTypeNameAsNameExpression = false;
         public recursiveMemberSpecializationDepth = 0;
         public recursiveSignatureSpecializationDepth = 0;
 
-        constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }
+        constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public typeCheckUnitPath?: string) { }
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
@@ -200,6 +190,13 @@ module TypeScript {
             var tc = this.contextStack.pop();
 
             tc.invalidateProvisionallyTypedSymbols();
+
+            // If the context we just popped off had provisional errors, and we are *still* in a provisional context,
+            // we need to not forget that we had provisional errors in a deeper context. We do this by setting the 
+            // hasProvisioanlErrors flag on the now top context on the stack. 
+            if (tc.hasProvisionalErrors && this.inProvisionalResolution()) {
+                this.contextStack[this.contextStack.length - 1].hasProvisionalErrors = true;
+            }
 
             return tc;
         }
@@ -250,7 +247,6 @@ module TypeScript {
         }
 
         public inSpecialization = false;
-        public suppressErrors = false;
         private inBaseTypeResolution = false;
 
         public isInBaseTypeResolution() { return this.inBaseTypeResolution; }
@@ -273,6 +269,14 @@ module TypeScript {
             if (this.contextStack.length && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length - 1].recordProvisionallyTypedSymbol(symbol);
             }
+        }
+
+        public getTypeSpecializationStack() {
+            return this.typeSpecializationStack;
+        }
+
+        public setTypeSpecializationStack(newStack: any[]) {
+            this.typeSpecializationStack = newStack;
         }
 
         public pushTypeSpecializationCache(cache: any) {
@@ -305,16 +309,18 @@ module TypeScript {
         }
 
         public postDiagnostic(diagnostic: Diagnostic): void {
-            if (this.inProvisionalResolution()) {
-                (this.contextStack[this.contextStack.length - 1]).postDiagnostic(diagnostic);
-            }
-            else if (this.inTypeCheck && !this.suppressErrors && this.resolver) {
-                this.resolver.currentUnit.addDiagnostic(diagnostic);
+            if (!this.inSpecialization) { // Do not report errors if in specialization resolutions, its not a typeCheckMode
+                if (this.inProvisionalResolution()) {
+                    (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
+                }
+                else if (this.inTypeCheck && this.resolver) {
+                    this.resolver.currentUnit.addDiagnostic(diagnostic);
+                }
             }
         }
 
         public typeCheck() {
-            return this.inTypeCheck && !this.inSpecialization;
+            return this.inTypeCheck && !this.inSpecialization && !(this.inProvisionalResolution() || this.inProvisionalAnyContext);
         }
 
         public startResolvingTypeArguments(ast: AST) {

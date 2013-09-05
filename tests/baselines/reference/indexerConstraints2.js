@@ -52,7 +52,6 @@ var J = (function () {
     return J;
 })();
 
-// BUG 765883
 var K = (function (_super) {
     __extends(K, _super);
     function K() {

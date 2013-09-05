@@ -1,0 +1,72 @@
+=== tests/cases/compiler/genericClasses4.ts ===
+Line 1 col 6 IdentifierName "Vec2_T" = Vec2_T<A>
+Line 1 col 13 IdentifierName "A" = any
+Line 3 col 23 IdentifierName "x" = A
+Line 3 col 26 IdentifierName "A" = A
+Line 3 col 36 IdentifierName "y" = A
+Line 3 col 39 IdentifierName "A" = A
+Line 4 col 0 IdentifierName "fmap" = <B>(f: (a: A) => B) => Vec2_T<B>
+Line 4 col 9 IdentifierName "B" = any
+Line 4 col 12 IdentifierName "f" = any
+Line 4 col 16 IdentifierName "a" = any
+Line 4 col 19 IdentifierName "A" = A
+Line 4 col 25 IdentifierName "B" = B
+Line 4 col 29 IdentifierName "Vec2_T" = Vec2_T<A>
+Line 4 col 36 IdentifierName "B" = B
+Line 5 col 12 IdentifierName "x" = B
+Line 5 col 14 IdentifierName "B" = B
+Line 5 col 18 InvocationExpression "f(this.x)" = B
+Line 5 col 18 IdentifierName "f" = (a: A) => B
+Line 5 col 20 MemberAccessExpression "this.x" = A
+Line 5 col 20 ThisKeyword "this" = Vec2_T<A>
+Line 5 col 25 IdentifierName "x" = A
+Line 6 col 12 IdentifierName "y" = B
+Line 6 col 14 IdentifierName "B" = B
+Line 6 col 18 InvocationExpression "f(this.y)" = B
+Line 6 col 18 IdentifierName "f" = (a: A) => B
+Line 6 col 20 MemberAccessExpression "this.y" = A
+Line 6 col 20 ThisKeyword "this" = Vec2_T<A>
+Line 6 col 25 IdentifierName "y" = A
+Line 7 col 12 IdentifierName "retval" = Vec2_T<B>
+Line 7 col 20 IdentifierName "Vec2_T" = Vec2_T<A>
+Line 7 col 27 IdentifierName "B" = B
+Line 7 col 32 ObjectCreationExpression "new Vec2_T(x, y)" = Vec2_T<B>
+Line 7 col 36 IdentifierName "Vec2_T" = new<A>(x: A, y: A) => Vec2_T<A>
+Line 7 col 43 IdentifierName "x" = B
+Line 7 col 46 IdentifierName "y" = B
+Line 8 col 15 IdentifierName "retval" = Vec2_T<B>
+Line 10 col 0 IdentifierName "apply" = <B>(f: Vec2_T<(a: A) => B>) => Vec2_T<B>
+Line 10 col 10 IdentifierName "B" = any
+Line 10 col 13 IdentifierName "f" = any
+Line 10 col 16 IdentifierName "Vec2_T" = Vec2_T<A>
+Line 10 col 24 IdentifierName "a" = any
+Line 10 col 27 IdentifierName "A" = A
+Line 10 col 33 IdentifierName "B" = B
+Line 10 col 38 IdentifierName "Vec2_T" = Vec2_T<A>
+Line 10 col 45 IdentifierName "B" = B
+Line 11 col 12 IdentifierName "x" = B
+Line 11 col 14 IdentifierName "B" = B
+Line 11 col 18 InvocationExpression "f.x(this.x)" = B
+Line 11 col 18 MemberAccessExpression "f.x" = (a: A) => B
+Line 11 col 18 IdentifierName "f" = Vec2_T<(a: A) => B>
+Line 11 col 20 IdentifierName "x" = (a: A) => B
+Line 11 col 22 MemberAccessExpression "this.x" = A
+Line 11 col 22 ThisKeyword "this" = Vec2_T<A>
+Line 11 col 27 IdentifierName "x" = A
+Line 12 col 12 IdentifierName "y" = B
+Line 12 col 14 IdentifierName "B" = B
+Line 12 col 18 InvocationExpression "f.y(this.y)" = B
+Line 12 col 18 MemberAccessExpression "f.y" = (a: A) => B
+Line 12 col 18 IdentifierName "f" = Vec2_T<(a: A) => B>
+Line 12 col 20 IdentifierName "y" = (a: A) => B
+Line 12 col 22 MemberAccessExpression "this.y" = A
+Line 12 col 22 ThisKeyword "this" = Vec2_T<A>
+Line 12 col 27 IdentifierName "y" = A
+Line 13 col 12 IdentifierName "retval" = Vec2_T<B>
+Line 13 col 20 IdentifierName "Vec2_T" = Vec2_T<A>
+Line 13 col 27 IdentifierName "B" = B
+Line 13 col 32 ObjectCreationExpression "new Vec2_T(x, y)" = Vec2_T<B>
+Line 13 col 36 IdentifierName "Vec2_T" = new<A>(x: A, y: A) => Vec2_T<A>
+Line 13 col 43 IdentifierName "x" = B
+Line 13 col 46 IdentifierName "y" = B
+Line 14 col 15 IdentifierName "retval" = Vec2_T<B>

@@ -130,6 +130,14 @@ module TypeScript {
             }
 
             var scopePath = scopeSymbol.pathToRoot();
+            if (scopePath.length > 1 && scopePath[scopePath.length - 2].kind === PullElementKind.DynamicModule) {
+                var decls = scopePath[scopePath.length - 2].getDeclarations();
+                var symbol = this.findAliasedType(decls);
+                if (symbol) {
+                    return symbol;
+                }
+            }
+
             if (scopePath.length && scopePath[scopePath.length - 1].kind === PullElementKind.DynamicModule) {
                 var decls = scopePath[scopePath.length - 1].getDeclarations();
                 var symbol = this.findAliasedType(decls);
@@ -272,15 +280,7 @@ module TypeScript {
         }
 
         public invalidate() {
-
-            this.isResolved = false;
-
-            var declarations = this.getDeclarations();
-
-            // reset the errors for its decl
-            //for (var i = 0; i < declarations.length; i++) {
-            //    declarations[i].resetErrors();
-            //}
+            this.setUnresolved();
         }
 
         public hasFlag(flag: PullElementFlags): boolean {
@@ -2624,7 +2624,8 @@ module TypeScript {
             return typeToSpecialize;
         }
 
-        return (typeToSpecialize.kind & (PullElementKind.Class | PullElementKind.Interface)) ? <PullTypeSymbol>decl.getSymbol().type : typeToSpecialize;
+        // get type from the decl if class or interface (Interface declaration with no name is declaration for object literal)
+        return typeToSpecialize.kind == PullElementKind.Class || (typeToSpecialize.kind == PullElementKind.Interface && typeToSpecialize.name != "") ? <PullTypeSymbol>decl.getSymbol().type : typeToSpecialize;
     }
 
     export var nSpecializationsCreated = 0;
@@ -2963,7 +2964,7 @@ module TypeScript {
                 // if the signature is not yet specialized, specialize the signature using an empty context first - that way, no type parameters
                 // will be accidentally specialized
                 if (!(signature.isResolved || signature.inResolution)) {
-                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.typeCheck(), context.typeCheckUnitPath));
                 }
 
                 context.recursiveSignatureSpecializationDepth++;
@@ -3046,7 +3047,7 @@ module TypeScript {
                 decl.setSpecializingSignatureSymbol(newSignature);
 
                 if (!(signature.isResolved || signature.inResolution)) {
-                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.typeCheck(), context.typeCheckUnitPath));
                 } 
 
                 context.recursiveSignatureSpecializationDepth++;
@@ -3127,7 +3128,7 @@ module TypeScript {
                 decl.setSpecializingSignatureSymbol(newSignature);
 
                 if (!(signature.isResolved || signature.inResolution)) {
-                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.inTypeCheck));
+                    resolver.resolveDeclaredSymbol(signature, enclosingDecl, new PullTypeResolutionContext(resolver, context.typeCheck(), context.typeCheckUnitPath));
                 } 
 
                 context.recursiveSignatureSpecializationDepth++;

@@ -360,7 +360,7 @@ module TypeScript {
                 // We're emitting comments on an elided element.  Only keep the comment if it is
                 // a triple slash or pinned comment.
                 if (onlyPinnedOrTripleSlashComments) {
-                    preComments = preComments.filter(c => c.isPinnedOrTripleSlash());
+                    preComments = ArrayUtilities.where(preComments, c => c.isPinnedOrTripleSlash());
                 }
 
                 this.emitCommentsArray(preComments);

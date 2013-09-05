@@ -13,7 +13,7 @@ Line 5 col 29 IdentifierName "ListFactory" = Editor.ListFactory<T>
 Line 5 col 41 IdentifierName "T" = T
 Line 7 col 27 IdentifierName "isHead" = boolean
 Line 7 col 51 IdentifierName "data" = T
-Line 7 col 57 IdentifierName "T" = any
+Line 7 col 57 IdentifierName "T" = T
 Line 8 col 0 AssignmentExpression "this.listFactory = new ListFactory<T>()" = Editor.ListFactory<T>
 Line 8 col 0 MemberAccessExpression "this.listFactory" = Editor.ListFactory<T>
 Line 8 col 0 ThisKeyword "this" = Editor.List<T>
@@ -105,8 +105,8 @@ Line 41 col 28 IdentifierName "next" = Editor.List<T>
 Line 41 col 33 IdentifierName "data" = T
 Line 48 col 15 IdentifierName "pushEntry" = (entry: Editor.List<T>) => void
 Line 48 col 25 IdentifierName "entry" = any
-Line 48 col 32 IdentifierName "List" = any
-Line 48 col 37 IdentifierName "T" = any
+Line 48 col 32 IdentifierName "List" = Editor.List<T>
+Line 48 col 37 IdentifierName "T" = T
 Line 49 col 0 AssignmentExpression "entry.isHead = false" = boolean
 Line 49 col 0 MemberAccessExpression "entry.isHead" = boolean
 Line 49 col 0 IdentifierName "entry" = Editor.List<T>
@@ -181,8 +181,8 @@ Line 63 col 23 IdentifierName "prev" = Editor.List<T>
 Line 63 col 30 IdentifierName "entry" = Editor.List<T>
 Line 66 col 15 IdentifierName "popEntry" = (head: Editor.List<T>) => Editor.List<T>
 Line 66 col 24 IdentifierName "head" = any
-Line 66 col 30 IdentifierName "List" = any
-Line 66 col 35 IdentifierName "T" = any
+Line 66 col 30 IdentifierName "List" = Editor.List<T>
+Line 66 col 35 IdentifierName "T" = T
 Line 66 col 40 IdentifierName "List" = Editor.List<T>
 Line 66 col 45 IdentifierName "T" = T
 Line 67 col 16 MemberAccessExpression "this.next.isHead" = boolean
@@ -201,8 +201,8 @@ Line 71 col 52 ThisKeyword "this" = Editor.List<T>
 Line 71 col 57 IdentifierName "next" = Editor.List<T>
 Line 75 col 15 IdentifierName "insertEntry" = (entry: Editor.List<T>) => Editor.List<T>
 Line 75 col 27 IdentifierName "entry" = any
-Line 75 col 34 IdentifierName "List" = any
-Line 75 col 39 IdentifierName "T" = any
+Line 75 col 34 IdentifierName "List" = Editor.List<T>
+Line 75 col 39 IdentifierName "T" = T
 Line 75 col 44 IdentifierName "List" = Editor.List<T>
 Line 75 col 49 IdentifierName "T" = T
 Line 76 col 0 AssignmentExpression "entry.isHead = false" = boolean
@@ -276,8 +276,8 @@ Line 89 col 30 IdentifierName "entry" = Editor.List<T>
 Line 90 col 19 IdentifierName "entry" = Editor.List<T>
 Line 93 col 15 IdentifierName "insertEntryBefore" = (entry: Editor.List<T>) => Editor.List<T>
 Line 93 col 33 IdentifierName "entry" = any
-Line 93 col 40 IdentifierName "List" = any
-Line 93 col 45 IdentifierName "T" = any
+Line 93 col 40 IdentifierName "List" = Editor.List<T>
+Line 93 col 45 IdentifierName "T" = T
 Line 93 col 50 IdentifierName "List" = Editor.List<T>
 Line 93 col 55 IdentifierName "T" = T
 Line 94 col 0 AssignmentExpression "this.prev.next = entry" = Editor.List<T>
@@ -349,7 +349,7 @@ Line 114 col 19 IdentifierName "entry" = Editor.List<T>
 Line 117 col 15 IdentifierName "MakeEntry" = <T>(data: T) => Editor.List<T>
 Line 117 col 25 IdentifierName "T" = any
 Line 117 col 28 IdentifierName "data" = any
-Line 117 col 34 IdentifierName "T" = any
+Line 117 col 34 IdentifierName "T" = T
 Line 117 col 38 IdentifierName "List" = Editor.List<T>
 Line 117 col 43 IdentifierName "T" = T
 Line 118 col 16 IdentifierName "entry" = Editor.List<T>
@@ -373,8 +373,8 @@ Line 121 col 19 IdentifierName "entry" = Editor.List<T>
 Line 124 col 15 IdentifierName "RemoveEntry" = <T>(entry: Editor.List<T>) => Editor.List<T>
 Line 124 col 27 IdentifierName "T" = any
 Line 124 col 30 IdentifierName "entry" = any
-Line 124 col 37 IdentifierName "List" = any
-Line 124 col 42 IdentifierName "T" = any
+Line 124 col 37 IdentifierName "List" = Editor.List<T>
+Line 124 col 42 IdentifierName "T" = T
 Line 124 col 47 IdentifierName "List" = Editor.List<T>
 Line 124 col 52 IdentifierName "T" = T
 Line 125 col 16 EqualsWithTypeConversionExpression "entry == null" = boolean

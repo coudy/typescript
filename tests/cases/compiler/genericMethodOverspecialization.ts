@@ -2,6 +2,7 @@ var names = ["list", "table1", "table2", "table3", "summary"];
 
 interface HTMLElement {
     clientWidth: number;
+    isDisabled: boolean;
 }
 
 declare var document: Document;

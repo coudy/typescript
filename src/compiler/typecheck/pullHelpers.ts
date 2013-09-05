@@ -88,5 +88,10 @@ module TypeScript {
 
             return false;
         }
+
+        export function isNameNumeric(name: string) {
+            // Coerce the name to a number, and then use isFinite to make sure it is not Infinity or NaN
+            return isFinite(+name);
+        }
     }
 }

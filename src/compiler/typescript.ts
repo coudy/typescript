@@ -748,6 +748,7 @@ module TypeScript {
                 }
             }
 
+            errors = ArrayUtilities.distinct(errors, Diagnostic.equals);
             errors.sort((d1, d2) => {
                 if (d1.fileName() < d2.fileName()) {
                     return -1;
@@ -1370,7 +1371,7 @@ module TypeScript {
                             // We are outside the cast term
                             if (propagateContextualTypes) {
                                 var contextualType: PullTypeSymbol = null;
-                                var typeSymbol = this.resolver.resolveTypeAssertionExpression(castExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                var typeSymbol = this.resolver.resolveTypeAssertionExpression(castExpression, enclosingDecl, resolutionContext);
 
                                 // Set the context type
                                 if (typeSymbol) {

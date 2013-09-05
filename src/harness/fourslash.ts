@@ -1551,7 +1551,7 @@ module FourSlash {
         // List of all the subfiles we've parsed out
         var files: FourSlashFile[] = [];
         // Global options
-        var opts = {};
+        var opts: { [s: string]: string; } = {};
         // Marker positions
 
         // Split up the input file by line
@@ -1566,7 +1566,7 @@ module FourSlash {
         // Stuff related to the subfile we're parsing
         var currentFileContent: string = null;
         var currentFileName = fileName;
-        var currentFileOptions = {};
+        var currentFileOptions: { [s: string]: string } = {};
 
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
