@@ -1683,23 +1683,21 @@ module TypeScript {
             return this._typesThatExplicitlyImplementThisType;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, origin: PullSymbol = null) {
+        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[] = []) {
             if (this === potentialBase) {
                 return true;
             }
 
-            if (origin && (this === origin || this.getRootSymbol() === origin)) {
+            if (visited.indexOf(this) >= 0) {
                 return true;
             }
 
-            if (!origin) {
-                origin = this;
-            }
+            visited.push(this);
 
             var extendedTypes = this.getExtendedTypes();
 
             for (var i = 0; i < extendedTypes.length; i++) {
-                if (extendedTypes[i].hasBase(potentialBase, origin)) {
+                if (extendedTypes[i].hasBase(potentialBase, visited)) {
                     return true;
                 }
             }
@@ -1707,10 +1705,15 @@ module TypeScript {
             var implementedTypes = this.getImplementedTypes();
 
             for (var i = 0; i < implementedTypes.length; i++) {
-                if (implementedTypes[i].hasBase(potentialBase, origin)) {
+                if (implementedTypes[i].hasBase(potentialBase, visited)) {
                     return true;
                 }
             }
+
+            // Clean the list if we are returning false to ensure we are not leaving symbols that 
+            // were not in the path. No need to do that if we return true, as that will short circuit
+            // the search
+            visited.pop();
 
             return false;
         }
