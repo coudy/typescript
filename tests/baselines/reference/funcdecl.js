@@ -101,4 +101,7 @@ declare function f(n: () => void): void;
 declare module m2 {
     function foo(n: () => void): void;
 }
+declare function fooAmbient(n: number): string;
+declare function overloadAmbient(n: number): string;
+declare function overloadAmbient(s: string): string;
 declare var f2: () => string;

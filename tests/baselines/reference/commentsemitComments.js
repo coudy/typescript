@@ -120,3 +120,4 @@ declare module m1 {
     module m2 {
     }
 }
+declare var x: any;
