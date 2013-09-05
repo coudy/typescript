@@ -242,6 +242,11 @@ module TypeScript {
             var searchKind = isEnum ? PullElementKind.Enum : PullElementKind.SomeContainer;
             var isInitializedModule = (moduleContainerDecl.flags & PullElementFlags.SomeInitializedModule) != 0;
 
+            if (parent && moduleKind == PullElementKind.DynamicModule) {
+                // Dynamic modules cannot be parented
+                this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_must_be_defined_in_global_context, null));
+            }
+
             var createdNewSymbol = false;
 
             moduleContainerTypeSymbol = <PullContainerSymbol>this.getExistingSymbol(moduleContainerDecl, searchKind, parent);

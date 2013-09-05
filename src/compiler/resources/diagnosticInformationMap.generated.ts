@@ -1114,6 +1114,10 @@ module TypeScript {
     "code": 2194,
     "category": DiagnosticCategory.Error
   },
+  "Ambient external module declaration must be defined in global context.": {
+    "code": 2195,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
