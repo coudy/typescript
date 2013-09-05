@@ -212,6 +212,38 @@ module TypeScript {
                 }
             }
         }
+
+        public addSyntheticIndexSignature(containingDecl: PullDecl, containingSymbol: PullTypeSymbol, ast: AST,
+            indexParamName: string, indexParamType: PullTypeSymbol, returnType: PullTypeSymbol): void {
+
+            var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
+            var indexParameterSymbol = new PullSymbol(indexParamName, PullElementKind.Parameter);
+            indexParameterSymbol.type = indexParamType;
+            indexSignature.addParameter(indexParameterSymbol);
+            indexSignature.returnType = returnType;
+            indexSignature.setResolved();
+            indexParameterSymbol.setResolved();
+
+            containingSymbol.addIndexSignature(indexSignature);
+
+            var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+            var indexSigDecl = new PullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, span, this.getPath());
+            var indexParamDecl = new PullDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, span, this.getPath());
+            indexSigDecl.addChildDecl(indexParamDecl);
+            indexParamDecl.setParentDecl(indexSigDecl);
+            containingDecl.addChildDecl(indexSigDecl);
+            indexSigDecl.setParentDecl(containingDecl);
+            this.addSynthesizedDecl(indexSigDecl);
+            this.addSynthesizedDecl(indexParamDecl);
+            indexSigDecl.setSignatureSymbol(indexSignature);
+            indexParamDecl.setSymbol(indexParameterSymbol);
+            indexSignature.addDeclaration(indexSigDecl);
+            indexParameterSymbol.addDeclaration(indexParamDecl);
+            this.setASTForDecl(indexSigDecl, ast);
+            this.setASTForDecl(indexParamDecl, ast);
+            indexSigDecl.setIsBound(true);
+            indexParamDecl.setIsBound(true);
+        }
     }
 
     export class SemanticInfoChain {

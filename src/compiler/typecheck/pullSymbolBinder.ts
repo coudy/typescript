@@ -395,7 +395,8 @@ module TypeScript {
 
             // if it's an enum, create an index signature and a decl for it
             if (isEnum) {
-                this.bindSyntheticEnumIndexSignature(moduleContainerDecl, moduleContainerTypeSymbol, moduleAST);
+                this.semanticInfo.addSyntheticIndexSignature(moduleContainerDecl, moduleContainerTypeSymbol.getInstanceSymbol().type, moduleAST.name, "x",
+                    /*indexParamType*/ this.semanticInfoChain.numberTypeSymbol, /*returnType*/ this.semanticInfoChain.stringTypeSymbol);
             }
 
             var valueDecl = moduleContainerDecl.getValueDecl();
@@ -411,37 +412,6 @@ module TypeScript {
                     otherDecls[i].ensureSymbolIsBound();
                 }
             }
-        }
-
-        private bindSyntheticEnumIndexSignature(enumDecl: PullDecl, enumContainerSymbol: PullContainerSymbol, enumAST: ModuleDeclaration): void {
-            var enumInstanceTypeSymbol = enumContainerSymbol.getInstanceSymbol().type;
-
-            var enumIndexParamName = "x";
-            var enumIndexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
-            var enumIndexParameterSymbol = new PullSymbol(enumIndexParamName, PullElementKind.Parameter);
-            enumIndexParameterSymbol.type = this.semanticInfoChain.numberTypeSymbol;
-            enumIndexSignature.addParameter(enumIndexParameterSymbol);
-            enumIndexSignature.returnType = this.semanticInfoChain.stringTypeSymbol;
-
-            enumInstanceTypeSymbol.addIndexSignature(enumIndexSignature);
-
-            var moduleNameSpan = TextSpan.fromBounds(enumAST.name.minChar, enumAST.name.limChar);
-            var enumIndexSigDecl = new PullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, moduleNameSpan, this.semanticInfo.getPath());
-            var enumIndexParamDecl = new PullDecl(enumIndexParamName, enumIndexParamName, PullElementKind.Parameter, PullElementFlags.None, moduleNameSpan, this.semanticInfo.getPath());
-            enumIndexSigDecl.addChildDecl(enumIndexParamDecl);
-            enumIndexParamDecl.setParentDecl(enumIndexSigDecl);
-            enumDecl.addChildDecl(enumIndexSigDecl);
-            enumIndexSigDecl.setParentDecl(enumDecl);
-            this.semanticInfo.addSynthesizedDecl(enumIndexSigDecl);
-            this.semanticInfo.addSynthesizedDecl(enumIndexParamDecl);
-            enumIndexSigDecl.setSignatureSymbol(enumIndexSignature);
-            enumIndexParamDecl.setSymbol(enumIndexParameterSymbol);
-            enumIndexSignature.addDeclaration(enumIndexSigDecl);
-            enumIndexParameterSymbol.addDeclaration(enumIndexParamDecl);
-            this.semanticInfo.setASTForDecl(enumIndexSigDecl, enumAST.name);
-            this.semanticInfo.setASTForDecl(enumIndexParamDecl, enumAST.name);
-            enumIndexSigDecl.setIsBound(true);
-            enumIndexParamDecl.setIsBound(true);
         }
 
         // aliases

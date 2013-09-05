@@ -6035,11 +6035,15 @@ module TypeScript {
                 var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
                 var stringSignature = indexSignatures.stringSignature;
                 var numberSignature = indexSignatures.numericSignature;
-                if (stringSignature && !(stringSignature.returnType && stringSignature.returnType.isTypeParameter())) {
-                    typeSymbol.addIndexSignature(stringSignature);
+
+                // Start collecting the types of all the members so we can stamp the object literal with the proper index signatures
+                var allMemberTypes: PullTypeSymbol[] = null;
+                var allNumericMemberTypes: PullTypeSymbol[] = null;
+                if (stringSignature) {
+                    allMemberTypes = [stringSignature.returnType];
                 }
-                if (numberSignature && !(numberSignature.returnType && numberSignature.returnType.isTypeParameter())) {
-                    typeSymbol.addIndexSignature(numberSignature);
+                if (numberSignature) {
+                    allNumericMemberTypes = [numberSignature.returnType];
                 }
             }
 
@@ -6109,8 +6113,7 @@ module TypeScript {
 
                         // Consider index signatures as potential contextual types
                         if (!assigningSymbol) {
-                            var memberIsNumeric = PullHelpers.isNameNumeric(text);
-                            if (numberSignature && memberIsNumeric) {
+                            if (numberSignature && PullHelpers.isNameNumeric(text)) {
                                 assigningSymbol = numberSignature;
                             }
                             else if (stringSignature) {
@@ -6163,8 +6166,18 @@ module TypeScript {
 
                     var memberExpr = this.widenType(this.resolveAST(binex.operand2, contextualMemberType != null, enclosingDecl, context).type, enclosingDecl, context);
 
-                    if (memberExpr.type && memberExpr.type.isGeneric()) {
-                        typeSymbol.setHasGenericMember();
+                    if (memberExpr.type) {
+                        if (memberExpr.type.isGeneric()) {
+                            typeSymbol.setHasGenericMember();
+                        }
+
+                        // Add the member to the appropriate member type lists to compute the type of the synthesized index signatures
+                        if (stringSignature) {
+                            allMemberTypes.push(memberExpr.type);
+                        }
+                        if (numberSignature && PullHelpers.isNameNumeric(memberSymbol.name)) {
+                            allNumericMemberTypes.push(memberExpr.type);
+                        }
                     }
 
                     if (acceptedContextualType) {
@@ -6189,6 +6202,11 @@ module TypeScript {
                         }
                     }
                 }
+
+                if (!isUsingExistingSymbol) {
+                    this.stampObjectLiteralWithIndexSignature(typeSymbol, allMemberTypes, stringSignature, context);
+                    this.stampObjectLiteralWithIndexSignature(typeSymbol, allNumericMemberTypes, numberSignature, context);
+                }
             }
 
             if (!this.getSymbolForAST(objectLitAST)) {
@@ -6196,6 +6214,26 @@ module TypeScript {
             }
             typeSymbol.setResolved();
             return typeSymbol;
+        }
+
+        private stampObjectLiteralWithIndexSignature(objectLiteralSymbol: PullTypeSymbol, indexerTypeCandidates: PullTypeSymbol[],
+            contextualIndexSignature: PullSignatureSymbol, context: PullTypeResolutionContext): void {
+            if (contextualIndexSignature) {
+                var typeCollection: IPullTypeCollection = {
+                    getLength: () => indexerTypeCandidates.length,
+                    getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
+                };
+                var indexerReturnType = this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context);
+                if (indexerReturnType == contextualIndexSignature.returnType) {
+                    objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
+                }
+                else {
+                    // Create an index signature
+                    var decl = objectLiteralSymbol.getDeclarations()[0];
+                    this.currentUnit.addSyntheticIndexSignature(decl, objectLiteralSymbol, this.getASTForDecl(decl),
+                        contextualIndexSignature.parameters[0].name, /*indexParamType*/ contextualIndexSignature.parameters[0].type, /*returnType*/ indexerReturnType);
+                }
+            }
         }
 
         private resolveArrayLiteralExpression(arrayLit: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -8754,18 +8792,6 @@ module TypeScript {
                         comparisonInfo.addMessage(message);
                     }
                     return false;
-                }
-            }
-
-            // if the target has a string signature, the source is object literal's type, the source's members must be comparable with it's return type
-            if (targetStringSig && !source.isNamedTypeSymbol() && source.hasMembers()) {
-                var targetReturnType = targetStringSig.returnType;
-                var sourceMembers = source.getMembers();
-
-                for (var i = 0; i < sourceMembers.length; i++) {
-                    if (!this.sourceIsRelatableToTarget(sourceMembers[i].type, targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
-                        return false;
-                    }
                 }
             }
 

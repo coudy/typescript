@@ -1,0 +1,32 @@
+=== tests/cases/compiler/objectLiteralIndexers.ts ===
+Line 0 col 10 IdentifierName "A" = A
+Line 1 col 0 IdentifierName "x" = number
+Line 4 col 10 IdentifierName "B" = B
+Line 4 col 20 IdentifierName "A" = A
+Line 5 col 0 IdentifierName "y" = string
+Line 8 col 4 IdentifierName "a" = A
+Line 8 col 7 IdentifierName "A" = A
+Line 9 col 4 IdentifierName "b" = B
+Line 9 col 7 IdentifierName "B" = B
+Line 10 col 4 IdentifierName "c" = any
+Line 12 col 4 IdentifierName "o1" = { [s: string]: A; [n: number]: B; }
+Line 12 col 11 IdentifierName "s" = any
+Line 12 col 23 IdentifierName "A" = A
+Line 12 col 26 IdentifierName "n" = any
+Line 12 col 38 IdentifierName "B" = B
+Line 12 col 45 ObjectLiteralExpression "{ x: a, 0: b }" = { x: A; 0: B; [s: string]: A; [n: number]: B; }
+Line 12 col 47 IdentifierName "x" = A
+Line 12 col 50 IdentifierName "a" = A
+Line 12 col 56 IdentifierName "b" = B
+Line 13 col 0 AssignmentExpression "o1 = { x: b, 0: c }" = { x: B; 0: any; [s: string]: any; [n: number]: any; }
+Line 13 col 0 IdentifierName "o1" = { [s: string]: A; [n: number]: B; }
+Line 13 col 5 ObjectLiteralExpression "{ x: b, 0: c }" = { x: B; 0: any; [s: string]: any; [n: number]: any; }
+Line 13 col 7 IdentifierName "x" = B
+Line 13 col 10 IdentifierName "b" = B
+Line 13 col 16 IdentifierName "c" = any
+Line 14 col 0 AssignmentExpression "o1 = { x: c, 0: b }" = { x: any; 0: B; [s: string]: any; [n: number]: B; }
+Line 14 col 0 IdentifierName "o1" = { [s: string]: A; [n: number]: B; }
+Line 14 col 5 ObjectLiteralExpression "{ x: c, 0: b }" = { x: any; 0: B; [s: string]: any; [n: number]: B; }
+Line 14 col 7 IdentifierName "x" = any
+Line 14 col 10 IdentifierName "c" = any
+Line 14 col 16 IdentifierName "b" = B
