@@ -213,6 +213,17 @@ module TypeScript {
             }
         }
 
+        public isExternalModule() {
+            var topLevelDecl = this.getTopLevelDecl();
+            if (topLevelDecl.kind == PullElementKind.Script) {
+                var script = <Script>this.getASTForDecl(topLevelDecl);
+                return !!script.topLevelMod;
+            }
+
+            // Global context
+            return false;
+        }
+
         public addSyntheticIndexSignature(containingDecl: PullDecl, containingSymbol: PullTypeSymbol, ast: AST,
             indexParamName: string, indexParamType: PullTypeSymbol, returnType: PullTypeSymbol): void {
 
@@ -439,17 +450,6 @@ module TypeScript {
             return symbol;
         }
 
-        public isGlobalContextUnit(unit: SemanticInfo) {
-            var topLevelDecl = unit.getTopLevelDecl();
-            if (topLevelDecl.kind == PullElementKind.Script) {
-                var script = <Script>unit.getASTForDecl(topLevelDecl);
-                return (!script.topLevelMod);
-            } 
-
-            /* (topLevelDecl.kind == PullElementKind.Global) */
-            return true;
-        }
-
         public findExternalModule(id: string) {
             id = normalizePath(id);
 
@@ -470,7 +470,7 @@ module TypeScript {
             symbol = null;
             for (var i = 0; i < this.units.length; i++) {
                 var unit = this.units[i];
-                if (!this.isGlobalContextUnit(unit)) {
+                if (unit.isExternalModule()) {
                     var unitPath = unit.getPath();
                     var isDtsFile = unitPath == dtsFile;
                     if (isDtsFile || unitPath == tsFile) {
@@ -498,7 +498,7 @@ module TypeScript {
                 symbol = null;
                 for (var i = 0; i < this.units.length; i++) {
                     var unit = this.units[i];
-                    if (this.isGlobalContextUnit(unit)) {
+                    if (!unit.isExternalModule()) {
                         var topLevelDecl = unit.getTopLevelDecl();
                         var dynamicModules = topLevelDecl.searchChildDecls(id, PullElementKind.DynamicModule);
                         if (dynamicModules.length) {

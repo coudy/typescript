@@ -559,7 +559,7 @@ module TypeScript {
                     continue;
                 }
 
-                if (this.semanticInfoChain.isGlobalContextUnit(unit)) {
+                if (!unit.isExternalModule()) {
                     var topLevelDecl = unit.getTopLevelDecl();
                     this.addFilteredDecls(topLevelDecl.getChildDecls(), declSearchKind, result)
                 }

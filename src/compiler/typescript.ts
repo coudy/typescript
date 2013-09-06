@@ -1682,7 +1682,7 @@ module TypeScript {
             });
         }
 
-        public getTopLevelDeclaration(scriptName: string) {
+        public getTopLevelDeclaration(scriptName: string) : PullDecl {
             var unit = this.semanticInfoChain.getUnit(scriptName);
 
             if (!unit) {
