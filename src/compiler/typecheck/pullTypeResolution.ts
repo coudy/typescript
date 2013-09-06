@@ -10545,6 +10545,7 @@ module TypeScript {
                 var propName = typeMembers[i].name;
                 var extendedTypeProp = extendedType.findMember(propName);
                 if (extendedTypeProp) {
+                    this.resolveDeclaredSymbol(extendedTypeProp, extendedTypeProp.getDeclarations()[0].getParentDecl(), context);
                     foundError = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
 
                     if (!foundError) {
