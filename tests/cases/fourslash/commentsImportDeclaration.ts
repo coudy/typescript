@@ -1,5 +1,6 @@
 /// <reference path='fourslash.ts' />
 
+// @Filename: commentsImportDeclaration_file0.ts
 /////** ExtMod - contains m1*/
 ////declare module /*1*/"extMod" {
 ////    /** ModuleComment*/
@@ -18,16 +19,19 @@
 ////        export function fooExport(): number;
 ////    }
 ////}
+
+// @Filename: commentsImportDeclaration_file1.ts
+///////<reference path='commentsImportDeclaration_file0.ts'/>
 /////** Import declaration*/
 ////import e/*3*/xtMod = require("e/*4*/xtMod");
 /////*5*/extMod./*6*/m1./*7*/fooEx/*8q*/port(/*8*/);
 ////var new/*9*/Var = new extMod.m1.m2./*10*/c();
 
 goTo.marker('1');
-verify.quickInfoIs("extMod", "ExtMod - contains m1", "extMod", "module");
+verify.quickInfoIs("\"extMod\"", "ExtMod - contains m1", "\"extMod\"", "module");
 
 goTo.marker('2');
-verify.quickInfoIs("m1", "ModuleComment", "extMod.m1", "module");
+verify.quickInfoIs("m1", "ModuleComment", "\"extMod\".m1", "module");
 
 goTo.marker('3');
 verify.quickInfoIs("extMod", "Import declaration", "extMod", "module");

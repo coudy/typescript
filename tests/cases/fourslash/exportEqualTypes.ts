@@ -1,5 +1,6 @@
 /// <reference path='./fourslash.ts'/>
 
+// @Filename: exportEqualTypes_file0.ts
 ////declare module "test" {
 ////    interface x {
 ////        (): Date;
@@ -7,6 +8,9 @@
 ////    }
 ////    export = x;
 ////}
+
+// @Filename: exportEqualTypes_file1.ts
+///////<reference path='exportEqualTypes_file0.ts'/>
 ////import test = require('test');
 ////var t: test/*1*/;  // var 't' should be of type 'test'
 ////var r1/*2*/ = t(); // Should return a Date

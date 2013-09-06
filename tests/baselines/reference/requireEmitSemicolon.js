@@ -1,4 +1,7 @@
+//// [requireEmitSemicolon_0.js]
+//// [requireEmitSemicolon_1.js]
 define(["require", "exports", "Person"], function(require, exports, __P__) {
+    ///<reference path='requireEmitSemicolon_0.ts'/>
     var P = __P__;
 
     (function (Database) {

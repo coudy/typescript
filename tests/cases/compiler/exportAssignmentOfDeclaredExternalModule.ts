@@ -1,4 +1,6 @@
 //@module: commonjs
+// @Filename: exportAssignmentOfDeclaredExternalModule_0.ts
+
 declare module 'M' {
    interface Sammy {
       new (): any; // a constructor signature
@@ -7,6 +9,8 @@ declare module 'M' {
    export = Sammy;
 }
 
+// @Filename: exportAssignmentOfDeclaredExternalModule_1.ts
+///<reference path='exportAssignmentOfDeclaredExternalModule_0.ts'/>
 import Sammy = require('M');
 var x = new Sammy(); // error to use as constructor as there is not constructor symbol
 var y = Sammy(); // error to use interface name as call target

@@ -1,4 +1,5 @@
 //@module: commonjs
+// @Filename: exportEqualMemberMissing_0.ts
 declare module 'connect' {
     module server {
         export interface connectModule {
@@ -15,5 +16,7 @@ declare module 'connect' {
     export = server;
 }
 
+// @Filename: exportEqualMemberMissing_1.ts
+///<reference path='exportEqualMemberMissing_0.ts'/>
 import connect = require('connect');
 connect().use(connect.static('foo')); // Error	1	The property 'static' does not exist on value of type ''.

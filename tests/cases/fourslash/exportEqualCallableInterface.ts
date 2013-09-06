@@ -1,5 +1,6 @@
 /// <reference path='fourslash.ts'/>
 
+// @Filename: exportEqualCallableInterface_file0.ts
 ////declare module "test" {
 ////    interface x {
 ////        (): Date;
@@ -8,6 +9,8 @@
 ////    export = x;
 ////}
 
+// @Filename: exportEqualCallableInterface_file1.ts
+///////<reference path='exportEqualCallableInterface_file0.ts'/>
 ////import test = require('test');
 ////var t2: test;
 ////t2./**/

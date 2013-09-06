@@ -1,23 +1,33 @@
 //@module: amd
+
+// @Filename: privacyTopLevelAmbientExternalModuleImportWithoutExport_require.ts
+// Public elements
+declare module "mi_public" {
+    export class c_public {
+    }
+}
+declare module "mu_public" {
+    export class c_public {
+    }
+}
+
+
+// @Filename: privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.ts
 // private elements
-declare module "mi_private" {
+// Export - Error ambient modules allowed only in global
+export declare module "mi_private" {
     export class c_private {
     }
 }
-declare module "mu_private" {
+export declare module "mu_private" {
     export class c_private {
     }
 }
 
-// Public elements
-export declare module "mi_public" {
-    export class c_public {
-    }
-}
-export declare module "mu_public" {
-    export class c_public {
-    }
-}
+
+// @Filename: privacyTopLevelAmbientExternalModuleImportWithoutExport_core.ts
+///<reference path='privacyTopLevelAmbientExternalModuleImportWithoutExport_require.ts'/>
+///<reference path='privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.ts'/>
 
 // Privacy errors - importing private elements
 import im_private_mi_private = require("mi_private");

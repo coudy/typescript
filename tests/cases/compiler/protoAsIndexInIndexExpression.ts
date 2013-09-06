@@ -1,4 +1,9 @@
 // @module: commonjs
+// @Filename: protoAsIndexInIndexExpression_0.ts
+declare module "__proto__" { export var x; }
+
+// @Filename: protoAsIndexInIndexExpression_1.ts
+///<reference path='protoAsIndexInIndexExpression_0.ts'/>
 var EntityPrototype = undefined;
 var WorkspacePrototype = {
     serialize: function (): any {
@@ -12,6 +17,5 @@ var o = {
 class C {
     "__proto__" = 0;
 }
-declare module "__proto__" { export var x; }
 import p = require("__proto__");
 p.x;

@@ -1,24 +1,33 @@
 //@module: commonjs
-// private elements
-declare module "mi_private" {
-    export class c_private {
-    }
-}
-declare module "mu_private" {
-    export class c_private {
-    }
-}
 
+// @Filename: privacyTopLevelAmbientExternalModuleImportWithExport_require.ts
 // Public elements
-export declare module "mi_public" {
+declare module "mi_public" {
     export class c_public {
     }
 }
-export declare module "mu_public" {
+declare module "mu_public" {
     export class c_public {
     }
 }
 
+
+// @Filename: privacyTopLevelAmbientExternalModuleImportWithExport_require2.ts
+// private elements
+// Export - Error ambient modules allowed only in global
+export declare module "mi_private" {
+    export class c_private {
+    }
+}
+export declare module "mu_private" {
+    export class c_private {
+    }
+}
+
+
+// @Filename: privacyTopLevelAmbientExternalModuleImportWithExport_core.ts
+///<reference path='privacyTopLevelAmbientExternalModuleImportWithExport_require.ts'/>
+///<reference path='privacyTopLevelAmbientExternalModuleImportWithExport_require2.ts'/>
 // Privacy errors - importing private elements
 export import im_public_mi_private = require("mi_private");
 export import im_public_mu_private = require("mu_private");

@@ -1,12 +1,41 @@
 //@module: commonjs
 // @declaration: true
-export declare module "m4" {
+// @Filename: importDecl_require.ts
+declare module "m4" {
     export class d {
     }
     var x: d;
     export function foo(): d;
 }
 
+declare module "glo_m4" {
+    export class d {
+    }
+    var x: d;
+    export function foo(): d;
+}
+
+declare module "fncOnly_m4" {
+    export class d {
+    }
+    var x: d;
+    export function foo(): d;
+}
+
+declare module "private_m4" {
+    class d {
+    }
+    export var x: d;
+    export function foo(): d;
+}
+
+declare module "m5" {
+    import m4 = require("m4");
+    export function foo2(): m4.d;
+}
+
+// @Filename: importDecl_1.ts
+///<reference path='importDecl_require.ts'/>
 import m4 = require("m4"); // Emit used
 export var x4 = m4.x;
 export var d4 = m4.d;
@@ -23,33 +52,14 @@ export module m1 {
 }
 
 //Emit global only usage
-export declare module "glo_m4" {
-    export class d {
-    }
-    var x: d;
-    export function foo(): d;
-}
 import glo_m4 = require("glo_m4");
 export var useGlo_m4_x4 = glo_m4.x;
 export var useGlo_m4_d4 = glo_m4.d;
 export var useGlo_m4_f4 = glo_m4.foo();
 
 //Emit even when used just in function type
-export declare module "fncOnly_m4" {
-    export class d {
-    }
-    var x: d;
-    export function foo(): d;
-}
 import fncOnly_m4 = require("fncOnly_m4");
 export var useFncOnly_m4_f4 = fncOnly_m4.foo();
-
-declare module "private_m4" {
-    class d {
-    }
-    export var x: d;
-    export function foo(): d;
-}
 
 // only used privately no need to emit
 import private_m4 = require("private_m4");
@@ -57,10 +67,6 @@ export module usePrivate_m4_m1 {
     var x3 = private_m4.x;
     var d3 = private_m4.d;
     var f3 = private_m4.foo();
-}
-
-declare module "m5" {
-    export function foo2(): m4.d;
 }
 
 // Do not emit unused import

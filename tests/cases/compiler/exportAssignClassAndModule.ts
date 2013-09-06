@@ -1,4 +1,5 @@
 //@module: commonjs
+// @Filename: exportAssignClassAndModule_0.ts
 declare module "foo" {
     class Foo {
         x: Foo.Bar;
@@ -10,6 +11,8 @@ declare module "foo" {
     export = Foo;
 }
 
+// @Filename: exportAssignClassAndModule_1.ts
+///<reference path='exportAssignClassAndModule_0.ts'/>
 import Foo = require('foo');
 
 var z: Foo.Bar;

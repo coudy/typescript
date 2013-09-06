@@ -1,5 +1,13 @@
 //@module: amd
 // @declaration: true
+// @Filename: withImportDecl_0.ts
+declare module "m1" {
+    class A {
+    }
+}
+
+// @Filename: withImportDecl_1.ts
+///<reference path='withImportDecl_0.ts'/>
 var simpleVar;
 
 var anotherVar: any;
@@ -34,10 +42,7 @@ module m1 {
 }
 
 
-declare module "m1" {
-    class A {
-    }
-}
+
 
 import m3 = require("m1");
 

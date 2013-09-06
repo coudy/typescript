@@ -1,5 +1,7 @@
-//// [withImportDecl.js]
+//// [withImportDecl_0.js]
+//// [withImportDecl_1.js]
 define(["require", "exports", "m1"], function(require, exports, __m3__) {
+    ///<reference path='withImportDecl_0.ts'/>
     var simpleVar;
 
     var anotherVar;
@@ -34,4 +36,10 @@ define(["require", "exports", "m1"], function(require, exports, __m3__) {
 });
 
 
-////[withImportDecl.d.ts]
+////[withImportDecl_0.d.ts]
+declare module "m1" {
+    class A {
+    }
+}
+////[withImportDecl_1.d.ts]
+/// <reference path="withImportDecl_0.d.ts" />

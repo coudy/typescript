@@ -1,3 +1,6 @@
+//// [protoAsIndexInIndexExpression_0.js]
+//// [protoAsIndexInIndexExpression_1.js]
+///<reference path='protoAsIndexInIndexExpression_0.ts'/>
 var EntityPrototype = undefined;
 var WorkspacePrototype = {
     serialize: function () {
@@ -14,7 +17,6 @@ var C = (function () {
     }
     return C;
 })();
-
 var p = require("__proto__");
 p.x;
 

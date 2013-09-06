@@ -133,26 +133,41 @@ class CompilerBaselineRunner extends RunnerBase {
             // if the .d.ts is non-empty, confirm it compiles correctly as well
             if (this.decl && result.declFilesCode.length > 0 && result.errors.length === 0) {
                 var declErrors: string[] = undefined;
-                result.declFilesCode.forEach(file => {
+
+                var declOtherFiles: { unitName: string; content: string }[] = [];
+
+                // use other files if it is dts
+                for (var i = 0; i < otherFiles.length; i++) {
+                    if (TypeScript.isDTSFile(otherFiles[i].unitName)) {
+                        declOtherFiles.push(otherFiles[i]);
+                    }
+                }
+
+                for (var i = 0; i < result.declFilesCode.length; i++) {
+                    var declCode = result.declFilesCode[i];
                     // don't want to use the fullpath for the unitName or the file won't be resolved correctly
-                    var declFile = { unitName: 'tests/cases/compiler/' + Harness.getFileName(file.fileName), content: file.code };
-                    harnessCompiler.compileFiles(
-                        [declFile],
-                        otherFiles,
-                        TypeScript.ModuleGenTarget.Unspecified,
-                        function (result) {
-                            declErrors = result.errors.map(err => Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message + '\r\n');
-                        },
-                        function (settings) {
-                            harnessCompiler.setCompilerSettings(tcSettings);
-                            settings.mapSourceFiles = emittingSourceMap;
-                        }
+                    var declFile = { unitName: 'tests/cases/compiler/' + Harness.getFileName(declCode.fileName), content: declCode.code };
+                    if (i != result.declFilesCode.length - 1) {
+                        declOtherFiles.push(declFile);
+                    }
+                }
+
+                harnessCompiler.compileFiles(
+                    [declFile],
+                    declOtherFiles,
+                    moduleTarget,
+                    function (result) {
+                        declErrors = result.errors.map(err => Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message + '\r\n');
+                    },
+                    function (settings) {
+                        harnessCompiler.setCompilerSettings(tcSettings);
+                        settings.mapSourceFiles = emittingSourceMap;
+                    }
                     );
 
-                    if (declErrors && declErrors.length) {
-                        throw new Error('.d.ts file ' + file.fileName + ' did not compile. Errors: ' + declErrors.map(err => JSON.stringify(err)).join('\r\n'));
-                    }
-                });
+                if (declErrors && declErrors.length) {
+                    throw new Error('.d.ts file output of ' + fileName + ' did not compile. Errors: ' + declErrors.map(err => JSON.stringify(err)).join('\r\n'));
+                }
             }
 
             if (!TypeScript.isDTSFile(lastUnit.name)) {

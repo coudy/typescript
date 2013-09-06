@@ -1,35 +1,34 @@
-=== tests/cases/compiler/withImportDecl.ts ===
-Line 0 col 4 IdentifierName "simpleVar" = any
-Line 2 col 4 IdentifierName "anotherVar" = any
-Line 3 col 4 IdentifierName "varWithSimpleType" = number
-Line 4 col 4 IdentifierName "varWithArrayType" = number[]
-Line 6 col 4 IdentifierName "varWithInitialValue" = number
-Line 8 col 4 IdentifierName "withComplicatedValue" = { x: number; y: number; desc: string; }
-Line 8 col 27 ObjectLiteralExpression "{ x: 30, y: 70, desc: "position" }" = { x: number; y: number; desc: string; }
-Line 8 col 29 IdentifierName "x" = number
-Line 8 col 36 IdentifierName "y" = number
-Line 8 col 43 IdentifierName "desc" = string
-Line 10 col 12 IdentifierName "declaredVar" = any
-Line 11 col 12 IdentifierName "declareVar2" = any
-Line 13 col 12 IdentifierName "declaredVar" = any
-Line 14 col 12 IdentifierName "deckareVarWithType" = number
-Line 16 col 4 IdentifierName "arrayVar" = string[]
-Line 16 col 25 ArrayLiteralExpression "['a', 'b']" = string[]
-Line 19 col 9 IdentifierName "simpleFunction" = () => { x: string; y: string; n: number; }
-Line 20 col 11 ObjectLiteralExpression "{
+=== tests/cases/compiler/withImportDecl_1.ts ===
+Line 1 col 4 IdentifierName "simpleVar" = any
+Line 3 col 4 IdentifierName "anotherVar" = any
+Line 4 col 4 IdentifierName "varWithSimpleType" = number
+Line 5 col 4 IdentifierName "varWithArrayType" = number[]
+Line 7 col 4 IdentifierName "varWithInitialValue" = number
+Line 9 col 4 IdentifierName "withComplicatedValue" = { x: number; y: number; desc: string; }
+Line 9 col 27 ObjectLiteralExpression "{ x: 30, y: 70, desc: "position" }" = { x: number; y: number; desc: string; }
+Line 9 col 29 IdentifierName "x" = number
+Line 9 col 36 IdentifierName "y" = number
+Line 9 col 43 IdentifierName "desc" = string
+Line 11 col 12 IdentifierName "declaredVar" = any
+Line 12 col 12 IdentifierName "declareVar2" = any
+Line 14 col 12 IdentifierName "declaredVar" = any
+Line 15 col 12 IdentifierName "deckareVarWithType" = number
+Line 17 col 4 IdentifierName "arrayVar" = string[]
+Line 17 col 25 ArrayLiteralExpression "['a', 'b']" = string[]
+Line 20 col 9 IdentifierName "simpleFunction" = () => { x: string; y: string; n: number; }
+Line 21 col 11 ObjectLiteralExpression "{
         x: "Hello",
         y: "word",
         n: 2
     }" = { x: string; y: string; n: number; }
-Line 21 col 0 IdentifierName "x" = string
-Line 22 col 0 IdentifierName "y" = string
-Line 23 col 0 IdentifierName "n" = number
-Line 27 col 7 IdentifierName "m1" = m1
-Line 28 col 20 IdentifierName "foo" = () => string
-Line 35 col 10 IdentifierName "A" = "m1".A
-Line 39 col 7 IdentifierName "m3" = any
-Line 41 col 4 IdentifierName "b" = "m1".A
-Line 41 col 8 ObjectCreationExpression "new m3.A()" = "m1".A
-Line 41 col 12 MemberAccessExpression "m3.A" = new() => "m1".A
-Line 41 col 12 IdentifierName "m3" = m3
-Line 41 col 15 IdentifierName "A" = new() => "m1".A
+Line 22 col 0 IdentifierName "x" = string
+Line 23 col 0 IdentifierName "y" = string
+Line 24 col 0 IdentifierName "n" = number
+Line 28 col 7 IdentifierName "m1" = m1
+Line 29 col 20 IdentifierName "foo" = () => string
+Line 37 col 7 IdentifierName "m3" = any
+Line 39 col 4 IdentifierName "b" = any
+Line 39 col 8 ObjectCreationExpression "new m3.A()" = any
+Line 39 col 12 MemberAccessExpression "m3.A" = any
+Line 39 col 12 IdentifierName "m3" = m3
+Line 39 col 15 IdentifierName "A" = any

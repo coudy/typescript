@@ -1,18 +1,15 @@
-=== tests/cases/compiler/requireEmitSemicolon.ts ===
-Line 1 col 15 IdentifierName "Models" = "Person".Models
-Line 2 col 15 IdentifierName "Person" = "Person".Models.Person
-Line 3 col 15 IdentifierName "name" = any
-Line 8 col 7 IdentifierName "P" = any
-Line 10 col 14 IdentifierName "Database" = Database
-Line 11 col 14 IdentifierName "DB" = Database.DB
-Line 12 col 12 IdentifierName "findPerson" = (id: number) => "Person".Models.Person
-Line 12 col 23 IdentifierName "id" = any
-Line 12 col 36 IdentifierName "P" = P
-Line 12 col 38 IdentifierName "Models" = any
-Line 12 col 45 IdentifierName "Person" = any
-Line 13 col 16 ObjectCreationExpression "new P.Models.Person("Rock")" = "Person".Models.Person
-Line 13 col 20 MemberAccessExpression "P.Models.Person" = new(name: string) => "Person".Models.Person
-Line 13 col 20 MemberAccessExpression "P.Models" = { Person: new(name: string) => "Person".Models.Person; }
-Line 13 col 20 IdentifierName "P" = P
-Line 13 col 22 IdentifierName "Models" = { Person: new(name: string) => "Person".Models.Person; }
-Line 13 col 29 IdentifierName "Person" = new(name: string) => "Person".Models.Person
+=== tests/cases/compiler/requireEmitSemicolon_1.ts ===
+Line 1 col 7 IdentifierName "P" = any
+Line 3 col 14 IdentifierName "Database" = Database
+Line 4 col 14 IdentifierName "DB" = Database.DB
+Line 5 col 12 IdentifierName "findPerson" = (id: number) => any
+Line 5 col 23 IdentifierName "id" = any
+Line 5 col 36 IdentifierName "P" = P
+Line 5 col 38 IdentifierName "Models" = any
+Line 5 col 45 IdentifierName "Person" = any
+Line 6 col 16 ObjectCreationExpression "new P.Models.Person("Rock")" = any
+Line 6 col 20 MemberAccessExpression "P.Models.Person" = any
+Line 6 col 20 MemberAccessExpression "P.Models" = any
+Line 6 col 20 IdentifierName "P" = P
+Line 6 col 22 IdentifierName "Models" = any
+Line 6 col 29 IdentifierName "Person" = any

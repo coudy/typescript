@@ -51,7 +51,7 @@
     var m1_im2_private_v3_private = m1_im2_private.f1;
     var m1_im2_private_v4_private = m1_im2_private.f1();
 
-    var m1_im3_private = require("m1_M3_public");
+    var m1_im3_private = "m1_M3_public";
     m1.m1_im3_private_v1_public = m1_im3_private.c1;
     m1.m1_im3_private_v2_public = new m1_im3_private.c1();
     m1.m1_im3_private_v3_public = m1_im3_private.f1;
@@ -61,7 +61,7 @@
     var m1_im3_private_v3_private = m1_im3_private.f1;
     var m1_im3_private_v4_private = m1_im3_private.f1();
 
-    var m1_im4_private = require("m1_M4_private");
+    var m1_im4_private = "m1_M4_private";
     m1.m1_im4_private_v1_public = m1_im4_private.c1;
     m1.m1_im4_private_v2_public = new m1_im4_private.c1();
     m1.m1_im4_private_v3_public = m1_im4_private.f1;
@@ -134,7 +134,7 @@ var m2;
     var m1_im2_private_v3_private = m1_im2_private.f1;
     var m1_im2_private_v4_private = m1_im2_private.f1();
 
-    var m1_im3_private = require("m2_M3_public");
+    var m1_im3_private = "m2_M3_public";
     m2.m1_im3_private_v1_public = m1_im3_private.c1;
     m2.m1_im3_private_v2_public = new m1_im3_private.c1();
     m2.m1_im3_private_v3_public = m1_im3_private.f1;
@@ -144,7 +144,7 @@ var m2;
     var m1_im3_private_v3_private = m1_im3_private.f1;
     var m1_im3_private_v4_private = m1_im3_private.f1();
 
-    var m1_im4_private = require("m2_M4_private");
+    var m1_im4_private = "m2_M4_private";
     m2.m1_im4_private_v1_public = m1_im4_private.c1;
     m2.m1_im4_private_v2_public = new m1_im4_private.c1();
     m2.m1_im4_private_v3_public = m1_im4_private.f1;
@@ -205,7 +205,7 @@ var glo_im1_private_v2_private = new glo_im1_private.c1();
 var glo_im1_private_v3_private = glo_im1_private.f1;
 var glo_im1_private_v4_private = glo_im1_private.f1();
 
-var glo_im2_private = require("glo_M2_public");
+var glo_im2_private = "glo_M2_public";
 exports.glo_im2_private_v1_public = glo_im2_private.c1;
 exports.glo_im2_private_v2_public = new glo_im2_private.c1();
 exports.glo_im2_private_v3_public = glo_im2_private.f1;
@@ -225,7 +225,7 @@ var glo_im3_private_v2_private = new glo_im3_private.c1();
 var glo_im3_private_v3_private = glo_im3_private.f1;
 var glo_im3_private_v4_private = glo_im3_private.f1();
 
-var glo_im4_private = require("glo_M4_private");
+var glo_im4_private = "glo_M4_private";
 exports.glo_im4_private_v1_public = glo_im4_private.c1;
 exports.glo_im4_private_v2_public = new glo_im4_private.c1();
 exports.glo_im4_private_v3_public = glo_im4_private.f1;
