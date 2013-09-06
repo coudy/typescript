@@ -407,8 +407,8 @@ module Services {
             return this.compiler.pullGetDeclInformation(decl, path, document);
         }
 
-        public getTopLevelDeclarations(fileName: string): TypeScript.PullDecl[]{
-            return this.compiler.getTopLevelDeclarations(fileName);
+        public getTopLevelDeclaration(fileName: string) {
+            return this.compiler.getTopLevelDeclaration(fileName);
         }
 
         public findMatchingValidDecl(decl: TypeScript.PullDecl): TypeScript.PullDecl[]{

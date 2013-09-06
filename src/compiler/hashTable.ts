@@ -114,7 +114,7 @@ module TypeScript {
             return true;
         }
 
-        public some(fn: (k: string, value: any, context: any) => void , context: any) {
+        public some(fn: (k: string, value: T, context: any) => void , context: any) {
             for (var k in this.table) {
                 var data = this.table[k];
 

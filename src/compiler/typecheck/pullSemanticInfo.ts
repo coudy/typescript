@@ -21,7 +21,7 @@ module TypeScript {
     export class SemanticInfo {
         private compilationUnitPath: string;  // the "file" this is associated with
 
-        private topLevelDecls: PullDecl[] = [];
+        private topLevelDecl: PullDecl = null;
         private topLevelSynthesizedDecls: PullDecl[] = [];
 
         private declASTMap = new DataMap<AST>();
@@ -63,10 +63,10 @@ module TypeScript {
         }
 
         public addTopLevelDecl(decl: PullDecl) {
-            this.topLevelDecls[this.topLevelDecls.length] = decl;
+            this.topLevelDecl = decl;
         }
 
-        public getTopLevelDecls() { return this.topLevelDecls; }
+        public getTopLevelDecl() { return this.topLevelDecl; }
 
         public getPath(): string {
             return this.compilationUnitPath;
@@ -195,7 +195,7 @@ module TypeScript {
         public getImportDeclarationNames(): BlockIntrinsics {
             if (this.importDeclarationNames === null) {
                 this.importDeclarationNames = new BlockIntrinsics();
-                this.populateImportDeclarationNames(this.topLevelDecls);
+                this.populateImportDeclarationNames([this.topLevelDecl]);
             }
 
             return this.importDeclarationNames;
@@ -348,13 +348,8 @@ module TypeScript {
                 return this.topLevelDecls;
             }
 
-            var unitDecls: PullDecl[];
-
             for (var i = 0; i < this.units.length; i++) {
-                unitDecls = this.units[i].getTopLevelDecls();
-                for (var j = 0; j < unitDecls.length; j++) {
-                    this.topLevelDecls[this.topLevelDecls.length] = unitDecls[j];
-                }
+                this.topLevelDecls[this.topLevelDecls.length] = this.units[i].getTopLevelDecl();
             }
 
             return this.topLevelDecls;
@@ -444,6 +439,81 @@ module TypeScript {
             return symbol;
         }
 
+        public isGlobalContextUnit(unit: SemanticInfo) {
+            var topLevelDecl = unit.getTopLevelDecl();
+            if (topLevelDecl.kind == PullElementKind.Script) {
+                var script = <Script>unit.getASTForDecl(topLevelDecl);
+                return (!script.topLevelMod);
+            } 
+
+            /* (topLevelDecl.kind == PullElementKind.Global) */
+            return true;
+        }
+
+        public findExternalModule(id: string) {
+            id = normalizePath(id);
+
+            var dtsFile = id + ".d.ts";
+            var dtsCacheID = this.getDeclPathCacheID([dtsFile], PullElementKind.DynamicModule);
+            var symbol = <PullContainerSymbol>this.symbolCache[dtsCacheID];
+            if (symbol) {
+                return symbol;
+            }
+
+            var tsFile = id + ".ts"
+            var tsCacheID = this.getDeclPathCacheID([tsFile], PullElementKind.DynamicModule);
+            symbol = <PullContainerSymbol>this.symbolCache[tsCacheID]
+            if (symbol != undefined) {
+                return symbol;
+            }
+
+            symbol = null;
+            for (var i = 0; i < this.units.length; i++) {
+                var unit = this.units[i];
+                if (!this.isGlobalContextUnit(unit)) {
+                    var unitPath = unit.getPath();
+                    var isDtsFile = unitPath == dtsFile;
+                    if (isDtsFile || unitPath == tsFile) {
+                        var topLevelDecl = unit.getTopLevelDecl(); // Script
+                        var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
+                        symbol = <PullContainerSymbol>dynamicModuleDecl.getSymbol();
+                        this.symbolCache[dtsCacheID] = isDtsFile ? symbol : null;
+                        this.symbolCache[tsCacheID] = !isDTSFile ? symbol : null;
+                        return symbol;
+                    }
+                }
+            }
+
+            this.symbolCache[dtsCacheID] = null;
+            this.symbolCache[tsCacheID] = null;
+
+            return symbol;
+        }
+
+        public findAmbientExternalModuleInGlobalContext(id: string) {
+            var cacheID = this.getDeclPathCacheID([id], PullElementKind.DynamicModule);
+
+            var symbol = <PullContainerSymbol>this.symbolCache[cacheID];
+            if (symbol == undefined) {
+                symbol = null;
+                for (var i = 0; i < this.units.length; i++) {
+                    var unit = this.units[i];
+                    if (this.isGlobalContextUnit(unit)) {
+                        var topLevelDecl = unit.getTopLevelDecl();
+                        var dynamicModules = topLevelDecl.searchChildDecls(id, PullElementKind.DynamicModule);
+                        if (dynamicModules.length) {
+                            symbol = <PullContainerSymbol>dynamicModules[0].getSymbol();
+                            break;
+                        }
+                    }
+                }
+
+                this.symbolCache[cacheID] = symbol;
+            }
+
+            return symbol;
+        }
+
         // a decl path is a list of decls that reference the components of a declaration from the global scope down
         // E.g., string would be "['string']" and "A.B.C" would be "['A','B','C']"
         public findDecls(declPath: string[], declKind: PullElementKind): PullDecl[] {
@@ -460,26 +530,6 @@ module TypeScript {
             }
 
             declCacheMiss++;
-
-            if (declKind == PullElementKind.DynamicModule && declPath.length == 1) {
-                // we can start by searching the unit cache
-                var path = declPath[0];
-
-                if (isRooted(path)) {
-                    var unit = <SemanticInfo>this.unitCache[path];
-
-                    if (unit) {
-                        // the dynamic module will be the only child
-                        var childDecls = unit.getTopLevelDecls()[0].getChildDecls();
-
-                        if (childDecls.length === 1 && childDecls[0].kind == PullElementKind.DynamicModule) {
-                            return childDecls;
-                        }
-                    }
-
-                    return sentinelEmptyArray;
-                }
-            }
 
             var declsToSearch = this.collectAllTopLevelDecls();
 
@@ -556,7 +606,7 @@ module TypeScript {
             }
 
             // now search for that decl
-            var declsToSearch = unit.getTopLevelDecls();
+            var declsToSearch = [unit.getTopLevelDecl()];
             var foundDecls: PullDecl[] = [];
             var keepSearching = (invalidatedDecl.kind & PullElementKind.Container) || 
                 (invalidatedDecl.kind & PullElementKind.Interface) ||

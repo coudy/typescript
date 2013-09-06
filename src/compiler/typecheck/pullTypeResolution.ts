@@ -558,14 +558,10 @@ module TypeScript {
                     // Current unit has already been processed. skip it.
                     continue;
                 }
-                var topLevelDecls = unit.getTopLevelDecls();
-                if (topLevelDecls.length) {
-                    for (var j = 0, m = topLevelDecls.length; j < m; j++) {
-                        var topLevelDecl = topLevelDecls[j];
-                        if (topLevelDecl.kind === PullElementKind.Script || topLevelDecl.kind === PullElementKind.Global) {
-                            this.addFilteredDecls(topLevelDecl.getChildDecls(), declSearchKind, result);
-                        }
-                    }
+
+                if (this.semanticInfoChain.isGlobalContextUnit(unit)) {
+                    var topLevelDecl = unit.getTopLevelDecl();
+                    this.addFilteredDecls(topLevelDecl.getChildDecls(), declSearchKind, result)
                 }
             }
 
@@ -832,86 +828,37 @@ module TypeScript {
             return (type.isArray() && type.getElementType()) || type == this.cachedArrayInterfaceType();
         }
 
-        private lastExternalModulePath = "";
-
-        private findTypeSymbolForDynamicModule(idText: string, currentFileName: string, search: (id: string) => PullTypeSymbol): PullTypeSymbol {
+        private resolveExternalModuleReference(idText: string, currentFileName: string): PullContainerSymbol {
             var originalIdText = idText;
-            var symbol: PullTypeSymbol = null;
+            var symbol: PullContainerSymbol = null;
 
-            // If the literal path doesn't work, begin the search
-            if (!isRelative(originalIdText)) {
-                // check the full path first, as this is the most likely scenario
+            if (isRelative(originalIdText)) {
+                // Find the module relative to current file
+                var path = getRootFilePath(switchToForwardSlashes(currentFileName));
+                symbol = this.semanticInfoChain.findExternalModule(path + idText);
+            } else {
                 idText = originalIdText;
 
-                var strippedIdText = stripStartAndEndQuotes(idText);
+                // Search in global context if there exists ambient module
+                symbol = this.semanticInfoChain.findAmbientExternalModuleInGlobalContext(quoteStr(originalIdText));
 
-                // Check to see if the previously resolved external module shares this path
-                if (this.lastExternalModulePath != "") {
-                    idText = normalizePath(this.lastExternalModulePath + strippedIdText + ".ts");
-                    symbol = search(idText);
+                if (!symbol) {
+                    // REVIEW: Technically, we shouldn't have to normalize here - we should normalize in addUnit.
+                    // Still, normalizing here alows any language services to be free of assumptions
+                    var path = getRootFilePath(switchToForwardSlashes(currentFileName));
 
-                    if (symbol) {
-                        return symbol;
-                    }
-
-                    if (symbol === null) {
-                        idText = normalizePath(this.lastExternalModulePath + strippedIdText + ".d.ts");
-                        symbol = search(idText);
-                    }
-
-                    if (symbol) {
-                        return symbol;
-                    }
-                }
-
-                // REVIEW: Technically, we shouldn't have to normalize here - we should normalize in addUnit.
-                // Still, normalizing here alows any language services to be free of assumptions
-                var path = getRootFilePath(switchToForwardSlashes(currentFileName));
-
-                while (symbol === null && path != "") {
-                    // Check for .d.ts
-                    idText = normalizePath(path + strippedIdText + ".d.ts");
-                    symbol = search(idText);
-
-                    // check for .ts
-                    if (symbol === null) {
-                        idText = normalizePath(path + strippedIdText + ".ts");
-                        symbol = search(idText);
-                    }
-
-                    if (symbol === null) {
-                        if (path === '/') {
-                            path = '';
-                        } else {
-                            path = normalizePath(path + "..");
-                            path = path && path != '/' ? path + '/' : path;
+                    // Search for external modules compiled (.d.ts or .ts files) starting with current files directory to root directory until we find the module
+                    while (symbol === null && path != "") {
+                        symbol = this.semanticInfoChain.findExternalModule(path + idText);
+                        if (symbol === null) {
+                            if (path === '/') {
+                                path = '';
+                            } else {
+                                path = normalizePath(path + "..");
+                                path = path && path != '/' ? path + '/' : path;
+                            }
                         }
                     }
-
-                    if (symbol) {
-                        this.lastExternalModulePath = path;
-                    }
-                }
-            }
-
-            symbol = search(originalIdText);
-
-            if (symbol === null) {
-                // perhaps it's a dynamic module?
-                if (!symbol) {
-                    idText = swapQuotes(originalIdText);
-                    symbol = search(idText);
-                }
-
-                // Check the literal path first
-                if (!symbol) {
-                    idText = stripStartAndEndQuotes(originalIdText) + ".d.ts";
-                    symbol = search(idText);
-                }
-
-                if (!symbol) {
-                    idText = stripStartAndEndQuotes(originalIdText) + ".ts";
-                    symbol = search(idText);
                 }
             }
 
@@ -1673,19 +1620,14 @@ module TypeScript {
             // reference
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
-                var modPath = (<StringLiteral>importStatementAST.alias).actualText;
+                var modPath = (<Identifier>importStatementAST.alias).text();
                 var declPath = getPathToDecl(enclosingDecl);
 
-                aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.semanticInfoChain.findSymbol([s], PullElementKind.DynamicModule));
+                aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());
 
-                // If we could not resolve the symbol using a simple search, the module either does not exist or is ambient.  Should this be the case, we'll try to
-                // resolve the symbol in a more conventional manner
-                if (!aliasedType) {
-                    aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), (s: string) => <PullTypeSymbol>this.getSymbolFromDeclPath(s, declPath, PullElementKind.DynamicModule));
-                }
                 if (!aliasedType) {
                     this.currentUnit.addDiagnostic(
-                        new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [modPath]));
+                        new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.alias).actualText]));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
             } else {
@@ -9712,7 +9654,7 @@ module TypeScript {
             if (!unit.hasBeenTypeChecked) {
                 unit.hasBeenTypeChecked = true;
 
-                var scriptDecl = unit.getTopLevelDecls()[0];
+                var scriptDecl = unit.getTopLevelDecl();
 
                 var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
                 var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);

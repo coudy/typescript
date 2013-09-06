@@ -735,27 +735,23 @@ module TypeScript {
             var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
             var result: PullDecl[] = [];
 
-            var queue: PullDecl[] = semanticInfo.getTopLevelDecls();
+            var topLevelDecl = semanticInfo.getTopLevelDecl(); // This is script for the file
+            var dynamicModuleDecl = topLevelDecl.getChildDecls()[0]; // Dynamic module declaration has to be present
+            var queue: PullDecl[] = dynamicModuleDecl.getChildDecls();
 
-            while (queue.length > 0) {
-                var decl = queue.shift();
+            for (var i = 0, n = queue.length; i < n; i++) {
+                var decl = queue[i];
 
                 if (decl.kind & PullElementKind.TypeAlias) {
                     var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(decl);
-                    if (importStatementAST.alias.nodeType() === NodeType.Name) { // name or dynamic module name
-                        var text = (<Identifier>importStatementAST.alias).actualText;
-                        if (isQuoted(text)) { // dynamic module name (string literal)
-                            var symbol = decl.getSymbol();
-                            var typeSymbol = symbol && symbol.type;
-                            if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {
-                                result.push(decl);
-                            }
+                    if (importStatementAST.isExternalImportDeclaration()) { // external module
+                        var symbol = decl.getSymbol();
+                        var typeSymbol = symbol && symbol.type;
+                        if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {
+                            result.push(decl);
                         }
                     }
                 }
-
-                // visit children
-                queue = queue.concat(decl.getChildDecls());
             }
 
             return result;
@@ -800,7 +796,7 @@ module TypeScript {
 
         public shouldCaptureThis(ast: AST) {
             if (ast.nodeType() === NodeType.Script) {
-                var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecls()[0];
+                var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecl();
                 return (scriptDecl.flags & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
 

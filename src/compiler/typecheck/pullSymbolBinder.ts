@@ -2071,11 +2071,8 @@ module TypeScript {
         public bindDeclsForUnit(filePath: string) {
             this.setUnit(filePath);
 
-            var topLevelDecls = this.semanticInfo.getTopLevelDecls();
-
-            for (var i = 0; i < topLevelDecls.length; i++) {
-                this.bindDeclToPullSymbol(topLevelDecls[i]);
-            }
+            var topLevelDecl = this.semanticInfo.getTopLevelDecl();
+            this.bindDeclToPullSymbol(topLevelDecl);
         }
     }
 }

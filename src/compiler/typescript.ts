@@ -867,7 +867,7 @@ module TypeScript {
                 // create decls
                 getAstWalkerFactory().walk(newScript, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
-                var oldTopLevelDecl = oldScriptSemanticInfo.getTopLevelDecls()[0];
+                var oldTopLevelDecl = oldScriptSemanticInfo.getTopLevelDecl();
                 var newTopLevelDecl = declCollectionContext.getParent();
 
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
@@ -1682,14 +1682,14 @@ module TypeScript {
             });
         }
 
-        public getTopLevelDeclarations(scriptName: string): PullDecl[] {
+        public getTopLevelDeclaration(scriptName: string) {
             var unit = this.semanticInfoChain.getUnit(scriptName);
 
             if (!unit) {
                 return null;
             }
 
-            return unit.getTopLevelDecls();
+            return unit.getTopLevelDecl();
         }
 
         public reportDiagnostics(errors: Diagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {
