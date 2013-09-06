@@ -13,7 +13,7 @@ class RunnerBase {
     }
 
     public enumerateFiles(folder: string, recursive: boolean = false): string[] {
-        return IO.dir(Harness.userSpecifiedroot + folder, /\.ts$/);
+        return IO.dir(Harness.userSpecifiedroot + folder, /\.ts$/, { recursive: recursive });
     }
 
     /** Setup the runner's tests so that they are ready to be executed by the harness 

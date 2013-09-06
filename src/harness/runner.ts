@@ -219,6 +219,12 @@ opts.flag('compiler', {
     }
 });
 
+opts.flag('conformance', {
+    set: function () {
+        runners.push(new CompilerBaselineRunner('conformance'));
+    }
+});
+
 opts.flag('project', {
     set: function () {
         runners.push(new ProjectRunner());

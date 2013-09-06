@@ -18,7 +18,12 @@ class CompilerBaselineRunner extends RunnerBase {
         this.emit = true;
         this.decl = true;
         this.output = true;
-        this.basePath += '/compiler';
+        if (testType === 'conformance') {
+            this.basePath += '/conformance';
+        }
+        else {
+            this.basePath += '/compiler';
+        }
     }    
 
     /** Replaces instances of full paths with filenames only */
@@ -230,7 +235,8 @@ class CompilerBaselineRunner extends RunnerBase {
         });
 
         if (this.tests.length === 0) {
-            this.enumerateFiles(this.basePath).forEach(fn => {
+            var testFiles = this.enumerateFiles(this.basePath, true);
+            testFiles.forEach(fn => {
                 fn = fn.replace(/\\/g, "/");
                 this.checkTestCodeOutput(fn);
             });
