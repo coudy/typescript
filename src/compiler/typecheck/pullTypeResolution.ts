@@ -946,8 +946,12 @@ module TypeScript {
             var savedTypeSpecializationStack = context.getTypeSpecializationStack();
             context.setTypeSpecializationStack([]);
 
+            var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
+            context.resolvingNamespaceMemberAccess = false;
+
             var result = this.resolveDeclaredSymbolWorker(symbol, enclosingDecl, context);
 
+            context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
             context.inConstructorArguments = savedInConstructorArguments;
@@ -5248,10 +5252,7 @@ module TypeScript {
             }
 
             if (!typeNameSymbol.isResolved) {
-                var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-                context.resolvingNamespaceMemberAccess = false;
                 this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
-                context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             }
 
             if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {
@@ -5318,19 +5319,13 @@ module TypeScript {
                 if (typeNameSymbol.isAlias()) {
                     typeNameSymbolAlias = <PullTypeAliasSymbol>typeNameSymbol;
                     if (!typeNameSymbol.isResolved) {
-                        var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-                        context.resolvingNamespaceMemberAccess = false;
                         this.resolveDeclaredSymbol(typeNameSymbol, enclosingDecl, context);
-                        context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
                     }
 
                     var aliasedType = typeNameSymbolAlias.getExportAssignedTypeSymbol();
 
                     if (aliasedType && !aliasedType.isResolved) {
-                        var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-                        context.resolvingNamespaceMemberAccess = false;
                         this.resolveDeclaredSymbol(aliasedType, enclosingDecl, context);
-                        context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
                     }
                 }
 
@@ -10767,10 +10762,10 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             var typeDecl = this.getDeclForAST(typeDeclAst);
-                var baseType = <PullTypeSymbol>this.getSymbolForAST(baseDeclAST);
-                if (!baseType) {
-                    return;
-                }
+            var baseType = <PullTypeSymbol>this.getSymbolForAST(baseDeclAST);
+            if (!baseType) {
+                return;
+            }
 
             var typeDeclIsClass = typeSymbol.isClass();
 
