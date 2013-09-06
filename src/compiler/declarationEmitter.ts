@@ -154,19 +154,23 @@ module TypeScript {
                 else {
                     var emitDeclare = !hasFlag(pullFlags, PullElementFlags.Exported);
 
+                    var container = this.getAstDeclarationContainer();
+                    var isWholeFileDynamicModule = container.nodeType() === NodeType.ModuleDeclaration &&
+                        hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsWholeFile);
+
                     // Emit export only for global export statements. 
                     // The container for this would be dynamic module which is whole file
-                    var container = this.getAstDeclarationContainer();
-                    if (container.nodeType() === NodeType.ModuleDeclaration &&
-                        hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsWholeFile) &&
-                        hasFlag(pullFlags, PullElementFlags.Exported)) {
+                    if (isWholeFileDynamicModule && hasFlag(pullFlags, PullElementFlags.Exported)) {
                         result += "export ";
                         emitDeclare = true;
                     }
 
-                    // Emit declare if not interface declaration or import declaration && is not from module
-                    if (emitDeclare && typeString !== "interface" && typeString != "import") {
-                        result += "declare ";
+                    // Emit declare only in global context
+                    if (isWholeFileDynamicModule || container.nodeType() == NodeType.Script) {
+                        // Emit declare if not interface declaration or import declaration && is not from module
+                        if (emitDeclare && typeString !== "interface" && typeString != "import") {
+                            result += "declare ";
+                        }
                     }
 
                     result += typeString + " ";
@@ -769,23 +773,25 @@ module TypeScript {
                 var modulePullDecl = this.compiler.semanticInfoChain.getDeclForAST(moduleDecl, this.document.fileName);
                 var moduleName = this.getDeclFlagsString(ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "module");
 
-                // Module is dotted if it contains single module element with exported flag and it does not have doc comments for it
-                for (;
-                    // Till the module has single module element with exported flag and without doc comments,
-                    //  we traverse the module element so we can create a dotted module name.
-                    moduleDecl.members.members.length === 1 &&
-                    moduleDecl.members.members[0].nodeType() === NodeType.ModuleDeclaration &&
-                    !(<ModuleDeclaration>moduleDecl.members.members[0]).isEnum() &&
-                    hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported) && 
-                    (moduleDecl.docComments() === null || moduleDecl.docComments().length === 0)
+                if (!isQuoted(moduleDecl.name.text())) {
+                    // Module is dotted if it contains single module element with exported flag and it does not have doc comments for it
+                    for (;
+                        // Till the module has single module element with exported flag and without doc comments,
+                        //  we traverse the module element so we can create a dotted module name.
+                        moduleDecl.members.members.length === 1 &&
+                        moduleDecl.members.members[0].nodeType() === NodeType.ModuleDeclaration &&
+                        !(<ModuleDeclaration>moduleDecl.members.members[0]).isEnum() &&
+                        hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported) &&
+                        (moduleDecl.docComments() === null || moduleDecl.docComments().length === 0)
 
-                    // Module to look up is the single module element of the current module
-                    ; moduleDecl = <ModuleDeclaration>moduleDecl.members.members[0]) {
+                        // Module to look up is the single module element of the current module
+                        ; moduleDecl = <ModuleDeclaration>moduleDecl.members.members[0]) {
 
-                    // construct dotted name
-                    moduleName += moduleDecl.name.actualText + ".";
-                    dottedModuleContainers.push(moduleDecl);
-                    this.pushDeclarationContainer(moduleDecl);
+                        // construct dotted name
+                        moduleName += moduleDecl.name.actualText + ".";
+                        dottedModuleContainers.push(moduleDecl);
+                        this.pushDeclarationContainer(moduleDecl);
+                    }
                 }
 
                 moduleName += moduleDecl.name.actualText;
