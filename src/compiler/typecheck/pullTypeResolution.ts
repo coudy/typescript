@@ -9173,22 +9173,22 @@ module TypeScript {
             // Just in case the argument is a string literal, and are checking overload on const, we set this stringConstantVal
             // (sourceIsAssignableToTarget will internally check if the argument is actually a string)
             comparisonInfo.stringConstantVal = arg;
-            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context) ?
-                OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors :
-                OverloadApplicabilityStatus.NotApplicable;
+            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context)
+                ? OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors
+                : OverloadApplicabilityStatus.NotApplicable;
         }
 
         private overloadIsApplicableForArgumentHelper(paramType: PullTypeSymbol, argSym: PullSymbol, argumentIndex: number, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): boolean {
-            if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                if (comparisonInfo && !comparisonInfo.message) {
-                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
-                        [paramType.toString(), (argumentIndex + 1), argSym.getTypeName()]));
-                }
-
-                return false;
+            if (this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+                return true;
             }
 
-            return true;
+            if (comparisonInfo && !comparisonInfo.message) {
+                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
+                    [paramType.toString(), (argumentIndex + 1), argSym.getTypeName()]));
+            }
+
+            return false;
         }
 
         private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
@@ -9198,12 +9198,6 @@ module TypeScript {
             context: PullTypeResolutionContext): PullApplicableSignature[] {
 
             var applicableSigs: PullApplicableSignature[] = [];
-            var paramType: PullTypeSymbol = null;
-            var cxt: PullContextualTypeContext = null;
-
-            var parameters: PullSymbol[];
-            var signature: PullSignatureSymbol;
-            var argSym: PullSymbol;
 
             for (var i = 0; i < candidateSignatures.length; i++) {
                 var applicability = this.overloadIsApplicable(candidateSignatures[i], args, enclosingDecl, context, comparisonInfo);
