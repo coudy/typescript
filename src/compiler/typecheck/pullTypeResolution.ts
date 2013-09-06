@@ -4201,7 +4201,7 @@ module TypeScript {
                 this.setTypeChecked(ast, context);
                 // Return type of constructor signature must be assignable to the instance type of the class.
                 if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
-                    var classDecl = parentDecl.getParentDecl()
+                    var classDecl = parentDecl.getParentDecl();
                     if (classDecl) {
                         var classSymbol = classDecl.getSymbol();
                         if (!classSymbol.isResolved) {

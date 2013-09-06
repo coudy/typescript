@@ -456,7 +456,7 @@ module TypeScript {
                     }
                     else {
                         this.addDiagnostic(
-                            new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version_0_not_supported_Using_default_1_code_generation, [type, "ES3"]));
+                            new Diagnostic(null, 0, 0, DiagnosticCode.ECMAScript_target_version_0_not_supported_Specify_a_valid_target_version_1_default_or_2, [type, "ES3", "ES5"]));
                     }
                 }
             }, 't');
@@ -782,7 +782,10 @@ module TypeScript {
 
         /// IDiagnosticsReporter methods
         addDiagnostic(diagnostic: Diagnostic) {
-            this.hasErrors = true;
+            var diagnosticInfo = TypeScript.getDiagnosticInfoFromKey(diagnostic.diagnosticKey());
+            if (diagnosticInfo.category === DiagnosticCategory.Error) {
+                this.hasErrors = true;
+            }
 
             if (diagnostic.fileName()) {
                 var scriptSnapshot = this.getScriptSnapshot(diagnostic.fileName());

@@ -1230,13 +1230,13 @@ module TypeScript {
     "code": 5001,
     "category": DiagnosticCategory.Error
   },
-  "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.": {
+  "ECMAScript target version '{0}' not supported.  Specify a valid target version: '{1}' (default), or '{2}'": {
     "code": 5002,
-    "category": DiagnosticCategory.Warning
+    "category": DiagnosticCategory.Error
   },
   "Module code generation '{0}' not supported.": {
     "code": 5003,
-    "category": DiagnosticCategory.Warning
+    "category": DiagnosticCategory.Error
   },
   "Could not find file: '{0}'.": {
     "code": 5004,

@@ -308,7 +308,7 @@ module TypeScript {
         Variable_declaration_cannot_have_the_same_name_as_an_import_declaration: "Variable declaration cannot have the same name as an import declaration.",
         Signature_expected_0_type_arguments_got_1_instead: "Signature expected {0} type arguments, got {1} instead.",
         Current_host_does_not_support_0_option: "Current host does not support '{0}' option.",
-        ECMAScript_target_version_0_not_supported_Using_default_1_code_generation: "ECMAScript target version '{0}' not supported.  Using default '{1}' code generation.",
+        ECMAScript_target_version_0_not_supported_Specify_a_valid_target_version_1_default_or_2: "ECMAScript target version '{0}' not supported.  Specify a valid target version: '{1}' (default), or '{2}'",
         Module_code_generation_0_not_supported: "Module code generation '{0}' not supported.",
         Could_not_find_file_0: "Could not find file: '{0}'.",
         A_file_cannot_have_a_reference_to_itself: "A file cannot have a reference to itself.",
