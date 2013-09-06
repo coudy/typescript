@@ -1404,10 +1404,22 @@ module TypeScript {
                     }
                 }
 
-                return true;
+                return this.allSignaturesAreFixed(this.getCallSignatures(false))
+                    && this.allSignaturesAreFixed(this.getConstructSignatures(false))
+                    && this.allSignaturesAreFixed(this.getIndexSignatures(false));
             }
 
             return false;
+        }
+
+        private allSignaturesAreFixed(signatures: PullSignatureSymbol[]): boolean {
+            for (var i = 0; i < signatures.length; i++) {
+                if (!signatures[i].isFixed()) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {

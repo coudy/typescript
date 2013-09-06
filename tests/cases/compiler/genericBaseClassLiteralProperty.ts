@@ -1,5 +1,3 @@
-// bug 766872: function with type parameter in generic base class
-
 class BaseClass<T> {
     public _getValue1: { (): T; };
     public _getValue2: () => T;
