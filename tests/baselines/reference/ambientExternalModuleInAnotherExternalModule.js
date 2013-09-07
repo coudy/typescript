@@ -1,4 +1,4 @@
-define(["require", "exports", "ext"], function(require, exports, __ext__) {
+define(["require", "exports", "ext"], function(require, exports, ext) {
     var D = (function () {
         function D() {
         }
@@ -6,8 +6,7 @@ define(["require", "exports", "ext"], function(require, exports, __ext__) {
     })();
     
 
-    // Cannot resolve this ext module reference
-    var ext = "ext";
+    
     var x = ext;
     return D;
 });

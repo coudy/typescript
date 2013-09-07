@@ -1,8 +1,7 @@
 //// [memberAccessMustUseModuleInstances_0.js]
 //// [memberAccessMustUseModuleInstances_1.js]
-define(["require", "exports", 'winjs'], function(require, exports, __WinJS__) {
-    ///<reference path='memberAccessMustUseModuleInstances_0.ts'/>
-    var WinJS = __WinJS__;
+define(["require", "exports", 'winjs'], function(require, exports, WinJS) {
+    
 
     WinJS.Promise.timeout(10);
 });

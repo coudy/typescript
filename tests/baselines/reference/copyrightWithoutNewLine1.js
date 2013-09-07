@@ -1,8 +1,5 @@
-define(["require", "exports", "./greeter"], function(require, exports, __model__) {
-    /*****************************
-    * (c) Copyright - Important
-    ****************************/
-    var model = "./greeter";
+define(["require", "exports", "./greeter"], function(require, exports, model) {
+    
     var el = document.getElementById('content');
     var greeter = new model.Greeter(el);
 

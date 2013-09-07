@@ -1,5 +1,5 @@
-define(["require", "exports", 'fs'], function(require, exports, __fs__) {
-    var fs = 'fs';
+define(["require", "exports", 'fs'], function(require, exports, fs) {
+    
     function readdir(path, accept, callback) {
     }
 

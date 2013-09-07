@@ -9,8 +9,8 @@ define(["require", "exports"], function(require, exports) {
     return M;
 });
 //// [exportAssignmentInternalModule_B.js]
-define(["require", "exports", "exportAssignmentInternalModule_A"], function(require, exports, __modM__) {
-    var modM = __modM__;
+define(["require", "exports", "exportAssignmentInternalModule_A"], function(require, exports, modM) {
+    
 
     var n = modM.x;
 });

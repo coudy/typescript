@@ -170,13 +170,20 @@ module TypeScript {
         }
 
         public emitImportDeclaration(importDeclAST: ImportDeclaration) {
-            if (this.importStatementShouldBeEmitted(importDeclAST)) {
+            var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
+            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
+            var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
+            var isAmdCodeGen = this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous;
+            if ((!isExternalModuleReference || // Any internal reference needs to check if the emit can happen
+                isExported || // External module reference with export modifier always needs to be emitted
+                !isAmdCodeGen) // commonjs needs the var declaration for the import declaration
+                && this.importStatementShouldBeEmitted(importDeclAST)) {
+
                 var prevModAliasId = this.modAliasId;
                 var prevFirstModAlias = this.firstModAlias;
 
                 this.emitComments(importDeclAST, true);
 
-                var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
                 var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
                 var parentSymbol = importSymbol.getContainer();
@@ -188,7 +195,7 @@ module TypeScript {
                 var usePropertyAssignmentInsteadOfVarDecl = false;
                 var moduleNamePrefix: string;
 
-                if (hasFlag(importDecl.flags, PullElementFlags.Exported) &&
+                if (isExported &&
                     (parentKind == PullElementKind.Container ||
                     parentKind === PullElementKind.DynamicModule ||
                     associatedParentSymbolKind === PullElementKind.Container ||
@@ -215,24 +222,38 @@ module TypeScript {
                     }
                 }
 
-                this.recordSourceMappingStart(importDeclAST);
-                if (usePropertyAssignmentInsteadOfVarDecl) {
-                    this.writeToOutput(moduleNamePrefix);
+                if (isAmdCodeGen && isExternalModuleReference) {
+                    // For amdCode gen of exported external module reference, do not emit var declaration
+                    // Emit the property assignment since it is exported
+                    needsPropertyAssignment = true;
                 } else {
-                    this.writeToOutput("var ");
-                }
-                this.writeToOutput(importDeclAST.id.actualText + " = ");
-                this.modAliasId = importDeclAST.id.actualText;
-                this.firstModAlias = importDeclAST.firstAliasedModToString();
-                var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
+                    this.recordSourceMappingStart(importDeclAST);
+                    if (usePropertyAssignmentInsteadOfVarDecl) {
+                        this.writeToOutput(moduleNamePrefix);
+                    } else {
+                        this.writeToOutput("var ");
+                    }
+                    this.writeToOutput(importDeclAST.id.actualText + " = ");
+                    this.modAliasId = importDeclAST.id.actualText;
+                    this.firstModAlias = importDeclAST.firstAliasedModToString();
+                    var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
 
-                this.emitJavascript(aliasAST, false);
-                this.recordSourceMappingEnd(importDeclAST);
-                this.writeToOutput(";");
+                    if (isExternalModuleReference) {
+                        this.writeToOutput("require(" + (<Identifier>aliasAST).actualText + ")");
+                    } else {
+                        this.emitJavascript(aliasAST, false);
+                    }
+
+                    this.recordSourceMappingEnd(importDeclAST);
+                    this.writeToOutput(";");
+
+                    if (needsPropertyAssignment) {
+                        this.writeLineToOutput("");
+                        this.emitIndent();
+                    }
+                }
 
                 if (needsPropertyAssignment) {
-                    this.writeLineToOutput("");
-                    this.emitIndent();
                     this.writeToOutputWithSourceMapRecord(moduleNamePrefix + importDeclAST.id.actualText + " = " + importDeclAST.id.actualText, importDeclAST);
                     this.writeToOutput(";");
                 }
@@ -777,7 +798,7 @@ module TypeScript {
                             importList += ", ";
                         }
 
-                        importList += "__" + importStatementDecl.name + "__";
+                        importList += importStatementDecl.name;
                         dependencyList += importStatementAST.firstAliasedModToString();
                     }
                 }
@@ -1292,14 +1313,14 @@ module TypeScript {
                 if (pullSymbol && pullSymbolAlias) {
                     var symbolToCompare = this.resolvingContext.resolvingTypeReference ?
                         pullSymbolAlias.getExportAssignedTypeSymbol() :
-                        pullSymbolAlias.getExportAssignedValueSymbol(); 
+                        pullSymbolAlias.getExportAssignedValueSymbol();
 
                     if (pullSymbol == symbolToCompare) {
                         pullSymbol = pullSymbolAlias;
                         pullSymbolAlias = null;
                     }
                 }
-                
+
                 var pullSymbolKind = pullSymbol.kind;
                 var isLocalAlias = pullSymbolAlias && (pullSymbolAlias.getDeclarations()[0].getParentDecl() == this.getEnclosingDecl());
                 if (addThis && (this.emitState.container !== EmitContainer.Args) && pullSymbol) {
@@ -1319,13 +1340,13 @@ module TypeScript {
                             }
                         }
                         else if (PullHelpers.symbolIsModule(pullSymbolContainer) || pullSymbolContainerKind === PullElementKind.Enum ||
-                                 pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
+                            pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
                             if (pullSymbolKind === PullElementKind.Property || pullSymbolKind === PullElementKind.EnumMember) {
                                 this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
-                                     pullSymbolKind === PullElementKind.Variable &&
+                                pullSymbolKind === PullElementKind.Variable &&
                                 !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
                                 this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
                             }
@@ -1339,17 +1360,17 @@ module TypeScript {
                             // }
                         }
                         else if (pullSymbolContainerKind === PullElementKind.DynamicModule ||
-                                 pullSymbolContainer.hasFlag(PullElementFlags.InitializedDynamicModule)) {
+                            pullSymbolContainer.hasFlag(PullElementFlags.InitializedDynamicModule)) {
                             if (pullSymbolKind === PullElementKind.Property) {
                                 // If dynamic module
                                 this.writeToOutput("exports.");
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
-                                     !isLocalAlias &&
-                                     !pullSymbol.hasFlag(PullElementFlags.ImplicitVariable) &&
-                                     pullSymbol.kind !== PullElementKind.ConstructorMethod &&
-                                     pullSymbol.kind !== PullElementKind.Class &&
-                                     pullSymbol.kind !== PullElementKind.Enum) {
+                                !isLocalAlias &&
+                                !pullSymbol.hasFlag(PullElementFlags.ImplicitVariable) &&
+                                pullSymbol.kind !== PullElementKind.ConstructorMethod &&
+                                pullSymbol.kind !== PullElementKind.Class &&
+                                pullSymbol.kind !== PullElementKind.Enum) {
                                 this.writeToOutput("exports.");
                             }
                         }
@@ -1374,18 +1395,7 @@ module TypeScript {
                     }
                 }
 
-                // If it's a dynamic module, we need to print the "require" invocation
-                if (pullSymbol && pullSymbolKind === PullElementKind.DynamicModule) {
-                    if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
-                        this.writeToOutput("__" + this.modAliasId + "__");
-                    }
-                    else {
-                        this.writeToOutput("require(" + name.actualText + ")");
-                    }
-                }
-                else {
-                    this.writeToOutput(name.actualText);
-                }
+                this.writeToOutput(name.actualText);
             }
 
             this.recordSourceMappingEnd(name);

@@ -8,8 +8,8 @@ define(["require", "exports"], function(require, exports) {
     return foo;
 });
 //// [exportAssignmentFunction_B.js]
-define(["require", "exports", "exportAssignmentFunction_A"], function(require, exports, __fooFunc__) {
-    var fooFunc = __fooFunc__;
+define(["require", "exports", "exportAssignmentFunction_A"], function(require, exports, fooFunc) {
+    
 
     var n = fooFunc();
 });

@@ -5,7 +5,7 @@ var a = require('m');
 exports.a = a;
 var y = exports.a.x;
 
-var b = require(a);
+var b = a;
 exports.b = b;
 var z = exports.b.x;
 
