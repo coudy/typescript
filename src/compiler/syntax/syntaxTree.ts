@@ -781,7 +781,8 @@ module TypeScript {
         }
 
         public visitIndexMemberDeclaration(node: IndexMemberDeclaration): void {
-            if (this.checkIndexMemberModifiers(node)) {
+            if (this.checkClassElementModifiers(node.modifiers) ||
+                this.checkIndexMemberModifiers(node)) {
                 this.skip(node);
                 return;
             }

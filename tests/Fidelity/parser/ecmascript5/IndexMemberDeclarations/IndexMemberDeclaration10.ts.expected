@@ -6,22 +6,22 @@
     },
     "diagnostics": [
         {
-            "start": 14,
+            "start": 21,
             "length": 6,
-            "diagnosticCode": "'{0}' modifier cannot appear on a class element.",
+            "diagnosticCode": "'{0}' modifier already seen.",
             "arguments": [
-                "export"
+                "static"
             ]
         }
     ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 44,
+        "fullWidth": 51,
         "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "ClassDeclaration",
-                "fullWidth": 44,
+                "fullWidth": 51,
                 "modifiers": [],
                 "classKeyword": {
                     "kind": "ClassKeyword",
@@ -72,15 +72,15 @@
                 "classElements": [
                     {
                         "kind": "IndexMemberDeclaration",
-                        "fullWidth": 32,
+                        "fullWidth": 39,
                         "modifiers": [
                             {
-                                "kind": "ExportKeyword",
+                                "kind": "StaticKeyword",
                                 "width": 6,
                                 "fullWidth": 10,
-                                "text": "export",
-                                "value": "export",
-                                "valueText": "export",
+                                "text": "static",
+                                "value": "static",
+                                "valueText": "static",
                                 "hasLeadingTrivia": true,
                                 "hasTrailingTrivia": true,
                                 "leadingTrivia": [
@@ -89,6 +89,21 @@
                                         "text": "   "
                                     }
                                 ],
+                                "trailingTrivia": [
+                                    {
+                                        "kind": "WhitespaceTrivia",
+                                        "text": " "
+                                    }
+                                ]
+                            },
+                            {
+                                "kind": "StaticKeyword",
+                                "width": 6,
+                                "fullWidth": 7,
+                                "text": "static",
+                                "value": "static",
+                                "valueText": "static",
+                                "hasTrailingTrivia": true,
                                 "trailingTrivia": [
                                     {
                                         "kind": "WhitespaceTrivia",
@@ -215,8 +230,8 @@
         "lineStarts": [
             0,
             11,
-            43
+            50
         ],
-        "length": 44
+        "length": 51
     }
 }
