@@ -294,6 +294,7 @@ var TypeScript;
         All_declarations_of_merged_declaration_0_must_be_exported_or_not_exported: "All declarations of merged declaration '{0}' must be exported or not exported.",
         super_cannot_be_referenced_in_constructor_arguments: "'super' cannot be referenced in constructor arguments.",
         Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class: "Return type of constructor signature must be assignable to the instance type of the class.",
+        Ambient_external_module_declaration_must_be_defined_in_global_context: "Ambient external module declaration must be defined in global context.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
@@ -2837,6 +2838,10 @@ var TypeScript;
         },
         "Return type of constructor signature must be assignable to the instance type of the class.": {
             "code": 2194,
+            "category": 1 /* Error */
+        },
+        "Ambient external module declaration must be defined in global context.": {
+            "code": 2195,
             "category": 1 /* Error */
         },
         "Type '{0}' is missing property '{1}' from type '{2}'.": {
@@ -29178,26 +29183,23 @@ var TypeScript;
             var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
             var result = [];
 
-            var queue = semanticInfo.getTopLevelDecls();
+            var topLevelDecl = semanticInfo.getTopLevelDecl();
+            var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
+            var queue = dynamicModuleDecl.getChildDecls();
 
-            while (queue.length > 0) {
-                var decl = queue.shift();
+            for (var i = 0, n = queue.length; i < n; i++) {
+                var decl = queue[i];
 
                 if (decl.kind & 256 /* TypeAlias */) {
                     var importStatementAST = semanticInfo.getASTForDecl(decl);
-                    if (importStatementAST.alias.nodeType() === 21 /* Name */) {
-                        var text = importStatementAST.alias.actualText;
-                        if (TypeScript.isQuoted(text)) {
-                            var symbol = decl.getSymbol();
-                            var typeSymbol = symbol && symbol.type;
-                            if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {
-                                result.push(decl);
-                            }
+                    if (importStatementAST.isExternalImportDeclaration()) {
+                        var symbol = decl.getSymbol();
+                        var typeSymbol = symbol && symbol.type;
+                        if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {
+                            result.push(decl);
                         }
                     }
                 }
-
-                queue = queue.concat(decl.getChildDecls());
             }
 
             return result;
@@ -29240,7 +29242,7 @@ var TypeScript;
 
         Emitter.prototype.shouldCaptureThis = function (ast) {
             if (ast.nodeType() === 2 /* Script */) {
-                var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecls()[0];
+                var scriptDecl = this.semanticInfoChain.getUnit(this.document.fileName).getTopLevelDecl();
                 return (scriptDecl.flags & 262144 /* MustCaptureThis */) === 262144 /* MustCaptureThis */;
             }
 
@@ -31263,13 +31265,17 @@ var TypeScript;
                     var emitDeclare = !TypeScript.hasFlag(pullFlags, 1 /* Exported */);
 
                     var container = this.getAstDeclarationContainer();
-                    if (container.nodeType() === 16 /* ModuleDeclaration */ && TypeScript.hasFlag(container.getModuleFlags(), 256 /* IsWholeFile */) && TypeScript.hasFlag(pullFlags, 1 /* Exported */)) {
+                    var isWholeFileDynamicModule = container.nodeType() === 16 /* ModuleDeclaration */ && TypeScript.hasFlag(container.getModuleFlags(), 256 /* IsWholeFile */);
+
+                    if (isWholeFileDynamicModule && TypeScript.hasFlag(pullFlags, 1 /* Exported */)) {
                         result += "export ";
                         emitDeclare = true;
                     }
 
-                    if (emitDeclare && typeString !== "interface" && typeString != "import") {
-                        result += "declare ";
+                    if (isWholeFileDynamicModule || container.nodeType() == 2 /* Script */) {
+                        if (emitDeclare && typeString !== "interface" && typeString != "import") {
+                            result += "declare ";
+                        }
                     }
 
                     result += typeString + " ";
@@ -31844,10 +31850,12 @@ var TypeScript;
                 var modulePullDecl = this.compiler.semanticInfoChain.getDeclForAST(moduleDecl, this.document.fileName);
                 var moduleName = this.getDeclFlagsString(TypeScript.ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "module");
 
-                for (; moduleDecl.members.members.length === 1 && moduleDecl.members.members[0].nodeType() === 16 /* ModuleDeclaration */ && !moduleDecl.members.members[0].isEnum() && TypeScript.hasFlag(moduleDecl.members.members[0].getModuleFlags(), 1 /* Exported */) && (moduleDecl.docComments() === null || moduleDecl.docComments().length === 0); moduleDecl = moduleDecl.members.members[0]) {
-                    moduleName += moduleDecl.name.actualText + ".";
-                    dottedModuleContainers.push(moduleDecl);
-                    this.pushDeclarationContainer(moduleDecl);
+                if (!TypeScript.isQuoted(moduleDecl.name.text())) {
+                    for (; moduleDecl.members.members.length === 1 && moduleDecl.members.members[0].nodeType() === 16 /* ModuleDeclaration */ && !moduleDecl.members.members[0].isEnum() && TypeScript.hasFlag(moduleDecl.members.members[0].getModuleFlags(), 1 /* Exported */) && (moduleDecl.docComments() === null || moduleDecl.docComments().length === 0); moduleDecl = moduleDecl.members.members[0]) {
+                        moduleName += moduleDecl.name.actualText + ".";
+                        dottedModuleContainers.push(moduleDecl);
+                        this.pushDeclarationContainer(moduleDecl);
+                    }
                 }
 
                 moduleName += moduleDecl.name.actualText;
@@ -32588,14 +32596,6 @@ var TypeScript;
             }
 
             var scopePath = scopeSymbol.pathToRoot();
-            if (scopePath.length > 1 && scopePath[scopePath.length - 2].kind === 32 /* DynamicModule */) {
-                var decls = scopePath[scopePath.length - 2].getDeclarations();
-                var symbol = this.findAliasedType(decls);
-                if (symbol) {
-                    return symbol;
-                }
-            }
-
             if (scopePath.length && scopePath[scopePath.length - 1].kind === 32 /* DynamicModule */) {
                 var decls = scopePath[scopePath.length - 1].getDeclarations();
                 var symbol = this.findAliasedType(decls);
@@ -36268,7 +36268,6 @@ var TypeScript;
             this.subtypeCache = {};
             this.identicalCache = {};
             this.currentUnit = null;
-            this.lastExternalModulePath = "";
             this.cachedFunctionArgumentsSymbol = new TypeScript.PullSymbol("arguments", 1024 /* Variable */);
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
             this.cachedFunctionArgumentsSymbol.setResolved();
@@ -36730,14 +36729,10 @@ var TypeScript;
                 if (unit === this.currentUnit && declPath.length != 0) {
                     continue;
                 }
-                var topLevelDecls = unit.getTopLevelDecls();
-                if (topLevelDecls.length) {
-                    for (var j = 0, m = topLevelDecls.length; j < m; j++) {
-                        var topLevelDecl = topLevelDecls[j];
-                        if (topLevelDecl.kind === 1 /* Script */ || topLevelDecl.kind === 0 /* Global */) {
-                            this.addFilteredDecls(topLevelDecl.getChildDecls(), declSearchKind, result);
-                        }
-                    }
+
+                if (!unit.isExternalModule()) {
+                    var topLevelDecl = unit.getTopLevelDecl();
+                    this.addFilteredDecls(topLevelDecl.getChildDecls(), declSearchKind, result);
                 }
             }
 
@@ -36984,75 +36979,32 @@ var TypeScript;
             return (type.isArray() && type.getElementType()) || type == this.cachedArrayInterfaceType();
         };
 
-        PullTypeResolver.prototype.findTypeSymbolForDynamicModule = function (idText, currentFileName, search) {
+        PullTypeResolver.prototype.resolveExternalModuleReference = function (idText, currentFileName) {
             var originalIdText = idText;
             var symbol = null;
 
-            if (!TypeScript.isRelative(originalIdText)) {
+            if (TypeScript.isRelative(originalIdText)) {
+                var path = TypeScript.getRootFilePath(TypeScript.switchToForwardSlashes(currentFileName));
+                symbol = this.semanticInfoChain.findExternalModule(path + idText);
+            } else {
                 idText = originalIdText;
 
-                var strippedIdText = TypeScript.stripStartAndEndQuotes(idText);
+                symbol = this.semanticInfoChain.findAmbientExternalModuleInGlobalContext(TypeScript.quoteStr(originalIdText));
 
-                if (this.lastExternalModulePath != "") {
-                    idText = TypeScript.normalizePath(this.lastExternalModulePath + strippedIdText + ".ts");
-                    symbol = search(idText);
+                if (!symbol) {
+                    var path = TypeScript.getRootFilePath(TypeScript.switchToForwardSlashes(currentFileName));
 
-                    if (symbol) {
-                        return symbol;
-                    }
-
-                    if (symbol === null) {
-                        idText = TypeScript.normalizePath(this.lastExternalModulePath + strippedIdText + ".d.ts");
-                        symbol = search(idText);
-                    }
-
-                    if (symbol) {
-                        return symbol;
-                    }
-                }
-
-                var path = TypeScript.getRootFilePath(TypeScript.switchToForwardSlashes(currentFileName));
-
-                while (symbol === null && path != "") {
-                    idText = TypeScript.normalizePath(path + strippedIdText + ".d.ts");
-                    symbol = search(idText);
-
-                    if (symbol === null) {
-                        idText = TypeScript.normalizePath(path + strippedIdText + ".ts");
-                        symbol = search(idText);
-                    }
-
-                    if (symbol === null) {
-                        if (path === '/') {
-                            path = '';
-                        } else {
-                            path = TypeScript.normalizePath(path + "..");
-                            path = path && path != '/' ? path + '/' : path;
+                    while (symbol === null && path != "") {
+                        symbol = this.semanticInfoChain.findExternalModule(path + idText);
+                        if (symbol === null) {
+                            if (path === '/') {
+                                path = '';
+                            } else {
+                                path = TypeScript.normalizePath(path + "..");
+                                path = path && path != '/' ? path + '/' : path;
+                            }
                         }
                     }
-
-                    if (symbol) {
-                        this.lastExternalModulePath = path;
-                    }
-                }
-            }
-
-            symbol = search(originalIdText);
-
-            if (symbol === null) {
-                if (!symbol) {
-                    idText = TypeScript.swapQuotes(originalIdText);
-                    symbol = search(idText);
-                }
-
-                if (!symbol) {
-                    idText = TypeScript.stripStartAndEndQuotes(originalIdText) + ".d.ts";
-                    symbol = search(idText);
-                }
-
-                if (!symbol) {
-                    idText = TypeScript.stripStartAndEndQuotes(originalIdText) + ".ts";
-                    symbol = search(idText);
                 }
             }
 
@@ -37726,7 +37678,6 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveImportDeclaration = function (importStatementAST, context) {
-            var _this = this;
             var importDecl = this.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = importDecl.getSymbol();
@@ -37740,20 +37691,13 @@ var TypeScript;
             importDeclSymbol.startResolving();
 
             if (importStatementAST.isExternalImportDeclaration()) {
-                var modPath = importStatementAST.alias.actualText;
+                var modPath = importStatementAST.alias.text();
                 var declPath = TypeScript.getPathToDecl(enclosingDecl);
 
-                aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), function (s) {
-                    return _this.semanticInfoChain.findSymbol([s], 32 /* DynamicModule */);
-                });
+                aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());
 
                 if (!aliasedType) {
-                    aliasedType = this.findTypeSymbolForDynamicModule(modPath, importDecl.getScriptName(), function (s) {
-                        return _this.getSymbolFromDeclPath(s, declPath, 32 /* DynamicModule */);
-                    });
-                }
-                if (!aliasedType) {
-                    this.currentUnit.addDiagnostic(new TypeScript.Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), TypeScript.DiagnosticCode.Unable_to_resolve_external_module_0, [modPath]));
+                    this.currentUnit.addDiagnostic(new TypeScript.Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), TypeScript.DiagnosticCode.Unable_to_resolve_external_module_0, [importStatementAST.alias.actualText]));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
             } else {
@@ -44823,7 +44767,7 @@ var TypeScript;
             if (!unit.hasBeenTypeChecked) {
                 unit.hasBeenTypeChecked = true;
 
-                var scriptDecl = unit.getTopLevelDecls()[0];
+                var scriptDecl = unit.getTopLevelDecl();
 
                 var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
                 var context = new TypeScript.PullTypeResolutionContext(resolver, true, scriptName);
@@ -45061,29 +45005,18 @@ var TypeScript;
                 if (symbolIsVisible && symbol.kind != 2 /* Primitive */ && symbol.kind != 8192 /* TypeParameter */) {
                     var symbolPath = symbol.pathToRoot();
                     var declSymbolPath = declSymbol.pathToRoot();
-                    if (symbolPath[symbolPath.length - 1].kind === 32 /* DynamicModule */ && declSymbolPath[declSymbolPath.length - 1].kind == 32 /* DynamicModule */) {
-                        var verifyAlias = false;
 
-                        if (declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
-                            verifyAlias = true;
-                        } else if (symbolPath.length > 1 && symbolPath[symbolPath.length - 2].kind == 32 /* DynamicModule */) {
-                            if (declSymbolPath.length < 2 || declSymbolPath[declSymbolPath.length - 2] != symbolPath[symbolPath.length - 2]) {
-                                verifyAlias = true;
+                    if (symbolPath[symbolPath.length - 1].kind === 32 /* DynamicModule */ && declSymbolPath[declSymbolPath.length - 1].kind == 32 /* DynamicModule */ && declSymbolPath[declSymbolPath.length - 1] != symbolPath[symbolPath.length - 1]) {
+                        symbolIsVisible = false;
+                        for (var i = symbolPath.length - 1; i >= 0; i--) {
+                            var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
+                            if (aliasSymbol) {
+                                symbolIsVisible = true;
+                                aliasSymbol.typeUsedExternally = true;
+                                break;
                             }
                         }
-
-                        if (verifyAlias) {
-                            symbolIsVisible = false;
-                            for (var i = symbolPath.length - 1; i >= 0; i--) {
-                                var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
-                                if (aliasSymbol) {
-                                    symbolIsVisible = true;
-                                    aliasSymbol.typeUsedExternally = true;
-                                    break;
-                                }
-                            }
-                            symbol = symbolPath.length > 1 && symbolPath[symbolPath.length - 2].kind == 32 /* DynamicModule */ ? symbolPath[symbolPath.length - 2] : symbolPath[symbolPath.length - 1];
-                        }
+                        symbol = symbolPath[symbolPath.length - 1];
                     }
                 } else if (symbol.kind == 256 /* TypeAlias */) {
                     var aliasSymbol = symbol;
@@ -45650,6 +45583,7 @@ var TypeScript;
                 var propName = typeMembers[i].name;
                 var extendedTypeProp = extendedType.findMember(propName);
                 if (extendedTypeProp) {
+                    this.resolveDeclaredSymbol(extendedTypeProp, extendedTypeProp.getDeclarations()[0].getParentDecl(), context);
                     foundError = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
 
                     if (!foundError) {
@@ -46029,7 +45963,7 @@ var TypeScript;
 
     var SemanticInfo = (function () {
         function SemanticInfo(compilationUnitPath) {
-            this.topLevelDecls = [];
+            this.topLevelDecl = null;
             this.topLevelSynthesizedDecls = [];
             this.declASTMap = new TypeScript.DataMap();
             this.astDeclMap = new TypeScript.DataMap();
@@ -46065,11 +45999,11 @@ var TypeScript;
         };
 
         SemanticInfo.prototype.addTopLevelDecl = function (decl) {
-            this.topLevelDecls[this.topLevelDecls.length] = decl;
+            this.topLevelDecl = decl;
         };
 
-        SemanticInfo.prototype.getTopLevelDecls = function () {
-            return this.topLevelDecls;
+        SemanticInfo.prototype.getTopLevelDecl = function () {
+            return this.topLevelDecl;
         };
 
         SemanticInfo.prototype.getPath = function () {
@@ -46191,7 +46125,7 @@ var TypeScript;
         SemanticInfo.prototype.getImportDeclarationNames = function () {
             if (this.importDeclarationNames === null) {
                 this.importDeclarationNames = new TypeScript.BlockIntrinsics();
-                this.populateImportDeclarationNames(this.topLevelDecls);
+                this.populateImportDeclarationNames([this.topLevelDecl]);
             }
 
             return this.importDeclarationNames;
@@ -46206,6 +46140,16 @@ var TypeScript;
                     this.populateImportDeclarationNames(decl.getChildDecls());
                 }
             }
+        };
+
+        SemanticInfo.prototype.isExternalModule = function () {
+            var topLevelDecl = this.getTopLevelDecl();
+            if (topLevelDecl.kind == 1 /* Script */) {
+                var script = this.getASTForDecl(topLevelDecl);
+                return !!script.topLevelMod;
+            }
+
+            return false;
         };
 
         SemanticInfo.prototype.addSyntheticIndexSignature = function (containingDecl, containingSymbol, ast, indexParamName, indexParamType, returnType) {
@@ -46335,13 +46279,8 @@ var TypeScript;
                 return this.topLevelDecls;
             }
 
-            var unitDecls;
-
             for (var i = 0; i < this.units.length; i++) {
-                unitDecls = this.units[i].getTopLevelDecls();
-                for (var j = 0; j < unitDecls.length; j++) {
-                    this.topLevelDecls[this.topLevelDecls.length] = unitDecls[j];
-                }
+                this.topLevelDecls[this.topLevelDecls.length] = this.units[i].getTopLevelDecl();
             }
 
             return this.topLevelDecls;
@@ -46402,6 +46341,70 @@ var TypeScript;
             return symbol;
         };
 
+        SemanticInfoChain.prototype.findExternalModule = function (id) {
+            id = TypeScript.normalizePath(id);
+
+            var dtsFile = id + ".d.ts";
+            var dtsCacheID = this.getDeclPathCacheID([dtsFile], 32 /* DynamicModule */);
+            var symbol = this.symbolCache[dtsCacheID];
+            if (symbol) {
+                return symbol;
+            }
+
+            var tsFile = id + ".ts";
+            var tsCacheID = this.getDeclPathCacheID([tsFile], 32 /* DynamicModule */);
+            symbol = this.symbolCache[tsCacheID];
+            if (symbol != undefined) {
+                return symbol;
+            }
+
+            symbol = null;
+            for (var i = 0; i < this.units.length; i++) {
+                var unit = this.units[i];
+                if (unit.isExternalModule()) {
+                    var unitPath = unit.getPath();
+                    var isDtsFile = unitPath == dtsFile;
+                    if (isDtsFile || unitPath == tsFile) {
+                        var topLevelDecl = unit.getTopLevelDecl();
+                        var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
+                        symbol = dynamicModuleDecl.getSymbol();
+                        this.symbolCache[dtsCacheID] = isDtsFile ? symbol : null;
+                        this.symbolCache[tsCacheID] = !TypeScript.isDTSFile ? symbol : null;
+                        return symbol;
+                    }
+                }
+            }
+
+            this.symbolCache[dtsCacheID] = null;
+            this.symbolCache[tsCacheID] = null;
+
+            return symbol;
+        };
+
+        SemanticInfoChain.prototype.findAmbientExternalModuleInGlobalContext = function (id) {
+            var cacheID = this.getDeclPathCacheID([id], 32 /* DynamicModule */);
+
+            var symbol = this.symbolCache[cacheID];
+            if (symbol == undefined) {
+                symbol = null;
+                for (var i = 0; i < this.units.length; i++) {
+                    var unit = this.units[i];
+                    if (!unit.isExternalModule()) {
+                        var topLevelDecl = unit.getTopLevelDecl();
+                        var dynamicModules = topLevelDecl.searchChildDecls(id, 32 /* DynamicModule */);
+                        if (dynamicModules.length) {
+                            symbol = dynamicModules[0].getSymbol();
+                            break;
+                        }
+                    }
+                }
+
+                this.symbolCache[cacheID] = symbol;
+            }
+
+            return symbol;
+        };
+
         SemanticInfoChain.prototype.findDecls = function (declPath, declKind) {
             var cacheID = this.getDeclPathCacheID(declPath, declKind);
 
@@ -46415,24 +46418,6 @@ var TypeScript;
             }
 
             TypeScript.declCacheMiss++;
-
-            if (declKind == 32 /* DynamicModule */ && declPath.length == 1) {
-                var path = declPath[0];
-
-                if (TypeScript.isRooted(path)) {
-                    var unit = this.unitCache[path];
-
-                    if (unit) {
-                        var childDecls = unit.getTopLevelDecls()[0].getChildDecls();
-
-                        if (childDecls.length === 1 && childDecls[0].kind == 32 /* DynamicModule */) {
-                            return childDecls;
-                        }
-                    }
-
-                    return TypeScript.sentinelEmptyArray;
-                }
-            }
 
             var declsToSearch = this.collectAllTopLevelDecls();
 
@@ -46505,7 +46490,7 @@ var TypeScript;
                 current = current.getParentDecl();
             }
 
-            var declsToSearch = unit.getTopLevelDecls();
+            var declsToSearch = [unit.getTopLevelDecl()];
             var foundDecls = [];
             var keepSearching = (invalidatedDecl.kind & 4 /* Container */) || (invalidatedDecl.kind & 16 /* Interface */) || (invalidatedDecl.kind & 8 /* Class */) || (invalidatedDecl.kind & 64 /* Enum */);
 
@@ -48069,6 +48054,10 @@ var TypeScript;
             var isEnum = (moduleKind & 64 /* Enum */) != 0;
             var searchKind = isEnum ? 64 /* Enum */ : TypeScript.PullElementKind.SomeContainer;
             var isInitializedModule = (moduleContainerDecl.flags & TypeScript.PullElementFlags.SomeInitializedModule) != 0;
+
+            if (parent && moduleKind == 32 /* DynamicModule */) {
+                this.semanticInfo.addDiagnostic(new TypeScript.Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), TypeScript.DiagnosticCode.Ambient_external_module_declaration_must_be_defined_in_global_context, null));
+            }
 
             var createdNewSymbol = false;
 
@@ -49697,11 +49686,8 @@ var TypeScript;
         PullSymbolBinder.prototype.bindDeclsForUnit = function (filePath) {
             this.setUnit(filePath);
 
-            var topLevelDecls = this.semanticInfo.getTopLevelDecls();
-
-            for (var i = 0; i < topLevelDecls.length; i++) {
-                this.bindDeclToPullSymbol(topLevelDecls[i]);
-            }
+            var topLevelDecl = this.semanticInfo.getTopLevelDecl();
+            this.bindDeclToPullSymbol(topLevelDecl);
         };
         return PullSymbolBinder;
     })();
@@ -53489,7 +53475,7 @@ var TypeScript;
 
                 TypeScript.getAstWalkerFactory().walk(newScript, TypeScript.preCollectDecls, TypeScript.postCollectDecls, null, declCollectionContext);
 
-                var oldTopLevelDecl = oldScriptSemanticInfo.getTopLevelDecls()[0];
+                var oldTopLevelDecl = oldScriptSemanticInfo.getTopLevelDecl();
                 var newTopLevelDecl = declCollectionContext.getParent();
 
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
@@ -54236,14 +54222,14 @@ var TypeScript;
             });
         };
 
-        TypeScriptCompiler.prototype.getTopLevelDeclarations = function (scriptName) {
+        TypeScriptCompiler.prototype.getTopLevelDeclaration = function (scriptName) {
             var unit = this.semanticInfoChain.getUnit(scriptName);
 
             if (!unit) {
                 return null;
             }
 
-            return unit.getTopLevelDecls();
+            return unit.getTopLevelDecl();
         };
 
         TypeScriptCompiler.prototype.reportDiagnostics = function (errors, errorReporter) {
