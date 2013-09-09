@@ -2271,35 +2271,67 @@ module TypeScript {
         }
     }
 
+    function applyDelta(ast: TypeScript.ASTSpan, delta: number) {
+        if (ast.minChar !== -1) {
+            ast.minChar += delta;
+        }
+
+        if (ast.limChar !== -1) {
+            ast.limChar += delta;
+        }
+    }
+
+    function applyDeltaToComments(comments: TypeScript.Comment[], delta: number) {
+        if (comments && comments.length > 0) {
+            for (var i = 0; i < comments.length; i++) {
+                var comment = comments[i];
+                applyDelta(comment, delta);
+            }
+        }
+    }
+
     class SyntaxTreeToIncrementalAstVisitor extends SyntaxTreeToAstVisitor {
         private applyDelta(ast: TypeScript.AST, delta: number) {
             if (delta === 0) {
                 return;
             }
 
-            var applyDelta = (ast: TypeScript.AST) => {
-                if (ast.minChar !== -1) {
-                    ast.minChar += delta;
-                }
-                if (ast.limChar !== -1) {
-                    ast.limChar += delta;
-                }
-            };
-
-            var applyDeltaToComments = (comments: TypeScript.Comment[]) => {
-                if (comments && comments.length > 0) {
-                    for (var i = 0; i < comments.length; i++) {
-                        var comment = comments[i];
-                        applyDelta(comment);
-                    }
-                }
-            };
-
             var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
                 // Apply delta to this node
-                applyDelta(cur);
-                applyDeltaToComments(cur.preComments());
-                applyDeltaToComments(cur.postComments());
+                applyDelta(cur, delta);
+                applyDeltaToComments(cur.preComments(), delta);
+                applyDeltaToComments(cur.postComments(), delta);
+
+                // Apply delta to all custom span fields
+                switch (cur.nodeType()) {
+                    case NodeType.Block:
+                        applyDelta((<Block>cur).closeBraceSpan, delta);
+                        break; 
+
+                    case NodeType.ObjectCreationExpression:
+                        applyDelta((<ObjectCreationExpression>cur).closeParenSpan, delta);
+                        break;
+
+                    case NodeType.InvocationExpression:
+                        applyDelta((<InvocationExpression>cur).closeParenSpan, delta);
+                        break;
+
+                    case NodeType.ModuleDeclaration:
+                        applyDelta((<ModuleDeclaration>cur).endingToken, delta);
+                        break;
+
+                    case NodeType.ClassDeclaration:
+                        applyDelta((<ClassDeclaration>cur).endingToken, delta);
+                        break;
+
+                    case NodeType.DoStatement:
+                        applyDelta((<DoStatement>cur).whileSpan, delta);
+                        break;
+
+                    case NodeType.SwitchStatement:
+                        applyDelta((<SwitchStatement>cur).statement, delta);
+                        break;
+                }
 
                 return cur;
             };
