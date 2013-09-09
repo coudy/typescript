@@ -2365,7 +2365,6 @@ module TypeScript {
             declSymbol.startResolving();
 
             var typeExprSymbol: PullTypeSymbol = null;
-            var initExprSymbol: PullSymbol = null;
             var inConstructorArgumentList = context.inConstructorArguments;
             context.inConstructorArguments = false;
 
@@ -2374,7 +2373,7 @@ module TypeScript {
 
             // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
             if (!varDecl.typeExpr) {
-                initExprSymbol = this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
+                this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
             }
 
             // if we're lacking both a type annotation and an initialization expression, the type is 'any'
@@ -2542,19 +2541,20 @@ module TypeScript {
             }
             else {
                 var initTypeSymbol = initExprSymbol.type;
+                var widenedInitTypeSymbol = this.widenType(initTypeSymbol, enclosingDecl, context);
 
                 // Don't reset the type if we already have one from the type expression
                 if (!varDecl.typeExpr) {
-                    context.setTypeInContext(declSymbol, this.widenType(initTypeSymbol, enclosingDecl, context));
+                    context.setTypeInContext(declSymbol, widenedInitTypeSymbol);
 
                     if (declParameterSymbol) {
-                        context.setTypeInContext(declParameterSymbol, initTypeSymbol);
+                        context.setTypeInContext(declParameterSymbol, widenedInitTypeSymbol);
                     }
 
                     // if the noImplicitAny flag is set to be true, report an error
                     if (this.compilationSettings.noImplicitAny) {
                         // initializer is resolved to any type from widening variable declaration (i.e var x = null)
-                        if ((declSymbol.type != initTypeSymbol) && (declSymbol.type == this.semanticInfoChain.anyTypeSymbol)) {
+                        if ((widenedInitTypeSymbol != initTypeSymbol) && (widenedInitTypeSymbol == this.semanticInfoChain.anyTypeSymbol)) {
                             context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Variable_0_implicitly_has_an_any_type,
                                 [varDecl.id.actualText]);
                         }
@@ -2562,7 +2562,7 @@ module TypeScript {
                 }
             }
 
-            return initExprSymbol;
+            return widenedInitTypeSymbol;
         }
 
         private typeCheckVariableDeclaration(varDecl: BoundDecl, context: PullTypeResolutionContext, enclosingDecl?: PullDecl) {
@@ -2574,8 +2574,7 @@ module TypeScript {
             var typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
 
             // Report errors on init Expr only if typeExpr is present because we wouldnt have resolved the initExpr when just resolving
-            var initExprSymbol = this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
-            var initTypeSymbol = initExprSymbol ? this.widenType(initExprSymbol.type, enclosingDecl, context) : null;
+            var initTypeSymbol = this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
 
             // If we're type checking, test the initializer and type annotation for assignment compatibility
             if (varDecl.typeExpr || varDecl.init) {
@@ -3830,8 +3829,8 @@ module TypeScript {
             this.setTypeChecked(ast, context);
             var binaryExpression = <BinaryExpression>ast;
 
-            var lhsType = this.widenType(this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type, enclosingDecl, context);
-            var rhsType = this.widenType(this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type, enclosingDecl, context);
+            var lhsType = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type;
 
             var isValidLHS = lhsType && (this.isAnyOrEquivalent(lhsType) || !lhsType.isPrimitive());
             var isValidRHS = rhsType && (this.isAnyOrEquivalent(rhsType) || rhsType.isClass() || this.typeIsSubtypeOfFunction(rhsType, context));
@@ -3846,7 +3845,7 @@ module TypeScript {
         }
 
         private resolveCommaExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var rhsType = this.widenType(this.resolveAST((<BinaryExpression>ast).operand2, false, enclosingDecl, context).type, enclosingDecl, context);
+            var rhsType = this.resolveAST((<BinaryExpression>ast).operand2, false, enclosingDecl, context).type;
 
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckCommaExpression(ast, enclosingDecl, context);
@@ -3877,8 +3876,8 @@ module TypeScript {
             this.setTypeChecked(ast, context);
 
             var binaryExpression = <BinaryExpression>ast;
-            var lhsType = this.widenType(this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type, enclosingDecl, context);
-            var rhsType = this.widenType(this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type, enclosingDecl, context);
+            var lhsType = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type;
 
             var isStringAnyOrNumber = lhsType.type === this.semanticInfoChain.stringTypeSymbol ||
                 this.isAnyOrEquivalent(lhsType.type) ||
@@ -3929,7 +3928,7 @@ module TypeScript {
 
             var forInStatement = <ForInStatement>ast;
 
-            var rhsType = this.widenType(this.resolveAST(forInStatement.obj, false, enclosingDecl, context).type, enclosingDecl, context);
+            var rhsType = this.resolveAST(forInStatement.obj, false, enclosingDecl, context).type;
             var lval = forInStatement.lval;
 
             if (lval.nodeType() === NodeType.VariableDeclaration) {
@@ -6167,13 +6166,13 @@ module TypeScript {
                     getLength: () => indexerTypeCandidates.length,
                     getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
                 };
-                var indexerReturnType = this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context);
+                var decl = objectLiteralSymbol.getDeclarations()[0];
+                var indexerReturnType = this.widenType(this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context), decl, context);
                 if (indexerReturnType == contextualIndexSignature.returnType) {
                     objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
                 }
                 else {
                     // Create an index signature
-                    var decl = objectLiteralSymbol.getDeclarations()[0];
                     this.currentUnit.addSyntheticIndexSignature(decl, objectLiteralSymbol, this.getASTForDecl(decl),
                         contextualIndexSignature.parameters[0].name, /*indexParamType*/ contextualIndexSignature.parameters[0].type, /*returnType*/ indexerReturnType);
                 }
@@ -7574,10 +7573,8 @@ module TypeScript {
             var leftExpr = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context);
             var leftType = leftExpr.type;
 
-            leftType = this.widenType(leftExpr.type, enclosingDecl, context); //this.typeCheckAST(assignmentAST.operand1, typeCheckContext);
-
             context.pushContextualType(leftType, context.inProvisionalResolution(), null);
-            var rightType = this.widenType(this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type, enclosingDecl, context);
+            var rightType = this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type;
             context.popContextualType();
 
             rightType = this.getInstanceTypeForAssignment(binaryExpression.operand1, rightType, enclosingDecl, context);

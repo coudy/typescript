@@ -15,6 +15,6 @@ var obj;
 obj instanceof 4;
 Object instanceof obj;
 
-// OK
+// Error on left hand side
 null instanceof null;
 obj instanceof Object;
