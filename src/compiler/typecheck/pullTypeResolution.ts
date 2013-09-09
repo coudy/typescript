@@ -2567,8 +2567,12 @@ module TypeScript {
 
         private typeCheckVariableDeclaration(varDecl: BoundDecl, context: PullTypeResolutionContext, enclosingDecl?: PullDecl) {
             this.setTypeChecked(varDecl, context);
-            var decl: PullDecl = this.getDeclForAST(varDecl);            var declSymbol = decl.getSymbol();
-            var typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
+
+            var decl: PullDecl = this.getDeclForAST(varDecl);
+            var declSymbol = decl.getSymbol();
+
+            var typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
+
             // Report errors on init Expr only if typeExpr is present because we wouldnt have resolved the initExpr when just resolving
             var initExprSymbol = this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
             var initTypeSymbol = initExprSymbol ? this.widenType(initExprSymbol.type, enclosingDecl, context) : null;
@@ -2666,7 +2670,8 @@ module TypeScript {
                     }
                 }
             }
-            if (varDecl.init && varDecl.nodeType() === NodeType.Parameter) {
+
+            if (varDecl.init && varDecl.nodeType() === NodeType.Parameter) {
                 var containerSignature = enclosingDecl.getSignatureSymbol();
                 if (containerSignature && !containerSignature.isDefinition()) {
                     context.postError(this.unitPath, varDecl.minChar, varDecl.getLength(), DiagnosticCode.Default_arguments_are_not_allowed_in_an_overload_parameter, null);
@@ -3402,7 +3407,8 @@ module TypeScript {
             var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
             this.seenSuperConstructorCall = false;
             this.resolveAST(funcDeclAST.block, false, funcDecl, context);
-            this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+            this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
@@ -3565,7 +3571,8 @@ module TypeScript {
             var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
             this.seenSuperConstructorCall = false;
             this.resolveAST(funcDeclAST.block, false, funcDecl, context);
-            this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+            this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
+
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             var enclosingDecl = this.getEnclosingDecl(funcDecl);

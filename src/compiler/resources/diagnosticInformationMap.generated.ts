@@ -350,11 +350,11 @@ module TypeScript {
     "code": 1086,
     "category": DiagnosticCategory.Error
   },
-  "Ambient external module declaration cannot specify relative module name.": {
+  "Import declaration in an ambient external module declaration cannot reference external module through relative external module name.": {
     "code": 1087,
     "category": DiagnosticCategory.Error
   },
-  "Import declaration in an ambient external module declaration cannot reference external module through relative external module name.": {
+  "Index member declaration can only have the 'static' modifier.": {
     "code": 1088,
     "category": DiagnosticCategory.Error
   },
@@ -1116,6 +1116,10 @@ module TypeScript {
   },
   "Ambient external module declaration must be defined in global context.": {
     "code": 2195,
+    "category": DiagnosticCategory.Error
+  },
+  "Ambient external module declaration cannot specify relative module name.": {
+    "code": 2196,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {

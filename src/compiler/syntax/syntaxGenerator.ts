@@ -663,10 +663,11 @@ var definitions:ITypeDefinition[] = [
         isTypeScriptSpecific: true
     },
     <any>{
-        name: 'MemberIndexerDeclaration',
+        name: 'IndexMemberDeclaration',
         baseType: 'SyntaxNode',
         interfaces: ['IClassElementSyntax'],
         children: [
+            <any>{ name: 'modifiers', isList: true, elementType: 'ISyntaxToken' },
             <any>{ name: 'indexSignature', type: 'IndexSignatureSyntax' },
             <any>{ name: 'semicolonToken', isToken: true }
         ],

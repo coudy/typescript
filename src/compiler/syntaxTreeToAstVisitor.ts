@@ -1625,13 +1625,17 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberIndexerDeclaration(node: MemberIndexerDeclaration): FunctionDeclaration {
+        public visitIndexMemberDeclaration(node: IndexMemberDeclaration): FunctionDeclaration {
             var start = this.position;
 
             var result = node.indexSignature.accept(this);
             this.setCommentsAndSpan(result, start, node);
 
             this.movePast(node.semicolonToken);
+
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
+                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Static);
+            }
 
             return result;
         }

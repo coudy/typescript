@@ -780,6 +780,31 @@ module TypeScript {
             return false;
         }
 
+        public visitIndexMemberDeclaration(node: IndexMemberDeclaration): void {
+            if (this.checkIndexMemberModifiers(node)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitIndexMemberDeclaration(node);
+        }
+
+        private checkIndexMemberModifiers(node: IndexMemberDeclaration): boolean {
+            var modifierFullStart = this.position();
+
+            for (var i = 0, n = node.modifiers.childCount(); i < n; i++) {
+                var modifier = <ISyntaxToken>node.modifiers.childAt(i);
+                if (modifier.tokenKind !== SyntaxKind.StaticKeyword) {
+
+                    this.pushDiagnostic1(modifierFullStart, modifier,
+                        DiagnosticCode.Index_member_declaration_can_only_have_the_static_modifier);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private checkEcmaScriptVersionIsAtLeast(parent: ISyntaxElement, node: ISyntaxElement, languageVersion: LanguageVersion, diagnosticKey: string): boolean {
             if (this.syntaxTree.parseOptions().languageVersion() < languageVersion) {
                 var nodeFullStart = this.childFullStart(parent, node);

@@ -2123,7 +2123,7 @@ module TypeScript.Parser {
                    this.isMemberFunctionDeclaration(inErrorRecovery) ||
                    this.isMemberAccessorDeclaration(inErrorRecovery) ||
                    this.isMemberVariableDeclaration(inErrorRecovery) ||
-                   this.isMemberIndexerDeclaration();
+                   this.isIndexMemberDeclaration();
         }
 
         private parseClassElement(inErrorRecovery: boolean): IClassElementSyntax {
@@ -2145,8 +2145,8 @@ module TypeScript.Parser {
             else if (this.isMemberVariableDeclaration(inErrorRecovery)) {
                 return this.parseMemberVariableDeclaration();
             }
-            else if (this.isMemberIndexerDeclaration()) {
-                return this.parseMemberIndexerDeclaration();
+            else if (this.isIndexMemberDeclaration()) {
+                return this.parseIndexMemberDeclaration();
             }
             else {
                 throw Errors.invalidOperation();
@@ -2335,16 +2335,18 @@ module TypeScript.Parser {
             return this.factory.memberVariableDeclaration(modifiers, variableDeclarator, semicolon);
         }
 
-        private isMemberIndexerDeclaration(): boolean {
-            return this.isIndexSignature();
+        private isIndexMemberDeclaration(): boolean {
+            var index = this.modifierCount();
+            return this.isIndexSignature(index);
         }
 
-        private parseMemberIndexerDeclaration(): MemberIndexerDeclaration {
-            // Debug.assert(this.isMemberIndexerDeclaration()
+        private parseIndexMemberDeclaration(): IndexMemberDeclaration {
+            // Debug.assert(this.isIndexMemberDeclaration()
+            var modifiers = this.parseModifiers();
             var indexSignature = this.parseIndexSignature();
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewLine:*/ false);
 
-            return this.factory.memberIndexerDeclaration(indexSignature, semicolonToken);
+            return this.factory.indexMemberDeclaration(modifiers, indexSignature, semicolonToken);
         }
 
         private tryAddUnexpectedEqualsGreaterThanToken(callSignature: CallSignatureSyntax): CallSignatureSyntax {
@@ -2510,7 +2512,7 @@ module TypeScript.Parser {
 
             return this.isCallSignature(/*tokenIndex:*/ 0) ||
                    this.isConstructSignature() ||
-                   this.isIndexSignature() ||
+                   this.isIndexSignature(/*tokenIndex:*/ 0) ||
                    this.isMethodSignature(inErrorRecovery) ||
                    this.isPropertySignature(inErrorRecovery);
         }
@@ -2526,7 +2528,7 @@ module TypeScript.Parser {
             else if (this.isConstructSignature()) {
                 return this.parseConstructSignature();
             }
-            else if (this.isIndexSignature()) {
+            else if (this.isIndexSignature(/*tokenIndex:*/ 0)) {
                 return this.parseIndexSignature();
             }
             else if (this.isMethodSignature(inErrorRecovery)) {
@@ -2596,8 +2598,8 @@ module TypeScript.Parser {
             return token1.tokenKind === SyntaxKind.LessThanToken || token1.tokenKind === SyntaxKind.OpenParenToken;
         }
 
-        private isIndexSignature(): boolean {
-            return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
+        private isIndexSignature(tokenIndex: number): boolean {
+            return this.peekToken(tokenIndex).tokenKind === SyntaxKind.OpenBracketToken;
         }
 
         private isMethodSignature(inErrorRecovery: boolean): boolean {
