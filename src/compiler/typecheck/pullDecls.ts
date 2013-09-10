@@ -17,7 +17,7 @@ module TypeScript {
 
         private symbol: PullSymbol = null;
 
-        private declGroups: { [s: string]: PullDeclGroup; } = <{ [s: string]: PullDeclGroup; }><{}> new BlockIntrinsics();
+        private declGroups = new BlockIntrinsics<PullDeclGroup>();
 
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
@@ -27,10 +27,10 @@ module TypeScript {
         private typeParameters: PullDecl[] = null;
 
         // Mappings from names to decls.  Public only for diffing purposes.
-        public childDeclTypeCache: any = new BlockIntrinsics();
-        public childDeclValueCache: any = new BlockIntrinsics();
-        public childDeclNamespaceCache: any = new BlockIntrinsics();
-        public childDeclTypeParameterCache: any = new BlockIntrinsics();
+        public childDeclTypeCache = new BlockIntrinsics<PullDecl[]>();
+        public childDeclValueCache = new BlockIntrinsics<PullDecl[]>();
+        public childDeclNamespaceCache = new BlockIntrinsics<PullDecl[]>();
+        public childDeclTypeParameterCache = new BlockIntrinsics<PullDecl[]>();
 
         public declID = pullDeclID++;
         public declIDString: string = null;

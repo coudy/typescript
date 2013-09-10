@@ -22,14 +22,15 @@ module TypeScript {
 
     var proto = "__proto__"
 
-    export class BlockIntrinsics {
-        public prototype: any = undefined;
-        public toString: any = undefined;
-        public toLocaleString: any = undefined;
-        public valueOf: any = undefined;
-        public hasOwnProperty: any = undefined;
-        public propertyIsEnumerable: any = undefined;
-        public isPrototypeOf: any = undefined;
+    export class BlockIntrinsics<T> {
+        public prototype: T = undefined;
+        public toString: T = undefined;
+        public toLocaleString: T = undefined;
+        public valueOf: T = undefined;
+        public hasOwnProperty: T = undefined;
+        public propertyIsEnumerable: T = undefined;
+        public isPrototypeOf: T = undefined;
+        [s: string]: T;
 
         constructor() {
             // initialize the 'constructor' field
@@ -55,7 +56,7 @@ module TypeScript {
 
     export class StringHashTable<T> implements IHashTable<T> {
         private itemCount = 0;
-        private table: IIndexable<T> = <any>(new BlockIntrinsics());
+        private table: IIndexable<T> = new BlockIntrinsics<T>();
 
         public getAllKeys(): string[] {
             var result: string[] = [];

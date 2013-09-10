@@ -38,10 +38,10 @@ module TypeScript {
 
     export class PullSymbolBinder {
 
-        private functionTypeParameterCache: any = new BlockIntrinsics();
+        private functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
 
         private findTypeParameterInCache(name: string) {
-            return <PullTypeParameterSymbol>this.functionTypeParameterCache[name];
+            return this.functionTypeParameterCache[name];
         }
 
         private addTypeParameterToCache(typeParameter: PullTypeParameterSymbol) {
@@ -1128,7 +1128,7 @@ module TypeScript {
             var argDecl: BoundDecl = null;
             var parameterSymbol: PullSymbol = null;
             var isProperty = false;
-            var params: any = new BlockIntrinsics();
+            var params = new BlockIntrinsics<boolean>();
             var funcDecl = this.semanticInfo.getDeclForAST(functionDeclaration);
 
             if (functionDeclaration.arguments) {

@@ -637,7 +637,7 @@ module TypeScript {
 
         private specializationCache: any = {};
 
-        private memberTypeParameterNameCache: any = null;
+        private memberTypeParameterNameCache: BlockIntrinsics<PullTypeParameterSymbol> = null;
 
         public hasAGenericParameter = false;
         private stringConstantOverload: boolean = undefined;
@@ -997,14 +997,14 @@ module TypeScript {
 
         private _elementType: PullTypeSymbol = null;
 
-        private _memberNameCache: any = null;
-        private _enclosedTypeNameCache: any = null;
-        private _enclosedContainerCache: any = null;
-        private _typeParameterNameCache: any = null;
-        private _containedNonMemberNameCache: any = null;
-        private _containedNonMemberTypeNameCache: any = null;
-        private _containedNonMemberContainerCache: any = null;
-        private _specializedTypeIDCache: any = null;
+        private _memberNameCache: BlockIntrinsics<PullSymbol> = null;
+        private _enclosedTypeNameCache: BlockIntrinsics<PullTypeSymbol> = null;
+        private _enclosedContainerCache: BlockIntrinsics<PullTypeSymbol> = null;
+        private _typeParameterNameCache: BlockIntrinsics<PullTypeParameterSymbol> = null;
+        private _containedNonMemberNameCache: BlockIntrinsics<PullSymbol> = null;
+        private _containedNonMemberTypeNameCache: BlockIntrinsics<PullTypeSymbol> = null;
+        private _containedNonMemberContainerCache: BlockIntrinsics<PullTypeSymbol> = null;
+        private _specializedTypeIDCache: BlockIntrinsics<PullTypeSymbol> = null;
 
         private _hasGenericSignature = false;
         private _hasGenericMember = false;
@@ -3355,8 +3355,8 @@ module TypeScript {
         var newParameterElementType: PullTypeSymbol;
         var parameterType: PullTypeSymbol;
         var replacementParameterType: PullTypeSymbol;
-        var localTypeParameters: any = new BlockIntrinsics();
-        var localSkipMap: any = null;
+        var localTypeParameters = new BlockIntrinsics<boolean>();
+        var localSkipMap: { [s: string]: PullTypeParameterSymbol; } = null;
 
         // if we specialize the signature recursive (through, say, the specialization of a method whilst specializing
         // its class), we need to prevent accidental specialization of type parameters that shadow type parameters in the

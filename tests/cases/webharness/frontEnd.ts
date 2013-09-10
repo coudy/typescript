@@ -131,23 +131,6 @@ class BatchCompiler implements Services.ILanguageServiceHost {
         return new Services.LanguageService(this);
     }
 
-    // use this to test "clean" re-typecheck speed
-    public reTypeCheck() {
-        var settings = new TypeScript.CompilationSettings();
-
-        if (!this.compiler) {
-            this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
-
-            this.compiler.addSourceUnit("lib.d.ts", this.libScriptSnapshot, ByteOrderMark.None, 0, false, []);
-            this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, ByteOrderMark.None, 0, false, []);
-            this.compiler.pullTypeCheck();
-        }
-
-        this.compiler.semanticInfoChain.update();
-        this.compiler.semanticInfoChain.forceTypeCheck("compiler.ts");
-        this.compiler.getSemanticDiagnostics("compiler.ts");
-    }
-
     public newParse(): TypeScript.SyntaxTree {
         return TypeScript.Parser.parse(compilerFileName, this.simpleText, false,
             TypeScript.getParseOptions(new TypeScript.CompilationSettings()));

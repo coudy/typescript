@@ -37,7 +37,7 @@ module TypeScript {
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
             Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
-        private importDeclarationNames: BlockIntrinsics = null;
+        private importDeclarationNames: BlockIntrinsics<boolean> = null;
         // Data to clear when we get invalidated --> 
 
         constructor(compilationUnitPath: string) {
@@ -192,7 +192,7 @@ module TypeScript {
             }
         }
 
-        public getImportDeclarationNames(): BlockIntrinsics {
+        public getImportDeclarationNames(): BlockIntrinsics<boolean> {
             if (this.importDeclarationNames === null) {
                 this.importDeclarationNames = new BlockIntrinsics();
                 this.populateImportDeclarationNames([this.topLevelDecl]);
@@ -259,9 +259,9 @@ module TypeScript {
 
     export class SemanticInfoChain {
         public units: SemanticInfo[] = [new SemanticInfo("")];
-        private declCache = <any>new BlockIntrinsics();
-        private symbolCache = <any>new BlockIntrinsics();
-        private unitCache = <any>new BlockIntrinsics();
+        private declCache = new BlockIntrinsics<PullDecl[]>();
+        private symbolCache = new BlockIntrinsics<PullSymbol>();
+        private unitCache = new BlockIntrinsics<SemanticInfo>();
         private topLevelDecls: PullDecl[] = [];
 
         public anyTypeSymbol: PullTypeSymbol = null;
@@ -736,12 +736,11 @@ module TypeScript {
         public update() {
 
             // PULLTODO: Be less aggressive about clearing the cache
-            this.declCache = <any>new BlockIntrinsics();
-            this.symbolCache = <any>new BlockIntrinsics();
+            this.declCache = new BlockIntrinsics();
+            this.symbolCache = new BlockIntrinsics();
             this.units[0] = new SemanticInfo("");
             this.units[0].addTopLevelDecl(this.getGlobalDecl());
             this.cleanAllDecls();
-            //this.symbolCache = <any>{};
             for (var unit in this.unitCache) {
                 if (this.unitCache[unit]) {
                     this.unitCache[unit].invalidate();
@@ -753,13 +752,6 @@ module TypeScript {
             var unit: SemanticInfo = this.unitCache[compilationUnitPath];
             if (unit) {
                 unit.invalidate();
-            }
-        }
-
-        public forceTypeCheck(compilationUnitPath: string) {
-            var unit = this.unitCache[compilationUnitPath];
-            if (unit) {
-                unit.setTypeChecked(false);
             }
         }
 

@@ -9625,7 +9625,7 @@ module TypeScript {
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             // If we're inside a module, collect the names of imports so we can ensure they don't 
             // conflict with any variable declaration names.
-            var importDeclarationNames: BlockIntrinsics = null;
+            var importDeclarationNames: BlockIntrinsics<boolean> = null;
             if (enclosingDecl.kind & (PullElementKind.Container | PullElementKind.DynamicModule | PullElementKind.Script)) {
                 var childDecls = enclosingDecl.getChildDecls();
                 for (var i = 0, n = childDecls.length; i < n; i++) {
@@ -10728,13 +10728,13 @@ module TypeScript {
         private checkPropertyTypeIdentityBetweenBases(typeDeclAst: TypeDeclaration, typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext): void {
             // Check that all the extended base types have compatible members (members of the same name must have identical types)
             var allMembers = typeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.externallyVisible);
-            var membersBag = new BlockIntrinsics();
+            var membersBag = new BlockIntrinsics<PullSymbol>();
             for (var i = 0; i < allMembers.length; i++) {
                 var member = allMembers[i];
                 var memberName = member.name;
                 // Error if there is already a member in the bag with that name, and it doesn't have the same type
                 if (membersBag[memberName]) {
-                    var prevMember: PullSymbol = membersBag[memberName];
+                    var prevMember = membersBag[memberName];
                     if (!this.typesAreIdentical(member.type, prevMember.type)) {
                         var prevContainerName = prevMember.getContainer().getScopedName();
                         var curContainerName = member.getContainer().getScopedName();
