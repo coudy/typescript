@@ -677,6 +677,9 @@ module TypeScript {
         if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
+        if (indexSignatureDeclAST.getFunctionFlags() & FunctionFlags.Static) {
+            declFlags |= PullElementFlags.Static;
+        }
 
         var decl = new PullDecl("", "" , declType, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);

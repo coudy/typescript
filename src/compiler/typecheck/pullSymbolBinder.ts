@@ -1716,8 +1716,6 @@ module TypeScript {
         }
 
         public bindIndexSignatureDeclarationToPullSymbol(indexSignatureDeclaration: PullDecl) {
-            var parent = this.getParent(indexSignatureDeclaration, true);
-
             var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
 
             var typeParameters = indexSignatureDeclaration.getTypeParameters();
@@ -1749,7 +1747,16 @@ module TypeScript {
 
             this.semanticInfo.setSymbolForAST(this.semanticInfo.getASTForDecl(indexSignatureDeclaration), indexSignature);
 
+            var parent = this.getParent(indexSignatureDeclaration);
+
+            var isStatic = hasFlag(indexSignatureDeclaration.flags, PullElementFlags.Static);
+            if (isStatic) {
+                // Add to the constructor type instead of the instance type
+                parent = parent.getConstructorMethod().type;
+            }
+
             parent.addIndexSignature(indexSignature);
+            indexSignature.setContainer(parent);
         }
 
         // getters and setters

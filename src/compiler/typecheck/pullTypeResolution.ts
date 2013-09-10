@@ -1215,10 +1215,6 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isResolved) {
-
-                // Resolve members
-                var typeDeclMembers = typeDeclSymbol.getMembers();
-
                 if (globalBinder) {
                     globalBinder.resetTypeParameterCache();
                 }
@@ -1386,8 +1382,13 @@ module TypeScript {
             this.resolveAST(classDeclAST.members, false, classDecl, context);
 
             this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
-            if (classDeclSymbol.isResolved && !classDeclSymbol.hasBaseTypeConflict()) {
+            if (!classDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
+            }
+
+            var classConstructorTypeSymbol = classDeclSymbol.getConstructorMethod().type;
+            if (!classConstructorTypeSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(classConstructorTypeSymbol, classDecl, context);
             }
         }
 
@@ -2965,7 +2966,8 @@ module TypeScript {
                     this.typeCheckFunctionOverloads(funcDeclAST, context);
                 } else {
                     // Index signatures
-                    var allIndexSignatures = this.getBothKindsOfIndexSignatures(enclosingDecl.getSymbol().type, context);
+                    var parentSymbol = funcDecl.getSignatureSymbol().getContainer();
+                    var allIndexSignatures = this.getBothKindsOfIndexSignatures(parentSymbol, context);
                     var stringIndexSignature = allIndexSignatures.stringSignature;
                     var numberIndexSignature = allIndexSignatures.numericSignature;
                     var isNumericIndexer = numberIndexSignature === signature;
@@ -2988,7 +2990,7 @@ module TypeScript {
                     }
 
                     // Check that property names comply with indexer constraints (either string or numeric)
-                    var allMembers = enclosingDecl.getSymbol().type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
+                    var allMembers = parentSymbol.type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
                     for (var i = 0; i < allMembers.length; i++) {
                         var name = allMembers[i].name;
                         if (name) {
@@ -2996,7 +2998,7 @@ module TypeScript {
                                 this.resolveDeclaredSymbol(allMembers[i], allMembers[i].getDeclarations()[0].getParentDecl(), context);
                             }
                             // Skip members in the same container, they will be checked during their member type check
-                            if (enclosingDecl.getSymbol() !== allMembers[i].getContainer()) {
+                            if (parentSymbol !== allMembers[i].getContainer()) {
                                 // Check if the member name kind (number or string), matches the index signature kind. If it does give an error.
                                 // If it doesn't we only want to give an error if this is a string signature, and we don't have a numeric signature
                                 var isMemberNumeric = PullHelpers.isNameNumeric(name);
@@ -7623,61 +7625,6 @@ module TypeScript {
             return typeToReturn;
         }
 
-        public resolveBoundDecls(decl: PullDecl, context: PullTypeResolutionContext): void {
-
-            if (!decl) {
-                return;
-            }
-
-            switch (decl.kind) {
-                case PullElementKind.Script:
-                    var childDecls = decl.getChildDecls();
-                    for (var i = 0; i < childDecls.length; i++) {
-                        this.resolveBoundDecls(childDecls[i], context);
-                    }
-                    break;
-                case PullElementKind.DynamicModule:
-                case PullElementKind.Container:
-                case PullElementKind.Enum:
-                    var moduleDecl = <ModuleDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveModuleDeclaration(moduleDecl, context);
-                    break;
-                case PullElementKind.Interface:
-                    // case PullElementKind.ObjectType:
-                    var interfaceDecl = <TypeDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveInterfaceDeclaration(interfaceDecl, context);
-                    break;
-                case PullElementKind.Class:
-                    var classDecl = <ClassDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveClassDeclaration(classDecl, context);
-                    break;
-                case PullElementKind.Method:
-                case PullElementKind.Function:
-                    var funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveFunctionDeclaration(funcDecl, context);
-                    break;
-                case PullElementKind.GetAccessor:
-                    funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveGetAccessorDeclaration(funcDecl, context);
-                    break;
-                case PullElementKind.SetAccessor:
-                    funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    this.resolveSetAccessorDeclaration(funcDecl, context);
-                    break;
-                case PullElementKind.Property:
-                case PullElementKind.Variable:
-                case PullElementKind.Parameter:
-                    var varDecl = <BoundDecl>this.semanticInfoChain.getASTForDecl(decl);
-
-                    // varDecl may be null if we're dealing with an implicit variable created for a class,
-                    // module or enum
-                    if (varDecl) {
-                        this.resolveVariableDeclaration(varDecl, context);
-                    }
-                    break;
-            }
-        }
-
         // type relationships
 
         private mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
@@ -10459,19 +10406,19 @@ module TypeScript {
             if (stringSignature || numberSignature) {
                 var members = containerTypeDecl.getChildDecls();
                 for (var i = 0; i < members.length; i++) {
-                    // Nothing to check if the member has no name or is a signature
+                    // Make sure the member is actually contained by the containerType, and not its associated constructor type
                     var member = members[i];
-                    if (!member.name || member.kind & PullElementKind.SomeSignature) {
-                        continue;
-                    }
-
-                    // Decide whether to check against the number or string signature
-                    var isMemberNumeric = PullHelpers.isNameNumeric(member.name);
-                    if (isMemberNumeric && numberSignature) {
-                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), numberSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, /*isNumeric*/ true);
-                    }
-                    else if (stringSignature) {
-                        this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), stringSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, /*isNumeric*/ false);
+                    if (member.name
+                        && member.kind !== PullElementKind.ConstructorMethod
+                        && member.getSymbol().getContainer() === containerType) {
+                        // Decide whether to check against the number or string signature
+                        var isMemberNumeric = PullHelpers.isNameNumeric(member.name);
+                        if (isMemberNumeric && numberSignature) {
+                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), numberSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, /*isNumeric*/ true);
+                        }
+                        else if (stringSignature) {
+                            this.checkThatMemberIsSubtypeOfIndexer(member.getSymbol(), stringSignature, this.semanticInfoChain.getASTForDecl(member), context, containerTypeDecl, /*isNumeric*/ false);
+                        }
                     }
                 }
             }

@@ -1628,6 +1628,7 @@ module TypeScript {
         public visitIndexMemberDeclaration(node: IndexMemberDeclaration): FunctionDeclaration {
             var start = this.position;
 
+            this.moveTo(node, node.indexSignature);
             var result = node.indexSignature.accept(this);
             this.setCommentsAndSpan(result, start, node);
 
