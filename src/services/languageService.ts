@@ -357,7 +357,15 @@ module Services {
         }
     }
 
+    export class EmitOutputStatus {
+        static succeeeded = "succeeeded";
+        static failedDueToEmitErrors = "failed-HasEmitErrors";
+        static failedDueToSyntaxErrors = "failed-HasSyntaxErrors";
+        static noDeclarationsDueToSemanticErrors = "NoDeclarations-HasSemnaticErrors";
+    }
+
     export class EmitOutput {
+        public status: string;
         public outputFiles: IOutputFile[] = [];
         public diagnostics: TypeScript.Diagnostic[] = [];
     }

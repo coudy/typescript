@@ -463,7 +463,7 @@ module TypeScript {
             return getDeclareFilePath(fileName);
         }
 
-        private canEmitDeclarations(script?: Script) {
+        public shouldEmitDeclarations(script?: Script) {
             if (!this.settings.generateDeclarationFiles) {
                 return false;
             }
@@ -479,7 +479,7 @@ module TypeScript {
         // Caller is responsible for closing emitter.
         private emitDeclarations(document: Document, declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
             var script = document.script;
-            if (this.canEmitDeclarations(script)) {
+            if (this.shouldEmitDeclarations(script)) {
                 if (declarationEmitter) {
                     declarationEmitter.document = document;
                 } else {
@@ -497,7 +497,7 @@ module TypeScript {
         public emitAllDeclarations(): Diagnostic[] {
             var start = new Date().getTime();
 
-            if (this.canEmitDeclarations()) {
+            if (this.shouldEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
                 var fileNames = this.fileNameToDocument.getAllKeys();
 
@@ -541,8 +541,9 @@ module TypeScript {
 
         // Will not throw exceptions.
         public emitUnitDeclarations(fileName: string): Diagnostic[] {
-            if (this.canEmitDeclarations()) {
-                var document = this.getDocument(fileName);
+            var document = this.getDocument(fileName);
+
+            if (this.shouldEmitDeclarations(document.script)) {
                 // Emitting module or multiple files, always goes to single file
                 if (this.emitOptions.outputMany || document.script.topLevelMod) {
                     try {
