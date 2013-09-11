@@ -69,6 +69,10 @@ module FourSlashInterface {
     }
 
     export class diagnostics {
+        public validateTypeAtCurrentPosition() {
+            return this.validateTypesAtPositions(FourSlash.currentTestState.currentCaretPosition);
+        }
+
         public validateTypesAtPositions(...positions: number[]) {
             return FourSlash.currentTestState.verifyTypesAgainstFullCheckAtPositions(positions);
         }
