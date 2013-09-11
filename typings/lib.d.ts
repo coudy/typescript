@@ -448,19 +448,19 @@ interface Number {
 
     /** 
       * Returns a string representing a number in fixed-point notation.
-      * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 – 20, inclusive.
+      * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
       */
     toFixed(fractionDigits?: number): string;
 
     /**
       * Returns a string containing a number represented in exponential notation.
-      * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 – 20, inclusive.
+      * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
       */
     toExponential(fractionDigits?: number): string;
 
     /**
       * Returns a string containing a number represented either in exponential or fixed-point notation with a specified number of digits.
-      * @param precision Number of significant digits. Must be in the range 1 – 21, inclusive.
+      * @param precision Number of significant digits. Must be in the range 1 - 21, inclusive.
       */ 
     toPrecision(precision?: number): string;
 }
@@ -11245,7 +11245,7 @@ interface HTMLInputElement {
       */
     validity: ValidityState;
     /**
-      * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"–type submit option.
+      * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"-type submit option.
       */
     formNoValidate: string;
     /**
@@ -12452,7 +12452,7 @@ interface HTMLButtonElement {
       */
     validity: ValidityState;
     /**
-      * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"–type submit option.
+      * Overrides any validation or required attributes on a form or form elements to allow it to be submitted without validation. This can be used to create a "save draft"-type submit option.
       */
     formNoValidate: string;
     /**
