@@ -30,6 +30,6 @@ goTo.marker("6");
 verify.currentLineContentIs('void (0);');
 
 goTo.marker("7");
-verify.currentLineContentIs('b = void ( c = 1, d = 2);');
+verify.currentLineContentIs('b = void (c = 1, d = 2);');
 
 

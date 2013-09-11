@@ -10,4 +10,4 @@
 //// 
 
 goTo.marker();
-verify.quickInfoSymbolNameIs('x');
+verify.quickInfoExists();
