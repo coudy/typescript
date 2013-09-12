@@ -152,6 +152,7 @@ module TypeScript {
 
     export var maxRecursiveMemberSpecializationDepth = 32;
     export var maxRecursiveSignatureSpecializationDepth = 8;
+    export var maxRecursiveConstraintSpecializationDepth = 32;
 
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
@@ -178,6 +179,7 @@ module TypeScript {
         public resolvingTypeNameAsNameExpression = false;
         public recursiveMemberSpecializationDepth = 0;
         public recursiveSignatureSpecializationDepth = 0;
+        public recursiveConstraintSpecializationDepth = 0;
 
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public typeCheckUnitPath?: string) { }
 

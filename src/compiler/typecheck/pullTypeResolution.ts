@@ -971,7 +971,7 @@ module TypeScript {
                 context.pushTypeSpecializationCache(typeCache);
                 var rootType = getRootType(symbol.type);
 
-                var specializedSymbol = specializeType(rootType, typeArgs, this, enclosingDecl, context, ast);
+                var specializedSymbol = specializeType(rootType, typeArgs, this, enclosingDecl, context);
 
                 context.popTypeSpecializationCache();
 
@@ -2243,7 +2243,7 @@ module TypeScript {
             }
 
             if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, typeRef, context)) {
-                this.currentUnit.addDiagnostic(new Diagnostic(this.unitPath, typeRef.minChar, typeRef.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null));
+                context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
                 typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
             }
 
@@ -2260,7 +2260,7 @@ module TypeScript {
                         this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                     }
 
-                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [typeDeclSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, typeRef);
+                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [typeDeclSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
 
                     if (!arraySymbol) {
                         arraySymbol = this.semanticInfoChain.anyTypeSymbol;
@@ -2272,7 +2272,7 @@ module TypeScript {
                         var existingArraySymbol = arraySymbol.getArrayType();
 
                         if (!existingArraySymbol) {
-                            arraySymbol = specializeType(this.cachedArrayInterfaceType(), [arraySymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, typeRef);
+                            arraySymbol = specializeType(this.cachedArrayInterfaceType(), [arraySymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
                         }
                         else {
                             arraySymbol = existingArraySymbol;
@@ -5315,11 +5315,14 @@ module TypeScript {
                 }
             }
 
-            var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context, genericTypeAST);
+            var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, enclosingDecl, context);
 
             // check constraints, if appropriate
             var typeConstraint: PullTypeSymbol = null;
             var upperBound: PullTypeSymbol = null;
+
+            // Get the instantiated versions of the type parameters (in case their constraints were generic)
+            typeParameters = specializedSymbol.getTypeParameters();
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
@@ -6237,7 +6240,7 @@ module TypeScript {
                     this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
                 }
 
-                arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, arrayLit);
+                arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
 
                 if (!arraySymbol) {
                     arraySymbol = this.semanticInfoChain.anyTypeSymbol;
@@ -7332,7 +7335,7 @@ module TypeScript {
                 // if it's a default constructor, and we have a type argument, we need to specialize
                 if (returnType && !signature.isGeneric() && returnType.isGeneric() && !returnType.getIsSpecialized()) {
                     if (typeArgs && typeArgs.length) {
-                        returnType = specializeType(returnType, typeArgs, this, enclosingDecl, context, callEx);
+                        returnType = specializeType(returnType, typeArgs, this, enclosingDecl, context);
                     }
                     else {
                         returnType = this.specializeTypeToAny(returnType, enclosingDecl, context);
@@ -10523,7 +10526,12 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             var typeDecl = this.getDeclForAST(typeDeclAst);
-            var baseType = <PullTypeSymbol>this.getSymbolForAST(baseDeclAST);
+
+            var savedResolvingTypeReference = context.resolvingTypeReference;
+            context.resolvingTypeReference = true;
+            var baseType = this.resolveTypeReference(new TypeReference(baseDeclAST, 0), typeDecl, context).type;
+            context.resolvingTypeReference = savedResolvingTypeReference;
+
             if (!baseType) {
                 return;
             }

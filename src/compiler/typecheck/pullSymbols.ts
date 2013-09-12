@@ -2667,13 +2667,15 @@ module TypeScript {
         return true;
     }
 
-    export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext, ast?: AST): PullTypeSymbol {
+    export function specializeType(typeToSpecialize: PullTypeSymbol, typeArguments: PullTypeSymbol[], resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
         if (typeToSpecialize.isPrimitive() || !typeToSpecialize.isGeneric()) {
             return typeToSpecialize;
         }
 
-        if (context.recursiveMemberSpecializationDepth == maxRecursiveMemberSpecializationDepth || context.recursiveSignatureSpecializationDepth == maxRecursiveSignatureSpecializationDepth) {
+        if (context.recursiveMemberSpecializationDepth == maxRecursiveMemberSpecializationDepth
+            || context.recursiveSignatureSpecializationDepth == maxRecursiveSignatureSpecializationDepth
+            || context.recursiveConstraintSpecializationDepth == maxRecursiveConstraintSpecializationDepth) {
             return resolver.semanticInfoChain.anyTypeSymbol;
         }
 
@@ -2720,7 +2722,7 @@ module TypeScript {
             if (!context.specializingToAny) {
                 var elementType = typeToSpecialize.getElementType();
 
-                newElementType = specializeType(elementType, typeArguments, resolver, enclosingDecl, context, ast);
+                newElementType = specializeType(elementType, typeArguments, resolver, enclosingDecl, context);
             }
             else {
                 newElementType = resolver.semanticInfoChain.anyTypeSymbol;
@@ -2732,10 +2734,10 @@ module TypeScript {
             return newArrayType;
         }     
 
-        var typeParameters = typeToSpecialize.getTypeParameters();
+        var rootTypeParameters = typeToSpecialize.getTypeParameters();
 
         // if we don't have the complete list of types to specialize to, we'll need to reconstruct the specialization signature
-        if (!context.specializingToAny && searchForExistingSpecialization && (typeParameters.length > typeArguments.length)) {
+        if (!context.specializingToAny && searchForExistingSpecialization && (rootTypeParameters.length > typeArguments.length)) {
             searchForExistingSpecialization = false;
         }
 
@@ -2749,7 +2751,7 @@ module TypeScript {
 
         if (searchForExistingSpecialization || context.specializingToAny) {
             if (!typeArguments.length || context.specializingToAny) {
-                for (var i = 0; i < typeParameters.length; i++) {
+                for (var i = 0; i < rootTypeParameters.length; i++) {
                     typeArguments[i] = resolver.semanticInfoChain.anyTypeSymbol;
                 }
             }
@@ -2761,25 +2763,25 @@ module TypeScript {
                 newType = rootType.getSpecialization(typeArguments);
             }
             
-            if (!newType && !typeParameters.length && context.specializingToAny) {
+            if (!newType && !rootTypeParameters.length && context.specializingToAny) {
                 newType = rootType.getSpecialization([resolver.semanticInfoChain.anyTypeSymbol]);
             }
             
             for (var i = 0; i < typeArguments.length; i++) {
-                if (!typeArguments[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typeArguments[i], typeParameters[i]))) {
+                if (!typeArguments[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typeArguments[i], rootTypeParameters[i]))) {
                     typeToSpecialize.memberWrapsOwnTypeParameter = true;
                 }
             }
         }
         else {
             var knownTypeArguments = typeToSpecialize.getTypeArguments();
-            var typesToReplace = knownTypeArguments ? knownTypeArguments : typeParameters;
+            var typesToReplace = knownTypeArguments ? knownTypeArguments : rootTypeParameters;
             var declAST: AST;
             var replacementType: PullTypeSymbol = null;
 
             for (var i = 0; i < typesToReplace.length; i++) {
 
-                if (!typesToReplace[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typesToReplace[i], typeParameters[i]))) {
+                if (!typesToReplace[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typesToReplace[i], rootTypeParameters[i]))) {
                     typeToSpecialize.memberWrapsOwnTypeParameter = true;
                 }
 
@@ -2787,7 +2789,7 @@ module TypeScript {
                 // of specializing the type, and if we didn't we would "over wrap" the type parameter 
                 replacementType = typeToSpecialize.memberWrapsOwnTypeParameter ? (<PullTypeSymbol>typesToReplace[i].getRootSymbol()) : typesToReplace[i];
 
-                substitution = specializeType(replacementType, null, resolver, enclosingDecl, context, ast);
+                substitution = specializeType(replacementType, null, resolver, enclosingDecl, context);
 
                 typeArguments[i] = (substitution != null && !resolver.typesAreIdentical(typesToReplace[i], substitution)) ? substitution : typesToReplace[i];
             }
@@ -2864,14 +2866,16 @@ module TypeScript {
 
         // create the type replacement map
 
-        var typeReplacementMap: any = {};
+        var typeReplacementMap: { [s: string]: PullTypeSymbol; } = {};
 
-        for (var i = 0; i < typeParameters.length; i++) {
-            if (typeParameters[i] != typeArguments[i]) {
-                typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
+        for (var i = 0; i < rootTypeParameters.length; i++) {
+            if (rootTypeParameters[i] != typeArguments[i]) {
+                typeReplacementMap[rootTypeParameters[i].pullSymbolIDString] = typeArguments[i];
             }
-            newType.addTypeParameter(typeParameters[i]);
         }
+
+        // Specialize type parameter constraints
+        specializeConstraints(newType, rootTypeParameters, typeReplacementMap, resolver, context);
 
         // specialize any extends/implements types
         var extendedTypesToSpecialize = typeToSpecialize.getExtendedTypes();
@@ -3224,7 +3228,7 @@ module TypeScript {
                 fieldType = newType; 
             }
 
-            replacementType = <PullTypeSymbol>typeReplacementMap[fieldType.pullSymbolIDString];
+            replacementType = typeReplacementMap[fieldType.pullSymbolIDString];
 
             if (replacementType) {
                 newField.type = replacementType;
@@ -3243,7 +3247,7 @@ module TypeScript {
                     context.pushTypeSpecializationCache(typeReplacementMap);
 
                     context.recursiveMemberSpecializationDepth++;
-                    newFieldType = specializeType(fieldType, !fieldType.getIsSpecialized() ? typeArguments : null, resolver, newTypeDecl, context, ast);
+                    newFieldType = specializeType(fieldType, !fieldType.getIsSpecialized() ? typeArguments : null, resolver, newTypeDecl, context);
                     context.recursiveMemberSpecializationDepth--;
 
                     resolver.setUnitPath(unitPath);
@@ -3274,7 +3278,7 @@ module TypeScript {
             }
 
             var newConstructorMethod = new PullSymbol(constructorMethod.name, PullElementKind.ConstructorMethod);
-            var newConstructorType = specializeType(constructorMethod.type, typeArguments, resolver, newTypeDecl, context, ast);         
+            var newConstructorType = specializeType(constructorMethod.type, typeArguments, resolver, newTypeDecl, context);         
 
             context.isSpecializingConstructorMethod = prevIsSpecializingConstructorMethod;
 
@@ -3295,6 +3299,40 @@ module TypeScript {
         typeToSpecialize.setValueIsBeingSpecialized(prevCurrentlyBeingSpecialized);
         context.inSpecialization = prevInSpecialization;
         return newType;
+    }
+
+    export function specializeConstraints(newType: PullTypeSymbol, rootTypeParameters: PullTypeParameterSymbol[], typeReplacementMap: { [s: string]: PullTypeSymbol }, resolver: PullTypeResolver, context: PullTypeResolutionContext): void {
+        for (var i = 0; i < rootTypeParameters.length; i++) {
+            var newTypeParameter = rootTypeParameters[i];
+            var constraint = newTypeParameter.getConstraint();
+            if (constraint) {
+
+                var newConstraint = typeReplacementMap[constraint.pullSymbolIDString];
+
+                // If the typeReplacementMap didn't have it, try specializing the constraint if it is not fixed
+                if (!newConstraint && !constraint.isFixed()) {
+                    var constraintDecl = constraint.getDeclarations()[0];
+                    var unitPath = resolver.getUnitPath();
+
+                    resolver.setUnitPath(constraintDecl.getScriptName());
+                    context.pushTypeSpecializationCache(typeReplacementMap);
+                    context.recursiveConstraintSpecializationDepth++;
+
+                    newConstraint = specializeType(constraint, /*typeArguments*/ null, resolver, constraintDecl.getParentDecl(), context);
+
+                    context.recursiveConstraintSpecializationDepth--;
+                    resolver.setUnitPath(unitPath);
+                    context.popTypeSpecializationCache();
+                }
+
+                if (newConstraint) {
+                    newTypeParameter = new PullTypeParameterSymbol(newTypeParameter.name, /*_isFunctionTypeParameter*/ false);
+                    newTypeParameter.setRootSymbol(rootTypeParameters[i]);
+                    newTypeParameter.setConstraint(newConstraint);
+                }
+            }
+            newType.addTypeParameter(newTypeParameter);
+        }
     }
 
     // PULLTODO: Replace typeReplacementMap with use of context
@@ -3384,7 +3422,7 @@ module TypeScript {
         if (skipLocalTypeParameters && localSkipMap) {
             context.pushTypeSpecializationCache(localSkipMap);
         }
-        var newReturnType = (!localTypeParameters[returnType.name] /*&& typeArguments != null*/) ? specializeType(returnType, null/*typeArguments*/, resolver, enclosingDecl, context, ast) : returnType;
+        var newReturnType = (!localTypeParameters[returnType.name] /*&& typeArguments != null*/) ? specializeType(returnType, null/*typeArguments*/, resolver, enclosingDecl, context) : returnType;
         if (skipLocalTypeParameters && localSkipMap) {
             context.popTypeSpecializationCache();
         }
@@ -3409,7 +3447,7 @@ module TypeScript {
             if (skipLocalTypeParameters && localSkipMap) {
                 context.pushTypeSpecializationCache(localSkipMap);
             }
-            newParameterType = !localTypeParameters[parameterType.name] ? specializeType(parameterType, null/*typeArguments*/, resolver, enclosingDecl, context, ast) : parameterType;
+            newParameterType = !localTypeParameters[parameterType.name] ? specializeType(parameterType, null/*typeArguments*/, resolver, enclosingDecl, context) : parameterType;
             if (skipLocalTypeParameters && localSkipMap) {
                 context.popTypeSpecializationCache();
             }
