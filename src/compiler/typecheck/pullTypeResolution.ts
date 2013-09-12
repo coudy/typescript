@@ -7029,25 +7029,6 @@ module TypeScript {
                 // Attempt to recover from the error condition
                 // First, pick the first signature as the candidate signature
                 signature = signatures[0];
-
-                // Second, clear any state left from overload resolution in preparation of contextual typing
-                if (callEx.arguments) {
-                    for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
-                        var arg = callEx.arguments.members[k];
-                        var argSymbol = this.getSymbolForAST(arg);
-
-                        if (argSymbol) {
-                            var argType = argSymbol.type;
-                            if (arg.nodeType() === NodeType.FunctionDeclaration) {
-                                if (!this.canApplyContextualTypeToFunction(argType, <FunctionDeclaration>arg, true)) {
-                                    continue;
-                                }
-                            }
-
-                            argSymbol.invalidate();
-                        }
-                    }
-                }
             }
 
             if (!signature.isGeneric() && callEx.typeArguments) {
@@ -7404,25 +7385,6 @@ module TypeScript {
 
                     // First, pick the first signature as the candidate signature
                     signature = constructSignatures[0];
-
-                    // Second, clear any state left from overload resolution in preparation of contextual typing
-                    if (callEx.arguments) {
-                        for (var k = 0, n = callEx.arguments.members.length; k < n; k++) {
-                            var arg = callEx.arguments.members[k];
-                            var argSymbol = this.getSymbolForAST(arg);
-
-                            if (argSymbol) {
-                                var argType = argSymbol.type;
-                                if (arg.nodeType() === NodeType.FunctionDeclaration) {
-                                    if (!this.canApplyContextualTypeToFunction(argType, <FunctionDeclaration>arg, true)) {
-                                        continue;
-                                    }
-                                }
-
-                                argSymbol.invalidate();
-                            }
-                        }
-                    }
                 }
 
                 if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
@@ -8972,36 +8934,20 @@ module TypeScript {
                 return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
             }
 
-            var argSym = this.resolveFunctionExpression(<FunctionDeclaration>arg, false, enclosingDecl, context);
+            context.pushContextualType(paramType, true, null);
 
-            if (!this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>arg, /*beStringent*/true)) {
-                // if it's just annotations that are blocking us, typecheck the function and add it to the list
-                if (this.canApplyContextualTypeToFunction(paramType, <FunctionDeclaration>arg, /*beStringent*/false)) {
-                    if (!this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
-                        return OverloadApplicabilityStatus.NotApplicable;
-                    }
-                }
-                else {
-                    return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
-                }
+            var argSym = this.resolveFunctionExpression(<FunctionDeclaration>arg, true, enclosingDecl, context);
+
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+            var cxt = context.popContextualType();
+
+            if (applicable) {
+                return cxt.hasProvisionalErrors ?
+                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
+                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
             }
-            else { // if it can be contextually typed, try it out...
-                argSym.invalidate();
-                context.pushContextualType(paramType, true, null);
-
-                argSym = this.resolveFunctionExpression(<FunctionDeclaration>arg, true, enclosingDecl, context);
-
-                var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
-                var cxt = context.popContextualType();
-
-                if (applicable) {
-                    return cxt.hasProvisionalErrors ?
-                        OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
-                        OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
-                }
-                else {
-                    return OverloadApplicabilityStatus.NotApplicable;
-                }
+            else {
+                return OverloadApplicabilityStatus.NotApplicable;
             }
         }
 
@@ -9292,8 +9238,6 @@ module TypeScript {
                         this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, enclosingDecl, context);
 
                         cxt = context.popContextualType();
-
-                        argSym.invalidate();
                     }
                 }
                 else {
@@ -9303,8 +9247,6 @@ module TypeScript {
                     this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, enclosingDecl, context);
 
                     cxt = context.popContextualType();
-
-                    argSym.invalidate();
                 }
             }
 
