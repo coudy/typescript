@@ -1799,17 +1799,6 @@ module TypeScript {
                 argumentList ? argumentList.argumentList : null, argumentList ? argumentList.closeParenSpan : null);
             this.setSpan(result, start, node);
 
-            if (expression.nodeType() === NodeType.TypeRef) {
-                var typeRef = <TypeReference>expression;
-
-                if (typeRef.arrayCount === 0) {
-                    var term = typeRef.term;
-                    if (term.nodeType() === NodeType.MemberAccessExpression || term.nodeType() === NodeType.Name) {
-                        expression = term;
-                    }
-                }
-            }
-
             return result;
         }
 

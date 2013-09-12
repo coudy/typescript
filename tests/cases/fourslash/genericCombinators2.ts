@@ -54,7 +54,7 @@
 ////var r7a/*21*/ = _.map<number, A, string>(c4, (x/*7a*/,y/*7b*/) => { return y.foo() });
 ////var r7b/*22*/ = _.map<number, A, string>(c4, rf3);
 ////
-////var r8a/*23*/ = _.map<number, B, string>(c5, (x/*8a*/,y/*8b*/) => { return y.foo() }); 
+////var r8a/*23*/ = _.map<number, /*error1*/B/*error2*/, string>(c5, (x/*8a*/,y/*8b*/) => { return y.foo() }); 
 
 goTo.marker('2a');
 verify.quickInfoIs('Collection<number, number>');
@@ -89,7 +89,7 @@ verify.quickInfoIs('A');
 goTo.marker('8a');
 verify.quickInfoIs('number');
 goTo.marker('8b');
-verify.quickInfoIs('B<T>');
+verify.quickInfoIs('B<any>'); // Specialized to any because no type argument was specified
 
 goTo.marker('9');
 verify.quickInfoIs('Collection<number, string>');
@@ -126,3 +126,5 @@ verify.quickInfoIs('Collection<number, string>');
 
 goTo.marker('23');
 verify.quickInfoIs('Collection<number, string>');
+
+verify.errorExistsBetweenMarkers('error1', 'error2');

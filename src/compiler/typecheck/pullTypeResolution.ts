@@ -824,10 +824,6 @@ module TypeScript {
             return false;
         }
 
-        public isArrayOrEquivalent(type: PullTypeSymbol) {
-            return (type.isArray() && type.getElementType()) || type == this.cachedArrayInterfaceType();
-        }
-
         private resolveExternalModuleReference(idText: string, currentFileName: string): PullContainerSymbol {
             var originalIdText = idText;
             var symbol: PullContainerSymbol = null;
@@ -1144,10 +1140,6 @@ module TypeScript {
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
                         this.setSymbolForAST(typeDeclAST.extendsList.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
-                        if (parentType.isGeneric() && parentType.isResolved && !parentType.getIsSpecialized()) {
-                            parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
-                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.extendsList.members[i].minChar, typeDeclAST.extendsList.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
-                        }
 
                         // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
                         if (!typeDeclSymbol.hasBase(parentType) && !parentType.hasBase(typeDeclSymbol)) {
@@ -1176,11 +1168,8 @@ module TypeScript {
                     
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
                         this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
-                        if (implementedType.isGeneric() && implementedType.isResolved && !implementedType.getIsSpecialized()) {
-                            implementedType = this.specializeTypeToAny(implementedType, enclosingDecl, context);
-                            this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), implementedTypeAST.minChar, implementedTypeAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
-                        }
 
+                        // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
                         if (!typeDeclSymbol.hasBase(implementedType) && !implementedType.hasBase(typeDeclSymbol)) {
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
@@ -1857,16 +1846,9 @@ module TypeScript {
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
-                var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
+                signature.returnType = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
 
-                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                    returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, functionDecl, context);
-                }
-
-                signature.returnType = returnTypeSymbol;
-
-                if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
+                if (this.isTypeArgumentOrWrapper(signature.returnType)) {
                     signature.hasAGenericParameter = true;
 
                     if (funcDeclSymbol) {
@@ -1926,12 +1908,6 @@ module TypeScript {
 
                 // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
                 if (this.isTypeArgumentOrWrapper(typeRef)) {
-
-                    if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeRef, <TypeReference>argDeclAST.typeExpr, context)) {
-                        context.postError(this.unitPath, argDeclAST.typeExpr.minChar, argDeclAST.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                        typeRef = this.specializeTypeToAny(typeRef, enclosingDecl, context);
-                    }
-
                     signature.hasAGenericParameter = true;
                 }
             }
@@ -1970,11 +1946,6 @@ module TypeScript {
                 if (paramSymbol.isVarArg && !(typeRef.isArray() || typeRef == this.cachedArrayInterfaceType())) {
                     var diagnostic = context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Rest_parameters_must_be_array_types, null);
                     typeRef = this.getNewErrorTypeSymbol();
-                }
-
-                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeRef, <TypeReference>argDeclAST.typeExpr, context)) {
-                    context.postError(this.unitPath, argDeclAST.typeExpr.minChar, argDeclAST.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                    typeRef = this.specializeTypeToAny(typeRef, enclosingDecl, context);
                 }
 
                 // The contextual type now gets overriden by the type annotation
@@ -2271,6 +2242,11 @@ module TypeScript {
                 return typeDeclSymbol;
             }
 
+            if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, typeRef, context)) {
+                this.currentUnit.addDiagnostic(new Diagnostic(this.unitPath, typeRef.minChar, typeRef.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null));
+                typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
+            }
+
             // an array of any of the above
             if (typeRef.arrayCount) {
 
@@ -2282,11 +2258,6 @@ module TypeScript {
 
                     if (!this.cachedArrayInterfaceType().isResolved) {
                         this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), enclosingDecl, context);
-                    }
-
-                    if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, typeRef, context)) {
-                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                        typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
                     }
 
                     arraySymbol = specializeType(this.cachedArrayInterfaceType(), [typeDeclSymbol], this, this.cachedArrayInterfaceType().getDeclarations()[0], context, typeRef);
@@ -2322,7 +2293,7 @@ module TypeScript {
                 (typeSymbol.isResolved || (typeSymbol.inResolution && !context.inSpecialization)) &&
                 !typeSymbol.getIsSpecialized() &&
                 typeSymbol.getTypeParameters().length &&
-                (typeSymbol.getTypeArguments() == null && !this.isArrayOrEquivalent(typeSymbol)) &&
+                typeSymbol.getTypeArguments() == null &&
                 this.isTypeRefWithoutTypeArgs(typeReference);
         }
 
@@ -2437,11 +2408,6 @@ module TypeScript {
             else {
                 if (typeExprSymbol == this.semanticInfoChain.anyTypeSymbol) {
                     decl.setFlag(PullElementFlags.IsAnnotatedWithAny);
-                }
-
-                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeExprSymbol, <TypeReference>varDecl.typeExpr, context)) {
-                    context.postError(this.unitPath, varDecl.typeExpr.minChar, varDecl.typeExpr.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                    typeExprSymbol = this.specializeTypeToAny(typeExprSymbol, enclosingDecl, context);
                 }
 
                 // PULLREVIEW: If the type annotation is a container type, use the module instance type
@@ -2703,11 +2669,6 @@ module TypeScript {
             if (typeParameterAST.constraint) {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
-
-                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(constraintTypeSymbol, <TypeReference>typeParameterAST.constraint, context)) {
-                    context.postError(this.unitPath, typeParameterAST.constraint.minChar, typeParameterAST.constraint.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                    constraintTypeSymbol = this.specializeTypeToAny(constraintTypeSymbol, enclosingDecl, context);
-                }
 
                 if (constraintTypeSymbol) {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -3034,10 +2995,6 @@ module TypeScript {
                     context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
                 }
                 else {
-                    if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                        context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                    }
-
                     var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
                     if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
                         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructors_cannot_have_a_return_type_of_void, null);
@@ -3186,10 +3143,6 @@ module TypeScript {
                             }
                         }
 
-                        if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                            returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, funcDecl, context);
-                        }
-
                         signature.returnType = returnTypeSymbol;
                     }
                 }
@@ -3326,10 +3279,6 @@ module TypeScript {
                             if (getterSymbol) {
                                 getterTypeSymbol.setHasGenericSignature();
                             }
-                        }
-
-                        if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                            returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, funcDecl, context);
                         }
 
                         signature.returnType = returnTypeSymbol;
@@ -5329,11 +5278,6 @@ module TypeScript {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
                         var typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
-                        if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeArg, <TypeReference>genericTypeAST.typeArguments.members[i], context)) {
-                            context.postError(this.unitPath, genericTypeAST.typeArguments.members[i].minChar, genericTypeAST.typeArguments.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                            typeArg = this.specializeTypeToAny(typeArg, enclosingDecl, context);
-                        }
-
                         if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {   
                             typeArgs[i] = context.findSpecializationForType(typeArg);   
                         }   
@@ -5640,15 +5584,7 @@ module TypeScript {
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
-                var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
-
-                if (this.genericTypeIsUsedWithoutRequiredTypeArguments(returnTypeSymbol, <TypeReference>funcDeclAST.returnTypeAnnotation, context)) {
-                    context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                    returnTypeSymbol = this.specializeTypeToAny(returnTypeSymbol, functionDecl, context);
-                }
-
-                signature.returnType = returnTypeSymbol;
-
+                signature.returnType = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
             }
             else {
                 if (assigningFunctionSignature) {
@@ -10567,8 +10503,14 @@ module TypeScript {
             }
 
             var associatedContainerType = valueSymbol.type ? valueSymbol.type.getAssociatedContainerType() : null;
+
             if (associatedContainerType) {
-                return associatedContainerType != typeSymbol;
+                // We may have specialized the typeSymbol to any for error recovery, as in the following example:
+                // class A<T> { }
+                // class B extends A { }
+                // Since A was not given type arguments (which is an error), we may have specialized it to any, in which case A<any> != A<T>.
+                // So we need to compare associatedContainerType to the rootSymbol (the unspecialized version) of typeSymbol
+                return associatedContainerType != typeSymbol.getRootSymbol();
             }
 
             return true;
