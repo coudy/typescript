@@ -175,7 +175,6 @@ module TypeScript {
         public isResolvingSuperConstructorCallArgument = false;
         public inConstructorArguments = false;
         public isInStaticInitializer = false;
-        public inProvisionalAnyContext = false;
         public resolvingTypeNameAsNameExpression = false;
         public recursiveMemberSpecializationDepth = 0;
         public recursiveSignatureSpecializationDepth = 0;
@@ -320,7 +319,7 @@ module TypeScript {
         }
 
         public typeCheck() {
-            return this.inTypeCheck && !this.inSpecialization && !(this.inProvisionalResolution() || this.inProvisionalAnyContext);
+            return this.inTypeCheck && !this.inSpecialization && !this.inProvisionalResolution();
         }
 
         public startResolvingTypeArguments(ast: AST) {

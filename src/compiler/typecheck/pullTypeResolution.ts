@@ -201,7 +201,7 @@ module TypeScript {
         }
 
         private setTypeChecked(ast: AST, context: PullTypeResolutionContext) {
-            if (!context || !(context.inProvisionalResolution() || context.inProvisionalAnyContext)) {
+            if (!context || !context.inProvisionalResolution()) {
                 ast.typeCheckPhase = PullTypeResolver.globalTypeCheckPhase;
             }
         }
@@ -1948,7 +1948,7 @@ module TypeScript {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
 
                     // if the noImplicitAny flag is set to be true, report an error 
-                    if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+                    if (this.compilationSettings.noImplicitAny) {
                         context.postError(this.unitPath, argDeclAST.minChar, argDeclAST.getLength(), DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
                             [argDeclAST.id.actualText])
                     }
@@ -2036,7 +2036,7 @@ module TypeScript {
             }
                
             // if the noImplicitAny flag is set to be true, report an error
-            if (isImplicitAny && this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+            if (isImplicitAny && this.compilationSettings.noImplicitAny) {
 
                 // there is a name for function expression then use the function expression name otherwise use "lambda"
                 var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
@@ -2620,7 +2620,7 @@ module TypeScript {
                         }
                     }
                 }
-            } else if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext && !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
+            } else if (this.compilationSettings.noImplicitAny && !TypeScript.hasFlag(varDecl.getVarFlags(), VariableFlags.ForInVariable)) {
                 // if we're lacking both a type annotation and an initialization expression, the type is 'any'
                 // if the noImplicitAny flag is set to be true, report an error
                 // Do not report an error if the variable declaration is declared in ForIn statement
@@ -2842,7 +2842,7 @@ module TypeScript {
                         signature.returnType = newReturnType;
 
                         // if noImplicitAny flag is set to be true and return statements are not cast expressions, report an error
-                        if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+                        if (this.compilationSettings.noImplicitAny) {
                             // if the returnType got widen to Any
                             if (previousReturnType !== newReturnType && newReturnType === this.semanticInfoChain.anyTypeSymbol) {
                                 var functionName = enclosingDecl.name;
@@ -5664,7 +5664,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if noimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+                        if (this.compilationSettings.noImplicitAny) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
@@ -6244,7 +6244,7 @@ module TypeScript {
             }
 
             // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-            if (this.compilationSettings.noImplicitAny && !context.inProvisionalAnyContext) {
+            if (this.compilationSettings.noImplicitAny) {
                 // if it is an empty array and there is no contextual type
                 if (!inContextuallyTypedAssignment && elements.members.length == 0) {
                     context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
@@ -6278,7 +6278,7 @@ module TypeScript {
 
             if (elementType === this.semanticInfoChain.undefinedTypeSymbol || elementType === this.semanticInfoChain.nullTypeSymbol) {
                 // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
+                if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment) {
                     context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                 }
             }
@@ -6287,7 +6287,7 @@ module TypeScript {
                 elementType = this.semanticInfoChain.undefinedTypeSymbol;
 
                 // if noImplicitAny flag is set to be true and array is not declared in the function invocation or object creation invocation, report an error
-                if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment && !context.inProvisionalAnyContext) {
+                if (this.compilationSettings.noImplicitAny && !inContextuallyTypedAssignment) {
                     context.postError(this.unitPath, arrayLit.minChar, arrayLit.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
                 }
             }
@@ -8802,9 +8802,6 @@ module TypeScript {
             var comparisonInfo = new TypeComparisonInfo();
             var args: ASTList = application.arguments;
 
-            var originalInProvisionalAnyContext = context.inProvisionalAnyContext;
-            context.inProvisionalAnyContext = true;
-
             var signature: PullSignatureSymbol;
             var returnType: PullTypeSymbol;
             var initialCandidates = ArrayUtilities.where(group, signature => 
@@ -8828,7 +8825,6 @@ module TypeScript {
                 }
             }
 
-            context.inProvisionalAnyContext = originalInProvisionalAnyContext;
             return finalDecision;
         }
 
