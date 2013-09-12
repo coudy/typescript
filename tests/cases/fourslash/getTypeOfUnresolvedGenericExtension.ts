@@ -7,5 +7,4 @@
 //// 
 
 goTo.marker();
-// Bug 778413: Hangs
-// diagnostics.validateTypeAtCurrentPosition();
+diagnostics.validateTypeAtCurrentPosition();
