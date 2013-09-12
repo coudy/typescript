@@ -1148,7 +1148,9 @@ module TypeScript {
                             parentType = this.specializeTypeToAny(parentType, enclosingDecl, context);
                             this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), typeDeclAST.extendsList.members[i].minChar, typeDeclAST.extendsList.members[i].getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
-                        if (!typeDeclSymbol.hasBase(parentType)) {
+
+                        // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
+                        if (!typeDeclSymbol.hasBase(parentType) && !parentType.hasBase(typeDeclSymbol)) {
                             typeDeclSymbol.addExtendedType(parentType);
 
                             var specializations = typeDeclSymbol.getKnownSpecializations();
@@ -1179,7 +1181,7 @@ module TypeScript {
                             this.currentUnit.addDiagnostic(new Diagnostic(typeDecl.getScriptName(), implementedTypeAST.minChar, implementedTypeAST.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
                         }
 
-                        if (!typeDeclSymbol.hasBase(implementedType)) {
+                        if (!typeDeclSymbol.hasBase(implementedType) && !implementedType.hasBase(typeDeclSymbol)) {
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
                     } else if (implementedType && !this.getSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount])) {
@@ -10671,7 +10673,7 @@ module TypeScript {
             }
 
             // Check if its a recursive extend/implement type
-            if ((<PullTypeSymbol>baseType.getRootSymbol()).hasBase(<PullTypeSymbol>typeSymbol.getRootSymbol())) {
+            if (baseType.hasBase(typeSymbol)) {
                 typeSymbol.setHasBaseTypeConflict();
                 baseType.setHasBaseTypeConflict();
                 // Report error

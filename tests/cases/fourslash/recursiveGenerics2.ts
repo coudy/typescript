@@ -4,5 +4,4 @@
 //// /**/
 
 goTo.marker();
-// Bug 773653: Stack overflow
-// edit.insert('(new S18()).S18 = 0;');
+edit.insert('(new S18()).S18 = 0;');

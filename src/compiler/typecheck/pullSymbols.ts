@@ -1683,8 +1683,12 @@ module TypeScript {
             return this._typesThatExplicitlyImplementThisType;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[] = []) {
-            if (this === potentialBase) {
+        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []) {
+            // Check if this is the potential base:
+            //      A extends A  => this === potentialBase
+            //      A<T> extends A<T>  => this.getRootSymbol() === potentialBase
+            //      A<T> extends A<string> => this === potentialBase.getRootSymbol()
+            if (this === potentialBase || this.getRootSymbol() === potentialBase || this === potentialBase.getRootSymbol()) {
                 return true;
             }
 
