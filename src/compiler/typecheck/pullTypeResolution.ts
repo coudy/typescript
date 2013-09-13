@@ -315,38 +315,40 @@ module TypeScript {
                 }
             }
 
-            var typeDeclarations = parent.getDeclarations();
-            var childDecls: PullDecl[] = null;
+            if (parent.kind & PullElementKind.SomeContainer) {
+                var typeDeclarations = parent.getDeclarations();
+                var childDecls: PullDecl[] = null;
 
-            for (var j = 0; j < typeDeclarations.length; j++) {
-                childDecls = typeDeclarations[j].searchChildDecls(symbolName, declSearchKind);
+                for (var j = 0; j < typeDeclarations.length; j++) {
+                    childDecls = typeDeclarations[j].searchChildDecls(symbolName, declSearchKind);
 
-                if (childDecls.length) {
-                    member = childDecls[0].getSymbol();
+                    if (childDecls.length) {
+                        member = childDecls[0].getSymbol();
 
-                    if (!member) {
-                        member = childDecls[0].getSignatureSymbol();
+                        if (!member) {
+                            member = childDecls[0].getSignatureSymbol();
+                        }
+                        return this.getExportedMemberSymbol(member, parent);
                     }
-                    return this.getExportedMemberSymbol(member, parent);
-                }
 
-                // If we were looking  for some type or value, we need to look for alias so we can see if it has associated value or type symbol with it
-                if ((declSearchKind & PullElementKind.SomeType) != 0 || (declSearchKind & PullElementKind.SomeValue) != 0) {
-                    childDecls = typeDeclarations[j].searchChildDecls(symbolName, PullElementKind.TypeAlias);
-                    if (childDecls.length && childDecls[0].kind == PullElementKind.TypeAlias) { // this can return container or dynamic module
-                        var aliasSymbol = <PullTypeAliasSymbol>this.getExportedMemberSymbol(childDecls[0].getSymbol(), parent);
-                        if (aliasSymbol) {
-                            if ((declSearchKind & PullElementKind.SomeType) != 0) {
-                                // Some type
-                                var typeSymbol = aliasSymbol.getExportAssignedTypeSymbol();
-                                if (typeSymbol) {
-                                    return typeSymbol;
-                                }
-                            } else {
-                                // Some value
-                                var valueSymbol = aliasSymbol.getExportAssignedValueSymbol();
-                                if (valueSymbol) {
-                                    return valueSymbol;
+                    // If we were looking  for some type or value, we need to look for alias so we can see if it has associated value or type symbol with it
+                    if ((declSearchKind & PullElementKind.SomeType) != 0 || (declSearchKind & PullElementKind.SomeValue) != 0) {
+                        childDecls = typeDeclarations[j].searchChildDecls(symbolName, PullElementKind.TypeAlias);
+                        if (childDecls.length && childDecls[0].kind == PullElementKind.TypeAlias) { // this can return container or dynamic module
+                            var aliasSymbol = <PullTypeAliasSymbol>this.getExportedMemberSymbol(childDecls[0].getSymbol(), parent);
+                            if (aliasSymbol) {
+                                if ((declSearchKind & PullElementKind.SomeType) != 0) {
+                                    // Some type
+                                    var typeSymbol = aliasSymbol.getExportAssignedTypeSymbol();
+                                    if (typeSymbol) {
+                                        return typeSymbol;
+                                    }
+                                } else {
+                                    // Some value
+                                    var valueSymbol = aliasSymbol.getExportAssignedValueSymbol();
+                                    if (valueSymbol) {
+                                        return valueSymbol;
+                                    }
                                 }
                             }
                         }

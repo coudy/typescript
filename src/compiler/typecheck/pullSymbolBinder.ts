@@ -389,11 +389,21 @@ module TypeScript {
 
             if (createdNewSymbol) {
                 if (parent) {
-                    if (moduleContainerDecl.flags & PullElementFlags.Exported) {
-                        parent.addEnclosedMemberContainer(moduleContainerTypeSymbol);
+                    if (isEnum) {
+                        if (moduleContainerDecl.flags & PullElementFlags.Exported) {
+                            parent.addEnclosedMemberType(moduleContainerTypeSymbol);
+                        }
+                        else {
+                            parent.addEnclosedNonMemberType(moduleContainerTypeSymbol);
+                        }
                     }
                     else {
-                        parent.addEnclosedNonMemberContainer(moduleContainerTypeSymbol);
+                        if (moduleContainerDecl.flags & PullElementFlags.Exported) {
+                            parent.addEnclosedMemberContainer(moduleContainerTypeSymbol);
+                        }
+                        else {
+                            parent.addEnclosedNonMemberContainer(moduleContainerTypeSymbol);
+                        }
                     }
                 }
             }
