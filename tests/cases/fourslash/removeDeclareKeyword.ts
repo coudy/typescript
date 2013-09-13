@@ -4,5 +4,4 @@
 //// var x = new y;
 
 goTo.marker();
-// Bug 778468: Crash in AST converter
-// edit.deleteAtCaret('declare'.length);
+edit.deleteAtCaret('declare'.length);

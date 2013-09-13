@@ -2261,12 +2261,14 @@ module TypeScript {
     }
 
     function applyDelta(ast: TypeScript.ASTSpan, delta: number) {
-        if (ast.minChar !== -1) {
-            ast.minChar += delta;
-        }
+        if (ast) {
+            if (ast.minChar !== -1) {
+                ast.minChar += delta;
+            }
 
-        if (ast.limChar !== -1) {
-            ast.limChar += delta;
+            if (ast.limChar !== -1) {
+                ast.limChar += delta;
+            }
         }
     }
 
