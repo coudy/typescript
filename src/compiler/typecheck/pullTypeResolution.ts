@@ -1615,6 +1615,17 @@ module TypeScript {
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
                 var modPath = (<Identifier>importStatementAST.alias).text();
+                if (enclosingDecl.kind === PullElementKind.DynamicModule) {
+                    var ast = this.getASTForDecl(enclosingDecl);
+                    if (ast.nodeType() === NodeType.ModuleDeclaration) {
+                        if (isRelative(modPath)) {
+                            this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
+                                importStatementAST.minChar, importStatementAST.getLength(),
+                                DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null));
+                        }
+                    }
+                }
+
                 var declPath = getPathToDecl(enclosingDecl);
 
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());

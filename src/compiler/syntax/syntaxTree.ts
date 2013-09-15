@@ -1035,12 +1035,6 @@ module TypeScript {
                         if (node.stringLiteral === null) {
                             this.pushDiagnostic1(currentElementFullStart, importDeclaration,
                                 DiagnosticCode.Import_declarations_in_an_internal_module_cannot_reference_an_external_module, null);
-                        } else {
-                            var importPath = (<ExternalModuleReferenceSyntax>importDeclaration.moduleReference).stringLiteral.value();
-                            if (isRelative(importPath)) {
-                                this.pushDiagnostic1(currentElementFullStart, importDeclaration,
-                                    DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null);
-                            }
                         }
                     }
                 }
