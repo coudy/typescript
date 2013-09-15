@@ -1617,7 +1617,7 @@ module TypeScript {
                 var modPath = (<Identifier>importStatementAST.alias).text();
                 if (enclosingDecl.kind === PullElementKind.DynamicModule) {
                     var ast = this.getASTForDecl(enclosingDecl);
-                    if (ast.nodeType() === NodeType.ModuleDeclaration) {
+                    if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
                         if (isRelative(modPath)) {
                             this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
                                 importStatementAST.minChar, importStatementAST.getLength(),
