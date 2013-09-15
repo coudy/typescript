@@ -1016,6 +1016,11 @@ module TypeScript {
 
             containerSymbol.inResolution = true;
 
+            if (isRelative(stripStartAndEndQuotes(ast.name.actualText))) {
+                this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
+                    ast.name.minChar, ast.name.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name));
+            }
+
             var containerDecls = containerSymbol.getDeclarations();
 
             for (var i = 0; i < containerDecls.length; i++) {

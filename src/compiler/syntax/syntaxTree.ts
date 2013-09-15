@@ -1090,14 +1090,6 @@ module TypeScript {
                         DiagnosticCode.Only_ambient_modules_can_use_quoted_names);
                     this.skip(node);
                     return;
-                } else {
-                    var moduleName = node.stringLiteral.value();
-                    if (isRelative(moduleName)) {
-                        var stringLiteralFullStart = this.childFullStart(node, node.stringLiteral);
-                        this.pushDiagnostic1(stringLiteralFullStart, node.stringLiteral, DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name);
-                        this.skip(node);
-                        return;
-                    }
                 }
             }
 
