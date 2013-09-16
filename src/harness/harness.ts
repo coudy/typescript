@@ -1554,6 +1554,7 @@ module Harness {
             public errors: ReportedError[] = [];
             public declFilesCode: GeneratedFile[] = [];
             public sourceMaps: GeneratedFile[] = []; 
+            public sourceMapRecord: string;
 
             /** @param fileResults an array of strings for the fileName and an ITextWriter with its code */
             constructor(fileResults: { fileName: string; file: WriterAggregator; }[], errors: ReportedError[], sourceMapRecordLines: string[]) {
@@ -1577,6 +1578,7 @@ module Harness {
                 });
 
                 this.errors = errors;
+                this.sourceMapRecord = sourceMapRecordLines.join('\r\n');
             }
 
             public isErrorAt(line: number, column: number, message: string) {

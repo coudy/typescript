@@ -197,12 +197,22 @@ class CompilerBaselineRunner extends RunnerBase {
 
                     // Check sourcemap output
                     if (emittingSourceMap) {
-                        if (result.sourceMaps.length !== 1) {
-                            throw new Error('Expected exactly 1 .js.map file to be emitted, but got ' + result.sourceMaps.length);
+                        if (result.sourceMaps.length === 0 ) {
+                            throw new Error('Expected at least 1 .js.map file to be emitted, but got none');
                         }
-                        
+
                         Harness.Baseline.runBaseline('Correct SourceMap for ' + fileName, justName.replace(/\.ts/, '.map'), () => {
                             return result.sourceMaps[0].code;
+                        });
+
+                        for (var i = 1; i < result.sourceMaps.length; i++) {
+                            Harness.Baseline.runBaseline('Correct SourceMap for ' + fileName + ' (#' + i + ')', justName.replace(/\.ts/, '.' + i + '.map'), () => {
+                                return result.sourceMaps[i].code;
+                            });
+                        }
+
+                        Harness.Baseline.runBaseline('Correct SourceMap Record for ' + fileName, justName.replace(/\.ts/, '.maprecord'), () => {
+                            return result.sourceMapRecord;
                         });
                     }
                 }
