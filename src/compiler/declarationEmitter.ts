@@ -460,26 +460,20 @@ module TypeScript {
                     else if (funcDecl.isConstructMember()) {
                         this.declFile.Write("new");
                     }
-
-                    this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
                 }
                 else {
                     this.emitIndent();
                     if (funcDecl.isConstructMember()) {
                         this.declFile.Write("new");
-                        this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
                     }
                     else if (!funcDecl.isCallMember() && !funcDecl.isIndexerMember()) {
                         this.declFile.Write(id);
-                        this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
                         if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
                             this.declFile.Write("? ");
                         }
                     }
-                    else {
-                        this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
-                    }
                 }
+                this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
             }
 
             if (!funcDecl.isIndexerMember()) {
