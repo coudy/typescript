@@ -1692,7 +1692,7 @@ module TypeScript {
                 return true;
             }
 
-            if (visited.indexOf(this) >= 0) {
+            if (ArrayUtilities.contains(visited, this)) {
                 return true;
             }
 

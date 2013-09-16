@@ -4816,11 +4816,12 @@ module TypeScript.Parser {
             // Debug.assert(this.isConstructorType());
 
             var newKeyword = this.eatKeyword(SyntaxKind.NewKeyword);
+            var typeParameterList = this.parseOptionalTypeParameterList(/*requireCompleteTypeParameterList:*/ false);
             var parameterList = this.parseParameterList();
             var equalsGreaterThanToken = this.eatToken(SyntaxKind.EqualsGreaterThanToken);
             var type = this.parseType();
 
-            return this.factory.constructorType(newKeyword, null, parameterList, equalsGreaterThanToken, type);
+            return this.factory.constructorType(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type);
         }
 
         private isTypeLiteral(): boolean {

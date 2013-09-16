@@ -655,7 +655,7 @@ module TypeScript {
                     var declarations = containerSymbol.getDeclarations();
                     for (var i = 0, n = declarations.length; i < n; i++) {
                         var declaration = declarations[i];
-                        if (declPath.indexOf(declaration) >= 0) {
+                        if (ArrayUtilities.contains(declPath, declaration)) {
                             memberVisibilty = GetAllMembersVisiblity.internallyVisible;
                             break;
                         }
