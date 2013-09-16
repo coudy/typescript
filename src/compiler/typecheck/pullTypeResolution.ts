@@ -1016,11 +1016,6 @@ module TypeScript {
 
             containerSymbol.inResolution = true;
 
-            if (isRelative(stripStartAndEndQuotes(ast.name.actualText))) {
-                this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
-                    ast.name.minChar, ast.name.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name));
-            }
-
             var containerDecls = containerSymbol.getDeclarations();
 
             for (var i = 0; i < containerDecls.length; i++) {
@@ -1068,6 +1063,11 @@ module TypeScript {
             var containerDecl = this.getDeclForAST(ast);
             this.resolveAST(ast.members, false, containerDecl, context);
             this.validateVariableDeclarationGroups(containerDecl, context);
+
+            if (isRelative(stripStartAndEndQuotes(ast.name.actualText))) {
+                this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
+                    ast.name.minChar, ast.name.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name));
+            }
         }
 
         public isTypeRefWithoutTypeArgs(typeRef: TypeReference) {
@@ -1620,17 +1620,6 @@ module TypeScript {
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
                 var modPath = (<Identifier>importStatementAST.alias).text();
-                if (enclosingDecl.kind === PullElementKind.DynamicModule) {
-                    var ast = this.getASTForDecl(enclosingDecl);
-                    if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
-                        if (isRelative(modPath)) {
-                            this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
-                                importStatementAST.minChar, importStatementAST.getLength(),
-                                DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null));
-                        }
-                    }
-                }
-
                 var declPath = getPathToDecl(enclosingDecl);
 
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());
@@ -1682,6 +1671,20 @@ module TypeScript {
             var importDecl: PullDecl = this.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+
+            if (importStatementAST.isExternalImportDeclaration()) {
+                var modPath = (<Identifier>importStatementAST.alias).text();
+                if (enclosingDecl.kind === PullElementKind.DynamicModule) {
+                    var ast = this.getASTForDecl(enclosingDecl);
+                    if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
+                        if (isRelative(modPath)) {
+                            this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
+                                importStatementAST.minChar, importStatementAST.getLength(),
+                                DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null));
+                        }
+                    }
+                }
+            }
 
             var checkPrivacy: boolean;
             if (importStatementAST.isExternalImportDeclaration()) {
