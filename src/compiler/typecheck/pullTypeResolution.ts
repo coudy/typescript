@@ -1673,14 +1673,18 @@ module TypeScript {
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
             if (importStatementAST.isExternalImportDeclaration()) {
+                if (this.compilationSettings.noResolve) {
+                    context.postError(this.unitPath, importStatementAST.minChar, importStatementAST.getLength(),
+                        DiagnosticCode.Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set, null);
+                }
+
                 var modPath = (<Identifier>importStatementAST.alias).text();
                 if (enclosingDecl.kind === PullElementKind.DynamicModule) {
                     var ast = this.getASTForDecl(enclosingDecl);
                     if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
                         if (isRelative(modPath)) {
-                            this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
-                                importStatementAST.minChar, importStatementAST.getLength(),
-                                DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null));
+                            context.postError(this.unitPath, importStatementAST.minChar, importStatementAST.getLength(),
+                                DiagnosticCode.Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name, null);
                         }
                     }
                 }

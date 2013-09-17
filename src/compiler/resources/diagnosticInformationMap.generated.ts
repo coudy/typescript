@@ -1126,6 +1126,10 @@ module TypeScript {
     "code": 2198,
     "category": DiagnosticCategory.Error
   },
+  "Import declaration cannot refer to external module reference when --noResolve option is set.": {
+    "code": 2199,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

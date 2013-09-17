@@ -1158,6 +1158,7 @@ module Harness {
                 { flag: 'outDir', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outDirOption = value; } },
                 { flag: 'filename', setFlag: (x: TypeScript.CompilationSettings, value: string) => { /* used for multifile tests, doesn't change any compiler settings */; } },
                 { flag: 'noimplicitany', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noImplicitAny = value.toLowerCase() === 'true' ? true : false; } }, 
+                { flag: 'noresolve', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noResolve = value.toLowerCase() === 'true' ? true : false; } }, 
             ];
 
             /** Does a deep copy of the given compiler's settings and emit options and returns
@@ -1615,7 +1616,7 @@ module Harness {
         var optionRegex = /^[\/]{2}\s*@(\w+)\s*:\s*(\S*)/gm;  // multiple matches on multiple lines
 
         // List of allowed metadata names
-        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "outDir", "noimplicitany"];
+        var fileMetadataNames = ["filename", "comments", "declaration", "module", "nolib", "sourcemap", "target", "out", "outDir", "noimplicitany", "noresolve"];
 
         function extractCompilerSettings(content: string): CompilerSetting[] {
 
