@@ -1122,6 +1122,10 @@ module TypeScript {
     "code": 2197,
     "category": DiagnosticCategory.Error
   },
+  "Could not find the best common type of types of all return statement expressions.": {
+    "code": 2198,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
