@@ -44,6 +44,7 @@ module TypeScript {
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
 
         static typeCheckCallBacks: { (context: PullTypeResolutionContext): void; }[] = [];
+        private static postTypeCheckWorkitems: { ast: AST; enclosingDecl: PullDecl; }[] = [];
 
         private cachedFunctionArgumentsSymbol: PullSymbol = null;
 
@@ -1377,6 +1378,12 @@ module TypeScript {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
 
+            // Add for post typeChecking if we want to verify name collision with _this
+            if ((/* In global context*/ !classDeclSymbol.getContainer() ||
+                /* In Dynamic Module */ classDeclSymbol.getContainer().kind == PullElementKind.DynamicModule) &&
+                classDeclAST.name.text() == "_this") {
+                PullTypeResolver.postTypeCheckWorkitems.push({ ast: classDeclAST, enclosingDecl: this.getEnclosingDecl(classDecl) });            }
+
             this.resolveAST(classDeclAST.members, false, classDecl, context);
 
             this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
@@ -1388,6 +1395,10 @@ module TypeScript {
             if (!classConstructorTypeSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classConstructorTypeSymbol, classDecl, context);
             }
+        }
+
+        private postTypeCheckClassDeclaration(classDeclAST: ClassDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            this.checkThisCaptureVariableCollides(classDeclAST, enclosingDecl, context);
         }
 
         private resolveInterfaceDeclaration(interfaceDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2675,6 +2686,46 @@ module TypeScript {
                 this.checkSymbolPrivacy(declSymbol, declSymbol.type, context, (symbol: PullSymbol) =>
                     this.variablePrivacyErrorReporter(declSymbol, symbol, context));
             }
+
+            // Non property variable with _this name, we need to verify if this would be ok
+            if (declSymbol.kind != PullElementKind.Property && varDecl.id.text() == "_this") {
+                PullTypeResolver.postTypeCheckWorkitems.push({ ast: varDecl, enclosingDecl: enclosingDecl });
+            }
+        }
+
+        private checkThisCaptureVariableCollides(declAST: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            // Verify if this variable name conflicts with the _this that would be emitted to capture this in any of the enclosing context
+            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
+
+            for (var i = declPath.length - 1; i >= 0; i--) {
+                var decl = declPath[i];
+                var declKind = decl.kind;
+                if (declKind === PullElementKind.FunctionExpression && hasFlag(decl.flags, PullElementFlags.FatArrow)) {
+                    continue;
+                }
+
+                if (declKind === PullElementKind.Function ||
+                    declKind === PullElementKind.Method ||
+                    declKind === PullElementKind.ConstructorMethod ||
+                    declKind === PullElementKind.GetAccessor ||
+                    declKind === PullElementKind.SetAccessor ||
+                    declKind === PullElementKind.FunctionExpression ||
+                    declKind === PullElementKind.Class ||
+                    declKind === PullElementKind.Container ||
+                    declKind === PullElementKind.DynamicModule ||
+                    declKind === PullElementKind.Script) {
+
+                    if (hasFlag(decl.flags, PullElementFlags.MustCaptureThis)) {
+                        context.postError(this.unitPath, declAST.minChar, declAST.getLength(),
+                            DiagnosticCode.Duplicate_identifier_this_Compiler_uses_variable_declaration_this_to_capture_this_reference, null);
+                    }
+                    break;
+                }
+            }
+        }
+
+        private postTypeCheckVariableDeclaration(varDecl: BoundDecl, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            this.checkThisCaptureVariableCollides(varDecl, enclosingDecl, context);
         }
 
         private resolveTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -4818,6 +4869,31 @@ module TypeScript {
 
                 default:
                     Debug.assert(false, "Implement typeCheck clause if symbol is cached");
+            }
+        }
+
+        public processPostTypeCheckWorkItems(context: PullTypeResolutionContext) {
+            while (PullTypeResolver.postTypeCheckWorkitems.length) {
+                var workItem = PullTypeResolver.postTypeCheckWorkitems.pop();
+                this.postTypeCheck(workItem.ast, workItem.enclosingDecl, context);
+            }
+        }
+
+        private postTypeCheck(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            var nodeType = ast.nodeType();
+
+            switch (nodeType) {
+                case NodeType.Parameter:
+                case NodeType.VariableDeclarator:
+                    this.postTypeCheckVariableDeclaration(<BoundDecl>ast, enclosingDecl, context);
+                    return;
+
+                case NodeType.ClassDeclaration:
+                    this.postTypeCheckClassDeclaration(<ClassDeclaration>ast, enclosingDecl, context);
+                    return;
+
+                default:
+                    Debug.assert(false, "Implement postTypeCheck clause to handle the postTypeCheck work");
             }
         }
 
@@ -9570,6 +9646,8 @@ module TypeScript {
                     var callBack = PullTypeResolver.typeCheckCallBacks.pop();
                     callBack(context);
                 }
+
+                resolver.processPostTypeCheckWorkItems(context);
 
                 PullTypeResolver.globalTypeCheckPhase++;
             }

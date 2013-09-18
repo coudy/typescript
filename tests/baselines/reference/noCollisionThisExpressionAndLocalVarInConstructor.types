@@ -1,0 +1,42 @@
+=== tests/cases/compiler/noCollisionThisExpressionAndLocalVarInConstructor.ts ===
+Line 0 col 6 IdentifierName "class1" = class1
+Line 2 col 12 IdentifierName "x2" = { doStuff: (callback: any) => () => any; }
+Line 2 col 17 ObjectLiteralExpression "{
+            doStuff: (callback) => () => {
+                var _this = 2;
+                return callback(_this);
+            }
+        }" = { doStuff: (callback: any) => () => any; }
+Line 3 col 0 IdentifierName "doStuff" = (callback: any) => () => any
+Line 3 col 21 ParenthesizedArrowFunctionExpression "(callback) => () => {
+                var _this = 2;
+                return callback(_this);
+            }" = (callback: any) => () => any
+Line 3 col 22 IdentifierName "callback" = any
+Line 3 col 35 ParenthesizedArrowFunctionExpression "() => {
+                var _this = 2;
+                return callback(_this);
+            }" = () => any
+Line 4 col 20 IdentifierName "_this" = number
+Line 5 col 23 InvocationExpression "callback(_this)" = any
+Line 5 col 23 IdentifierName "callback" = any
+Line 5 col 32 IdentifierName "_this" = number
+Line 11 col 6 IdentifierName "class2" = class2
+Line 13 col 12 IdentifierName "_this" = number
+Line 14 col 12 IdentifierName "x2" = { doStuff: (callback: any) => () => any; }
+Line 14 col 17 ObjectLiteralExpression "{
+            doStuff: (callback) => () => {
+                return callback(_this);
+            }
+        }" = { doStuff: (callback: any) => () => any; }
+Line 15 col 0 IdentifierName "doStuff" = (callback: any) => () => any
+Line 15 col 21 ParenthesizedArrowFunctionExpression "(callback) => () => {
+                return callback(_this);
+            }" = (callback: any) => () => any
+Line 15 col 22 IdentifierName "callback" = any
+Line 15 col 35 ParenthesizedArrowFunctionExpression "() => {
+                return callback(_this);
+            }" = () => any
+Line 16 col 23 InvocationExpression "callback(_this)" = any
+Line 16 col 23 IdentifierName "callback" = any
+Line 16 col 32 IdentifierName "_this" = number

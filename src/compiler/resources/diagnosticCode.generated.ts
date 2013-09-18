@@ -283,6 +283,7 @@ module TypeScript {
         Import_declaration_in_an_ambient_external_module_declaration_cannot_reference_external_module_through_relative_external_module_name: "Import declaration in an ambient external module declaration cannot reference external module through relative external module name.",
         Could_not_find_the_best_common_type_of_types_of_all_return_statement_expressions: "Could not find the best common type of types of all return statement expressions.",
         Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set: "Import declaration cannot refer to external module reference when --noResolve option is set.",
+        Duplicate_identifier_this_Compiler_uses_variable_declaration_this_to_capture_this_reference: "Duplicate identifier '_this'. Compiler uses variable declaration '_this' to capture 'this' reference.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
