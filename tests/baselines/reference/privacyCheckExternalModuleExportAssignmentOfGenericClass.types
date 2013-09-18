@@ -2,5 +2,11 @@
 Line 0 col 7 IdentifierName "Foo" = any
 Line 1 col 9 IdentifierName "Bar" = any
 Line 2 col 10 IdentifierName "Bar" = Bar
-Line 3 col 0 IdentifierName "foo" = any
+Line 3 col 0 IdentifierName "foo" = Foo<number>
 Line 3 col 9 IdentifierName "Foo" = Foo
+=== tests/cases/compiler/privacyCheckExternalModuleExportAssignmentOfGenericClass_0.ts ===
+Line 0 col 9 IdentifierName "Foo" = any
+Line 1 col 6 IdentifierName "Foo" = Foo<A>
+Line 1 col 10 IdentifierName "A" = any
+Line 2 col 23 IdentifierName "a" = A
+Line 2 col 26 IdentifierName "A" = A

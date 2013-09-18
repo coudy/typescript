@@ -1,8 +1,11 @@
 === tests/cases/compiler/enumFromExternalModule_1.ts ===
 Line 1 col 7 IdentifierName "f" = any
-Line 3 col 4 IdentifierName "x" = any
-Line 3 col 8 MemberAccessExpression "f.Mode.Open" = any
-Line 3 col 8 MemberAccessExpression "f.Mode" = any
+Line 3 col 4 IdentifierName "x" = 'filexx'.Mode
+Line 3 col 8 MemberAccessExpression "f.Mode.Open" = 'filexx'.Mode
+Line 3 col 8 MemberAccessExpression "f.Mode" = { Open: 'filexx'.Mode; [x: number]: string; }
 Line 3 col 8 IdentifierName "f" = f
-Line 3 col 10 IdentifierName "Mode" = any
-Line 3 col 15 IdentifierName "Open" = any
+Line 3 col 10 IdentifierName "Mode" = { Open: 'filexx'.Mode; [x: number]: string; }
+Line 3 col 15 IdentifierName "Open" = 'filexx'.Mode
+=== tests/cases/compiler/enumFromExternalModule_0.ts ===
+Line 1 col 16 IdentifierName "Mode" = 'filexx'.Mode
+Line 1 col 23 IdentifierName "Open" = 'filexx'.Mode

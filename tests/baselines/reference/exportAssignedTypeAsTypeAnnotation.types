@@ -1,4 +1,9 @@
 === tests/cases/compiler/exportAssignedTypeAsTypeAnnotation_1.ts ===
 Line 1 col 7 IdentifierName "test" = any
-Line 2 col 4 IdentifierName "t2" = any
+Line 2 col 4 IdentifierName "t2" = "test".x
 Line 2 col 8 IdentifierName "test" = test
+=== tests/cases/compiler/exportAssignedTypeAsTypeAnnotation_0.ts ===
+Line 2 col 14 IdentifierName "x" = "test".x
+Line 3 col 12 IdentifierName "Date" = Date
+Line 4 col 0 IdentifierName "foo" = string
+Line 6 col 13 IdentifierName "x" = any

@@ -1,9 +1,13 @@
 === tests/cases/compiler/exportAssignmentClass_B.ts ===
 Line 0 col 7 IdentifierName "D" = any
-Line 2 col 4 IdentifierName "d" = any
-Line 2 col 8 ObjectCreationExpression "new D()" = any
-Line 2 col 12 IdentifierName "D" = D
-Line 3 col 4 IdentifierName "x" = any
-Line 3 col 8 MemberAccessExpression "d.p" = any
-Line 3 col 8 IdentifierName "d" = any
-Line 3 col 10 IdentifierName "p" = any
+Line 2 col 4 IdentifierName "d" = C
+Line 2 col 8 ObjectCreationExpression "new D()" = C
+Line 2 col 12 IdentifierName "D" = new() => C
+Line 3 col 4 IdentifierName "x" = number
+Line 3 col 8 MemberAccessExpression "d.p" = number
+Line 3 col 8 IdentifierName "d" = C
+Line 3 col 10 IdentifierName "p" = number
+=== tests/cases/compiler/exportAssignmentClass_A.ts ===
+Line 0 col 6 IdentifierName "C" = C
+Line 0 col 17 IdentifierName "p" = number
+Line 2 col 9 IdentifierName "C" = any

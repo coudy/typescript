@@ -224,17 +224,18 @@ class CompilerBaselineRunner extends RunnerBase {
                     var compilerState = new Services.CompilerState(host);
 
                     host.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
-                    toBeCompiled.forEach(file => {
+                    var allFiles = toBeCompiled.concat(otherFiles);
+                    allFiles.forEach(file => {
                         host.addScript(file.unitName, file.content);
                     });
 
                     compilerState.refresh();
-                    toBeCompiled.forEach(file => {
+                    allFiles.forEach(file => {
                         compilerState.getSemanticDiagnostics(file.unitName);
                     });
 
                     var typeLines: string[] = [];
-                    toBeCompiled.forEach(file => {
+                    allFiles.forEach(file => {
                         typeLines.push('=== ' + file.unitName + ' ===');
                         var walker = new TypeWriterWalker(file.unitName, host, compilerState);
                         walker.run();

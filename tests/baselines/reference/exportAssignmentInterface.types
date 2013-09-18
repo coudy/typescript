@@ -1,8 +1,12 @@
 === tests/cases/compiler/exportAssignmentInterface_B.ts ===
 Line 0 col 7 IdentifierName "I1" = any
-Line 2 col 4 IdentifierName "i" = any
+Line 2 col 4 IdentifierName "i" = A
 Line 2 col 7 IdentifierName "I1" = I1
 Line 4 col 4 IdentifierName "n" = number
-Line 4 col 16 MemberAccessExpression "i.p1" = any
-Line 4 col 16 IdentifierName "i" = any
-Line 4 col 18 IdentifierName "p1" = any
+Line 4 col 16 MemberAccessExpression "i.p1" = number
+Line 4 col 16 IdentifierName "i" = A
+Line 4 col 18 IdentifierName "p1" = number
+=== tests/cases/compiler/exportAssignmentInterface_A.ts ===
+Line 0 col 10 IdentifierName "A" = A
+Line 1 col 0 IdentifierName "p1" = number
+Line 4 col 9 IdentifierName "A" = any

@@ -4,6 +4,8 @@ Line 2 col 9 IdentifierName "IsFoo" = (value: any) => boolean
 Line 2 col 15 IdentifierName "value" = any
 Line 3 col 11 InstanceOfExpression "value instanceof Bar.Foo" = boolean
 Line 3 col 11 IdentifierName "value" = any
-Line 3 col 28 MemberAccessExpression "Bar.Foo" = any
+Line 3 col 28 MemberAccessExpression "Bar.Foo" = new() => "FS".Foo
 Line 3 col 28 IdentifierName "Bar" = Bar
-Line 3 col 32 IdentifierName "Foo" = any
+Line 3 col 32 IdentifierName "Foo" = new() => "FS".Foo
+=== tests/cases/compiler/instanceOfInExternalModules_require.ts ===
+Line 1 col 17 IdentifierName "Foo" = "FS".Foo

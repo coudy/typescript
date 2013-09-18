@@ -9,8 +9,12 @@ Line 4 col 15 FunctionExpression "function () {
 Line 5 col 0 InvocationExpression "//var x = mod.id; // TODO needed hack that mod is loaded
     b.b(mod)" = any
 Line 5 col 0 MemberAccessExpression "//var x = mod.id; // TODO needed hack that mod is loaded
-    b.b" = any
+    b.b" = (a: any) => any
 Line 5 col 0 IdentifierName "//var x = mod.id; // TODO needed hack that mod is loaded
     b" = b
-Line 6 col 6 IdentifierName "b" = any
+Line 6 col 6 IdentifierName "b" = (a: any) => any
 Line 6 col 8 IdentifierName "mod" = mod
+=== tests/cases/compiler/aliasUsedAsNameValue_0.ts ===
+Line 1 col 5 IdentifierName "id" = number
+Line 5 col 10 IdentifierName "b" = (a: any) => any
+Line 5 col 12 IdentifierName "a" = any
