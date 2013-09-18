@@ -1,0 +1,18 @@
+//// [importAliasAnExternalModuleInsideAnInternalModule_file0.js]
+(function (m) {
+    function foo() {
+    }
+    m.foo = foo;
+})(exports.m || (exports.m = {}));
+var m = exports.m;
+
+//// [importAliasAnExternalModuleInsideAnInternalModule_file1.js]
+
+var m_private;
+(function (m_private) {
+    //import r2 = require('m'); // would be error
+    var C = r;
+    m_private.C = C;
+    C.m.foo();
+})(m_private || (m_private = {}));
+

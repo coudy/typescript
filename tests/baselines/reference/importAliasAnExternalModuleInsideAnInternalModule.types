@@ -1,0 +1,11 @@
+=== tests/cases/compiler/importAliasAnExternalModuleInsideAnInternalModule_file1.ts ===
+Line 0 col 7 IdentifierName "r" = any
+Line 1 col 7 IdentifierName "m_private" = m_private
+Line 3 col 18 IdentifierName "C" = any
+Line 3 col 22 IdentifierName "r" = any
+Line 4 col 0 InvocationExpression "C.m.foo()" = any
+Line 4 col 0 MemberAccessExpression "C.m.foo" = any
+Line 4 col 0 MemberAccessExpression "C.m" = any
+Line 4 col 0 IdentifierName "C" = m_private.C
+Line 4 col 6 IdentifierName "m" = any
+Line 4 col 8 IdentifierName "foo" = any
