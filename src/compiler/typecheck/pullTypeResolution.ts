@@ -2682,9 +2682,33 @@ module TypeScript {
                     this.variablePrivacyErrorReporter(declSymbol, symbol, context));
             }
 
-            // Non property variable with _this name, we need to verify if this would be ok
-            if (declSymbol.kind != PullElementKind.Property && varDecl.id.text() == "_this") {
-                PullTypeResolver.postTypeCheckWorkitems.push({ ast: varDecl, enclosingDecl: enclosingDecl });
+            if (declSymbol.kind != PullElementKind.Property) {
+                // Non property variable with _this name, we need to verify if this would be ok
+                var varIdText = varDecl.id.text();
+                if (varIdText == "_this") {
+                    PullTypeResolver.postTypeCheckWorkitems.push({ ast: varDecl, enclosingDecl: enclosingDecl });
+                } else if (varIdText == "_super") {
+                    this.checkSuperCaptureVariableCollides(varDecl, enclosingDecl, context);
+                }
+            }
+        }
+
+        private checkSuperCaptureVariableCollides(declAST: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
+
+
+            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
+
+            if (classSymbol) {
+                if (!classSymbol.isResolved) {
+                    this.resolveDeclaredSymbol(classSymbol, enclosingDecl, context);
+                }
+
+                var parents = classSymbol.getExtendedTypes();
+                if (parents.length) {
+                    context.postError(this.unitPath, declAST.minChar, declAST.getLength(),
+                        DiagnosticCode.Duplicate_identifier_super_Compiler_uses_super_to_capture_base_class_reference, null);
+                }
             }
         }
 
@@ -2994,6 +3018,14 @@ module TypeScript {
 
                         context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]);
                     }
+                }
+            }
+
+            if (funcDecl.kind == PullElementKind.Function) {
+                // Non property variable with _this name, we need to verify if this would be ok
+                var funcNameText = funcDeclAST.name.text();
+                if (funcNameText == "_super") {
+                    this.checkSuperCaptureVariableCollides(funcDeclAST, enclosingDecl, context);
                 }
             }
 

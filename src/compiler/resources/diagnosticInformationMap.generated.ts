@@ -1150,6 +1150,10 @@ module TypeScript {
     "code": 2204,
     "category": DiagnosticCategory.Error
   },
+  "Duplicate identifier '_super'. Compiler uses '_super' to capture base class reference.": {
+    "code": 2205,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

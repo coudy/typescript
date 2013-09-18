@@ -288,6 +288,7 @@ module TypeScript {
         break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement: "'break' statement can only be used within an enclosing iteration or switch statement.",
         Jump_target_not_found: "Jump target not found.",
         Jump_target_cannot_cross_function_boundary: "Jump target cannot cross function boundary.",
+        Duplicate_identifier_super_Compiler_uses_super_to_capture_base_class_reference: "Duplicate identifier '_super'. Compiler uses '_super' to capture base class reference.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
