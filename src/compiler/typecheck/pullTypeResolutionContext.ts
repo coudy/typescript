@@ -160,6 +160,13 @@ module TypeScript {
         private genericASTResolutionStack: AST[] = [];
         private enclosingFunctionParameterIndexStack: IParameterIndexContext[] = [];
 
+        // Each entry in the stack contains the labels that are currently in scope.  Each time we 
+        // enter/exist a method, we push/pop a new context onto the stack.
+        public breakableLabelsStack: string[][] = [[]];
+        public continuableLabelsStack: string[][] = [[]];
+        public inIterationStatement: boolean = false;
+        public inSwitchStatement: boolean = false;
+
         public resolvingTypeReference = false;
         public resolvingNamespaceMemberAccess = false;
         public resolvingTypeQueryExpression = false;
@@ -304,7 +311,7 @@ module TypeScript {
             return type;
         }
 
-        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[]): void {
+        public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[] = null): void {
             var diagnostic = new Diagnostic(fileName, offset, length, diagnosticKey, arguments);
             this.postDiagnostic(diagnostic);
         }

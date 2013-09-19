@@ -1134,6 +1134,22 @@ module TypeScript {
     "code": 2200,
     "category": DiagnosticCategory.Error
   },
+  "'continue' statement can only be used within an enclosing iteration statement.": {
+    "code": 2201,
+    "category": DiagnosticCategory.Error
+  },
+  "'break' statement can only be used within an enclosing iteration or switch statement.": {
+    "code": 2202,
+    "category": DiagnosticCategory.Error
+  },
+  "Jump target not found.": {
+    "code": 2203,
+    "category": DiagnosticCategory.Error
+  },
+  "Jump target cannot cross function boundary.": {
+    "code": 2204,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

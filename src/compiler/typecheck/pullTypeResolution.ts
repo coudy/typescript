@@ -1382,7 +1382,8 @@ module TypeScript {
             if ((/* In global context*/ !classDeclSymbol.getContainer() ||
                 /* In Dynamic Module */ classDeclSymbol.getContainer().kind == PullElementKind.DynamicModule) &&
                 classDeclAST.name.text() == "_this") {
-                PullTypeResolver.postTypeCheckWorkitems.push({ ast: classDeclAST, enclosingDecl: this.getEnclosingDecl(classDecl) });            }
+                PullTypeResolver.postTypeCheckWorkitems.push({ ast: classDeclAST, enclosingDecl: this.getEnclosingDecl(classDecl) });
+            }
 
             this.resolveAST(classDeclAST.members, false, classDecl, context);
 
@@ -3087,6 +3088,41 @@ module TypeScript {
             return returnTypeSymbol;
         }
 
+        private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            context.breakableLabelsStack.push([]);
+            context.continuableLabelsStack.push([]);
+
+            var savedInSwitchStatement = context.inSwitchStatement;
+            var savedInIterationStatement = context.inIterationStatement;
+            context.inSwitchStatement = false;
+            context.inIterationStatement = false;
+
+            var result: PullSymbol;
+            if (funcDecl.isGetAccessor()) {
+                result = this.resolveGetAccessorDeclaration(funcDecl, context);
+            }
+            else if (funcDecl.isSetAccessor()) {
+                result = this.resolveSetAccessorDeclaration(funcDecl, context);
+            }
+            else if (inContextuallyTypedAssignment ||
+                (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
+                (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
+                (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+
+                result = this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
+            }
+            else {
+                result = this.resolveFunctionDeclaration(funcDecl, context);
+            }
+
+            context.breakableLabelsStack.pop();
+            context.continuableLabelsStack.pop();
+            context.inSwitchStatement = savedInSwitchStatement;
+            context.inIterationStatement = savedInIterationStatement;
+
+            return result;
+        }
+
         private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
@@ -3945,7 +3981,11 @@ module TypeScript {
             this.resolveAST((<ForStatement>ast).init, false, enclosingDecl, context);
             this.resolveAST((<ForStatement>ast).cond, false, enclosingDecl, context);
             this.resolveAST((<ForStatement>ast).incr, false, enclosingDecl, context);
+
+            var savedInIterationStatement = context.inIterationStatement;
+            context.inIterationStatement = true;
             this.resolveAST((<ForStatement>ast).body, false, enclosingDecl, context);
+            context.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveForInStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -3993,7 +4033,10 @@ module TypeScript {
                 context.postError(this.unitPath, forInStatement.obj.minChar, forInStatement.obj.getLength(), DiagnosticCode.The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter, null);
             }
 
+            var savedInIterationStatement = context.inIterationStatement;
+            context.inIterationStatement = true;
             this.resolveAST(forInStatement.body, false, enclosingDecl, context);
+            context.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveWhileStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4010,7 +4053,11 @@ module TypeScript {
             this.setTypeChecked(ast, context);
 
             this.resolveAST((<WhileStatement>ast).cond, false, enclosingDecl, context);
+
+            var savedInIterationStatement = context.inIterationStatement;
+            context.inIterationStatement = true;
             this.resolveAST((<WhileStatement>ast).body, false, enclosingDecl, context);
+            context.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveDoStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4027,7 +4074,11 @@ module TypeScript {
             this.setTypeChecked(ast, context);
 
             this.resolveAST((<DoStatement>ast).cond, false, enclosingDecl, context);
+
+            var savedInIterationStatement = context.inIterationStatement;
+            context.inIterationStatement = true;
             this.resolveAST((<DoStatement>ast).body, false, enclosingDecl, context);
+            context.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveIfStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4276,8 +4327,13 @@ module TypeScript {
 
             var expressionType = this.resolveAST(switchStatement.val, false, enclosingDecl, context).type;
 
+            var savedInSwitchStatement = context.inSwitchStatement;
+            context.inSwitchStatement = true;
+
             this.resolveAST(switchStatement.caseList, false, enclosingDecl, context);
             this.resolveAST(switchStatement.defaultCase, false, enclosingDecl, context);
+
+            context.inSwitchStatement = savedInSwitchStatement;
 
             if (switchStatement.caseList && switchStatement.caseList.members) {
                 for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
@@ -4319,8 +4375,152 @@ module TypeScript {
             this.resolveAST((<CaseClause>ast).body, false, enclosingDecl, context);
         }
 
-        private resolveLabeledStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveAST((<LabeledStatement>ast).statement, false, enclosingDecl, context);
+        private resolveLabeledStatement(ast: LabeledStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckLabeledStatement(ast, enclosingDecl, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckLabeledStatement(ast: LabeledStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+            this.setTypeChecked(ast, context);
+
+            // Note that break/continue are treated differently.  ES5 says this about a break statement:
+            // A program is considered syntactically incorrect if ...:
+            //
+            // The program contains a break statement with the optional Identifier, where Identifier 
+            // does not appear in the label set of an enclosing (but not crossing function boundaries) 
+            // **Statement.**
+            // 
+            // However, it says this about continue statements:
+            //
+            // The program contains a continue statement with the optional Identifier, where Identifier
+            // does not appear in the label set of an enclosing (but not crossing function boundaries) 
+            // **IterationStatement.**
+
+            // In other words, you can 'break' to any enclosing statement.  But you can only 'continue'
+            // to an enclosing *iteration* statement.
+            var labelIdentifier = ast.identifier.text();
+            var breakableLabels = ArrayUtilities.last(context.breakableLabelsStack);
+            var continuableLabels = ArrayUtilities.last(context.continuableLabelsStack);
+
+            // It is invalid to have a label enclosed in a label of the same name.
+            if (ArrayUtilities.contains(breakableLabels, labelIdentifier)) {
+                context.postError(this.unitPath, ast.identifier.minChar, ast.identifier.getLength(),
+                    DiagnosticCode.Duplicate_identifier_0, [labelIdentifier]);
+            }
+
+            breakableLabels.push(labelIdentifier);
+
+            var isContinuableLabel = this.labelIsOnContinuableConstruct(ast.statement);
+            if (isContinuableLabel) {
+                continuableLabels.push(labelIdentifier);
+            }
+
+            this.resolveAST(ast.statement, /*inContextuallyTypedAssignment*/ false, enclosingDecl, context);
+
+            breakableLabels.pop();
+
+            if (isContinuableLabel) {
+                continuableLabels.pop();
+            }
+        }
+
+        private labelIsOnContinuableConstruct(statement: AST): boolean {
+            switch (statement.nodeType()) {
+                case NodeType.LabeledStatement:
+                    // Labels work transitively.  i.e. if you have:
+                    //      foo:
+                    //      bar:
+                    //      while(...)
+                    //
+                    // Then both 'foo' and 'bar' are in the label set for 'while' and are thus
+                    // continuable.
+                    return this.labelIsOnContinuableConstruct((<LabeledStatement>statement).statement);
+
+                case NodeType.WhileStatement:
+                case NodeType.ForStatement:
+                case NodeType.ForInStatement:
+                case NodeType.DoStatement:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private resolveContinueStatement(ast: Jump, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckContinueStatement(ast, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckContinueStatement(ast: Jump, context: PullTypeResolutionContext): void {
+            this.setTypeChecked(ast, context);
+
+            if (!context.inIterationStatement) {
+                context.postError(this.unitPath, ast.minChar, ast.getLength(),
+                    DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement);
+            }
+            else if (ast.target) {
+                var continuableLabels = ArrayUtilities.last(context.continuableLabelsStack);
+
+                if (!ArrayUtilities.contains(continuableLabels, ast.target)) {
+                    // The target of the continue statement wasn't to a reachable label.
+                    //
+                    // Let hte user know, with a specialized message if the target was to an
+                    // unreachable label (as opposed to a non-existed label)
+                    if (ArrayUtilities.any(context.continuableLabelsStack, labels => ArrayUtilities.contains(labels, ast.target))) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(),
+                            DiagnosticCode.Jump_target_cannot_cross_function_boundary);
+                    }
+                    else {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(),
+                            DiagnosticCode.Jump_target_not_found);
+                    }
+                }
+            }
+        }
+
+        private resolveBreakStatement(ast: Jump, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckBreakStatement(ast, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckBreakStatement(ast: Jump, context: PullTypeResolutionContext): void {
+            this.setTypeChecked(ast, context);
+
+            // Note: the order here is important.  If the 'break' has a target, then it can jump to
+            // any enclosing laballed statment.  If it has no target, it must be in an iteration or
+            // swtich statement.
+            if (ast.target) {
+                var breakableLabels = ArrayUtilities.last(context.breakableLabelsStack);
+
+                if (!ArrayUtilities.contains(breakableLabels, ast.target)) {
+                    // The target of the continue statement wasn't to a reachable label.
+                    //
+                    // Let hte user know, with a specialized message if the target was to an
+                    // unreachable label (as opposed to a non-existed label)
+                    if (ArrayUtilities.any(context.breakableLabelsStack, labels => ArrayUtilities.contains(labels, ast.target))) {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(),
+                            DiagnosticCode.Jump_target_cannot_cross_function_boundary);
+                    }
+                    else {
+                        context.postError(this.unitPath, ast.minChar, ast.getLength(),
+                            DiagnosticCode.Jump_target_not_found);
+                    }
+                }
+            }
+            else if (!context.inIterationStatement && !context.inSwitchStatement) {
+                context.postError(this.unitPath, ast.minChar, ast.getLength(),
+                    DiagnosticCode.break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement);
+            }
         }
 
         // Expression resolution
@@ -4396,25 +4596,7 @@ module TypeScript {
                     }
 
                 case NodeType.FunctionDeclaration:
-                    {
-                        var funcDecl = <FunctionDeclaration>ast;
-
-                        if (funcDecl.isGetAccessor()) {
-                            return this.resolveGetAccessorDeclaration(funcDecl, context);
-                        }
-                        else if (funcDecl.isSetAccessor()) {
-                            return this.resolveSetAccessorDeclaration(funcDecl, context);
-                        }
-                        else if (inContextuallyTypedAssignment ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
-                            return this.resolveFunctionExpression(funcDecl, inContextuallyTypedAssignment, enclosingDecl, context);
-                        }
-                        else {
-                            return this.resolveFunctionDeclaration(funcDecl, context);
-                        }
-                    }
+                    return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ArrayLiteralExpression:
                     return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -4589,11 +4771,17 @@ module TypeScript {
                 case NodeType.SwitchStatement:
                     return this.resolveSwitchStatement(ast, enclosingDecl, context);
 
+                case NodeType.ContinueStatement:
+                    return this.resolveContinueStatement(<Jump>ast, context);
+
+                case NodeType.BreakStatement:
+                    return this.resolveBreakStatement(<Jump>ast, context);
+
                 case NodeType.CaseClause:
                     return this.resolveCaseClause(ast, enclosingDecl, context);
 
                 case NodeType.LabeledStatement:
-                    return this.resolveLabeledStatement(ast, enclosingDecl, context);
+                    return this.resolveLabeledStatement(<LabeledStatement>ast, enclosingDecl, context);
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
