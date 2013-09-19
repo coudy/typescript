@@ -154,6 +154,15 @@ module TypeScript {
     export var maxRecursiveSignatureSpecializationDepth = 8;
     export var maxRecursiveConstraintSpecializationDepth = 32;
 
+    export class JumpRecord {
+        constructor(
+            public breakableLabels: string[]= [],
+            public continuableLabels: string[]= [],
+            public inIterationStatement: boolean = false,
+            public inSwitchStatement: boolean = false) {
+        }
+    }
+
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
         private typeSpecializationStack: any[] = [];
@@ -162,10 +171,7 @@ module TypeScript {
 
         // Each entry in the stack contains the labels that are currently in scope.  Each time we 
         // enter/exist a method, we push/pop a new context onto the stack.
-        public breakableLabelsStack: string[][] = [[]];
-        public continuableLabelsStack: string[][] = [[]];
-        public inIterationStatement: boolean = false;
-        public inSwitchStatement: boolean = false;
+        public jumpRecordStack: JumpRecord[] = [new JumpRecord()];
 
         public resolvingTypeReference = false;
         public resolvingNamespaceMemberAccess = false;
@@ -207,6 +213,10 @@ module TypeScript {
             }
 
             return tc;
+        }
+
+        public currentJumpRecord(): JumpRecord {
+            return ArrayUtilities.last(this.jumpRecordStack);
         }
 
         public findSubstitution(type: PullTypeSymbol) {

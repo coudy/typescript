@@ -3089,13 +3089,7 @@ module TypeScript {
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            context.breakableLabelsStack.push([]);
-            context.continuableLabelsStack.push([]);
-
-            var savedInSwitchStatement = context.inSwitchStatement;
-            var savedInIterationStatement = context.inIterationStatement;
-            context.inSwitchStatement = false;
-            context.inIterationStatement = false;
+            context.jumpRecordStack.push(new JumpRecord());
 
             var result: PullSymbol;
             if (funcDecl.isGetAccessor()) {
@@ -3115,10 +3109,7 @@ module TypeScript {
                 result = this.resolveFunctionDeclaration(funcDecl, context);
             }
 
-            context.breakableLabelsStack.pop();
-            context.continuableLabelsStack.pop();
-            context.inSwitchStatement = savedInSwitchStatement;
-            context.inIterationStatement = savedInIterationStatement;
+            context.jumpRecordStack.pop();
 
             return result;
         }
@@ -3982,10 +3973,11 @@ module TypeScript {
             this.resolveAST((<ForStatement>ast).cond, false, enclosingDecl, context);
             this.resolveAST((<ForStatement>ast).incr, false, enclosingDecl, context);
 
-            var savedInIterationStatement = context.inIterationStatement;
-            context.inIterationStatement = true;
+            var jumpRecord = context.currentJumpRecord();
+            var savedInIterationStatement = jumpRecord.inIterationStatement;
+            jumpRecord.inIterationStatement = true;
             this.resolveAST((<ForStatement>ast).body, false, enclosingDecl, context);
-            context.inIterationStatement = savedInIterationStatement;
+            jumpRecord.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveForInStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4033,10 +4025,11 @@ module TypeScript {
                 context.postError(this.unitPath, forInStatement.obj.minChar, forInStatement.obj.getLength(), DiagnosticCode.The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter, null);
             }
 
-            var savedInIterationStatement = context.inIterationStatement;
-            context.inIterationStatement = true;
+            var jumpRecord = context.currentJumpRecord();
+            var savedInIterationStatement = jumpRecord.inIterationStatement;
+            jumpRecord.inIterationStatement = true;
             this.resolveAST(forInStatement.body, false, enclosingDecl, context);
-            context.inIterationStatement = savedInIterationStatement;
+            jumpRecord.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveWhileStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4054,10 +4047,11 @@ module TypeScript {
 
             this.resolveAST((<WhileStatement>ast).cond, false, enclosingDecl, context);
 
-            var savedInIterationStatement = context.inIterationStatement;
-            context.inIterationStatement = true;
+            var jumpRecord = context.currentJumpRecord();
+            var savedInIterationStatement = jumpRecord.inIterationStatement;
+            jumpRecord.inIterationStatement = true;
             this.resolveAST((<WhileStatement>ast).body, false, enclosingDecl, context);
-            context.inIterationStatement = savedInIterationStatement;
+            jumpRecord.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveDoStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4075,10 +4069,11 @@ module TypeScript {
 
             this.resolveAST((<DoStatement>ast).cond, false, enclosingDecl, context);
 
-            var savedInIterationStatement = context.inIterationStatement;
-            context.inIterationStatement = true;
+            var jumpRecord = context.currentJumpRecord();
+            var savedInIterationStatement = jumpRecord.inIterationStatement;
+            jumpRecord.inIterationStatement = true;
             this.resolveAST((<DoStatement>ast).body, false, enclosingDecl, context);
-            context.inIterationStatement = savedInIterationStatement;
+            jumpRecord.inIterationStatement = savedInIterationStatement;
         }
 
         private resolveIfStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4327,13 +4322,14 @@ module TypeScript {
 
             var expressionType = this.resolveAST(switchStatement.val, false, enclosingDecl, context).type;
 
-            var savedInSwitchStatement = context.inSwitchStatement;
-            context.inSwitchStatement = true;
+            var jumpRecord = context.currentJumpRecord();
+            var savedInSwitchStatement = jumpRecord.inSwitchStatement;
+            jumpRecord.inSwitchStatement = true;
 
             this.resolveAST(switchStatement.caseList, false, enclosingDecl, context);
             this.resolveAST(switchStatement.defaultCase, false, enclosingDecl, context);
 
-            context.inSwitchStatement = savedInSwitchStatement;
+            jumpRecord.inSwitchStatement = savedInSwitchStatement;
 
             if (switchStatement.caseList && switchStatement.caseList.members) {
                 for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
@@ -4402,8 +4398,10 @@ module TypeScript {
             // In other words, you can 'break' to any enclosing statement.  But you can only 'continue'
             // to an enclosing *iteration* statement.
             var labelIdentifier = ast.identifier.text();
-            var breakableLabels = ArrayUtilities.last(context.breakableLabelsStack);
-            var continuableLabels = ArrayUtilities.last(context.continuableLabelsStack);
+            var jumpRecord = context.currentJumpRecord();
+
+            var breakableLabels = jumpRecord.breakableLabels;
+            var continuableLabels = jumpRecord.continuableLabels;
 
             // It is invalid to have a label enclosed in a label of the same name.
             if (ArrayUtilities.contains(breakableLabels, labelIdentifier)) {
@@ -4461,19 +4459,20 @@ module TypeScript {
         private typeCheckContinueStatement(ast: Jump, context: PullTypeResolutionContext): void {
             this.setTypeChecked(ast, context);
 
-            if (!context.inIterationStatement) {
+            var jumpRecord = context.currentJumpRecord();
+            if (!jumpRecord.inIterationStatement) {
                 context.postError(this.unitPath, ast.minChar, ast.getLength(),
                     DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement);
             }
             else if (ast.target) {
-                var continuableLabels = ArrayUtilities.last(context.continuableLabelsStack);
+                var continuableLabels = jumpRecord.continuableLabels;
 
                 if (!ArrayUtilities.contains(continuableLabels, ast.target)) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
-                    if (ArrayUtilities.any(context.continuableLabelsStack, labels => ArrayUtilities.contains(labels, ast.target))) {
+                    if (ArrayUtilities.any(context.jumpRecordStack, jr => ArrayUtilities.contains(jr.continuableLabels, ast.target))) {
                         context.postError(this.unitPath, ast.minChar, ast.getLength(),
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary);
                     }
@@ -4499,15 +4498,16 @@ module TypeScript {
             // Note: the order here is important.  If the 'break' has a target, then it can jump to
             // any enclosing laballed statment.  If it has no target, it must be in an iteration or
             // swtich statement.
+            var jumpRecord = context.currentJumpRecord();
             if (ast.target) {
-                var breakableLabels = ArrayUtilities.last(context.breakableLabelsStack);
+                var breakableLabels = jumpRecord.breakableLabels;
 
                 if (!ArrayUtilities.contains(breakableLabels, ast.target)) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
-                    if (ArrayUtilities.any(context.breakableLabelsStack, labels => ArrayUtilities.contains(labels, ast.target))) {
+                    if (ArrayUtilities.any(context.jumpRecordStack, jr => ArrayUtilities.contains(jr.breakableLabels, ast.target))) {
                         context.postError(this.unitPath, ast.minChar, ast.getLength(),
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary);
                     }
@@ -4517,7 +4517,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (!context.inIterationStatement && !context.inSwitchStatement) {
+            else if (!jumpRecord.inIterationStatement && !jumpRecord.inSwitchStatement) {
                 context.postError(this.unitPath, ast.minChar, ast.getLength(),
                     DiagnosticCode.break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement);
             }
