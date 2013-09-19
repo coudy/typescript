@@ -2008,14 +2008,15 @@ module TypeScript {
                 var moduleElement = moduleElements.members[i];
 
                 if (moduleElement.nodeType() === NodeType.ModuleDeclaration) {
-                    if (this.requiresExtendsBlock((<ModuleDeclaration>moduleElement).members)) {
+                    var moduleAST = <ModuleDeclaration>moduleElement;
+                    if (!hasFlag(moduleAST.getModuleFlags(), ModuleFlags.Ambient) && this.requiresExtendsBlock(moduleAST.members)) {
                         return true;
                     }
                 }
                 else if (moduleElement.nodeType() === NodeType.ClassDeclaration) {
                     var classDeclaration = <ClassDeclaration>moduleElement;
 
-                    if (classDeclaration.extendsList && classDeclaration.extendsList.members.length > 0) {
+                    if (!hasFlag(classDeclaration.getVarFlags(), VariableFlags.Ambient) && classDeclaration.extendsList && classDeclaration.extendsList.members.length > 0) {
                         return true;
                     }
                 }
