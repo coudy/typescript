@@ -26,5 +26,19 @@ var Foo = (function () {
             };
         };
     };
+
+    Foo.prototype.x1 = function () {
+        var _this = 10;
+        function inner(_this) {
+        }
+    };
+    Foo.prototype.y1 = function () {
+        var lamda = function (_this) {
+        };
+    };
+    Foo.prototype.z1 = function (_this) {
+        var lambda = function () {
+        };
+    };
     return Foo;
 })();

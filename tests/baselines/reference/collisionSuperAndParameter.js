@@ -7,6 +7,22 @@ var __extends = this.__extends || function (d, b) {
 var Foo = (function () {
     function Foo() {
     }
+    Foo.prototype.a = function () {
+        var _this = this;
+        var lamda = function (_super) {
+            return function (x) {
+                return _this;
+            };
+        };
+    };
+    Foo.prototype.b = function (_super) {
+        var _this = this;
+        var lambda = function () {
+            return function (x) {
+                return _this;
+            };
+        };
+    };
     return Foo;
 })();
 var Foo2 = (function (_super) {

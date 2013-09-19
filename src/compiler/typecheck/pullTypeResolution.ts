@@ -2055,14 +2055,18 @@ module TypeScript {
             }
 
             if (canTypeCheckAST) {
-                var argDeclIdText = argDeclAST.id.text();
-                if (argDeclIdText == "_this") {
-                    PullTypeResolver.postTypeCheckWorkitems.push({ ast: argDeclAST, enclosingDecl: enclosingDecl });
-                } else if (argDeclIdText == "_super") {
-                    this.checkSuperCaptureVariableCollides(argDeclAST, true, enclosingDecl, context);
-                }
+                this.checkNameForCompilerGeneratedDeclarationCollision(argDeclAST, /*isDeclaration*/ true, argDeclAST.id, enclosingDecl, context); 
             }
             paramSymbol.setResolved();
+        }
+
+        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            var nameText = name.text();
+            if (nameText == "_this") {
+                PullTypeResolver.postTypeCheckWorkitems.push({ ast: astWithName, enclosingDecl: enclosingDecl });
+            } else if (nameText == "_super") {
+                this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, enclosingDecl, context);
+            }
         }
 
         public resolveInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2693,12 +2697,7 @@ module TypeScript {
 
             if (declSymbol.kind != PullElementKind.Property) {
                 // Non property variable with _this name, we need to verify if this would be ok
-                var varIdText = varDecl.id.text();
-                if (varIdText == "_this") {
-                    PullTypeResolver.postTypeCheckWorkitems.push({ ast: varDecl, enclosingDecl: enclosingDecl });
-                } else if (varIdText == "_super") {
-                    this.checkSuperCaptureVariableCollides(varDecl, true, enclosingDecl, context);
-                }
+                this.checkNameForCompilerGeneratedDeclarationCollision(varDecl, /*isDeclaration*/ true, varDecl.id, enclosingDecl, context); 
             }
         }
 
@@ -3037,7 +3036,7 @@ module TypeScript {
                 // Non property variable with _this name, we need to verify if this would be ok
                 var funcNameText = funcDeclAST.name.text();
                 if (funcNameText == "_super") {
-                    this.checkSuperCaptureVariableCollides(funcDeclAST, true, enclosingDecl, context);
+                    this.checkSuperCaptureVariableCollides(funcDeclAST, /*isDeclaration*/ true, enclosingDecl, context);
                 }
             }
 
@@ -5180,20 +5179,18 @@ module TypeScript {
             this.checkThisCaptureVariableCollides(nameAST, false, enclosingDecl, context);
         }
 
+        private typeCheckNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            this.setTypeChecked(nameAST, context);
+            this.checkNameForCompilerGeneratedDeclarationCollision(nameAST, /*isDeclaration*/ false, nameAST, enclosingDecl, context); 
+        }
+
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var nameSymbol = this.getSymbolForAST(nameAST);
             var foundCached = nameSymbol != null;
 
             if (!foundCached || this.canTypeCheckAST(nameAST, context)) {
                 if (this.canTypeCheckAST(nameAST, context)) {
-                    this.setTypeChecked(nameAST, context);
-                    var nameText = nameAST.text();
-                    if (nameText == "_this") {
-                        PullTypeResolver.postTypeCheckWorkitems.push({ ast: nameAST, enclosingDecl: enclosingDecl });
-                    } else if (nameText == "_super") {
-                        // Check if this can resolve to _super
-                        this.checkSuperCaptureVariableCollides(nameAST, false, enclosingDecl, context);
-                    }
+                    this.typeCheckNameExpression(nameAST, enclosingDecl, context);
                 }
                 nameSymbol = this.computeNameExpression(nameAST, enclosingDecl, context);
             }
