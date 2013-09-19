@@ -1990,6 +1990,7 @@ module TypeScript {
                 isImplicitAny = true;
             }
 
+            // Resolve the function expression parameter init only if we have contexual type to evaluate the expression in or we are in typeCheck
             var canTypeCheckAST = this.canTypeCheckAST(argDeclAST, context);
             if (argDeclAST.init && (canTypeCheckAST || !contextualType)) {
                 if (contextualType) {
@@ -2119,13 +2120,19 @@ module TypeScript {
             interfaceSymbol.setResolved();
 
             if (this.canTypeCheckAST(interfaceDeclAST, context)) {
-                this.setTypeChecked(interfaceDeclAST, context);
-                if (!interfaceSymbol.hasBaseTypeConflict()) {
-                    this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
-                }
+                this.typeCheckInterfaceTypeReference(interfaceDeclAST, context);
             }
 
             return interfaceSymbol;
+        }
+
+        private typeCheckInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext) {
+            this.setTypeChecked(interfaceDeclAST, context);
+            var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+            var interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
+            if (!interfaceSymbol.hasBaseTypeConflict()) {
+                this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+            }
         }
 
         public resolveTypeReference(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2364,54 +2371,49 @@ module TypeScript {
                         valSymbol.setResolved();
                     }
                 }
-
-                if (this.canTypeCheckAST(varDecl, context)) {
-                    this.typeCheckVariableDeclaration(varDecl, context, enclosingDecl);
-                }
-                return declSymbol
-            }
-
-            if (declSymbol.inResolution) {
-                // PULLTODO: Error or warning?
-                if (!context.inSpecialization) {
-                    declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
-                    declSymbol.setResolved();
-                    return declSymbol;
-                }
-            }
-
-            declSymbol.startResolving();
-
-            var typeExprSymbol: PullTypeSymbol = null;
-            var inConstructorArgumentList = context.inConstructorArguments;
-            context.inConstructorArguments = false;
-
-            // Does this have a type expression? If so, that's the type
-            typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
-
-            // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
-            if (!varDecl.typeExpr) {
-                this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
-            }
-
-            // if we're lacking both a type annotation and an initialization expression, the type is 'any'
-            if (!(varDecl.typeExpr || varDecl.init)) {
-                var defaultType = this.semanticInfoChain.anyTypeSymbol;
-
-                if (declSymbol.isVarArg) {
-                    defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
+            } else {
+                if (declSymbol.inResolution) {
+                    // PULLTODO: Error or warning?
+                    if (!context.inSpecialization) {
+                        declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                        declSymbol.setResolved();
+                        return declSymbol;
+                    }
                 }
 
-                context.setTypeInContext(declSymbol, defaultType);
+                declSymbol.startResolving();
+
+                var typeExprSymbol: PullTypeSymbol = null;
+                var inConstructorArgumentList = context.inConstructorArguments;
+                context.inConstructorArguments = false;
+
+                // Does this have a type expression? If so, that's the type
+                typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
+
+                // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
+                if (!varDecl.typeExpr) {
+                    this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
+                }
+
+                // if we're lacking both a type annotation and an initialization expression, the type is 'any'
+                if (!(varDecl.typeExpr || varDecl.init)) {
+                    var defaultType = this.semanticInfoChain.anyTypeSymbol;
+
+                    if (declSymbol.isVarArg) {
+                        defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, this.cachedArrayInterfaceType().getDeclarations()[0], context);
+                    }
+
+                    context.setTypeInContext(declSymbol, defaultType);
+
+                    if (declParameterSymbol) {
+                        declParameterSymbol.type = defaultType;
+                    }
+                }
+                declSymbol.setResolved();
 
                 if (declParameterSymbol) {
-                    declParameterSymbol.type = defaultType;
+                    declParameterSymbol.setResolved();
                 }
-            }
-            declSymbol.setResolved();
-
-            if (declParameterSymbol) {
-                declParameterSymbol.setResolved();
             }
 
             if (this.canTypeCheckAST(varDecl, context)) {
@@ -4216,122 +4218,121 @@ module TypeScript {
             var returnExpr = returnAST.returnExpression;
 
             var returnType = <PullTypeSymbol>this.getSymbolForAST(ast);
-            if (returnType && !this.canTypeCheckAST(ast, context)) {
-                return returnType;
-            }
-
-            while (parentDecl) {
-                if (parentDecl.kind & PullElementKind.SomeFunction) {
-                    parentDecl.setFlag(PullElementFlags.HasReturnStatement);
-                    break;
-                }
-
-                parentDecl = parentDecl.getParentDecl();
-            }
-
-            // push contextual type
-            var inContextuallyTypedAssignment = false;
-            var enclosingDeclAST: FunctionDeclaration;
-
-            if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
-                if (enclosingDeclAST.returnTypeAnnotation) {
-                    // The containing function has a type annotation, propagate it as the contextual type
-                    var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
-                    if (returnTypeAnnotationSymbol) {
-                        inContextuallyTypedAssignment = true;
-                        context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
+            var canTypeCheckAST = this.canTypeCheckAST(ast, context);
+            if (!returnType || canTypeCheckAST) {
+                while (parentDecl) {
+                    if (parentDecl.kind & PullElementKind.SomeFunction) {
+                        parentDecl.setFlag(PullElementFlags.HasReturnStatement);
+                        break;
                     }
-                }
-                else {
-                    // No type annotation, check if there is a contextual type enforced on the function, and propagate that
-                    var currentContextualType = context.getContextualType();
-                    if (currentContextualType && currentContextualType.isFunction()) {
-                        var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
-                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
-                        if (currentContextualTypeReturnTypeSymbol) {
-                            inContextuallyTypedAssignment = true;
-                            context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
-                        }
-                    }
-                }
-            }
 
-            var resolvedReturnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
-            if (inContextuallyTypedAssignment) {
-                context.popContextualType();
-            }
-
-            if (!returnType) {
-                returnType = resolvedReturnType;
-                this.setSymbolForAST(ast, resolvedReturnType, context);
-            }
-
-            if (returnExpr && this.canTypeCheckAST(ast, context)) {
-                this.setTypeChecked(ast, context);
-                // Return type of constructor signature must be assignable to the instance type of the class.
-                if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
-                    var classDecl = parentDecl.getParentDecl();
-                    if (classDecl) {
-                        var classSymbol = classDecl.getSymbol();
-                        if (!classSymbol.isResolved) {
-                            this.resolveDeclaredSymbol(classSymbol, classDecl, context);
-                        }
-
-                        var comparisonInfo = new TypeComparisonInfo();
-                        var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, classSymbol.type, context, comparisonInfo);
-                        if (!isAssignable) {
-                            context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class, null);
-                        }
-                    }
+                    parentDecl = parentDecl.getParentDecl();
                 }
 
-                if (enclosingDecl.kind === PullElementKind.SetAccessor) {
-                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null);
-                }
+                // push contextual type
+                var inContextuallyTypedAssignment = false;
+                var enclosingDeclAST: FunctionDeclaration;
 
                 if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                    var enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
-
+                    enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
                     if (enclosingDeclAST.returnTypeAnnotation) {
-                        var signatureSymbol = enclosingDecl.getSignatureSymbol();
-                        var sigReturnType = signatureSymbol.returnType;
+                        // The containing function has a type annotation, propagate it as the contextual type
+                        var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
+                        if (returnTypeAnnotationSymbol) {
+                            inContextuallyTypedAssignment = true;
+                            context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
+                        }
+                    }
+                    else {
+                        // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                        var currentContextualType = context.getContextualType();
+                        if (currentContextualType && currentContextualType.isFunction()) {
+                            var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
+                            var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
+                            if (currentContextualTypeReturnTypeSymbol) {
+                                inContextuallyTypedAssignment = true;
+                                context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
+                            }
+                        }
+                    }
+                }
 
-                        if (resolvedReturnType && sigReturnType) {
+                var resolvedReturnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
+                if (inContextuallyTypedAssignment) {
+                    context.popContextualType();
+                }
+
+                if (!returnType) {
+                    returnType = resolvedReturnType;
+                    this.setSymbolForAST(ast, resolvedReturnType, context);
+                }
+
+                if (returnExpr && canTypeCheckAST) {
+                    this.setTypeChecked(ast, context);
+                    // Return type of constructor signature must be assignable to the instance type of the class.
+                    if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
+                        var classDecl = parentDecl.getParentDecl();
+                        if (classDecl) {
+                            var classSymbol = classDecl.getSymbol();
+                            if (!classSymbol.isResolved) {
+                                this.resolveDeclaredSymbol(classSymbol, classDecl, context);
+                            }
+
                             var comparisonInfo = new TypeComparisonInfo();
-                            var upperBound: PullTypeSymbol = null;
-
-                            if (resolvedReturnType.isTypeParameter()) {
-                                upperBound = (<PullTypeParameterSymbol>resolvedReturnType).getConstraint();
-
-                                if (upperBound) {
-                                    resolvedReturnType = upperBound;
-                                }
-                            }
-
-                            if (sigReturnType.isTypeParameter()) {
-                                upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
-
-                                if (upperBound) {
-                                    sigReturnType = upperBound;
-                                }
-                            }
-
-                            if (!resolvedReturnType.isResolved) {
-                                this.resolveDeclaredSymbol(resolvedReturnType, enclosingDecl, context);
-                            }
-
-                            if (!sigReturnType.isResolved) {
-                                this.resolveDeclaredSymbol(resolvedReturnType, enclosingDecl, context);
-                            }
-
-                            var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, sigReturnType, context, comparisonInfo);
-
+                            var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, classSymbol.type, context, comparisonInfo);
                             if (!isAssignable) {
-                                if (comparisonInfo.message) {
-                                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [resolvedReturnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
-                                } else {
-                                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [resolvedReturnType.toString(), sigReturnType.toString()]);
+                                context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class, null);
+                            }
+                        }
+                    }
+
+                    if (enclosingDecl.kind === PullElementKind.SetAccessor) {
+                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null);
+                    }
+
+                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+                        var enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
+
+                        if (enclosingDeclAST.returnTypeAnnotation) {
+                            var signatureSymbol = enclosingDecl.getSignatureSymbol();
+                            var sigReturnType = signatureSymbol.returnType;
+
+                            if (resolvedReturnType && sigReturnType) {
+                                var comparisonInfo = new TypeComparisonInfo();
+                                var upperBound: PullTypeSymbol = null;
+
+                                if (resolvedReturnType.isTypeParameter()) {
+                                    upperBound = (<PullTypeParameterSymbol>resolvedReturnType).getConstraint();
+
+                                    if (upperBound) {
+                                        resolvedReturnType = upperBound;
+                                    }
+                                }
+
+                                if (sigReturnType.isTypeParameter()) {
+                                    upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
+
+                                    if (upperBound) {
+                                        sigReturnType = upperBound;
+                                    }
+                                }
+
+                                if (!resolvedReturnType.isResolved) {
+                                    this.resolveDeclaredSymbol(resolvedReturnType, enclosingDecl, context);
+                                }
+
+                                if (!sigReturnType.isResolved) {
+                                    this.resolveDeclaredSymbol(resolvedReturnType, enclosingDecl, context);
+                                }
+
+                                var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, sigReturnType, context, comparisonInfo);
+
+                                if (!isAssignable) {
+                                    if (comparisonInfo.message) {
+                                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [resolvedReturnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
+                                    } else {
+                                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [resolvedReturnType.toString(), sigReturnType.toString()]);
+                                    }
                                 }
                             }
                         }
@@ -5328,9 +5329,6 @@ module TypeScript {
                     this.setTypeChecked(dottedNameAST, context);
                 }
                 symbol = this.computeDottedNameExpressionSymbol(dottedNameAST, enclosingDecl, context, canTypeCheckDottedNameAST);
-                if (this.canTypeCheckAST(dottedNameAST, context)) {
-                    this.setTypeChecked(dottedNameAST, context);
-                }
             }
 
             if (symbol && !symbol.isResolved) {
@@ -6088,7 +6086,7 @@ module TypeScript {
                 }
 
                 this.setSymbolForAST(ast, thisTypeSymbol, context);
-                if (this.canTypeCheckAST(ast, context)) {
+                if (canTypeCheckAST) {
                     this.setTypeChecked(ast, context);
                     var thisExpressionAST = <ThisExpression>ast;
                     var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
@@ -6109,14 +6107,11 @@ module TypeScript {
                             context.postError(this.unitPath, thisExpressionAST.minChar, thisExpressionAST.getLength(), DiagnosticCode.this_cannot_be_referenced_in_constructor_arguments, null);
                         }
                     }
+                    this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
                 }
             } else if (!thisTypeSymbol) {
                 thisTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
                 this.setSymbolForAST(ast, thisTypeSymbol, context);
-            }
-
-            if (canTypeCheckAST) {
-                this.checkForThisCaptureInArrowFunction(ast, enclosingDecl);
             }
 
             return thisTypeSymbol;
