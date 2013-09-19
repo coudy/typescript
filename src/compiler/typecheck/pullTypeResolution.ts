@@ -1254,116 +1254,110 @@ module TypeScript {
         private resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
-            if (classDeclSymbol.isResolved) {
-                if (this.canTypeCheckAST(classDeclAST, context)) {
-                    this.typeCheckClassDeclaration(classDeclAST, context);
-                }
+            if (!classDeclSymbol.isResolved) {
+                this.resolveReferenceTypeDeclaration(classDeclAST, context);
 
-                return classDeclSymbol;
-            }
+                var constructorMethod = classDeclSymbol.getConstructorMethod();
+                var extendedTypes = classDeclSymbol.getExtendedTypes();
+                var parentType = extendedTypes.length ? extendedTypes[0] : null;
 
-            this.resolveReferenceTypeDeclaration(classDeclAST, context);
+                if (constructorMethod) {
+                    var constructorTypeSymbol = constructorMethod.type;
 
-            var constructorMethod = classDeclSymbol.getConstructorMethod();
-            var extendedTypes = classDeclSymbol.getExtendedTypes();
-            var parentType = extendedTypes.length ? extendedTypes[0] : null;
+                    var constructSignatures = constructorTypeSymbol.getConstructSignatures();
 
-            if (constructorMethod) {
-                var constructorTypeSymbol = constructorMethod.type;
+                    if (!constructSignatures.length) {
+                        var constructorSignature: PullSignatureSymbol;
 
-                var constructSignatures = constructorTypeSymbol.getConstructSignatures();
+                        var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
 
-                if (!constructSignatures.length) {
-                    var constructorSignature: PullSignatureSymbol;
+                        // inherit parent's constructor signatures   
+                        if (parentConstructor) {
+                            var parentConstructorType = parentConstructor.type;
+                            var parentConstructSignatures = parentConstructorType.getConstructSignatures();
 
-                    var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
+                            var parentConstructSignature: PullSignatureSymbol;
+                            var parentParameters: PullSymbol[];
 
-                    // inherit parent's constructor signatures   
-                    if (parentConstructor) {
-                        var parentConstructorType = parentConstructor.type;
-                        var parentConstructSignatures = parentConstructorType.getConstructSignatures();
+                            if (!parentConstructSignatures.length) {
+                                // If neither we nor our parent have a construct signature then we've entered this call recursively,
+                                // so just create the parent's constructor now rather than later.
+                                // (We'll have begun resolving this symbol because of the call to resolveReferenceTypeDeclaration above, so this
+                                // is safe to do here and now.)
 
-                        var parentConstructSignature: PullSignatureSymbol;
-                        var parentParameters: PullSymbol[];
+                                parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                                parentConstructSignature.returnType = parentType;
+                                parentConstructorType.addConstructSignature(parentConstructSignature);
+                                parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
 
-                        if (!parentConstructSignatures.length) {
-                            // If neither we nor our parent have a construct signature then we've entered this call recursively,
-                            // so just create the parent's constructor now rather than later.
-                            // (We'll have begun resolving this symbol because of the call to resolveReferenceTypeDeclaration above, so this
-                            // is safe to do here and now.)
+                                var parentTypeParameters = parentConstructorType.getTypeParameters();
 
-                            parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                            parentConstructSignature.returnType = parentType;
-                            parentConstructorType.addConstructSignature(parentConstructSignature);
-                            parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
+                                for (var i = 0; i < parentTypeParameters.length; i++) {
+                                    parentConstructSignature.addTypeParameter(parentTypeParameters[i]);
+                                }
 
-                            var parentTypeParameters = parentConstructorType.getTypeParameters();
-
-                            for (var i = 0; i < parentTypeParameters.length; i++) {
-                                parentConstructSignature.addTypeParameter(parentTypeParameters[i]);
+                                parentConstructSignatures = [parentConstructSignature];
                             }
 
-                            parentConstructSignatures = [parentConstructSignature];
+                            for (var i = 0; i < parentConstructSignatures.length; i++) {
+                                // create a new signature for each parent constructor   
+                                parentConstructSignature = parentConstructSignatures[i];
+                                parentParameters = parentConstructSignature.parameters;
+
+                                constructorSignature = parentConstructSignature.isDefinition() ?
+                                new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                                constructorSignature.returnType = classDeclSymbol;
+
+                                for (var j = 0; j < parentParameters.length; j++) {
+                                    constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
+                                }
+
+                                var typeParameters = constructorTypeSymbol.getTypeParameters();
+
+                                for (var j = 0; j < typeParameters.length; j++) {
+                                    constructorSignature.addTypeParameter(typeParameters[j]);
+                                }
+
+                                constructorTypeSymbol.addConstructSignature(constructorSignature);
+                                constructorSignature.addDeclaration(classDecl);
+                            }
                         }
-
-                        for (var i = 0; i < parentConstructSignatures.length; i++) {
-                            // create a new signature for each parent constructor   
-                            parentConstructSignature = parentConstructSignatures[i];
-                            parentParameters = parentConstructSignature.parameters;
-
-                            constructorSignature = parentConstructSignature.isDefinition() ?
-                            new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                        else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
+                            constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                             constructorSignature.returnType = classDeclSymbol;
-
-                            for (var j = 0; j < parentParameters.length; j++) {
-                                constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
-                            }
+                            constructorTypeSymbol.addConstructSignature(constructorSignature);
+                            constructorSignature.addDeclaration(classDecl);
 
                             var typeParameters = constructorTypeSymbol.getTypeParameters();
 
-                            for (var j = 0; j < typeParameters.length; j++) {
-                                constructorSignature.addTypeParameter(typeParameters[j]);
+                            for (var i = 0; i < typeParameters.length; i++) {
+                                constructorSignature.addTypeParameter(typeParameters[i]);
                             }
-
-                            constructorTypeSymbol.addConstructSignature(constructorSignature);
-                            constructorSignature.addDeclaration(classDecl);
                         }
                     }
-                    else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
-                        constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                        constructorSignature.returnType = classDeclSymbol;
-                        constructorTypeSymbol.addConstructSignature(constructorSignature);
-                        constructorSignature.addDeclaration(classDecl);
 
-                        var typeParameters = constructorTypeSymbol.getTypeParameters();
-
-                        for (var i = 0; i < typeParameters.length; i++) {
-                            constructorSignature.addTypeParameter(typeParameters[i]);
-                        }
+                    if (!classDeclSymbol.isResolved) {
+                        return classDeclSymbol;
                     }
-                }
 
-                if (!classDeclSymbol.isResolved) {
-                    return classDeclSymbol;
-                }
+                    // Need to ensure our constructor type can properly see our parent type's 
+                    // constructor type before going and resolving our members.
+                    if (parentType) {
+                        var parentConstructorSymbol = parentType.getConstructorMethod();
 
-                // Need to ensure our constructor type can properly see our parent type's 
-                // constructor type before going and resolving our members.
-                if (parentType) {
-                    var parentConstructorSymbol = parentType.getConstructorMethod();
+                        // this will only be null if we have upstream errors
+                        if (parentConstructorSymbol) {
+                            var parentConstructorTypeSymbol = parentConstructorSymbol.type;
 
-                    // this will only be null if we have upstream errors
-                    if (parentConstructorSymbol) {
-                        var parentConstructorTypeSymbol = parentConstructorSymbol.type;
-
-                        if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
-                            constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                            if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
+                                constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                            }
                         }
                     }
                 }
+
+                this.resolveOtherDeclarations(classDeclAST, context);
             }
-
-            this.resolveOtherDeclarations(classDeclAST, context);
 
             if (this.canTypeCheckAST(classDeclAST, context)) {
                 this.typeCheckClassDeclaration(classDeclAST, context);
