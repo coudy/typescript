@@ -11,6 +11,7 @@ tests/cases/*/*.js.map
 tests/cases/*/*/*.js.map
 tests/cases/*/*/*/*.js.map
 tests/cases/*/*/*/*/*.js.map
+tests/cases/rwc/*
 !tests/cases/projects/r.js
 tests/cases/projects/*/local/*
 !tests/cases/projects/r.js
@@ -19,6 +20,8 @@ tests/cases/projects/*/local/*
 !tests/cases/webharness/compilerToString.js
 tests/runners/*.js
 tests/runners/*/*.js
+tests/runners/rwc/*
+!tests/runners/rwc/runner.ts
 diff-*.html
 test-args.txt
 *.suo
@@ -26,6 +29,8 @@ test-args.txt
 tests/baselines/local/*
 tests/services/baselines/local/*
 tests/baselines/prototyping/local/*
+tests/baselines/rwc/*
+!tests/baselines/rwc/local/placeholder.txt
 tests/services/baselines/prototyping/local/*
 tests/services/browser/typescriptServices.js
 src/compiler/*.js

@@ -203,7 +203,8 @@ var harnessSources = [
 	path.join(runnersDirectory, "compiler/runner.ts"),
 	path.join(runnersDirectory, "fourslash/fsrunner.ts"),
 	path.join(runnersDirectory, "projects/runner.ts"),
-	path.join(runnersDirectory, "unittest/unittestrunner.ts")
+	path.join(runnersDirectory, "unittest/unittestrunner.ts"),
+	path.join(runnersDirectory, "rwc/runner.ts")
 ];
 
 var libraryFiles = [

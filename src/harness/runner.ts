@@ -256,6 +256,12 @@ opts.flag('samples', {
     }
 });
 
+opts.flag('rwc', {
+    set: function () {
+        runners.push(new RWCRunner());
+    }
+});
+
 opts.flag('ls', {
     set: function () {
         runners.push(new UnitTestRunner('ls'));

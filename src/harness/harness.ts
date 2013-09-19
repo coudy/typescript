@@ -1065,6 +1065,10 @@ module Harness {
                 return this.compiler.emitAll(host);
             }
 
+            public emitAllDeclarations() {
+                return this.compiler.emitAllDeclarations();
+            }
+
             /** If the compiler already contains the contents of interest, this will re-emit for AMD without re-adding or recompiling the current compiler units */
             private emitCurrentCompilerContentsAsAMD() {
                 var oldModuleType = this.compiler.settings.moduleGenTarget;
@@ -1223,6 +1227,16 @@ module Harness {
                 var idx = path.indexOf('tests/');
                 var fixedPath = path.substr(idx === -1 ? 0 : idx);
                 var result = this.fileNameToScriptSnapshot.lookup(fixedPath);
+                if (!result) {
+                    // if the file didn't exist in the 'virtual' file system (ie fileNameToScriptSnapshot)
+                    // see if it is a real file, and if so, make sure to register it with the virtual 
+                    // file system for later lookup with other resolution calls
+                    if (IO.fileExists(path)) {
+                        var contents = IO.readFile(path, null).contents;
+                        result = TypeScript.ScriptSnapshot.fromString(contents);
+                        this.fileNameToScriptSnapshot.add(fixedPath, result);
+                    }
+                }
                 return (result !== null && result !== undefined);
             }
 

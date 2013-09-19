@@ -1,6 +1,7 @@
 ///<reference path="runnerbase.ts" />
 ///<reference path="compiler/runner.ts" />
 ///<reference path="fourslash/fsrunner.ts" />
+///<reference path="rwc/runner.ts" />
 ///<reference path="projects/runner.ts" />
 ///<reference path="unittest/unittestrunner.ts" />
 
@@ -21,6 +22,9 @@ class RunnerFactory {
         } else if (/tests\/cases\/fourslash\/generated/.test(normalizedName)) {
             this.runners['fourslash-generated'] = this.runners['fourslash-generated'] || new GeneratedFourslashRunner();
             this.runners['fourslash-generated'].addTest(Harness.userSpecifiedroot + name);
+        } else if (/tests\/cases\/rwc/.test(normalizedName)) {
+            this.runners['rwc'] = this.runners['rwc'] || new RWCRunner();
+            this.runners['rwc'].addTest(Harness.userSpecifiedroot + name);
         } else {
             this.runners['unitTestRunner'] = this.runners['unitTestRunner'] || new UnitTestRunner();
             this.runners['unitTestRunner'].addTest(Harness.userSpecifiedroot + name);
