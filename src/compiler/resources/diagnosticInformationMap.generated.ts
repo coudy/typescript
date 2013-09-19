@@ -1154,6 +1154,14 @@ module TypeScript {
     "code": 2205,
     "category": DiagnosticCategory.Error
   },
+  "Expression resolves to variable declaration '_this' that compiler uses to capture 'this' reference.": {
+    "code": 2206,
+    "category": DiagnosticCategory.Error
+  },
+  "Expression resolves to '_super' that compiler uses to capture base class reference.": {
+    "code": 2207,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

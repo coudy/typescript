@@ -289,6 +289,8 @@ module TypeScript {
         Jump_target_not_found: "Jump target not found.",
         Jump_target_cannot_cross_function_boundary: "Jump target cannot cross function boundary.",
         Duplicate_identifier_super_Compiler_uses_super_to_capture_base_class_reference: "Duplicate identifier '_super'. Compiler uses '_super' to capture base class reference.",
+        Expression_resolves_to_variable_declaration_this_that_compiler_uses_to_capture_this_reference: "Expression resolves to variable declaration '_this' that compiler uses to capture 'this' reference.",
+        Expression_resolves_to_super_that_compiler_uses_to_capture_base_class_reference: "Expression resolves to '_super' that compiler uses to capture base class reference.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",

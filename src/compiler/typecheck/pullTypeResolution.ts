@@ -1393,7 +1393,7 @@ module TypeScript {
         }
 
         private postTypeCheckClassDeclaration(classDeclAST: ClassDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            this.checkThisCaptureVariableCollides(classDeclAST, enclosingDecl, context);
+            this.checkThisCaptureVariableCollides(classDeclAST, true, enclosingDecl, context);
         }
 
         private resolveInterfaceDeclaration(interfaceDeclAST: TypeDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2688,12 +2688,12 @@ module TypeScript {
                 if (varIdText == "_this") {
                     PullTypeResolver.postTypeCheckWorkitems.push({ ast: varDecl, enclosingDecl: enclosingDecl });
                 } else if (varIdText == "_super") {
-                    this.checkSuperCaptureVariableCollides(varDecl, enclosingDecl, context);
+                    this.checkSuperCaptureVariableCollides(varDecl, true, enclosingDecl, context);
                 }
             }
         }
 
-        private checkSuperCaptureVariableCollides(declAST: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private checkSuperCaptureVariableCollides(superAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
 
 
@@ -2706,13 +2706,15 @@ module TypeScript {
 
                 var parents = classSymbol.getExtendedTypes();
                 if (parents.length) {
-                    context.postError(this.unitPath, declAST.minChar, declAST.getLength(),
-                        DiagnosticCode.Duplicate_identifier_super_Compiler_uses_super_to_capture_base_class_reference, null);
+                    context.postError(this.unitPath, superAST.minChar, superAST.getLength(),
+                        isDeclaration ? DiagnosticCode.Duplicate_identifier_super_Compiler_uses_super_to_capture_base_class_reference :
+                        DiagnosticCode.Expression_resolves_to_super_that_compiler_uses_to_capture_base_class_reference,
+                        null);
                 }
             }
         }
 
-        private checkThisCaptureVariableCollides(declAST: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private checkThisCaptureVariableCollides(_thisAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             // Verify if this variable name conflicts with the _this that would be emitted to capture this in any of the enclosing context
             var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
 
@@ -2733,10 +2735,11 @@ module TypeScript {
                     declKind === PullElementKind.Container ||
                     declKind === PullElementKind.DynamicModule ||
                     declKind === PullElementKind.Script) {
-
                     if (hasFlag(decl.flags, PullElementFlags.MustCaptureThis)) {
-                        context.postError(this.unitPath, declAST.minChar, declAST.getLength(),
-                            DiagnosticCode.Duplicate_identifier_this_Compiler_uses_variable_declaration_this_to_capture_this_reference, null);
+                        context.postError(this.unitPath, _thisAST.minChar, _thisAST.getLength(),
+                            isDeclaration ? DiagnosticCode.Duplicate_identifier_this_Compiler_uses_variable_declaration_this_to_capture_this_reference :
+                            DiagnosticCode.Expression_resolves_to_variable_declaration_this_that_compiler_uses_to_capture_this_reference,
+                            null);
                     }
                     break;
                 }
@@ -2744,7 +2747,7 @@ module TypeScript {
         }
 
         private postTypeCheckVariableDeclaration(varDecl: BoundDecl, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            this.checkThisCaptureVariableCollides(varDecl, enclosingDecl, context);
+            this.checkThisCaptureVariableCollides(varDecl, true, enclosingDecl, context);
         }
 
         private resolveTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -3025,7 +3028,7 @@ module TypeScript {
                 // Non property variable with _this name, we need to verify if this would be ok
                 var funcNameText = funcDeclAST.name.text();
                 if (funcNameText == "_super") {
-                    this.checkSuperCaptureVariableCollides(funcDeclAST, enclosingDecl, context);
+                    this.checkSuperCaptureVariableCollides(funcDeclAST, true, enclosingDecl, context);
                 }
             }
 
@@ -5106,6 +5109,10 @@ module TypeScript {
                     this.postTypeCheckClassDeclaration(<ClassDeclaration>ast, enclosingDecl, context);
                     return;
 
+                case NodeType.Name:
+                    this.postTypeCheckNameExpression(<Identifier>ast, enclosingDecl, context);
+                    return;
+
                 default:
                     Debug.assert(false, "Implement postTypeCheck clause to handle the postTypeCheck work");
             }
@@ -5160,6 +5167,10 @@ module TypeScript {
             return nameSymbol;
         }
 
+        private postTypeCheckNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            this.checkThisCaptureVariableCollides(nameAST, false, enclosingDecl, context);
+        }
+
         public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var nameSymbol = this.getSymbolForAST(nameAST);
             var foundCached = nameSymbol != null;
@@ -5167,6 +5178,13 @@ module TypeScript {
             if (!foundCached || this.canTypeCheckAST(nameAST, context)) {
                 if (this.canTypeCheckAST(nameAST, context)) {
                     this.setTypeChecked(nameAST, context);
+                    var nameText = nameAST.text();
+                    if (nameText == "_this") {
+                        PullTypeResolver.postTypeCheckWorkitems.push({ ast: nameAST, enclosingDecl: enclosingDecl });
+                    } else if (nameText == "_super") {
+                        // Check if this can resolve to _super
+                        this.checkSuperCaptureVariableCollides(nameAST, false, enclosingDecl, context);
+                    }
                 }
                 nameSymbol = this.computeNameExpression(nameAST, enclosingDecl, context);
             }
