@@ -1990,7 +1990,8 @@ module TypeScript {
                 isImplicitAny = true;
             }
 
-            if (argDeclAST.init && (this.canTypeCheckAST(argDeclAST, context) || !contextualType)) {
+            var canTypeCheckAST = this.canTypeCheckAST(argDeclAST, context);
+            if (argDeclAST.init && (canTypeCheckAST || !contextualType)) {
                 if (contextualType) {
                     context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                 }
@@ -2053,6 +2054,14 @@ module TypeScript {
                 }
             }
 
+            if (canTypeCheckAST) {
+                var argDeclIdText = argDeclAST.id.text();
+                if (argDeclIdText == "_this") {
+                    PullTypeResolver.postTypeCheckWorkitems.push({ ast: argDeclAST, enclosingDecl: enclosingDecl });
+                } else if (argDeclIdText == "_super") {
+                    this.checkSuperCaptureVariableCollides(argDeclAST, true, enclosingDecl, context);
+                }
+            }
             paramSymbol.setResolved();
         }
 
