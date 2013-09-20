@@ -46,6 +46,8 @@ class RWCRunner extends RunnerBase {
     private outputPath = "tests/baselines/rwc/local/";
     private referencePath = "tests/baselines/rwc/reference/";
 
+    private htmlBaselineReport = new Diff.HtmlBaselineReport('rwc-report.html');
+
     /** Add a source file to the runner's list of tests that need to be initialized with initializeTests */
     public addTest(fileName: string) {
         this.tests.push(fileName);
@@ -69,6 +71,9 @@ class RWCRunner extends RunnerBase {
         // Recreate the compiler with the default lib
         Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, false);
         harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
+
+        // reset the report
+        this.htmlBaselineReport.reset();
 
         var runner = this;
 
@@ -99,14 +104,13 @@ class RWCRunner extends RunnerBase {
                 var outputErrorFilename = runner.outputPath + spec.outputFile + ".err.out";
                 var outputCrashFilename = runner.outputPath + spec.outputFile + ".crash.out";
                 var outputDeclarationFilename = runner.outputPath + spec.outputFile + ".d.ts";
-                
+
                 var baselineJsFilename = runner.referencePath + spec.outputFile + ".js";
                 var baselineErrorFilename = runner.referencePath + spec.outputFile + ".err.out";
                 var baselineCrashFilename = runner.referencePath + spec.outputFile + ".crash.out";
                 var baselineDeclarationFilename = runner.referencePath + spec.outputFile + ".d.ts";
 
                 var emitterIOHost = new RWCEmitter(fsOutput, fsDeclOutput);
-
 
                 it("compile it ", function () {
                     try {
@@ -128,7 +132,7 @@ class RWCRunner extends RunnerBase {
                         fsDeclOutput.Close();
 
                         compilationErrors.forEach((err: Harness.Compiler.ReportedError) => {
-                            errors += Harness.getFileName(err.fileName) + " (" + err.line + "," + err.column + ") " +  err.message + '\r\n';
+                            errors += Harness.getFileName(err.fileName) + " (" + err.line + "," + err.column + ") " + err.message + '\r\n';
                         });
                         result = fsOutput.lines.join('\r\n');
                         dtsresult = fsDeclOutput.lines.join("\r\n");
@@ -140,7 +144,6 @@ class RWCRunner extends RunnerBase {
                             IO.deleteFile(outputErrorFilename);
                         if (IO.fileExists(outputDeclarationFilename))
                             IO.deleteFile(outputDeclarationFilename);
-
 
                         // Create the results
                         IO.writeFile(outputJsFilename, result, /*codepage*/ null);
@@ -162,13 +165,20 @@ class RWCRunner extends RunnerBase {
                 it("error baseline check", () => {
                     if (!hasCrashed) {
                         if (!IO.fileExists(baselineErrorFilename)) {
-                            Harness.Assert.throwAssertError(new Error("Baseline for " + spec.outputFile + " (errors) does not exist!"));
+                            var expected = "<no content>";
                         } else {
                             var expected = IO.readFile(baselineErrorFilename, null).contents;
-                            // remove line sensitivity
-                            expected = expected.replace(/\r\n?/g, '\n');
-                            errors = errors.replace(/\r\n?/g, '\n');
-                            Harness.Assert.equal(errors, expected);
+                        }
+                        // remove line sensitivity
+                        expected = expected.replace(/\r\n?/g, '\n');
+                        var actual = errors.replace(/\r\n?/g, '\n');
+
+                        if (actual !== expected) {
+                            runner.htmlBaselineReport.addDifference("error baseline check for " + spec.projectName, spec.outputFile + '.err.out', spec.outputFile + '.err.out', expected, actual, /* includeUnchangedRegions*/ false);
+
+                            var errMsg = 'The baseline file ' + spec.outputFile + '.err.out' + ' has changed. Please refer to rwc-report.html and ';
+                            errMsg += 'either fix the regression (if unintended) or update the baseline (if intended).'
+                            Harness.Assert.throwAssertError(new Error(errMsg));
                         }
                     }
                 });
@@ -176,13 +186,20 @@ class RWCRunner extends RunnerBase {
                 it("codegen baseline check", () => {
                     if (!hasCrashed) {
                         if (!IO.fileExists(baselineJsFilename)) {
-                            Harness.Assert.throwAssertError(new Error("Baseline for " + spec.outputFile + " (codegen) does not exist!"));
+                            var expected = "<no content >";
                         } else {
                             var expected = IO.readFile(baselineJsFilename, null).contents;
-                            // remove line sensitivity
-                            expected = expected.replace(/\r\n?/g, '\n');
-                            result = result.replace(/\r\n?/g, '\n');
-                            Harness.Assert.equal(result, expected);
+                        }
+
+                        // remove line sensitivity
+                        expected = expected.replace(/\r\n?/g, '\n');
+                        var actual = result.replace(/\r\n?/g, '\n');
+                        if (actual !== expected) {
+                            runner.htmlBaselineReport.addDifference("codegen baseline check for " + spec.projectName, spec.outputFile + '.js', spec.outputFile + '.js', expected, actual, /* includeUnchangedRegions*/ false);
+
+                            var errMsg = 'The baseline file ' + spec.outputFile + '.err.out' + ' has changed. Please refer to rwc-report.html and ';
+                            errMsg += 'either fix the regression (if unintended) or update the baseline (if intended).'
+                            Harness.Assert.throwAssertError(new Error(errMsg));
                         }
                     }
                 });
@@ -190,13 +207,20 @@ class RWCRunner extends RunnerBase {
                 it(".d.ts baseline check", () => {
                     if (!hasCrashed) {
                         if (!IO.fileExists(baselineDeclarationFilename)) {
-                            Harness.Assert.throwAssertError(new Error("Baseline for " + spec.outputFile + " (.d.ts) does not exist!"));
+                            var expected = "<no content>";
                         } else {
                             var expected = IO.readFile(baselineDeclarationFilename, null).contents;
-                            // remove line sensitivity
-                            expected = expected.replace(/\r\n?/g, '\n');
-                            dtsresult = dtsresult.replace(/\r\n?/g, '\n');
-                            Harness.Assert.equal(dtsresult, expected);
+                        }
+
+                        // remove line sensitivity
+                        expected = expected.replace(/\r\n?/g, '\n');
+                        var actual = dtsresult.replace(/\r\n?/g, '\n');
+                        if (actual !== expected) {
+                            runner.htmlBaselineReport.addDifference("codegen baseline check for " + spec.projectName, spec.outputFile + '.d.ts', spec.outputFile + '.d.ts', expected, actual, /* includeUnchangedRegions*/ false);
+
+                            var errMsg = 'The baseline file ' + spec.outputFile + '.err.out' + ' has changed. Please refer to rwc-report.html and ';
+                            errMsg += 'either fix the regression (if unintended) or update the baseline (if intended).'
+                            Harness.Assert.throwAssertError(new Error(errMsg));
                         }
                     }
                 });
@@ -233,6 +257,3 @@ class RWCRunner extends RunnerBase {
         }
     }
 }
-
-
-
