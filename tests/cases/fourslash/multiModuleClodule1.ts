@@ -35,7 +35,6 @@ goTo.marker('3');
 //verify.completionListContains('bar');
 
 goTo.marker('4');
-// BUG 755964
 verify.completionListContains('x');
 verify.completionListContains('foo');
 verify.completionListContains('boo');
