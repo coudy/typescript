@@ -75,6 +75,10 @@ class RWCRunner extends RunnerBase {
         // reset the report
         this.htmlBaselineReport.reset();
 
+        // Create folders if needed
+        IO.createDirectory(IO.dirName(this.outputPath));
+        IO.createDirectory(this.outputPath);
+
         var runner = this;
 
         function runTest(spec: testSpec) {

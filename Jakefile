@@ -371,6 +371,9 @@ task("test-harness", [perfCompilerPath]);
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 
+var localRwcBaseline = "tests/baselines/rwc/local/";
+var refRwcBaseline = "tests/baselines/rwc/reference/";
+
 desc("Builds the test infrastructure using the built compiler");
 task("tests", [run, serviceFile, perfCompilerPath, fidelityTestsOutFile].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
@@ -384,6 +387,12 @@ task("runtests", ["local", "tests", builtTestDirectory], function() {
 	if (fs.existsSync(localBaseline)) {
 		jake.rmRf(localBaseline);
 	}
+
+    // Clean the local Rwc baselines directory
+	if (fs.existsSync(localRwcBaseline)) {
+		jake.rmRf(localRwcBaseline);
+	}
+
 	jake.mkdirP(localBaseline);
 	host = process.env.host || process.env.TYPESCRIPT_HOST || "node";
 	tests = process.env.test || process.env.tests;
@@ -414,6 +423,12 @@ task("baseline-accept", function() {
 	fs.renameSync(localBaseline, refBaseline);
 });
 
+desc("Makes the most recent rwc test results the new baseline, overwriting the old baseline");
+task("baseline-accept-rwc", function() {
+	jake.rmRf(refRwcBaseline);
+	fs.renameSync(localRwcBaseline, refRwcBaseline);
+});
+                                          
 // Syntax Generator
 var syntaxGeneratorOutFile = compilerDirectory + "syntax/SyntaxGenerator.js";
 var syntaxGeneratorInFile = compilerDirectory + "syntax/SyntaxGenerator.ts";
