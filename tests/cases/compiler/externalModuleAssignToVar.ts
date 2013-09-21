@@ -1,26 +1,22 @@
 //@module: amd
 // @Filename: externalModuleAssignToVar_ext.ts
-class D { }
+class D { foo: string; }
 export = D;
 
 // @Filename: externalModuleAssignToVar_core_require.ts
-declare module "ext" {
-    export class C { }
-}
+export class C { bar: string; }
 
-declare module "ext2" {
-    class C { }
-    export = C;
-}
+// @Filename: externalModuleAssignToVar_core_require2.ts
+class C { baz: string; }
+export = C;
 
 // @Filename: externalModuleAssignToVar_core.ts
 ///<reference path='externalModuleAssignToVar_core_require.ts'/>
-import ext = require('ext');
+import ext = require('externalModuleAssignToVar_core_require');
 var y1: { C: new() => ext.C; } = ext;
 y1 = ext; // ok
 
-
-import ext2 = require('ext2');
+import ext2 = require('externalModuleAssignToVar_core_require2');
 var y2: new() => ext2 = ext2;
 y2 = ext2; // ok
 

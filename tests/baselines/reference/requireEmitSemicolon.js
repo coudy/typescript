@@ -1,6 +1,17 @@
 //// [requireEmitSemicolon_0.js]
+define(["require", "exports"], function(require, exports) {
+    (function (Models) {
+        var Person = (function () {
+            function Person(name) {
+            }
+            return Person;
+        })();
+        Models.Person = Person;
+    })(exports.Models || (exports.Models = {}));
+    var Models = exports.Models;
+});
 //// [requireEmitSemicolon_1.js]
-define(["require", "exports", "Person"], function(require, exports, P) {
+define(["require", "exports", "requireEmitSemicolon_0"], function(require, exports, P) {
     
 
     (function (Database) {

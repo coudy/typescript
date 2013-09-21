@@ -1,20 +1,21 @@
-=== tests/cases/compiler/aliasUsedAsNameValue_1.ts ===
-Line 1 col 7 IdentifierName "mod" = any
-Line 2 col 7 IdentifierName "b" = any
-Line 4 col 11 IdentifierName "a" = () => void
-Line 4 col 15 FunctionExpression "function () {
+=== tests/cases/compiler/aliasUsedAsNameValue_2.ts ===
+Line 2 col 7 IdentifierName "mod" = any
+Line 3 col 7 IdentifierName "b" = any
+Line 5 col 11 IdentifierName "a" = () => void
+Line 5 col 15 FunctionExpression "function () {
     //var x = mod.id; // TODO needed hack that mod is loaded
     b.b(mod);
 }" = () => void
-Line 5 col 0 InvocationExpression "//var x = mod.id; // TODO needed hack that mod is loaded
+Line 6 col 0 InvocationExpression "//var x = mod.id; // TODO needed hack that mod is loaded
     b.b(mod)" = any
-Line 5 col 0 MemberAccessExpression "//var x = mod.id; // TODO needed hack that mod is loaded
+Line 6 col 0 MemberAccessExpression "//var x = mod.id; // TODO needed hack that mod is loaded
     b.b" = (a: any) => any
-Line 5 col 0 IdentifierName "//var x = mod.id; // TODO needed hack that mod is loaded
+Line 6 col 0 IdentifierName "//var x = mod.id; // TODO needed hack that mod is loaded
     b" = b
-Line 6 col 6 IdentifierName "b" = (a: any) => any
-Line 6 col 8 IdentifierName "mod" = mod
+Line 7 col 6 IdentifierName "b" = (a: any) => any
+Line 7 col 8 IdentifierName "mod" = mod
 === tests/cases/compiler/aliasUsedAsNameValue_0.ts ===
-Line 1 col 5 IdentifierName "id" = number
-Line 5 col 10 IdentifierName "b" = (a: any) => any
-Line 5 col 12 IdentifierName "a" = any
+Line 0 col 11 IdentifierName "id" = number
+=== tests/cases/compiler/aliasUsedAsNameValue_1.ts ===
+Line 0 col 16 IdentifierName "b" = (a: any) => any
+Line 0 col 18 IdentifierName "a" = any

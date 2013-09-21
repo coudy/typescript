@@ -1,6 +1,14 @@
 //// [withImportDecl_0.js]
+define(["require", "exports"], function(require, exports) {
+    var A = (function () {
+        function A() {
+        }
+        return A;
+    })();
+    exports.A = A;
+});
 //// [withImportDecl_1.js]
-define(["require", "exports", "m1"], function(require, exports, m3) {
+define(["require", "exports", "withImportDecl_0"], function(require, exports, m3) {
     ///<reference path='withImportDecl_0.ts'/>
     var simpleVar;
 
@@ -33,13 +41,13 @@ define(["require", "exports", "m1"], function(require, exports, m3) {
     
 
     var b = new m3.A();
+    b.foo;
 });
 
 
 ////[withImportDecl_0.d.ts]
-declare module "m1" {
-    class A {
-    }
+export declare class A {
+    public foo: string;
 }
 ////[withImportDecl_1.d.ts]
 /// <reference path="withImportDecl_0.d.ts" />

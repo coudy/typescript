@@ -3,5 +3,12 @@ Line 1 col 7 IdentifierName "foo" = any
 Line 2 col 6 IdentifierName "Sub" = Sub
 Line 2 col 18 IdentifierName "foo" = foo
 Line 2 col 22 IdentifierName "Super" = any
+Line 3 col 4 IdentifierName "s" = Sub
+Line 3 col 7 IdentifierName "Sub" = Sub
+Line 4 col 4 IdentifierName "r" = string
+Line 4 col 16 MemberAccessExpression "s.foo" = string
+Line 4 col 16 IdentifierName "s" = Sub
+Line 4 col 18 IdentifierName "foo" = string
 === tests/cases/compiler/importUsedInExtendsList1_require.ts ===
-Line 1 col 17 IdentifierName "Super" = 'base'.Super
+Line 0 col 13 IdentifierName "Super" = Super
+Line 0 col 21 IdentifierName "foo" = string

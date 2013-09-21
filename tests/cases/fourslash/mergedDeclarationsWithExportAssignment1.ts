@@ -1,20 +1,17 @@
 /// <reference path='fourslash.ts'/>
 
 // @Filename: mergedDeclarationsWithExportAssignment1_file0.ts
-////declare module 'M' 
-////{
-////    class Foo {
-////        doStuff(x: number): number;
-////    }
-////    module Foo {
-////        export var x: number;
-////    }
-////    export = Foo;
+////class Foo {
+////    doStuff(x: number): number;
 ////}
+////module Foo {
+////    export var x: number;
+////}
+////export = Foo;
 
 // @Filename: mergedDeclarationsWithExportAssignment1_file1.ts
 ///////<reference path='mergedDeclarationsWithExportAssignment1_file0.ts'/>
-////import Foo/*1*/ = require('M');
+////import Foo/*1*/ = require('mergedDeclarationsWithExportAssignment1_file0');
 ////var z/*3*/ = new /*2*/Foo();
 ////var r2/*5*/ = Foo./*4*/x;
 

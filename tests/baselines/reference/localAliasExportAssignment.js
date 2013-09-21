@@ -1,7 +1,12 @@
 //// [localAliasExportAssignment_0.js]
+var server;
+
+
+module.exports = server;
+
 //// [localAliasExportAssignment_1.js]
 ///<reference path='localAliasExportAssignment_0.ts'/>
-var connect = require('connect');
+var connect = require('localAliasExportAssignment_0');
 
 connect();
 

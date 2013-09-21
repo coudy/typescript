@@ -1,4 +1,13 @@
 //// [exportAssignmentOfGenericType1_0.js]
+define(["require", "exports"], function(require, exports) {
+    
+    var T = (function () {
+        function T() {
+        }
+        return T;
+    })();
+    return T;
+});
 //// [exportAssignmentOfGenericType1_1.js]
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -6,7 +15,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", "Q"], function(require, exports, q) {
+define(["require", "exports", "exportAssignmentOfGenericType1_0"], function(require, exports, q) {
     
 
     var M = (function (_super) {
@@ -16,4 +25,6 @@ define(["require", "exports", "Q"], function(require, exports, q) {
         }
         return M;
     })(q);
+    var m;
+    var r = m.foo;
 });

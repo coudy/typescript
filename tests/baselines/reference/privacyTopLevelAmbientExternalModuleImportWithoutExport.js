@@ -1,10 +1,24 @@
 //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require.js]
-
-//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.js]
+define(["require", "exports"], function(require, exports) {
+    // Public elements
+    var c_public = (function () {
+        function c_public() {
+        }
+        return c_public;
+    })();
+    exports.c_public = c_public;
+});
+//// [privacyTopLevelAmbientExternalModuleImportWithoutExport_require1.js]
+define(["require", "exports"], function(require, exports) {
+    var c_public = (function () {
+        function c_public() {
+        }
+        return c_public;
+    })();
+    exports.c_public = c_public;
+});
 //// [privacyTopLevelAmbientExternalModuleImportWithoutExport_core.js]
-///<reference path='privacyTopLevelAmbientExternalModuleImportWithoutExport_require.ts'/>
-///<reference path='privacyTopLevelAmbientExternalModuleImportWithoutExport_require2.ts'/>
-define(["require", "exports", "mi_private", "mu_private", "mi_public"], function(require, exports, im_private_mi_private, im_private_mu_private, im_private_mi_public) {
+define(["require", "exports", "m", "m2", "privacyTopLevelAmbientExternalModuleImportWithoutExport_require"], function(require, exports, im_private_mi_private, im_private_mu_private, im_private_mi_public) {
     
     
     

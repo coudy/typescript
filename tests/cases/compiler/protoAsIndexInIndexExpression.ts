@@ -1,6 +1,6 @@
 // @module: commonjs
 // @Filename: protoAsIndexInIndexExpression_0.ts
-declare module "__proto__" { export var x; }
+export var x;
 
 // @Filename: protoAsIndexInIndexExpression_1.ts
 ///<reference path='protoAsIndexInIndexExpression_0.ts'/>
@@ -17,5 +17,3 @@ var o = {
 class C {
     "__proto__" = 0;
 }
-import p = require("__proto__");
-p.x;

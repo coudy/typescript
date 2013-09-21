@@ -1,10 +1,7 @@
 //@module: amd
 // @declaration: true
 // @Filename: withImportDecl_0.ts
-declare module "m1" {
-    class A {
-    }
-}
+export class A { foo: string; }
 
 // @Filename: withImportDecl_1.ts
 ///<reference path='withImportDecl_0.ts'/>
@@ -41,9 +38,7 @@ module m1 {
     }
 }
 
-
-
-
-import m3 = require("m1");
+import m3 = require("withImportDecl_0");
 
 var b = new m3.A();
+b.foo;

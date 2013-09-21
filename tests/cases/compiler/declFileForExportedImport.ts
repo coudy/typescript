@@ -1,13 +1,11 @@
 // @declaration: true
 // @module: commonjs
 // @Filename: declFileForExportedImport_0.ts
-declare module 'm' {
-    export var x: number;
-}
+export var x: number;
 
 // @Filename: declFileForExportedImport_1.ts
 ///<reference path='declFileForExportedImport_0.ts'/>
-export import a = require('m');
+export import a = require('declFileForExportedImport_0');
 var y = a.x;
 
 export import b = a;

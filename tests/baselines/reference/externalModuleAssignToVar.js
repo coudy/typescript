@@ -1,4 +1,22 @@
 //// [externalModuleAssignToVar_core_require.js]
+define(["require", "exports"], function(require, exports) {
+    var C = (function () {
+        function C() {
+        }
+        return C;
+    })();
+    exports.C = C;
+});
+//// [externalModuleAssignToVar_core_require2.js]
+define(["require", "exports"], function(require, exports) {
+    var C = (function () {
+        function C() {
+        }
+        return C;
+    })();
+    
+    return C;
+});
 //// [externalModuleAssignToVar_ext.js]
 define(["require", "exports"], function(require, exports) {
     var D = (function () {
@@ -10,7 +28,7 @@ define(["require", "exports"], function(require, exports) {
     return D;
 });
 //// [externalModuleAssignToVar_core.js]
-define(["require", "exports", 'ext', 'ext2', 'externalModuleAssignToVar_ext'], function(require, exports, ext, ext2, ext3) {
+define(["require", "exports", 'externalModuleAssignToVar_core_require', 'externalModuleAssignToVar_core_require2', 'externalModuleAssignToVar_ext'], function(require, exports, ext, ext2, ext3) {
     
     var y1 = ext;
     y1 = ext;

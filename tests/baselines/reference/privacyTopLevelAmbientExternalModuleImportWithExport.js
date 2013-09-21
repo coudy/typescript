@@ -1,15 +1,27 @@
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require.js]
+// Public elements
+var c_public = (function () {
+    function c_public() {
+    }
+    return c_public;
+})();
+exports.c_public = c_public;
 
-//// [privacyTopLevelAmbientExternalModuleImportWithExport_require2.js]
+//// [privacyTopLevelAmbientExternalModuleImportWithExport_require1.js]
+var c_public = (function () {
+    function c_public() {
+    }
+    return c_public;
+})();
+exports.c_public = c_public;
+
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_core.js]
-///<reference path='privacyTopLevelAmbientExternalModuleImportWithExport_require.ts'/>
-///<reference path='privacyTopLevelAmbientExternalModuleImportWithExport_require2.ts'/>
 // Privacy errors - importing private elements
-var im_public_mi_private = require("mi_private");
+var im_public_mi_private = require("privacyTopLevelAmbientExternalModuleImportWithExport_require");
 exports.im_public_mi_private = im_public_mi_private;
-var im_public_mu_private = require("mu_private");
+var im_public_mu_private = require("privacyTopLevelAmbientExternalModuleImportWithExport_require1");
 exports.im_public_mu_private = im_public_mu_private;
-var im_public_mi_public = require("mi_public");
+var im_public_mi_public = require("m");
 exports.im_public_mi_public = im_public_mi_public;
 
 

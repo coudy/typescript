@@ -1,5 +1,3 @@
-//// [staticInstanceResolution5_0.js]
-//// [staticInstanceResolution5_1.js]
 define(["require", "exports"], function(require, exports) {
     
 

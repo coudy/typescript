@@ -1,22 +1,20 @@
 /// <reference path='fourslash.ts'/>
 
 // @Filename: externalModuleIntellisense_file0.ts
-////declare module "expressx" {
-////    export = express;
-////    function express(): express.ExpressServer;
-////    module express {
-////        export interface ExpressServer {
-////            enable(name: string): ExpressServer;
-////            post(path: RegExp, handler: (req: Function) => void): void;
-////        }
-////        export class ExpressServerRequest {
-////        }
+////export = express;
+////function express(): express.ExpressServer;
+////module express {
+////    export interface ExpressServer {
+////        enable(name: string): ExpressServer;
+////        post(path: RegExp, handler: (req: Function) => void): void;
+////    }
+////    export class ExpressServerRequest {
 ////    }
 ////}
 
 // @Filename: externalModuleIntellisense_file1.ts
 ///////<reference path='externalModuleIntellisense_file0.ts'/>
-////import express = require('expressx');
+////import express = require('externalModuleIntellisense_file0');
 ////var x = express();/*1*/
 
 goTo.marker('1');
