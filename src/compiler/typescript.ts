@@ -1031,7 +1031,7 @@ module TypeScript {
                 var funcDecl: FunctionDeclaration = null;
                 if (lastDeclAST === foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
-                    this.resolver.resolveDeclaredSymbol(symbol, null, resolutionContext);
+                    this.resolver.resolveDeclaredSymbol(symbol, resolutionContext);
                     symbol.setUnresolved();
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
                     if (foundAST.nodeType() === NodeType.FunctionDeclaration) {
@@ -1541,7 +1541,7 @@ module TypeScript {
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var decl = semanticInfo.getDeclForAST(ast);
             var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
-            this.resolver.resolveDeclaredSymbol(symbol, null, context.resolutionContext);
+            this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
 
             // we set the symbol as unresolved so as not to interfere with typecheck
             symbol.setUnresolved();
@@ -1666,7 +1666,7 @@ module TypeScript {
             }
 
             var symbol = decl.getSymbol();
-            this.resolver.resolveDeclaredSymbol(symbol, context.enclosingDecl, context.resolutionContext);
+            this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
             symbol.setUnresolved();
 
             return {
