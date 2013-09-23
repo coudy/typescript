@@ -7661,12 +7661,6 @@ module TypeScript {
 
             var typeAssertionType = this.resolveAST(assertionExpression.castType, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
-            // REVIEW(cyrusn): Why is this here?  Why didn't we just report the error while resolving the cast term.
-            if (typeAssertionType.isError()) {
-                var symbolName = (<PullErrorTypeSymbol>typeAssertionType).name;
-                context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Could_not_find_symbol_0, [symbolName]);
-            }
-
             context.pushContextualType(typeAssertionType, context.inProvisionalResolution(), /*substitutions:*/ null);
             var exprType = this.resolveAST(assertionExpression.operand, /*inContextuallyTypedAssignment:*/ true, enclosingDecl, context).type;
             context.popContextualType();
