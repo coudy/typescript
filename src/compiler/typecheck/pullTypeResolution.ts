@@ -7651,7 +7651,7 @@ module TypeScript {
 
             // September 17, 2013: 
             // A type assertion expression of the form < T > e requires the type of e to be 
-            // assignable to T or T to be assignable to the type of e, or otherwise a compile - 
+            // assignable to T or T to be assignable to the type of e, or otherwise a compilew - 
             // time error occurs.The type of the result is T.
             return typeAssertionType;
         }
@@ -7827,7 +7827,7 @@ module TypeScript {
             if (type.isArray()) {
                 var elementType = this.widenType(null, type.getElementType(), enclosingDecl, context);
 
-                if (ast && ast.nodeType() === NodeType.ArrayLiteralExpression && this.compilationSettings.noImplicitAny) {
+                if (this.compilationSettings.noImplicitAny && ast && ast.nodeType() === NodeType.ArrayLiteralExpression) {
                     // If we widened from non-'any' type to 'any', then report error.
                     if (elementType === this.semanticInfoChain.anyTypeSymbol && type.getElementType() !== this.semanticInfoChain.anyTypeSymbol) {
                         context.postError(this.unitPath, ast.minChar, ast.getLength(), DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening, null);
