@@ -4332,6 +4332,17 @@ module TypeScript.Parser {
                 return true;
             }
 
+            token2 = this.peekToken(2);
+            if (token1.tokenKind === SyntaxKind.PublicKeyword || token1.tokenKind === SyntaxKind.PrivateKeyword) {
+                if (this.isIdentifier(token2)) {
+                    // "(public id" or "(private id".  Definitely an arrow function.  Could never 
+                    // be a parenthesized expression.  Note: this will be an *illegal* arrow 
+                    // function (as accessibility modifiers are not allowed in it).  However, that
+                    // will be reported by the grammar checker walker.
+                    return true;
+                }
+            }
+
             if (!this.isIdentifier(token1)) {
                 // All other arrow functions must start with (id
                 // so this is definitely not an arrow function.
@@ -4342,7 +4353,6 @@ module TypeScript.Parser {
             //
             // Lots of options here.  Check for things that make us certain it's an
             // arrow function.
-            token2 = this.peekToken(2);
             if (token2.tokenKind === SyntaxKind.ColonToken) {
                 // (id:
                 // Definitely an arrow function.  Could never be a parenthesized expression.
