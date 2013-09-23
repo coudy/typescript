@@ -2228,6 +2228,7 @@ module TypeScript {
                 prevResolvingTypeReference = context.resolvingTypeReference;
                 var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
                 context.resolvingNamespaceMemberAccess = false;
+                context.resolvingTypeReference = true;
                 typeSymbol = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
                 typeDeclSymbol = typeSymbol;
                 context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
