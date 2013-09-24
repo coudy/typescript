@@ -204,7 +204,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            emitter.emitNewLineSeparatedList(this);
+            emitter.emitList(this);
         }
 
         public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {

@@ -678,7 +678,7 @@ module TypeScript {
                 this.emitConstructorStatements(funcDecl);
             }
             else {
-                this.emitNewLineSeparatedList(funcDecl.block.statements);
+                this.emitList(funcDecl.block.statements);
             }
 
             this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
@@ -902,7 +902,7 @@ module TypeScript {
                 this.writeCaptureThisStatement(moduleDecl);
             }
 
-            this.emitNewLineSeparatedList(moduleDecl.members);
+            this.emitList(moduleDecl.members);
             if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }
@@ -1543,7 +1543,7 @@ module TypeScript {
             }
         }
 
-        public emitNewLineSeparatedList(list: ASTList) {
+        public emitList(list: ASTList, useNewLineSeparator = true) {
             if (list === null) {
                 return;
             }
@@ -1558,7 +1558,9 @@ module TypeScript {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
 
                     this.emitJavascript(node, true);
-                    this.writeLineToOutput("");
+                    if (useNewLineSeparator) {
+                        this.writeLineToOutput("");
+                    }
 
                     lastEmittedNode = node;
                 }
@@ -2299,7 +2301,7 @@ module TypeScript {
             this.writeLineToOutput(" {");
             this.indenter.increaseIndent();
             if (block.statements) {
-                this.emitNewLineSeparatedList(block.statements);
+                this.emitList(block.statements);
             }
             this.emitCommentsArray(block.closeBraceLeadingComments);
             this.indenter.decreaseIndent();
@@ -2442,16 +2444,7 @@ module TypeScript {
             this.recordSourceMappingEnd(statement.statement);
             this.writeLineToOutput(" {");
             this.indenter.increaseIndent();
-
-            var lastEmittedNode: AST = null;
-            for (var i = 0, n = statement.caseList.members.length; i < n; i++) {
-                var caseExpr = statement.caseList.members[i];
-
-                this.emitSpaceBetweenConstructs(lastEmittedNode, caseExpr);
-                this.emitJavascript(caseExpr, true);
-
-                lastEmittedNode = caseExpr;
-            }
+            this.emitList(statement.caseList, /*useNewLineSeparator:*/ false);
             this.indenter.decreaseIndent();
             this.emitIndent();
             this.writeToOutput("}");
