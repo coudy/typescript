@@ -341,8 +341,6 @@ module TypeScript {
 
                 topLevelMod.setModuleFlags(moduleFlags);
 
-                topLevelMod.prettyName = getPrettyName(correctedFileName);
-
                 var leadingComments = this.getLeadingComments(node);
                 for (var i = 0, n = leadingComments.length; i < n; i++) {
                     var trivia = leadingComments[i];

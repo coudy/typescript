@@ -136,16 +136,6 @@ module TypeScript {
             return this.limChar - this.minChar;
         }
 
-        //public getID(): number {
-        //    var result = this.astID;
-        //    if (result === -1) {
-        //        result = astID++;
-        //        this.astID = result;
-        //    }
-
-        //    return result;
-        //}
-
         public isDeclaration() { return false; }
 
         public emit(emitter: Emitter) {
@@ -748,8 +738,6 @@ module TypeScript {
         private _functionFlags = FunctionFlags.None;
         public classDecl: ClassDeclaration = null;
 
-        public returnStatementsWithExpressions: ReturnStatement[];
-
         constructor(public name: Identifier,
                     public block: Block,
                     public isConstructor: boolean,
@@ -842,15 +830,12 @@ module TypeScript {
 
     export class ModuleDeclaration extends AST {
         private _moduleFlags = ModuleFlags.None;
-        public prettyName: string;
         public amdDependencies = new Array<string>();
 
         constructor(public name: Identifier,
                     public members: ASTList,
                     public endingToken: ASTSpan) {
             super();
-
-            this.prettyName = this.name.actualText;
         }
 
         public isDeclaration() {
