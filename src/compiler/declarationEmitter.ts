@@ -838,7 +838,7 @@ module TypeScript {
 
             // Collect all the documents that need to be emitted as reference
             var documents: Document[] = [];
-            if (this.compiler.emitOptions.outputMany || script.topLevelMod) {
+            if (this.compiler.emitOptions.outputMany || script.isExternalModule) {
                 // Emit only from this file
                 var scriptReferences = script.referencedFiles;
                 var addedGlobalDocument = false;
@@ -848,9 +848,11 @@ module TypeScript {
                     // All the references that are not going to be part of same file
 
                     if (document &&
-                        (this.compiler.emitOptions.outputMany || document.script.isDeclareFile || document.script.topLevelMod || !addedGlobalDocument)) {
+                        (this.compiler.emitOptions.outputMany || document.script.isDeclareFile || document.script.isExternalModule || !addedGlobalDocument)) {
+
                         documents = documents.concat(document);
-                        if (!document.script.isDeclareFile && document.script.topLevelMod) {
+
+                        if (!document.script.isDeclareFile && document.script.isExternalModule) {
                             addedGlobalDocument = true;
                         }
                     }
@@ -859,7 +861,7 @@ module TypeScript {
                 // Collect from all the references and emit
                 var allDocuments = this.compiler.getDocuments();
                 for (var i = 0; i < allDocuments.length; i++) {
-                    if (!allDocuments[i].script.isDeclareFile && !allDocuments[i].script.topLevelMod) {
+                    if (!allDocuments[i].script.isDeclareFile && !allDocuments[i].script.isExternalModule) {
                         // Check what references need to be added
                         var scriptReferences = allDocuments[i].script.referencedFiles;
                         for (var j = 0; j < scriptReferences.length; j++) {
@@ -867,7 +869,7 @@ module TypeScript {
                             var document = this.compiler.getDocument(currentReference);
                             // All the references that are not going to be part of same file
                             if (document &&
-                                (document.script.isDeclareFile || document.script.topLevelMod)) {
+                                (document.script.isDeclareFile || document.script.isExternalModule)) {
                                 for (var k = 0; k < documents.length; k++) {
                                     if (documents[k] == document) {
                                         break;

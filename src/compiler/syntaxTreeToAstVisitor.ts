@@ -327,11 +327,13 @@ module TypeScript {
 
             var bod = this.visitSyntaxList(node.moduleElements);
 
-            var topLevelMod: ModuleDeclaration = null;
+            var isExternalModule = false;
             if (this.hasTopLevelImportOrExport(node)) {
+                isExternalModule = true;
+
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName, correctedFileName);
-                topLevelMod = new ModuleDeclaration(id, bod, null);
+                var topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
                 var moduleFlags = topLevelMod.getModuleFlags() | ModuleFlags.IsDynamic | ModuleFlags.IsWholeFile | ModuleFlags.Exported;
@@ -358,7 +360,7 @@ module TypeScript {
             this.setSpanExplicit(result, start, start + node.fullWidth());
 
             result.moduleElements = bod;
-            result.topLevelMod = topLevelMod;
+            result.isExternalModule = isExternalModule;
             result.isDeclareFile = isDTSFile(this.fileName);
 
             return result;

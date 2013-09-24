@@ -48,7 +48,7 @@ module TypeScript {
         }
 
         public mapOutputFileName(document: Document, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
-            if (this.outputMany || document.script.topLevelMod) {
+            if (this.outputMany || document.script.isExternalModule) {
                 var updatedFileName = document.fileName;
                 if (this.compilationSettings.outDirOption !== "") {
                     // Replace the common directory path with the option specified

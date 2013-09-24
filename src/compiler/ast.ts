@@ -805,7 +805,7 @@ module TypeScript {
         public moduleElements: ASTList = null;
         public referencedFiles= new Array<string>();
         public isDeclareFile = false;
-        public topLevelMod: ModuleDeclaration = null;
+        public isExternalModule: boolean = false;
 
         public nodeType(): NodeType {
             return NodeType.Script;

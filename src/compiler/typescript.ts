@@ -306,7 +306,7 @@ module TypeScript {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
-                if (!script.isDeclareFile && script.topLevelMod !== null) {
+                if (!script.isDeclareFile && script.isExternalModule) {
                     return true;
                 }
             }
@@ -439,13 +439,13 @@ module TypeScript {
 
         private writeByteOrderMarkForDocument(document: Document) {
             // If module its always emitted in its own file
-            if (this.emitOptions.outputMany || document.script.topLevelMod) {
+            if (this.emitOptions.outputMany || document.script.isExternalModule) {
                 return document.byteOrderMark !== ByteOrderMark.None;
             } else {
                 var fileNames = this.fileNameToDocument.getAllKeys();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
-                    if (document.script.topLevelMod) {
+                    if (document.script.isExternalModule) {
                         // Dynamic module never contributes to the single file
                         continue;
                     }
@@ -508,7 +508,7 @@ module TypeScript {
                         var document = this.getDocument(fileNames[i]);
 
                         // Emitting module or multiple files, always goes to single file
-                        if (this.emitOptions.outputMany || document.script.topLevelMod) {
+                        if (this.emitOptions.outputMany || document.script.isExternalModule) {
                             var singleEmitter = this.emitDeclarations(document);
                             if (singleEmitter) {
                                 singleEmitter.close();
@@ -545,7 +545,7 @@ module TypeScript {
 
             if (this.shouldEmitDeclarations(document.script)) {
                 // Emitting module or multiple files, always goes to single file
-                if (this.emitOptions.outputMany || document.script.topLevelMod) {
+                if (this.emitOptions.outputMany || document.script.isExternalModule) {
                     try {
                         var emitter = this.emitDeclarations(document);
                         if (emitter) {
@@ -640,7 +640,7 @@ module TypeScript {
 
                 try {
                     // Emitting module or multiple files, always goes to single file
-                    if (this.emitOptions.outputMany || document.script.topLevelMod) {
+                    if (this.emitOptions.outputMany || document.script.isExternalModule) {
                         // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
                         var singleEmitter = this.emit(document, inputOutputMapper);
 
@@ -683,7 +683,7 @@ module TypeScript {
 
             var document = this.getDocument(fileName);
             // Emitting module or multiple files, always goes to single file
-            if (this.emitOptions.outputMany || document.script.topLevelMod) {
+            if (this.emitOptions.outputMany || document.script.isExternalModule) {
                 // In outputMany mode, only emit the document specified and its sourceMap if needed
                 try {
                     var emitter = this.emit(document, inputOutputMapper);
