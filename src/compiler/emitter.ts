@@ -102,8 +102,6 @@ module TypeScript {
         public moduleName = "";
         public emitState = new EmitState();
         public indenter = new Indenter();
-        public modAliasId: string = null;
-        public firstModAlias: string = null;
         public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
@@ -179,9 +177,6 @@ module TypeScript {
                 !isAmdCodeGen) // commonjs needs the var declaration for the import declaration
                 && this.importStatementShouldBeEmitted(importDeclAST)) {
 
-                var prevModAliasId = this.modAliasId;
-                var prevFirstModAlias = this.firstModAlias;
-
                 this.emitComments(importDeclAST, true);
 
                 var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
@@ -234,8 +229,6 @@ module TypeScript {
                         this.writeToOutput("var ");
                     }
                     this.writeToOutput(importDeclAST.id.actualText + " = ");
-                    this.modAliasId = importDeclAST.id.actualText;
-                    this.firstModAlias = importDeclAST.firstAliasedModToString();
                     var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
 
                     if (isExternalModuleReference) {
@@ -258,9 +251,6 @@ module TypeScript {
                     this.writeToOutput(";");
                 }
                 this.emitComments(importDeclAST, false);
-
-                this.modAliasId = prevModAliasId;
-                this.firstModAlias = prevFirstModAlias;
             }
         }
 
@@ -799,7 +789,7 @@ module TypeScript {
                         }
 
                         importList += importStatementDecl.name;
-                        dependencyList += importStatementAST.firstAliasedModToString();
+                        dependencyList += importStatementAST.getAliasName();
                     }
                 }
             }

@@ -628,17 +628,6 @@ module TypeScript {
             }
         }
 
-        public firstAliasedModToString() {
-            if (this.alias.nodeType() === NodeType.Name) {
-                return (<Identifier>this.alias).actualText;
-            }
-            else {
-                var dotExpr = <TypeReference>this.alias;
-                var firstMod = <Identifier>(<BinaryExpression>dotExpr.term).operand1;
-                return firstMod.actualText;
-            }
-        }
-
         public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this._varFlags === ast._varFlags &&
