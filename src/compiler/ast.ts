@@ -204,7 +204,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            emitter.emitModuleElements(this);
+            emitter.emitNewLineSeparatedList(this);
         }
 
         public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {
@@ -1359,7 +1359,7 @@ module TypeScript {
             emitter.writeLineToOutput(" {");
             emitter.indenter.increaseIndent();
             if (this.statements) {
-                emitter.emitModuleElements(this.statements);
+                emitter.emitNewLineSeparatedList(this.statements);
             }
             emitter.emitCommentsArray(this.closeBraceLeadingComments);
             emitter.indenter.decreaseIndent();

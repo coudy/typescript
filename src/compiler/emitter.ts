@@ -678,7 +678,7 @@ module TypeScript {
                 this.emitConstructorStatements(funcDecl);
             }
             else {
-                this.emitModuleElements(funcDecl.block.statements);
+                this.emitNewLineSeparatedList(funcDecl.block.statements);
             }
 
             this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
@@ -902,7 +902,7 @@ module TypeScript {
                 this.writeCaptureThisStatement(moduleDecl);
             }
 
-            this.emitModuleElements(moduleDecl.members);
+            this.emitNewLineSeparatedList(moduleDecl.members);
             if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }
@@ -1543,7 +1543,7 @@ module TypeScript {
             }
         }
 
-        public emitModuleElements(list: ASTList) {
+        public emitNewLineSeparatedList(list: ASTList) {
             if (list === null) {
                 return;
             }
