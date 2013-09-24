@@ -9,7 +9,7 @@ interface testSpec {
     compileList: string[];  // files we want to compile
     outputFile: string;     // the final output file
     skipThisCheck?: boolean;
-    target?: string;
+    skipTypeCheck?: boolean;
 }
 
 class RWCEmitter implements TypeScript.EmitterIOHost {
@@ -234,7 +234,7 @@ class RWCRunner extends RunnerBase {
                 });
 
                 it("correct expression types check", () => {
-                    if (!hasCrashed && errors.length == 0) {
+                    if (!hasCrashed && !spec.skipTypeCheck && errors.length == 0) {
                         var host = new TypeWriterHost();
                         var compilerState = new Services.CompilerState(host);
 
