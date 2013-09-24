@@ -119,8 +119,8 @@ module TypeScript {
             public outfile: ITextWriter,
             public emitOptions: EmitOptions,
             private semanticInfoChain: SemanticInfoChain) {
-                globalSemanticInfoChain = semanticInfoChain;
-                globalBinder.semanticInfoChain = semanticInfoChain;
+            globalSemanticInfoChain = semanticInfoChain;
+            globalBinder.semanticInfoChain = semanticInfoChain;
         }
 
         private pushDecl(decl: PullDecl) {
@@ -156,10 +156,10 @@ module TypeScript {
         public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): boolean {
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
             var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-            if (!importDeclAST.isExternalImportDeclaration()) { 
+            if (!importDeclAST.isExternalImportDeclaration()) {
                 if (pullSymbol.getExportAssignedValueSymbol()) {
                     return true;
-                } 
+                }
                 var containerSymbol = pullSymbol.getExportAssignedContainerSymbol();
                 if (containerSymbol && containerSymbol.getInstanceSymbol()) {
                     return true;
@@ -445,7 +445,7 @@ module TypeScript {
             this.writeToOutput("]");
         }
 
-        public emitNew(objectCreationExpression: ObjectCreationExpression) {
+        public emitObjectCreationExpression(objectCreationExpression: ObjectCreationExpression) {
             this.recordSourceMappingStart(objectCreationExpression);
             this.writeToOutput("new ");
             var target = objectCreationExpression.target;
@@ -532,7 +532,7 @@ module TypeScript {
             return false;
         }
 
-        public emitCall(callNode: InvocationExpression) {
+        public emitInvocationExpression(callNode: InvocationExpression) {
             this.recordSourceMappingStart(callNode);
             var target = callNode.target;
             var args = callNode.arguments;
@@ -723,7 +723,7 @@ module TypeScript {
             }
         }
 
-        private emitRestParameterInitializer(funcDecl: FunctionDeclaration): void  {
+        private emitRestParameterInitializer(funcDecl: FunctionDeclaration): void {
             if (funcDecl.variableArgList) {
                 var n = funcDecl.arguments.members.length;
                 var lastArg = <Parameter>funcDecl.arguments.members[n - 1];
@@ -835,7 +835,7 @@ module TypeScript {
 
             var svModuleName = this.moduleName;
             this.moduleName = moduleDecl.name.actualText;
-            if (isTSFile(this.moduleName )) {
+            if (isTSFile(this.moduleName)) {
                 this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
             }
 
@@ -1526,7 +1526,7 @@ module TypeScript {
             }
             else {
                 // this.emitComments(ast, true);
-                    // this.emitComments(ast, false);
+                // this.emitComments(ast, false);
 
                 for (var i = 0, n = list.members.length; i < n; i++) {
                     var emitNode = list.members[i];
@@ -1677,7 +1677,7 @@ module TypeScript {
             this.emitPrologue(script);
             var lastEmittedNode: AST = null;
 
-                // Now emit the rest of the script elements
+            // Now emit the rest of the script elements
             for (; i < n; i++) {
                 var node = list.members[i];
 
@@ -1944,7 +1944,7 @@ module TypeScript {
                             this.emitPrototypeMember(functionDeclaration, classDecl.name.actualText);
                         }
                         else {
-                             // static functions
+                            // static functions
                             if (functionDeclaration.isAccessor()) {
                                 this.emitPropertyAccessor(functionDeclaration, this.thisClassNode.name.actualText, false);
                             }
@@ -2079,6 +2079,437 @@ module TypeScript {
             }
 
             throw e;
+        }
+
+        public emitLiteralExpression(expression: LiteralExpression): void {
+            switch (expression.nodeType()) {
+                case NodeType.NullLiteral:
+                    this.writeToOutputWithSourceMapRecord("null", expression);
+                    break;
+                case NodeType.FalseLiteral:
+                    this.writeToOutputWithSourceMapRecord("false", expression);
+                    break;
+                case NodeType.TrueLiteral:
+                    this.writeToOutputWithSourceMapRecord("true", expression);
+                    break;
+                default:
+                    throw Errors.abstract();
+            }
+        }
+
+        public emitThisExpression(expression: ThisExpression): void {
+            if (this.thisFunctionDeclaration && (hasFlag(this.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
+                this.writeToOutputWithSourceMapRecord("_this", expression);
+            }
+            else {
+                this.writeToOutputWithSourceMapRecord("this", expression);
+            }
+        }
+
+        public emitSuperExpression(expression: SuperExpression): void {
+            this.writeToOutputWithSourceMapRecord("_super.prototype", expression);
+        }
+
+        public emitParenthesizedExpression(parenthesizedExpression: ParenthesizedExpression): void {
+            if (parenthesizedExpression.expression.nodeType() === NodeType.CastExpression && parenthesizedExpression.openParenTrailingComments === null) {
+                // We have an expression of the form: (<Type>SubExpr)
+                // Emitting this as (SubExpr) is really not desirable.  Just emit the subexpr as is.
+                parenthesizedExpression.expression.emit(this);
+            }
+            else {
+                this.recordSourceMappingStart(parenthesizedExpression);
+                this.writeToOutput("(");
+                this.emitCommentsArray(parenthesizedExpression.openParenTrailingComments);
+                parenthesizedExpression.expression.emit(this);
+                this.writeToOutput(")");
+                this.recordSourceMappingEnd(parenthesizedExpression);
+            }
+        }
+
+        public emitCastExpression(expression: CastExpression): void {
+            expression.operand.emit(this);
+        }
+
+        public emitUnaryExpression(expression: UnaryExpression): void {
+            var nodeType = expression.nodeType();
+
+            this.recordSourceMappingStart(expression);
+            switch (nodeType) {
+                case NodeType.PostIncrementExpression:
+                    expression.operand.emit(this);
+                    this.writeToOutput("++");
+                    break;
+                case NodeType.LogicalNotExpression:
+                    this.writeToOutput("!");
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.PostDecrementExpression:
+                    expression.operand.emit(this);
+                    this.writeToOutput("--");
+                    break;
+                case NodeType.ObjectLiteralExpression:
+                    this.emitObjectLiteral(expression);
+                    break;
+                case NodeType.ArrayLiteralExpression:
+                    this.emitArrayLiteral(expression);
+                    break;
+                case NodeType.BitwiseNotExpression:
+                    this.writeToOutput("~");
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.NegateExpression:
+                    this.writeToOutput("-");
+                    if (expression.operand.nodeType() === NodeType.NegateExpression || expression.operand.nodeType() === NodeType.PreDecrementExpression) {
+                        this.writeToOutput(" ");
+                    }
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.PlusExpression:
+                    this.writeToOutput("+");
+                    if (expression.operand.nodeType() === NodeType.PlusExpression || expression.operand.nodeType() === NodeType.PreIncrementExpression) {
+                        this.writeToOutput(" ");
+                    }
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.PreIncrementExpression:
+                    this.writeToOutput("++");
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.PreDecrementExpression:
+                    this.writeToOutput("--");
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.TypeOfExpression:
+                    this.writeToOutput("typeof ");
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.DeleteExpression:
+                    this.writeToOutput("delete ");
+                    expression.operand.emit(this);
+                    break;
+                case NodeType.VoidExpression:
+                    this.writeToOutput("void ");
+                    expression.operand.emit(this);
+                    break;
+                default:
+                    throw Errors.abstract();
+            }
+
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitBinaryExpression(expression: BinaryExpression): void {
+            this.recordSourceMappingStart(expression);
+            switch (expression.nodeType()) {
+                case NodeType.MemberAccessExpression:
+                    if (!this.tryEmitConstant(expression)) {
+                        expression.operand1.emit(this);
+                        this.writeToOutput(".");
+                        this.emitName(<Identifier>expression.operand2, false);
+                    }
+                    break;
+                case NodeType.ElementAccessExpression:
+                    this.emitIndex(expression.operand1, expression.operand2);
+                    break;
+
+                case NodeType.Member:
+                    if (expression.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>expression.operand2).isAccessor()) {
+                        var funcDecl = <FunctionDeclaration>expression.operand2;
+                        if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
+                            this.writeToOutput("get ");
+                        }
+                        else {
+                            this.writeToOutput("set ");
+                        }
+                        expression.operand1.emit(this);
+                    }
+                    else {
+                        expression.operand1.emit(this);
+                        this.writeToOutput(": ");
+                    }
+                    expression.operand2.emit(this);
+                    break;
+                case NodeType.CommaExpression:
+                    expression.operand1.emit(this);
+                    this.writeToOutput(", ");
+                    expression.operand2.emit(this);
+                    break;
+                default:
+                    {
+                        expression.operand1.emit(this);
+                        var binOp = BinaryExpression.getTextForBinaryToken(expression.nodeType());
+                        if (binOp === "instanceof") {
+                            this.writeToOutput(" instanceof ");
+                        }
+                        else if (binOp === "in") {
+                            this.writeToOutput(" in ");
+                        }
+                        else {
+                            this.writeToOutput(" " + binOp + " ");
+                        }
+                        expression.operand2.emit(this);
+                    }
+            }
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitConditionalExpression(expression: ConditionalExpression): void {
+            expression.operand1.emit(this);
+            this.writeToOutput(" ? ");
+            expression.operand2.emit(this);
+            this.writeToOutput(" : ");
+            expression.operand3.emit(this);
+        }
+
+        public emitThrowStatement(statement: ThrowStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("throw ");
+            statement.expression.emit(this);
+            this.recordSourceMappingEnd(statement);
+            this.writeToOutput(";");
+        }
+
+        public emitExpressionStatement(statement: ExpressionStatement): void {
+            var isArrowExpression = statement.expression.nodeType() === NodeType.FunctionDeclaration &&
+                hasFlag((<FunctionDeclaration>statement.expression).getFunctionFlags(), FunctionFlags.IsFatArrowFunction);
+
+            this.recordSourceMappingStart(statement);
+            if (isArrowExpression) {
+                this.writeToOutput("(");
+            }
+
+            statement.expression.emit(this);
+
+            if (isArrowExpression) {
+                this.writeToOutput(")");
+            }
+
+            this.recordSourceMappingEnd(statement);
+            this.writeToOutput(";");
+        }
+
+        public emitLabeledStatement(statement: LabeledStatement): void {
+            this.writeToOutputWithSourceMapRecord(statement.identifier.actualText, statement.identifier);
+            this.writeLineToOutput(":");
+            this.emitJavascript(statement.statement, /*startLine:*/ true);
+        }
+
+        public emitBlock(block: Block): void {
+            this.recordSourceMappingStart(block);
+            this.writeLineToOutput(" {");
+            this.indenter.increaseIndent();
+            if (block.statements) {
+                this.emitNewLineSeparatedList(block.statements);
+            }
+            this.emitCommentsArray(block.closeBraceLeadingComments);
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutput("}");
+            this.recordSourceMappingEnd(block);
+        }
+
+        public emitJump(jump: Jump): void {
+            this.recordSourceMappingStart(jump);
+            if (jump.nodeType() === NodeType.BreakStatement) {
+                this.writeToOutput("break");
+            }
+            else {
+                this.writeToOutput("continue");
+            }
+            if (jump.target) {
+                this.writeToOutput(" " + jump.target);
+            }
+            this.recordSourceMappingEnd(jump);
+            this.writeToOutput(";");
+        }
+
+        public emitWhileStatement(statement: WhileStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("while (");
+            statement.cond.emit(this);
+            this.writeToOutput(")");
+            this.emitBlockOrStatement(statement.body);
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitDoStatement(statement: DoStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("do");
+            this.emitBlockOrStatement(statement.body);
+            this.writeToOutputWithSourceMapRecord(" while", statement.whileSpan);
+            this.writeToOutput('(');
+            statement.cond.emit(this);
+            this.writeToOutput(")");
+            this.recordSourceMappingEnd(statement);
+            this.writeToOutput(";");
+        }
+
+        public emitIfStatement(statement: IfStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("if (");
+            statement.cond.emit(this);
+            this.writeToOutput(")");
+
+            this.emitBlockOrStatement(statement.thenBod);
+
+            if (statement.elseBod) {
+                if (statement.thenBod.nodeType() !== NodeType.Block) {
+                    this.writeLineToOutput("");
+                    this.emitIndent();
+                }
+                else {
+                    this.writeToOutput(" ");
+                }
+
+                if (statement.elseBod.nodeType() === NodeType.IfStatement) {
+                    this.writeToOutput("else ");
+                    statement.elseBod.emit(this);
+                }
+                else {
+                    this.writeToOutput("else");
+                    this.emitBlockOrStatement(statement.elseBod);
+                }
+            }
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitReturnStatement(statement: ReturnStatement): void {
+            this.recordSourceMappingStart(statement);
+            if (statement.returnExpression) {
+                this.writeToOutput("return ");
+                statement.returnExpression.emit(this);
+            }
+            else {
+                this.writeToOutput("return");
+            }
+            this.recordSourceMappingEnd(statement);
+            this.writeToOutput(";");
+        }
+
+        public emitForInStatement(statement: ForInStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("for (");
+            statement.lval.emit(this);
+            this.writeToOutput(" in ");
+            statement.obj.emit(this);
+            this.writeToOutput(")");
+            this.emitBlockOrStatement(statement.body);
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitForStatement(statement: ForStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("for (");
+            if (statement.init) {
+                if (statement.init.nodeType() !== NodeType.List) {
+                    statement.init.emit(this);
+                }
+                else {
+                    this.emitCommaSeparatedList(<ASTList>statement.init);
+                }
+            }
+
+            this.writeToOutput("; ");
+            this.emitJavascript(statement.cond, false);
+            this.writeToOutput(";");
+            if (statement.incr) {
+                this.writeToOutput(" ");
+                this.emitJavascript(statement.incr, false);
+            }
+            this.writeToOutput(")");
+            this.emitBlockOrStatement(statement.body);
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitWithStatement(statement: WithStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("with (");
+            if (statement.expr) {
+                statement.expr.emit(this);
+            }
+
+            this.writeToOutput(")");
+            this.emitBlockOrStatement(statement.body);
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitSwitchStatement(statement: SwitchStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.recordSourceMappingStart(statement.statement);
+            this.writeToOutput("switch (");
+            statement.val.emit(this);
+            this.writeToOutput(")");
+            this.recordSourceMappingEnd(statement.statement);
+            this.writeLineToOutput(" {");
+            this.indenter.increaseIndent();
+
+            var lastEmittedNode: AST = null;
+            for (var i = 0, n = statement.caseList.members.length; i < n; i++) {
+                var caseExpr = statement.caseList.members[i];
+
+                this.emitSpaceBetweenConstructs(lastEmittedNode, caseExpr);
+                this.emitJavascript(caseExpr, true);
+
+                lastEmittedNode = caseExpr;
+            }
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutput("}");
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitCaseClause(clause: CaseClause): void {
+            this.recordSourceMappingStart(clause);
+            if (clause.expr) {
+                this.writeToOutput("case ");
+                clause.expr.emit(this);
+            }
+            else {
+                this.writeToOutput("default");
+            }
+            this.writeToOutput(":");
+
+            if (clause.body.members.length === 1 && clause.body.members[0].nodeType() === NodeType.Block) {
+                // The case statement was written with curly braces, so emit it with the appropriate formatting
+                clause.body.members[0].emit(this);
+                this.writeLineToOutput("");
+            }
+            else {
+                // No curly braces. Format in the expected way
+                this.writeLineToOutput("");
+                this.indenter.increaseIndent();
+                clause.body.emit(this);
+                this.indenter.decreaseIndent();
+            }
+            this.recordSourceMappingEnd(clause);
+        }
+
+        public emitTryStatement(statement: TryStatement): void {
+            this.recordSourceMappingStart(statement);
+            this.writeToOutput("try ");
+            statement.tryBody.emit(this);
+            this.emitJavascript(statement.catchClause, false);
+
+            if (statement.finallyBody) {
+                this.writeToOutput(" finally");
+                statement.finallyBody.emit(this);
+            }
+            this.recordSourceMappingEnd(statement);
+        }
+
+        public emitCatchClause(clause: CatchClause): void {
+            this.writeToOutput(" ");
+            this.recordSourceMappingStart(clause);
+            this.writeToOutput("catch (");
+            clause.param.id.emit(this);
+            this.writeToOutput(")");
+            clause.body.emit(this);
+            this.recordSourceMappingEnd(clause);
+        }
+
+        public emitDebuggerStatement(statement: DebuggerStatement): void {
+            this.writeToOutputWithSourceMapRecord("debugger", statement);
+            this.writeToOutput(";");
         }
     }
 }
