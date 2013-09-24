@@ -335,6 +335,7 @@ module TypeScript {
         _0_overload_s: " (+ {0} overload(s))",
         Variable_declaration_cannot_have_the_same_name_as_an_import_declaration: "Variable declaration cannot have the same name as an import declaration.",
         Signature_expected_0_type_arguments_got_1_instead: "Signature expected {0} type arguments, got {1} instead.",
+        Property_0_defined_as_optional_in_type_1_but_is_required_in_type_2: "Property '{0}' defined as optional in type '{1}', but is required in type '{2}'.",
         Current_host_does_not_support_0_option: "Current host does not support '{0}' option.",
         ECMAScript_target_version_0_not_supported_Specify_a_valid_target_version_1_default_or_2: "ECMAScript target version '{0}' not supported.  Specify a valid target version: '{1}' (default), or '{2}'",
         Module_code_generation_0_not_supported: "Module code generation '{0}' not supported.",

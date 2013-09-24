@@ -1338,6 +1338,10 @@ module TypeScript {
     "code": 4027,
     "category": DiagnosticCategory.Error
   },
+  "Property '{0}' defined as optional in type '{1}', but is required in type '{2}'.": {
+    "code": 4028,
+    "category": DiagnosticCategory.NoPrefix
+  },
   "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error

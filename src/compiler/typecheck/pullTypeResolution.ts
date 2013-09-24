@@ -8975,6 +8975,16 @@ module TypeScript {
                 }
             }
 
+            // If the target property is required, and the source property is optional, they are not compatible
+            if (sourceProp.isOptional && !targetProp.isOptional) {
+                if (comparisonInfo) {
+                    comparisonInfo.flags |= TypeRelationshipFlags.RequiredPropertyIsMissing;
+                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property_0_defined_as_optional_in_type_1_but_is_required_in_type_2,
+                        [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(), targetProp.getContainer().toString()]));
+                }
+                return false;
+            }
+
             this.resolveDeclaredSymbol(sourceProp, context);
 
             var sourcePropType = sourceProp.type;
