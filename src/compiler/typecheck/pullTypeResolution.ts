@@ -2358,6 +2358,10 @@ module TypeScript {
                     }
                 }
 
+                if (declSymbol.type && declSymbol.type.isError()) {
+                    return declSymbol;
+                }
+
                 declSymbol.startResolving();
 
                 var typeExprSymbol: PullTypeSymbol = null;
@@ -6435,14 +6439,10 @@ module TypeScript {
                         contextualElementType = contextualType.getElementType();
                     }
                     else {
-                        // Collect the index signatures
-                        var indexSignatures = contextualType.getIndexSignatures();
-                        for (var i = 0; i < indexSignatures.length; i++) {
-                            var signature = indexSignatures[i];
-                            if (signature.parameters[0].type === this.semanticInfoChain.numberTypeSymbol) {
-                                contextualElementType = signature.returnType;
-                                break;
-                            }
+                        // Get the number indexer if it exists
+                        var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
+                        if (indexSignatures.numericSignature) {
+                            contextualElementType = indexSignatures.numericSignature.returnType;
                         }
                     }
                 }
@@ -9199,14 +9199,13 @@ module TypeScript {
             }
 
             var best: PullApplicableSignature = signatures[0];
-            var Q: PullApplicableSignature = null;
 
             var PType: PullTypeSymbol = null;
             var QType: PullTypeSymbol = null;
 
             var ambiguous = false;
 
-            var bestParams: PullSymbol[];
+            var pParams: PullSymbol[];
             var qParams: PullSymbol[];
 
             // Make sure the first signature has every parameter resolved
@@ -9226,17 +9225,22 @@ module TypeScript {
             }
 
             for (var qSig = 1; qSig < signatures.length; qSig++) {
-                Q = signatures[qSig];
+                var P = best;
+                var Q = signatures[qSig];
 
                 // find the better conversion
                 for (var i = 0; args && i < args.members.length; i++) {
 
-                    bestParams = best.signature.parameters;
+                    pParams = P.signature.parameters;
                     qParams = Q.signature.parameters;
 
-                    PType = i < bestParams.length ? bestParams[i].type : bestParams[bestParams.length - 1].type.getElementType();
+                    PType = i < pParams.length ? pParams[i].type : pParams[pParams.length - 1].type.getElementType();
                     QType = i < qParams.length ? qParams[i].type : qParams[qParams.length - 1].type.getElementType();
 
+                    // The following series of decisions are biased toward selecting P (the first candidate signature) as opposed to Q (the second).
+                    // To pick P, all we need is P to be a better match for at least one parameter.
+                    // To pick Q, we need Q to be better for at least one parameter, and P to be better for NO parameter.
+                    // This is why we break whenever we have a reason to favor P.
                     if (this.typesAreIdentical(PType, QType) && !(QType.isPrimitive() && (<PullPrimitiveTypeSymbol>QType).isStringConstant())) {
                         continue;
                     }
@@ -9244,6 +9248,7 @@ module TypeScript {
                         (<PullPrimitiveTypeSymbol>PType).isStringConstant() &&
                         args.members[i].nodeType() === NodeType.StringLiteral &&
                         stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>PType).name)) {
+                        best = P;
                         break;
                     }
                     else if (QType.isPrimitive() &&
@@ -9253,25 +9258,25 @@ module TypeScript {
                         best = Q;
                     }
                     else if (this.typesAreIdentical(ATypes[i], PType)) {
+                        best = P;
                         break;
                     }
                     else if (this.typesAreIdentical(ATypes[i], QType)) {
                         best = Q;
-                        break;
                     }
                     else if (this.sourceIsSubtypeOfTarget(PType, QType, context)) {
+                        best = P;
                         break;
                     }
                     else if (this.sourceIsSubtypeOfTarget(QType, PType, context)) {
                         best = Q;
-                        break;
                     }
                     else if (Q.hasProvisionalErrors) {
+                        best = P;
                         break;
                     }
-                    else if (best.hasProvisionalErrors) {
+                    else if (P.hasProvisionalErrors) {
                         best = Q;
-                        break;
                     }
                 }
             }
