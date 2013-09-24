@@ -9965,34 +9965,51 @@ module TypeScript {
 
             if (symbol.isType()) {
                 var typeSymbol = <PullTypeSymbol>symbol;
-                if (typeSymbol.isArray()) {
-                    this.checkSymbolPrivacy(declSymbol, typeSymbol.getElementType(), context, privacyErrorReporter);
-                    return;
-                }
-
-                if (!typeSymbol.isNamedTypeSymbol()) {
-                    if (typeSymbol.inSymbolPrivacyCheck) {
+                var isNamedType = typeSymbol.isNamedTypeSymbol();
+                var isArrayType = typeSymbol.isArray();
+                if (typeSymbol.inSymbolPrivacyCheck) {
+                    if (!isArrayType && !isNamedType) {
                         var associatedContainerType = typeSymbol.getAssociatedContainerType();
                         if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
                             this.checkSymbolPrivacy(declSymbol, associatedContainerType, context, privacyErrorReporter);
                         }
-                        return;
                     }
 
-                    typeSymbol.inSymbolPrivacyCheck = true;
+                    return;
+                }
 
-                    // Check the privacy of members, constructors, calls, index signatures
-                    var members = typeSymbol.getMembers();
-                    for (var i = 0; i < members.length; i++) {
-                        this.checkSymbolPrivacy(declSymbol, members[i].type, context, privacyErrorReporter);
+                typeSymbol.inSymbolPrivacyCheck = true;
+
+                var typars = typeSymbol.getTypeArguments();
+                if (!typars || !typars.length) {
+                    typars = typeSymbol.getTypeParameters();
+                }
+                if (typars) {
+                    for (var i = 0; i < typars.length; i++) {
+                        this.checkSymbolPrivacy(declSymbol, typars[i], context, privacyErrorReporter);
                     }
+                }
 
-                    this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
-                    this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
-                    this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+                if (!isNamedType) {
+                    if (isArrayType) {
+                        this.checkSymbolPrivacy(declSymbol, typeSymbol.getElementType(), context, privacyErrorReporter);
+                    } else {
+                        var members = typeSymbol.getMembers();
+                        for (var i = 0; i < members.length; i++) {
+                            this.checkSymbolPrivacy(declSymbol, members[i].type, context, privacyErrorReporter);
+                        }
 
-                    typeSymbol.inSymbolPrivacyCheck = false;
+                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
+                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
+                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+                    }
+                } else if (typeSymbol.kind == PullElementKind.TypeParameter) {
+                    this.checkSymbolPrivacy(declSymbol, (<PullTypeParameterSymbol>typeSymbol).getConstraint(), context, privacyErrorReporter);
+                }
 
+                typeSymbol.inSymbolPrivacyCheck = false;
+
+                if (!isNamedType) {
                     return;
                 }
             }
@@ -10002,7 +10019,7 @@ module TypeScript {
                 // Check if type symbol is externally visible
                 var symbolIsVisible = symbol.isExternallyVisible();
                 // If Visible check if the type is part of dynamic module
-                if (symbolIsVisible && symbol.kind != PullElementKind.Primitive && symbol.kind != PullElementKind.TypeParameter) {
+                if (symbolIsVisible && symbol.kind != PullElementKind.TypeParameter) {
                     var symbolPath = symbol.pathToRoot();
                     var declSymbolPath = declSymbol.pathToRoot();
                     // Symbols are from different dynamic modules
@@ -10012,8 +10029,9 @@ module TypeScript {
                         // Declaration symbol is from different modules
                         // Type may not be visible without import statement
                         symbolIsVisible = false;
+                        var declSymbolScope = declSymbolPath[declSymbolPath.length - 1];
                         for (var i = symbolPath.length - 1; i >= 0; i--) {
-                            var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbol);
+                            var aliasSymbol = symbolPath[i].getAliasedSymbol(declSymbolScope);
                             if (aliasSymbol) {
                                 // Visible type.
                                 symbolIsVisible = true;

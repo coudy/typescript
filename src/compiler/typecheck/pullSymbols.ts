@@ -2046,29 +2046,6 @@ module TypeScript {
 
             return MemberName.create("{}");
         }
-
-        public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
-            var isVisible = super.isExternallyVisible(inIsExternallyVisibleSymbols);
-            if (isVisible) {
-                // Get type parameters
-                var typars = this.getTypeArguments();
-                if (!typars || !typars.length) {
-                    typars = this.getTypeParameters();
-                }
-
-                if (typars) {
-                    // If any of the type parameter is not visible the type is invisible
-                    for (var i = 0; i < typars.length; i++) {
-                        isVisible = PullSymbol.getIsExternallyVisible(typars[i], this, inIsExternallyVisibleSymbols);
-                        if (!isVisible) {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return isVisible;
-        }
     }
 
     export class PullPrimitiveTypeSymbol extends PullTypeSymbol {
@@ -2447,11 +2424,6 @@ module TypeScript {
         }
 
         public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
-            var constraint = this.getConstraint();
-            if (constraint) {
-                return PullSymbol.getIsExternallyVisible(constraint, this, inIsExternallyVisibleSymbols);
-            }
-
             return true;          
         }
     }
