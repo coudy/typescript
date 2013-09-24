@@ -151,20 +151,30 @@ module TypeScript {
             this.document = document;
         }
 
-        public importStatementShouldBeEmitted(importDeclAST: ImportDeclaration, unitPath?: string): boolean {
+        public shouldEmitImportDeclaration(importDeclAST: ImportDeclaration) {
+            var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
-            var pullSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-            if (!importDeclAST.isExternalImportDeclaration()) {
-                if (pullSymbol.getExportAssignedValueSymbol()) {
-                    return true;
+            var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
+            var isAmdCodeGen = this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous;
+
+            if (!isExternalModuleReference || // Any internal reference needs to check if the emit can happen
+                isExported || // External module reference with export modifier always needs to be emitted
+                !isAmdCodeGen) {// commonjs needs the var declaration for the import declaration
+                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+                if (!importDeclAST.isExternalImportDeclaration()) {
+                    if (importSymbol.getExportAssignedValueSymbol()) {
+                        return true;
+                    }
+                    var containerSymbol = importSymbol.getExportAssignedContainerSymbol();
+                    if (containerSymbol && containerSymbol.getInstanceSymbol()) {
+                        return true;
+                    }
                 }
-                var containerSymbol = pullSymbol.getExportAssignedContainerSymbol();
-                if (containerSymbol && containerSymbol.getInstanceSymbol()) {
-                    return true;
-                }
+
+                return importSymbol.isUsedAsValue;
             }
 
-            return pullSymbol.isUsedAsValue;
+            return false;
         }
 
         public emitImportDeclaration(importDeclAST: ImportDeclaration) {
@@ -172,86 +182,81 @@ module TypeScript {
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
             var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
             var isAmdCodeGen = this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous;
-            if ((!isExternalModuleReference || // Any internal reference needs to check if the emit can happen
-                isExported || // External module reference with export modifier always needs to be emitted
-                !isAmdCodeGen) // commonjs needs the var declaration for the import declaration
-                && this.importStatementShouldBeEmitted(importDeclAST)) {
 
-                this.emitComments(importDeclAST, true);
+            this.emitComments(importDeclAST, true);
 
-                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+            var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
-                var parentSymbol = importSymbol.getContainer();
-                var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
-                var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
-                var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.kind : PullElementKind.None;
+            var parentSymbol = importSymbol.getContainer();
+            var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
+            var associatedParentSymbol = parentSymbol ? parentSymbol.getAssociatedContainerType() : null;
+            var associatedParentSymbolKind = associatedParentSymbol ? associatedParentSymbol.kind : PullElementKind.None;
 
-                var needsPropertyAssignment = false;
-                var usePropertyAssignmentInsteadOfVarDecl = false;
-                var moduleNamePrefix: string;
+            var needsPropertyAssignment = false;
+            var usePropertyAssignmentInsteadOfVarDecl = false;
+            var moduleNamePrefix: string;
 
-                if (isExported &&
-                    (parentKind == PullElementKind.Container ||
-                    parentKind === PullElementKind.DynamicModule ||
-                    associatedParentSymbolKind === PullElementKind.Container ||
-                    associatedParentSymbolKind === PullElementKind.DynamicModule)) {
-                    if (importSymbol.getExportAssignedTypeSymbol() || importSymbol.getExportAssignedContainerSymbol()) {
-                        // Type or container assignment that is exported
-                        needsPropertyAssignment = true;
-                    } else {
-                        var valueSymbol = importSymbol.getExportAssignedValueSymbol();
-                        if (valueSymbol &&
-                            (valueSymbol.kind == PullElementKind.Method || valueSymbol.kind == PullElementKind.Function)) {
-                            needsPropertyAssignment = true;
-                        } else {
-                            usePropertyAssignmentInsteadOfVarDecl = true;
-                        }
-                    }
-
-                    // Calculate what name prefix to use
-                    if (this.emitState.container === EmitContainer.DynamicModule) {
-                        moduleNamePrefix = "exports."
-                        }
-                    else {
-                        moduleNamePrefix = this.moduleName + ".";
-                    }
-                }
-
-                if (isAmdCodeGen && isExternalModuleReference) {
-                    // For amdCode gen of exported external module reference, do not emit var declaration
-                    // Emit the property assignment since it is exported
+            if (isExported &&
+                (parentKind == PullElementKind.Container ||
+                parentKind === PullElementKind.DynamicModule ||
+                associatedParentSymbolKind === PullElementKind.Container ||
+                associatedParentSymbolKind === PullElementKind.DynamicModule)) {
+                if (importSymbol.getExportAssignedTypeSymbol() || importSymbol.getExportAssignedContainerSymbol()) {
+                    // Type or container assignment that is exported
                     needsPropertyAssignment = true;
                 } else {
-                    this.recordSourceMappingStart(importDeclAST);
-                    if (usePropertyAssignmentInsteadOfVarDecl) {
-                        this.writeToOutput(moduleNamePrefix);
+                    var valueSymbol = importSymbol.getExportAssignedValueSymbol();
+                    if (valueSymbol &&
+                        (valueSymbol.kind == PullElementKind.Method || valueSymbol.kind == PullElementKind.Function)) {
+                        needsPropertyAssignment = true;
                     } else {
-                        this.writeToOutput("var ");
-                    }
-                    this.writeToOutput(importDeclAST.id.actualText + " = ");
-                    var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
-
-                    if (isExternalModuleReference) {
-                        this.writeToOutput("require(" + (<Identifier>aliasAST).actualText + ")");
-                    } else {
-                        this.emitJavascript(aliasAST, false);
-                    }
-
-                    this.recordSourceMappingEnd(importDeclAST);
-                    this.writeToOutput(";");
-
-                    if (needsPropertyAssignment) {
-                        this.writeLineToOutput("");
-                        this.emitIndent();
+                        usePropertyAssignmentInsteadOfVarDecl = true;
                     }
                 }
+
+                // Calculate what name prefix to use
+                if (this.emitState.container === EmitContainer.DynamicModule) {
+                    moduleNamePrefix = "exports."
+                        }
+                else {
+                    moduleNamePrefix = this.moduleName + ".";
+                }
+            }
+
+            if (isAmdCodeGen && isExternalModuleReference) {
+                // For amdCode gen of exported external module reference, do not emit var declaration
+                // Emit the property assignment since it is exported
+                needsPropertyAssignment = true;
+            } else {
+                this.recordSourceMappingStart(importDeclAST);
+                if (usePropertyAssignmentInsteadOfVarDecl) {
+                    this.writeToOutput(moduleNamePrefix);
+                } else {
+                    this.writeToOutput("var ");
+                }
+                this.writeToOutput(importDeclAST.id.actualText + " = ");
+                var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
+
+                if (isExternalModuleReference) {
+                    this.writeToOutput("require(" + (<Identifier>aliasAST).actualText + ")");
+                } else {
+                    this.emitJavascript(aliasAST, false);
+                }
+
+                this.recordSourceMappingEnd(importDeclAST);
+                this.writeToOutput(";");
 
                 if (needsPropertyAssignment) {
-                    this.writeToOutputWithSourceMapRecord(moduleNamePrefix + importDeclAST.id.actualText + " = " + importDeclAST.id.actualText, importDeclAST);
-                    this.writeToOutput(";");
+                    this.writeLineToOutput("");
+                    this.emitIndent();
                 }
-                this.emitComments(importDeclAST, false);
             }
+
+            if (needsPropertyAssignment) {
+                this.writeToOutputWithSourceMapRecord(moduleNamePrefix + importDeclAST.id.actualText + " = " + importDeclAST.id.actualText, importDeclAST);
+                this.writeToOutput(";");
+            }
+            this.emitComments(importDeclAST, false);
         }
 
         public createSourceMapper(document: Document, jsFileName: string, jsFile: ITextWriter, sourceMapOut: ITextWriter) {

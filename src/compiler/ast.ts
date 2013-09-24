@@ -611,6 +611,10 @@ module TypeScript {
             return false;
         }
 
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitImportDeclaration(this);
+        }
+
         public emit(emitter: Emitter) {
             emitter.emitImportDeclaration(this);
         }
