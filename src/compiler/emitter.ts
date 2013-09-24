@@ -1301,6 +1301,58 @@ module TypeScript {
             return false;
         }
 
+        // Emits the container name of the symbol in the given enclosing context
+        private emitSymbolContainerNameInEnclosingContext(pullSymbol: PullSymbol) {
+            var decl = pullSymbol.getDeclarations()[0];
+            var symbolContainerDeclPath = getPathToDecl(decl.getParentDecl());
+
+            var enclosingContextDeclPath = this.declStack;
+            var potentialDeclPath = symbolContainerDeclPath;
+
+            // Find the container decl path and the declStack of the context
+            if (enclosingContextDeclPath.length) {
+                var commonNodeIndex = -1;
+                for (var i = symbolContainerDeclPath.length - 1; i >= 0; i--) {
+                    var symbolContainerDeclPathNode = symbolContainerDeclPath[i];
+                    for (var j = enclosingContextDeclPath.length - 1; j >= 0; j--) {
+                        var enclosingContextDeclPathNode = enclosingContextDeclPath[j];
+                        if (symbolContainerDeclPathNode === enclosingContextDeclPathNode) {
+                            commonNodeIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (commonNodeIndex >= 0) {
+                        break;
+                    }
+                }
+
+                if (commonNodeIndex >= 0) {
+                    potentialDeclPath = symbolContainerDeclPath.slice(commonNodeIndex);
+                }
+            }
+
+            // We can emit dotted names only of exported declarations, so find the index to start emitting dotted name
+            var startingIndex = potentialDeclPath.length - 1
+            for (var i = startingIndex - 1; i >= 0; i--) {
+                if (potentialDeclPath[i + 1].flags & PullElementFlags.Exported) {
+                    startingIndex = i;
+                } else {
+                    break;
+                }
+            }
+
+            // Emit dotted names for the path
+            for (var i = startingIndex; i < potentialDeclPath.length; i++) {
+                if (potentialDeclPath[i].kind === PullElementKind.DynamicModule ||
+                    potentialDeclPath[i].flags & PullElementFlags.InitializedDynamicModule) {
+                    this.writeToOutput("exports.");
+                } else {
+                    this.writeToOutput(potentialDeclPath[i].getDisplayName() + ".");
+                }
+            }
+        }
+
         public emitName(name: Identifier, addThis: boolean) {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
@@ -1332,7 +1384,7 @@ module TypeScript {
                         if (pullSymbolContainerKind === PullElementKind.Class) {
                             if (pullSymbol.hasFlag(PullElementFlags.Static)) {
                                 // This is static symbol
-                                this.writeToOutput(pullSymbolContainer.getName() + ".");
+                                this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
                             else if (pullSymbolKind === PullElementKind.Property) {
                                 this.emitThis();
@@ -1343,21 +1395,16 @@ module TypeScript {
                             pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
                             if (pullSymbolKind === PullElementKind.Property || pullSymbolKind === PullElementKind.EnumMember) {
-                                this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
+                                this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
                                 pullSymbolKind === PullElementKind.Variable &&
                                 !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
-                                this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
+                                    this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
-                                this.writeToOutput(pullSymbolContainer.getDisplayName() + ".");
+                                this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
-                            // else if (pullSymbol.hasFlag(PullElementFlags.Exported) && 
-                            //             pullSymbolKind !== PullElementKind.ConstructorMethod && 
-                            //             !pullSymbol.hasFlag(PullElementFlags.ClassConstructorVariable)) {
-                            //         this.writeToOutput(pullSymbolContainer.getName() + ".");
-                            // }
                         }
                         else if (pullSymbolContainerKind === PullElementKind.DynamicModule ||
                             pullSymbolContainer.hasFlag(PullElementFlags.InitializedDynamicModule)) {
@@ -1372,24 +1419,6 @@ module TypeScript {
                                 pullSymbol.kind !== PullElementKind.Class &&
                                 pullSymbol.kind !== PullElementKind.Enum) {
                                 this.writeToOutput("exports.");
-                            }
-                        }
-                        else if (pullSymbolKind === PullElementKind.Property) {
-                            if (pullSymbolContainer.kind === PullElementKind.Class) {
-                                this.emitThis();
-                                this.writeToOutput(".");
-                            }
-                        }
-                        else {
-                            var pullDecls = pullSymbol.getDeclarations();
-                            var emitContainerName = true;
-                            for (var i = 0; i < pullDecls.length; i++) {
-                                if (pullDecls[i].getScriptName() === this.document.fileName) {
-                                    emitContainerName = false;
-                                }
-                            }
-                            if (emitContainerName) {
-                                this.writeToOutput(pullSymbolContainer.getName() + ".");
                             }
                         }
                     }
