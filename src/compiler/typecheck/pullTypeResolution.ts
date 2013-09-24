@@ -1539,7 +1539,10 @@ module TypeScript {
             } else if (!(<Identifier>moduleNameExpr).isMissing()) {
                 moduleName = (<Identifier>moduleNameExpr).text();
                 moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
-                if (!moduleSymbol) {
+                if (moduleSymbol) {
+                    // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
+                    this.setSymbolForAST(moduleNameExpr, moduleSymbol, null);
+                } else {
                     this.currentUnit.addDiagnostic(
                         new Diagnostic(importDecl.getScriptName(), moduleNameExpr.minChar, moduleNameExpr.getLength(), DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]));
                 }
@@ -1585,7 +1588,6 @@ module TypeScript {
                         if (identifierResolution.valueSymbol) {
                             importDeclSymbol.isUsedAsValue = true;
                         }
-                        this.semanticInfoChain.setSymbolForAST(importStatementAST.alias, importDeclSymbol, this.unitPath);
                         return null;
                     }
                 }
@@ -1645,7 +1647,7 @@ module TypeScript {
                 importDeclSymbol.setAssignedTypeSymbol(aliasedType);
 
                 // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
-                this.semanticInfoChain.setSymbolForAST(importStatementAST.alias, aliasedType, this.unitPath);
+                this.setSymbolForAST(importStatementAST.alias, aliasedType, null);
             }
 
             importDeclSymbol.setResolved();
