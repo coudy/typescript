@@ -1554,7 +1554,7 @@ module TypeScript {
             for (var i = 0, n = list.members.length; i < n; i++) {
                 var node = list.members[i];
 
-                if (node.shouldEmit()) {
+                if (node.shouldEmit(this)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
 
                     this.emitJavascript(node, true);
@@ -1683,7 +1683,7 @@ module TypeScript {
             for (; i < n; i++) {
                 var node = list.members[i];
 
-                if (node.shouldEmit()) {
+                if (node.shouldEmit(this)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
 
                     this.emitJavascript(node, true);
@@ -1716,7 +1716,7 @@ module TypeScript {
 
                 var node = list.members[i];
 
-                if (node.shouldEmit()) {
+                if (node.shouldEmit(this)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
 
                     this.emitJavascript(node, true);
@@ -2503,6 +2503,143 @@ module TypeScript {
         public emitDebuggerStatement(statement: DebuggerStatement): void {
             this.writeToOutputWithSourceMapRecord("debugger", statement);
             this.writeToOutput(";");
+        }
+
+        public emitNumericLiteral(literal: NumericLiteral): void {
+            this.writeToOutputWithSourceMapRecord(literal.text(), literal);
+        }
+
+        public emitRegularExpressionLiteral(literal: RegularExpressionLiteral): void {
+            this.writeToOutputWithSourceMapRecord(literal.text, literal);
+        }
+
+        public emitStringLiteral(literal: StringLiteral): void {
+            this.writeToOutputWithSourceMapRecord(literal.actualText, literal);
+        }
+
+        public emitParameter(parameter: Parameter): void {
+            this.writeToOutputWithSourceMapRecord(parameter.id.actualText, parameter);
+        }
+
+        private isNonAmbientAndNotSignature(declaration: FunctionDeclaration): boolean {
+            return !hasFlag(declaration.getFunctionFlags(), FunctionFlags.Signature) &&
+                !hasFlag(declaration.getFunctionFlags(), FunctionFlags.Ambient);
+        }
+
+        public shouldEmitFunctionDeclaration(declaration: FunctionDeclaration): boolean {
+            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration);
+        }
+
+        public emitFunctionDeclaration(declaration: FunctionDeclaration): void {
+            if (this.isNonAmbientAndNotSignature(declaration)) {
+                this.emitFunction(declaration);
+            }
+            else {
+                this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
+        }
+
+        public emitScript(script: Script): void {
+            if (!script.isDeclareFile) {
+                this.emitScriptElements(script);
+            }
+        }
+
+        private isElided(declaration: ModuleDeclaration): boolean {
+            if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
+                return true;
+            }
+
+            // Always emit a non ambient enum (even empty ones).
+            if (hasFlag(declaration.getModuleFlags(), ModuleFlags.IsEnum)) {
+                return false;
+            }
+
+            for (var i = 0, n = declaration.members.members.length; i < n; i++) {
+                var member = declaration.members.members[i];
+
+                // We should emit *this* module if it contains any non-interface types. 
+                // Caveat: if we have contain a module, then we should be emitted *if we want to
+                // emit that inner module as well.
+                if (member.nodeType() === NodeType.ModuleDeclaration) {
+                    if (!this.isElided(<ModuleDeclaration>member)) {
+                        return false;
+                    }
+                }
+                else if (member.nodeType() !== NodeType.InterfaceDeclaration) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public shouldEmitModuleDeclaration(declaration: ModuleDeclaration): boolean {
+            return declaration.preComments() !== null || !this.isElided(declaration);
+        }
+
+        public emitModuleDeclaration(declaration: ModuleDeclaration): void {
+            if (!this.isElided(declaration)) {
+                this.emitComments(declaration, true);
+                this.emitModule(declaration);
+                this.emitComments(declaration, false);
+            }
+            else {
+                this.emitComments(declaration, true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
+        }
+
+        public shouldEmitClassDeclaration(declaration: ClassDeclaration): boolean {
+            return declaration.preComments() !== null || !hasFlag(declaration.getVarFlags(), VariableFlags.Ambient);
+        }
+
+        public emitClassDeclaration(declaration: ClassDeclaration): void {
+            if (!hasFlag(declaration.getVarFlags(), VariableFlags.Ambient)) {
+                this.emitClass(declaration);
+            }
+            else {
+                this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
+        }
+
+        public shouldEmitInterfaceDeclaration(declaration: InterfaceDeclaration): boolean {
+            return declaration.preComments() !== null;
+        }
+
+        public emitInterfaceDeclaration(declaration: InterfaceDeclaration): void {
+            this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+        }
+
+        private firstVariableDeclarator(statement: VariableStatement): VariableDeclarator {
+            return <VariableDeclarator>statement.declaration.declarators.members[0];
+        }
+
+        private isNotAmbientOrHasInitializer(statement: VariableStatement): boolean {
+            var varDecl = this.firstVariableDeclarator(statement);
+            return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
+        }
+
+        public shouldEmitVariableStatement(statement: VariableStatement): boolean {
+            return this.firstVariableDeclarator(statement).preComments() !== null || this.isNotAmbientOrHasInitializer(statement);
+        }
+
+        public emitVariableStatement(statement: VariableStatement): void {
+            if (this.isNotAmbientOrHasInitializer(statement)) {
+                if (hasFlag(statement.getFlags(), ASTFlags.EnumElement)) {
+                    this.emitEnumElement(this.firstVariableDeclarator(statement));
+                }
+                else {
+                    statement.declaration.emit(this);
+                    this.writeToOutput(";");
+                }
+            }
+            else {
+                this.emitComments(this.firstVariableDeclarator(statement), /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
+        }
+
+        public emitGenericType(type: GenericType): void {
+            type.name.emit(this);
         }
     }
 }

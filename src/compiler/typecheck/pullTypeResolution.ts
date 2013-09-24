@@ -6243,7 +6243,7 @@ module TypeScript {
                         text = (<StringLiteral>id).text();
                     }
                     else if (id.nodeType() === NodeType.NumericLiteral) {
-                        actualText = text = (<NumberLiteral>id).text();
+                        actualText = text = (<NumericLiteral>id).text();
                     }
                     else {
                         // TODO: no error for this?
@@ -6548,7 +6548,7 @@ module TypeScript {
             if (callEx.operand2.nodeType() === NodeType.StringLiteral || callEx.operand2.nodeType() === NodeType.NumericLiteral) {
                 var memberName = callEx.operand2.nodeType() === NodeType.StringLiteral
                     ? stripStartAndEndQuotes((<StringLiteral>callEx.operand2).actualText)
-                    : (<NumberLiteral>callEx.operand2).value.toString();
+                    : (<NumericLiteral>callEx.operand2).value.toString();
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 

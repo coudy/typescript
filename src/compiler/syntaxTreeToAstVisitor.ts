@@ -243,13 +243,13 @@ module TypeScript {
                 result = new StringLiteral(token.text(), token.valueText());
             }
             else if (token.tokenKind === SyntaxKind.RegularExpressionLiteral) {
-                result = new RegexLiteral(token.text());
+                result = new RegularExpressionLiteral(token.text());
             }
             else if (token.tokenKind === SyntaxKind.NumericLiteral) {
                 var preComments = this.convertTokenLeadingComments(token, fullStart);
 
                 var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
-                result = new NumberLiteral(value, token.text());
+                result = new NumericLiteral(value, token.text());
 
                 result.setPreComments(preComments);
             }

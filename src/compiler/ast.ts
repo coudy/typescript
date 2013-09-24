@@ -119,7 +119,7 @@ module TypeScript {
             }
         }
 
-        public shouldEmit(): boolean {
+        public shouldEmit(emitter: Emitter): boolean {
             return true;
         }
 
@@ -522,7 +522,7 @@ module TypeScript {
         }
     }
 
-    export class NumberLiteral extends AST {
+    export class NumericLiteral extends AST {
         private _text: string;
 
         constructor(public value: number,
@@ -531,26 +531,24 @@ module TypeScript {
             this._text = text;
         }
 
-        public text(): string {
-            return this._text;
-        }
+        public text(): string { return this._text; }
 
         public nodeType(): NodeType {
             return NodeType.NumericLiteral;
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutputWithSourceMapRecord(this._text, this);
+            emitter.emitNumericLiteral(this);
         }
 
-        public structuralEquals(ast: NumberLiteral, includingPosition: boolean): boolean {
+        public structuralEquals(ast: NumericLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    (this.value === ast.value || (isNaN(this.value) && isNaN(ast.value))) &&
                    this._text === ast._text;
         }
     }
 
-    export class RegexLiteral extends AST {
+    export class RegularExpressionLiteral extends AST {
         constructor(public text: string) {
             super();
         }
@@ -560,10 +558,10 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutputWithSourceMapRecord(this.text, this);
+            emitter.emitRegularExpressionLiteral(this);
         }
 
-        public structuralEquals(ast: RegexLiteral, includingPosition: boolean): boolean {
+        public structuralEquals(ast: RegularExpressionLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this.text === ast.text;
         }
@@ -577,16 +575,14 @@ module TypeScript {
             this._text = text;
         }
 
-        public text(): string {
-            return this._text;
-        }
+        public text(): string { return this._text; }
 
         public nodeType(): NodeType {
             return NodeType.StringLiteral;
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutputWithSourceMapRecord(this.actualText, this);
+            emitter.emitStringLiteral(this);
         }
 
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
@@ -738,7 +734,7 @@ module TypeScript {
         public isOptionalArg(): boolean { return this.isOptional || this.init !== null; }
 
         public emitWorker(emitter: Emitter) {
-            emitter.writeToOutputWithSourceMapRecord(this.id.actualText, this);
+            emitter.emitParameter(this);
         }
 
         public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
@@ -791,22 +787,12 @@ module TypeScript {
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
 
-        private isNonAmbientAndNotSignature(): boolean {
-            return !hasFlag(this.getFunctionFlags(), FunctionFlags.Signature) &&
-                !hasFlag(this.getFunctionFlags(), FunctionFlags.Ambient);
-        }
-
-        public shouldEmit(): boolean {
-            return this.preComments() !== null || this.isNonAmbientAndNotSignature();
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitFunctionDeclaration(this);
         }
 
         public emit(emitter: Emitter) {
-            if (this.isNonAmbientAndNotSignature()) {
-                emitter.emitFunction(this);
-            }
-            else {
-                emitter.emitComments(this, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
-            }
+            emitter.emitFunctionDeclaration(this);
         }
 
         public getNameText() {
@@ -845,9 +831,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            if (!this.isDeclareFile) {
-                emitter.emitScriptElements(this);
-            }
+            emitter.emitScript(this);
         }
 
         public structuralEquals(ast: Script, includingPosition: boolean): boolean {
@@ -896,48 +880,12 @@ module TypeScript {
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
         public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
-        private isElided(): boolean {
-            if (hasFlag(this.getModuleFlags(), ModuleFlags.Ambient)) {
-                return true;
-            }
-
-            // Always emit a non ambient enum (even empty ones).
-            if (hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum)) {
-                return false;
-            }
-
-            for (var i = 0, n = this.members.members.length; i < n; i++) {
-                var member = this.members.members[i];
-
-                // We should emit *this* module if it contains any non-interface types. 
-                // Caveat: if we have contain a module, then we should be emitted *if we want to
-                // emit that inner module as well.
-                if (member.nodeType() === NodeType.ModuleDeclaration) {
-                    if (!(<ModuleDeclaration>member).isElided()) {
-                        return false;
-                    }
-                }
-                else if (member.nodeType() !== NodeType.InterfaceDeclaration) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public shouldEmit(): boolean {
-            return this.preComments() !== null || !this.isElided();
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitModuleDeclaration(this);
         }
 
         public emit(emitter: Emitter) {
-            if (!this.isElided()) {
-                emitter.emitComments(this, true);
-                emitter.emitModule(this);
-                emitter.emitComments(this, false);
-            }
-            else {
-                emitter.emitComments(this, true, /*onlyPinnedOrTripleSlashComments:*/ true);
-            }
+            return emitter.emitModuleDeclaration(this);
         }
     }
 
@@ -992,17 +940,12 @@ module TypeScript {
             return NodeType.ClassDeclaration;
         }
 
-        public shouldEmit(): boolean {
-            return this.preComments() !== null || !hasFlag(this.getVarFlags(), VariableFlags.Ambient);
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitClassDeclaration(this);
         }
 
         public emit(emitter: Emitter): void {
-            if (!hasFlag(this.getVarFlags(), VariableFlags.Ambient)) {
-                emitter.emitClass(this);
-            }
-            else {
-                emitter.emitComments(this, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
-            }
+            emitter.emitClassDeclaration(this);
         }
     }
 
@@ -1020,12 +963,12 @@ module TypeScript {
             return NodeType.InterfaceDeclaration;
         }
 
-        public shouldEmit(): boolean {
-            return this.preComments() !== null;
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitInterfaceDeclaration(this);
         }
 
         public emit(emitter: Emitter): void {
-            emitter.emitComments(this, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            emitter.emitInterfaceDeclaration(this);
         }
     }
 
@@ -1131,32 +1074,12 @@ module TypeScript {
             return true;
         }
 
-        private firstVariableDeclarator(): VariableDeclarator {
-            return <VariableDeclarator>this.declaration.declarators.members[0];
-        }
-
-        private isNotAmbientOrHasInitializer(): boolean {
-            var varDecl = this.firstVariableDeclarator();
-            return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
-        }
-
-        public shouldEmit(): boolean {
-            return this.firstVariableDeclarator().preComments() !== null || this.isNotAmbientOrHasInitializer();
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitVariableStatement(this);
         }
 
         public emitWorker(emitter: Emitter) {
-            if (this.isNotAmbientOrHasInitializer()) {
-                if (hasFlag(this.getFlags(), ASTFlags.EnumElement)) {
-                    emitter.emitEnumElement(this.firstVariableDeclarator());
-                }
-                else {
-                    this.declaration.emit(emitter);
-                    emitter.writeToOutput(";");
-                }
-            }
-            else {
-                emitter.emitComments(this.firstVariableDeclarator(), /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
-            }
+            return emitter.emitVariableStatement(this);
         }
 
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
@@ -1459,7 +1382,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter): void {
-            this.name.emit(emitter);
+            emitter.emitGenericType(this);
         }
 
         public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {

@@ -742,7 +742,7 @@ module TypeScript {
                 this.emitIndent();
                 this.declFile.Write(varDeclarator.id.actualText);
                 if (varDeclarator.init && varDeclarator.init.nodeType() == NodeType.NumericLiteral) {
-                    this.declFile.Write(" = " + (<NumberLiteral>varDeclarator.init).text());
+                    this.declFile.Write(" = " + (<NumericLiteral>varDeclarator.init).text());
                 }
                 this.declFile.WriteLine(",");
             }
