@@ -178,7 +178,6 @@ module FourSlash {
 
             // Open the first file by default
             this.openFile(0);
-            this.checkPostEditInvariants();
         }
 
         // Entry points from fourslash.ts
