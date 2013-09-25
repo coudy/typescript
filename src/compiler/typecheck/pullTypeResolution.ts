@@ -7680,10 +7680,7 @@ module TypeScript {
             this.setTypeChecked(assertionExpression, context);
 
             var typeAssertionType = this.resolveAST(assertionExpression.castType, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
-
-            context.pushContextualType(typeAssertionType, context.inProvisionalResolution(), /*substitutions:*/ null);
-            var exprType = this.resolveAST(assertionExpression.operand, /*inContextuallyTypedAssignment:*/ true, enclosingDecl, context).type;
-            context.popContextualType();
+            var exprType = this.resolveAST(assertionExpression.operand, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             this.resolveDeclaredSymbol(typeAssertionType, context);
             this.resolveDeclaredSymbol(exprType, context);

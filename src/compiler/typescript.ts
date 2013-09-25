@@ -1365,27 +1365,6 @@ module TypeScript {
 
                         break;
 
-                    case NodeType.CastExpression:
-                        var castExpression = <CastExpression>current;
-
-                        if (!(i + 1 < n && path.asts[i + 1] === castExpression.castType)) {
-                            // We are outside the cast term
-                            if (propagateContextualTypes) {
-                                var contextualType: PullTypeSymbol = null;
-                                var typeSymbol = this.resolver.resolveCastExpression(castExpression, enclosingDecl, resolutionContext);
-
-                                // Set the context type
-                                if (typeSymbol) {
-                                    inContextuallyTypedAssignment = true;
-                                    contextualType = typeSymbol;
-                                }
-
-                                resolutionContext.pushContextualType(contextualType, false, null);
-                            }
-                        }
-
-                        break;
-
                     case NodeType.ReturnStatement:
                         if (propagateContextualTypes) {
                             var returnStatement = <ReturnStatement>current;
