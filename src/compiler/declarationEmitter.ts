@@ -840,7 +840,7 @@ module TypeScript {
             var documents: Document[] = [];
             if (this.compiler.emitOptions.outputMany || script.isExternalModule) {
                 // Emit only from this file
-                var scriptReferences = script.referencedFiles;
+                var scriptReferences = this.document.referencedFiles;
                 var addedGlobalDocument = false;
                 for (var j = 0; j < scriptReferences.length; j++) {
                     var currentReference = this.resolveScriptReference(this.document, scriptReferences[j]);
@@ -863,7 +863,7 @@ module TypeScript {
                 for (var i = 0; i < allDocuments.length; i++) {
                     if (!allDocuments[i].script.isDeclareFile && !allDocuments[i].script.isExternalModule) {
                         // Check what references need to be added
-                        var scriptReferences = allDocuments[i].script.referencedFiles;
+                        var scriptReferences = allDocuments[i].referencedFiles;
                         for (var j = 0; j < scriptReferences.length; j++) {
                             var currentReference = this.resolveScriptReference(allDocuments[i], scriptReferences[j]);
                             var document = this.compiler.getDocument(currentReference);

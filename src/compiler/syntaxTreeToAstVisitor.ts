@@ -356,12 +356,8 @@ module TypeScript {
                 this.setSpanExplicit(bod, start, this.position);
             }
 
-            var result = new Script();
+            var result = new Script(bod, isExternalModule, isDTSFile(this.fileName));
             this.setSpanExplicit(result, start, start + node.fullWidth());
-
-            result.moduleElements = bod;
-            result.isExternalModule = isExternalModule;
-            result.isDeclareFile = isDTSFile(this.fileName);
 
             return result;
         }

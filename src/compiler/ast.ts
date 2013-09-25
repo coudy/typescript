@@ -802,10 +802,9 @@ module TypeScript {
     }
 
     export class Script extends AST {
-        public moduleElements: ASTList = null;
-        public referencedFiles= new Array<string>();
-        public isDeclareFile = false;
-        public isExternalModule: boolean = false;
+        constructor(public moduleElements: ASTList, public isExternalModule: boolean, public isDeclareFile: boolean) {
+            super();
+        }
 
         public nodeType(): NodeType {
             return NodeType.Script;

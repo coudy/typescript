@@ -133,6 +133,7 @@ module TypeScript {
         public lineMap: LineMap;
 
         constructor(public fileName: string,
+                    public referencedFiles: string[],
                     private compilationSettings: CompilationSettings,
                     public scriptSnapshot: IScriptSnapshot,
                     public byteOrderMark: ByteOrderMark,
@@ -220,7 +221,7 @@ module TypeScript {
                 ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), getParseOptions(this.compilationSettings))
                 : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
 
-            return new Document(this.fileName, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
+            return new Document(this.fileName, this.referencedFiles, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
         }
 
         public static create(fileName: string, scriptSnapshot: IScriptSnapshot, byteOrderMark: ByteOrderMark, version: number, isOpen: boolean, referencedFiles: string[], compilationSettings: CompilationSettings): Document {
@@ -229,8 +230,7 @@ module TypeScript {
             var syntaxTree = Parser.parse(fileName, SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), getParseOptions(compilationSettings));
             TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
 
-            var document = new Document(fileName, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
-            document.script.referencedFiles = referencedFiles;
+            var document = new Document(fileName, referencedFiles, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
 
             return document;
         }
