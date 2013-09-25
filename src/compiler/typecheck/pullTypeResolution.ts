@@ -6965,6 +6965,7 @@ module TypeScript {
                 if (targetTypeSymbol.isClass()) {
                     this.seenSuperConstructorCall = true;
                     targetSymbol = targetTypeSymbol.getConstructorMethod();
+                    this.resolveDeclaredSymbol(targetSymbol, context);
                     targetTypeSymbol = targetSymbol.type;
                 }
                 else {
