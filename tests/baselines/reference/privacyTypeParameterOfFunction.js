@@ -87,3 +87,38 @@ function privateFunctionWithPrivateTypeParameters() {
 function privateFunctionWithPublicTypeParameters() {
 }
 
+var publicClassWithWithPublicTypeParametersWithoutExtends = (function () {
+    function publicClassWithWithPublicTypeParametersWithoutExtends() {
+    }
+    publicClassWithWithPublicTypeParametersWithoutExtends.myPublicStaticMethod = function () {
+    };
+    publicClassWithWithPublicTypeParametersWithoutExtends.myPrivateStaticMethod = function () {
+    };
+    publicClassWithWithPublicTypeParametersWithoutExtends.prototype.myPublicMethod = function () {
+    };
+    publicClassWithWithPublicTypeParametersWithoutExtends.prototype.myPrivateMethod = function () {
+    };
+    return publicClassWithWithPublicTypeParametersWithoutExtends;
+})();
+exports.publicClassWithWithPublicTypeParametersWithoutExtends = publicClassWithWithPublicTypeParametersWithoutExtends;
+var privateClassWithWithPublicTypeParametersWithoutExtends = (function () {
+    function privateClassWithWithPublicTypeParametersWithoutExtends() {
+    }
+    privateClassWithWithPublicTypeParametersWithoutExtends.myPublicStaticMethod = function () {
+    };
+    privateClassWithWithPublicTypeParametersWithoutExtends.myPrivateStaticMethod = function () {
+    };
+    privateClassWithWithPublicTypeParametersWithoutExtends.prototype.myPublicMethod = function () {
+    };
+    privateClassWithWithPublicTypeParametersWithoutExtends.prototype.myPrivateMethod = function () {
+    };
+    return privateClassWithWithPublicTypeParametersWithoutExtends;
+})();
+
+function publicFunctionWithPublicTypeParametersWithoutExtends() {
+}
+exports.publicFunctionWithPublicTypeParametersWithoutExtends = publicFunctionWithPublicTypeParametersWithoutExtends;
+
+function privateFunctionWithPublicTypeParametersWithoutExtends() {
+}
+

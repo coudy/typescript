@@ -91,3 +91,42 @@ function privateFunctionWithPrivateTypeParameters<T extends privateClass>() {
 
 function privateFunctionWithPublicTypeParameters<T extends publicClass>() {
 }
+
+export interface publicInterfaceWithPublicTypeParametersWithoutExtends {
+    new <T>(): publicClass;
+    <T>(): publicClass;
+    myMethod<T>(): publicClass;
+}
+
+interface privateInterfaceWithPublicTypeParametersWithoutExtends {
+    new <T>(): publicClass;
+    <T>(): publicClass;
+    myMethod<T>(): publicClass;
+}
+
+export class publicClassWithWithPublicTypeParametersWithoutExtends {
+    static myPublicStaticMethod<T>() {
+    }
+    private static myPrivateStaticMethod<T>() {
+    }
+    myPublicMethod<T>() {
+    }
+    private myPrivateMethod<T>() {
+    }
+}
+class privateClassWithWithPublicTypeParametersWithoutExtends {
+    static myPublicStaticMethod<T>() {
+    }
+    private static myPrivateStaticMethod<T>() {
+    }
+    myPublicMethod<T>() {
+    }
+    private myPrivateMethod<T>() {
+    }
+}
+
+export function publicFunctionWithPublicTypeParametersWithoutExtends<T>() {
+}
+
+function privateFunctionWithPublicTypeParametersWithoutExtends<T>() {
+}

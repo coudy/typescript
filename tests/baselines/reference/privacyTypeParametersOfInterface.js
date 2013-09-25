@@ -11,5 +11,18 @@ var publicClass = (function () {
 })();
 exports.publicClass = publicClass;
 
+var privateClassT = (function () {
+    function privateClassT() {
+    }
+    return privateClassT;
+})();
+
+var publicClassT = (function () {
+    function publicClassT() {
+    }
+    return publicClassT;
+})();
+exports.publicClassT = publicClassT;
+
 
 
