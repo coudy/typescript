@@ -1521,7 +1521,7 @@ module TypeScript {
             }
         }
 
-        public emitList(list: ASTList, useNewLineSeparator = true) {
+        public emitList(list: ASTList, useNewLineSeparator = true, startInclusive = 0, endExclusive = list.members.length) {
             if (list === null) {
                 return;
             }
@@ -1529,7 +1529,7 @@ module TypeScript {
             this.emitComments(list, true);
             var lastEmittedNode: AST = null;
 
-            for (var i = 0, n = list.members.length; i < n; i++) {
+            for (var i = startInclusive; i < endExclusive; i++) {
                 var node = list.members[i];
 
                 if (node.shouldEmit(this)) {
@@ -1672,21 +1672,7 @@ module TypeScript {
                 }
             }
 
-            var lastEmittedNode: AST = null;
-
-            // Now emit the rest of the script elements
-            for (; i < n; i++) {
-                var node = list.members[i];
-
-                if (node.shouldEmit(this)) {
-                    this.emitSpaceBetweenConstructs(lastEmittedNode, node);
-
-                    this.emitJavascript(node, true);
-                    this.writeLineToOutput("");
-
-                    lastEmittedNode = node;
-                }
-            }
+            this.emitList(list, /*useNewLineSeparator:*/ true, /*startInclusive:*/ i, /*endExclusive:*/ n);
         }
 
         public emitConstructorStatements(funcDecl: FunctionDeclaration) {
