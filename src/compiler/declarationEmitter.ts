@@ -155,18 +155,18 @@ module TypeScript {
                     var emitDeclare = !hasFlag(pullFlags, PullElementFlags.Exported);
 
                     var container = this.getAstDeclarationContainer();
-                    var isWholeFileDynamicModule = container.nodeType() === NodeType.ModuleDeclaration &&
-                        hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsWholeFile);
+                    var isExternalModule = container.nodeType() === NodeType.ModuleDeclaration &&
+                        hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsExternalModule);
 
                     // Emit export only for global export statements. 
                     // The container for this would be dynamic module which is whole file
-                    if (isWholeFileDynamicModule && hasFlag(pullFlags, PullElementFlags.Exported)) {
+                    if (isExternalModule && hasFlag(pullFlags, PullElementFlags.Exported)) {
                         result += "export ";
                         emitDeclare = true;
                     }
 
                     // Emit declare only in global context
-                    if (isWholeFileDynamicModule || container.nodeType() == NodeType.Script) {
+                    if (isExternalModule || container.nodeType() == NodeType.Script) {
                         // Emit declare if not interface declaration or import declaration && is not from module
                         if (emitDeclare && typeString !== "interface" && typeString != "import") {
                             result += "declare ";
@@ -757,13 +757,13 @@ module TypeScript {
                 return this.emitEnumSignature(moduleDecl);
             }
 
-            var isWholeFileModule = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
-            if (!isWholeFileModule && !this.canEmitDeclarations(ToDeclFlags(moduleDecl.getModuleFlags()), moduleDecl)) {
+            var isExternalModule = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
+            if (!isExternalModule && !this.canEmitDeclarations(ToDeclFlags(moduleDecl.getModuleFlags()), moduleDecl)) {
                 return;
             }
 
             var dottedModuleContainers: ModuleDeclaration[] = [];
-            if (!isWholeFileModule) {
+            if (!isExternalModule) {
                 var modulePullDecl = this.compiler.semanticInfoChain.getDeclForAST(moduleDecl, this.document.fileName);
                 var moduleName = this.getDeclFlagsString(ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "module");
 
@@ -800,7 +800,7 @@ module TypeScript {
 
             this.emitDeclarationsForList(moduleDecl.members);
 
-            if (!isWholeFileModule) {
+            if (!isExternalModule) {
                 this.indenter.decreaseIndent();
                 this.emitIndent();
                 this.declFile.WriteLine("}");

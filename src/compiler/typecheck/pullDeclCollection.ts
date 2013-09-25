@@ -61,7 +61,7 @@ module TypeScript {
         var moduleDecl: ModuleDeclaration = <ModuleDeclaration>ast;
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text();
-        var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsDynamic);
+        var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
         var kind: PullElementKind = PullElementKind.Container;
 
         if (!context.containingModuleHasExportAssignment() && (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || context.isParsingAmbientModule())) {

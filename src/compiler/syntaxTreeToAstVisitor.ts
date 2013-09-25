@@ -338,7 +338,7 @@ module TypeScript {
                 var topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
-                moduleFlags = ModuleFlags.IsDynamic | ModuleFlags.IsWholeFile | ModuleFlags.Exported;
+                moduleFlags = ModuleFlags.IsExternalModule | ModuleFlags.Exported;
                 if (isDTSFile(this.fileName)) {
                     moduleFlags |= ModuleFlags.Ambient;
                 }

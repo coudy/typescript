@@ -834,13 +834,12 @@ module TypeScript {
                 this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
             }
 
-            var isDynamicMod = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsDynamic);
+            var isExternalModule = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
             var temp = this.setContainer(EmitContainer.Module);
             var isExported = hasFlag(pullDecl.flags, PullElementFlags.Exported);
-            var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
 
             // prologue
-            if (isDynamicMod) {
+            if (isExternalModule) {
                 // if the external module has an "export =" identifier, we'll
                 // set it in the ExportAssignment emit method
                 this.setExportAssignmentIdentifier(null);
@@ -863,14 +862,12 @@ module TypeScript {
                 this.writeToOutput("function (");
                 this.writeToOutputWithSourceMapRecord(this.moduleName, moduleDecl.name);
                 this.writeLineToOutput(") {");
-            }
 
-            if (!isWholeFile) {
                 this.recordSourceMappingNameStart(this.moduleName);
             }
 
             // body - don't indent for Node
-            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
+            if (!isExternalModule || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                 this.indenter.increaseIndent();
             }
 
@@ -879,13 +876,13 @@ module TypeScript {
             }
 
             this.emitList(moduleDecl.members);
-            if (!isDynamicMod || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
+            if (!isExternalModule || this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }
             this.emitIndent();
 
             // epilogue
-            if (isDynamicMod) {
+            if (isExternalModule) {
                 var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
                 var exportAssignmentValueSymbol = (<PullContainerSymbol>pullDecl.getSymbol()).getExportAssignedValueSymbol();
 
@@ -904,9 +901,6 @@ module TypeScript {
                     this.writeLineToOutput("module.exports = " + exportAssignmentIdentifier + ";");
                 }
 
-                if (!isWholeFile) {
-                    this.recordSourceMappingNameEnd();
-                }
                 this.recordSourceMappingEnd(moduleDecl);
             }
             else {
@@ -914,34 +908,26 @@ module TypeScript {
                 this.recordSourceMappingStart(moduleDecl.endingToken);
                 if (temp === EmitContainer.Prog && isExported) {
                     this.writeToOutput("}");
-                    if (!isWholeFile) {
-                        this.recordSourceMappingNameEnd();
-                    }
+                    this.recordSourceMappingNameEnd();
                     this.recordSourceMappingEnd(moduleDecl.endingToken);
                     this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
                 }
                 else if (isExported || temp === EmitContainer.Prog) {
                     var dotMod = svModuleName !== "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
                     this.writeToOutput("}");
-                    if (!isWholeFile) {
-                        this.recordSourceMappingNameEnd();
-                    }
+                    this.recordSourceMappingNameEnd();
                     this.recordSourceMappingEnd(moduleDecl.endingToken);
                     this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
                 }
                 else if (!isExported && temp !== EmitContainer.Prog) {
                     this.writeToOutput("}");
-                    if (!isWholeFile) {
-                        this.recordSourceMappingNameEnd();
-                    }
+                    this.recordSourceMappingNameEnd();
                     this.recordSourceMappingEnd(moduleDecl.endingToken);
                     this.writeToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
                 }
                 else {
                     this.writeToOutput("}");
-                    if (!isWholeFile) {
-                        this.recordSourceMappingNameEnd();
-                    }
+                    this.recordSourceMappingNameEnd();
                     this.recordSourceMappingEnd(moduleDecl.endingToken);
                     this.writeToOutput(")();");
                 }
@@ -1640,7 +1626,7 @@ module TypeScript {
                 var firstElement = list.members[0];
                 if (firstElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleDeclaration = <ModuleDeclaration>firstElement;
-                    if (moduleDeclaration.isWholeFile()) {
+                    if (hasFlag(moduleDeclaration.getModuleFlags(), ModuleFlags.IsExternalModule)) {
                         firstElement = moduleDeclaration.members.members[0];
                     }
                 }
@@ -1670,7 +1656,7 @@ module TypeScript {
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script);
 
-            var isNonElidedExternalModule = hasFlag(script.getModuleFlags(), ModuleFlags.IsDynamic) && !this.scriptIsElided(script);
+            var isNonElidedExternalModule = hasFlag(script.getModuleFlags(), ModuleFlags.IsExternalModule) && !this.scriptIsElided(script);
             if (isNonElidedExternalModule) {
                 this.recordSourceMappingStart(script);
 

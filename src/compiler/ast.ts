@@ -864,7 +864,6 @@ module TypeScript {
         }
 
         public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
-        public isWholeFile() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsWholeFile); }
 
         public shouldEmit(emitter: Emitter): boolean {
             return emitter.shouldEmitModuleDeclaration(this);
