@@ -835,12 +835,6 @@ module TypeScript {
             }
 
             var isDynamicMod = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsDynamic);
-            var prevOutFile = this.outfile;
-            var prevOutFileName = this.emittingFileName;
-            var prevAllSourceMappers = this.allSourceMappers;
-            var prevSourceMapper = this.sourceMapper;
-            var prevColumn = this.emitState.column;
-            var prevLine = this.emitState.line;
             var temp = this.setContainer(EmitContainer.Module);
             var isExported = hasFlag(pullDecl.flags, PullElementFlags.Exported);
             var isWholeFile = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsWholeFile);
@@ -914,19 +908,6 @@ module TypeScript {
                     this.recordSourceMappingNameEnd();
                 }
                 this.recordSourceMappingEnd(moduleDecl);
-
-                // close the module outfile, and restore the old one
-                if (this.outfile !== prevOutFile) {
-                    this.emitSourceMapsAndClose();
-                    if (prevSourceMapper !== null) {
-                        this.allSourceMappers = prevAllSourceMappers;
-                        this.sourceMapper = prevSourceMapper;
-                        this.emitState.column = prevColumn;
-                        this.emitState.line = prevLine;
-                    }
-                    this.outfile = prevOutFile;
-                    this.emittingFileName = prevOutFileName;
-                }
             }
             else {
                 var parentIsDynamic = temp === EmitContainer.DynamicModule;
