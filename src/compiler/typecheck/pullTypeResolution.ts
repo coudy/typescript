@@ -1396,6 +1396,16 @@ module TypeScript {
             return classDeclSymbol;
         }
 
+        private typeCheckTypeParametersOfTypeDeclaration(typeDeclaration: TypeDeclaration, context: PullTypeResolutionContext) {
+            var typeDecl: PullDecl = this.getDeclForAST(typeDeclaration);
+            var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
+            var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
+            for (var i = 0; i < typeDeclTypeParameters.length; i++) {
+                this.checkSymbolPrivacy(typeDeclSymbol, typeDeclTypeParameters[i], (symbol: PullSymbol) =>
+                    this.typeParameterOfTypeDeclarationPrivacyErrorReporter(typeDeclaration, i, typeDeclTypeParameters[i], symbol, context));
+            }
+        }
+
         private typeCheckClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(classDeclAST, context);
 
@@ -1411,6 +1421,7 @@ module TypeScript {
 
             this.resolveAST(classDeclAST.members, false, classDecl, context);
 
+            this.typeCheckTypeParametersOfTypeDeclaration(classDeclAST, context);
             this.typeCheckBases(classDeclAST, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
             if (!classDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
@@ -1451,6 +1462,7 @@ module TypeScript {
 
             this.resolveAST(interfaceDeclAST.members, false, interfaceDecl, context);
 
+            this.typeCheckTypeParametersOfTypeDeclaration(interfaceDeclAST, context);
             this.typeCheckBases(interfaceDeclAST, interfaceDeclSymbol, this.getEnclosingDecl(interfaceDecl), context);
 
             if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
@@ -10075,6 +10087,41 @@ module TypeScript {
                 var returnType = signature.returnType;
                 this.checkSymbolPrivacy(declSymbol, returnType, privacyErrorReporter);
             }
+        }
+
+        private typeParameterOfTypeDeclarationPrivacyErrorReporter(declAST: TypeDeclaration, indexOfTypeParameter: number, typeParameter: PullTypeParameterSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
+            var decl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
+            var messageCode: string;
+
+            var typeParameterAST = declAST.typeParameters.members[indexOfTypeParameter];
+
+            var typeSymbol = <PullTypeSymbol>symbol;
+            var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
+            if (typeSymbol.isContainer() && !typeSymbol.isEnum()) {
+                if (!isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+                if (declAST.nodeType() === NodeType.ClassDeclaration) {
+                    // Class
+                    messageCode = DiagnosticCode.TypeParameter_0_of_exported_class_is_using_inaccessible_module_1;
+                } else {
+                    // Interface
+                    messageCode = DiagnosticCode.TypeParameter_0_of_exported_interface_is_using_inaccessible_module_1;
+                }
+            } else {
+                if (declAST.nodeType() === NodeType.ClassDeclaration) {
+                    // Class
+                    messageCode = DiagnosticCode.TypeParameter_0_of_exported_class_has_or_is_using_private_type_1;
+                } else {
+                    // Interface
+                    messageCode = DiagnosticCode.TypeParameter_0_of_exported_interface_has_or_is_using_private_type_1;
+                }
+            }
+
+            var messageArguments = [typeParameter.getScopedName(enclosingSymbol, true /*useConstraintInName*/), typeSymbolName];
+            context.postError(this.unitPath, typeParameterAST.minChar, typeParameterAST.getLength(), messageCode, messageArguments);
         }
 
         private baseListPrivacyErrorReporter(declAST: TypeDeclaration, declSymbol: PullTypeSymbol, baseAst: AST, isExtendedType: boolean, symbol: PullSymbol, context: PullTypeResolutionContext) {

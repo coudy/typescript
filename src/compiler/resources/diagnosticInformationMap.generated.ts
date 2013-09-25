@@ -1210,6 +1210,22 @@ module TypeScript {
     "code": 2219,
     "category": DiagnosticCategory.Error
   },
+  "TypeParameter '{0}' of exported class has or is using private type '{1}'.": {
+    "code": 2220,
+    "category": DiagnosticCategory.Error
+  },
+  "TypeParameter '{0}' of exported interface has or is using private type '{1}'.": {
+    "code": 2221,
+    "category": DiagnosticCategory.Error
+  },
+  "TypeParameter '{0}' of exported class is using inaccessible module {1}.": {
+    "code": 2222,
+    "category": DiagnosticCategory.Error
+  },
+  "TypeParameter '{0}' of exported interface is using inaccessible module {1}.": {
+    "code": 2223,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
