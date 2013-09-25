@@ -10179,6 +10179,7 @@ module TypeScript {
 
             var isGetter = funcDeclAST.isGetAccessor();
             var isSetter = funcDeclAST.isSetAccessor();
+            var isIndexSignature = funcDeclAST.isIndexerMember();
 
             if (isGetter || isSetter) {
                 var accessorSymbol = <PullAccessorSymbol> functionSymbol;
@@ -10191,15 +10192,25 @@ module TypeScript {
                         // Call Signature from the non named type
                         return;
                     }
-                } else if (functionSymbol.kind == PullElementKind.Method && !functionSymbol.getContainer().isNamedTypeSymbol()) {
+                } else if (functionSymbol.kind == PullElementKind.Method && !funcDeclAST.isStatic() && !functionSymbol.getContainer().isNamedTypeSymbol()) {
                     // method of the unnmaed type
                     return;
                 }
                 functionSignature = functionDecl.getSignatureSymbol();
             }
 
+            // TypeParameters
+            if (funcDeclAST.typeArguments && !isGetter && !isSetter && !isIndexSignature && !funcDeclAST.isConstructor) {
+                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
+                    var typeParameterAST = <TypeParameter>funcDeclAST.typeArguments.members[i];
+                    var typeParameter = this.resolveTypeParameterDeclaration(typeParameterAST, context);
+                    this.checkSymbolPrivacy(functionSymbol, typeParameter, context, (symbol: PullSymbol) =>
+                        this.functionTypeArgumentArgumentTypePrivacyErrorReporter(funcDeclAST, typeParameterAST, typeParameter, symbol, context));
+                }
+            }
+
             // Check function parameters
-            if (!isGetter) {
+            if (!isGetter && !isIndexSignature) {
                 var funcParams = functionSignature.parameters;
                 for (var i = 0; i < funcParams.length; i++) {
                     this.checkSymbolPrivacy(functionSymbol, funcParams[i].type, context, (symbol: PullSymbol) =>
@@ -10214,18 +10225,81 @@ module TypeScript {
             }
         }
 
+        private functionTypeArgumentArgumentTypePrivacyErrorReporter(declAST: FunctionDeclaration, typeParameterAST: TypeParameter, typeParameter: PullTypeSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
+            var decl = this.getDeclForAST(declAST);
+            var enclosingDecl = this.getEnclosingDecl(decl);
+            var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
+
+            var isStatic = declAST.isStatic();
+            var isMethod = decl.kind === PullElementKind.Method;
+            var isMethodOfClass = false;
+            var declParent = decl.getParentDecl();
+            if (declParent && (declParent.kind === PullElementKind.Class || isStatic)) {
+                isMethodOfClass = true;
+            }
+
+            var start = typeParameterAST.minChar;
+            var length = typeParameterAST.getLength();
+
+            var typeSymbol = <PullTypeSymbol>symbol;
+            var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
+            var messageCode: string;
+            if (typeSymbol.isContainer() && !typeSymbol.isEnum()) {
+                if (!isQuoted(typeSymbolName)) {
+                    typeSymbolName = "'" + typeSymbolName + "'";
+                }
+
+                if (declAST.isConstructMember()) {
+                    messageCode = DiagnosticCode.TypeParameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1;
+                } else if (declAST.isCallMember()) {
+                    messageCode = DiagnosticCode.TypeParameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1;
+                } else if (isMethod) {
+                    if (isStatic) {
+                        messageCode = DiagnosticCode.TypeParameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1;
+                    } else if (isMethodOfClass) {
+                        messageCode = DiagnosticCode.TypeParameter_0_of_public_method_from_exported_class_is_using_inaccessible_module_1;
+                    } else {
+                        messageCode = DiagnosticCode.TypeParameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1;
+                    }
+                } else {
+                    messageCode = DiagnosticCode.TypeParameter_0_of_exported_function_is_using_inaccessible_module_1;
+                }
+            } else {
+                if (declAST.isConstructMember()) {
+                    messageCode = DiagnosticCode.TypeParameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1;
+                } else if (declAST.isCallMember()) {
+                    messageCode = DiagnosticCode.TypeParameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1;
+                } else if (isMethod) {
+                    if (isStatic) {
+                        messageCode = DiagnosticCode.TypeParameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1;
+                    } else if (isMethodOfClass) {
+                        messageCode = DiagnosticCode.TypeParameter_0_of_public_method_from_exported_class_has_or_is_using_private_type_1;
+                    } else {
+                        messageCode = DiagnosticCode.TypeParameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1;
+                    }
+                } else {
+                    messageCode = DiagnosticCode.TypeParameter_0_of_exported_function_has_or_is_using_private_type_1;
+                }
+            }
+
+            if (messageCode) {
+                var messageArgs = [typeParameter.getScopedName(enclosingSymbol, true /*usedConstraintInName*/), typeSymbolName];
+                context.postError(this.unitPath, start, length, messageCode, messageArgs);
+            }
+        }
+
         private functionArgumentTypePrivacyErrorReporter(declAST: FunctionDeclaration, argIndex: number, paramSymbol: PullSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
             var decl = this.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
-            var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
-            var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var isStatic = (decl.flags & PullElementFlags.Static) === PullElementFlags.Static;
+            var isGetter = declAST.isGetAccessor();
+            var isSetter = declAST.isSetAccessor();
+            var isStatic = declAST.isStatic();
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
-            if (declParent && (declParent.kind === PullElementKind.Class || declParent.kind === PullElementKind.ConstructorMethod)) {
+            if (declParent && (declParent.kind === PullElementKind.Class || isStatic)) {
                 isMethodOfClass = true;
             }
 
@@ -10299,13 +10373,13 @@ module TypeScript {
             var decl = this.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
 
-            var isGetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.GetAccessor);
-            var isSetter = declAST.isAccessor() && hasFlag(declAST.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var isStatic = (decl.flags & PullElementFlags.Static) === PullElementFlags.Static;
+            var isGetter = declAST.isGetAccessor();
+            var isSetter = declAST.isSetAccessor();
+            var isStatic = declAST.isStatic();
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
-            if (declParent && (declParent.kind === PullElementKind.Class || declParent.kind === PullElementKind.ConstructorMethod)) {
+            if (declParent && (declParent.kind === PullElementKind.Class || isStatic)) {
                 isMethodOfClass = true;
             }
 
