@@ -802,12 +802,22 @@ module TypeScript {
     }
 
     export class Script extends AST {
-        constructor(public moduleElements: ASTList, public isExternalModule: boolean, public isDeclareFile: boolean) {
+        private _moduleFlags = ModuleFlags.None;
+
+        constructor(public moduleElements: ASTList, public isExternalModule: boolean, public isDeclareFile: boolean, public amdDependencies: string[]) {
             super();
         }
 
         public nodeType(): NodeType {
             return NodeType.Script;
+        }
+
+        public getModuleFlags(): ModuleFlags {
+            return this._moduleFlags;
+        }
+
+        public setModuleFlags(flags: ModuleFlags): void {
+            this._moduleFlags = flags;
         }
 
         public emit(emitter: Emitter) {
@@ -822,7 +832,6 @@ module TypeScript {
 
     export class ModuleDeclaration extends AST {
         private _moduleFlags = ModuleFlags.None;
-        public amdDependencies = new Array<string>();
 
         constructor(public name: Identifier,
                     public members: ASTList,

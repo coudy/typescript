@@ -773,7 +773,7 @@ module TypeScript {
             return result;
         }
 
-        public getModuleImportAndDependencyList(moduleDecl: ModuleDeclaration) {
+        public getModuleImportAndDependencyList(script: Script) {
             var importList = "";
             var dependencyList = "";
 
@@ -800,8 +800,8 @@ module TypeScript {
             }
 
             // emit any potential amd dependencies
-            for (var i = 0; i < moduleDecl.amdDependencies.length; i++) {
-                dependencyList += ", \"" + moduleDecl.amdDependencies[i] + "\"";
+            for (var i = 0; i < script.amdDependencies.length; i++) {
+                dependencyList += ", \"" + script.amdDependencies[i] + "\"";
             }
 
             return {
@@ -847,23 +847,10 @@ module TypeScript {
 
             // prologue
             if (isDynamicMod) {
-
                 // if the external module has an "export =" identifier, we'll
                 // set it in the ExportAssignment emit method
                 this.setExportAssignmentIdentifier(null);
                 this.setContainer(EmitContainer.DynamicModule); // discard the previous 'Module' container
-
-                this.recordSourceMappingStart(moduleDecl);
-                if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
-                    var dependencyList = "[\"require\", \"exports\"";
-                    var importList = "require, exports";
-
-                    var importAndDependencyList = this.getModuleImportAndDependencyList(moduleDecl);
-                    importList += importAndDependencyList.importList;
-                    dependencyList += importAndDependencyList.dependencyList + "]";
-
-                    this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
-                }
             }
             else {
                 if (!isExported) {
@@ -1701,6 +1688,23 @@ module TypeScript {
 
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script);
+
+            var isNonElidedExternalModule = hasFlag(script.getModuleFlags(), ModuleFlags.IsDynamic) && !this.scriptIsElided(script);
+            if (isNonElidedExternalModule) {
+                this.recordSourceMappingStart(script);
+
+                if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Asynchronous) { // AMD
+                    var dependencyList = "[\"require\", \"exports\"";
+                    var importList = "require, exports";
+
+                    var importAndDependencyList = this.getModuleImportAndDependencyList(script);
+                    importList += importAndDependencyList.importList;
+                    dependencyList += importAndDependencyList.dependencyList + "]";
+
+                    this.writeLineToOutput("define(" + dependencyList + "," + " function(" + importList + ") {");
+                }
+            }
+
             var lastEmittedNode: AST = null;
 
             // Now emit the rest of the script elements
@@ -2569,7 +2573,15 @@ module TypeScript {
             }
         }
 
-        private isElided(declaration: ModuleDeclaration): boolean {
+        private scriptIsElided(script: Script): boolean {
+            if (hasFlag(script.getModuleFlags(), ModuleFlags.Ambient)) {
+                return true;
+            }
+
+            return this.moduleMembersAreElided(script.moduleElements);
+        }
+
+        private moduleIsElided(declaration: ModuleDeclaration): boolean {
             if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
                 return true;
             }
@@ -2579,14 +2591,18 @@ module TypeScript {
                 return false;
             }
 
-            for (var i = 0, n = declaration.members.members.length; i < n; i++) {
-                var member = declaration.members.members[i];
+            return this.moduleMembersAreElided(declaration.members);
+        }
+
+        private moduleMembersAreElided(members: ASTList): boolean {
+            for (var i = 0, n = members.members.length; i < n; i++) {
+                var member = members.members[i];
 
                 // We should emit *this* module if it contains any non-interface types. 
                 // Caveat: if we have contain a module, then we should be emitted *if we want to
                 // emit that inner module as well.
                 if (member.nodeType() === NodeType.ModuleDeclaration) {
-                    if (!this.isElided(<ModuleDeclaration>member)) {
+                    if (!this.moduleIsElided(<ModuleDeclaration>member)) {
                         return false;
                     }
                 }
@@ -2599,11 +2615,11 @@ module TypeScript {
         }
 
         public shouldEmitModuleDeclaration(declaration: ModuleDeclaration): boolean {
-            return declaration.preComments() !== null || !this.isElided(declaration);
+            return declaration.preComments() !== null || !this.moduleIsElided(declaration);
         }
 
         public emitModuleDeclaration(declaration: ModuleDeclaration): void {
-            if (!this.isElided(declaration)) {
+            if (!this.moduleIsElided(declaration)) {
                 this.emitComments(declaration, true);
                 this.emitModule(declaration);
                 this.emitComments(declaration, false);

@@ -328,6 +328,8 @@ module TypeScript {
             var bod = this.visitSyntaxList(node.moduleElements);
 
             var isExternalModule = false;
+            var amdDependencies: string[] = [];
+            var moduleFlags = ModuleFlags.None;
             if (this.hasTopLevelImportOrExport(node)) {
                 isExternalModule = true;
 
@@ -336,7 +338,7 @@ module TypeScript {
                 var topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
-                var moduleFlags = topLevelMod.getModuleFlags() | ModuleFlags.IsDynamic | ModuleFlags.IsWholeFile | ModuleFlags.Exported;
+                moduleFlags = ModuleFlags.IsDynamic | ModuleFlags.IsWholeFile | ModuleFlags.Exported;
                 if (isDTSFile(this.fileName)) {
                     moduleFlags |= ModuleFlags.Ambient;
                 }
@@ -348,7 +350,7 @@ module TypeScript {
                     var trivia = leadingComments[i];
                     var amdDependency = this.getAmdDependency(trivia.fullText());
                     if (amdDependency) {
-                        topLevelMod.amdDependencies.push(amdDependency);
+                        amdDependencies.push(amdDependency);
                     }
                 }
 
@@ -356,8 +358,10 @@ module TypeScript {
                 this.setSpanExplicit(bod, start, this.position);
             }
 
-            var result = new Script(bod, isExternalModule, isDTSFile(this.fileName));
+            var result = new Script(bod, isExternalModule, isDTSFile(this.fileName), amdDependencies);
             this.setSpanExplicit(result, start, start + node.fullWidth());
+
+            result.setModuleFlags(moduleFlags);
 
             return result;
         }
