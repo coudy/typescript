@@ -2821,7 +2821,7 @@ module TypeScript {
 
             var enclosingDeclStack: PullDecl[] = [enclosingDecl];
 
-            var preFindReturnExpressionTypes = (ast: AST, parent: AST, walker: IAstWalker) => {
+            var preFindReturnExpressionTypes = (ast: AST, walker: IAstWalker) => {
                 var go = true;
 
                 switch (ast.nodeType()) {
@@ -2852,7 +2852,7 @@ module TypeScript {
                 return ast;
             };
 
-            var postFindReturnExpressionEnclosingDecls = function (ast: AST, parent: AST, walker: IAstWalker) {
+            var postFindReturnExpressionEnclosingDecls = function (ast: AST, walker: IAstWalker) {
                 switch (ast.nodeType()) {
                     case NodeType.CatchClause:
                     case NodeType.WithStatement:
@@ -10351,7 +10351,7 @@ module TypeScript {
                 }
 
                 if (declAST.block) {
-                    var reportErrorOnReturnExpressions = (ast: AST, parent: AST, walker: IAstWalker) => {
+                    var reportErrorOnReturnExpressions = (ast: AST, walker: IAstWalker) => {
                         var go = true;
                         switch (ast.nodeType()) {
                             case NodeType.FunctionDeclaration:

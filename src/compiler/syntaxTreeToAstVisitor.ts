@@ -2287,7 +2287,7 @@ module TypeScript {
                 return;
             }
 
-            var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
+            var pre = function (cur: TypeScript.AST, walker: TypeScript.IAstWalker) {
                 // Apply delta to this node
                 applyDelta(cur, delta);
                 applyDeltaToComments(cur.preComments(), delta);

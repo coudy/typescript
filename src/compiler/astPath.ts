@@ -279,7 +279,7 @@ module TypeScript {
             }
         };
 
-        var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
+        var pre = function (cur: TypeScript.AST, walker: IAstWalker) {
             if (isValidAstNode(cur)) {
                 var isInvalid1 = cur.nodeType() === NodeType.ExpressionStatement && cur.getLength() === 0;
 
@@ -348,13 +348,13 @@ module TypeScript {
     /// Simple function to Walk an AST using a simple callback function.
     ///
     export function walkAST(ast: TypeScript.AST, callback: (path: AstPath, walker: TypeScript.IAstWalker) => void ): void {
-        var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
+        var pre = function (cur: TypeScript.AST, walker: TypeScript.IAstWalker) {
             var path: TypeScript.AstPath = walker.state;
             path.push(cur);
             callback(path, walker);
             return cur;
         };
-        var post = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: TypeScript.IAstWalker) {
+        var post = function (cur: TypeScript.AST, walker: TypeScript.IAstWalker) {
             var path: TypeScript.AstPath = walker.state;
             path.pop();
             return cur;

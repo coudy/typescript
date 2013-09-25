@@ -181,7 +181,7 @@ module TypeScript {
         public bloomFilter(): BloomFilter {
             if (!this._bloomFilter) {
                 var identifiers = new BlockIntrinsics<boolean>();
-                var pre = function (cur: TypeScript.AST, parent: TypeScript.AST, walker: IAstWalker) {
+                var pre = function (cur: TypeScript.AST, walker: IAstWalker) {
                     if (isValidAstNode(cur)) {
                         if (cur.nodeType() === NodeType.Name) {
                             var nodeText = (<TypeScript.Identifier>cur).text();
@@ -944,7 +944,7 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }            
 
-            var pre = (cur: AST, parent: AST): AST => {
+            var pre = (cur: AST): AST => {
                 if (isValidAstNode(cur)) {
                     if (pos >= cur.minChar && pos <= cur.limChar) {
 

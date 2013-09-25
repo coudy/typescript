@@ -27,7 +27,7 @@ module TypeScript {
     }
 
     export interface IAstWalkCallback {
-        (ast: AST, parent: AST, walker: IAstWalker): AST;
+        (ast: AST, walker: IAstWalker): AST;
     }
 
     export interface IAstWalkChildren {
@@ -44,7 +44,7 @@ module TypeScript {
         }
 
         public walk(ast: AST, parent: AST): AST {
-            var preAst = this.pre(ast, parent, this);
+            var preAst = this.pre(ast, this);
             if (preAst === undefined) {
                 preAst = ast;
             }
@@ -58,7 +58,7 @@ module TypeScript {
             }
 
             if (this.post) {
-                var postAst = this.post(preAst, parent, this);
+                var postAst = this.post(preAst, this);
                 if (postAst === undefined) {
                     postAst = preAst;
                 }
