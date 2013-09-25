@@ -1741,14 +1741,14 @@ module TypeScript {
                 var containerSymbol = importDeclSymbol.getExportAssignedContainerSymbol();
                 var valueSymbol = importDeclSymbol.getExportAssignedValueSymbol();
 
-                this.checkSymbolPrivacy(importDeclSymbol, containerSymbol, context, (symbol: PullSymbol) => {
+                this.checkSymbolPrivacy(importDeclSymbol, containerSymbol, (symbol: PullSymbol) => {
                     var messageCode = DiagnosticCode.Exported_import_declaration_0_is_assigned_container_that_is_or_is_using_inaccessible_module_1;
                     var messageArguments = [importDeclSymbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null), symbol.getScopedName(enclosingDecl ? enclosingDecl.getSymbol() : null)];
                     context.postError(this.unitPath, importStatementAST.minChar, importStatementAST.getLength(), messageCode, messageArguments);
                 });
 
                 if (typeSymbol != containerSymbol) {
-                    this.checkSymbolPrivacy(importDeclSymbol, typeSymbol, context, (symbol: PullSymbol) => {
+                    this.checkSymbolPrivacy(importDeclSymbol, typeSymbol, (symbol: PullSymbol) => {
                         var messageCode = symbol.isContainer() && !(<PullTypeSymbol>symbol).isEnum() ?
                             DiagnosticCode.Exported_import_declaration_0_is_assigned_type_that_is_using_inaccessible_module_1 :
                             DiagnosticCode.Exported_import_declaration_0_is_assigned_type_that_has_or_is_using_private_type_1;
@@ -1759,7 +1759,7 @@ module TypeScript {
                 }
 
                 if (valueSymbol) {
-                    this.checkSymbolPrivacy(importDeclSymbol, valueSymbol.type, context, (symbol: PullSymbol) => {
+                    this.checkSymbolPrivacy(importDeclSymbol, valueSymbol.type, (symbol: PullSymbol) => {
                         var messageCode = symbol.isContainer() && !(<PullTypeSymbol>symbol).isEnum() ?
                             DiagnosticCode.Exported_import_declaration_0_is_assigned_value_with_type_that_is_using_inaccessible_module_1 :
                             DiagnosticCode.Exported_import_declaration_0_is_assigned_value_with_type_that_has_or_is_using_private_type_1;
@@ -2709,7 +2709,7 @@ module TypeScript {
             }
             if (declSymbol.kind != PullElementKind.Parameter &&
                 (declSymbol.kind != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
-                this.checkSymbolPrivacy(declSymbol, declSymbol.type, context, (symbol: PullSymbol) =>
+                this.checkSymbolPrivacy(declSymbol, declSymbol.type, (symbol: PullSymbol) =>
                     this.variablePrivacyErrorReporter(declSymbol, symbol, context));
             }
 
@@ -9958,7 +9958,7 @@ module TypeScript {
 
         // Privacy checking
 
-        private checkSymbolPrivacy(declSymbol: PullSymbol, symbol: PullSymbol, context: PullTypeResolutionContext, privacyErrorReporter: (symbol: PullSymbol) => void) {
+        private checkSymbolPrivacy(declSymbol: PullSymbol, symbol: PullSymbol, privacyErrorReporter: (symbol: PullSymbol) => void) {
             if (!symbol || symbol.kind === PullElementKind.Primitive) {
                 return;
             }
@@ -9971,7 +9971,7 @@ module TypeScript {
                     if (!isArrayType && !isNamedType) {
                         var associatedContainerType = typeSymbol.getAssociatedContainerType();
                         if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
-                            this.checkSymbolPrivacy(declSymbol, associatedContainerType, context, privacyErrorReporter);
+                            this.checkSymbolPrivacy(declSymbol, associatedContainerType, privacyErrorReporter);
                         }
                     }
 
@@ -9986,25 +9986,25 @@ module TypeScript {
                 }
                 if (typars) {
                     for (var i = 0; i < typars.length; i++) {
-                        this.checkSymbolPrivacy(declSymbol, typars[i], context, privacyErrorReporter);
+                        this.checkSymbolPrivacy(declSymbol, typars[i], privacyErrorReporter);
                     }
                 }
 
                 if (!isNamedType) {
                     if (isArrayType) {
-                        this.checkSymbolPrivacy(declSymbol, typeSymbol.getElementType(), context, privacyErrorReporter);
+                        this.checkSymbolPrivacy(declSymbol, typeSymbol.getElementType(), privacyErrorReporter);
                     } else {
                         var members = typeSymbol.getMembers();
                         for (var i = 0; i < members.length; i++) {
-                            this.checkSymbolPrivacy(declSymbol, members[i].type, context, privacyErrorReporter);
+                            this.checkSymbolPrivacy(declSymbol, members[i].type, privacyErrorReporter);
                         }
 
-                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), context, privacyErrorReporter);
-                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), context, privacyErrorReporter);
-                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), context, privacyErrorReporter);
+                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), privacyErrorReporter);
+                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), privacyErrorReporter);
+                        this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getIndexSignatures(), privacyErrorReporter);
                     }
                 } else if (typeSymbol.kind == PullElementKind.TypeParameter) {
-                    this.checkSymbolPrivacy(declSymbol, (<PullTypeParameterSymbol>typeSymbol).getConstraint(), context, privacyErrorReporter);
+                    this.checkSymbolPrivacy(declSymbol, (<PullTypeParameterSymbol>typeSymbol).getConstraint(), privacyErrorReporter);
                 }
 
                 typeSymbol.inSymbolPrivacyCheck = false;
@@ -10054,7 +10054,7 @@ module TypeScript {
             }
         }
 
-        private checkTypePrivacyOfSignatures(declSymbol: PullSymbol, signatures: PullSignatureSymbol[], context: PullTypeResolutionContext, privacyErrorReporter: (symbol: PullSymbol) => void) {
+        private checkTypePrivacyOfSignatures(declSymbol: PullSymbol, signatures: PullSignatureSymbol[], privacyErrorReporter: (symbol: PullSymbol) => void) {
             for (var i = 0; i < signatures.length; i++) {
                 var signature = signatures[i];
                 if (signatures.length > 1 && signature.isDefinition()) {
@@ -10063,17 +10063,17 @@ module TypeScript {
 
                 var typeParams = signature.getTypeParameters();
                 for (var j = 0; j < typeParams.length; j++) {
-                    this.checkSymbolPrivacy(declSymbol, typeParams[j], context, privacyErrorReporter);
+                    this.checkSymbolPrivacy(declSymbol, typeParams[j], privacyErrorReporter);
                 }
 
                 var params = signature.parameters;
                 for (var j = 0; j < params.length; j++) {
                     var paramType = params[j].type;
-                    this.checkSymbolPrivacy(declSymbol, paramType, context, privacyErrorReporter);
+                    this.checkSymbolPrivacy(declSymbol, paramType, privacyErrorReporter);
                 }
 
                 var returnType = signature.returnType;
-                this.checkSymbolPrivacy(declSymbol, returnType, context, privacyErrorReporter);
+                this.checkSymbolPrivacy(declSymbol, returnType, privacyErrorReporter);
             }
         }
 
@@ -10204,7 +10204,7 @@ module TypeScript {
                 for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
                     var typeParameterAST = <TypeParameter>funcDeclAST.typeArguments.members[i];
                     var typeParameter = this.resolveTypeParameterDeclaration(typeParameterAST, context);
-                    this.checkSymbolPrivacy(functionSymbol, typeParameter, context, (symbol: PullSymbol) =>
+                    this.checkSymbolPrivacy(functionSymbol, typeParameter, (symbol: PullSymbol) =>
                         this.functionTypeArgumentArgumentTypePrivacyErrorReporter(funcDeclAST, typeParameterAST, typeParameter, symbol, context));
                 }
             }
@@ -10213,14 +10213,14 @@ module TypeScript {
             if (!isGetter && !isIndexSignature) {
                 var funcParams = functionSignature.parameters;
                 for (var i = 0; i < funcParams.length; i++) {
-                    this.checkSymbolPrivacy(functionSymbol, funcParams[i].type, context, (symbol: PullSymbol) =>
+                    this.checkSymbolPrivacy(functionSymbol, funcParams[i].type, (symbol: PullSymbol) =>
                         this.functionArgumentTypePrivacyErrorReporter(funcDeclAST, i, funcParams[i], symbol, context));
                 }
             }
 
             // Check return type
             if (!isSetter) {
-                this.checkSymbolPrivacy(functionSymbol, functionSignature.returnType, context, (symbol: PullSymbol) =>
+                this.checkSymbolPrivacy(functionSymbol, functionSignature.returnType, (symbol: PullSymbol) =>
                     this.functionReturnTypePrivacyErrorReporter(funcDeclAST, functionSignature.returnType, symbol, context));
             }
         }
@@ -10934,7 +10934,7 @@ module TypeScript {
             }
 
             // Privacy error:
-            this.checkSymbolPrivacy(typeSymbol, baseType, context, (errorSymbol: PullSymbol) =>
+            this.checkSymbolPrivacy(typeSymbol, baseType, (errorSymbol: PullSymbol) =>
                 this.baseListPrivacyErrorReporter(typeDeclAst, typeSymbol, baseDeclAST, isExtendedType, errorSymbol, context));
         }
 
