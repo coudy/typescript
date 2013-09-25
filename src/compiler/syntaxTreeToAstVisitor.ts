@@ -2323,8 +2323,6 @@ module TypeScript {
                         applyDelta((<SwitchStatement>cur).statement, delta);
                         break;
                 }
-
-                return cur;
             };
 
             TypeScript.getAstWalkerFactory().walk(ast, pre);

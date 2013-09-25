@@ -335,8 +335,6 @@ module TypeScript {
                     walker.options.goChildren = (minChar <= pos && pos <= limChar);
                 }
             }
-
-            return cur;
         };
 
         var ctx = new AstPathContext();
@@ -357,7 +355,6 @@ module TypeScript {
         var post = function (cur: TypeScript.AST, walker: TypeScript.IAstWalker) {
             var path: TypeScript.AstPath = walker.state;
             path.pop();
-            return cur;
         };
 
         var path = new AstPath();

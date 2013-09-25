@@ -189,8 +189,6 @@ module TypeScript {
                             identifiers[nodeText] = true;
                         }
                     }
-
-                    return cur;
                 };
 
                 TypeScript.getAstWalkerFactory().walk(this.script, pre, null, null, identifiers);
@@ -944,7 +942,7 @@ module TypeScript {
                 globalBinder.semanticInfoChain = this.semanticInfoChain;
             }            
 
-            var pre = (cur: AST): AST => {
+            var pre = (cur: AST) => {
                 if (isValidAstNode(cur)) {
                     if (pos >= cur.minChar && pos <= cur.limChar) {
 
@@ -982,7 +980,6 @@ module TypeScript {
                         }
                     }
                 }
-                return cur;
             };
 
             getAstWalkerFactory().walk(script, pre);

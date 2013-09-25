@@ -1115,8 +1115,6 @@ module TypeScript {
         }
 
         walker.options.goChildren = go;
-
-        return ast;
     }
 
     function isContainer(decl: PullDecl): boolean {
@@ -1241,8 +1239,5 @@ module TypeScript {
 
             context.popParent();
         }
-
-
-        return ast;
     }
 }
