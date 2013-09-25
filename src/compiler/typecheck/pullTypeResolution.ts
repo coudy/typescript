@@ -8249,6 +8249,16 @@ module TypeScript {
                 return false;
             }
 
+            // Even if the source class does extend the target class, we know that constructor types are allowed
+            // to differ in their construct signatures. Therefore, we need to bail out and do a normal structural
+            // check here to make sure we compare construct signatures.
+            // TODO: If we discover more cases where it is not appropriate for constructor types to extend each other,
+            // consider removing the extends link.
+            if (source.kind & PullElementKind.ConstructorType
+                && target.kind & PullElementKind.ConstructorType) {
+                return false;
+            }
+
             if (source.hasBase(target)) {
                 return true;
             }
@@ -8278,9 +8288,9 @@ module TypeScript {
                         }
                     }
                 }
-
-                return false;
             }
+
+            return false;
         }
 
         public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
@@ -8532,6 +8542,8 @@ module TypeScript {
 
             comparisonCache[comboId] = false;
 
+            // This is an optimization that is a deviation from the spec. The spec sections 3.8.3 and 3.8.4 say to compare structurally,
+            // but we know that if a type nominally extends another type, it is both a subtype and assignable.
             if (this.sourceExtendsTarget(source, target, context)) {
                 return true;
             }
