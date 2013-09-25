@@ -1020,6 +1020,20 @@ module TypeScript {
             }
         }
 
+        private resolveScript(script: Script, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            this.resolveAST(script.moduleElements, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+
+            if (this.canTypeCheckAST(script, context)) {
+                this.typeCheckScript(script, enclosingDecl, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckScript(script: Script, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+            this.typeCheckAST(script.moduleElements, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+        }
+
         //
         // Resolve a module declaration
         //
@@ -4580,7 +4594,7 @@ module TypeScript {
                     return this.resolveList(<ASTList>ast, enclosingDecl, context);
 
                 case NodeType.Script:
-                    return null;
+                    return this.resolveScript(<Script>ast, enclosingDecl, context);
 
                 case NodeType.ModuleDeclaration:
                     return this.resolveModuleDeclaration(<ModuleDeclaration>ast, context);
@@ -9721,7 +9735,7 @@ module TypeScript {
                 var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
                 var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
 
-                resolver.resolveAST(script.moduleElements, false, scriptDecl, context);
+                resolver.resolveAST(script, /*inContextuallyTypedAssignment:*/ false, scriptDecl, context);
                 resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
                 while (PullTypeResolver.typeCheckCallBacks.length) {
