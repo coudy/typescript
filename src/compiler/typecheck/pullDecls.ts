@@ -173,6 +173,10 @@ module TypeScript {
             // check if decl exists
             // merge if necessary
 
+            if (!this.isSynthesized() && childDecl.isSynthesized()) {
+                throw Errors.invalidOperation("A Synthesized decl can not be linked from its parent");
+            }
+
             if (childDecl.kind === PullElementKind.TypeParameter) {
                 if (!this.typeParameters) {
                     this.typeParameters = [];
@@ -297,18 +301,30 @@ module TypeScript {
         public isBound() {
             return this._isBound;
         }
+
+        public isSynthesized(): boolean {
+            return false;
+        }
     }
 
     export class PullFunctionExpressionDecl extends PullDecl {
         private functionExpressionName: string;
 
-        constructor(expressionName: string, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
-            super("", "", PullElementKind.FunctionExpression, declFlags, span, scriptName);
-            this.functionExpressionName = expressionName;
+        constructor(expressionName: string, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {            super("", "", PullElementKind.FunctionExpression, declFlags, span, scriptName);            this.functionExpressionName = expressionName;
         }
 
         public getFunctionExpressionName(): string {
             return this.functionExpressionName;
+        }
+    }
+
+    export class PullSynthesizedDecl extends PullDecl {
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
+            super(declName, displayName, kind, declFlags, span, scriptName);
+        }
+
+        public isSynthesized(): boolean {
+            return true;
         }
     }
 

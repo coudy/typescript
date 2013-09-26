@@ -22,7 +22,6 @@ module TypeScript {
         private compilationUnitPath: string;  // the "file" this is associated with
 
         private topLevelDecl: PullDecl = null;
-        private topLevelSynthesizedDecls: PullDecl[] = [];
 
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
@@ -70,20 +69,6 @@ module TypeScript {
 
         public getPath(): string {
             return this.compilationUnitPath;
-        }
-
-        public addSynthesizedDecl(decl: PullDecl) {
-            //if (!decl.getParentDecl()) {
-                this.topLevelSynthesizedDecls[this.topLevelSynthesizedDecls.length] = decl;
-            //}
-        }
-
-        public getSynthesizedDecls() {
-            return this.topLevelSynthesizedDecls;
-        }
-
-        public cleanSynthesizedDecls() {
-            this.topLevelSynthesizedDecls = [];
         }
 
         public getDeclForAST(ast: AST): PullDecl {
@@ -237,14 +222,10 @@ module TypeScript {
             containingSymbol.addIndexSignature(indexSignature);
 
             var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
-            var indexSigDecl = new PullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, span, this.getPath());
-            var indexParamDecl = new PullDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, span, this.getPath());
-            indexSigDecl.addChildDecl(indexParamDecl);
+            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, span, this.getPath());
+            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, span, this.getPath());
             indexParamDecl.setParentDecl(indexSigDecl);
-            containingDecl.addChildDecl(indexSigDecl);
             indexSigDecl.setParentDecl(containingDecl);
-            this.addSynthesizedDecl(indexSigDecl);
-            this.addSynthesizedDecl(indexParamDecl);
             indexSigDecl.setSignatureSymbol(indexSignature);
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);
@@ -270,6 +251,7 @@ module TypeScript {
         public nullTypeSymbol: PullTypeSymbol = null;
         public undefinedTypeSymbol: PullTypeSymbol = null;
         public voidTypeSymbol: PullTypeSymbol = null;
+        public emptyTypeSymbol: PullTypeSymbol = null;
 
         public addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
@@ -317,6 +299,14 @@ module TypeScript {
             this.undefinedTypeSymbol = this.addPrimitiveType("undefined", null);
             this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
 
+            // other decls not reachable from the globalDecl
+            var emptyTypeDecl = new PullDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, span, "");
+            var emptyTypeSymbol = new PullTypeSymbol("{}", PullElementKind.ObjectType);
+            emptyTypeDecl.setSymbol(emptyTypeSymbol);
+            emptyTypeSymbol.addDeclaration(emptyTypeDecl);
+            emptyTypeSymbol.setResolved();
+            this.emptyTypeSymbol = emptyTypeSymbol;
+
             return globalDecl;
         }
 
@@ -362,20 +352,6 @@ module TypeScript {
 
             return this.topLevelDecls;
         }
-
-        private collectAllSynthesizedDecls() {
-            var decls: PullDecl[] = [];
-            var synthDecls: PullDecl[];
-
-            for (var i = 0; i < this.units.length; i++) {
-                synthDecls = this.units[i].getSynthesizedDecls();
-                for (var j = 0; j < synthDecls.length; j++) {
-                    decls[decls.length] = synthDecls[j];
-                }
-            }
-
-            return decls;
-        }        
 
         private getDeclPathCacheID(declPath: string[], declKind: PullElementKind) {
             var cacheID = "";
@@ -714,20 +690,7 @@ module TypeScript {
                 this.cleanDecl(topLevelDecls[i]);
             }
 
-            var synthesizedDecls = this.collectAllSynthesizedDecls();
-
-            for (var i = 0; i < synthesizedDecls.length; i++) {
-                this.cleanDecl(synthesizedDecls[i]);
-            }
-
-            this.cleanAllSynthesizedDecls();
             this.topLevelDecls = [];
-        }
-
-        private cleanAllSynthesizedDecls() {
-            for (var i = 0; i < this.units.length; i++) {
-                this.units[i].cleanSynthesizedDecls();
-            }
         }
 
         public update() {

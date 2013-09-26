@@ -182,6 +182,7 @@ module TypeScript {
 
         constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, inTypeCheck: boolean = false) {
 
+            // Note: why is this here, and not on the global unit?
             this.cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
             this.cachedFunctionArgumentsSymbol.setResolved();
@@ -785,9 +786,7 @@ module TypeScript {
             var prototypeStr = "prototype";
             var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
             var parentDecl = constructorTypeSymbol.getDeclarations()[0];
-            var prototypeDecl = new PullDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl.getSpan(), parentDecl.getScriptName());
-
-            this.currentUnit.addSynthesizedDecl(prototypeDecl);
+            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl.getSpan(), parentDecl.getScriptName());
 
             prototypeDecl.setParentDecl(parentDecl);
             prototypeSymbol.addDeclaration(prototypeDecl);
@@ -1910,7 +1909,6 @@ module TypeScript {
                 getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
-                this.currentUnit.addSynthesizedDecl(functionDecl);
             }
 
             if (!functionDecl.hasSymbol()) {
@@ -2138,7 +2136,6 @@ module TypeScript {
                 getAstWalkerFactory().walk(objectType, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                 var interfaceDecl = this.getDeclForAST(objectType);
-                this.currentUnit.addSynthesizedDecl(interfaceDecl);
 
                 var binder = new PullSymbolBinder(this.semanticInfoChain);
 
@@ -2294,10 +2291,9 @@ module TypeScript {
             else if (typeRef.term.nodeType() === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>typeRef.term;
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
-                var decl = new PullDecl(stringConstantAST.actualText, stringConstantAST.actualText,
+                var decl = new PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText,
                     typeDeclSymbol.kind, null,
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName());
-                this.currentUnit.addSynthesizedDecl(decl);
                 typeDeclSymbol.addDeclaration(decl);
             }
             else if (typeRef.term.nodeType() === NodeType.TypeQuery) {
@@ -6082,7 +6078,6 @@ module TypeScript {
                 getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
-                this.currentUnit.addSynthesizedDecl(functionDecl);
 
                 var binder = new PullSymbolBinder(this.semanticInfoChain);
                 binder.setUnit(this.unitPath);
@@ -6485,12 +6480,10 @@ module TypeScript {
 
             if (!objectLitDecl) {
                 objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
-                this.currentUnit.addSynthesizedDecl(objectLitDecl);
 
-                if (enclosingDecl) {
-                    objectLitDecl.setParentDecl(enclosingDecl);
-                }
-
+                objectLitDecl.setParentDecl(enclosingDecl);
+                enclosingDecl.addChildDecl(objectLitDecl);
+  
                 this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
                 this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
             }
@@ -6569,7 +6562,6 @@ module TypeScript {
                     if (!isAccessor) {
                         if (!isUsingExistingDecl) {
                             decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
-                            this.currentUnit.addSynthesizedDecl(decl);
 
                             objectLitDecl.addChildDecl(decl);
                             decl.setParentDecl(objectLitDecl);
@@ -6625,7 +6617,6 @@ module TypeScript {
                             getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                             var functionDecl = this.getDeclForAST(funcDeclAST);
-                            this.currentUnit.addSynthesizedDecl(functionDecl);
                         }
 
                         if (!isUsingExistingSymbol) {
@@ -8272,13 +8263,7 @@ module TypeScript {
 
             if (!bestCommonType) {
                 // if no best common type can be determined, use "{}"
-                var emptyTypeDecl = new PullDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, new TextSpan(0, 0), this.currentUnit.getPath());
-                var emptyType = new PullTypeSymbol("{}", PullElementKind.ObjectType);
-
-                emptyTypeDecl.setSymbol(emptyType);
-                emptyType.addDeclaration(emptyTypeDecl);
-
-                bestCommonType = emptyType;
+                bestCommonType = this.semanticInfoChain.emptyTypeSymbol;
             }
 
             return bestCommonType;
