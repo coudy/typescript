@@ -56,7 +56,7 @@ module TypeScript {
         // if the useDirectTypeStorage flag is set
         public ast: AST = null;
 
-        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan, scriptName: string) {
             this.name = declName;
             this.kind = kind;
             this.flags = declFlags;
@@ -69,6 +69,16 @@ module TypeScript {
 
             this.hashCode = this.declID ^ this.kind;
             this.declIDString = this.declID.toString();
+
+            // Link to parent
+            if (parentDecl) {
+                parentDecl.addChildDecl(this);
+                this.setParentDecl(parentDecl);
+            }
+
+            if (!parentDecl && !this.isSynthesized() && kind !== PullElementKind.Global && kind !== PullElementKind.Script && kind !== PullElementKind.Primitive) {
+                throw Errors.invalidOperation("Orphaned decl " + PullElementKind[kind]);
+            }
         }
 
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
@@ -95,7 +105,6 @@ module TypeScript {
         }
 
         public getSymbol(): PullSymbol {
-
             if (this.kind == PullElementKind.Script) {
                 return null;
             }
@@ -112,7 +121,7 @@ module TypeScript {
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
         public getSignatureSymbol(): PullSignatureSymbol { 
             this.ensureSymbolIsBound(true);
-            
+
             return this.signatureSymbol;
         }
 
@@ -167,12 +176,7 @@ module TypeScript {
                         : this.childDeclValueCache;
         }
 
-        // returns 'true' if the child decl was successfully added
-        // ('false' is returned if addIfDuplicate is false and there is a collision)
-        public addChildDecl(childDecl: PullDecl): void {
-            // check if decl exists
-            // merge if necessary
-
+        private addChildDecl(childDecl: PullDecl): void {
             if (!this.isSynthesized() && childDecl.isSynthesized()) {
                 throw Errors.invalidOperation("A Synthesized decl can not be linked from its parent");
             }
@@ -310,7 +314,9 @@ module TypeScript {
     export class PullFunctionExpressionDecl extends PullDecl {
         private functionExpressionName: string;
 
-        constructor(expressionName: string, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {            super("", "", PullElementKind.FunctionExpression, declFlags, span, scriptName);            this.functionExpressionName = expressionName;
+        constructor(expressionName: string, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan, scriptName: string) {
+            super("", "", PullElementKind.FunctionExpression, declFlags, parentDecl, span, scriptName);
+            this.functionExpressionName = expressionName;
         }
 
         public getFunctionExpressionName(): string {
@@ -319,8 +325,14 @@ module TypeScript {
     }
 
     export class PullSynthesizedDecl extends PullDecl {
-        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, scriptName: string) {
-            super(declName, displayName, kind, declFlags, span, scriptName);
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan, scriptName: string) {
+            super(declName, displayName, kind, declFlags, /*parentDecl*/ null, span, scriptName);
+
+            // This is a synthesized decl; its life time should match that of the symbol using it, and not that of its parent decl. To 
+            // enforce this we are not making it reachable from its parent, but will set the parent link.
+            if (parentDecl) {
+                this.setParentDecl(parentDecl);
+            }
         }
 
         public isSynthesized(): boolean {

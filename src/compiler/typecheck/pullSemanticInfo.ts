@@ -222,10 +222,8 @@ module TypeScript {
             containingSymbol.addIndexSignature(indexSignature);
 
             var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
-            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, span, this.getPath());
-            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, span, this.getPath());
-            indexParamDecl.setParentDecl(indexSigDecl);
-            indexSigDecl.setParentDecl(containingDecl);
+            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Index | PullElementFlags.Signature, containingDecl, span, this.getPath());
+            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl , span, this.getPath());
             indexSigDecl.setSignatureSymbol(indexSignature);
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);
@@ -255,7 +253,7 @@ module TypeScript {
 
         public addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
-            var decl = new PullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, span, "");
+            var decl = new PullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
 
             symbol.addDeclaration(decl);
@@ -263,29 +261,23 @@ module TypeScript {
 
             symbol.setResolved();
 
-            if (globalDecl) {
-                globalDecl.addChildDecl(decl);
-            }
-
             return symbol;
         }
 
         public addPrimitiveValue(name: string, type: PullTypeSymbol, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
-            var decl = new PullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, span, "");
+            var decl = new PullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span, "");
             var symbol = new PullSymbol(name, PullElementKind.Variable);
 
             symbol.addDeclaration(decl);
             decl.setSymbol(symbol);
             symbol.type = type;
             symbol.setResolved();
-
-            globalDecl.addChildDecl(decl);
         }
 
         public getGlobalDecl() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new PullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "");
+            var globalDecl = new PullDecl("", "", PullElementKind.Global, PullElementFlags.None, /*parentDecl*/ null, span, "");
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
@@ -300,7 +292,7 @@ module TypeScript {
             this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
 
             // other decls not reachable from the globalDecl
-            var emptyTypeDecl = new PullDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, span, "");
+            var emptyTypeDecl = new PullSynthesizedDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, /*parentDecl*/ null, span, "");
             var emptyTypeSymbol = new PullTypeSymbol("{}", PullElementKind.ObjectType);
             emptyTypeDecl.setSymbol(emptyTypeSymbol);
             emptyTypeSymbol.addDeclaration(emptyTypeDecl);

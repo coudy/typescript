@@ -187,7 +187,7 @@ module TypeScript {
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
             this.cachedFunctionArgumentsSymbol.setResolved();
 
-            var functionArgumentsDecl = new PullDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, new TextSpan(0, 0), unitPath);
+            var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0), unitPath);
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
 
@@ -786,12 +786,11 @@ module TypeScript {
             var prototypeStr = "prototype";
             var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
             var parentDecl = constructorTypeSymbol.getDeclarations()[0];
-            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl.getSpan(), parentDecl.getScriptName());
+            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan(), parentDecl.getScriptName());
 
-            prototypeDecl.setParentDecl(parentDecl);
             prototypeSymbol.addDeclaration(prototypeDecl);
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
-            prototypeSymbol.isResolved = true;
+            prototypeSymbol.setResolved();
 
             return prototypeSymbol;
         }
@@ -2292,7 +2291,7 @@ module TypeScript {
                 var stringConstantAST = <StringLiteral>typeRef.term;
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
                 var decl = new PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText,
-                    typeDeclSymbol.kind, null,
+                    typeDeclSymbol.kind, null, enclosingDecl,
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName());
                 typeDeclSymbol.addDeclaration(decl);
             }
@@ -6479,11 +6478,8 @@ module TypeScript {
             var isUsingExistingSymbol = !!typeSymbol;
 
             if (!objectLitDecl) {
-                objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, span, this.unitPath);
+                objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, enclosingDecl, span, this.unitPath);
 
-                objectLitDecl.setParentDecl(enclosingDecl);
-                enclosingDecl.addChildDecl(objectLitDecl);
-  
                 this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
                 this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
             }
@@ -6561,10 +6557,7 @@ module TypeScript {
                     var decl = this.getDeclForAST(propertyAssignment);
                     if (!isAccessor) {
                         if (!isUsingExistingDecl) {
-                            decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
-
-                            objectLitDecl.addChildDecl(decl);
-                            decl.setParentDecl(objectLitDecl);
+                            decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, objectLitDecl, span, this.unitPath);
 
                             this.currentUnit.setDeclForAST(propertyAssignment, decl);
                             this.currentUnit.setASTForDecl(decl, propertyAssignment);
@@ -6640,7 +6633,6 @@ module TypeScript {
                             getAstWalkerFactory().walk(propertyAssignment, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                             var functionDecl = this.getDeclForAST(propertyAssignment);
-                            this.currentUnit.addSynthesizedDecl(functionDecl);
                         }
 
                         var binder = new PullSymbolBinder(this.semanticInfoChain);
