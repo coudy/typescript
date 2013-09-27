@@ -1499,7 +1499,11 @@ module TypeScript {
 
             var ast = path.ast();
 
-            if (ast.nodeType() !== NodeType.ClassDeclaration && ast.nodeType() !== NodeType.InterfaceDeclaration && ast.nodeType() !== NodeType.ModuleDeclaration && ast.nodeType() !== NodeType.FunctionDeclaration && ast.nodeType() !== NodeType.VariableDeclarator) {
+            if (ast.nodeType() !== NodeType.ClassDeclaration &&
+                ast.nodeType() !== NodeType.InterfaceDeclaration &&
+                ast.nodeType() !== NodeType.ModuleDeclaration &&
+                ast.nodeType() !== NodeType.FunctionDeclaration &&
+                ast.nodeType() !== NodeType.VariableDeclarator) {
                 return null;
             }
 

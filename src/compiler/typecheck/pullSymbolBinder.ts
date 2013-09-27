@@ -602,7 +602,7 @@ module TypeScript {
             var interfaceName = interfaceDecl.name;
             var interfaceSymbol: PullTypeSymbol = null;
 
-            var interfaceAST = <TypeDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
+            var interfaceAST = <InterfaceDeclaration>this.semanticInfo.getASTForDecl(interfaceDecl);
             var createdNewSymbol = false;
             var parent = this.getParent(interfaceDecl);
 

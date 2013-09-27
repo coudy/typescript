@@ -874,14 +874,16 @@ module TypeScript {
         }
     }
 
-    export class TypeDeclaration extends AST {
+    export class ClassDeclaration extends AST {
+        public constructorDecl: FunctionDeclaration = null;
         private _varFlags = VariableFlags.None;
 
         constructor(public name: Identifier,
                     public typeParameters: ASTList,
                     public extendsList: ASTList,
                     public implementsList: ASTList,
-                    public members: ASTList) {
+                    public members: ASTList,
+                    public endingToken: ASTSpan) {
             super();
         }
 
@@ -898,29 +900,6 @@ module TypeScript {
             this._varFlags = flags;
         }
 
-        public structuralEquals(ast: TypeDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   this._varFlags === ast._varFlags &&
-                   structuralEquals(this.name, ast.name, includingPosition) &&
-                   structuralEquals(this.members, ast.members, includingPosition) &&
-                   structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                   structuralEquals(this.extendsList, ast.extendsList, includingPosition) &&
-                   structuralEquals(this.implementsList, ast.implementsList, includingPosition);
-        }
-    }
-
-    export class ClassDeclaration extends TypeDeclaration {
-        public constructorDecl: FunctionDeclaration = null;
-
-        constructor(name: Identifier,
-                    typeParameters: ASTList,
-                    members: ASTList,
-                    extendsList: ASTList,
-                    implementsList: ASTList,
-                    public endingToken: ASTSpan) {
-            super(name, typeParameters, extendsList, implementsList, members);
-        }
-
         public nodeType(): NodeType {
             return NodeType.ClassDeclaration;
         }
@@ -932,6 +911,16 @@ module TypeScript {
         public emit(emitter: Emitter): void {
             emitter.emitClassDeclaration(this);
         }
+
+        public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                   this._varFlags === ast._varFlags &&
+                   structuralEquals(this.name, ast.name, includingPosition) &&
+                   structuralEquals(this.members, ast.members, includingPosition) &&
+                   structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
+                   structuralEquals(this.extendsList, ast.extendsList, includingPosition) &&
+                   structuralEquals(this.implementsList, ast.implementsList, includingPosition);
+        }
     }
 
     export class InterfaceDeclaration extends AST {
@@ -940,8 +929,7 @@ module TypeScript {
         constructor(public name: Identifier,
                     public typeParameters: ASTList,
                     public members: ASTList,
-                    public extendsList: ASTList,
-                    public isObjectTypeLiteral: boolean) {
+                    public extendsList: ASTList) {
             super();
         }
 
@@ -977,6 +965,30 @@ module TypeScript {
                 structuralEquals(this.members, ast.members, includingPosition) &&
                 structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
                 structuralEquals(this.extendsList, ast.extendsList, includingPosition);
+        }
+    }
+
+    export class ObjectType extends AST {
+
+        constructor(public members: ASTList) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ObjectType;
+        }
+
+        public isDeclaration() {
+            return true;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return false;
+        }
+
+        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.members, ast.members, includingPosition);
         }
     }
 
@@ -1422,6 +1434,7 @@ module TypeScript {
     export class TypeReference extends AST {
         constructor(public term: AST, public arrayCount: number) {
             super();
+            Debug.assert(term !== null && term !== undefined);
             this.minChar = term.minChar;
             this.limChar = term.limChar;
         }

@@ -671,7 +671,7 @@ module TypeScript {
         }
 
         private emitDeclarationsForInterfaceDeclaration(interfaceDecl: InterfaceDeclaration) {
-            if (interfaceDecl.isObjectTypeLiteral || !this.canEmitDeclarations(ToDeclFlags(interfaceDecl.getVarFlags()), interfaceDecl)) {
+            if (!this.canEmitDeclarations(ToDeclFlags(interfaceDecl.getVarFlags()), interfaceDecl)) {
                 return;
             }
 

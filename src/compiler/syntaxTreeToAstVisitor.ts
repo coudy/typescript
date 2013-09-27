@@ -407,7 +407,7 @@ module TypeScript {
             var closeBraceSpan = new ASTSpan();
             this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
-            var result = new ClassDeclaration(name, typeParameters, members, extendsList, implementsList, closeBraceSpan);
+            var result = new ClassDeclaration(name, typeParameters, extendsList, implementsList, members, closeBraceSpan);
             this.setCommentsAndSpan(result, start, node);
 
             for (var i = 0; i < members.members.length; i++) {
@@ -466,7 +466,7 @@ module TypeScript {
 
             this.movePast(node.body.closeBraceToken);
 
-            var result = new InterfaceDeclaration(name, typeParameters, members, extendsList, /*isObjectTypeLiteral:*/ false);
+            var result = new InterfaceDeclaration(name, typeParameters, members, extendsList);
             this.setCommentsAndSpan(result, start, node);
 
             this.completeInterfaceDeclaration(node, result);
@@ -1167,14 +1167,13 @@ module TypeScript {
             var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
             this.movePast(node.closeBraceToken);
 
-            var interfaceDecl = new InterfaceDeclaration(
-                new Identifier("__anonymous", "__anonymous"), null, typeMembers, null, /*isObjectTypeLiteral:*/ true);
-            this.setSpan(interfaceDecl, start, node);
+            var objectType = new ObjectType(typeMembers);
+            this.setSpan(objectType, start, node);
 
-            interfaceDecl.setFlags(interfaceDecl.getFlags() | ASTFlags.TypeReference);
+            objectType.setFlags(objectType.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(interfaceDecl, 0);
-            this.copySpan(interfaceDecl, result);
+            var result = new TypeReference(objectType, 0);
+            this.copySpan(objectType, result);
 
             return result;
         }
