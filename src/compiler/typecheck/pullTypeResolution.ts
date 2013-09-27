@@ -5835,6 +5835,51 @@ module TypeScript {
             return childTypeSymbol;
         }
 
+        private shouldContextuallyTypeFunctionExpression(functionExpressionAST: FunctionDeclaration, context: PullTypeResolutionContext): boolean {
+            // September 21, 2013: If e is a FunctionExpression or ArrowFunctionExpression with no type parameters and no parameter
+            // or return type annotations, and T is a function type with exactly one non - generic call signature, then any
+            // inferences made for type parameters referenced by the parameters of T’s call signature are fixed(section 4.12.2)
+            // and e is processed with the contextual type T, as described in section 4.9.3.
+
+            // No type parameters
+            if (functionExpressionAST.typeArguments && functionExpressionAST.typeArguments.members.length > 0) {
+                return false;
+            }
+
+            // No return type annotation
+            if (functionExpressionAST.returnTypeAnnotation) {
+                return false;
+            }
+
+            // No parameter type annotations
+            if (functionExpressionAST.arguments) {
+                for (var i = 0; i < functionExpressionAST.arguments.members.length; i++) {
+                    var parameter = <Parameter>functionExpressionAST.arguments.members[i];
+                    if (parameter.typeExpr) {
+                        return false
+                    }
+                }
+            }
+
+            var contextualFunctionTypeSymbol = context.getContextualType();
+
+            // Exactly one non-generic call signature (note that this means it must have exactly one call signature,
+            // AND that call signature must be non-generic)
+            if (contextualFunctionTypeSymbol) {
+                this.resolveDeclaredSymbol(contextualFunctionTypeSymbol, context);
+                var callSignatures = contextualFunctionTypeSymbol.getCallSignatures();
+                var exactlyOneCallSignature = callSignatures && callSignatures.length == 1;
+                if (!exactlyOneCallSignature) {
+                    return false;
+                }
+
+                var callSignatureIsGeneric = callSignatures[0].typeParameters && callSignatures[0].typeParameters.length > 0;
+                return !callSignatureIsGeneric;
+            }
+
+            return false;
+        }
+
         private resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
             var funcDeclSymbol: PullSymbol = null;
@@ -5844,42 +5889,6 @@ module TypeScript {
                 funcDeclSymbol = functionDecl.getSymbol();
                 if (funcDeclSymbol.isResolved || funcDeclSymbol.inResolution) {
                     return funcDeclSymbol;
-                }
-            }
-
-            // if we have an assigning AST with a type, and the funcDecl has no parameter types or return type annotation
-            // we'll contextually type it
-            // otherwise, just process it as a normal function declaration
-
-            var shouldContextuallyType = inContextuallyTypedAssignment;
-
-            var assigningFunctionTypeSymbol: PullTypeSymbol = null;
-            var assigningFunctionSignature: PullSignatureSymbol = null;
-
-            if (funcDeclAST.returnTypeAnnotation) {
-                shouldContextuallyType = false;
-            }
-
-            if (shouldContextuallyType && funcDeclAST.arguments) {
-
-                for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    var parameter = <Parameter>funcDeclAST.arguments.members[i];
-                    if (parameter.typeExpr) {
-                        shouldContextuallyType = false;
-                        break;
-                    }
-                }
-            }
-
-            if (shouldContextuallyType) {
-                assigningFunctionTypeSymbol = context.getContextualType();
-
-                if (assigningFunctionTypeSymbol) {
-                    this.resolveDeclaredSymbol(assigningFunctionTypeSymbol, context);
-
-                    if (assigningFunctionTypeSymbol) {
-                        assigningFunctionSignature = assigningFunctionTypeSymbol.getCallSignatures()[0];
-                    }
                 }
             }
 
@@ -5910,6 +5919,11 @@ module TypeScript {
                 for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
                     this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
                 }
+            }
+
+            var assigningFunctionSignature: PullSignatureSymbol = null;
+            if (inContextuallyTypedAssignment && this.shouldContextuallyTypeFunctionExpression(funcDeclAST, context)) {
+                assigningFunctionSignature = context.getContextualType().getCallSignatures()[0];
             }
 
             // link parameters and resolve their annotations
