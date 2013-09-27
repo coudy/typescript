@@ -1432,7 +1432,6 @@ module TypeScript {
                         var interfaceDeclaration = <InterfaceDeclaration>current;
                         if (path.asts[i + 1]) {
                             if (path.asts[i + 1] === interfaceDeclaration.extendsList ||
-                                path.asts[i + 1] === interfaceDeclaration.implementsList ||
                                 path.asts[i + 1] === interfaceDeclaration.name) {
                                 resolutionContext.resolvingTypeReference = true;
                             }

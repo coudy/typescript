@@ -934,18 +934,32 @@ module TypeScript {
         }
     }
 
-    export class InterfaceDeclaration extends TypeDeclaration {
-        constructor(name: Identifier,
-                    typeParameters: ASTList,
-                    members: ASTList,
-                    extendsList: ASTList,
-                    implementsList: ASTList,
+    export class InterfaceDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public name: Identifier,
+                    public typeParameters: ASTList,
+                    public members: ASTList,
+                    public extendsList: ASTList,
                     public isObjectTypeLiteral: boolean) {
-            super(name, typeParameters, extendsList, implementsList, members);
+            super();
         }
 
         public nodeType(): NodeType {
             return NodeType.InterfaceDeclaration;
+        }
+
+        public isDeclaration() {
+            return true;
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
         }
 
         public shouldEmit(emitter: Emitter): boolean {
@@ -954,6 +968,15 @@ module TypeScript {
 
         public emit(emitter: Emitter): void {
             emitter.emitInterfaceDeclaration(this);
+        }
+
+        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.name, ast.name, includingPosition) &&
+                structuralEquals(this.members, ast.members, includingPosition) &&
+                structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
+                structuralEquals(this.extendsList, ast.extendsList, includingPosition);
         }
     }
 

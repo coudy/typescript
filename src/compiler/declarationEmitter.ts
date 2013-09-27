@@ -527,8 +527,7 @@ module TypeScript {
             this.declFile.WriteLine(";");
         }
 
-        private emitBaseList(typeDecl: TypeDeclaration, useExtendsList: boolean) {
-            var bases = useExtendsList ? typeDecl.extendsList : typeDecl.implementsList;
+        private emitBaseList(bases: ASTList, useExtendsList: boolean) {
             if (bases && (bases.members.length > 0)) {
                 var qual = useExtendsList ? "extends" : "implements";
                 this.declFile.Write(" " + qual + " ");
@@ -620,8 +619,8 @@ module TypeScript {
             this.declFile.Write(className);
             this.pushDeclarationContainer(classDecl);
             this.emitTypeParameters(classDecl.typeParameters);
-            this.emitBaseList(classDecl, true);
-            this.emitBaseList(classDecl, false);
+            this.emitBaseList(classDecl.extendsList, true);
+            this.emitBaseList(classDecl.implementsList, false);
             this.declFile.WriteLine(" {");
 
             this.indenter.increaseIndent();
@@ -683,7 +682,7 @@ module TypeScript {
             this.declFile.Write(interfaceName);
             this.pushDeclarationContainer(interfaceDecl);
             this.emitTypeParameters(interfaceDecl.typeParameters);
-            this.emitBaseList(interfaceDecl, true);
+            this.emitBaseList(interfaceDecl.extendsList, true);
             this.declFile.WriteLine(" {");
 
             this.indenter.increaseIndent();
