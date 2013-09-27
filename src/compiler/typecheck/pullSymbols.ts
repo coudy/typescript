@@ -1464,6 +1464,10 @@ module TypeScript {
         }
         public setTypeArguments(typeArgs: PullTypeSymbol[]) { this._typeArguments = typeArgs; }
 
+        public getTypeArgumentsOrTypeParameters() {
+            return this.getIsSpecialized() ? this.getTypeArguments() : this.getTypeParameters();
+        }
+
         public addCallSignature(callSignature: PullSignatureSymbol) {
 
             if (!this._callSignatures) {
@@ -1891,11 +1895,7 @@ module TypeScript {
         public getNamePartForFullName() {
             var name = super.getNamePartForFullName();
 
-            var typars = this.getTypeArguments();
-            if (!typars || !typars.length) {
-                typars = this.getTypeParameters();
-            }
-
+            var typars = this.getTypeArgumentsOrTypeParameters();
             var typarString = PullSymbol.getTypeParameterString(typars, this, /*useConstraintInName:*/ true);
             return name + typarString;
         }
@@ -1947,11 +1947,7 @@ module TypeScript {
             var builder = new MemberNameArray();
             builder.prefix = super.getScopedName(scopeSymbol, useConstraintInName);
 
-            var typars = this.getTypeArguments();
-            if (!typars || !typars.length) {
-                typars = this.getTypeParameters();
-            }
-
+            var typars = this.getTypeArgumentsOrTypeParameters();
             builder.add(PullSymbol.getTypeParameterStringEx(typars, scopeSymbol, getTypeParamMarkerInfo, useConstraintInName));
 
             return builder;

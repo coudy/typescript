@@ -656,10 +656,7 @@ module TypeScript {
                 typars = funcSignature.getTypeParameters();
             }
             else {
-                typars = containerSymbol.getTypeArguments();
-                if (!typars || !typars.length) {
-                    typars = containerSymbol.getTypeParameters();
-                }
+                typars = containerSymbol.getTypeArgumentsOrTypeParameters();
             }
 
             for (var i = 0; i < typars.length; i++) {

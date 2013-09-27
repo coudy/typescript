@@ -9526,14 +9526,14 @@ module TypeScript {
                 (parameterDeclarations[0].isEqual(expressionDeclarations[0]) ||
                 (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(expressionType, parameterType, context, null))) &&
                 expressionType.isGeneric()) {
-                var typeParameters: PullTypeSymbol[] = parameterType.getIsSpecialized() ? parameterType.getTypeArguments() : parameterType.getTypeParameters();
+                var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
 
                 // If we're relating an out-of-order resolution of a function call within the body
                 // of a generic type's method, the relationship will actually be in reverse.
                 if (!typeArguments) {
                     typeParameters = parameterType.getTypeArguments();
-                    typeArguments = expressionType.getIsSpecialized() ? expressionType.getTypeArguments() : expressionType.getTypeParameters();
+                    typeArguments = expressionType.getTypeArgumentsOrTypeParameters();
                 }
 
                 if (typeParameters && typeArguments && typeParameters.length === typeArguments.length) {
@@ -9992,10 +9992,7 @@ module TypeScript {
 
                 typeSymbol.inSymbolPrivacyCheck = true;
 
-                var typars = typeSymbol.getTypeArguments();
-                if (!typars || !typars.length) {
-                    typars = typeSymbol.getTypeParameters();
-                }
+                var typars = typeSymbol.getTypeArgumentsOrTypeParameters();
                 if (typars) {
                     for (var i = 0; i < typars.length; i++) {
                         this.checkSymbolPrivacy(declSymbol, typars[i], privacyErrorReporter);
