@@ -95,13 +95,13 @@ goTo.marker('8b');
 verify.quickInfoIs('B<any>'); // Specialized to any because no type argument was specified
 
 goTo.marker('9');
-verify.quickInfoIs('Collection<number, string>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('10');
-verify.quickInfoIs('Collection<number, string>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('11');
 verify.quickInfoIs('Collection<any, any>');
 goTo.marker('12');
-verify.quickInfoIs('Collection<Collection<number, number>, number>');
+verify.quickInfoIs('Collection<any, any>');
 goTo.marker('13');
 verify.quickInfoIs('Collection<any, any>');
 goTo.marker('14');

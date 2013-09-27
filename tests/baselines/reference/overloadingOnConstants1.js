@@ -41,13 +41,13 @@ var Derived3 = (function (_super) {
 
 var d2;
 
-// these are ok
+// this is ok
 var htmlElement = d2.createElement("yo");
+
+// these are errors (we pick the first overload even though it is not a string constant)
 var htmlCanvasElement = d2.createElement("canvas");
 var htmlDivElement = d2.createElement("div");
 var htmlSpanElement = d2.createElement("span");
-
-// these are errors
 var htmlElement2 = d2.createElement("yo");
 var htmlCanvasElement2 = d2.createElement("canvas");
 var htmlDivElement2 = d2.createElement("div");

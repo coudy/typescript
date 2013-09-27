@@ -7,11 +7,6 @@ module TypeScript {
         getTypeAtIndex(index: number): PullTypeSymbol;
     }
 
-    export interface PullApplicableSignature {
-        signature: PullSignatureSymbol;
-        hasProvisionalErrors: boolean;
-    }
-
     export class PullAdditionalCallResolutionData {
         public targetSymbol: PullSymbol = null;
         public resolvedSignatures: PullSignatureSymbol[] = null;
@@ -9305,21 +9300,27 @@ module TypeScript {
             haveTypeArgumentsAtCallSite: boolean,
             context: PullTypeResolutionContext,
             diagnostics: Diagnostic[]): PullSignatureSymbol {
-            var finalDecision: PullSignatureSymbol = null;
             var hasOverloads = group.length > 1;
             var comparisonInfo = new TypeComparisonInfo();
             var args: ASTList = application.arguments;
 
             var signature: PullSignatureSymbol;
             var returnType: PullTypeSymbol;
-            var initialCandidates = ArrayUtilities.where(group, signature =>
-                // Filter out definition if overloads are available, and nongeneric signatures if type arguments are supplied
-                !(hasOverloads && signature.isDefinition() || (haveTypeArgumentsAtCallSite && !signature.isGeneric()))
-                );
+            var firstApplicableSignature = ArrayUtilities.firstOrDefault(group, signature => {
+                // Filter out definition if overloads are available
+                if (hasOverloads && signature.isDefinition()) {
+                    return false;
+                }
+                // Filter out nongeneric signatures if type arguments are supplied
+                if (haveTypeArgumentsAtCallSite && !signature.isGeneric()) {
+                    return false;
+                }
 
-            var applicableCandidates = this.getApplicableSignatures(initialCandidates, args, comparisonInfo, enclosingDecl, context);
-            if (applicableCandidates.length > 0) {
-                finalDecision = this.findMostApplicableSignature(applicableCandidates, args, enclosingDecl, context);
+                return this.overloadIsApplicable(signature, args, enclosingDecl, context, comparisonInfo);
+            });
+
+            if (firstApplicableSignature) {
+                return firstApplicableSignature;
             }
             else {
                 var target: AST = this.getCallTargetErrorSpanAST(application);
@@ -9333,7 +9334,7 @@ module TypeScript {
                 }
             }
 
-            return finalDecision;
+            return null;
         }
 
         private getCallTargetErrorSpanAST(callEx: ICallExpression): AST {
@@ -9355,33 +9356,32 @@ module TypeScript {
             if (numberOfArgs < signature.nonOptionalParamCount) {
                 return false;
             }
+            // The spec does not say this, but if there are more arguments than parameters, the signature is not applicable.
+            // TODO: Update this comment when the spec is updated.
             if (!signature.hasVarArgs && numberOfArgs > signature.parameters.length) {
                 return false;
             }
 
             return true;
         }
-
-        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        
+        //September 21, 2013 - section 4.12.1:
+        //A signature is said to be an applicable signature with respect to an argument list when
+        //	- each non-optional parameter has a corresponding argument, and
+        //	- each argument expression, contextually typed(section 4.19) by the corresponding parameter type in the signature, is of a type that is assignable to(section 3.8.4) that parameter type.
+        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             if (args == null) {
                 // If arguments are required in this signature, the signature doesn't fit
-                if (signature.nonOptionalParamCount > 0) {
-                    return OverloadApplicabilityStatus.NotApplicable;
-                }
-                else {
-                    return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
-                }
+                return signature.nonOptionalParamCount == 0;
             }
             else {
                 // Check arity bounds
                 if (!this.overloadHasCorrectArity(signature, args)) {
-                    return OverloadApplicabilityStatus.NotApplicable;
+                    return false;
                 }
 
                 var isInVarArg = false;
-                var hasProvisionalErrors = false;
                 var parameters = signature.parameters;
-                var hasProvisionalErrors = false;
                 var paramType: PullTypeSymbol = null;
 
                 for (var i = 0; i < args.members.length; i++) {
@@ -9398,24 +9398,18 @@ module TypeScript {
                         }
                     }
 
-                    var applicability = this.overloadIsApplicableForArgument(paramType, args.members[i], i, enclosingDecl, context, comparisonInfo);
-                    if (applicability === OverloadApplicabilityStatus.NotApplicable) {
-                        return applicability;
-                    }
-                    else {
-                        hasProvisionalErrors = hasProvisionalErrors || (applicability === OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors);
+                    if (!this.overloadIsApplicableForArgument(paramType, args.members[i], i, enclosingDecl, context, comparisonInfo)) {
+                        return false;
                     }
                 }
 
-                return hasProvisionalErrors ?
-                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
-                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                return true;
             }
         }
 
-        private overloadIsApplicableForArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        private overloadIsApplicableForArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             if (this.isAnyOrEquivalent(paramType)) {
-                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                return true;
             }
             else if (arg.nodeType() === NodeType.ArrowFunctionExpression) {
                 var arrowFunction = <ArrowFunctionExpression>arg;
@@ -9450,10 +9444,10 @@ module TypeScript {
             argIndex: number,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext,
-            comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            comparisonInfo: TypeComparisonInfo): boolean {
 
             if (this.cachedFunctionInterfaceType() && paramType === this.cachedFunctionInterfaceType()) {
-                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                return true;
             }
 
             context.pushContextualType(paramType, true, null);
@@ -9464,14 +9458,7 @@ module TypeScript {
             var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
             var cxt = context.popContextualType();
 
-            if (applicable) {
-                return cxt.hasProvisionalErrors ?
-                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
-                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
-            }
-            else {
-                return OverloadApplicabilityStatus.NotApplicable;
-            }
+            return applicable;
         }
 
         private overloadIsApplicableForObjectLiteralArgument(
@@ -9480,11 +9467,11 @@ module TypeScript {
             argIndex: number,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext,
-            comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+            comparisonInfo: TypeComparisonInfo): boolean {
 
             // attempt to contextually type the object literal
             if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
-                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                return true;
             }
 
             context.pushContextualType(paramType, true, null);
@@ -9493,20 +9480,13 @@ module TypeScript {
             var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
 
             var cxt = context.popContextualType();
-            if (applicable) {
-                return cxt.hasProvisionalErrors ?
-                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
-                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
-            }
-            else {
-                return OverloadApplicabilityStatus.NotApplicable;
-            }
+            return applicable;
         }
 
-        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: ArrayLiteralExpression, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: ArrayLiteralExpression, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             // attempt to contextually type the array literal
             if (paramType === this.cachedArrayInterfaceType()) {
-                return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
+                return true;
             }
 
             context.pushContextualType(paramType, true, null);
@@ -9516,17 +9496,10 @@ module TypeScript {
 
             var cxt = context.popContextualType();
 
-            if (applicable) {
-                return cxt.hasProvisionalErrors ?
-                    OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors :
-                    OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
-            }
-            else {
-                return OverloadApplicabilityStatus.NotApplicable;
-            }
+            return applicable;
         }
 
-        private overloadIsApplicableForOtherArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        private overloadIsApplicableForOtherArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             // No need to contextually type or mark as provisional
             var argSym = this.resolveAST(arg, false, enclosingDecl, context);
 
@@ -9539,9 +9512,7 @@ module TypeScript {
             // Just in case the argument is a string literal, and are checking overload on const, we set this stringConstantVal
             // (sourceIsAssignableToTarget will internally check if the argument is actually a string)
             comparisonInfo.stringConstantVal = arg;
-            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context)
-                ? OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors
-                : OverloadApplicabilityStatus.NotApplicable;
+            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
         }
 
         private overloadIsApplicableForArgumentHelper(paramType: PullTypeSymbol, argSym: PullSymbol, argumentIndex: number, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): boolean {
@@ -9557,114 +9528,19 @@ module TypeScript {
             return false;
         }
 
-        private getApplicableSignatures(candidateSignatures: PullSignatureSymbol[],
+        private getFirstApplicableSignature(candidateSignatures: PullSignatureSymbol[],
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
             enclosingDecl: PullDecl,
-            context: PullTypeResolutionContext): PullApplicableSignature[] {
-
-            var applicableSigs: PullApplicableSignature[] = [];
+            context: PullTypeResolutionContext): PullSignatureSymbol {
 
             for (var i = 0; i < candidateSignatures.length; i++) {
-                var applicability = this.overloadIsApplicable(candidateSignatures[i], args, enclosingDecl, context, comparisonInfo);
-                if (applicability !== OverloadApplicabilityStatus.NotApplicable) {
-                    applicableSigs[applicableSigs.length] = { signature: candidateSignatures[i], hasProvisionalErrors: applicability === OverloadApplicabilityStatus.ApplicableButWithProvisionalErrors };
+                if (this.overloadIsApplicable(candidateSignatures[i], args, enclosingDecl, context, comparisonInfo)) {
+                    return candidateSignatures[i];
                 }
             }
 
-            return applicableSigs;
-        }
-
-        private findMostApplicableSignature(signatures: PullApplicableSignature[], args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
-
-            if (signatures.length === 1) {
-                return signatures[0].signature;
-            }
-
-            var best: PullApplicableSignature = signatures[0];
-
-            var PType: PullTypeSymbol = null;
-            var QType: PullTypeSymbol = null;
-
-            var ambiguous = false;
-
-            var pParams: PullSymbol[];
-            var qParams: PullSymbol[];
-
-            // Make sure the first signature has every parameter resolved
-            for (var p = 0; p < best.signature.parameters.length; p++) {
-                this.resolveDeclaredSymbol(best.signature.parameters[p], context);
-            }
-
-            // Resolve the argument types with a provisional any (this is a hack to make sure the symbol does not get cached when we resolve the AST)
-            // Ideally, we would have a way to switch into provisional mode *without* pushing a contextual type on the stack
-            if (args) {
-                var ATypes = new Array<PullTypeSymbol>(args.members.length);
-                context.pushContextualType(this.semanticInfoChain.anyTypeSymbol, /*provisional*/ true, /*substitutions*/ null);
-                for (var i = 0; i < args.members.length; i++) {
-                    ATypes[i] = this.resolveAST(args.members[i], /*inContextuallyTypedAssignment*/ true, enclosingDecl, context).type;
-                }
-                context.popContextualType();
-            }
-
-            for (var qSig = 1; qSig < signatures.length; qSig++) {
-                var P = best;
-                var Q = signatures[qSig];
-
-                // find the better conversion
-                for (var i = 0; args && i < args.members.length; i++) {
-
-                    pParams = P.signature.parameters;
-                    qParams = Q.signature.parameters;
-
-                    PType = i < pParams.length ? pParams[i].type : pParams[pParams.length - 1].type.getElementType();
-                    QType = i < qParams.length ? qParams[i].type : qParams[qParams.length - 1].type.getElementType();
-
-                    // The following series of decisions are biased toward selecting P (the first candidate signature) as opposed to Q (the second).
-                    // To pick P, all we need is P to be a better match for at least one parameter.
-                    // To pick Q, we need Q to be better for at least one parameter, and P to be better for NO parameter.
-                    // This is why we break whenever we have a reason to favor P.
-                    if (this.typesAreIdentical(PType, QType) && !(QType.isPrimitive() && (<PullPrimitiveTypeSymbol>QType).isStringConstant())) {
-                        continue;
-                    }
-                    else if (PType.isPrimitive() &&
-                        (<PullPrimitiveTypeSymbol>PType).isStringConstant() &&
-                        args.members[i].nodeType() === NodeType.StringLiteral &&
-                        stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>PType).name)) {
-                        best = P;
-                        break;
-                    }
-                    else if (QType.isPrimitive() &&
-                        (<PullPrimitiveTypeSymbol>QType).isStringConstant() &&
-                        args.members[i].nodeType() === NodeType.StringLiteral &&
-                        stripStartAndEndQuotes((<StringLiteral>args.members[i]).actualText) === stripStartAndEndQuotes((<PullStringConstantTypeSymbol>QType).name)) {
-                        best = Q;
-                    }
-                    else if (this.typesAreIdentical(ATypes[i], PType)) {
-                        best = P;
-                        break;
-                    }
-                    else if (this.typesAreIdentical(ATypes[i], QType)) {
-                        best = Q;
-                    }
-                    else if (this.sourceIsSubtypeOfTarget(PType, QType, context)) {
-                        best = P;
-                        break;
-                    }
-                    else if (this.sourceIsSubtypeOfTarget(QType, PType, context)) {
-                        best = Q;
-                    }
-                    else if (Q.hasProvisionalErrors) {
-                        best = P;
-                        break;
-                    }
-                    else if (P.hasProvisionalErrors) {
-                        best = Q;
-                    }
-                }
-            }
-
-            return best.signature;
+            return null;
         }
 
         private inferArgumentTypesForSignature(signature: PullSignatureSymbol,
@@ -11570,11 +11446,5 @@ module TypeScript {
         else {
             throw Errors.invalidOperation();
         }
-    }
-
-    enum OverloadApplicabilityStatus {
-        NotApplicable,
-        ApplicableButWithProvisionalErrors,
-        ApplicableWithNoProvisionalErrors
     }
 }
