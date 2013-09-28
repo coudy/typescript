@@ -981,42 +981,6 @@ module TypeScript {
         return true;
     }
 
-    function preCollectFuncDecls(ast: AST, context: DeclCollectionContext) {
-        var funcDecl = <FunctionDeclaration>ast;
-
-        if (funcDecl.isConstructor) {
-            return createClassConstructorDeclaration(funcDecl, context);
-        }
-        else if (funcDecl.isGetAccessor()) {
-            return createGetAccessorDeclaration(funcDecl, context);
-        }
-        else if (funcDecl.isSetAccessor()) {
-            return createSetAccessorDeclaration(funcDecl, context);
-        }
-        else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ConstructMember)) {
-            return hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference) ?
-                createConstructorTypeDeclaration(funcDecl, context) :
-                createConstructSignatureDeclaration(funcDecl, context);
-        }
-        else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.CallMember)) {
-            return createCallSignatureDeclaration(funcDecl, context);
-        }
-        else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IndexerMember)) {
-            return createIndexSignatureDeclaration(funcDecl, context);
-        }
-        else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
-            return createFunctionTypeDeclaration(funcDecl, context);
-        }
-        else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method)) {
-            return createMemberFunctionDeclaration(funcDecl, context);
-        }
-        else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction | FunctionFlags.IsFunctionProperty))) {
-            return createFunctionExpressionDeclaration(funcDecl, context);
-        }
-
-        return createFunctionDeclaration(funcDecl, context);
-    }
-
     export function preCollectDecls(ast: AST, walker: IAstWalker) {
         var context: DeclCollectionContext = walker.state;
         var go = false;
@@ -1056,7 +1020,40 @@ module TypeScript {
             go = preCollectVarDecls(ast, context);
         }
         else if (ast.nodeType() === NodeType.FunctionDeclaration) {
-            go = preCollectFuncDecls(ast, context);
+            var funcDecl = <FunctionDeclaration>ast;
+
+            if (funcDecl.isConstructor) {
+                go = createClassConstructorDeclaration(funcDecl, context);
+            }
+            else if (funcDecl.isGetAccessor()) {
+                go = createGetAccessorDeclaration(funcDecl, context);
+            }
+            else if (funcDecl.isSetAccessor()) {
+                go = createSetAccessorDeclaration(funcDecl, context);
+            }
+            else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ConstructMember)) {
+                go = hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference) ?
+                    createConstructorTypeDeclaration(funcDecl, context) :
+                    createConstructSignatureDeclaration(funcDecl, context);
+            }
+            else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.CallMember)) {
+                go = createCallSignatureDeclaration(funcDecl, context);
+            }
+            else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IndexerMember)) {
+                go = createIndexSignatureDeclaration(funcDecl, context);
+            }
+            else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
+                go = createFunctionTypeDeclaration(funcDecl, context);
+            }
+            else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method)) {
+                go = createMemberFunctionDeclaration(funcDecl, context);
+            }
+            else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction | FunctionFlags.IsFunctionProperty))) {
+                go = createFunctionExpressionDeclaration(funcDecl, context);
+            }
+            else {
+                go = createFunctionDeclaration(funcDecl, context);
+            }
         }
         else if (ast.nodeType() === NodeType.ImportDeclaration) {
             go = preCollectImportDecls(ast, context);
