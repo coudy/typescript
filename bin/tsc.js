@@ -7883,7 +7883,7 @@ var TypeScript;
 
         function identifierName(text, info) {
             if (typeof info === "undefined") { info = null; }
-            return Syntax.identifier(text);
+            return TypeScript.Syntax.identifier(text);
         }
         Syntax.identifierName = identifierName;
 
@@ -18029,7 +18029,7 @@ var TypeScript;
 
             VariableWidthTokenWithNoTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18037,7 +18037,7 @@ var TypeScript;
 
             VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18085,7 +18085,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.firstToken = function () {
                 return this;
@@ -18103,7 +18103,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18122,7 +18122,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithNoTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithNoTrivia.prototype.isMemberExpression = function () {
@@ -18204,7 +18204,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18212,7 +18212,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18260,7 +18260,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18278,7 +18278,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18297,7 +18297,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.isMemberExpression = function () {
@@ -18379,7 +18379,7 @@ var TypeScript;
 
             VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18387,7 +18387,7 @@ var TypeScript;
 
             VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18435,7 +18435,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18453,7 +18453,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18472,7 +18472,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.isMemberExpression = function () {
@@ -18555,7 +18555,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18563,7 +18563,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18611,7 +18611,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18629,7 +18629,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18648,7 +18648,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isMemberExpression = function () {
@@ -18712,10 +18712,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -18759,7 +18759,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.firstToken = function () {
                 return this;
@@ -18777,7 +18777,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18796,7 +18796,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithNoTrivia.prototype.isMemberExpression = function () {
@@ -18870,10 +18870,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -18917,7 +18917,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18935,7 +18935,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18954,7 +18954,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.isMemberExpression = function () {
@@ -19028,10 +19028,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -19075,7 +19075,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19093,7 +19093,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19112,7 +19112,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.isMemberExpression = function () {
@@ -19187,10 +19187,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -19234,7 +19234,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19252,7 +19252,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19271,7 +19271,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isMemberExpression = function () {
@@ -19556,7 +19556,7 @@ var TypeScript;
             }
 
             if (kind === 13 /* NumericLiteral */) {
-                return Syntax.isHexInteger(text) ? parseInt(text, 16) : parseFloat(text);
+                return TypeScript.Syntax.isHexInteger(text) ? parseInt(text, 16) : parseFloat(text);
             } else if (kind === 14 /* StringLiteral */) {
                 if (text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0)) {
                     return massageEscapes(text.substr(1, text.length - 2));
@@ -28046,15 +28046,6 @@ var TypeScript;
             return (items === null || items.length <= index) ? null : items[items.length - index - 1];
         };
 
-        AstPath.prototype.clone = function () {
-            var clone = new AstPath();
-            clone.asts = this.asts.map(function (value) {
-                return value;
-            });
-            clone.top = this.top;
-            return clone;
-        };
-
         AstPath.prototype.pop = function () {
             var head = this.ast();
             this.up();
@@ -28077,18 +28068,6 @@ var TypeScript;
             if (this.top <= -1)
                 throw TypeScript.Errors.invalidOperation(TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Invalid_call_to_up, null));
             this.top--;
-        };
-
-        AstPath.prototype.down = function () {
-            if (this.top === this.ast.length - 1)
-                throw TypeScript.Errors.invalidOperation(TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Invalid_call_to_down, null));
-            this.top++;
-        };
-
-        AstPath.prototype.nodeType = function () {
-            if (this.ast() === null)
-                return 0 /* None */;
-            return this.ast().nodeType();
         };
 
         AstPath.prototype.ast = function () {
@@ -28121,13 +28100,6 @@ var TypeScript;
             return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 15 /* InterfaceDeclaration */) && (this.parent().name === this.ast());
         };
 
-        AstPath.prototype.isNameOfArgument = function () {
-            if (this.ast() === null || this.parent() === null)
-                return false;
-
-            return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 21 /* Parameter */) && (this.parent().id === this.ast());
-        };
-
         AstPath.prototype.isNameOfVariable = function () {
             if (this.ast() === null || this.parent() === null)
                 return false;
@@ -28135,34 +28107,11 @@ var TypeScript;
             return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 19 /* VariableDeclarator */) && (this.parent().id === this.ast());
         };
 
-        AstPath.prototype.isNameOfModule = function () {
-            if (this.ast() === null || this.parent() === null)
-                return false;
-
-            return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 17 /* ModuleDeclaration */) && (this.parent().name === this.ast());
-        };
-
         AstPath.prototype.isNameOfFunction = function () {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
             return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 13 /* FunctionDeclaration */) && (this.parent().name === this.ast());
-        };
-
-        AstPath.prototype.isBodyOfFunction = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType() === 13 /* FunctionDeclaration */ && this.asts[this.top - 1].block === this.asts[this.top - 0];
-        };
-
-        AstPath.prototype.isArgumentListOfFunction = function () {
-            return this.count() >= 2 && this.asts[this.top - 0].nodeType() === 1 /* List */ && this.asts[this.top - 1].nodeType() === 13 /* FunctionDeclaration */ && this.asts[this.top - 1].parameters === this.asts[this.top - 0];
-        };
-
-        AstPath.prototype.isTargetOfCall = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType() === 38 /* InvocationExpression */ && this.asts[this.top - 1].target === this.asts[this.top];
-        };
-
-        AstPath.prototype.isTargetOfNew = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType() === 39 /* ObjectCreationExpression */ && this.asts[this.top - 1].target === this.asts[this.top];
         };
 
         AstPath.prototype.isMemberOfMemberAccessExpression = function () {
@@ -28215,18 +28164,6 @@ var TypeScript;
 
             return false;
         };
-
-        AstPath.prototype.isMemberOfList = function (list, item) {
-            if (list && list.members) {
-                for (var i = 0, n = list.members.length; i < n; i++) {
-                    if (list.members[i] === item) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        };
         return AstPath;
     })();
     TypeScript.AstPath = AstPath;
@@ -28248,7 +28185,6 @@ var TypeScript;
         }
         return AstPathContext;
     })();
-    TypeScript.AstPathContext = AstPathContext;
 
     function getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, forceInclusive) {
         var lookInComments = function (comments) {
@@ -28304,23 +28240,6 @@ var TypeScript;
         return ctx.path;
     }
     TypeScript.getAstPathToPosition = getAstPathToPosition;
-
-    function walkAST(ast, callback) {
-        var pre = function (cur, walker) {
-            var path = walker.state;
-            path.push(cur);
-            callback(path, walker);
-            return cur;
-        };
-        var post = function (cur, walker) {
-            var path = walker.state;
-            path.pop();
-        };
-
-        var path = new AstPath();
-        TypeScript.getAstWalkerFactory().walk(ast, pre, post, null, path);
-    }
-    TypeScript.walkAST = walkAST;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {

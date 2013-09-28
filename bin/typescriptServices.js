@@ -7968,7 +7968,7 @@ var TypeScript;
 
         function identifierName(text, info) {
             if (typeof info === "undefined") { info = null; }
-            return Syntax.identifier(text);
+            return TypeScript.Syntax.identifier(text);
         }
         Syntax.identifierName = identifierName;
 
@@ -18114,7 +18114,7 @@ var TypeScript;
 
             VariableWidthTokenWithNoTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18122,7 +18122,7 @@ var TypeScript;
 
             VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18170,7 +18170,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.firstToken = function () {
                 return this;
@@ -18188,7 +18188,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18207,7 +18207,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithNoTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithNoTrivia.prototype.isMemberExpression = function () {
@@ -18289,7 +18289,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18297,7 +18297,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18345,7 +18345,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18363,7 +18363,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18382,7 +18382,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.isMemberExpression = function () {
@@ -18464,7 +18464,7 @@ var TypeScript;
 
             VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18472,7 +18472,7 @@ var TypeScript;
 
             VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18520,7 +18520,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18538,7 +18538,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18557,7 +18557,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.isMemberExpression = function () {
@@ -18640,7 +18640,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = Syntax.value(this);
+                    this._value = TypeScript.Syntax.value(this);
                 }
 
                 return this._value;
@@ -18648,7 +18648,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = Syntax.valueText(this);
+                    this._valueText = TypeScript.Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18696,7 +18696,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18714,7 +18714,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18733,7 +18733,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isMemberExpression = function () {
@@ -18797,10 +18797,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -18844,7 +18844,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.firstToken = function () {
                 return this;
@@ -18862,7 +18862,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18881,7 +18881,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithNoTrivia.prototype.isMemberExpression = function () {
@@ -18955,10 +18955,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -19002,7 +19002,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19020,7 +19020,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19039,7 +19039,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.isMemberExpression = function () {
@@ -19113,10 +19113,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -19160,7 +19160,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19178,7 +19178,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19197,7 +19197,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.isMemberExpression = function () {
@@ -19272,10 +19272,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-                return Syntax.value(this);
+                return TypeScript.Syntax.value(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-                return Syntax.valueText(this);
+                return TypeScript.Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -19319,7 +19319,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-                return Syntax.tokenToJSON(this);
+                return TypeScript.Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19337,7 +19337,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return Syntax.realizeToken(this);
+                return TypeScript.Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19356,7 +19356,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isPrimaryExpression = function () {
-                return Syntax.isPrimaryExpression(this);
+                return TypeScript.Syntax.isPrimaryExpression(this);
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isMemberExpression = function () {
@@ -19641,7 +19641,7 @@ var TypeScript;
             }
 
             if (kind === 13 /* NumericLiteral */) {
-                return Syntax.isHexInteger(text) ? parseInt(text, 16) : parseFloat(text);
+                return TypeScript.Syntax.isHexInteger(text) ? parseInt(text, 16) : parseFloat(text);
             } else if (kind === 14 /* StringLiteral */) {
                 if (text.length > 1 && text.charCodeAt(text.length - 1) === text.charCodeAt(0)) {
                     return massageEscapes(text.substr(1, text.length - 2));
@@ -28131,15 +28131,6 @@ var TypeScript;
             return (items === null || items.length <= index) ? null : items[items.length - index - 1];
         };
 
-        AstPath.prototype.clone = function () {
-            var clone = new AstPath();
-            clone.asts = this.asts.map(function (value) {
-                return value;
-            });
-            clone.top = this.top;
-            return clone;
-        };
-
         AstPath.prototype.pop = function () {
             var head = this.ast();
             this.up();
@@ -28162,18 +28153,6 @@ var TypeScript;
             if (this.top <= -1)
                 throw TypeScript.Errors.invalidOperation(TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Invalid_call_to_up, null));
             this.top--;
-        };
-
-        AstPath.prototype.down = function () {
-            if (this.top === this.ast.length - 1)
-                throw TypeScript.Errors.invalidOperation(TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Invalid_call_to_down, null));
-            this.top++;
-        };
-
-        AstPath.prototype.nodeType = function () {
-            if (this.ast() === null)
-                return 0 /* None */;
-            return this.ast().nodeType();
         };
 
         AstPath.prototype.ast = function () {
@@ -28206,13 +28185,6 @@ var TypeScript;
             return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 15 /* InterfaceDeclaration */) && (this.parent().name === this.ast());
         };
 
-        AstPath.prototype.isNameOfArgument = function () {
-            if (this.ast() === null || this.parent() === null)
-                return false;
-
-            return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 21 /* Parameter */) && (this.parent().id === this.ast());
-        };
-
         AstPath.prototype.isNameOfVariable = function () {
             if (this.ast() === null || this.parent() === null)
                 return false;
@@ -28220,34 +28192,11 @@ var TypeScript;
             return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 19 /* VariableDeclarator */) && (this.parent().id === this.ast());
         };
 
-        AstPath.prototype.isNameOfModule = function () {
-            if (this.ast() === null || this.parent() === null)
-                return false;
-
-            return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 17 /* ModuleDeclaration */) && (this.parent().name === this.ast());
-        };
-
         AstPath.prototype.isNameOfFunction = function () {
             if (this.ast() === null || this.parent() === null)
                 return false;
 
             return (this.ast().nodeType() === 22 /* Name */) && (this.parent().nodeType() === 13 /* FunctionDeclaration */) && (this.parent().name === this.ast());
-        };
-
-        AstPath.prototype.isBodyOfFunction = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType() === 13 /* FunctionDeclaration */ && this.asts[this.top - 1].block === this.asts[this.top - 0];
-        };
-
-        AstPath.prototype.isArgumentListOfFunction = function () {
-            return this.count() >= 2 && this.asts[this.top - 0].nodeType() === 1 /* List */ && this.asts[this.top - 1].nodeType() === 13 /* FunctionDeclaration */ && this.asts[this.top - 1].parameters === this.asts[this.top - 0];
-        };
-
-        AstPath.prototype.isTargetOfCall = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType() === 38 /* InvocationExpression */ && this.asts[this.top - 1].target === this.asts[this.top];
-        };
-
-        AstPath.prototype.isTargetOfNew = function () {
-            return this.count() >= 2 && this.asts[this.top - 1].nodeType() === 39 /* ObjectCreationExpression */ && this.asts[this.top - 1].target === this.asts[this.top];
         };
 
         AstPath.prototype.isMemberOfMemberAccessExpression = function () {
@@ -28300,18 +28249,6 @@ var TypeScript;
 
             return false;
         };
-
-        AstPath.prototype.isMemberOfList = function (list, item) {
-            if (list && list.members) {
-                for (var i = 0, n = list.members.length; i < n; i++) {
-                    if (list.members[i] === item) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        };
         return AstPath;
     })();
     TypeScript.AstPath = AstPath;
@@ -28333,7 +28270,6 @@ var TypeScript;
         }
         return AstPathContext;
     })();
-    TypeScript.AstPathContext = AstPathContext;
 
     function getAstPathToPosition(script, pos, useTrailingTriviaAsLimChar, forceInclusive) {
         var lookInComments = function (comments) {
@@ -28389,23 +28325,6 @@ var TypeScript;
         return ctx.path;
     }
     TypeScript.getAstPathToPosition = getAstPathToPosition;
-
-    function walkAST(ast, callback) {
-        var pre = function (cur, walker) {
-            var path = walker.state;
-            path.push(cur);
-            callback(path, walker);
-            return cur;
-        };
-        var post = function (cur, walker) {
-            var path = walker.state;
-            path.pop();
-        };
-
-        var path = new AstPath();
-        TypeScript.getAstWalkerFactory().walk(ast, pre, post, null, path);
-    }
-    TypeScript.walkAST = walkAST;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -58088,7 +58007,7 @@ var TypeScript;
                     end = p + 1;
                     lineBreak = this.snapshot.substr(end, endIncludingLineBreak - end, false);
                 }
-                var result = new Formatting.TextSnapshotLine(this, lineNumber, start, end, lineBreak);
+                var result = new TypeScript.Formatting.TextSnapshotLine(this, lineNumber, start, end, lineBreak);
                 return result;
             };
             return TextSnapshot;
@@ -58113,7 +58032,7 @@ var TypeScript;
             };
 
             TextSnapshotLine.prototype.start = function () {
-                return new Formatting.SnapshotPoint(this._snapshot, this._start);
+                return new TypeScript.Formatting.SnapshotPoint(this._snapshot, this._start);
             };
 
             TextSnapshotLine.prototype.startPosition = function () {
@@ -58121,7 +58040,7 @@ var TypeScript;
             };
 
             TextSnapshotLine.prototype.end = function () {
-                return new Formatting.SnapshotPoint(this._snapshot, this._end);
+                return new TypeScript.Formatting.SnapshotPoint(this._snapshot, this._end);
             };
 
             TextSnapshotLine.prototype.endPosition = function () {
@@ -58129,7 +58048,7 @@ var TypeScript;
             };
 
             TextSnapshotLine.prototype.endIncludingLineBreak = function () {
-                return new Formatting.SnapshotPoint(this._snapshot, this._end + this._lineBreak.length);
+                return new TypeScript.Formatting.SnapshotPoint(this._snapshot, this._end + this._lineBreak.length);
             };
 
             TextSnapshotLine.prototype.endIncludingLineBreakPosition = function () {
@@ -58360,7 +58279,7 @@ var TypeScript;
 
                 var result = [];
 
-                var formattingEdits = Formatting.Formatter.getEdits(span, this.syntaxTree.sourceUnit(), this.options, true, this.snapshot, this.rulesProvider, formattingRequestKind);
+                var formattingEdits = TypeScript.Formatting.Formatter.getEdits(span, this.syntaxTree.sourceUnit(), this.options, true, this.snapshot, this.rulesProvider, formattingRequestKind);
 
                 formattingEdits.forEach(function (item) {
                     var edit = new Services.TextEdit(item.position, item.position + item.length, item.replaceWith);
@@ -58435,15 +58354,15 @@ var TypeScript;
             };
 
             RuleDescriptor.create1 = function (left, right) {
-                return RuleDescriptor.create4(Formatting.Shared.TokenRange.FromToken(left), Formatting.Shared.TokenRange.FromToken(right));
+                return RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.FromToken(left), TypeScript.Formatting.Shared.TokenRange.FromToken(right));
             };
 
             RuleDescriptor.create2 = function (left, right) {
-                return RuleDescriptor.create4(left, Formatting.Shared.TokenRange.FromToken(right));
+                return RuleDescriptor.create4(left, TypeScript.Formatting.Shared.TokenRange.FromToken(right));
             };
 
             RuleDescriptor.create3 = function (left, right) {
-                return RuleDescriptor.create4(Formatting.Shared.TokenRange.FromToken(left), right);
+                return RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.FromToken(left), right);
             };
 
             RuleDescriptor.create4 = function (left, right) {
@@ -58479,7 +58398,7 @@ var TypeScript;
             };
 
             RuleOperation.create1 = function (action) {
-                return RuleOperation.create2(Formatting.RuleOperationContext.Any, action);
+                return RuleOperation.create2(TypeScript.Formatting.RuleOperationContext.Any, action);
             };
 
             RuleOperation.create2 = function (context, action) {
@@ -58535,99 +58454,99 @@ var TypeScript;
     (function (Formatting) {
         var Rules = (function () {
             function Rules() {
-                this.IgnoreBeforeComment = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.Comments), Formatting.RuleOperation.create1(0 /* Ignore */));
-                this.IgnoreAfterLineComment = new Formatting.Rule(Formatting.RuleDescriptor.create3(7 /* SingleLineCommentTrivia */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create1(0 /* Ignore */));
+                this.IgnoreBeforeComment = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.Any, TypeScript.Formatting.Shared.TokenRange.Comments), TypeScript.Formatting.RuleOperation.create1(0 /* Ignore */));
+                this.IgnoreAfterLineComment = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(7 /* SingleLineCommentTrivia */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create1(0 /* Ignore */));
 
-                this.NoSpaceBeforeSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 78 /* SemicolonToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceBeforeColon = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 106 /* ColonToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
-                this.NoSpaceBeforeQMark = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 105 /* QuestionToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
-                this.SpaceAfterColon = new Formatting.Rule(Formatting.RuleDescriptor.create3(106 /* ColonToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterQMark = new Formatting.Rule(Formatting.RuleDescriptor.create3(105 /* QuestionToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create3(78 /* SemicolonToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.NoSpaceBeforeSemicolon = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 78 /* SemicolonToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeColon = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 106 /* ColonToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
+                this.NoSpaceBeforeQMark = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 105 /* QuestionToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
+                this.SpaceAfterColon = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(106 /* ColonToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterQMark = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(105 /* QuestionToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterSemicolon = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(78 /* SemicolonToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
 
-                this.SpaceAfterCloseBrace = new Formatting.Rule(Formatting.RuleDescriptor.create3(71 /* CloseBraceToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsAfterCodeBlockContext), 1 /* Space */));
+                this.SpaceAfterCloseBrace = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(71 /* CloseBraceToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsAfterCodeBlockContext), 1 /* Space */));
 
-                this.SpaceBetweenCloseBraceAndElse = new Formatting.Rule(Formatting.RuleDescriptor.create1(71 /* CloseBraceToken */, 23 /* ElseKeyword */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.SpaceBetweenCloseBraceAndWhile = new Formatting.Rule(Formatting.RuleDescriptor.create1(71 /* CloseBraceToken */, 42 /* WhileKeyword */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.NoSpaceAfterCloseBrace = new Formatting.Rule(Formatting.RuleDescriptor.create3(71 /* CloseBraceToken */, Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 75 /* CloseBracketToken */, 79 /* CommaToken */, 78 /* SemicolonToken */])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.SpaceBetweenCloseBraceAndElse = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(71 /* CloseBraceToken */, 23 /* ElseKeyword */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.SpaceBetweenCloseBraceAndWhile = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(71 /* CloseBraceToken */, 42 /* WhileKeyword */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.NoSpaceAfterCloseBrace = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(71 /* CloseBraceToken */, TypeScript.Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 75 /* CloseBracketToken */, 79 /* CommaToken */, 78 /* SemicolonToken */])), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.NoSpaceBeforeDot = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 76 /* DotToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceAfterDot = new Formatting.Rule(Formatting.RuleDescriptor.create3(76 /* DotToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceBeforeOpenBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 74 /* OpenBracketToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceAfterOpenBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(74 /* OpenBracketToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceBeforeCloseBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 75 /* CloseBracketToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceAfterCloseBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(75 /* CloseBracketToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeDot = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 76 /* DotToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterDot = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(76 /* DotToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeOpenBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 74 /* OpenBracketToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterOpenBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(74 /* OpenBracketToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeCloseBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 75 /* CloseBracketToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterCloseBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(75 /* CloseBracketToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.FunctionOpenBraceLeftTokenRange = Formatting.Shared.TokenRange.AnyIncludingMultilineComments;
-                this.SpaceBeforeOpenBraceInFunction = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), 1 /* Space */), 1 /* CanDeleteNewLines */);
+                this.FunctionOpenBraceLeftTokenRange = TypeScript.Formatting.Shared.TokenRange.AnyIncludingMultilineComments;
+                this.SpaceBeforeOpenBraceInFunction = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), 1 /* Space */), 1 /* CanDeleteNewLines */);
 
-                this.TypeScriptOpenBraceLeftTokenRange = Formatting.Shared.TokenRange.FromTokens([11 /* IdentifierName */, 6 /* MultiLineCommentTrivia */]);
-                this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), 1 /* Space */), 1 /* CanDeleteNewLines */);
+                this.TypeScriptOpenBraceLeftTokenRange = TypeScript.Formatting.Shared.TokenRange.FromTokens([11 /* IdentifierName */, 6 /* MultiLineCommentTrivia */]);
+                this.SpaceBeforeOpenBraceInTypeScriptDeclWithBlock = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), 1 /* Space */), 1 /* CanDeleteNewLines */);
 
-                this.ControlOpenBraceLeftTokenRange = Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 6 /* MultiLineCommentTrivia */, 22 /* DoKeyword */, 38 /* TryKeyword */, 25 /* FinallyKeyword */, 23 /* ElseKeyword */]);
-                this.SpaceBeforeOpenBraceInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), 1 /* Space */), 1 /* CanDeleteNewLines */);
+                this.ControlOpenBraceLeftTokenRange = TypeScript.Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 6 /* MultiLineCommentTrivia */, 22 /* DoKeyword */, 38 /* TryKeyword */, 25 /* FinallyKeyword */, 23 /* ElseKeyword */]);
+                this.SpaceBeforeOpenBraceInControl = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsNotFormatOnEnter, Rules.IsSameLineTokenOrBeforeMultilineBlockContext), 1 /* Space */), 1 /* CanDeleteNewLines */);
 
-                this.SpaceAfterOpenBrace = new Formatting.Rule(Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */));
-                this.SpaceBeforeCloseBrace = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */));
-                this.NoSpaceBetweenEmptyBraceBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), 3 /* Delete */));
+                this.SpaceAfterOpenBrace = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */));
+                this.SpaceBeforeCloseBrace = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 71 /* CloseBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSingleLineBlockContext), 1 /* Space */));
+                this.NoSpaceBetweenEmptyBraceBrackets = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */, 71 /* CloseBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectContext), 3 /* Delete */));
 
-                this.NewLineAfterOpenBraceInBlockContext = new Formatting.Rule(Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
+                this.NewLineAfterOpenBraceInBlockContext = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(70 /* OpenBraceToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
 
-                this.NewLineBeforeCloseBraceInBlockContext = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.AnyIncludingMultilineComments, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
+                this.NewLineBeforeCloseBraceInBlockContext = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.AnyIncludingMultilineComments, 71 /* CloseBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsMultilineBlockContext), 2 /* NewLine */));
 
-                this.NoSpaceAfterUnaryPrefixOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.UnaryPrefixOperators, Formatting.Shared.TokenRange.UnaryPrefixExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
-                this.NoSpaceAfterUnaryPreincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(93 /* PlusPlusToken */, Formatting.Shared.TokenRange.UnaryPreincrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceAfterUnaryPredecrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(94 /* MinusMinusToken */, Formatting.Shared.TokenRange.UnaryPredecrementExpressions), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceBeforeUnaryPostincrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.UnaryPostincrementExpressions, 93 /* PlusPlusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceBeforeUnaryPostdecrementOperator = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.UnaryPostdecrementExpressions, 94 /* MinusMinusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterUnaryPrefixOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.UnaryPrefixOperators, TypeScript.Formatting.Shared.TokenRange.UnaryPrefixExpressions), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
+                this.NoSpaceAfterUnaryPreincrementOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(93 /* PlusPlusToken */, TypeScript.Formatting.Shared.TokenRange.UnaryPreincrementExpressions), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterUnaryPredecrementOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(94 /* MinusMinusToken */, TypeScript.Formatting.Shared.TokenRange.UnaryPredecrementExpressions), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeUnaryPostincrementOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.UnaryPostincrementExpressions, 93 /* PlusPlusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeUnaryPostdecrementOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.UnaryPostdecrementExpressions, 94 /* MinusMinusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.SpaceAfterPostincrementWhenFollowedByAdd = new Formatting.Rule(Formatting.RuleDescriptor.create1(93 /* PlusPlusToken */, 89 /* PlusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterAddWhenFollowedByUnaryPlus = new Formatting.Rule(Formatting.RuleDescriptor.create1(89 /* PlusToken */, 89 /* PlusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterAddWhenFollowedByPreincrement = new Formatting.Rule(Formatting.RuleDescriptor.create1(89 /* PlusToken */, 93 /* PlusPlusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterPostdecrementWhenFollowedBySubtract = new Formatting.Rule(Formatting.RuleDescriptor.create1(94 /* MinusMinusToken */, 90 /* MinusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new Formatting.Rule(Formatting.RuleDescriptor.create1(90 /* MinusToken */, 90 /* MinusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterSubtractWhenFollowedByPredecrement = new Formatting.Rule(Formatting.RuleDescriptor.create1(90 /* MinusToken */, 94 /* MinusMinusToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterPostincrementWhenFollowedByAdd = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(93 /* PlusPlusToken */, 89 /* PlusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterAddWhenFollowedByUnaryPlus = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(89 /* PlusToken */, 89 /* PlusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterAddWhenFollowedByPreincrement = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(89 /* PlusToken */, 93 /* PlusPlusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterPostdecrementWhenFollowedBySubtract = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(94 /* MinusMinusToken */, 90 /* MinusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterSubtractWhenFollowedByUnaryMinus = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(90 /* MinusToken */, 90 /* MinusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterSubtractWhenFollowedByPredecrement = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(90 /* MinusToken */, 94 /* MinusMinusToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
 
-                this.NoSpaceBeforeComma = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 79 /* CommaToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeComma = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 79 /* CommaToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.SpaceAfterCertainKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([40 /* VarKeyword */, 36 /* ThrowKeyword */, 31 /* NewKeyword */, 21 /* DeleteKeyword */, 33 /* ReturnKeyword */, 39 /* TypeOfKeyword */]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.NoSpaceBeforeOpenParenInFuncCall = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), 3 /* Delete */));
-                this.SpaceAfterFunctionInFuncDecl = new Formatting.Rule(Formatting.RuleDescriptor.create3(27 /* FunctionKeyword */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */));
-                this.NoSpaceBeforeOpenParenInFuncDecl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionDeclContext), 3 /* Delete */));
-                this.SpaceAfterVoidOperator = new Formatting.Rule(Formatting.RuleDescriptor.create3(41 /* VoidKeyword */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsVoidOpContext), 1 /* Space */));
+                this.SpaceAfterCertainKeywords = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.FromTokens([40 /* VarKeyword */, 36 /* ThrowKeyword */, 31 /* NewKeyword */, 21 /* DeleteKeyword */, 33 /* ReturnKeyword */, 39 /* TypeOfKeyword */]), TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.NoSpaceBeforeOpenParenInFuncCall = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionCallOrNewContext), 3 /* Delete */));
+                this.SpaceAfterFunctionInFuncDecl = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(27 /* FunctionKeyword */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */));
+                this.NoSpaceBeforeOpenParenInFuncDecl = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsFunctionDeclContext), 3 /* Delete */));
+                this.SpaceAfterVoidOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(41 /* VoidKeyword */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsVoidOpContext), 1 /* Space */));
 
-                this.NoSpaceBetweenReturnAndSemicolon = new Formatting.Rule(Formatting.RuleDescriptor.create1(33 /* ReturnKeyword */, 78 /* SemicolonToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBetweenReturnAndSemicolon = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(33 /* ReturnKeyword */, 78 /* SemicolonToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.SpaceBetweenStatements = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 22 /* DoKeyword */, 23 /* ElseKeyword */, 16 /* CaseKeyword */]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), 1 /* Space */));
+                this.SpaceBetweenStatements = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 22 /* DoKeyword */, 23 /* ElseKeyword */, 16 /* CaseKeyword */]), TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotForContext), 1 /* Space */));
 
-                this.SpaceAfterTryFinally = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.FromTokens([38 /* TryKeyword */, 25 /* FinallyKeyword */]), 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.SpaceAfterTryFinally = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.FromTokens([38 /* TryKeyword */, 25 /* FinallyKeyword */]), 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
 
-                this.SpaceAfterGetSetInMember = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.FromTokens([64 /* GetKeyword */, 68 /* SetKeyword */]), 11 /* IdentifierName */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */));
+                this.SpaceAfterGetSetInMember = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.FromTokens([64 /* GetKeyword */, 68 /* SetKeyword */]), 11 /* IdentifierName */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */));
 
-                this.SpaceBeforeBinaryKeywordOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryKeywordOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterBinaryKeywordOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryKeywordOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceBeforeBinaryKeywordOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.Any, TypeScript.Formatting.Shared.TokenRange.BinaryKeywordOperators), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterBinaryKeywordOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.BinaryKeywordOperators, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
 
-                this.NoSpaceAfterConstructor = new Formatting.Rule(Formatting.RuleDescriptor.create1(62 /* ConstructorKeyword */, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterConstructor = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(62 /* ConstructorKeyword */, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.NoSpaceAfterModuleImport = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.FromTokens([65 /* ModuleKeyword */, 66 /* RequireKeyword */]), 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterModuleImport = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.FromTokens([65 /* ModuleKeyword */, 66 /* RequireKeyword */]), 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.SpaceAfterCertainTypeScriptKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.FromTokens([44 /* ClassKeyword */, 63 /* DeclareKeyword */, 46 /* EnumKeyword */, 47 /* ExportKeyword */, 48 /* ExtendsKeyword */, 64 /* GetKeyword */, 51 /* ImplementsKeyword */, 49 /* ImportKeyword */, 52 /* InterfaceKeyword */, 65 /* ModuleKeyword */, 55 /* PrivateKeyword */, 57 /* PublicKeyword */, 68 /* SetKeyword */, 58 /* StaticKeyword */]), Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.SpaceBeforeCertainTypeScriptKeywords = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.FromTokens([48 /* ExtendsKeyword */, 51 /* ImplementsKeyword */])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.SpaceAfterCertainTypeScriptKeywords = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.FromTokens([44 /* ClassKeyword */, 63 /* DeclareKeyword */, 46 /* EnumKeyword */, 47 /* ExportKeyword */, 48 /* ExtendsKeyword */, 64 /* GetKeyword */, 51 /* ImplementsKeyword */, 49 /* ImportKeyword */, 52 /* InterfaceKeyword */, 65 /* ModuleKeyword */, 55 /* PrivateKeyword */, 57 /* PublicKeyword */, 68 /* SetKeyword */, 58 /* StaticKeyword */]), TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.SpaceBeforeCertainTypeScriptKeywords = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.Any, TypeScript.Formatting.Shared.TokenRange.FromTokens([48 /* ExtendsKeyword */, 51 /* ImplementsKeyword */])), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
 
-                this.SpaceAfterModuleName = new Formatting.Rule(Formatting.RuleDescriptor.create1(14 /* StringLiteral */, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsModuleDeclContext), 1 /* Space */));
+                this.SpaceAfterModuleName = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(14 /* StringLiteral */, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsModuleDeclContext), 1 /* Space */));
 
-                this.SpaceAfterArrow = new Formatting.Rule(Formatting.RuleDescriptor.create3(85 /* EqualsGreaterThanToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.SpaceAfterArrow = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(85 /* EqualsGreaterThanToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
 
-                this.NoSpaceAfterEllipsis = new Formatting.Rule(Formatting.RuleDescriptor.create1(77 /* DotDotDotToken */, 11 /* IdentifierName */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceAfterOptionalParameters = new Formatting.Rule(Formatting.RuleDescriptor.create3(105 /* QuestionToken */, Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 79 /* CommaToken */])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
+                this.NoSpaceAfterEllipsis = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(77 /* DotDotDotToken */, 11 /* IdentifierName */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterOptionalParameters = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(105 /* QuestionToken */, TypeScript.Formatting.Shared.TokenRange.FromTokens([73 /* CloseParenToken */, 79 /* CommaToken */])), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsNotBinaryOpContext), 3 /* Delete */));
 
-                this.NoSpaceBeforeOpenAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.TypeNames, 80 /* LessThanToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
-                this.NoSpaceBetweenCloseParenAndAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create1(73 /* CloseParenToken */, 80 /* LessThanToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
-                this.NoSpaceAfterOpenAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(80 /* LessThanToken */, Formatting.Shared.TokenRange.TypeNames), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
-                this.NoSpaceBeforeCloseAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 81 /* GreaterThanToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
-                this.NoSpaceAfterCloseAngularBracket = new Formatting.Rule(Formatting.RuleDescriptor.create3(81 /* GreaterThanToken */, Formatting.Shared.TokenRange.FromTokens([72 /* OpenParenToken */, 74 /* OpenBracketToken */, 81 /* GreaterThanToken */, 79 /* CommaToken */])), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
+                this.NoSpaceBeforeOpenAngularBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.TypeNames, 80 /* LessThanToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
+                this.NoSpaceBetweenCloseParenAndAngularBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(73 /* CloseParenToken */, 80 /* LessThanToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
+                this.NoSpaceAfterOpenAngularBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(80 /* LessThanToken */, TypeScript.Formatting.Shared.TokenRange.TypeNames), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
+                this.NoSpaceBeforeCloseAngularBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 81 /* GreaterThanToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
+                this.NoSpaceAfterCloseAngularBracket = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(81 /* GreaterThanToken */, TypeScript.Formatting.Shared.TokenRange.FromTokens([72 /* OpenParenToken */, 74 /* OpenBracketToken */, 81 /* GreaterThanToken */, 79 /* CommaToken */])), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsTypeArgumentOrParameterContext), 3 /* Delete */));
 
-                this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new Formatting.Rule(Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */, 71 /* CloseBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectTypeContext), 3 /* Delete */));
+                this.NoSpaceBetweenEmptyInterfaceBraceBrackets = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(70 /* OpenBraceToken */, 71 /* CloseBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsObjectTypeContext), 3 /* Delete */));
 
                 this.HighPriorityCommonRules = [
                     this.IgnoreBeforeComment,
@@ -58698,34 +58617,34 @@ var TypeScript;
                     this.SpaceAfterTryFinally
                 ];
 
-                this.SpaceAfterComma = new Formatting.Rule(Formatting.RuleDescriptor.create3(79 /* CommaToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.NoSpaceAfterComma = new Formatting.Rule(Formatting.RuleDescriptor.create3(79 /* CommaToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.SpaceAfterComma = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(79 /* CommaToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.NoSpaceAfterComma = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(79 /* CommaToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.SpaceBeforeBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.SpaceAfterBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
-                this.NoSpaceBeforeBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.Any, Formatting.Shared.TokenRange.BinaryOperators), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */));
-                this.NoSpaceAfterBinaryOperator = new Formatting.Rule(Formatting.RuleDescriptor.create4(Formatting.Shared.TokenRange.BinaryOperators, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */));
+                this.SpaceBeforeBinaryOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.Any, TypeScript.Formatting.Shared.TokenRange.BinaryOperators), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.SpaceAfterBinaryOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.BinaryOperators, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 1 /* Space */));
+                this.NoSpaceBeforeBinaryOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.Any, TypeScript.Formatting.Shared.TokenRange.BinaryOperators), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */));
+                this.NoSpaceAfterBinaryOperator = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create4(TypeScript.Formatting.Shared.TokenRange.BinaryOperators, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsBinaryOpContext), 3 /* Delete */));
 
-                this.SpaceAfterKeywordInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Keywords, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext), 1 /* Space */));
-                this.NoSpaceAfterKeywordInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Keywords, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext), 3 /* Delete */));
+                this.SpaceAfterKeywordInControl = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Keywords, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsControlDeclContext), 1 /* Space */));
+                this.NoSpaceAfterKeywordInControl = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Keywords, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsControlDeclContext), 3 /* Delete */));
 
-                this.NewLineBeforeOpenBraceInFunction = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsBeforeMultilineBlockContext), 2 /* NewLine */), 1 /* CanDeleteNewLines */);
+                this.NewLineBeforeOpenBraceInFunction = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(this.FunctionOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsFunctionDeclContext, Rules.IsBeforeMultilineBlockContext), 2 /* NewLine */), 1 /* CanDeleteNewLines */);
 
-                this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsBeforeMultilineBlockContext), 2 /* NewLine */), 1 /* CanDeleteNewLines */);
+                this.NewLineBeforeOpenBraceInTypeScriptDeclWithBlock = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(this.TypeScriptOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsTypeScriptDeclWithBlockContext, Rules.IsBeforeMultilineBlockContext), 2 /* NewLine */), 1 /* CanDeleteNewLines */);
 
-                this.NewLineBeforeOpenBraceInControl = new Formatting.Rule(Formatting.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsBeforeMultilineBlockContext), 2 /* NewLine */), 1 /* CanDeleteNewLines */);
+                this.NewLineBeforeOpenBraceInControl = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(this.ControlOpenBraceLeftTokenRange, 70 /* OpenBraceToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsControlDeclContext, Rules.IsBeforeMultilineBlockContext), 2 /* NewLine */), 1 /* CanDeleteNewLines */);
 
-                this.SpaceAfterSemicolonInFor = new Formatting.Rule(Formatting.RuleDescriptor.create3(78 /* SemicolonToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 1 /* Space */));
-                this.NoSpaceAfterSemicolonInFor = new Formatting.Rule(Formatting.RuleDescriptor.create3(78 /* SemicolonToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 3 /* Delete */));
+                this.SpaceAfterSemicolonInFor = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(78 /* SemicolonToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 1 /* Space */));
+                this.NoSpaceAfterSemicolonInFor = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(78 /* SemicolonToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext, Rules.IsForContext), 3 /* Delete */));
 
-                this.SpaceAfterOpenParen = new Formatting.Rule(Formatting.RuleDescriptor.create3(72 /* OpenParenToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.SpaceBeforeCloseParen = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 73 /* CloseParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
-                this.NoSpaceBetweenParens = new Formatting.Rule(Formatting.RuleDescriptor.create1(72 /* OpenParenToken */, 73 /* CloseParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceAfterOpenParen = new Formatting.Rule(Formatting.RuleDescriptor.create3(72 /* OpenParenToken */, Formatting.Shared.TokenRange.Any), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
-                this.NoSpaceBeforeCloseParen = new Formatting.Rule(Formatting.RuleDescriptor.create2(Formatting.Shared.TokenRange.Any, 73 /* CloseParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.SpaceAfterOpenParen = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(72 /* OpenParenToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.SpaceBeforeCloseParen = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 73 /* CloseParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 1 /* Space */));
+                this.NoSpaceBetweenParens = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(72 /* OpenParenToken */, 73 /* CloseParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceAfterOpenParen = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create3(72 /* OpenParenToken */, TypeScript.Formatting.Shared.TokenRange.Any), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
+                this.NoSpaceBeforeCloseParen = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create2(TypeScript.Formatting.Shared.TokenRange.Any, 73 /* CloseParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsSameLineTokenContext), 3 /* Delete */));
 
-                this.SpaceAfterAnonymousFunctionKeyword = new Formatting.Rule(Formatting.RuleDescriptor.create1(27 /* FunctionKeyword */, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */));
-                this.NoSpaceAfterAnonymousFunctionKeyword = new Formatting.Rule(Formatting.RuleDescriptor.create1(27 /* FunctionKeyword */, 72 /* OpenParenToken */), Formatting.RuleOperation.create2(new Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 3 /* Delete */));
+                this.SpaceAfterAnonymousFunctionKeyword = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(27 /* FunctionKeyword */, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 1 /* Space */));
+                this.NoSpaceAfterAnonymousFunctionKeyword = new TypeScript.Formatting.Rule(TypeScript.Formatting.RuleDescriptor.create1(27 /* FunctionKeyword */, 72 /* OpenParenToken */), TypeScript.Formatting.RuleOperation.create2(new TypeScript.Formatting.RuleOperationContext(Rules.IsFunctionDeclContext), 3 /* Delete */));
             }
             Rules.prototype.getRuleName = function (rule) {
                 var o = this;
@@ -58997,7 +58916,7 @@ var TypeScript;
 
             RulesMap.prototype.FillRule = function (rule, rulesBucketConstructionStateList) {
                 var _this = this;
-                var specificRule = rule.Descriptor.LeftTokenRange != Formatting.Shared.TokenRange.Any && rule.Descriptor.RightTokenRange != Formatting.Shared.TokenRange.Any;
+                var specificRule = rule.Descriptor.LeftTokenRange != TypeScript.Formatting.Shared.TokenRange.Any && rule.Descriptor.RightTokenRange != TypeScript.Formatting.Shared.TokenRange.Any;
 
                 rule.Descriptor.LeftTokenRange.GetTokens().forEach(function (left) {
                     rule.Descriptor.RightTokenRange.GetTokens().forEach(function (right) {
@@ -59114,7 +59033,7 @@ var TypeScript;
         var RulesProvider = (function () {
             function RulesProvider(logger) {
                 this.logger = logger;
-                this.globalRules = new Formatting.Rules();
+                this.globalRules = new TypeScript.Formatting.Rules();
             }
             RulesProvider.prototype.getRuleName = function (rule) {
                 return this.globalRules.getRuleName(rule);
@@ -59135,7 +59054,7 @@ var TypeScript;
                         return _this.createActiveRules(options);
                     });
                     var rulesMap = TypeScript.timeFunction(this.logger, "RulesProvider: RulesMap.create()", function () {
-                        return Formatting.RulesMap.create(activeRules);
+                        return TypeScript.Formatting.RulesMap.create(activeRules);
                     });
 
                     this.activeRules = activeRules;
@@ -59480,7 +59399,7 @@ var TypeScript;
                     return cachedNode;
                 }
 
-                return new Formatting.IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
+                return new TypeScript.Formatting.IndentationNodeContext(parent, node, fullStart, indentationLevel, childIndentationLevelDelta);
             };
 
             IndentationNodeContextPool.prototype.releaseNode = function (node, recursive) {
@@ -59511,7 +59430,7 @@ var TypeScript;
                 this._position = 0;
                 this._parent = null;
 
-                this._indentationNodeContextPool = new Formatting.IndentationNodeContextPool();
+                this._indentationNodeContextPool = new TypeScript.Formatting.IndentationNodeContextPool();
 
                 this._textSpan = textSpan;
                 this._snapshot = snapshot;
@@ -59773,7 +59692,7 @@ var TypeScript;
             };
 
             MultipleTokenIndenter.prototype.recordEdit = function (position, length, replaceWith) {
-                this._edits.push(new Formatting.TextEditInfo(position, length, replaceWith));
+                this._edits.push(new TypeScript.Formatting.TextEditInfo(position, length, replaceWith));
             };
 
             MultipleTokenIndenter.prototype.recordIndentationEditsForToken = function (token, indentationString, commentIndentationString) {
@@ -59898,7 +59817,7 @@ var TypeScript;
                 this.recordEdit(fullStart, firstNonWhitespacePosition, indentationString);
             };
             return MultipleTokenIndenter;
-        })(Formatting.IndentationTrackingWalker);
+        })(TypeScript.Formatting.IndentationTrackingWalker);
         Formatting.MultipleTokenIndenter = MultipleTokenIndenter;
     })(TypeScript.Formatting || (TypeScript.Formatting = {}));
     var Formatting = TypeScript.Formatting;
@@ -59928,7 +59847,7 @@ var TypeScript;
                 }
             };
             return SingleTokenIndenter;
-        })(Formatting.IndentationTrackingWalker);
+        })(TypeScript.Formatting.IndentationTrackingWalker);
         Formatting.SingleTokenIndenter = SingleTokenIndenter;
     })(TypeScript.Formatting || (TypeScript.Formatting = {}));
     var Formatting = TypeScript.Formatting;
@@ -59948,7 +59867,7 @@ var TypeScript;
 
                 this.rulesProvider = rulesProvider;
                 this.formattingRequestKind = formattingRequestKind;
-                this.formattingContext = new Formatting.FormattingContext(this.snapshot(), this.formattingRequestKind);
+                this.formattingContext = new TypeScript.Formatting.FormattingContext(this.snapshot(), this.formattingRequestKind);
             }
             Formatter.getEdits = function (textSpan, sourceUnit, options, indentFirstToken, snapshot, rulesProvider, formattingRequestKind) {
                 var walker = new Formatter(textSpan, sourceUnit, indentFirstToken, options, snapshot, rulesProvider, formattingRequestKind);
@@ -59975,7 +59894,7 @@ var TypeScript;
                     position += token.leadingTriviaWidth();
                 }
 
-                var currentTokenSpan = new Formatting.TokenSpan(token.kind(), position, token.width());
+                var currentTokenSpan = new TypeScript.Formatting.TokenSpan(token.kind(), position, token.width());
                 if (!this.parent().hasSkippedOrMissingTokenChild()) {
                     if (this.previousTokenSpan) {
                         this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
@@ -60002,7 +59921,7 @@ var TypeScript;
                     var trivia = triviaList.syntaxTriviaAt(i);
 
                     if (trivia.isComment() || trivia.isSkippedToken()) {
-                        var currentTokenSpan = new Formatting.TokenSpan(trivia.kind(), position, trivia.fullWidth());
+                        var currentTokenSpan = new TypeScript.Formatting.TokenSpan(trivia.kind(), position, trivia.fullWidth());
                         if (this.textSpan().containsTextSpan(currentTokenSpan)) {
                             if (trivia.isComment() && this.previousTokenSpan) {
                                 this.formatPair(this.previousTokenSpan, this.previousTokenParent, currentTokenSpan, this.parent());
@@ -60185,7 +60104,7 @@ var TypeScript;
                 }
             };
             return Formatter;
-        })(Formatting.MultipleTokenIndenter);
+        })(TypeScript.Formatting.MultipleTokenIndenter);
         Formatting.Formatter = Formatter;
     })(TypeScript.Formatting || (TypeScript.Formatting = {}));
     var Formatting = TypeScript.Formatting;
