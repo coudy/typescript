@@ -5943,26 +5943,32 @@ module TypeScript {
             return childTypeSymbol;
         }
 
-        private shouldContextuallyTypeFunctionExpression(functionExpressionAST: FunctionDeclaration, context: PullTypeResolutionContext): boolean {
+        private shouldContextuallyTypeAnyFunctionExpression(
+            functionExpressionAST: AST,
+            typeParameters: ASTList,
+            parameters: ASTList,
+            returnTypeAnnotation: TypeReference,
+            context: PullTypeResolutionContext): boolean {
+
             // September 21, 2013: If e is a FunctionExpression or ArrowFunctionExpression with no type parameters and no parameter
             // or return type annotations, and T is a function type with exactly one non - generic call signature, then any
             // inferences made for type parameters referenced by the parameters of T’s call signature are fixed(section 4.12.2)
             // and e is processed with the contextual type T, as described in section 4.9.3.
 
             // No type parameters
-            if (functionExpressionAST.typeArguments && functionExpressionAST.typeArguments.members.length > 0) {
+            if (typeParameters && typeParameters.members.length > 0) {
                 return false;
             }
 
             // No return type annotation
-            if (functionExpressionAST.returnTypeAnnotation) {
+            if (returnTypeAnnotation) {
                 return false;
             }
 
             // No parameter type annotations
-            if (functionExpressionAST.arguments) {
-                for (var i = 0; i < functionExpressionAST.arguments.members.length; i++) {
-                    var parameter = <Parameter>functionExpressionAST.arguments.members[i];
+            if (parameters) {
+                for (var i = 0; i < parameters.members.length; i++) {
+                    var parameter = <Parameter>parameters.members[i];
                     if (parameter.typeExpr) {
                         return false
                     }
@@ -6038,7 +6044,9 @@ module TypeScript {
             }
 
             var assigningFunctionSignature: PullSignatureSymbol = null;
-            if (inContextuallyTypedAssignment && this.shouldContextuallyTypeFunctionExpression(funcDeclAST, context)) {
+            if (inContextuallyTypedAssignment &&
+                this.shouldContextuallyTypeAnyFunctionExpression(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, context)) {
+
                 assigningFunctionSignature = context.getContextualType().getCallSignatures()[0];
             }
 
