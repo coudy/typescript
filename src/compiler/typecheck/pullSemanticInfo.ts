@@ -649,37 +649,12 @@ module TypeScript {
             }
         }
 
-        private cleanDecl(decl: PullDecl) {
-            decl.setSymbol(null);
-            decl.setSignatureSymbol(null);
-            decl.setSpecializingSignatureSymbol(null);
-            decl.setIsBound(false);
-
-            var children = decl.getChildDecls();
-
-            for (var i = 0; i < children.length; i++) {
-                this.cleanDecl(children[i]);
-            }
-
-            var typeParameters = decl.getTypeParameters();
-
-            for (var i = 0; i < typeParameters.length; i++) {
-                this.cleanDecl(typeParameters[i]);
-            }
-
-            var valueDecl = decl.getValueDecl();
-
-            if (valueDecl) {
-                this.cleanDecl(valueDecl);
-            }
-        }
-
         private cleanAllDecls() {
             var topLevelDecls = this.collectAllTopLevelDecls();
 
             // skip the first tld, which contains global primitive symbols
             for (var i = 1; i < topLevelDecls.length; i++) {
-                this.cleanDecl(topLevelDecls[i]);
+                topLevelDecls[i].clean();
             }
 
             this.topLevelDecls = [];
