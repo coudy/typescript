@@ -705,9 +705,22 @@ module TypeScript {
         }
     }
 
-    export class Parameter extends BoundDecl {
-        constructor(id: Identifier, typeExpr: AST, init: AST, public isOptional: boolean, public isRest: boolean) {
-            super(id, typeExpr, init);
+    export class Parameter extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public id: Identifier, public typeExpr: AST, public init: AST, public isOptional: boolean, public isRest: boolean) {
+            super();
+        }
+
+        public isDeclaration() { return true; }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
         }
 
         public nodeType(): NodeType {
@@ -715,6 +728,10 @@ module TypeScript {
         }
 
         public isOptionalArg(): boolean { return this.isOptional || this.init !== null; }
+
+        public isParameterProperty(): boolean {
+            return hasFlag(this.getVarFlags(), VariableFlags.Property);
+        }
 
         public emitWorker(emitter: Emitter) {
             emitter.emitParameter(this);

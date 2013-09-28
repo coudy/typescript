@@ -311,7 +311,7 @@ module TypeScript {
             }
         }
 
-        private emitTypeOfBoundDecl(boundDecl: BoundDecl) {
+        private emitTypeOfVariableDeclaratorOrParameter(boundDecl: AST) {
             var start = new Date().getTime();
             var decl = this.compiler.semanticInfoChain.getDeclForAST(boundDecl, this.document.fileName);
             var pullSymbol = decl.getSymbol();
@@ -322,9 +322,9 @@ module TypeScript {
                 // PULLTODO
                 return;
             }
+
             this.declFile.Write(": ");
             this.emitTypeSignature(type);
-
         }
 
         private emitDeclarationsForVariableDeclarator(varDecl: VariableDeclarator, isFirstVarInList: boolean, isLastVarInList: boolean) {
@@ -349,9 +349,8 @@ module TypeScript {
                 }
 
                 if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
-                    this.emitTypeOfBoundDecl(varDecl);
+                    this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
-
 
                 // Write ; or ,
                 if (isLastVarInList) {
@@ -386,7 +385,7 @@ module TypeScript {
             this.indenter.decreaseIndent();
 
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
-                this.emitTypeOfBoundDecl(argDecl);
+                this.emitTypeOfVariableDeclaratorOrParameter(argDecl);
             }
         }
 
@@ -599,7 +598,7 @@ module TypeScript {
                         this.declFile.Write(argDecl.id.actualText);
 
                         if (this.canEmitTypeAnnotationSignature(ToDeclFlags(argDecl.getVarFlags()))) {
-                            this.emitTypeOfBoundDecl(argDecl);
+                            this.emitTypeOfVariableDeclaratorOrParameter(argDecl);
                         }
                         this.declFile.WriteLine(";");
                     }
