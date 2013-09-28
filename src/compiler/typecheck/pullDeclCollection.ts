@@ -576,10 +576,15 @@ module TypeScript {
     }
 
     // function expression
-    function createFunctionExpressionDeclaration(functionExpressionDeclAST: FunctionDeclaration, context: DeclCollectionContext) {
+    function createAnyFunctionExpressionDeclaration(
+        functionExpressionDeclAST: AST,
+        id: Identifier,
+        returnTypeAnnotation: TypeReference,
+        context: DeclCollectionContext) {
+
         var declFlags = PullElementFlags.None;
 
-        if (hasFlag(functionExpressionDeclAST.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
+        if (functionExpressionDeclAST.nodeType() === NodeType.ArrowFunctionExpression) {
             declFlags |= PullElementFlags.FatArrow;
         }
 
@@ -591,7 +596,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var name = functionExpressionDeclAST.name ? functionExpressionDeclAST.name.actualText : "";
+        var name = id ? id.actualText : "";
         var decl = new PullFunctionExpressionDecl(name, declFlags, span, context.scriptName);
         context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
         context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
@@ -603,15 +608,15 @@ module TypeScript {
 
         context.pushParent(decl);
 
-        if (functionExpressionDeclAST.returnTypeAnnotation &&
-            (functionExpressionDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
-             functionExpressionDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
+        if (returnTypeAnnotation &&
+            (returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
+             returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
             var declCollectionContext = new DeclCollectionContext(context.semanticInfo, context.scriptName);
 
             declCollectionContext.pushParent(decl);
 
-            getAstWalkerFactory().walk(functionExpressionDeclAST.returnTypeAnnotation.term, preCollectDecls, postCollectDecls, null, declCollectionContext);
+            getAstWalkerFactory().walk(returnTypeAnnotation.term, preCollectDecls, postCollectDecls, null, declCollectionContext);
         }
 
         return true;
@@ -1048,12 +1053,16 @@ module TypeScript {
             else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method)) {
                 go = createMemberFunctionDeclaration(funcDecl, context);
             }
-            else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction | FunctionFlags.IsFunctionProperty))) {
-                go = createFunctionExpressionDeclaration(funcDecl, context);
+            else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFunctionProperty))) {
+                go = createAnyFunctionExpressionDeclaration(funcDecl, funcDecl.name, funcDecl.returnTypeAnnotation, context);
             }
             else {
                 go = createFunctionDeclaration(funcDecl, context);
             }
+        }
+        else if (ast.nodeType() === NodeType.ArrowFunctionExpression) {
+            var arrowFunction = <ArrowFunctionExpression>ast;
+            go = createAnyFunctionExpressionDeclaration(ast, /*id*/null, arrowFunction.returnTypeAnnotation, context);
         }
         else if (ast.nodeType() === NodeType.ImportDeclaration) {
             go = preCollectImportDecls(ast, context);
@@ -1199,7 +1208,8 @@ module TypeScript {
         else if (ast.nodeType() === NodeType.ObjectType) {
             context.popParent();
         }
-        else if (ast.nodeType() === NodeType.FunctionDeclaration) {
+        else if (ast.nodeType() === NodeType.FunctionDeclaration ||
+                 ast.nodeType() === NodeType.ArrowFunctionExpression) {
             context.popParent();
 
             parentDecl = context.getParent();

@@ -976,8 +976,9 @@ module Services {
                 symbol = declarationInformation.symbol;
                 enclosingScopeSymbol = declarationInformation.enclosingScopeSymbol;
 
-                if (path.ast().nodeType() === TypeScript.NodeType.FunctionDeclaration) {
-                    var funcDecl = <TypeScript.FunctionDeclaration>(path.ast());
+                if (path.ast().nodeType() === TypeScript.NodeType.FunctionDeclaration ||
+                    path.ast().nodeType() === TypeScript.NodeType.ArrowFunctionExpression) {
+                    var funcDecl = path.ast();
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
                         var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain().getUnit(fileName));
                         isCallExpression = true;

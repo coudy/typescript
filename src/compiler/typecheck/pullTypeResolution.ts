@@ -2959,6 +2959,7 @@ module TypeScript {
 
                 switch (ast.nodeType()) {
                     case NodeType.FunctionDeclaration:
+                    case NodeType.ArrowFunctionExpression:
                         // don't recurse into a function decl - we don't want to confuse a nested
                         // return type with the top-level function's return type
                         go = false;
@@ -3288,7 +3289,6 @@ module TypeScript {
             }
             else if (inContextuallyTypedAssignment ||
                 (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
                 (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
 
                 result = this.resolveAnyFunctionExpression(
@@ -3302,6 +3302,12 @@ module TypeScript {
             context.jumpRecordStack.pop();
 
             return result;
+        }
+
+        private resolveArrowFunctionExpression(funcDecl: ArrowFunctionExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveAnyFunctionExpression(
+                funcDecl, funcDecl.typeParameters, funcDecl.parameters, funcDecl.returnTypeAnnotation, funcDecl.block,
+                inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
         private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
@@ -3507,7 +3513,6 @@ module TypeScript {
 
             return funcSymbol;
         }
-
 
         private resolveGetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
@@ -4778,6 +4783,9 @@ module TypeScript {
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
+                case NodeType.ArrowFunctionExpression:
+                    return this.resolveArrowFunctionExpression(<ArrowFunctionExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case NodeType.ArrayLiteralExpression:
                     return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
@@ -5036,7 +5044,6 @@ module TypeScript {
                         }
                         else if (inContextuallyTypedAssignment ||
                             (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFatArrowFunction) ||
                             (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
                             this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
@@ -5045,6 +5052,10 @@ module TypeScript {
                         }
                         return;
                     }
+
+                case NodeType.ArrowFunctionExpression:
+                    this.typeCheckArrowFunctionExpression(<ArrowFunctionExpression>ast, context);
+                    return;
 
                 case NodeType.ArrayLiteralExpression:
                     this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -6131,6 +6142,13 @@ module TypeScript {
             }
 
             return funcDeclSymbol;
+        }
+
+        private typeCheckArrowFunctionExpression(
+            arrowFunction: ArrowFunctionExpression, context: PullTypeResolutionContext): void {
+
+            return this.typeCheckAnyFunctionExpression(
+                arrowFunction, arrowFunction.typeParameters, arrowFunction.returnTypeAnnotation, arrowFunction.block, context);
         }
 
         private typeCheckAnyFunctionExpression(
@@ -9273,6 +9291,12 @@ module TypeScript {
             if (this.isAnyOrEquivalent(paramType)) {
                 return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
             }
+            else if (arg.nodeType() === NodeType.ArrowFunctionExpression) {
+                var arrowFunction = <ArrowFunctionExpression>arg;
+                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
+                    arg, arrowFunction.typeParameters, arrowFunction.parameters, arrowFunction.returnTypeAnnotation, arrowFunction.block,
+                    argIndex, enclosingDecl, context, comparisonInfo);
+            }
             else if (arg.nodeType() === NodeType.FunctionDeclaration) {
                 var funcDecl = <FunctionDeclaration>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
@@ -10688,6 +10712,7 @@ module TypeScript {
                         var go = true;
                         switch (ast.nodeType()) {
                             case NodeType.FunctionDeclaration:
+                            case NodeType.ArrowFunctionExpression:
                                 // don't recurse into a function decl - we don't want to confuse a nested
                                 // return type with the top-level function's return type
                                 go = false;

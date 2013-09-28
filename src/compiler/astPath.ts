@@ -163,6 +163,7 @@ module TypeScript {
                     case TypeScript.NodeType.ModuleDeclaration:
                     case TypeScript.NodeType.FunctionDeclaration:
                     case TypeScript.NodeType.VariableDeclarator:
+                    case TypeScript.NodeType.ArrowFunctionExpression:
                        return true;
                 }
             }

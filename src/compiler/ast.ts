@@ -738,6 +738,40 @@ module TypeScript {
         }
     }
 
+    export class ArrowFunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(
+            public typeParameters: ASTList,
+            public parameters: ASTList,
+            public returnTypeAnnotation: TypeReference,
+            public block: Block) {
+            super();
+        }
+
+        public isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.ArrowFunctionExpression;
+        }
+
+        public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this.hint === ast.hint &&
+                structuralEquals(this.block, ast.block, includingPosition) &&
+                structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
+                structuralEquals(this.parameters, ast.parameters, includingPosition);
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitArrowFunctionExpression(this);
+        }
+
+        public getNameText() {
+            return this.hint;
+        }
+    }
+
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
