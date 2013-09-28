@@ -1596,7 +1596,7 @@ module TypeScript {
             return result;
         }
 
-        public visitIndexMemberDeclaration(node: IndexMemberDeclaration): FunctionDeclaration {
+        public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.indexSignature);
