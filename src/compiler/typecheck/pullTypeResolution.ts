@@ -266,10 +266,7 @@ module TypeScript {
         public getEnclosingDecl(decl: PullDecl): PullDecl {
             var declPath = decl.getParentPath();
 
-            if (!declPath.length) {
-                return null;
-            }
-            else if (declPath.length > 1 && declPath[declPath.length - 1] === decl) {
+            if (declPath.length > 1 && declPath[declPath.length - 1] === decl) {
                 return declPath[declPath.length - 2];
             }
             else {
@@ -607,12 +604,7 @@ module TypeScript {
         }
 
         public getVisibleDecls(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullDecl[] {
-
-            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
-
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
-            }
+            var declPath = enclosingDecl.getParentPath();
 
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;
 
@@ -1625,7 +1617,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
             var aliasExpr = importStatementAST.alias.nodeType() == NodeType.TypeRef ? (<TypeReference>importStatementAST.alias).term : importStatementAST.alias;
-            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
+            var declPath = enclosingDecl.getParentPath();
             var aliasedType: PullTypeSymbol = null;
 
             if (aliasExpr.nodeType() == NodeType.Name) {
@@ -5390,11 +5382,7 @@ module TypeScript {
 
             var id = nameAST.text();
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
-
-            if (enclosingDecl && !declPath.length) {
-                declPath = [enclosingDecl];
-            }
+            var declPath = enclosingDecl.getParentPath();
 
             var aliasSymbol: PullTypeAliasSymbol = null;
             var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
@@ -5739,11 +5727,7 @@ module TypeScript {
                 return this.semanticInfoChain.voidTypeSymbol;
             }
             else {
-                var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
-
-                if (enclosingDecl && !declPath.length) {
-                    declPath = [enclosingDecl];
-                }
+                var declPath = enclosingDecl.getParentPath();
 
                 // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
                 // first if need be, and then fall back to type names.  Otherwise, look for a type first, since we are probably looking for
@@ -6350,14 +6334,12 @@ module TypeScript {
         }
 
         private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
-            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
+            var declPath = enclosingDecl.getParentPath();
 
-            if (declPath.length) {
-                for (var i = declPath.length - 1; i >= 0; i--) {
-                    var decl = declPath[i];
-                    if (!(decl.kind === PullElementKind.FunctionExpression && (decl.flags & PullElementFlags.FatArrow))) {
-                        return decl;
-                    }
+            for (var i = declPath.length - 1; i >= 0; i--) {
+                var decl = declPath[i];
+                if (!(decl.kind === PullElementKind.FunctionExpression && (decl.flags & PullElementFlags.FatArrow))) {
+                    return decl;
                 }
             }
 
@@ -6368,7 +6350,7 @@ module TypeScript {
         private resolveSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var superType = this.semanticInfoChain.anyTypeSymbol;
             if (enclosingDecl) {
-                var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
+                var declPath = enclosingDecl.getParentPath();
                 var superType = this.semanticInfoChain.anyTypeSymbol;
 
                 var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
