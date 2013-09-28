@@ -5953,7 +5953,7 @@ module TypeScript {
                 for (var i = 0, n = funcDeclAST.parameters.members.length; i < n; i++) {
                     var actualParameter = <Parameter>funcDeclAST.parameters.members[i];
                     // Function has a variable argument list, and this paramter is the last
-                    var actualParameterIsVarArgParameter = funcDeclAST.variableArgList && i === n - 1;
+                    var actualParameterIsVarArgParameter = actualParameter.isRest;
                     var correspondingContextualParameter: PullSymbol = null;
                     var contextualParameterType: PullTypeSymbol = null;
 

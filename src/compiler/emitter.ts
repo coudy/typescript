@@ -99,6 +99,10 @@ module TypeScript {
             m => m.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>m).isConstructor);
     }
 
+    export function lastParameterIsRest(parameters: ASTList): boolean {
+        return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).isRest;
+    }
+
     export class Emitter {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
@@ -639,7 +643,7 @@ module TypeScript {
                 var tempContainer = this.setContainer(EmitContainer.Args);
                 argsLen = funcDecl.parameters.members.length;
                 var printLen = argsLen;
-                if (funcDecl.variableArgList) {
+                if (lastParameterIsRest(funcDecl.parameters)) {
                     printLen--;
                 }
                 for (var i = 0; i < printLen; i++) {
@@ -704,7 +708,7 @@ module TypeScript {
 
         private emitDefaultValueAssignments(funcDecl: FunctionDeclaration): void {
             var n = funcDecl.parameters.members.length;
-            if (funcDecl.variableArgList) {
+            if (lastParameterIsRest(funcDecl.parameters)) {
                 n--;
             }
 
@@ -724,7 +728,7 @@ module TypeScript {
         }
 
         private emitRestParameterInitializer(funcDecl: FunctionDeclaration): void {
-            if (funcDecl.variableArgList) {
+            if (lastParameterIsRest(funcDecl.parameters)) {
                 var n = funcDecl.parameters.members.length;
                 var lastArg = <Parameter>funcDecl.parameters.members[n - 1];
                 this.emitIndent();

@@ -706,7 +706,7 @@ module TypeScript {
     }
 
     export class Parameter extends BoundDecl {
-        constructor(id: Identifier, typeExpr: AST, init: AST, public isOptional: boolean) {
+        constructor(id: Identifier, typeExpr: AST, init: AST, public isOptional: boolean, public isRest: boolean) {
             super(id, typeExpr, init);
         }
 
@@ -722,7 +722,8 @@ module TypeScript {
 
         public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.isOptional === ast.isOptional;
+                this.isOptional === ast.isOptional &&
+                this.isRest === ast.isRest;
         }
     }
 
@@ -735,8 +736,7 @@ module TypeScript {
                     public isConstructor: boolean,
                     public typeParameters: ASTList,
                     public parameters: ASTList,
-                    public returnTypeAnnotation: AST,
-                    public variableArgList: boolean) {
+                    public returnTypeAnnotation: AST) {
             super();
         }
 
@@ -759,7 +759,6 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                    this._functionFlags === ast._functionFlags &&
                    this.hint === ast.hint &&
-                   this.variableArgList === ast.variableArgList &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition) &&
                    this.isConstructor === ast.isConstructor &&

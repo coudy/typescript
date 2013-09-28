@@ -485,7 +485,7 @@ module TypeScript {
 
             if (funcDecl.parameters) {
                 var argsLen = funcDecl.parameters.members.length;
-                if (funcDecl.variableArgList) {
+                if (lastParameterIsRest(funcDecl.parameters)) {
                     argsLen--;
                 }
 
@@ -498,7 +498,7 @@ module TypeScript {
                 }
             }
 
-            if (funcDecl.variableArgList) {
+            if (lastParameterIsRest(funcDecl.parameters)) {
                 var lastArg = <Parameter>funcDecl.parameters.members[funcDecl.parameters.members.length - 1];
                 if (funcDecl.parameters.members.length > 1) {
                     this.declFile.Write(", ...");
@@ -586,7 +586,7 @@ module TypeScript {
         private emitClassMembersFromConstructorDefinition(funcDecl: FunctionDeclaration) {
             if (funcDecl.parameters) {
                 var argsLen = funcDecl.parameters.members.length;
-                if (funcDecl.variableArgList) {
+                if (lastParameterIsRest(funcDecl.parameters)) {
                     argsLen--;
                 }
 

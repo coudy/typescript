@@ -746,7 +746,7 @@ module TypeScript {
 
             var signature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
-            if ((<FunctionDeclaration>constructorTypeAST).variableArgList) {
+            if (lastParameterIsRest((<FunctionDeclaration>constructorTypeAST).parameters)) {
                 signature.hasVarArgs = true;
             }
 
@@ -1138,7 +1138,7 @@ module TypeScript {
             // if it's a property, add the symbol to the enclosing type's member list
             var parameters: PullSymbol[] = [];
             var decl: PullDecl = null;
-            var argDecl: BoundDecl = null;
+            var argDecl: Parameter = null;
             var parameterSymbol: PullSymbol = null;
             var isProperty = false;
             var params = new BlockIntrinsics<boolean>();
@@ -1147,12 +1147,12 @@ module TypeScript {
             if (functionDeclaration.parameters) {
 
                 for (var i = 0; i < functionDeclaration.parameters.members.length; i++) {
-                    argDecl = <BoundDecl>functionDeclaration.parameters.members[i];
+                    argDecl = <Parameter>functionDeclaration.parameters.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
 
-                    if (functionDeclaration.variableArgList && i === functionDeclaration.parameters.members.length - 1) {
+                    if (argDecl.isRest) {
                         parameterSymbol.isVarArg = true;
                     }
 
@@ -1273,7 +1273,7 @@ module TypeScript {
             signature.addDeclaration(functionDeclaration);
             functionDeclaration.setSignatureSymbol(signature);
 
-            if (funcDeclAST.variableArgList) {
+            if (lastParameterIsRest(funcDeclAST.parameters)) {
                 signature.hasVarArgs = true;
             }
 
@@ -1341,7 +1341,7 @@ module TypeScript {
 
             var signature = new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
-            if (funcExpAST.variableArgList) {
+            if (lastParameterIsRest(funcExpAST.parameters)) {
                 signature.hasVarArgs = true;
             }
 
@@ -1393,7 +1393,7 @@ module TypeScript {
             var isSignature: boolean = (declFlags & PullElementFlags.Signature) !== 0;
             var signature = isSignature ? new PullSignatureSymbol(PullElementKind.CallSignature) : new PullDefinitionSignatureSymbol(PullElementKind.CallSignature);
 
-            if (funcTypeAST.variableArgList) {
+            if (lastParameterIsRest(funcTypeAST.parameters)) {
                 signature.hasVarArgs = true;
             }
 
@@ -1496,7 +1496,7 @@ module TypeScript {
 
             var signature = isSignature ? new PullSignatureSymbol(sigKind) : new PullDefinitionSignatureSymbol(sigKind);
 
-            if (methodAST.variableArgList) {
+            if (lastParameterIsRest(methodAST.parameters)) {
                 signature.hasVarArgs = true;
             }
 
@@ -1629,7 +1629,7 @@ module TypeScript {
                 constructSignature.addTypeParameter(typeParameters[i]);
             }
 
-            if (constructorAST.variableArgList) {
+            if (lastParameterIsRest(constructorAST.parameters)) {
                 constructSignature.hasVarArgs = true;
             }
 
@@ -1650,7 +1650,7 @@ module TypeScript {
 
             var constructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
 
-            if (constructorAST.variableArgList) {
+            if (lastParameterIsRest(constructorAST.parameters)) {
                 constructSignature.hasVarArgs = true;
             }
 
@@ -1692,7 +1692,7 @@ module TypeScript {
 
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
-            if (callSignatureAST.variableArgList) {
+            if (lastParameterIsRest(callSignatureAST.parameters)) {
                 callSignature.hasVarArgs = true;
             }
 

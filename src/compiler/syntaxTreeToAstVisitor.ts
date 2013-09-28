@@ -587,7 +587,7 @@ module TypeScript {
 
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(name, block, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            var result = new FunctionDeclaration(name, block, false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
@@ -987,14 +987,14 @@ module TypeScript {
             this.movePast(node.identifier);
             this.movePast(node.equalsGreaterThanToken);
 
-            var parameter = new Parameter(identifier, null, null, false);
+            var parameter = new Parameter(identifier, null, null, false, /*isRest:*/ false);
             this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
 
             var parameters = new ASTList([parameter]);
 
             var statements = this.getArrowFunctionStatements(node.body);
 
-            var result = new FunctionDeclaration(null, statements, /*isConstructor:*/ false, null, parameters, null, false);
+            var result = new FunctionDeclaration(null, statements, /*isConstructor:*/ false, null, parameters, null);
             this.setSpan(result, start, node);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction);
@@ -1012,7 +1012,7 @@ module TypeScript {
 
             var block = this.getArrowFunctionStatements(node.body);
 
-            var result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            var result = new FunctionDeclaration(null, block, /*isConstructor:*/ false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression | FunctionFlags.IsFatArrowFunction);
@@ -1096,7 +1096,7 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
-            var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.parameterList.parameters));
+            var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters, returnType);
             this.setSpan(funcDecl, start, node);
 
             funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature | FunctionFlags.ConstructMember);
@@ -1117,7 +1117,7 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
-            var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.parameterList.parameters));
+            var funcDecl = new FunctionDeclaration(null, null, false, typeParameters, parameters, returnType);
             this.setSpan(funcDecl, start, node);
 
             funcDecl.setFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature);
@@ -1221,7 +1221,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var result = new Parameter(identifier, typeExpr, init, !!node.questionToken);
+            var result = new Parameter(identifier, typeExpr, init, !!node.questionToken, node.dotDotDotToken !== null);
             this.setCommentsAndSpan(result, start, node);
 
             if (node.publicOrPrivateKeyword) {
@@ -1418,7 +1418,7 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            var result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             result.hint = "_construct";
@@ -1438,7 +1438,7 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var result = new FunctionDeclaration(name, null, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            var result = new FunctionDeclaration(name, null, false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Method | FunctionFlags.Signature);
@@ -1461,7 +1461,7 @@ module TypeScript {
 
             var parameters = new ASTList([parameter]);
 
-            var result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters, returnType, false);
+            var result = new FunctionDeclaration(name, null, /*isConstructor:*/ false, null, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IndexerMember | FunctionFlags.Method | FunctionFlags.Signature);
@@ -1506,7 +1506,7 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.parameterList.parameters));
+            var result = new FunctionDeclaration(null, null, /*isConstructor:*/ false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             result.hint = "_call";
@@ -1583,7 +1583,7 @@ module TypeScript {
 
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, null, this.hasDotDotDotParameter(node.parameterList.parameters));
+            var result = new FunctionDeclaration(null, block, /*isConstructor:*/ true, null, parameters, null);
             this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
@@ -1626,7 +1626,7 @@ module TypeScript {
             var block = node.block ? node.block.accept(this) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
@@ -1661,7 +1661,7 @@ module TypeScript {
             var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, returnType, this.hasDotDotDotParameter(node.parameterList.parameters));
+            var result = new FunctionDeclaration(name, block, /*isConstructor:*/ false, null, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
@@ -2026,7 +2026,7 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList([]), returnType, false);
+            var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, new ASTList([]), returnType);
             this.setSpan(funcDecl, start, node);
 
             funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor | FunctionFlags.IsFunctionExpression);
@@ -2053,7 +2053,7 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, parameters, null, false);
+            var funcDecl = new FunctionDeclaration(functionName, block, /*isConstructor:*/ false, null, parameters, null);
             this.setSpan(funcDecl, start, node);
 
             funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor | FunctionFlags.IsFunctionExpression);
@@ -2079,7 +2079,7 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var result = new FunctionDeclaration(name, block, false, typeParameters, parameters, returnType, this.hasDotDotDotParameter(node.callSignature.parameterList.parameters));
+            var result = new FunctionDeclaration(name, block, false, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
             result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);
