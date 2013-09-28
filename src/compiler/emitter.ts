@@ -1300,7 +1300,8 @@ module TypeScript {
         // Emits the container name of the symbol in the given enclosing context
         private emitSymbolContainerNameInEnclosingContext(pullSymbol: PullSymbol) {
             var decl = pullSymbol.getDeclarations()[0];
-            var symbolContainerDeclPath = getPathToDecl(decl.getParentDecl());
+            var parentDecl = decl.getParentDecl();
+            var symbolContainerDeclPath = parentDecl? parentDecl.getParentPath(): <PullDecl[]>[];
 
             var enclosingContextDeclPath = this.declStack;
             var potentialDeclPath = symbolContainerDeclPath;

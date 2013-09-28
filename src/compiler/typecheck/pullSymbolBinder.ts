@@ -4,40 +4,7 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-
-    export function getPathToDecl(decl: PullDecl): PullDecl[] {
-        if (!decl) {
-            return [];
-        }
-
-        var decls: PullDecl[] = decl.getParentPath();
-
-        if (decls) {
-            return decls;
-        }
-        else {
-            decls = [decl];
-        }
-
-        var parentDecl: PullDecl = decl.getParentDecl();
-
-        while (parentDecl) {
-            if (parentDecl && decls[decls.length - 1] != parentDecl && !(parentDecl.kind & PullElementKind.ObjectLiteral)) {
-                decls[decls.length] = parentDecl;
-            }
-            parentDecl = parentDecl.getParentDecl();
-        }
-
-        decls = decls.reverse();
-
-        // PULLREVIEW: Only cache in batch compilation scenarios?
-        decl.setParentPath(decls);
-
-        return decls;
-    }
-
     export class PullSymbolBinder {
-
         private functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
 
         private findTypeParameterInCache(name: string) {
@@ -107,7 +74,7 @@ module TypeScript {
                 return parentDecl.searchChildDecls(startingDecl.name, declKind);
             }
 
-            var contextSymbolPath: PullDecl[] = getPathToDecl(startingDecl);
+            var contextSymbolPath = startingDecl.getParentPath();
 
             // next, link back up to the enclosing context
             if (contextSymbolPath.length) {

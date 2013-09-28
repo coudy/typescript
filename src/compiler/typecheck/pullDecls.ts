@@ -20,7 +20,7 @@ module TypeScript {
         private span: TextSpan;
         private scriptName: string;
         private parentDecl: PullDecl = null;
-        private _parentPath: PullDecl[] = null;
+        private parentPath: PullDecl[] = null;
 
         // Properties that need to be cleaned after a change
         private _isBound: boolean = false;
@@ -313,12 +313,23 @@ module TypeScript {
             return declGroups ? declGroups : sentinelEmptyPullDeclArray;
         }
 
-        public getParentPath() {
-            return this._parentPath;
-        }
+        public getParentPath(): PullDecl[] {
+            if (!this.parentPath) {
+                var path = [this];
+                var parentDecl = this.parentDecl;
 
-        public setParentPath(path: PullDecl[]) {
-            this._parentPath = path;
+                while (parentDecl) {
+                    if (parentDecl && path[path.length - 1] != parentDecl && !(parentDecl.kind & PullElementKind.ObjectLiteral)) {
+                        path.unshift(parentDecl);
+                    }
+
+                    parentDecl = parentDecl.parentDecl;
+                }
+
+                this.parentPath = path;
+            }
+
+            return this.parentPath;
         }
 
         public setIsBound(isBinding: boolean) {

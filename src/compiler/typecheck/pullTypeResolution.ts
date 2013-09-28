@@ -264,7 +264,7 @@ module TypeScript {
         }
 
         public getEnclosingDecl(decl: PullDecl): PullDecl {
-            var declPath = getPathToDecl(decl);
+            var declPath = decl.getParentPath();
 
             if (!declPath.length) {
                 return null;
@@ -608,7 +608,7 @@ module TypeScript {
 
         public getVisibleDecls(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullDecl[] {
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
+            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -673,7 +673,7 @@ module TypeScript {
             }
 
             if (containerSymbol && containerSymbol.isClass()) {
-                var declPath = getPathToDecl(enclosingDecl);
+                var declPath = enclosingDecl.getParentPath();
                 if (declPath && declPath.length) {
                     var declarations = containerSymbol.getDeclarations();
                     for (var i = 0, n = declarations.length; i < n; i++) {
@@ -1625,7 +1625,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
             var aliasExpr = importStatementAST.alias.nodeType() == NodeType.TypeRef ? (<TypeReference>importStatementAST.alias).term : importStatementAST.alias;
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
+            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
             var aliasedType: PullTypeSymbol = null;
 
             if (aliasExpr.nodeType() == NodeType.Name) {
@@ -1686,7 +1686,7 @@ module TypeScript {
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
                 var modPath = (<Identifier>importStatementAST.alias).text();
-                var declPath = getPathToDecl(enclosingDecl);
+                var declPath = enclosingDecl.getParentPath();
 
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());
 
@@ -2829,8 +2829,7 @@ module TypeScript {
         }
 
         private checkSuperCaptureVariableCollides(superAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
-
+            var declPath = enclosingDecl.getParentPath();
 
             var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
 
@@ -2849,7 +2848,7 @@ module TypeScript {
 
         private checkThisCaptureVariableCollides(_thisAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             // Verify if this variable name conflicts with the _this that would be emitted to capture this in any of the enclosing context
-            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
+            var declPath = enclosingDecl.getParentPath();
 
             for (var i = declPath.length - 1; i >= 0; i--) {
                 var decl = declPath[i];
@@ -5391,7 +5390,7 @@ module TypeScript {
 
             var id = nameAST.text();
 
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
+            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
 
             if (enclosingDecl && !declPath.length) {
                 declPath = [enclosingDecl];
@@ -5740,7 +5739,7 @@ module TypeScript {
                 return this.semanticInfoChain.voidTypeSymbol;
             }
             else {
-                var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
+                var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
 
                 if (enclosingDecl && !declPath.length) {
                     declPath = [enclosingDecl];
@@ -6309,7 +6308,7 @@ module TypeScript {
         }
 
         private getContextualClassSymbolForEnclosingDecl(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
+            var declPath = enclosingDecl.getParentPath();
 
             // work back up the decl path, until you can find a class
             if (declPath.length) {
@@ -6351,7 +6350,7 @@ module TypeScript {
         }
 
         private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
-            var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
+            var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
 
             if (declPath.length) {
                 for (var i = declPath.length - 1; i >= 0; i--) {
@@ -6369,7 +6368,7 @@ module TypeScript {
         private resolveSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var superType = this.semanticInfoChain.anyTypeSymbol;
             if (enclosingDecl) {
-                var declPath: PullDecl[] = enclosingDecl !== null ? getPathToDecl(enclosingDecl) : <PullDecl[]>[];
+                var declPath: PullDecl[] = enclosingDecl !== null ? enclosingDecl.getParentPath() : <PullDecl[]>[];
                 var superType = this.semanticInfoChain.anyTypeSymbol;
 
                 var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
@@ -10996,7 +10995,7 @@ module TypeScript {
 
         private checkForThisCaptureInArrowFunction(expression: AST, enclosingDecl: PullDecl): void {
 
-            var declPath: PullDecl[] = getPathToDecl(enclosingDecl);
+            var declPath = enclosingDecl.getParentPath();
 
             // work back up the decl path, until you can find a class
             // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
