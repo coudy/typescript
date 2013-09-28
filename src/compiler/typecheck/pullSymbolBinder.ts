@@ -89,9 +89,6 @@ module TypeScript {
 
                 return this.semanticInfoChain.findDecls(copyOfContextSymbolPath, declKind);
             }
-
-            // finally, try searching globally
-            return this.semanticInfoChain.findDecls([name], declKind);
         }
 
         // Called by all the bind methods when searching for existing symbols to reuse. Returns the symbol, or null if it does not exist.
