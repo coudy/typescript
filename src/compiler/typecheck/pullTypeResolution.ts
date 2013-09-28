@@ -912,6 +912,9 @@ module TypeScript {
             var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.resolvingNamespaceMemberAccess = false;
 
+            var savedCurrentClassDeclaration = context.currentClassDeclaration;
+            context.currentClassDeclaration = null;
+
             var result = this.resolveDeclaredSymbolWorker(symbol, context);
 
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
@@ -921,6 +924,7 @@ module TypeScript {
             context.isResolvingSuperConstructorCallArgument = savedIsResolvingSuperConstructorCallArgument;
             context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
+            context.currentClassDeclaration = savedCurrentClassDeclaration;
 
             return result;
         }
@@ -1283,6 +1287,14 @@ module TypeScript {
         // Once bound, we can add the parent type's members to the class
         //
         private resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
+            context.currentClassDeclaration = classDeclAST;
+            var result = this.resolveClassDeclarationWorker(classDeclAST, context);
+            context.currentClassDeclaration = null;
+
+            return result;
+        }
+
+        private resolveClassDeclarationWorker(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (!classDeclSymbol.isResolved) {
@@ -3211,7 +3223,6 @@ module TypeScript {
         }
 
         private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-
             var funcDecl = this.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
@@ -3223,7 +3234,6 @@ module TypeScript {
             var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
 
             if (signature) {
-
                 if (signature.isResolved) {
                     if (this.canTypeCheckAST(funcDeclAST, context)) {
                         this.typeCheckFunctionDeclaration(funcDeclAST, context);
@@ -3232,7 +3242,7 @@ module TypeScript {
                 }
 
                 if (isConstructor && !signature.inResolution) {
-                    var classAST = funcDeclAST.classDecl;
+                    var classAST = context.currentClassDeclaration;
 
                     if (classAST) {
                         var classDecl = this.getDeclForAST(classAST);

@@ -94,6 +94,11 @@ module TypeScript {
         pullDecl: PullDecl;
     }
 
+    export function getClassConstructor(classDecl: ClassDeclaration): FunctionDeclaration {
+        return <FunctionDeclaration>ArrayUtilities.lastOrDefault(classDecl.members.members,
+            m => m.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>m).isConstructor);
+    }
+
     export class Emitter {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
@@ -1469,7 +1474,7 @@ module TypeScript {
 
         private emitParameterPropertyAndMemberVariableAssignments(): void {
             // emit any parameter properties first
-            var constructorDecl = this.thisClassNode.constructorDecl;
+            var constructorDecl = getClassConstructor(this.thisClassNode);
 
             if (constructorDecl && constructorDecl.arguments) {
                 for (var i = 0, n = constructorDecl.arguments.members.length; i < n; i++) {
@@ -1843,7 +1848,7 @@ module TypeScript {
 
             this.emitIndent();
 
-            var constrDecl = classDecl.constructorDecl;
+            var constrDecl = getClassConstructor(classDecl);
 
             // output constructor
             if (constrDecl) {
