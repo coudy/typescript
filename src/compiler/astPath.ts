@@ -36,13 +36,6 @@ module TypeScript {
             return (items === null || items.length <= index) ? null : items[items.length - index - 1];
         }
 
-        public clone(): AstPath {
-            var clone = new AstPath();
-            clone.asts = this.asts.map((value) => { return value; });
-            clone.top = this.top;
-            return clone;
-        }
-
         public pop(): TypeScript.AST {
             var head = this.ast();
             this.up();
@@ -65,18 +58,6 @@ module TypeScript {
             if (this.top <= -1)
                 throw Errors.invalidOperation(getLocalizedText(DiagnosticCode.Invalid_call_to_up, null));
             this.top--;
-        }
-
-        public down() {
-            if (this.top === this.ast.length - 1)
-                throw Errors.invalidOperation(getLocalizedText(DiagnosticCode.Invalid_call_to_down, null));
-            this.top++;
-        }
-
-        public nodeType(): TypeScript.NodeType {
-            if (this.ast() === null)
-                return TypeScript.NodeType.None;
-            return this.ast().nodeType();
         }
 
         public ast() {
