@@ -743,11 +743,11 @@ module TypeScript {
         private _functionFlags = FunctionFlags.None;
 
         constructor(public name: Identifier,
-                    public block: Block,
                     public isConstructor: boolean,
                     public typeParameters: ASTList,
                     public parameters: ASTList,
-                    public returnTypeAnnotation: AST) {
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
             super();
         }
 
@@ -1385,7 +1385,7 @@ module TypeScript {
     }
 
     export class TypeParameter extends AST {
-        constructor(public name: Identifier, public constraint: AST) {
+        constructor(public name: Identifier, public constraint: TypeReference) {
             super();
         }
 

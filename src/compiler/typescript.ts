@@ -1373,7 +1373,7 @@ module TypeScript {
                                     // The containing function has a type annotation, propagate it as the contextual type
                                     var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
                                     resolutionContext.resolvingTypeReference = true;
-                                    var returnTypeSymbol = this.resolver.resolveTypeReference(<TypeReference>functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
+                                    var returnTypeSymbol = this.resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
                                     resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
                                     if (returnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;

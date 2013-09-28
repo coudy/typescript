@@ -1942,7 +1942,7 @@ module TypeScript {
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
-                signature.returnType = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
+                signature.returnType = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, functionDecl, context);
 
                 if (this.isTypeArgumentOrWrapper(signature.returnType)) {
                     signature.hasAGenericParameter = true;
@@ -2916,7 +2916,7 @@ module TypeScript {
 
             if (typeParameterAST.constraint) {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
-                var constraintTypeSymbol = this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
+                var constraintTypeSymbol = this.resolveTypeReference(typeParameterAST.constraint, enclosingDecl, context);
 
                 if (constraintTypeSymbol) {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -2937,7 +2937,7 @@ module TypeScript {
 
             var typeParameterDecl = this.getDeclForAST(typeParameterAST);
             var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
-            this.resolveTypeReference(<TypeReference>typeParameterAST.constraint, enclosingDecl, context);
+            this.resolveTypeReference(typeParameterAST.constraint, enclosingDecl, context);
         }
 
         private resolveFunctionBodyReturnTypes(funcDeclAST: FunctionDeclaration, signature: PullSignatureSymbol, useContextualType: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
@@ -3253,7 +3253,7 @@ module TypeScript {
 
                 // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                 // on the function when resolving the return type
-                returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context);
+                returnTypeSymbol = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, funcDecl, context);
 
                 if (!returnTypeSymbol) {
                     context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
@@ -3334,7 +3334,7 @@ module TypeScript {
 
                     // try to set the return type, even though we may be lacking in some information
                     if (funcDeclAST.returnTypeAnnotation) {
-                        var returnTypeSymbol = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, funcDecl, context);
+                        var returnTypeSymbol = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, funcDecl, context);
                         if (!returnTypeSymbol) {
                             context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
                             signature.returnType = this.getNewErrorTypeSymbol();
@@ -4379,7 +4379,7 @@ module TypeScript {
                     enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
                     if (enclosingDeclAST.returnTypeAnnotation) {
                         // The containing function has a type annotation, propagate it as the contextual type
-                        var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
+                        var returnTypeAnnotationSymbol = this.resolveTypeReference(enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
                         if (returnTypeAnnotationSymbol) {
                             inContextuallyTypedAssignment = true;
                             context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
@@ -6067,7 +6067,7 @@ module TypeScript {
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
-                signature.returnType = this.resolveTypeReference(<TypeReference>funcDeclAST.returnTypeAnnotation, functionDecl, context);
+                signature.returnType = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, functionDecl, context);
             }
             else {
                 if (assigningFunctionSignature) {
@@ -10627,7 +10627,7 @@ module TypeScript {
                 if (declAST.returnTypeAnnotation) {
                     // NOTE: we don't want to report this diagnostics.  They'll already have been 
                     // reported when we first hit the return statement.
-                    var returnExpressionSymbol = this.resolveTypeReference(<TypeReference>declAST.returnTypeAnnotation, decl, context);
+                    var returnExpressionSymbol = this.resolveTypeReference(declAST.returnTypeAnnotation, decl, context);
                     if (returnExpressionSymbol === funcReturnType) {
                         // Error coming from return annotation
                         context.postError(this.unitPath, declAST.returnTypeAnnotation.minChar, declAST.returnTypeAnnotation.getLength(), messageCode, messageArguments);
