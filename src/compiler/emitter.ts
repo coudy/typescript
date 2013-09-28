@@ -90,7 +90,7 @@ module TypeScript {
     }
 
     export interface BoundDeclInfo {
-        boundDecl: BoundDecl;
+        boundDecl: VariableDeclarator;
         pullDecl: PullDecl;
     }
 
@@ -473,30 +473,6 @@ module TypeScript {
                 this.recordSourceMappingEnd(args);
             }
             this.recordSourceMappingEnd(objectCreationExpression);
-        }
-
-        public getVarDeclFromIdentifier(boundDeclInfo: BoundDeclInfo): BoundDeclInfo {
-            CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init &&
-                boundDeclInfo.boundDecl.init.nodeType() === NodeType.Name,
-                "The init expression of bound declaration when emitting as constant has to be indentifier");
-
-            var init = boundDeclInfo.boundDecl.init;
-            var ident = <Identifier>init;
-
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDeclInfo.boundDecl, this.document.fileName);
-
-            if (pullSymbol) {
-                var pullDecls = pullSymbol.getDeclarations();
-                if (pullDecls.length === 1) {
-                    var pullDecl = pullDecls[0];
-                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    if (ast && ast.nodeType() === NodeType.VariableDeclarator) {
-                        return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
-                    }
-                }
-            }
-
-            return null;
         }
 
         public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
@@ -1482,7 +1458,7 @@ module TypeScript {
 
             if (constructorDecl && constructorDecl.parameters) {
                 for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
-                    var arg = <BoundDecl>constructorDecl.parameters.members[i];
+                    var arg = <Parameter>constructorDecl.parameters.members[i];
                     if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                         this.emitIndent();
                         this.recordSourceMappingStart(arg);

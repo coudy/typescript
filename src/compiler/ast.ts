@@ -659,12 +659,22 @@ module TypeScript {
         }
     }
 
-    export class BoundDecl extends AST {
+    export class VariableDeclarator extends AST {
         public constantValue: number = null;
         private _varFlags = VariableFlags.None;
 
-        constructor(public id: Identifier, public typeExpr: AST, public init: AST) {
+        constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST) {
             super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.VariableDeclarator;
+        }
+
+        public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
+
+        public emit(emitter: Emitter) {
+            emitter.emitVariableDeclarator(this);
         }
 
         public isDeclaration() { return true; }
@@ -680,35 +690,19 @@ module TypeScript {
 
         public isProperty() { return hasFlag(this.getVarFlags(), VariableFlags.Property); }
 
-        public structuralEquals(ast: BoundDecl, includingPosition: boolean): boolean {
+        public structuralEquals(ast: VariableDeclarator, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this._varFlags === ast._varFlags &&
-                   structuralEquals(this.init, ast.init, includingPosition) &&
-                   structuralEquals(this.typeExpr, ast.typeExpr, includingPosition) &&
-                   structuralEquals(this.id, ast.id, includingPosition);
-        }
-    }
-
-    export class VariableDeclarator extends BoundDecl {
-        constructor(id: Identifier, typeExpr: AST, init: AST) {
-            super(id, typeExpr, init);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.VariableDeclarator;
-        }
-
-        public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
-
-        public emit(emitter: Emitter) {
-            emitter.emitVariableDeclarator(this);
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.init, ast.init, includingPosition) &&
+                structuralEquals(this.typeExpr, ast.typeExpr, includingPosition) &&
+                structuralEquals(this.id, ast.id, includingPosition);
         }
     }
 
     export class Parameter extends AST {
         private _varFlags = VariableFlags.None;
 
-        constructor(public id: Identifier, public typeExpr: AST, public init: AST, public isOptional: boolean, public isRest: boolean) {
+        constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST, public isOptional: boolean, public isRest: boolean) {
             super();
         }
 

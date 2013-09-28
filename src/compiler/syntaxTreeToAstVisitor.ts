@@ -1892,7 +1892,7 @@ module TypeScript {
             if (node.variableDeclaration) {
                 var variableDeclaration: VariableDeclaration = init;
                 for (var i = 0, n = variableDeclaration.declarators.members.length; i < n; i++) {
-                    var boundDecl = <BoundDecl>variableDeclaration.declarators.members[i];
+                    var boundDecl = <VariableDeclarator>variableDeclaration.declarators.members[i];
                     boundDecl.setVarFlags(boundDecl.getVarFlags() | VariableFlags.ForInVariable);
                 }
             }
