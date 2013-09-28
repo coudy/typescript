@@ -733,8 +733,8 @@ module TypeScript {
         constructor(public name: Identifier,
                     public block: Block,
                     public isConstructor: boolean,
-                    public typeArguments: ASTList,
-                    public arguments: ASTList,
+                    public typeParameters: ASTList,
+                    public parameters: ASTList,
                     public returnTypeAnnotation: AST,
                     public variableArgList: boolean) {
             super();
@@ -763,8 +763,8 @@ module TypeScript {
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition) &&
                    this.isConstructor === ast.isConstructor &&
-                   structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
-                   structuralEquals(this.arguments, ast.arguments, includingPosition);
+                   structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
+                   structuralEquals(this.parameters, ast.parameters, includingPosition);
         }
 
         public shouldEmit(emitter: Emitter): boolean {

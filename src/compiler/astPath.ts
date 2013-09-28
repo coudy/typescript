@@ -159,7 +159,7 @@ module TypeScript {
             return this.count() >= 2 &&
                 this.asts[this.top - 0].nodeType() === TypeScript.NodeType.List &&
                 this.asts[this.top - 1].nodeType() === TypeScript.NodeType.FunctionDeclaration &&
-                (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).arguments === this.asts[this.top - 0];
+                (<TypeScript.FunctionDeclaration>this.asts[this.top - 1]).parameters === this.asts[this.top - 0];
         }
         
         public isTargetOfCall(): boolean {

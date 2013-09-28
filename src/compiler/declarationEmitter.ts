@@ -448,7 +448,7 @@ module TypeScript {
             if (funcDecl.isConstructor) {
                 this.emitIndent();
                 this.declFile.Write("constructor");
-                this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
+                this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
             }
             else {
                 var id = funcDecl.getNameText();
@@ -473,7 +473,7 @@ module TypeScript {
                         }
                     }
                 }
-                this.emitTypeParameters(funcDecl.typeArguments, funcSignature);
+                this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
             }
 
             if (!funcDecl.isIndexerMember()) {
@@ -483,14 +483,14 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
-            if (funcDecl.arguments) {
-                var argsLen = funcDecl.arguments.members.length;
+            if (funcDecl.parameters) {
+                var argsLen = funcDecl.parameters.members.length;
                 if (funcDecl.variableArgList) {
                     argsLen--;
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <Parameter>funcDecl.arguments.members[i];
+                    var argDecl = <Parameter>funcDecl.parameters.members[i];
                     this.emitArgDecl(argDecl, funcDecl);
                     if (i < (argsLen - 1)) {
                         this.declFile.Write(", ");
@@ -499,8 +499,8 @@ module TypeScript {
             }
 
             if (funcDecl.variableArgList) {
-                var lastArg = <Parameter>funcDecl.arguments.members[funcDecl.arguments.members.length - 1];
-                if (funcDecl.arguments.members.length > 1) {
+                var lastArg = <Parameter>funcDecl.parameters.members[funcDecl.parameters.members.length - 1];
+                if (funcDecl.parameters.members.length > 1) {
                     this.declFile.Write(", ...");
                 }
                 else {
@@ -584,14 +584,14 @@ module TypeScript {
         }
 
         private emitClassMembersFromConstructorDefinition(funcDecl: FunctionDeclaration) {
-            if (funcDecl.arguments) {
-                var argsLen = funcDecl.arguments.members.length;
+            if (funcDecl.parameters) {
+                var argsLen = funcDecl.parameters.members.length;
                 if (funcDecl.variableArgList) {
                     argsLen--;
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <Parameter>funcDecl.arguments.members[i];
+                    var argDecl = <Parameter>funcDecl.parameters.members[i];
                     if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
                         var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
                         this.emitDeclarationComments(argDecl);

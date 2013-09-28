@@ -1953,16 +1953,16 @@ module TypeScript {
                 }
             }
 
-            if (funcDeclAST.typeArguments) {
-                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+            if (funcDeclAST.typeParameters) {
+                for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeParameters.members[i], context);
                 }
             }
 
             // link parameters and resolve their annotations
-            if (funcDeclAST.arguments) {
-                for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.arguments.members[i], signature, functionDecl, context);
+            if (funcDeclAST.parameters) {
+                for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                    this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.parameters.members[i], signature, functionDecl, context);
                 }
             }
 
@@ -3026,14 +3026,14 @@ module TypeScript {
 
             var funcDecl = this.getDeclForAST(funcDeclAST);
 
-            if (funcDeclAST.typeArguments) {
-                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+            if (funcDeclAST.typeParameters) {
+                for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeParameters.members[i], context);
                 }
             }
 
             // resolve parameter type annotations as necessary
-            if (funcDeclAST.arguments) {
+            if (funcDeclAST.parameters) {
                 var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
                 var prevInConstructorArguments = context.inConstructorArguments;
                 context.inConstructorArguments = isConstructor;
@@ -3041,8 +3041,8 @@ module TypeScript {
                 if (hasDefaultArgs) {
                     context.pushParameterIndexContext(funcDeclAST);
                 }
-                for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    this.resolveAST(funcDeclAST.arguments.members[i], false, funcDecl, context);
+                for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                    this.resolveAST(funcDeclAST.parameters.members[i], false, funcDecl, context);
                     if (hasDefaultArgs) {
                         context.incrementParameterIndex();
                     }
@@ -3299,15 +3299,15 @@ module TypeScript {
                 }
                 signature.startResolving();
 
-                if (funcDeclAST.typeArguments) {
-                    for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
-                        this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+                if (funcDeclAST.typeParameters) {
+                    for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
+                        this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeParameters.members[i], context);
                     }
                 }
 
                 // resolve parameter type annotations as necessary
 
-                if (funcDeclAST.arguments) {
+                if (funcDeclAST.parameters) {
                     var prevInConstructorArguments = context.inConstructorArguments;
                     var prevInTypeCheck = context.inTypeCheck;
                     context.inConstructorArguments = isConstructor;
@@ -3316,8 +3316,8 @@ module TypeScript {
                     if (hasDefaultArgs) {
                         context.pushParameterIndexContext(funcDeclAST);
                     }
-                    for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
+                    for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.parameters.members[i], context, funcDecl);
                         if (hasDefaultArgs) {
                             context.incrementParameterIndex();
                         }
@@ -3464,9 +3464,9 @@ module TypeScript {
                 signature.startResolving();
 
                 // resolve parameter type annotations as necessary
-                if (funcDeclAST.arguments) {
-                    for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
+                if (funcDeclAST.parameters) {
+                    for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.parameters.members[i], context, funcDecl);
                     }
                 }
 
@@ -3563,9 +3563,9 @@ module TypeScript {
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             // resolve parameter type annotations as necessary
-            if (funcDeclAST.arguments) {
-                for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
+            if (funcDeclAST.parameters) {
+                for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                    this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.parameters.members[i], context, funcDecl);
                 }
             }
 
@@ -3649,9 +3649,9 @@ module TypeScript {
                 signature.startResolving();
 
                 // resolve parameter type annotations as necessary
-                if (funcDeclAST.arguments) {
-                    for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
+                if (funcDeclAST.parameters) {
+                    for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.parameters.members[i], context, funcDecl);
                     }
                 }
 
@@ -3729,9 +3729,9 @@ module TypeScript {
             var funcDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
-            if (funcDeclAST.arguments) {
-                for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                    this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
+            if (funcDeclAST.parameters) {
+                for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
+                    this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.parameters.members[i], context, funcDecl);
                 }
             }
 
@@ -5288,9 +5288,9 @@ module TypeScript {
                 if (currentParameterIndex >= 0) {
                     // Search the enclosing function AST for a parameter with the right name, but stop once we hit our current context
                     var foundMatchingParameter = false;
-                    if (enclosingFunctionAST.arguments) {
+                    if (enclosingFunctionAST.parameters) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
-                            var candidateParameter = <Parameter>enclosingFunctionAST.arguments.members[i];
+                            var candidateParameter = <Parameter>enclosingFunctionAST.parameters.members[i];
                             if (candidateParameter && candidateParameter.id.text() === id) {
                                 foundMatchingParameter = true;
                             }
@@ -5300,7 +5300,7 @@ module TypeScript {
                         // We didn't find a matching parameter to the left, so error
                         context.postError(this.unitPath, nameAST.minChar, nameAST.getLength(),
                             DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
-                            [(<Parameter>enclosingFunctionAST.arguments.members[currentParameterIndex]).id.actualText, nameAST.actualText]);
+                            [(<Parameter>enclosingFunctionAST.parameters.members[currentParameterIndex]).id.actualText, nameAST.actualText]);
                         return this.getNewErrorTypeSymbol(id);
                     }
                 }
@@ -5891,7 +5891,6 @@ module TypeScript {
         }
 
         private resolveFunctionExpression(funcDeclAST: FunctionDeclaration, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-
             var funcDeclSymbol: PullSymbol = null;
             var functionDecl = this.getDeclForAST(funcDeclAST);
 
@@ -5925,9 +5924,9 @@ module TypeScript {
             var signature = funcDeclType.getCallSignatures()[0];
             funcDeclSymbol.startResolving();
 
-            if (funcDeclAST.typeArguments) {
-                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+            if (funcDeclAST.typeParameters) {
+                for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeParameters.members[i], context);
                 }
             }
 
@@ -5937,7 +5936,7 @@ module TypeScript {
             }
 
             // link parameters and resolve their annotations
-            if (funcDeclAST.arguments) {
+            if (funcDeclAST.parameters) {
                 var contextParams: PullSymbol[] = [];
 
                 if (assigningFunctionSignature) {
@@ -5951,8 +5950,8 @@ module TypeScript {
                 }
 
                 var contextualParametersCount = contextParams.length;
-                for (var i = 0, n = funcDeclAST.arguments.members.length; i < n; i++) {
-                    var actualParameter = <Parameter>funcDeclAST.arguments.members[i];
+                for (var i = 0, n = funcDeclAST.parameters.members.length; i < n; i++) {
+                    var actualParameter = <Parameter>funcDeclAST.parameters.members[i];
                     // Function has a variable argument list, and this paramter is the last
                     var actualParameterIsVarArgParameter = funcDeclAST.variableArgList && i === n - 1;
                     var correspondingContextualParameter: PullSymbol = null;
@@ -6047,9 +6046,9 @@ module TypeScript {
             var signature = funcDeclType.getCallSignatures()[0];
             var returnTypeSymbol = signature.returnType;
 
-            if (funcDeclAST.typeArguments) {
-                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeArguments.members[i], context);
+            if (funcDeclAST.typeParameters) {
+                for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeParameters.members[i], context);
                 }
             }
 
@@ -10302,9 +10301,9 @@ module TypeScript {
             }
 
             // TypeParameters
-            if (funcDeclAST.typeArguments && !isGetter && !isSetter && !isIndexSignature && !funcDeclAST.isConstructor) {
-                for (var i = 0; i < funcDeclAST.typeArguments.members.length; i++) {
-                    var typeParameterAST = <TypeParameter>funcDeclAST.typeArguments.members[i];
+            if (funcDeclAST.typeParameters && !isGetter && !isSetter && !isIndexSignature && !funcDeclAST.isConstructor) {
+                for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
+                    var typeParameterAST = <TypeParameter>funcDeclAST.typeParameters.members[i];
                     var typeParameter = this.resolveTypeParameterDeclaration(typeParameterAST, context);
                     this.checkSymbolPrivacy(functionSymbol, typeParameter, (symbol: PullSymbol) =>
                         this.functionTypeArgumentArgumentTypePrivacyErrorReporter(funcDeclAST, typeParameterAST, typeParameter, symbol, context));
@@ -10405,8 +10404,8 @@ module TypeScript {
                 isMethodOfClass = true;
             }
 
-            var start = declAST.arguments.members[argIndex].minChar;
-            var length = declAST.arguments.members[argIndex].getLength();
+            var start = declAST.parameters.members[argIndex].minChar;
+            var length = declAST.parameters.members[argIndex].getLength();
 
             var typeSymbol = <PullTypeSymbol>symbol;
             var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);

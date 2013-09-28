@@ -287,8 +287,8 @@ module TypeScript {
 
         export function walkFuncDeclChildren(preAst: FunctionDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.name);
-            walker.walk(preAst.typeArguments);
-            walker.walk(preAst.arguments);
+            walker.walk(preAst.typeParameters);
+            walker.walk(preAst.parameters);
             walker.walk(preAst.returnTypeAnnotation);
             walker.walk(preAst.block);
         }

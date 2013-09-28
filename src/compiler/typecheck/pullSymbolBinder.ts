@@ -1144,15 +1144,15 @@ module TypeScript {
             var params = new BlockIntrinsics<boolean>();
             var funcDecl = this.semanticInfo.getDeclForAST(functionDeclaration);
 
-            if (functionDeclaration.arguments) {
+            if (functionDeclaration.parameters) {
 
-                for (var i = 0; i < functionDeclaration.arguments.members.length; i++) {
-                    argDecl = <BoundDecl>functionDeclaration.arguments.members[i];
+                for (var i = 0; i < functionDeclaration.parameters.members.length; i++) {
+                    argDecl = <BoundDecl>functionDeclaration.parameters.members[i];
                     decl = this.semanticInfo.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
 
-                    if (functionDeclaration.variableArgList && i === functionDeclaration.arguments.members.length - 1) {
+                    if (functionDeclaration.variableArgList && i === functionDeclaration.parameters.members.length - 1) {
                         parameterSymbol.isVarArg = true;
                     }
 

@@ -633,17 +633,17 @@ module TypeScript {
 
             this.writeToOutput("(");
             var argsLen = 0;
-            if (funcDecl.arguments) {
-                this.emitComments(funcDecl.arguments, true);
+            if (funcDecl.parameters) {
+                this.emitComments(funcDecl.parameters, true);
 
                 var tempContainer = this.setContainer(EmitContainer.Args);
-                argsLen = funcDecl.arguments.members.length;
+                argsLen = funcDecl.parameters.members.length;
                 var printLen = argsLen;
                 if (funcDecl.variableArgList) {
                     printLen--;
                 }
                 for (var i = 0; i < printLen; i++) {
-                    var arg = <Parameter>funcDecl.arguments.members[i];
+                    var arg = <Parameter>funcDecl.parameters.members[i];
                     arg.emit(this);
 
                     if (i < (printLen - 1)) {
@@ -652,7 +652,7 @@ module TypeScript {
                 }
                 this.setContainer(tempContainer);
 
-                this.emitComments(funcDecl.arguments, false);
+                this.emitComments(funcDecl.parameters, false);
             }
             this.writeLineToOutput(") {");
 
@@ -703,13 +703,13 @@ module TypeScript {
         }
 
         private emitDefaultValueAssignments(funcDecl: FunctionDeclaration): void {
-            var n = funcDecl.arguments.members.length;
+            var n = funcDecl.parameters.members.length;
             if (funcDecl.variableArgList) {
                 n--;
             }
 
             for (var i = 0; i < n; i++) {
-                var arg = <Parameter>funcDecl.arguments.members[i];
+                var arg = <Parameter>funcDecl.parameters.members[i];
                 if (arg.init) {
                     this.emitIndent();
                     this.recordSourceMappingStart(arg);
@@ -725,8 +725,8 @@ module TypeScript {
 
         private emitRestParameterInitializer(funcDecl: FunctionDeclaration): void {
             if (funcDecl.variableArgList) {
-                var n = funcDecl.arguments.members.length;
-                var lastArg = <Parameter>funcDecl.arguments.members[n - 1];
+                var n = funcDecl.parameters.members.length;
+                var lastArg = <Parameter>funcDecl.parameters.members[n - 1];
                 this.emitIndent();
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("var ");
@@ -1476,9 +1476,9 @@ module TypeScript {
             // emit any parameter properties first
             var constructorDecl = getClassConstructor(this.thisClassNode);
 
-            if (constructorDecl && constructorDecl.arguments) {
-                for (var i = 0, n = constructorDecl.arguments.members.length; i < n; i++) {
-                    var arg = <BoundDecl>constructorDecl.arguments.members[i];
+            if (constructorDecl && constructorDecl.parameters) {
+                for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
+                    var arg = <BoundDecl>constructorDecl.parameters.members[i];
                     if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                         this.emitIndent();
                         this.recordSourceMappingStart(arg);
