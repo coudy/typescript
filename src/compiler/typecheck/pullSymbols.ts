@@ -36,6 +36,7 @@ module TypeScript {
 
         public isVarArg = false;
 
+        // GTODO
         private isSpecialized = false;
         public isBeingSpecialized = false;
 
@@ -59,6 +60,7 @@ module TypeScript {
             return (this.kind & PullElementKind.SomeSignature) != 0;
         }
 
+        // GTODO
         public isArray() {
             return (this.kind & PullElementKind.Array) != 0;
         }
@@ -169,7 +171,7 @@ module TypeScript {
             if (symbol) {
                 return symbol.getName();
             }
-            
+
             return this.name;
         }
 
@@ -184,13 +186,14 @@ module TypeScript {
             return decls.length ? this.getDeclarations()[0].getDisplayName() : this.name;
         }
 
+        // GTODO
         public setIsSpecialized() { this.isSpecialized = true; this.isBeingSpecialized = false; }
         public getIsSpecialized() { return this.isSpecialized; }
         public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
         public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
         public setValueIsBeingSpecialized(val: boolean) { this.isBeingSpecialized = val; }
 
-        public getRootSymbol() { 
+        public getRootSymbol() {
             if (!this.rootSymbol) {
                 return this;
             }
@@ -567,7 +570,7 @@ module TypeScript {
             if (this.rootSymbol) {
                 return PullSymbol.getIsExternallyVisible(this.rootSymbol, this, inIsExternallyVisibleSymbols);
             }
-            
+
             // Type - use container to determine privacy info
             if (this.isType()) {
                 var associatedContainerSymbol = (<PullTypeSymbol>this).getAssociatedContainerType();
@@ -639,7 +642,9 @@ module TypeScript {
 
         private memberTypeParameterNameCache: BlockIntrinsics<PullTypeParameterSymbol> = null;
 
+        // GTODO
         public hasAGenericParameter = false;
+
         private stringConstantOverload: boolean = undefined;
 
         public hasBeenChecked = false;
@@ -650,7 +655,8 @@ module TypeScript {
         }
 
         public isDefinition() { return false; }
-
+        
+        // GTODO
         public isGeneric() { return this.hasAGenericParameter || (this.typeParameters && this.typeParameters.length != 0); }
 
         public addParameter(parameter: PullSymbol, isOptional = false) {
@@ -662,7 +668,7 @@ module TypeScript {
             this.hasOptionalParam = isOptional;
 
             if (!parameter.getEnclosingSignature()) {
-                parameter.setEnclosingSignature(this); 
+                parameter.setEnclosingSignature(this);
             }
 
             if (!isOptional) {
@@ -702,8 +708,8 @@ module TypeScript {
 
             this.memberTypeParameterNameCache[typeParameter.getName()] = typeParameter;
         }
-        
-        public getTypeParameters(): PullTypeParameterSymbol[]{
+
+        public getTypeParameters(): PullTypeParameterSymbol[] {
 
             if (!this.typeParameters) {
                 this.typeParameters = [];
@@ -730,6 +736,7 @@ module TypeScript {
             return memberSymbol;
         }
 
+        // GTODO
         public mimicSignature(signature: PullSignatureSymbol, resolver: PullTypeResolver) {
             // mimic type parameters
             var typeParameters = signature.getTypeParameters();
@@ -769,11 +776,12 @@ module TypeScript {
 
             var returnType = signature.returnType;
 
-             if (!resolver.isTypeArgumentOrWrapper(returnType)) {
-                 this.returnType = returnType;
-             }
+            if (!resolver.isTypeArgumentOrWrapper(returnType)) {
+                this.returnType = returnType;
+            }
         }
 
+        // GTODO
         public isFixed(): boolean {
 
             if (!this.isGeneric()) {
@@ -833,12 +841,12 @@ module TypeScript {
         }
 
         static getSignaturesTypeNameEx(signatures: PullSignatureSymbol[],
-                                       prefix: string,
-                                       shortform: boolean,
-                                       brackets: boolean,
-                                       scopeSymbol?: PullSymbol,
-                                       getPrettyTypeName?: boolean,
-                                       candidateSignature?: PullSignatureSymbol) {
+            prefix: string,
+            shortform: boolean,
+            brackets: boolean,
+            scopeSymbol?: PullSymbol,
+            getPrettyTypeName?: boolean,
+            candidateSignature?: PullSignatureSymbol) {
             var result: MemberName[] = [];
             if (!signatures) {
                 return result;
@@ -974,11 +982,15 @@ module TypeScript {
         private _enclosedMemberTypes: PullTypeSymbol[] = null;
         private _enclosedMemberContainers: PullTypeSymbol[] = null;
         private _typeParameters: PullTypeParameterSymbol[] = null;
+
+        // GTODO
         private _typeArguments: PullTypeSymbol[] = null;
+
         private _containedNonMembers: PullSymbol[] = null;
         private _containedNonMemberTypes: PullTypeSymbol[] = null;
         private _containedNonMemberContainers: PullTypeSymbol[] = null;
 
+        // GTODO
         private _specializedVersionsOfThisType: PullTypeSymbol[] = null;
         private _arrayVersionOfThisType: PullTypeSymbol = null;
 
@@ -995,6 +1007,7 @@ module TypeScript {
         private _indexSignatures: PullSignatureSymbol[] = null;
         private _allIndexSignatures: PullSignatureSymbol[] = null;
 
+        // GTODO
         private _elementType: PullTypeSymbol = null;
 
         private _memberNameCache: BlockIntrinsics<PullSymbol> = null;
@@ -1006,8 +1019,10 @@ module TypeScript {
         private _containedNonMemberContainerCache: BlockIntrinsics<PullTypeSymbol> = null;
         private _specializedTypeIDCache: BlockIntrinsics<PullTypeSymbol> = null;
 
+        // GTODO
         private _hasGenericSignature = false;
         private _hasGenericMember = false;
+
         private _hasBaseTypeConflict = false;
 
         private _knownBaseTypeCount = 0;
@@ -1018,10 +1033,11 @@ module TypeScript {
 
         private _constructorMethod: PullSymbol = null;
         private _hasDefaultConstructor = false;
-        
+
         // TODO: Really only used to track doc comments...
         private _functionSymbol: PullSymbol = null;
 
+        // GTODO
         public memberWrapsOwnTypeParameter = false;
 
         private inMemberTypeNameEx = false;
@@ -1089,9 +1105,11 @@ module TypeScript {
             return false;
         }
 
+        // GTODO
         public setHasGenericSignature() { this._hasGenericSignature = true; }
         public getHasGenericSignature() { return this._hasGenericSignature; }
 
+        // GTODO
         public setHasGenericMember() { this._hasGenericMember = true; }
         public getHasGenericMember() { return this._hasGenericMember; }
 
@@ -1105,7 +1123,7 @@ module TypeScript {
 
         public getArrayType() { return this._arrayVersionOfThisType; }
 
-        public getElementType(): PullTypeSymbol {            
+        public getElementType(): PullTypeSymbol {
             return this._elementType;
         }
 
@@ -1323,6 +1341,7 @@ module TypeScript {
             this._typeParameterNameCache[typeParameter.getName()] = typeParameter;
         }
 
+        // GTODO
         public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol) {
 
             this.addTypeParameter(typeParameter);
@@ -1354,7 +1373,7 @@ module TypeScript {
             this._constructorMethod = constructorMethod;
         }
 
-        public getTypeParameters(): PullTypeParameterSymbol[]{
+        public getTypeParameters(): PullTypeParameterSymbol[] {
             if (!this._typeParameters) {
                 return sentinelEmptyArray;
             }
@@ -1362,6 +1381,7 @@ module TypeScript {
             return this._typeParameters;
         }
 
+        // GTODO
         public isGeneric(): boolean {
             return (this._typeParameters && this._typeParameters.length != 0) ||
                 this._hasGenericSignature ||
@@ -1370,6 +1390,7 @@ module TypeScript {
                 this.isArray();
         }
 
+        // GTODO
         public isFixed() {
 
             if (!this.isGeneric()) {
@@ -1451,7 +1472,7 @@ module TypeScript {
             return specialization;
         }
 
-        public getKnownSpecializations(): PullTypeSymbol[]{
+        public getKnownSpecializations(): PullTypeSymbol[] {
             if (!this._specializedVersionsOfThisType) {
                 return sentinelEmptyArray;
             }
@@ -1459,6 +1480,7 @@ module TypeScript {
             return this._specializedVersionsOfThisType;
         }
 
+        // GTODO
         public getTypeArguments() {
             return this._typeArguments;
         }
@@ -1514,7 +1536,7 @@ module TypeScript {
 
         public hasOwnCallSignatures() { return !!this._callSignatures; }
 
-        public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
+        public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
 
             if (!collectBaseSignatures) {
                 return this._callSignatures || [];
@@ -1577,7 +1599,7 @@ module TypeScript {
 
         public hasOwnIndexSignatures() { return !!this._indexSignatures; }
 
-        public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
+        public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
 
             if (!collectBaseSignatures) {
                 return this._indexSignatures || [];
@@ -1622,7 +1644,7 @@ module TypeScript {
             implementedType.addTypeThatExplicitlyImplementsThisType(this);
         }
 
-        public getImplementedTypes(): PullTypeSymbol[]{
+        public getImplementedTypes(): PullTypeSymbol[] {
             if (!this._implementedTypes) {
                 return sentinelEmptyArray;
             }
@@ -1644,7 +1666,7 @@ module TypeScript {
             extendedType.addTypeThatExtendsThisType(this);
         }
 
-        public getExtendedTypes(): PullTypeSymbol[]{
+        public getExtendedTypes(): PullTypeSymbol[] {
             if (!this._extendedTypes) {
                 return sentinelEmptyArray;
             }
@@ -1664,7 +1686,7 @@ module TypeScript {
             this._typesThatExtendThisType[this._typesThatExtendThisType.length] = type;
         }
 
-        public getTypesThatExtendThisType(): PullTypeSymbol[]{
+        public getTypesThatExtendThisType(): PullTypeSymbol[] {
             if (!this._typesThatExplicitlyImplementThisType) {
                 this._typesThatExplicitlyImplementThisType = [];
             }
@@ -1684,7 +1706,7 @@ module TypeScript {
             this._typesThatExplicitlyImplementThisType[this._typesThatExplicitlyImplementThisType.length] = type;
         }
 
-        public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[]{
+        public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[] {
             if (!this._typesThatExplicitlyImplementThisType) {
                 this._typesThatExplicitlyImplementThisType = [];
             }
@@ -1760,7 +1782,7 @@ module TypeScript {
 
             if (this._memberNameCache) {
                 memberSymbol = this._memberNameCache[name];
-            }            
+            }
 
             if (!lookInParent) {
                 return memberSymbol;
@@ -1844,7 +1866,7 @@ module TypeScript {
                 for (var i = 0, n = this._extendedTypes.length; i < n; i++) {
                     var extendedMembers = this._extendedTypes[i].getAllMembers(searchDeclKind, /*memberVisiblity*/ extenedMembersVisibility);
 
-                    for (var j = 0 , m = extendedMembers.length; j < m; j++) {
+                    for (var j = 0, m = extendedMembers.length; j < m; j++) {
                         var extendedMember = extendedMembers[j];
                         if (!(this._memberNameCache && this._memberNameCache[extendedMember.name])) {
                             allMembers[allMembers.length] = extendedMember;
@@ -1886,7 +1908,7 @@ module TypeScript {
             if (this._constructorMethod) {
                 this._constructorMethod.invalidate();
             }
-            
+
             this._knownBaseTypeCount = 0;
 
             super.invalidate();
@@ -1911,13 +1933,13 @@ module TypeScript {
 
             var kind = this.kind;
             if (kind === PullElementKind.Primitive || // primitives
-            kind === PullElementKind.Class || // class
-            kind === PullElementKind.Container || // module
-            kind === PullElementKind.DynamicModule || // dynamic module
-            kind === PullElementKind.TypeAlias || // dynamic module
-            kind === PullElementKind.Enum || // enum
-            kind === PullElementKind.TypeParameter || //TypeParameter
-            ((kind === PullElementKind.Interface || kind === PullElementKind.ObjectType) && this.name != "")) {
+                kind === PullElementKind.Class || // class
+                kind === PullElementKind.Container || // module
+                kind === PullElementKind.DynamicModule || // dynamic module
+                kind === PullElementKind.TypeAlias || // dynamic module
+                kind === PullElementKind.Enum || // enum
+                kind === PullElementKind.TypeParameter || //TypeParameter
+                ((kind === PullElementKind.Interface || kind === PullElementKind.ObjectType) && this.name != "")) {
                 return true;
             }
 
@@ -2128,7 +2150,7 @@ module TypeScript {
         }
 
         public setExportAssignedValueSymbol(symbol: PullSymbol) {
-            this.assignedValue = symbol; 
+            this.assignedValue = symbol;
         }
 
         public getExportAssignedValueSymbol() {
@@ -2273,7 +2295,7 @@ module TypeScript {
             return this.assignedContainer;
         }
 
-        public getMembers(): PullSymbol[]{
+        public getMembers(): PullSymbol[] {
             if (this.assignedType) {
                 return this.assignedType.getMembers();
             }
@@ -2389,14 +2411,14 @@ module TypeScript {
                 return name;
             }
 
-            this.isPrinting = true;         
+            this.isPrinting = true;
 
             if (useConstraintInName && this._constraint) {
                 name += " extends " + this._constraint.toString(scopeSymbol);
             }
 
             this.isPrinting = false;
-        
+
             return name;
         }
 
@@ -2415,7 +2437,7 @@ module TypeScript {
             }
 
             this.isPrinting = false;
-            
+
             return name;
         }
 
@@ -2425,13 +2447,14 @@ module TypeScript {
     }
 
     // transient type variables...
+    // GTODO
     export class PullTypeVariableSymbol extends PullTypeParameterSymbol {
 
         constructor(name: string, isFunctionTypeParameter: boolean) {
             super(name, isFunctionTypeParameter);
         }
 
-        private tyvarID =  globalTyvarID++;
+        private tyvarID = globalTyvarID++;
 
         public isTypeParameter() { return true; }
         public isTypeVariable() { return true; }
@@ -2489,6 +2512,7 @@ module TypeScript {
         }
     }
 
+    // GTODO
     export function typeWrapsTypeParameter(type: PullTypeSymbol, typeParameter: PullTypeParameterSymbol) {
 
         if (type.isTypeParameter()) {
@@ -2554,13 +2578,14 @@ module TypeScript {
                     break;
                 }
             }
-        } 
+        }
 
         type.inWrapCheck = false;
 
         return wrapsType;
     }
 
+    // GTODO
     export function signatureWrapsTypeParameter(signature: PullSignatureSymbol, typeParameter: PullTypeParameterSymbol) {
 
         if (signature.inWrapCheck) {
@@ -2705,7 +2730,7 @@ module TypeScript {
             var newArrayType = specializeType(resolver.getCachedArrayType(), [newElementType], resolver, context);
 
             return newArrayType;
-        }     
+        }
 
         var rootTypeParameters = typeToSpecialize.getTypeParameters();
 
@@ -2735,11 +2760,11 @@ module TypeScript {
             else if (typeArguments.length) {
                 newType = rootType.getSpecialization(typeArguments);
             }
-            
+
             if (!newType && !rootTypeParameters.length && context.specializingToAny) {
                 newType = rootType.getSpecialization([resolver.semanticInfoChain.anyTypeSymbol]);
             }
-            
+
             for (var i = 0; i < typeArguments.length; i++) {
                 if (!typeArguments[i].isTypeParameter() && (typeArguments[i] == rootType || typeWrapsTypeParameter(typeArguments[i], rootTypeParameters[i]))) {
                     typeToSpecialize.memberWrapsOwnTypeParameter = true;
@@ -2766,8 +2791,8 @@ module TypeScript {
 
                 typeArguments[i] = (substitution != null && !resolver.typesAreIdentical(typesToReplace[i], substitution)) ? substitution : typesToReplace[i];
             }
-            
-            newType = rootType.getSpecialization(typeArguments);            
+
+            newType = rootType.getSpecialization(typeArguments);
         }
 
         // check to see if this is a recursive specialization while resolving the root type
@@ -2789,14 +2814,14 @@ module TypeScript {
             if (i == rootTypeParameters.length) {
                 return rootType;
             }
-        }   
+        }
 
         if (newType) {
             if (newType.isResolved || newType.currentlyBeingSpecialized() || typeToSpecialize.memberWrapsOwnTypeParameter) {
                 return newType;
             }
         }
-        
+
         var prevInSpecialization = context.inSpecialization;
         context.inSpecialization = true;
 
@@ -2804,10 +2829,10 @@ module TypeScript {
             nSpecializationsCreated++;
 
             newType = typeToSpecialize.isClass() ? new PullTypeSymbol(typeToSpecialize.name, PullElementKind.Class) :
-                                                    isArray ? new PullTypeSymbol("Array", PullElementKind.Array) :
-                                                        typeToSpecialize.isTypeParameter() ? // watch out for replacing one tyvar with another
-                                                            new PullTypeVariableSymbol(typeToSpecialize.name, (<PullTypeParameterSymbol>typeToSpecialize).isFunctionTypeParameter()) :
-                                                                new PullTypeSymbol(typeToSpecialize.name, typeToSpecialize.kind);
+            isArray ? new PullTypeSymbol("Array", PullElementKind.Array) :
+            typeToSpecialize.isTypeParameter() ? // watch out for replacing one tyvar with another
+            new PullTypeVariableSymbol(typeToSpecialize.name, (<PullTypeParameterSymbol>typeToSpecialize).isFunctionTypeParameter()) :
+            new PullTypeSymbol(typeToSpecialize.name, typeToSpecialize.kind);
             newType.setRootSymbol(rootType);
         }
 
@@ -2963,7 +2988,7 @@ module TypeScript {
                 context.recursiveSignatureSpecializationDepth++;
 
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
-                
+
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -3008,7 +3033,7 @@ module TypeScript {
             }
             else {
                 newSignature = signature;
-            }          
+            }
 
             newType.addCallSignature(newSignature);
 
@@ -3046,7 +3071,7 @@ module TypeScript {
                 context.recursiveSignatureSpecializationDepth++;
 
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
-                
+
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -3089,7 +3114,7 @@ module TypeScript {
             }
             else {
                 newSignature = signature;
-            }   
+            }
 
             newType.addConstructSignature(newSignature);
 
@@ -3102,7 +3127,7 @@ module TypeScript {
         for (var i = 0; i < indexSignatures.length; i++) {
             signature = indexSignatures[i];
 
-            if (!signature.currentlyBeingSpecialized()) {                
+            if (!signature.currentlyBeingSpecialized()) {
 
                 context.pushTypeSpecializationCache(typeReplacementMap);
 
@@ -3127,7 +3152,7 @@ module TypeScript {
                 context.recursiveSignatureSpecializationDepth++;
 
                 resolver.resolveAST(declAST, false, newTypeDecl, context, true);
-                
+
                 decl.setSpecializingSignatureSymbol(prevSpecializationSignature);
 
                 parameters = signature.parameters;
@@ -3170,14 +3195,14 @@ module TypeScript {
             }
             else {
                 newSignature = signature;
-            }   
-            
+            }
+
             newType.addIndexSignature(newSignature);
 
             if (newSignature.hasAGenericParameter) {
                 newType.setHasGenericSignature();
             }
-        }        
+        }
 
         // specialize members
 
@@ -3209,7 +3234,7 @@ module TypeScript {
             fieldType = field.type;
 
             if (!fieldType) {
-                fieldType = newType; 
+                fieldType = newType;
             }
 
             replacementType = typeReplacementMap[fieldType.pullSymbolIDString];
@@ -3260,6 +3285,7 @@ module TypeScript {
             resolver.resolveDeclaredSymbol(constructorMethod, context);
 
             var newConstructorMethod = new PullSymbol(constructorMethod.name, PullElementKind.ConstructorMethod);
+            
             var newConstructorType = specializeType(constructorMethod.type, typeArguments, resolver, context);         
 
             context.isSpecializingConstructorMethod = prevIsSpecializingConstructorMethod;
@@ -3358,7 +3384,7 @@ module TypeScript {
             newSignature.hasAGenericParameter = true;
         }
 
-        signature.addSpecialization(newSignature, typeArguments);      
+        signature.addSpecialization(newSignature, typeArguments);
 
         var parameters = signature.parameters;
         var typeParameters = signature.getTypeParameters();

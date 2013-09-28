@@ -46,6 +46,7 @@
 ///<reference path='typecheck\pullDeclCollection.ts' />
 ///<reference path='typecheck\pullSymbolBinder.ts' />
 ///<reference path='typecheck\pullHelpers.ts' />
+///<reference path='typecheck\pullTypeInstantiation.ts' />
 ///<reference path='syntaxTreeToAstVisitor.ts' />
 
 module TypeScript {
