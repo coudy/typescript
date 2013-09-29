@@ -77,7 +77,7 @@ module TypeScript {
         SetAccessor = 1 << 6,
         Signature = 1 << 7,
         Method = 1 << 8,
-        CallMember = 1 << 9,
+        CallSignature = 1 << 9,
         ConstructMember = 1 << 10,
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,

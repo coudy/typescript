@@ -21,11 +21,6 @@ module TypeScript {
                 (<FunctionDeclaration>ast).isIndexerMember();
         }
 
-        export function isCallMember(ast: AST) {
-            return ast.nodeType() === NodeType.FunctionDeclaration &&
-                (<FunctionDeclaration>ast).isCallMember();
-        }
-
         export interface SignatureInfoForFuncDecl {
             signature: PullSignatureSymbol;
             allSignatures: PullSignatureSymbol[];

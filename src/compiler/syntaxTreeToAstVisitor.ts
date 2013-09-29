@@ -1513,7 +1513,7 @@ module TypeScript {
             this.setCommentsAndSpan(result, start, node);
 
             result.hint = "_call";
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.CallMember | FunctionFlags.Method | FunctionFlags.Signature);
+            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.CallSignature | FunctionFlags.Method | FunctionFlags.Signature);
 
             return result;
         }

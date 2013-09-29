@@ -10086,7 +10086,7 @@ module TypeScript {
                         else if (PullHelpers.isConstructMember(funcDecl)) {
                             context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_overload_construct_signature, null);
                         }
-                        else if (PullHelpers.isCallMember(funcDecl)) {
+                        else if (functionDeclaration.kind === PullElementKind.CallSignature) {
                             context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_overload_call_signature, null);
                         }
                         else {
@@ -10511,7 +10511,7 @@ module TypeScript {
 
                 if (declAST.isConstructMember()) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1;
-                } else if (declAST.isCallMember()) {
+                } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10527,7 +10527,7 @@ module TypeScript {
             } else {
                 if (declAST.isConstructMember()) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1;
-                } else if (declAST.isCallMember()) {
+                } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10584,7 +10584,7 @@ module TypeScript {
                     }
                 } else if (declAST.isConstructMember()) {
                     messageCode = DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1;
-                } else if (declAST.isCallMember()) {
+                } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10608,7 +10608,7 @@ module TypeScript {
                     }
                 } else if (declAST.isConstructMember()) {
                     messageCode = DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1;
-                } else if (declAST.isCallMember()) {
+                } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10659,7 +10659,7 @@ module TypeScript {
                     }
                 } else if (declAST.isConstructMember()) {
                     messageCode = DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_0;
-                } else if (declAST.isCallMember()) {
+                } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0;
                 } else if (declAST.isIndexerMember()) {
                     messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0;
@@ -10683,7 +10683,7 @@ module TypeScript {
                     }
                 } else if (declAST.isConstructMember()) {
                     messageCode = DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_0;
-                } else if (declAST.isCallMember()) {
+                } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0;
                 } else if (declAST.isIndexerMember()) {
                     messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0;

@@ -832,7 +832,6 @@ module TypeScript {
             return (this.getFunctionFlags() & FunctionFlags.Method) !== FunctionFlags.None;
         }
 
-        public isCallMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.CallMember); }
         public isConstructMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.ConstructMember); }
         public isIndexerMember() { return hasFlag(this.getFunctionFlags(), FunctionFlags.IndexerMember); }
         public isAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.GetAccessor) || hasFlag(this.getFunctionFlags(), FunctionFlags.SetAccessor); }

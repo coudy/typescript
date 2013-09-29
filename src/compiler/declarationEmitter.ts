@@ -465,7 +465,7 @@ module TypeScript {
                     if (funcDecl.isConstructMember()) {
                         this.declFile.Write("new");
                     }
-                    else if (!funcDecl.isCallMember() && !funcDecl.isIndexerMember()) {
+                    else if (funcPullDecl.kind !== PullElementKind.CallSignature && !funcDecl.isIndexerMember()) {
                         this.declFile.Write(id);
                         if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
                             this.declFile.Write("? ");

@@ -1041,7 +1041,7 @@ module TypeScript {
                     createConstructorTypeDeclaration(funcDecl, context) :
                     createConstructSignatureDeclaration(funcDecl, context);
             }
-            else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.CallMember)) {
+            else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.CallSignature)) {
                 go = createCallSignatureDeclaration(funcDecl, context);
             }
             else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IndexerMember)) {
