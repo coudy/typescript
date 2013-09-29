@@ -242,6 +242,7 @@ module TypeScript {
     export var globalSemanticInfoChain: SemanticInfoChain = null;
     export var globalBinder: PullSymbolBinder = null;
     export var globalLogger: ILogger = null;
+    export var globalResolver: PullTypeResolver = null;
 
     export var useDirectTypeStorage = false;
 
@@ -788,8 +789,11 @@ module TypeScript {
         }
 
         public setUnit(unitPath: string) {
+            var prevResolver = globalResolver;
+
             if (!this.resolver) {
                 this.resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, unitPath);
+                globalResolver = this.resolver; // GTODO: Can this be overwritten later?
             }
 
             this.resolver.setUnitPath(unitPath);

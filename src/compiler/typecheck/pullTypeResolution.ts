@@ -884,9 +884,13 @@ module TypeScript {
         // PULLTODO: VERY IMPORTANT
         // Right now, the assumption is that the declaration's parse tree is still in memory
         // we need to add a cache-in/cache-out mechanism so that we can break the dependency on in-memory ASTs
-        public resolveDeclaredSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): PullSymbol {
-            if (!symbol || symbol.isResolved) {
+        public resolveDeclaredSymbol(symbol: PullSymbol, context?: PullTypeResolutionContext): PullSymbol {
+            if (!symbol || symbol.isResolved || symbol.isTypeReference()) {
                 return symbol;
+            }
+
+            if (!context) {
+                context = new PullTypeResolutionContext(globalResolver);
             }
 
             // This is called while we're resolving type references.  Make sure we're no longer
@@ -10086,6 +10090,8 @@ module TypeScript {
                 var scriptDecl = unit.getTopLevelDecl();
 
                 var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+                var prevResolver = globalResolver;
+                globalResolver = resolver;
                 var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
 
                 resolver.resolveAST(script, /*inContextuallyTypedAssignment:*/ false, scriptDecl, context);
@@ -10099,6 +10105,8 @@ module TypeScript {
                 resolver.processPostTypeCheckWorkItems(context);
 
                 PullTypeResolver.globalTypeCheckPhase++;
+
+                globalResolver = prevResolver;
             }
         }
 

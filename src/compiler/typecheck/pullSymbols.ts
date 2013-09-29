@@ -56,6 +56,8 @@ module TypeScript {
             return (this.kind & PullElementKind.SomeType) != 0;
         }
 
+        public isTypeReference() { return false; }
+
         public isSignature() {
             return (this.kind & PullElementKind.SomeSignature) != 0;
         }
@@ -1069,14 +1071,14 @@ module TypeScript {
         public resetKnownBaseTypeCount() { this._knownBaseTypeCount = 0; }
         public incrementKnownBaseCount() { this._knownBaseTypeCount++; }
 
-        public setHasBaseTypeConflict() {
+        public setHasBaseTypeConflict(): void {
             this._hasBaseTypeConflict = true;
         }
-        public hasBaseTypeConflict() {
+        public hasBaseTypeConflict(): boolean {
             return this._hasBaseTypeConflict;
         }
 
-        public setUnresolved() {
+        public setUnresolved(): void {
             super.setUnresolved();
 
             this._invalidatedSpecializations = false;
@@ -1088,7 +1090,7 @@ module TypeScript {
             }
         }
 
-        public hasMembers() {
+        public hasMembers(): boolean {
 
             if (this._members != sentinelEmptyArray) {
                 return true;
@@ -1113,15 +1115,16 @@ module TypeScript {
         public setHasGenericMember() { this._hasGenericMember = true; }
         public getHasGenericMember() { return this._hasGenericMember; }
 
-        public setAssociatedContainerType(type: PullTypeSymbol) {
+        public setAssociatedContainerType(type: PullTypeSymbol): void {
             this._associatedContainerTypeSymbol = type;
         }
 
-        public getAssociatedContainerType() {
+        public getAssociatedContainerType(): PullTypeSymbol {
             return this._associatedContainerTypeSymbol;
         }
 
-        public getArrayType() { return this._arrayVersionOfThisType; }
+        // GTODO
+        public getArrayType(): PullTypeSymbol { return this._arrayVersionOfThisType; }
 
         public getElementType(): PullTypeSymbol {
             return this._elementType;
@@ -1135,17 +1138,17 @@ module TypeScript {
             this._arrayVersionOfThisType = arrayType;
         }
 
-        public getFunctionSymbol() {
+        public getFunctionSymbol(): PullSymbol {
             return this._functionSymbol;
         }
 
-        public setFunctionSymbol(symbol: PullSymbol) {
+        public setFunctionSymbol(symbol: PullSymbol): void {
             if (symbol) {
                 this._functionSymbol = symbol;
             }
         }
 
-        public addContainedNonMember(nonMember: PullSymbol) {
+        public addContainedNonMember(nonMember: PullSymbol): void {
 
             if (!nonMember) {
                 return;
@@ -1342,7 +1345,7 @@ module TypeScript {
         }
 
         // GTODO
-        public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol) {
+        public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol): void {
 
             this.addTypeParameter(typeParameter);
 
@@ -1357,19 +1360,19 @@ module TypeScript {
             return this._members;
         }
 
-        public setHasDefaultConstructor(hasOne= true) {
+        public setHasDefaultConstructor(hasOne= true): void {
             this._hasDefaultConstructor = hasOne;
         }
 
-        public getHasDefaultConstructor() {
+        public getHasDefaultConstructor(): boolean {
             return this._hasDefaultConstructor;
         }
 
-        public getConstructorMethod() {
+        public getConstructorMethod(): PullSymbol {
             return this._constructorMethod;
         }
 
-        public setConstructorMethod(constructorMethod: PullSymbol) {
+        public setConstructorMethod(constructorMethod: PullSymbol): void {
             this._constructorMethod = constructorMethod;
         }
 
@@ -1391,7 +1394,7 @@ module TypeScript {
         }
 
         // GTODO
-        public isFixed() {
+        public isFixed(): boolean {
 
             if (!this.isGeneric()) {
                 return true;
@@ -1481,16 +1484,17 @@ module TypeScript {
         }
 
         // GTODO
-        public getTypeArguments() {
+        public getTypeArguments(): PullTypeSymbol[] {
             return this._typeArguments;
         }
-        public setTypeArguments(typeArgs: PullTypeSymbol[]) { this._typeArguments = typeArgs; }
 
-        public getTypeArgumentsOrTypeParameters() {
+        public setTypeArguments(typeArgs: PullTypeSymbol[]): void { this._typeArguments = typeArgs; }
+
+        public getTypeArgumentsOrTypeParameters(): PullTypeSymbol[] {
             return this.getIsSpecialized() ? this.getTypeArguments() : this.getTypeParameters();
         }
 
-        public addCallSignature(callSignature: PullSignatureSymbol) {
+        public addCallSignature(callSignature: PullSignatureSymbol): void {
 
             if (!this._callSignatures) {
                 this._callSignatures = [];
@@ -1505,7 +1509,7 @@ module TypeScript {
             callSignature.functionType = this;
         }
 
-        public addConstructSignature(constructSignature: PullSignatureSymbol) {
+        public addConstructSignature(constructSignature: PullSignatureSymbol): void {
 
             if (!this._constructSignatures) {
                 this._constructSignatures = [];
@@ -1520,7 +1524,7 @@ module TypeScript {
             constructSignature.functionType = this;
         }
 
-        public addIndexSignature(indexSignature: PullSignatureSymbol) {
+        public addIndexSignature(indexSignature: PullSignatureSymbol): void {
             if (!this._indexSignatures) {
                 this._indexSignatures = [];
             }
@@ -1534,7 +1538,7 @@ module TypeScript {
             indexSignature.functionType = this;
         }
 
-        public hasOwnCallSignatures() { return !!this._callSignatures; }
+        public hasOwnCallSignatures(): boolean { return !!this._callSignatures; }
 
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
 
@@ -1567,7 +1571,7 @@ module TypeScript {
             return signatures;
         }
 
-        public hasOwnConstructSignatures() { return !!this._constructSignatures; }
+        public hasOwnConstructSignatures(): boolean { return !!this._constructSignatures; }
 
         public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
 
@@ -1597,7 +1601,7 @@ module TypeScript {
             return signatures;
         }
 
-        public hasOwnIndexSignatures() { return !!this._indexSignatures; }
+        public hasOwnIndexSignatures(): boolean { return !!this._indexSignatures; }
 
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
 
@@ -1630,7 +1634,7 @@ module TypeScript {
             return signatures;
         }
 
-        public addImplementedType(implementedType: PullTypeSymbol) {
+        public addImplementedType(implementedType: PullTypeSymbol): void {
             if (!implementedType) {
                 return;
             }
@@ -1652,7 +1656,7 @@ module TypeScript {
             return this._implementedTypes;
         }
 
-        public addExtendedType(extendedType: PullTypeSymbol) {
+        public addExtendedType(extendedType: PullTypeSymbol): void {
             if (!extendedType) {
                 return;
             }
@@ -1674,7 +1678,7 @@ module TypeScript {
             return this._extendedTypes;
         }
 
-        public addTypeThatExtendsThisType(type: PullTypeSymbol) {
+        public addTypeThatExtendsThisType(type: PullTypeSymbol): void {
             if (!type) {
                 return;
             }
@@ -1694,7 +1698,7 @@ module TypeScript {
             return this._typesThatExtendThisType;
         }
 
-        public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol) {
+        public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol): void {
             if (!type) {
                 return;
             }
@@ -1714,7 +1718,7 @@ module TypeScript {
             return this._typesThatExplicitlyImplementThisType;
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []) {
+        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
             // Check if this is the potential base:
             //      A extends A  => this === potentialBase
             //      A<T> extends A<T>  => this.getRootSymbol() === potentialBase
@@ -1753,7 +1757,7 @@ module TypeScript {
             return false;
         }
 
-        public isValidBaseKind(baseType: PullTypeSymbol, isExtendedType: boolean) {
+        public isValidBaseKind(baseType: PullTypeSymbol, isExtendedType: boolean): boolean {
             // Error type symbol is invalid base kind
             if (baseType.isError()) {
                 return false;
@@ -1899,11 +1903,11 @@ module TypeScript {
             return this._typeParameterNameCache[name];
         }
 
-        public setResolved() {
+        public setResolved(): void {
             super.setResolved();
         }
 
-        public invalidate() {
+        public invalidate(): void {
 
             if (this._constructorMethod) {
                 this._constructorMethod.invalidate();
@@ -1914,7 +1918,7 @@ module TypeScript {
             super.invalidate();
         }
 
-        public getNamePartForFullName() {
+        public getNamePartForFullName(): string {
             var name = super.getNamePartForFullName();
 
             var typars = this.getTypeArgumentsOrTypeParameters();
@@ -1926,7 +1930,7 @@ module TypeScript {
             return this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
         }
 
-        public isNamedTypeSymbol() {
+        public isNamedTypeSymbol(): boolean {
             if (this.isArray()) {
                 return false;
             }
@@ -1946,12 +1950,12 @@ module TypeScript {
             return false;
         }
 
-        public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+        public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
             var s = this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
             return s;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) {
+        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean): MemberName {
 
             if (this.isArray()) {
                 var elementMemberName = this._elementType ?
@@ -1975,7 +1979,7 @@ module TypeScript {
             return builder;
         }
 
-        public hasOnlyOverloadCallSignatures() {
+        public hasOnlyOverloadCallSignatures(): boolean {
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
             var constructSignatures = this.getConstructSignatures();
