@@ -87,8 +87,6 @@ module TypeScript {
 
         EnumMember = 1 << 26,
 
-        Expression = 1 << 28,
-
         WithBlock = 1 << 29,
         CatchBlock = 1 << 30,
 
@@ -98,7 +96,7 @@ module TypeScript {
         All = Script | Global | Primitive | Container | Class | Interface | DynamicModule | Enum | Array | TypeAlias |
             ObjectLiteral | Variable | Parameter | Property | TypeParameter | Function | ConstructorMethod | Method |
             FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature | ObjectType |
-            FunctionType | ConstructorType | EnumMember | Expression | WithBlock | CatchBlock,
+            FunctionType | ConstructorType | EnumMember | WithBlock | CatchBlock,
 
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor,
 
