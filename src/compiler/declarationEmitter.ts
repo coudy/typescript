@@ -465,7 +465,8 @@ module TypeScript {
                     if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
                         this.declFile.Write("new");
                     }
-                    else if (funcPullDecl.kind !== PullElementKind.CallSignature && !funcDecl.isIndexerMember()) {
+                    else if (funcPullDecl.kind !== PullElementKind.CallSignature &&
+                             funcPullDecl.kind !== PullElementKind.IndexSignature) {
                         this.declFile.Write(id);
                         if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
                             this.declFile.Write("? ");
@@ -475,7 +476,7 @@ module TypeScript {
                 this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
             }
 
-            if (!funcDecl.isIndexerMember()) {
+            if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
                 this.declFile.Write("(");
             }
             else {
@@ -509,7 +510,7 @@ module TypeScript {
                 this.emitArgDecl(lastArg, funcDecl);
             }
 
-            if (!funcDecl.isIndexerMember()) {
+            if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
                 this.declFile.Write(")");
             }
             else {

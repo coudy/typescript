@@ -11,11 +11,6 @@ module TypeScript {
                 (<FunctionDeclaration>ast).isConstructor;
         }
 
-        export function isIndexerMember(ast: AST) {
-            return ast.nodeType() === NodeType.FunctionDeclaration &&
-                (<FunctionDeclaration>ast).isIndexerMember();
-        }
-
         export interface SignatureInfoForFuncDecl {
             signature: PullSignatureSymbol;
             allSignatures: PullSignatureSymbol[];
@@ -45,7 +40,7 @@ module TypeScript {
             if (isConstructor(funcDecl) || functionDecl.kind === PullElementKind.ConstructSignature) {
                 signatures = typeSymbolWithAllSignatures.getConstructSignatures();
             }
-            else if (isIndexerMember(funcDecl)) {
+            else if (functionDecl.kind === PullElementKind.IndexSignature) {
                 signatures = typeSymbolWithAllSignatures.getIndexSignatures();
             }
             else {

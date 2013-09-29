@@ -10440,7 +10440,7 @@ module TypeScript {
 
             var isGetter = funcDeclAST.isGetAccessor();
             var isSetter = funcDeclAST.isSetAccessor();
-            var isIndexSignature = funcDeclAST.isIndexerMember();
+            var isIndexSignature = functionDecl.kind === PullElementKind.IndexSignature;
 
             if (isGetter || isSetter) {
                 var accessorSymbol = <PullAccessorSymbol> functionSymbol;
@@ -10627,7 +10627,8 @@ module TypeScript {
                     } else {
                         messageCode = DiagnosticCode.Parameter_0_of_method_from_exported_interface_has_or_is_using_private_type_1;
                     }
-                } else if (!isGetter && !declAST.isIndexerMember()) {
+                }
+                else if (!isGetter && decl.kind !== PullElementKind.IndexSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_exported_function_has_or_is_using_private_type_1;
                 }
             }
@@ -10673,7 +10674,7 @@ module TypeScript {
                 else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0;
                 }
-                else if (declAST.isIndexerMember()) {
+                else if (decl.kind === PullElementKind.IndexSignature) {
                     messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10700,9 +10701,11 @@ module TypeScript {
                 }
                 else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0;
-                } else if (declAST.isIndexerMember()) {
+                }
+                else if (decl.kind === PullElementKind.IndexSignature) {
                     messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0;
-                } else if (isMethod) {
+                }
+                else if (isMethod) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.Return_type_of_public_static_method_from_exported_class_has_or_is_using_private_type_0;
                     } else if (isMethodOfClass) {
