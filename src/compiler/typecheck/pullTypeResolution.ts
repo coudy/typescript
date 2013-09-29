@@ -4760,7 +4760,7 @@ module TypeScript {
                     return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
 
                 case NodeType.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.GenericType:
                     return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
@@ -5008,7 +5008,7 @@ module TypeScript {
                     return;
 
                 case NodeType.ObjectLiteralExpression:
-                    this.resolveObjectLiteralExpression(ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
                     return;
 
                 case NodeType.GenericType:
@@ -6374,7 +6374,7 @@ module TypeScript {
             }
         }
 
-        public resolveObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
+        public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             var symbol = this.getSymbolForAST(expressionAST, context);
 
             if (!symbol || additionalResults || this.canTypeCheckAST(expressionAST, context)) {
@@ -6390,15 +6390,14 @@ module TypeScript {
 
         // if there's no type annotation on the assigning AST, we need to create a type from each binary expression
         // in the object literal
-        private computeObjectLiteralExpression(expressionAST: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
+        private computeObjectLiteralExpression(objectLitAST: ObjectLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             // PULLTODO: Create a decl for the object literal
 
             // walk the members of the object literal,
             // create fields for each based on the value assigned in
-            var objectLitAST = <UnaryExpression>expressionAST;
             var span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
 
-            var objectLitDecl = this.getDeclForAST(expressionAST);
+            var objectLitDecl = this.getDeclForAST(objectLitAST);
             var typeSymbol = <PullTypeSymbol>this.getSymbolForAST(objectLitAST, context);
             var isUsingExistingDecl = !!objectLitDecl;
             var isUsingExistingSymbol = !!typeSymbol;
@@ -6422,8 +6421,7 @@ module TypeScript {
                 objectLitDecl.setSymbol(typeSymbol);
             }
 
-            var memberDecls = <ASTList>objectLitAST.operand;
-
+            var memberDecls = objectLitAST.propertyAssignments;
             var contextualType: PullTypeSymbol = null;
 
             if (inContextuallyTypedAssignment) {
@@ -9313,7 +9311,7 @@ module TypeScript {
                     argIndex, enclosingDecl, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ObjectLiteralExpression) {
-                return this.overloadIsApplicableForObjectLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+                return this.overloadIsApplicableForObjectLiteralArgument(paramType, <ObjectLiteralExpression>arg, argIndex, enclosingDecl, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ArrayLiteralExpression) {
                 return this.overloadIsApplicableForArrayLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
@@ -9357,7 +9355,14 @@ module TypeScript {
             }
         }
 
-        private overloadIsApplicableForObjectLiteralArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        private overloadIsApplicableForObjectLiteralArgument(
+            paramType: PullTypeSymbol,
+            arg: ObjectLiteralExpression,
+            argIndex: number,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext,
+            comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+
             // attempt to contextually type the object literal
             if (this.cachedObjectInterfaceType() && paramType === this.cachedObjectInterfaceType()) {
                 return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;

@@ -1962,7 +1962,7 @@ module TypeScript {
             return result;
         }
 
-        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
+        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): ObjectLiteralExpression {
             var start = this.position;
 
             var openStart = this.position + node.openBraceToken.leadingTriviaWidth();
@@ -1973,7 +1973,7 @@ module TypeScript {
             var closeStart = this.position + node.closeBraceToken.leadingTriviaWidth();
             this.movePast(node.closeBraceToken);
 
-            var result = new UnaryExpression(NodeType.ObjectLiteralExpression, propertyAssignments);
+            var result = new ObjectLiteralExpression(propertyAssignments);
             this.setCommentsAndSpan(result, start, node);
 
             if (this.isOnSingleLine(openStart, closeStart)) {
@@ -2906,8 +2906,8 @@ module TypeScript {
             return result;
         }
 
-        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): ObjectLiteralExpression {
+            var result: ObjectLiteralExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitObjectLiteralExpression(node);
                 this.setAST(node, result);

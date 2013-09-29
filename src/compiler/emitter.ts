@@ -403,11 +403,13 @@ module TypeScript {
             }
         }
 
-        public emitObjectLiteral(objectLiteral: UnaryExpression) {
+        public emitObjectLiteralExpression(objectLiteral: ObjectLiteralExpression) {
             var useNewLines = !hasFlag(objectLiteral.getFlags(), ASTFlags.SingleLine);
 
+            this.recordSourceMappingStart(objectLiteral);
+
             this.writeToOutput("{");
-            var list = <ASTList>objectLiteral.operand;
+            var list = objectLiteral.propertyAssignments;
             if (list.members.length > 0) {
                 if (useNewLines) {
                     this.writeLineToOutput("");
@@ -427,6 +429,8 @@ module TypeScript {
                 }
             }
             this.writeToOutput("}");
+
+            this.recordSourceMappingEnd(objectLiteral);
         }
 
         public emitArrayLiteral(arrayLiteral: UnaryExpression) {
@@ -2177,9 +2181,6 @@ module TypeScript {
                 case NodeType.PostDecrementExpression:
                     expression.operand.emit(this);
                     this.writeToOutput("--");
-                    break;
-                case NodeType.ObjectLiteralExpression:
-                    this.emitObjectLiteral(expression);
                     break;
                 case NodeType.ArrayLiteralExpression:
                     this.emitArrayLiteral(expression);

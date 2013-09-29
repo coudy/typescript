@@ -929,7 +929,7 @@ module TypeScript {
             // these are used to track intermediate nodes so that we can properly apply contextual types
             var lambdaAST: AST = null;
             var declarationInitASTs: VariableDeclarator[] = [];
-            var objectLitAST: UnaryExpression = null;
+            var objectLitAST: ObjectLiteralExpression = null;
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: UnaryExpression[] = [];
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
@@ -967,7 +967,7 @@ module TypeScript {
                                 declarationInitASTs[declarationInitASTs.length] = <VariableDeclarator>cur;
                             }
                             else if (cur.nodeType() === NodeType.ObjectLiteralExpression) {
-                                objectLitAST = <UnaryExpression>cur;
+                                objectLitAST = <ObjectLiteralExpression>cur;
                             }
                             else if (cur.nodeType() === NodeType.CastExpression) {
                                 typeAssertionASTs[typeAssertionASTs.length] = <UnaryExpression>cur;
@@ -1323,7 +1323,7 @@ module TypeScript {
 
                     case NodeType.ObjectLiteralExpression:
                         if (propagateContextualTypes) {
-                            var objectLiteralExpression = <UnaryExpression>current;
+                            var objectLiteralExpression = <ObjectLiteralExpression>current;
                             var objectLiteralResolutionContext = new PullAdditionalObjectLiteralResolutionData();
                             this.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
 
@@ -1332,7 +1332,7 @@ module TypeScript {
                             if (memeberAST) {
                                 // Propagate the member contextual type
                                 var contextualType: PullTypeSymbol = null;
-                                var memberDecls = <ASTList>objectLiteralExpression.operand;
+                                var memberDecls = objectLiteralExpression.propertyAssignments;
                                 if (memberDecls && objectLiteralResolutionContext.membersContextTypeSymbols) {
                                     for (var j = 0, m = memberDecls.members.length; j < m; j++) {
                                         if (memberDecls.members[j] === memeberAST) {
