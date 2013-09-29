@@ -1027,7 +1027,7 @@ module TypeScript {
         else if (ast.nodeType() === NodeType.FunctionDeclaration) {
             var funcDecl = <FunctionDeclaration>ast;
 
-            if (funcDecl.isConstructor) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 go = createClassConstructorDeclaration(funcDecl, context);
             }
             else if (funcDecl.isGetAccessor()) {

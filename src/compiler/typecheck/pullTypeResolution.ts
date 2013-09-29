@@ -3115,7 +3115,7 @@ module TypeScript {
 
             // resolve parameter type annotations as necessary
             if (funcDeclAST.parameters) {
-                var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
+                var isConstructor = funcDecl.kind === PullElementKind.ConstructorMethod || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
                 var prevInConstructorArguments = context.inConstructorArguments;
                 context.inConstructorArguments = isConstructor;
                 var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
@@ -3139,7 +3139,7 @@ module TypeScript {
             this.seenSuperConstructorCall = false;
             this.resolveAST(funcDeclAST.block, false, funcDecl, context);
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
-            if (funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
+            if (funcDecl.kind === PullElementKind.ConstructorMethod || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)) {
                 if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
                     // Constructors for derived classes must contain a call to the class's 'super' constructor
                     if (!this.seenSuperConstructorCall) {
@@ -3171,7 +3171,7 @@ module TypeScript {
                 var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
                 // If this is a function and it has returnType annotation, check if block contains non void return expression
-                if (!funcDeclAST.isConstructor && !hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)
+                if (funcDecl.kind !== PullElementKind.ConstructorMethod && !hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember)
                     && funcDeclAST.block && funcDeclAST.returnTypeAnnotation != null && !hasReturn) {
                     var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
 
@@ -3267,7 +3267,7 @@ module TypeScript {
                     context.postError(this.unitPath, funcDeclAST.returnTypeAnnotation.minChar, funcDeclAST.returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
                 }
                 else {
-                    var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
+                    var isConstructor = funcDecl.kind === PullElementKind.ConstructorMethod || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
                     if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
                         context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Constructors_cannot_have_a_return_type_of_void, null);
                     }
@@ -3319,7 +3319,7 @@ module TypeScript {
 
             var hadError = false;
 
-            var isConstructor = funcDeclAST.isConstructor || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
+            var isConstructor = funcDecl.kind === PullElementKind.ConstructorMethod || hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.ConstructMember);
 
             if (signature) {
                 if (signature.isResolved) {
@@ -3453,7 +3453,7 @@ module TypeScript {
                 //     - if it's not a definition signature, set the return type to 'any'
                 //     - if it's a definition sigature, take the best common type of all return expressions
                 //     - if it's a constructor, we set the return type link during binding
-                else if (!funcDeclAST.isConstructor && funcDecl.kind !== PullElementKind.ConstructSignature) {
+                else if (funcDecl.kind !== PullElementKind.ConstructorMethod && funcDecl.kind !== PullElementKind.ConstructSignature) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                         var parentDeclFlags = TypeScript.PullElementFlags.None;
@@ -10081,7 +10081,7 @@ module TypeScript {
                         if (!this.typesAreIdentical(allSignatures[i].returnType, signature.returnType)) {
                             context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Overloads_cannot_differ_only_by_return_type, null);
                         }
-                        else if (PullHelpers.isConstructor(funcDecl)) {
+                        else if (functionDeclaration.kind === PullElementKind.ConstructorMethod) {
                             context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_constructor_overload_signature, null);
                         }
                         else if (functionDeclaration.kind === PullElementKind.ConstructSignature) {
@@ -10158,7 +10158,7 @@ module TypeScript {
                 signatureForVisibilityCheck = allSignatures[0];
             }
 
-            if (!PullHelpers.isConstructor(funcDecl) && functionDeclaration.kind !== PullElementKind.ConstructSignature && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
+            if (functionDeclaration.kind !== PullElementKind.ConstructorMethod && functionDeclaration.kind !== PullElementKind.ConstructSignature && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
                 var errorCode: string;
                 // verify it satisfies all the properties of first signature
                 if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) != signature.hasFlag(PullElementFlags.Private)) {
@@ -10453,7 +10453,8 @@ module TypeScript {
                         // Call Signature from the non named type
                         return;
                     }
-                } else if (functionSymbol.kind == PullElementKind.Method && !funcDeclAST.isStatic() && !functionSymbol.getContainer().isNamedTypeSymbol()) {
+                }
+                else if (functionSymbol.kind == PullElementKind.Method && !funcDeclAST.isStatic() && !functionSymbol.getContainer().isNamedTypeSymbol()) {
                     // method of the unnmaed type
                     return;
                 }
@@ -10461,7 +10462,7 @@ module TypeScript {
             }
 
             // TypeParameters
-            if (funcDeclAST.typeParameters && !isGetter && !isSetter && !isIndexSignature && !funcDeclAST.isConstructor) {
+            if (funcDeclAST.typeParameters && !isGetter && !isSetter && !isIndexSignature && functionDecl.kind !== PullElementKind.ConstructorMethod) {
                 for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
                     var typeParameterAST = <TypeParameter>funcDeclAST.typeParameters.members[i];
                     var typeParameter = this.resolveTypeParameterDeclaration(typeParameterAST, context);
@@ -10577,9 +10578,10 @@ module TypeScript {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
 
-                if (declAST.isConstructor) {
+                if (decl.kind === PullElementKind.ConstructorMethod) {
                     messageCode = DiagnosticCode.Parameter_0_of_constructor_from_exported_class_is_using_inaccessible_module_1;
-                } else if (isSetter) {
+                }
+                else if (isSetter) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1;
                     }
@@ -10601,13 +10603,15 @@ module TypeScript {
                     } else {
                         messageCode = DiagnosticCode.Parameter_0_of_method_from_exported_interface_is_using_inaccessible_module_1;
                     }
-                } else if (!isGetter) {
+                }
+                else if (!isGetter) {
                     messageCode = DiagnosticCode.Parameter_0_of_exported_function_is_using_inaccessible_module_1;
                 }
             } else {
-                if (declAST.isConstructor) {
+                if (decl.kind === PullElementKind.ConstructorMethod) {
                     messageCode = DiagnosticCode.Parameter_0_of_constructor_from_exported_class_has_or_is_using_private_type_1;
-                } else if (isSetter) {
+                }
+                else if (isSetter) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_has_or_is_using_private_type_1;
                     } else {
@@ -10684,7 +10688,8 @@ module TypeScript {
                     } else {
                         messageCode = DiagnosticCode.Return_type_of_method_from_exported_interface_is_using_inaccessible_module_0;
                     }
-                } else if (!isSetter && !declAST.isConstructor) {
+                }
+                else if (!isSetter && decl.kind !== PullElementKind.ConstructorMethod) {
                     messageCode = DiagnosticCode.Return_type_of_exported_function_is_using_inaccessible_module_0;
                 }
             } else {
@@ -10713,7 +10718,8 @@ module TypeScript {
                     } else {
                         messageCode = DiagnosticCode.Return_type_of_method_from_exported_interface_has_or_is_using_private_type_0;
                     }
-                } else if (!isSetter && !declAST.isConstructor) {
+                }
+                else if (!isSetter && decl.kind !== PullElementKind.ConstructorMethod) {
                     messageCode = DiagnosticCode.Return_type_of_exported_function_has_or_is_using_private_type_0;
                 }
             }

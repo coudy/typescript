@@ -96,7 +96,7 @@ module TypeScript {
 
     export function getClassConstructor(classDecl: ClassDeclaration): FunctionDeclaration {
         return <FunctionDeclaration>ArrayUtilities.lastOrDefault(classDecl.members.members,
-            m => m.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>m).isConstructor);
+            m => m.nodeType() === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>m).getFunctionFlags(), FunctionFlags.Constructor));
     }
 
     export function lastParameterIsRest(parameters: ASTList): boolean {
@@ -620,7 +620,7 @@ module TypeScript {
                 this.writeToOutput("function ");
             }
 
-            if (funcDecl.isConstructor) {
+            if (pullDecl.kind === PullElementKind.ConstructorMethod) {
                 this.writeToOutput(this.thisClassNode.name.actualText);
             }
 
@@ -641,13 +641,16 @@ module TypeScript {
             this.emitFunctionParameters(funcDecl.parameters);
             this.writeLineToOutput(") {");
 
-            if (funcDecl.isConstructor) {
+            if (pullDecl.kind === PullElementKind.ConstructorMethod) {
                 this.recordSourceMappingNameStart("constructor");
-            } else if (funcDecl.isGetAccessor()) {
+            }
+            else if (funcDecl.isGetAccessor()) {
                 this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
-            } else if (funcDecl.isSetAccessor()) {
+            }
+            else if (funcDecl.isSetAccessor()) {
                 this.recordSourceMappingNameStart("set_" + funcDecl.getNameText());
-            } else {
+            }
+            else {
                 this.recordSourceMappingNameStart(funcDecl.getNameText());
             }
             this.indenter.increaseIndent();
@@ -659,7 +662,7 @@ module TypeScript {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
-            if (funcDecl.isConstructor) {
+            if (pullDecl.kind === PullElementKind.ConstructorMethod) {
                 this.emitConstructorStatements(funcDecl);
             }
             else {
@@ -1039,11 +1042,13 @@ module TypeScript {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
+            var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
+
             var temp: number;
             var savedInArrowFunction = this.inArrowFunction;
             this.inArrowFunction = false;
 
-            if (funcDecl.isConstructor) {
+            if (pullFunctionDecl.kind === PullElementKind.ConstructorMethod) {
                 temp = this.setContainer(EmitContainer.Constructor);
             }
             else {
@@ -1061,7 +1066,6 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
 
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
-                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
                 if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");

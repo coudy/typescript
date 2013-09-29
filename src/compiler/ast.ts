@@ -777,7 +777,6 @@ module TypeScript {
         private _functionFlags = FunctionFlags.None;
 
         constructor(public name: Identifier,
-                    public isConstructor: boolean,
                     public typeParameters: ASTList,
                     public parameters: ASTList,
                     public returnTypeAnnotation: TypeReference,
@@ -806,7 +805,6 @@ module TypeScript {
                    this.hint === ast.hint &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition) &&
-                   this.isConstructor === ast.isConstructor &&
                    structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
                    structuralEquals(this.parameters, ast.parameters, includingPosition);
         }
