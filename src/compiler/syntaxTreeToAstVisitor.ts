@@ -912,7 +912,7 @@ module TypeScript {
             return this.lineMap.getLineNumberFromPosition(start) === this.lineMap.getLineNumberFromPosition(end);
         }
 
-        public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
+        public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): ArrayLiteralExpression {
             var start = this.position;
             var openStart = this.position + node.openBracketToken.leadingTriviaWidth();
             this.movePast(node.openBracketToken);
@@ -922,7 +922,7 @@ module TypeScript {
             var closeStart = this.position + node.closeBracketToken.leadingTriviaWidth();
             this.movePast(node.closeBracketToken);
 
-            var result = new UnaryExpression(NodeType.ArrayLiteralExpression, expressions);
+            var result = new ArrayLiteralExpression(expressions);
             this.setSpan(result, start, node);
 
             if (this.isOnSingleLine(openStart, closeStart)) {
@@ -2465,8 +2465,8 @@ module TypeScript {
             return result;
         }
 
-        public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): ArrayLiteralExpression {
+            var result: ArrayLiteralExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitArrayLiteralExpression(node);
                 this.setAST(node, result);

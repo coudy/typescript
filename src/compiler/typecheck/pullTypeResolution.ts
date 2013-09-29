@@ -4788,7 +4788,7 @@ module TypeScript {
                     return this.resolveArrowFunctionExpression(<ArrowFunctionExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ArrayLiteralExpression:
-                    return this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ThisExpression:
                     return this.resolveThisExpression(ast, enclosingDecl, context);
@@ -5059,7 +5059,7 @@ module TypeScript {
                     return;
 
                 case NodeType.ArrayLiteralExpression:
-                    this.resolveArrayLiteralExpression(<UnaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
                     return;
 
                 case NodeType.ThisExpression:
@@ -6633,7 +6633,7 @@ module TypeScript {
             }
         }
 
-        private resolveArrayLiteralExpression(arrayLit: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveArrayLiteralExpression(arrayLit: ArrayLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var symbol = this.getSymbolForAST(arrayLit, context);
             if (!symbol || this.canTypeCheckAST(arrayLit, context)) {
                 if (this.canTypeCheckAST(arrayLit, context)) {
@@ -6646,8 +6646,8 @@ module TypeScript {
             return symbol;
         }
 
-        private computeArrayLiteralExpressionSymbol(arrayLit: UnaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var elements = <ASTList>arrayLit.operand;
+        private computeArrayLiteralExpressionSymbol(arrayLit: ArrayLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            var elements = arrayLit.expressions;
             var elementType: PullTypeSymbol = null;
             var elementTypes: PullTypeSymbol[] = [];
             var comparisonInfo = new TypeComparisonInfo();
@@ -9314,7 +9314,7 @@ module TypeScript {
                 return this.overloadIsApplicableForObjectLiteralArgument(paramType, <ObjectLiteralExpression>arg, argIndex, enclosingDecl, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ArrayLiteralExpression) {
-                return this.overloadIsApplicableForArrayLiteralArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+                return this.overloadIsApplicableForArrayLiteralArgument(paramType, <ArrayLiteralExpression>arg, argIndex, enclosingDecl, context, comparisonInfo);
             }
             else {
                 return this.overloadIsApplicableForOtherArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
@@ -9384,14 +9384,14 @@ module TypeScript {
             }
         }
 
-        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: ArrayLiteralExpression, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
             // attempt to contextually type the array literal
             if (paramType === this.cachedArrayInterfaceType()) {
                 return OverloadApplicabilityStatus.ApplicableWithNoProvisionalErrors;
             }
 
             context.pushContextualType(paramType, true, null);
-            var argSym = this.resolveArrayLiteralExpression(<UnaryExpression>arg, true, enclosingDecl, context);
+            var argSym = this.resolveArrayLiteralExpression(arg, true, enclosingDecl, context);
 
             var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
 

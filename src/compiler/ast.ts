@@ -366,6 +366,25 @@ module TypeScript {
         }
     }
 
+    export class ArrayLiteralExpression extends AST {
+        constructor(public expressions: ASTList) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ArrayLiteralExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitArrayLiteralExpression(this);
+        }
+
+        public structuralEquals(ast: ArrayLiteralExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expressions, ast.expressions, includingPosition);
+        }
+    }
+
     export class UnaryExpression extends AST {
         constructor(private _nodeType: NodeType, public operand: AST) {
             super();
