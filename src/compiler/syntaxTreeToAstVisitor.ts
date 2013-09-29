@@ -729,6 +729,11 @@ module TypeScript {
                         // Handle the common case of a left shifted value.
                         var binaryExpression = <BinaryExpressionSyntax>expression;
                         return this.computeConstantValue(binaryExpression.left, declarators) << this.computeConstantValue(binaryExpression.right, declarators);
+
+                    case SyntaxKind.BitwiseOrExpression:
+                        // Handle the common case of an or'ed value.
+                        var binaryExpression = <BinaryExpressionSyntax>expression;
+                        return this.computeConstantValue(binaryExpression.left, declarators) | this.computeConstantValue(binaryExpression.right, declarators);
                 }
 
                 // TODO: add more cases.
