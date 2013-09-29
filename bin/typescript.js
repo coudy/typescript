@@ -51349,6 +51349,10 @@ var TypeScript;
                     case 202 /* LeftShiftExpression */:
                         var binaryExpression = expression;
                         return this.computeConstantValue(binaryExpression.left, declarators) << this.computeConstantValue(binaryExpression.right, declarators);
+
+                    case 189 /* BitwiseOrExpression */:
+                        var binaryExpression = expression;
+                        return this.computeConstantValue(binaryExpression.left, declarators) | this.computeConstantValue(binaryExpression.right, declarators);
                 }
 
                 return null;
