@@ -52,7 +52,7 @@ module TypeScript {
         None = 0,
         Global = 0,
 
-        Script = 1,
+        Script = 1 << 0,
         Primitive = 1 << 1,
 
         Container = 1 << 2,
@@ -110,18 +110,8 @@ module TypeScript {
 
         SomeContainer = Container | DynamicModule | TypeAlias,
 
-        SomeBlock = WithBlock | CatchBlock,
-
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
 
-        SomeAccessor = GetAccessor | SetAccessor,
-
         SomeTypeReference = Interface | ObjectType | FunctionType | ConstructorType,
-
-        SomeLHS = Variable | Property | Parameter | SetAccessor | Method,
-
-        InterfaceTypeExtension = Interface | Class | Enum,
-        ClassTypeExtension = Interface | Class,
-        EnumTypeExtension = Interface | Enum,
     }
 }
