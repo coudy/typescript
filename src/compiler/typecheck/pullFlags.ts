@@ -86,7 +86,6 @@ module TypeScript {
         ConstructorType = 1 << 25,
 
         EnumMember = 1 << 26,
-        ErrorType = 1 << 27,
 
         Expression = 1 << 28,
 
@@ -99,7 +98,7 @@ module TypeScript {
         All = Script | Global | Primitive | Container | Class | Interface | DynamicModule | Enum | Array | TypeAlias |
             ObjectLiteral | Variable | Parameter | Property | TypeParameter | Function | ConstructorMethod | Method |
             FunctionExpression | GetAccessor | SetAccessor | CallSignature | ConstructSignature | IndexSignature | ObjectType |
-            FunctionType | ConstructorType | EnumMember | ErrorType | Expression | WithBlock | CatchBlock,
+            FunctionType | ConstructorType | EnumMember | Expression | WithBlock | CatchBlock,
 
         SomeFunction = Function | ConstructorMethod | Method | FunctionExpression | GetAccessor | SetAccessor,
 
@@ -107,7 +106,7 @@ module TypeScript {
         SomeValue = Variable | Parameter | Property | EnumMember | SomeFunction,
 
         SomeType = Script | Global | Primitive | Class | Interface |
-                    Enum | Array | ObjectType | FunctionType | ConstructorType | TypeParameter | ErrorType,
+                    Enum | Array | ObjectType | FunctionType | ConstructorType | TypeParameter,
 
         AcceptableAlias = Variable | SomeFunction | Class | Interface | Enum | Container | ObjectType | FunctionType | ConstructorType,
 
