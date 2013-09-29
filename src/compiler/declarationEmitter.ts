@@ -456,13 +456,13 @@ module TypeScript {
                     if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
                         this.declFile.Write(id);
                     }
-                    else if (funcDecl.isConstructMember()) {
+                    else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
                         this.declFile.Write("new");
                     }
                 }
                 else {
                     this.emitIndent();
-                    if (funcDecl.isConstructMember()) {
+                    if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
                         this.declFile.Write("new");
                     }
                     else if (funcPullDecl.kind !== PullElementKind.CallSignature && !funcDecl.isIndexerMember()) {

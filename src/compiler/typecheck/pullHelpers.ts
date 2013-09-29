@@ -11,11 +11,6 @@ module TypeScript {
                 (<FunctionDeclaration>ast).isConstructor;
         }
 
-        export function isConstructMember(ast: AST) {
-            return ast.nodeType() === NodeType.FunctionDeclaration &&
-                (<FunctionDeclaration>ast).isConstructMember();
-        }
-
         export function isIndexerMember(ast: AST) {
             return ast.nodeType() === NodeType.FunctionDeclaration &&
                 (<FunctionDeclaration>ast).isIndexerMember();
@@ -40,13 +35,14 @@ module TypeScript {
                 functionSignature = <PullSignatureSymbol>funcSymbol;
                 var parent = functionDecl.getParentDecl();
                 typeSymbolWithAllSignatures = parent.getSymbol().type;                
-            } else {
+            }
+            else {
                 functionSignature = functionDecl.getSignatureSymbol();
                 typeSymbolWithAllSignatures = funcSymbol.type;
             }
             var signatures: PullSignatureSymbol[];
 
-            if (isConstructor(funcDecl) || isConstructMember(funcDecl)) {
+            if (isConstructor(funcDecl) || functionDecl.kind === PullElementKind.ConstructSignature) {
                 signatures = typeSymbolWithAllSignatures.getConstructSignatures();
             }
             else if (isIndexerMember(funcDecl)) {

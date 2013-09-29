@@ -3453,7 +3453,7 @@ module TypeScript {
                 //     - if it's not a definition signature, set the return type to 'any'
                 //     - if it's a definition sigature, take the best common type of all return expressions
                 //     - if it's a constructor, we set the return type link during binding
-                else if (!funcDeclAST.isConstructor && !funcDeclAST.isConstructMember()) {
+                else if (!funcDeclAST.isConstructor && funcDecl.kind !== PullElementKind.ConstructSignature) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                         var parentDeclFlags = TypeScript.PullElementFlags.None;
@@ -3481,7 +3481,8 @@ module TypeScript {
                     else {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, funcDeclAST.block, signature, false, funcDecl, context);
                     }
-                } else if (funcDeclAST.isConstructMember()) {
+                }
+                else if (funcDecl.kind === PullElementKind.ConstructSignature) {
                     if (funcDeclAST.isSignature()) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
@@ -10083,7 +10084,7 @@ module TypeScript {
                         else if (PullHelpers.isConstructor(funcDecl)) {
                             context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_constructor_overload_signature, null);
                         }
-                        else if (PullHelpers.isConstructMember(funcDecl)) {
+                        else if (functionDeclaration.kind === PullElementKind.ConstructSignature) {
                             context.postError(this.unitPath, funcDecl.minChar, funcDecl.getLength(), DiagnosticCode.Duplicate_overload_construct_signature, null);
                         }
                         else if (functionDeclaration.kind === PullElementKind.CallSignature) {
@@ -10157,7 +10158,7 @@ module TypeScript {
                 signatureForVisibilityCheck = allSignatures[0];
             }
 
-            if (!PullHelpers.isConstructor(funcDecl) && !PullHelpers.isConstructMember(funcDecl) && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
+            if (!PullHelpers.isConstructor(funcDecl) && functionDeclaration.kind !== PullElementKind.ConstructSignature && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
                 var errorCode: string;
                 // verify it satisfies all the properties of first signature
                 if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) != signature.hasFlag(PullElementFlags.Private)) {
@@ -10509,7 +10510,7 @@ module TypeScript {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
 
-                if (declAST.isConstructMember()) {
+                if (decl.kind === PullElementKind.ConstructSignature) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1;
                 } else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1;
@@ -10525,11 +10526,13 @@ module TypeScript {
                     messageCode = DiagnosticCode.TypeParameter_0_of_exported_function_is_using_inaccessible_module_1;
                 }
             } else {
-                if (declAST.isConstructMember()) {
+                if (decl.kind === PullElementKind.ConstructSignature) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1;
-                } else if (decl.kind === PullElementKind.CallSignature) {
+                }
+                else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.TypeParameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1;
-                } else if (isMethod) {
+                }
+                else if (isMethod) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.TypeParameter_0_of_public_static_method_from_exported_class_has_or_is_using_private_type_1;
                     } else if (isMethodOfClass) {
@@ -10579,14 +10582,18 @@ module TypeScript {
                 } else if (isSetter) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.Parameter_0_of_public_static_property_setter_from_exported_class_is_using_inaccessible_module_1;
-                    } else {
+                    }
+                    else {
                         messageCode = DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_is_using_inaccessible_module_1;
                     }
-                } else if (declAST.isConstructMember()) {
+                }
+                else if (decl.kind === PullElementKind.ConstructSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_1;
-                } else if (decl.kind === PullElementKind.CallSignature) {
+                }
+                else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_is_using_inaccessible_module_1;
-                } else if (isMethod) {
+                }
+                else if (isMethod) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.Parameter_0_of_public_static_method_from_exported_class_is_using_inaccessible_module_1;
                     } else if (isMethodOfClass) {
@@ -10606,9 +10613,11 @@ module TypeScript {
                     } else {
                         messageCode = DiagnosticCode.Parameter_0_of_public_property_setter_from_exported_class_has_or_is_using_private_type_1;
                     }
-                } else if (declAST.isConstructMember()) {
+                }
+                else if (decl.kind === PullElementKind.ConstructSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_1;
-                } else if (decl.kind === PullElementKind.CallSignature) {
+                }
+                else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Parameter_0_of_call_signature_from_exported_interface_has_or_is_using_private_type_1;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10657,11 +10666,14 @@ module TypeScript {
                     } else {
                         messageCode = DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_is_using_inaccessible_module_0;
                     }
-                } else if (declAST.isConstructMember()) {
+                }
+                else if (decl.kind === PullElementKind.ConstructSignature) {
                     messageCode = DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_is_using_inaccessible_module_0;
-                } else if (decl.kind === PullElementKind.CallSignature) {
+                }
+                else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_is_using_inaccessible_module_0;
-                } else if (declAST.isIndexerMember()) {
+                }
+                else if (declAST.isIndexerMember()) {
                     messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_is_using_inaccessible_module_0;
                 } else if (isMethod) {
                     if (isStatic) {
@@ -10678,12 +10690,15 @@ module TypeScript {
                 if (isGetter) {
                     if (isStatic) {
                         messageCode = DiagnosticCode.Return_type_of_public_static_property_getter_from_exported_class_has_or_is_using_private_type_0;
-                    } else {
+                    }
+                    else {
                         messageCode = DiagnosticCode.Return_type_of_public_property_getter_from_exported_class_has_or_is_using_private_type_0;
                     }
-                } else if (declAST.isConstructMember()) {
+                }
+                else if (decl.kind === PullElementKind.ConstructSignature) {
                     messageCode = DiagnosticCode.Return_type_of_constructor_signature_from_exported_interface_has_or_is_using_private_type_0;
-                } else if (decl.kind === PullElementKind.CallSignature) {
+                }
+                else if (decl.kind === PullElementKind.CallSignature) {
                     messageCode = DiagnosticCode.Return_type_of_call_signature_from_exported_interface_has_or_is_using_private_type_0;
                 } else if (declAST.isIndexerMember()) {
                     messageCode = DiagnosticCode.Return_type_of_index_signature_from_exported_interface_has_or_is_using_private_type_0;
