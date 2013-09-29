@@ -87,8 +87,8 @@ module TypeScript {
 
         EnumMember = 1 << 26,
 
-        WithBlock = 1 << 29,
-        CatchBlock = 1 << 30,
+        WithBlock = 1 << 27,
+        CatchBlock = 1 << 28,
 
         // WARNING: To prevent JS VMs from wrapping these values as floats, we don't want to utilize more than the 31 bits above.  (Doing so would
         // seriously slow down bitwise operations
