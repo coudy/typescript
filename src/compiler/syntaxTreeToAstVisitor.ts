@@ -1983,25 +1983,25 @@ module TypeScript {
             return result;
         }
 
-        public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
+        public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): SimplePropertyAssignment {
             var start = this.position;
 
-            var left = node.propertyName.accept(this);
+            var propertyName = node.propertyName.accept(this);
 
             var afterColonComments = this.convertTokenTrailingComments(
                 node.colonToken, this.position + node.colonToken.leadingTriviaWidth() + node.colonToken.width());
 
             this.movePast(node.colonToken);
-            var right: AST = node.expression.accept(this);
-            right.setPreComments(this.mergeComments(afterColonComments, right.preComments()));
+            var expression: AST = node.expression.accept(this);
+            expression.setPreComments(this.mergeComments(afterColonComments, expression.preComments()));
 
-            var result = new BinaryExpression(NodeType.Member, left, right);
+            var result = new SimplePropertyAssignment(propertyName, expression);
             this.setCommentsAndSpan(result, start, node);
 
-            if (right.nodeType() === NodeType.FunctionDeclaration ||
-                right.nodeType() === NodeType.ArrowFunctionExpression) {
-                var funcDecl = <FunctionDeclaration>right;
-                funcDecl.hint = left.text();
+            if (expression.nodeType() === NodeType.FunctionDeclaration ||
+                expression.nodeType() === NodeType.ArrowFunctionExpression) {
+                var funcDecl = <FunctionDeclaration>expression;
+                    funcDecl.hint = propertyName.text();
             }
 
             return result;
@@ -2916,8 +2916,8 @@ module TypeScript {
             return result;
         }
 
-        public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): BinaryExpression {
-            var result: BinaryExpression = this.getAndMovePastAST(node);
+        public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): SimplePropertyAssignment {
+            var result: SimplePropertyAssignment = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitSimplePropertyAssignment(node);
                 this.setAST(node, result);

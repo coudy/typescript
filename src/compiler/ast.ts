@@ -347,6 +347,21 @@ module TypeScript {
         }
     }
 
+    export class SimplePropertyAssignment extends AST {
+        constructor(public propertyName: Identifier,
+                    public expression: AST) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SimplePropertyAssignment;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitSimplePropertyAssignment(this);
+        }
+    }
+
     export class ObjectLiteralExpression extends AST {
         constructor(public propertyAssignments: ASTList) {
             super();

@@ -4812,6 +4812,12 @@ module TypeScript {
                 case NodeType.ObjectLiteralExpression:
                     return this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
+                case NodeType.SimplePropertyAssignment:
+                    return this.resolveSimplePropertyAssignment(<SimplePropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.Member:
+                    return this.resolveMemberPropertyAssignment(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case NodeType.GenericType:
                     return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
 
@@ -6429,6 +6435,14 @@ module TypeScript {
             }
         }
 
+        public resolveSimplePropertyAssignment(propertyAssignment: SimplePropertyAssignment, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveAST(propertyAssignment.expression, inContextuallyTypedAssignment, enclosingDecl, context);
+        }
+
+        public resolveMemberPropertyAssignment(propertyAssignment: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveAST(propertyAssignment.operand2, inContextuallyTypedAssignment, enclosingDecl, context);
+        }
+
         public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             var symbol = this.getSymbolForAST(expressionAST, context);
 
@@ -6503,7 +6517,6 @@ module TypeScript {
             }
 
             if (memberDecls) {
-                var binex: BinaryExpression;
                 var memberSymbol: PullSymbol;
                 var assigningSymbol: PullSymbol = null;
                 var acceptedContextualType = false;
@@ -6513,9 +6526,9 @@ module TypeScript {
                 }
 
                 for (var i = 0, len = memberDecls.members.length; i < len; i++) {
-                    binex = <BinaryExpression>memberDecls.members[i];
+                    var propertyAssignment = memberDecls.members[i];
 
-                    var id = binex.operand1;
+                    var id = this.getPropertyAssignmentName(propertyAssignment);
                     var text: string;
                     var actualText: string;
 
@@ -6536,11 +6549,11 @@ module TypeScript {
                     }
 
                     // PULLTODO: Collect these at decl collection time, add them to the var decl
-                    span = TextSpan.fromBounds(binex.minChar, binex.limChar);
+                    span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
 
-                    var isAccessor = binex.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor();
+                    var isAccessor = this.propertyAssignmentIsAccessor(propertyAssignment);
 
-                    var decl = this.getDeclForAST(binex);
+                    var decl = this.getDeclForAST(propertyAssignment);
                     if (!isAccessor) {
                         if (!isUsingExistingDecl) {
                             decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, span, this.unitPath);
@@ -6549,8 +6562,8 @@ module TypeScript {
                             objectLitDecl.addChildDecl(decl);
                             decl.setParentDecl(objectLitDecl);
 
-                            this.currentUnit.setDeclForAST(binex, decl);
-                            this.currentUnit.setASTForDecl(decl, binex);
+                            this.currentUnit.setDeclForAST(propertyAssignment, decl);
+                            this.currentUnit.setASTForDecl(decl, propertyAssignment);
                         }
 
                         if (!isUsingExistingSymbol) {
@@ -6591,7 +6604,7 @@ module TypeScript {
 
                     // if operand 2 is a getter or a setter, we need to resolve it properly
                     if (isAccessor) {
-                        var funcDeclAST = <FunctionDeclaration>binex.operand2;
+                        var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
                         if (!isUsingExistingDecl) {
                             var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
 
@@ -6616,7 +6629,8 @@ module TypeScript {
                         }
                     }
 
-                    var memberExpr = this.widenType(binex.operand2, this.resolveAST(binex.operand2, contextualMemberType != null, enclosingDecl, context).type, enclosingDecl, context);
+                    var propertySymbol = this.resolveAST(propertyAssignment, contextualMemberType != null, enclosingDecl, context);
+                    var memberExpr = this.widenType(propertyAssignment, propertySymbol.type, enclosingDecl, context);
 
                     if (memberExpr.type) {
                         if (memberExpr.type.isGeneric()) {
@@ -6639,17 +6653,17 @@ module TypeScript {
 
                     if (!isUsingExistingSymbol) {
                         if (isAccessor) {
-                            this.setSymbolForAST(binex.operand1, memberExpr, context);
+                            this.setSymbolForAST(id, memberExpr, context);
                         } else {
                             // Make sure this was not defined before
                             if (typeSymbol.findMember(memberSymbol.name)) {
-                                context.postError(this.getUnitPath(), binex.minChar, binex.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
+                                context.postError(this.getUnitPath(), propertyAssignment.minChar, propertyAssignment.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
                             }
 
                             context.setTypeInContext(memberSymbol, memberExpr.type);
                             memberSymbol.setResolved();
 
-                            this.setSymbolForAST(binex.operand1, memberSymbol, context);
+                            this.setSymbolForAST(id, memberSymbol, context);
                             typeSymbol.addMember(memberSymbol);
                         }
                     }
@@ -6666,6 +6680,25 @@ module TypeScript {
             }
             typeSymbol.setResolved();
             return typeSymbol;
+        }
+
+        private propertyAssignmentIsAccessor(propertyAssignment: AST): boolean {
+            if (propertyAssignment.nodeType() === NodeType.Member) {
+                var binex = <BinaryExpression>propertyAssignment;
+                return binex.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor();
+            }
+
+            return false;
+        }
+
+        private getPropertyAssignmentName(propertyAssignment: AST): AST {
+            if (propertyAssignment.nodeType() === NodeType.SimplePropertyAssignment) {
+                return (<SimplePropertyAssignment>propertyAssignment).propertyName;
+            }
+            else {
+                var binaryExpression = <BinaryExpression>propertyAssignment;
+                return binaryExpression.operand1;
+            }
         }
 
         private stampObjectLiteralWithIndexSignature(objectLiteralSymbol: PullTypeSymbol, indexerTypeCandidates: PullTypeSymbol[],

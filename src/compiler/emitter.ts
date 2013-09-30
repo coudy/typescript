@@ -2286,6 +2286,14 @@ module TypeScript {
             this.recordSourceMappingEnd(expression);
         }
 
+        public emitSimplePropertyAssignment(property: SimplePropertyAssignment): void {
+            this.recordSourceMappingStart(property);
+            property.propertyName.emit(this);
+            this.writeToOutput(": ");
+            property.expression.emit(this);
+            this.recordSourceMappingEnd(property);
+        }
+
         public emitConditionalExpression(expression: ConditionalExpression): void {
             expression.operand1.emit(this);
             this.writeToOutput(" ? ");
