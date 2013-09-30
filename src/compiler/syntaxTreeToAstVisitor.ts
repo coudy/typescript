@@ -2007,18 +2007,23 @@ module TypeScript {
             return result;
         }
 
-        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): BinaryExpression {
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): FunctionPropertyAssignment {
             var start = this.position;
 
-            var left: Identifier = node.propertyName.accept(this);
-            var functionDeclaration = <FunctionDeclaration>node.callSignature.accept(this);
+            var propertyName: Identifier = node.propertyName.accept(this);
+            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
+            var parameters = node.callSignature.parameterList.accept(this);
+            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
             var block = node.block.accept(this);
 
-            functionDeclaration.hint = left.text();
-            functionDeclaration.block = block;
-            functionDeclaration.setFunctionFlags(FunctionFlags.IsFunctionProperty);
+            var result = new FunctionPropertyAssignment(
+                propertyName, typeParameters, parameters, returnType, block);
 
-            var result = new BinaryExpression(NodeType.Member, left, functionDeclaration);
+            //functionDeclaration.hint = left.text();
+            //functionDeclaration.block = block;
+            //functionDeclaration.setFunctionFlags(FunctionFlags.IsFunctionProperty);
+
+            //var result = new BinaryExpression(NodeType.Member, left, functionDeclaration);
             this.setSpan(result, start, node);
 
             return result;
@@ -2926,8 +2931,8 @@ module TypeScript {
             return result;
         }
 
-        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): BinaryExpression {
-            var result: BinaryExpression = this.getAndMovePastAST(node);
+        public visitFunctionPropertyAssignment(node: FunctionPropertyAssignmentSyntax): FunctionPropertyAssignment {
+            var result: FunctionPropertyAssignment = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitFunctionPropertyAssignment(node);
                 this.setAST(node, result);

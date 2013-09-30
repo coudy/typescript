@@ -3309,8 +3309,7 @@ module TypeScript {
                 result = this.resolveSetAccessorDeclaration(funcDecl, context);
             }
             else if (inContextuallyTypedAssignment ||
-                (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+                (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
 
                 result = this.resolveAnyFunctionExpression(
                     funcDecl, funcDecl.typeParameters, funcDecl.parameters, funcDecl.returnTypeAnnotation, funcDecl.block,
@@ -4815,6 +4814,9 @@ module TypeScript {
                 case NodeType.SimplePropertyAssignment:
                     return this.resolveSimplePropertyAssignment(<SimplePropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
+                case NodeType.FunctionPropertyAssignment:
+                    return this.resolveFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
                 case NodeType.Member:
                     return this.resolveMemberPropertyAssignment(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
@@ -5090,6 +5092,10 @@ module TypeScript {
                     }
                     return;
 
+                case NodeType.FunctionPropertyAssignment:
+                    this.typeCheckFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, context);
+                    return;
+
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
@@ -5102,8 +5108,7 @@ module TypeScript {
                             this.typeCheckSetAccessorDeclaration(funcDecl, context);
                         }
                         else if (inContextuallyTypedAssignment ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionProperty)) {
+                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
                             this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
                         else {
@@ -6221,6 +6226,11 @@ module TypeScript {
                 arrowFunction, arrowFunction.typeParameters, arrowFunction.returnTypeAnnotation, arrowFunction.block, context);
         }
 
+        private typeCheckFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, context: PullTypeResolutionContext): void {
+            this.typeCheckAnyFunctionExpression(
+                funcProp, funcProp.typeParameters, funcProp.returnTypeAnnotation, funcProp.block, context);
+        }
+
         private typeCheckAnyFunctionExpression(
             funcDeclAST: AST,
             typeParameters: ASTList,
@@ -6439,6 +6449,18 @@ module TypeScript {
             return this.resolveAST(propertyAssignment.expression, inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
+        public resolveFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            context.jumpRecordStack.push(new JumpRecord());
+
+            var result = this.resolveAnyFunctionExpression(
+                funcProp, funcProp.typeParameters, funcProp.parameters, funcProp.returnTypeAnnotation, funcProp.block,
+                inContextuallyTypedAssignment, enclosingDecl, context);
+
+            context.jumpRecordStack.pop();
+
+            return result;
+        }
+
         public resolveMemberPropertyAssignment(propertyAssignment: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAST(propertyAssignment.operand2, inContextuallyTypedAssignment, enclosingDecl, context);
         }
@@ -6628,6 +6650,23 @@ module TypeScript {
                             }
                         }
                     }
+                    else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
+                        if (!isUsingExistingDecl) {
+                            var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
+
+                            declCollectionContext.pushParent(objectLitDecl);
+
+                            getAstWalkerFactory().walk(propertyAssignment, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                            var functionDecl = this.getDeclForAST(propertyAssignment);
+                            this.currentUnit.addSynthesizedDecl(functionDecl);
+                        }
+
+                        var binder = new PullSymbolBinder(this.semanticInfoChain);
+                        binder.setUnit(this.unitPath);
+
+                        binder.bindFunctionExpressionToPullSymbol(decl);
+                    }
 
                     var propertySymbol = this.resolveAST(propertyAssignment, contextualMemberType != null, enclosingDecl, context);
                     var memberExpr = this.widenType(propertyAssignment, propertySymbol.type, enclosingDecl, context);
@@ -6694,6 +6733,9 @@ module TypeScript {
         private getPropertyAssignmentName(propertyAssignment: AST): AST {
             if (propertyAssignment.nodeType() === NodeType.SimplePropertyAssignment) {
                 return (<SimplePropertyAssignment>propertyAssignment).propertyName;
+            }
+            else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
+                return (<FunctionPropertyAssignment>propertyAssignment).propertyName;
             }
             else {
                 var binaryExpression = <BinaryExpression>propertyAssignment;
@@ -10531,7 +10573,7 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             if ((flags & FunctionFlags.IsFunctionExpression) ||
-                (flags & FunctionFlags.IsFunctionProperty)) {
+                funcDeclAST.nodeType() === NodeType.FunctionPropertyAssignment) {
                 return;
             }
 

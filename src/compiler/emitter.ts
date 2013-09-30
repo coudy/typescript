@@ -2294,6 +2294,69 @@ module TypeScript {
             this.recordSourceMappingEnd(property);
         }
 
+        public emitFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment): void {
+            this.recordSourceMappingStart(funcProp);
+
+            funcProp.propertyName.emit(this);
+            this.writeToOutput(": ");
+
+            var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcProp, this.document.fileName);
+
+            var savedInArrowFunction = this.inArrowFunction;
+            this.inArrowFunction = false;
+
+            var temp = this.setContainer(EmitContainer.Function);
+            var funcName = funcProp.propertyName;
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcProp, this.document.fileName);
+            this.pushDecl(pullDecl);
+
+            this.emitComments(funcProp, true);
+
+            this.recordSourceMappingStart(funcProp);
+            this.writeToOutput("function ");
+
+            //this.recordSourceMappingStart(funcProp.propertyName);
+            //this.writeToOutput(funcProp.propertyName.actualText);
+            //this.recordSourceMappingEnd(funcProp.propertyName);
+
+            this.writeToOutput("(");
+            this.emitFunctionParameters(funcProp.parameters);
+            this.writeLineToOutput(") {");
+
+            this.recordSourceMappingNameStart(funcProp.propertyName.actualText);
+            this.indenter.increaseIndent();
+
+            this.emitDefaultValueAssignments(funcProp.parameters);
+            this.emitRestParameterInitializer(funcProp.parameters);
+
+            if (this.shouldCaptureThis(funcProp)) {
+                this.writeCaptureThisStatement(funcProp);
+            }
+
+            this.emitList(funcProp.block.statements);
+            this.emitCommentsArray(funcProp.block.closeBraceLeadingComments);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", funcProp.block.closeBraceSpan);
+
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(funcProp);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcProp);
+
+            this.emitComments(funcProp, false);
+
+            this.popDecl(pullDecl);
+
+            this.setContainer(temp);
+            this.inArrowFunction = savedInArrowFunction;
+
+            this.recordSourceMappingEnd(funcProp);
+        }
+
         public emitConditionalExpression(expression: ConditionalExpression): void {
             expression.operand1.emit(this);
             this.writeToOutput(" ? ");

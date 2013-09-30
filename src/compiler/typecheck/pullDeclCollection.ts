@@ -1024,6 +1024,11 @@ module TypeScript {
         else if (ast.nodeType() === NodeType.VariableDeclarator) {
             go = preCollectVarDecls(ast, context);
         }
+        else if (ast.nodeType() === NodeType.FunctionPropertyAssignment) {
+            var funcProp = <FunctionPropertyAssignment>ast;
+            go = createAnyFunctionExpressionDeclaration(
+                funcProp, funcProp.propertyName, funcProp.returnTypeAnnotation, context);
+        }
         else if (ast.nodeType() === NodeType.FunctionDeclaration) {
             var funcDecl = <FunctionDeclaration>ast;
 
@@ -1053,7 +1058,7 @@ module TypeScript {
             else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method)) {
                 go = createMemberFunctionDeclaration(funcDecl, context);
             }
-            else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression | FunctionFlags.IsFunctionProperty))) {
+            else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression))) {
                 go = createAnyFunctionExpressionDeclaration(funcDecl, funcDecl.name, funcDecl.returnTypeAnnotation, context);
             }
             else {

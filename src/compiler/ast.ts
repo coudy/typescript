@@ -362,6 +362,24 @@ module TypeScript {
         }
     }
 
+    export class FunctionPropertyAssignment extends AST {
+        constructor(public propertyName: Identifier,
+                    public typeParameters: ASTList,
+                    public parameters: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.FunctionPropertyAssignment;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitFunctionPropertyAssignment(this);
+        }
+    }
+
     export class ObjectLiteralExpression extends AST {
         constructor(public propertyAssignments: ASTList) {
             super();

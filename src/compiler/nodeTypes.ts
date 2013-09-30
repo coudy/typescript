@@ -47,6 +47,7 @@ module TypeScript {
         VariableDeclaration,
         Parameter,
         SimplePropertyAssignment,
+        FunctionPropertyAssignment,
 
         // Expressions
         Name,
