@@ -846,6 +846,7 @@ module TypeScript {
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
+        public classDecl: ClassDeclaration = null;
 
         constructor(public name: Identifier,
                     public typeParameters: ASTList,
@@ -983,6 +984,7 @@ module TypeScript {
     }
 
     export class ClassDeclaration extends AST {
+        public constructorDecl: FunctionDeclaration = null;
         private _varFlags = VariableFlags.None;
 
         constructor(public name: Identifier,

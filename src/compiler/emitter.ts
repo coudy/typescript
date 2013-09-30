@@ -94,11 +94,6 @@ module TypeScript {
         pullDecl: PullDecl;
     }
 
-    export function getClassConstructor(classDecl: ClassDeclaration): FunctionDeclaration {
-        return <FunctionDeclaration>ArrayUtilities.lastOrDefault(classDecl.members.members,
-            m => m.nodeType() === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>m).getFunctionFlags(), FunctionFlags.Constructor));
-    }
-
     export function lastParameterIsRest(parameters: ASTList): boolean {
         return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).isRest;
     }
@@ -1525,7 +1520,7 @@ module TypeScript {
 
         private emitParameterPropertyAndMemberVariableAssignments(): void {
             // emit any parameter properties first
-            var constructorDecl = getClassConstructor(this.thisClassNode);
+            var constructorDecl = this.thisClassNode.constructorDecl;
 
             if (constructorDecl && constructorDecl.parameters) {
                 for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
@@ -1899,7 +1894,7 @@ module TypeScript {
 
             this.emitIndent();
 
-            var constrDecl = getClassConstructor(classDecl);
+            var constrDecl = classDecl.constructorDecl;
 
             // output constructor
             if (constrDecl) {

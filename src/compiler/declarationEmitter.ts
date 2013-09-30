@@ -624,10 +624,8 @@ module TypeScript {
             this.declFile.WriteLine(" {");
 
             this.indenter.increaseIndent();
-
-            var constructorDecl = getClassConstructor(classDecl);
-            if (constructorDecl) {
-                this.emitClassMembersFromConstructorDefinition(constructorDecl);
+            if (classDecl.constructorDecl) {
+                this.emitClassMembersFromConstructorDefinition(classDecl.constructorDecl);
             }
 
             this.emitDeclarationsForList(classDecl.members);
