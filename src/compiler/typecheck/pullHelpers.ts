@@ -4,7 +4,13 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
+
     export module PullHelpers {
+        export function isConstructor(ast: AST) {
+            return ast.nodeType() === NodeType.FunctionDeclaration &&
+                hasFlag((<FunctionDeclaration>ast).getFunctionFlags(), FunctionFlags.Constructor);
+        }
+
         export interface SignatureInfoForFuncDecl {
             signature: PullSignatureSymbol;
             allSignatures: PullSignatureSymbol[];
@@ -31,7 +37,7 @@ module TypeScript {
             }
             var signatures: PullSignatureSymbol[];
 
-            if (functionDecl.kind === PullElementKind.ConstructorMethod || functionDecl.kind === PullElementKind.ConstructSignature) {
+            if (isConstructor(funcDecl) || functionDecl.kind === PullElementKind.ConstructSignature) {
                 signatures = typeSymbolWithAllSignatures.getConstructSignatures();
             }
             else if (functionDecl.kind === PullElementKind.IndexSignature) {

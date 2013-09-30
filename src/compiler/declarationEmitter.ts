@@ -444,7 +444,7 @@ module TypeScript {
             var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
             var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
-            if (funcPullDecl.kind === PullElementKind.ConstructorMethod) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.emitIndent();
                 this.declFile.Write("constructor");
                 this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
@@ -517,7 +517,7 @@ module TypeScript {
                 this.declFile.Write("]");
             }
 
-            if (funcPullDecl.kind !== PullElementKind.ConstructorMethod &&
+            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor) &&
                 this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 var returnType = funcSignature.returnType;
                 this.declFile.Write(": ");

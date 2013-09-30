@@ -1625,13 +1625,11 @@ module TypeScript {
             var result = new FunctionDeclaration(null, null, parameters, null, block);
             this.setCommentsAndSpan(result, start, node);
 
-            var flags = result.getFunctionFlags() | FunctionFlags.Constructor;
-
             if (node.semicolonToken) {
-                flags = flags | FunctionFlags.Signature;
+                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
             }
 
-            result.setFunctionFlags(flags);
+            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Constructor);
 
             return result;
         }

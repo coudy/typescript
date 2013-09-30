@@ -623,7 +623,7 @@ module TypeScript {
                 this.writeToOutput("function ");
             }
 
-            if (pullDecl.kind === PullElementKind.ConstructorMethod) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.writeToOutput(this.thisClassNode.name.actualText);
             }
 
@@ -644,16 +644,13 @@ module TypeScript {
             this.emitFunctionParameters(funcDecl.parameters);
             this.writeLineToOutput(") {");
 
-            if (pullDecl.kind === PullElementKind.ConstructorMethod) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.recordSourceMappingNameStart("constructor");
-            }
-            else if (funcDecl.isGetAccessor()) {
+            } else if (funcDecl.isGetAccessor()) {
                 this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
-            }
-            else if (funcDecl.isSetAccessor()) {
+            } else if (funcDecl.isSetAccessor()) {
                 this.recordSourceMappingNameStart("set_" + funcDecl.getNameText());
-            }
-            else {
+            } else {
                 this.recordSourceMappingNameStart(funcDecl.getNameText());
             }
             this.indenter.increaseIndent();
@@ -665,7 +662,7 @@ module TypeScript {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
-            if (pullDecl.kind === PullElementKind.ConstructorMethod) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.emitConstructorStatements(funcDecl);
             }
             else {
@@ -1045,13 +1042,11 @@ module TypeScript {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
-            var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
-
             var temp: number;
             var savedInArrowFunction = this.inArrowFunction;
             this.inArrowFunction = false;
 
-            if (pullFunctionDecl.kind === PullElementKind.ConstructorMethod) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 temp = this.setContainer(EmitContainer.Constructor);
             }
             else {
@@ -1069,6 +1064,7 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
 
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
+                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
                 if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");
