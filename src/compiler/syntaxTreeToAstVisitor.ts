@@ -415,7 +415,7 @@ module TypeScript {
                 if (member.nodeType() === NodeType.FunctionDeclaration) {
                     var funcDecl = <FunctionDeclaration>member;
 
-                    if (funcDecl.isConstructor) {
+                    if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                         funcDecl.classDecl = result;
 
                         result.constructorDecl = funcDecl;
