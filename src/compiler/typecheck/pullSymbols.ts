@@ -2911,7 +2911,15 @@ module TypeScript {
         var callSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getCallSignatures(false) : typeToSpecialize.getCallSignatures(false);
         var constructSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getConstructSignatures(false) : typeToSpecialize.getConstructSignatures(false);
         var indexSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getIndexSignatures(false) : typeToSpecialize.getIndexSignatures(false);
-        var members = typeToSpecialize.memberWrapsOwnTypeParameter? rootType.getMembers() : typeToSpecialize.getMembers();
+        var members = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getMembers() : typeToSpecialize.getMembers();
+
+        // if no members of any kind were found on a class type, we may not have yet specialized the parent type's members, so we'll need to do so now
+        if (typeToSpecialize.isClass() && !(members.length || callSignatures.length || constructSignatures.length || indexSignatures.length)) {
+            callSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getCallSignatures(true) : typeToSpecialize.getCallSignatures(true);
+            constructSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getConstructSignatures(true) : typeToSpecialize.getConstructSignatures(true);
+            indexSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getIndexSignatures(true) : typeToSpecialize.getIndexSignatures(true);
+            members = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all) : typeToSpecialize.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+        }
 
         // specialize call signatures
         var newSignature: PullSignatureSymbol;
