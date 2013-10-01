@@ -192,8 +192,6 @@ module TypeScript {
         public resolvingNamespaceMemberAccess = false;
         public resolvingTypeQueryExpression = false;
 
-        public resolveAggressively = false;
-
         public canUseTypeSymbol = false;
 
         public specializingToAny = false;

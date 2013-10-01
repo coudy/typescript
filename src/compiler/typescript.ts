@@ -1208,7 +1208,6 @@ module TypeScript {
             }
 
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
-            resolutionContext.resolveAggressively = true;
 
             if (path.count() === 0) {
                 return null;
