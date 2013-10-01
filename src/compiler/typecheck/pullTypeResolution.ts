@@ -219,7 +219,7 @@ module TypeScript {
             if (context && context.inProvisionalResolution()) {
                 // Cache provisionally
                 context.setSymbolForAST(ast, symbol);
-            }
+        }
             else {
                 // Cache globally
                 this.semanticInfoChain.setSymbolForAST(ast, symbol, this.unitPath);
@@ -234,7 +234,7 @@ module TypeScript {
                 // Check provisional cache
                 if (context && context.inProvisionalResolution()) {
                     symbol = context.getSymbolForAST(ast);
-                }
+            }
             }
 
             return symbol;
@@ -248,7 +248,7 @@ module TypeScript {
                 // Check provisional cache
                 if (context && context.inProvisionalResolution()) {
                     ast = context.getASTForSymbol(symbol);
-                }
+        }
             }
 
             return ast;
@@ -774,7 +774,7 @@ module TypeScript {
             }
 
             // could be a function symbol
-            if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
+            if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) { 
                 members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, GetAllMembersVisiblity.externallyVisible));
             }
 
@@ -1203,7 +1203,7 @@ module TypeScript {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var implementedTypeAST = <TypeReference>typeDeclAST.implementsList.members[i - extendsCount];
                     var implementedType = this.resolveTypeReference(implementedTypeAST, typeDecl, context);
-
+                    
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
                         this.setSymbolForAST(typeDeclAST.implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
 
@@ -1218,7 +1218,7 @@ module TypeScript {
             }
 
             context.doneBaseTypeResolution(wasInBaseTypeResolution);
-
+            
             if (wasInBaseTypeResolution) {
 
                 // Do not resolve members as yet
@@ -1285,108 +1285,108 @@ module TypeScript {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (!classDeclSymbol.isResolved) {
-                this.resolveReferenceTypeDeclaration(classDeclAST, context);
+            this.resolveReferenceTypeDeclaration(classDeclAST, context);
 
-                var constructorMethod = classDeclSymbol.getConstructorMethod();
-                var extendedTypes = classDeclSymbol.getExtendedTypes();
-                var parentType = extendedTypes.length ? extendedTypes[0] : null;
+            var constructorMethod = classDeclSymbol.getConstructorMethod();
+            var extendedTypes = classDeclSymbol.getExtendedTypes();
+            var parentType = extendedTypes.length ? extendedTypes[0] : null;
 
-                if (constructorMethod) {
-                    var constructorTypeSymbol = constructorMethod.type;
+            if (constructorMethod) {
+                var constructorTypeSymbol = constructorMethod.type;
 
-                    var constructSignatures = constructorTypeSymbol.getConstructSignatures();
+                var constructSignatures = constructorTypeSymbol.getConstructSignatures();
 
-                    if (!constructSignatures.length) {
-                        var constructorSignature: PullSignatureSymbol;
+                if (!constructSignatures.length) {
+                    var constructorSignature: PullSignatureSymbol;
 
-                        var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
+                    var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
 
-                        // inherit parent's constructor signatures   
-                        if (parentConstructor) {
-                            var parentConstructorType = parentConstructor.type;
-                            var parentConstructSignatures = parentConstructorType.getConstructSignatures();
+                    // inherit parent's constructor signatures   
+                    if (parentConstructor) {
+                        var parentConstructorType = parentConstructor.type;
+                        var parentConstructSignatures = parentConstructorType.getConstructSignatures();
 
-                            var parentConstructSignature: PullSignatureSymbol;
-                            var parentParameters: PullSymbol[];
+                        var parentConstructSignature: PullSignatureSymbol;
+                        var parentParameters: PullSymbol[];
 
-                            if (!parentConstructSignatures.length) {
-                                // If neither we nor our parent have a construct signature then we've entered this call recursively,
-                                // so just create the parent's constructor now rather than later.
-                                // (We'll have begun resolving this symbol because of the call to resolveReferenceTypeDeclaration above, so this
-                                // is safe to do here and now.)
+                        if (!parentConstructSignatures.length) {
+                            // If neither we nor our parent have a construct signature then we've entered this call recursively,
+                            // so just create the parent's constructor now rather than later.
+                            // (We'll have begun resolving this symbol because of the call to resolveReferenceTypeDeclaration above, so this
+                            // is safe to do here and now.)
 
-                                parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                                parentConstructSignature.returnType = parentType;
-                                parentConstructorType.addConstructSignature(parentConstructSignature);
-                                parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
+                            parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                            parentConstructSignature.returnType = parentType;
+                            parentConstructorType.addConstructSignature(parentConstructSignature);
+                            parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
 
-                                var parentTypeParameters = parentConstructorType.getTypeParameters();
+                            var parentTypeParameters = parentConstructorType.getTypeParameters();
 
-                                for (var i = 0; i < parentTypeParameters.length; i++) {
-                                    parentConstructSignature.addTypeParameter(parentTypeParameters[i]);
-                                }
-
-                                parentConstructSignatures = [parentConstructSignature];
+                            for (var i = 0; i < parentTypeParameters.length; i++) {
+                                parentConstructSignature.addTypeParameter(parentTypeParameters[i]);
                             }
 
-                            for (var i = 0; i < parentConstructSignatures.length; i++) {
-                                // create a new signature for each parent constructor   
-                                parentConstructSignature = parentConstructSignatures[i];
-                                parentParameters = parentConstructSignature.parameters;
-
-                                constructorSignature = parentConstructSignature.isDefinition() ?
-                                new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                                constructorSignature.returnType = classDeclSymbol;
-
-                                for (var j = 0; j < parentParameters.length; j++) {
-                                    constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
-                                }
-
-                                var typeParameters = constructorTypeSymbol.getTypeParameters();
-
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    constructorSignature.addTypeParameter(typeParameters[j]);
-                                }
-
-                                constructorTypeSymbol.addConstructSignature(constructorSignature);
-                                constructorSignature.addDeclaration(classDecl);
-                            }
+                            parentConstructSignatures = [parentConstructSignature];
                         }
-                        else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
-                            constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+
+                        for (var i = 0; i < parentConstructSignatures.length; i++) {
+                            // create a new signature for each parent constructor   
+                            parentConstructSignature = parentConstructSignatures[i];
+                            parentParameters = parentConstructSignature.parameters;
+
+                            constructorSignature = parentConstructSignature.isDefinition() ?
+                            new PullDefinitionSignatureSymbol(PullElementKind.ConstructSignature) : new PullSignatureSymbol(PullElementKind.ConstructSignature);
                             constructorSignature.returnType = classDeclSymbol;
-                            constructorTypeSymbol.addConstructSignature(constructorSignature);
-                            constructorSignature.addDeclaration(classDecl);
+
+                            for (var j = 0; j < parentParameters.length; j++) {
+                                constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
+                            }
 
                             var typeParameters = constructorTypeSymbol.getTypeParameters();
 
-                            for (var i = 0; i < typeParameters.length; i++) {
-                                constructorSignature.addTypeParameter(typeParameters[i]);
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                constructorSignature.addTypeParameter(typeParameters[j]);
                             }
+
+                            constructorTypeSymbol.addConstructSignature(constructorSignature);
+                            constructorSignature.addDeclaration(classDecl);
                         }
                     }
+                    else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
+                        constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
+                        constructorSignature.returnType = classDeclSymbol;
+                        constructorTypeSymbol.addConstructSignature(constructorSignature);
+                        constructorSignature.addDeclaration(classDecl);
 
-                    if (!classDeclSymbol.isResolved) {
-                        return classDeclSymbol;
-                    }
+                        var typeParameters = constructorTypeSymbol.getTypeParameters();
 
-                    // Need to ensure our constructor type can properly see our parent type's 
-                    // constructor type before going and resolving our members.
-                    if (parentType) {
-                        var parentConstructorSymbol = parentType.getConstructorMethod();
-
-                        // this will only be null if we have upstream errors
-                        if (parentConstructorSymbol) {
-                            var parentConstructorTypeSymbol = parentConstructorSymbol.type;
-
-                            if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
-                                constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
-                            }
+                        for (var i = 0; i < typeParameters.length; i++) {
+                            constructorSignature.addTypeParameter(typeParameters[i]);
                         }
                     }
                 }
 
-                this.resolveOtherDeclarations(classDeclAST, context);
+                if (!classDeclSymbol.isResolved) {
+                    return classDeclSymbol;
+                }
+
+                // Need to ensure our constructor type can properly see our parent type's 
+                // constructor type before going and resolving our members.
+                if (parentType) {
+                    var parentConstructorSymbol = parentType.getConstructorMethod();
+
+                    // this will only be null if we have upstream errors
+                    if (parentConstructorSymbol) {
+                        var parentConstructorTypeSymbol = parentConstructorSymbol.type;
+
+                        if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
+                            constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
+                        }
+                    }
+                }
+            }
+
+            this.resolveOtherDeclarations(classDeclAST, context);
             }
 
             if (this.canTypeCheckAST(classDeclAST, context)) {
@@ -2069,7 +2069,7 @@ module TypeScript {
                 context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
                 isImplicitAny = true;
             }
-
+               
             // if the noImplicitAny flag is set to be true, report an error
             if (isImplicitAny && this.compilationSettings.noImplicitAny) {
 
@@ -2156,13 +2156,13 @@ module TypeScript {
         }
 
         private typeCheckInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext) {
-            this.setTypeChecked(interfaceDeclAST, context);
+                this.setTypeChecked(interfaceDeclAST, context);
             var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
             var interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
-            if (!interfaceSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+                if (!interfaceSymbol.hasBaseTypeConflict()) {
+                    this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
+                }
             }
-        }
 
         public resolveTypeReference(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             if (typeRef === null) {
@@ -2172,39 +2172,39 @@ module TypeScript {
             var aliasType: PullTypeAliasSymbol = null;
             var type = this.computeTypeReferenceSymbol(typeRef, enclosingDecl, context);
 
-            if (type.kind == PullElementKind.Container) {
-                var container = <PullContainerSymbol>type;
-                var instanceSymbol = container.getInstanceSymbol();
-                // check if it is actually merged with class
-                if (instanceSymbol &&
-                    (instanceSymbol.hasFlag(PullElementFlags.ClassConstructorVariable) || instanceSymbol.kind == PullElementKind.ConstructorMethod)) {
-                    type = instanceSymbol.type.getAssociatedContainerType();
-                }
-            }
-
-            if (type && type.isAlias()) {
-                aliasType = <PullTypeAliasSymbol>type;
-                type = aliasType.getExportAssignedTypeSymbol();
-            }
-
-            if (type && !type.isGeneric()) {
-                if (aliasType) {
-                    this.currentUnit.setAliasSymbolForAST(typeRef, aliasType);
-                }
-            }
-
-            if (type && !type.isError()) {
-                if ((type.kind & PullElementKind.SomeType) === 0) {
-                    // Provide some helper messages for common cases.
-                    if (type.kind & PullElementKind.SomeContainer) {
-                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
-                            DiagnosticCode.Type_reference_cannot_refer_to_container_0, [aliasType ? aliasType.toString() : type.toString()]);
-                    } else {
-                        context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
-                            DiagnosticCode.Type_reference_must_refer_to_type, null);
+                if (type.kind == PullElementKind.Container) {
+                    var container = <PullContainerSymbol>type;
+                    var instanceSymbol = container.getInstanceSymbol();
+                    // check if it is actually merged with class
+                    if (instanceSymbol &&
+                        (instanceSymbol.hasFlag(PullElementFlags.ClassConstructorVariable) || instanceSymbol.kind == PullElementKind.ConstructorMethod)) {
+                        type = instanceSymbol.type.getAssociatedContainerType();
                     }
                 }
-            }
+
+                if (type && type.isAlias()) {
+                    aliasType = <PullTypeAliasSymbol>type;
+                    type = aliasType.getExportAssignedTypeSymbol();
+                }
+
+                if (type && !type.isGeneric()) {
+                    if (aliasType) {
+                        this.currentUnit.setAliasSymbolForAST(typeRef, aliasType);
+                    }
+                }
+
+                if (type && !type.isError()) {
+                    if ((type.kind & PullElementKind.SomeType) === 0) {
+                        // Provide some helper messages for common cases.
+                        if (type.kind & PullElementKind.SomeContainer) {
+                            context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
+                                DiagnosticCode.Type_reference_cannot_refer_to_container_0, [aliasType ? aliasType.toString() : type.toString()]);
+                        } else {
+                            context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(),
+                                DiagnosticCode.Type_reference_must_refer_to_type, null);
+                        }
+                    }
+                }
 
             if (this.canTypeCheckAST(typeRef, context)) {
                 this.setTypeChecked(typeRef, context);
@@ -2396,52 +2396,52 @@ module TypeScript {
                     }
                 }
             } else {
-                if (declSymbol.inResolution) {
-                    // PULLTODO: Error or warning?
-                    if (!context.inSpecialization) {
-                        declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
-                        declSymbol.setResolved();
-                        return declSymbol;
-                    }
+            if (declSymbol.inResolution) {
+                // PULLTODO: Error or warning?
+                if (!context.inSpecialization) {
+                    declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                    declSymbol.setResolved();
+                    return declSymbol;
                 }
+            }
 
                 if (declSymbol.type && declSymbol.type.isError()) {
                     return declSymbol;
                 }
 
-                declSymbol.startResolving();
+            declSymbol.startResolving();
 
-                var typeExprSymbol: PullTypeSymbol = null;
-                var inConstructorArgumentList = context.inConstructorArguments;
-                context.inConstructorArguments = false;
+            var typeExprSymbol: PullTypeSymbol = null;
+            var inConstructorArgumentList = context.inConstructorArguments;
+            context.inConstructorArguments = false;
 
-                // Does this have a type expression? If so, that's the type
-                typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
+            // Does this have a type expression? If so, that's the type
+            typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(varDecl, context, enclosingDecl);
 
-                // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
-                if (!varDecl.typeExpr) {
-                    this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
-                }
+            // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
+            if (!varDecl.typeExpr) {
+                this.resolveAndTypeCheckVariableDeclarationInitExpr(varDecl, context, enclosingDecl, typeExprSymbol);
+            }
 
-                // if we're lacking both a type annotation and an initialization expression, the type is 'any'
-                if (!(varDecl.typeExpr || varDecl.init)) {
-                    var defaultType = this.semanticInfoChain.anyTypeSymbol;
+            // if we're lacking both a type annotation and an initialization expression, the type is 'any'
+            if (!(varDecl.typeExpr || varDecl.init)) {
+                var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
-                    if (declSymbol.isVarArg) {
+                if (declSymbol.isVarArg) {
                         defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, context);
-                    }
-
-                    context.setTypeInContext(declSymbol, defaultType);
-
-                    if (declParameterSymbol) {
-                        declParameterSymbol.type = defaultType;
-                    }
                 }
-                declSymbol.setResolved();
+
+                context.setTypeInContext(declSymbol, defaultType);
 
                 if (declParameterSymbol) {
-                    declParameterSymbol.setResolved();
+                    declParameterSymbol.type = defaultType;
                 }
+            }
+            declSymbol.setResolved();
+
+            if (declParameterSymbol) {
+                declParameterSymbol.setResolved();
+            }
             }
 
             if (this.canTypeCheckAST(varDecl, context)) {
@@ -2726,7 +2726,7 @@ module TypeScript {
             }
 
             if (declSymbol.kind != PullElementKind.Property) {
-                // Non property variable with _this name, we need to verify if this would be ok
+            // Non property variable with _this name, we need to verify if this would be ok
                 this.checkNameForCompilerGeneratedDeclarationCollision(varDecl, /*isDeclaration*/ true, varDecl.id, enclosingDecl, context);
             }
         }
@@ -3159,11 +3159,9 @@ module TypeScript {
             context.jumpRecordStack.push(new JumpRecord());
 
             var result: PullSymbol;
-            if (funcDecl.isGetAccessor()) {
-                result = this.resolveGetAccessorDeclaration(funcDecl, context);
-            }
-            else if (funcDecl.isSetAccessor()) {
-                result = this.resolveSetAccessorDeclaration(funcDecl, context);
+
+            if (funcDecl.isAccessor()) {
+                result = this.resolveAccessorDeclaration(funcDecl, context);
             }
             else if (inContextuallyTypedAssignment ||
                 (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression) ||
@@ -3387,10 +3385,161 @@ module TypeScript {
             return funcSymbol;
         }
 
+        private resolveGetterReturnTypeAnnotation(
+            getterFunctionDeclarationAst: FunctionDeclaration,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): PullTypeSymbol {
 
-        private resolveGetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
+            if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
+                return this.resolveTypeReference(<TypeReference>getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
+            }
 
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            return null;
+        }
+
+        private resolveSetterArgumentTypeAnnotation(
+            setterFunctionDeclarationAst: FunctionDeclaration,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): PullTypeSymbol {
+
+            if (setterFunctionDeclarationAst &&
+                setterFunctionDeclarationAst.arguments &&
+                setterFunctionDeclarationAst.arguments.members &&
+                setterFunctionDeclarationAst.arguments.members.length > 0) {
+                var argument = <BoundDecl>setterFunctionDeclarationAst.arguments.members[0];
+                return this.resolveTypeReference(<TypeReference>argument.typeExpr, enclosingDecl, context);
+            }
+
+            return null;
+        }
+
+        private resolveAccessorDeclaration(funcDeclAst: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
+
+            var safeGetFunctionDeclarationASTForSymbol = (symbol: PullSymbol): FunctionDeclaration => {
+                if (symbol) {
+                    return <FunctionDeclaration>this.getASTForSymbol(symbol, context);
+                }
+                return null;
+            }
+
+            var functionDeclaration = this.getDeclForAST(funcDeclAst);
+            var accessorSymbol = <PullAccessorSymbol> functionDeclaration.getSymbol();
+
+            if (accessorSymbol.isResolved) {
+                if (!accessorSymbol.type) {
+                    accessorSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                }
+                return accessorSymbol;
+            }
+            else if (accessorSymbol.inResolution) {
+                // TODO: Review, should an error be raised?
+                accessorSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                accessorSymbol.setResolved();
+                return accessorSymbol;
+            }
+
+            var getterSymbol = accessorSymbol.getGetter(),
+                hasGetter = !!getterSymbol,
+                getterFunctionDeclarationAst = safeGetFunctionDeclarationASTForSymbol(getterSymbol);
+
+            var setterSymbol = accessorSymbol.getSetter(),
+                hasSetter = !!setterSymbol,
+                setterFunctionDeclarationAst = safeGetFunctionDeclarationASTForSymbol(setterSymbol);
+
+            var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(getterFunctionDeclarationAst, functionDeclaration, context),
+                setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(setterFunctionDeclarationAst, functionDeclaration, context),
+                getterHasTypeAnnotation = !!getterAnnotatedType,
+                setterHasTypeAnnotation = !!setterAnnotatedType;
+
+            accessorSymbol.startResolving();
+
+            //resolve accessors
+            if (hasGetter) {
+                getterSymbol = this.resolveGetAccessorDeclaration(getterFunctionDeclarationAst, setterAnnotatedType, context);
+            }
+
+            if (hasSetter) {
+                setterSymbol = this.resolveSetAccessorDeclaration(setterFunctionDeclarationAst, context);
+            }
+
+            // enforce spec resolution rules
+            if (hasGetter && hasSetter) {
+                var setterSig = setterSymbol.type.getCallSignatures()[0],
+                    setterParameters = setterSig.parameters,
+                    setterHasParameters = setterParameters.length > 0,
+                    getterSig = getterSymbol.type.getCallSignatures()[0];
+
+                var setterSuppliedTypeSymbol: PullTypeSymbol = setterHasParameters ? setterParameters[0].type : null,
+                    getterSuppliedTypeSymbol: PullTypeSymbol = getterSig.returnType;
+
+                // if setter has a type annotation, the getters relevant type constraint should be set to that.
+                if (setterHasTypeAnnotation && !getterHasTypeAnnotation) {
+                    getterSuppliedTypeSymbol = setterSuppliedTypeSymbol;
+                    getterSig.returnType = setterSuppliedTypeSymbol;
+                }
+                // if the getter was annotated or neither were annotated, use the getters resolved type
+                else if ((getterHasTypeAnnotation && !setterHasTypeAnnotation) ||
+                    (!getterHasTypeAnnotation && !setterHasTypeAnnotation)) {
+
+                    setterSuppliedTypeSymbol = getterSuppliedTypeSymbol;
+
+                    if (setterHasParameters) {
+                        setterParameters[0].type = getterSuppliedTypeSymbol;
+                    }
+                }
+
+                if (!this.typesAreIdentical(setterSuppliedTypeSymbol, getterSuppliedTypeSymbol)) {
+                    context.postError(this.unitPath, funcDeclAst.minChar, funcDeclAst.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
+                    accessorSymbol.type = this.getNewErrorTypeSymbol();
+                }
+                else {
+                    accessorSymbol.type = getterSuppliedTypeSymbol;
+                }
+            }
+            else if (hasSetter) {
+                var setterSig = setterSymbol.type.getCallSignatures()[0],
+                    setterParameters = setterSig.parameters,
+                    setterHasParameters = setterParameters.length > 0;
+
+                accessorSymbol.type = setterHasParameters ? setterParameters[0].type : this.semanticInfoChain.anyTypeSymbol;
+
+                // Only report noImplicitAny error message on setter if there is no getter
+                // if the noImplicitAny flag is set to be true, report an error
+                if (this.compilationSettings.noImplicitAny) {
+                    // if setter has an any type, it must be implicit any
+                    if (!setterHasTypeAnnotation && accessorSymbol.type == this.semanticInfoChain.anyTypeSymbol) {
+                        context.postError(this.unitPath, setterFunctionDeclarationAst.minChar, setterFunctionDeclarationAst.getLength(),
+                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [setterFunctionDeclarationAst.name.actualText]);
+                    }
+                }
+            }
+            else {
+                var getterSig = getterSymbol.type.getCallSignatures()[0];
+                accessorSymbol.type = getterSig.returnType;
+            }
+
+            accessorSymbol.setResolved();
+
+            // type check if possible
+            if (hasGetter) {
+                if (this.canTypeCheckAST(getterFunctionDeclarationAst, context)) {
+                    context.pushContextualType(getterSymbol.type, context.inProvisionalResolution(), null);
+                    this.typeCheckGetAccessorDeclaration(getterFunctionDeclarationAst, context);
+                    context.popContextualType();
+                }
+            }
+
+            if (hasSetter) {
+                if (this.canTypeCheckAST(setterFunctionDeclarationAst, context)) {
+                    this.typeCheckSetAccessorDeclaration(setterFunctionDeclarationAst, context);
+                }
+            }
+
+            return accessorSymbol;
+        }
+
+        private resolveGetAccessorDeclaration(funcDeclAST: FunctionDeclaration, setterAnnotatedType: PullTypeSymbol, context: PullTypeResolutionContext): PullSymbol {
+            var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             var getterSymbol = accessorSymbol.getGetter();
@@ -3403,11 +3552,7 @@ module TypeScript {
             if (signature) {
 
                 if (signature.isResolved) {
-
-                    if (!accessorSymbol.type) {
-                        accessorSymbol.type = signature.returnType;
-                    }
-                    return accessorSymbol;
+                    return getterSymbol;
                 }
 
                 if (signature.inResolution) {
@@ -3415,27 +3560,13 @@ module TypeScript {
                     signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                     signature.setResolved();
 
-                    if (!accessorSymbol.type) {
-                        accessorSymbol.type = signature.returnType;
-                    }
-
-                    return accessorSymbol;
+                    return getterSymbol;
                 }
 
                 signature.startResolving();
 
-                // resolve parameter type annotations as necessary
-                if (funcDeclAST.arguments) {
-                    for (var i = 0; i < funcDeclAST.arguments.members.length; i++) {
-                        this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
-                    }
-                }
-
                 if (signature.hasAGenericParameter) {
-                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                    if (getterSymbol) {
-                        getterTypeSymbol.setHasGenericSignature();
-                    }
+                    getterTypeSymbol.setHasGenericSignature();
                 }
 
                 // resolve the return type annotation
@@ -3451,10 +3582,7 @@ module TypeScript {
 
                         if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
                             signature.hasAGenericParameter = true;
-
-                            if (getterSymbol) {
-                                getterTypeSymbol.setHasGenericSignature();
-                            }
+                            getterTypeSymbol.setHasGenericSignature();
                         }
 
                         signature.returnType = returnTypeSymbol;
@@ -3466,10 +3594,13 @@ module TypeScript {
                 //     - if it's a definition sigature, take the best common type of all return expressions
                 else {
                     if (funcDeclAST.isSignature()) {
-                        signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+                        signature.returnType = setterAnnotatedType || this.semanticInfoChain.anyTypeSymbol;
+                    }
+                    else if (!setterAnnotatedType) {
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
                     }
                     else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, signature, false, funcDecl, context);
+                        signature.returnType = setterAnnotatedType;
                     }
                 }
 
@@ -3479,42 +3610,7 @@ module TypeScript {
                 }
             }
 
-            var accessorType = signature.returnType;
-
-            var setter = accessorSymbol.getSetter();
-
-            if (setter) {
-                var setterType = setter.type;
-                var setterSig = setterType.getCallSignatures()[0];
-
-                if (setterSig.isResolved) {
-                    // compare setter parameter type and getter return type
-                    var setterParameters = setterSig.parameters;
-
-                    if (setterParameters.length) {
-                        var setterParameter = setterParameters[0];
-                        var setterParameterType = setterParameter.type;
-
-                        if (!this.typesAreIdentical(accessorType, setterParameterType)) {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
-                            accessorSymbol.type = this.getNewErrorTypeSymbol();
-                        }
-                    }
-                }
-                else {
-                    accessorSymbol.type = accessorType;
-                }
-
-            }
-            else {
-                accessorSymbol.type = accessorType;
-            }
-
-            if (this.canTypeCheckAST(funcDeclAST, context)) {
-                this.typeCheckGetAccessorDeclaration(funcDeclAST, context);
-            }
-
-            return accessorSymbol;
+            return getterSymbol;
         }
 
         private typeCheckGetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext) {
@@ -3589,22 +3685,14 @@ module TypeScript {
             if (signature) {
 
                 if (signature.isResolved) {
-                    if (!accessorSymbol.type) {
-                        accessorSymbol.type = signature.parameters[0].type;
-                    }
-                    return accessorSymbol;
+                    return setterSymbol;
                 }
 
                 if (signature.inResolution) {
                     // PULLTODO: Error or warning?
-                    signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+                    signature.returnType = this.semanticInfoChain.voidTypeSymbol;
                     signature.setResolved();
-
-                    if (!accessorSymbol.type) {
-                        accessorSymbol.type = this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    return accessorSymbol;
+                    return setterSymbol;
                 }
 
                 signature.startResolving();
@@ -3615,6 +3703,8 @@ module TypeScript {
                         this.resolveVariableDeclaration(<BoundDecl>funcDeclAST.arguments.members[i], context, funcDecl);
                     }
                 }
+
+                signature.returnType = this.semanticInfoChain.voidTypeSymbol;
 
                 if (signature.hasAGenericParameter) {
                     // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
@@ -3628,61 +3718,8 @@ module TypeScript {
                 }
             }
 
-            var parameters = signature.parameters;
-
-            var getter = accessorSymbol.getGetter();
-
-            var accessorType = parameters.length ? parameters[0].type : getter ? getter.type : this.semanticInfoChain.undefinedTypeSymbol;
-
-            if (getter) {
-                var getterType = getter.type;
-                var getterSig = getterType.getCallSignatures()[0];
-
-                if (accessorType == this.semanticInfoChain.undefinedTypeSymbol) {
-                    accessorType = getterType;
+            return setterSymbol;
                 }
-
-                if (getterSig.isResolved) {
-                    // compare setter parameter type and getter return type
-                    var getterReturnType = getterSig.returnType;
-
-                    if (!this.typesAreIdentical(accessorType, getterReturnType)) {
-                        if (this.isAnyOrEquivalent(accessorType)) {
-                            accessorSymbol.type = getterReturnType;
-                            if (!accessorType.isError()) {
-                                parameters[0].type = getterReturnType;
-                            }
-                        }
-                        else {
-                            context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
-                            accessorSymbol.type = this.getNewErrorTypeSymbol();
-                        }
-                    }
-                }
-                else {
-                    accessorSymbol.type = accessorType;
-                }
-            }
-            else {
-                accessorSymbol.type = accessorType;
-
-                // Only report noImplicitAny error message on setter if there is no getter
-                // if the noImplicitAny flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny) {
-                    // if setter has an any type, it must be implicit any
-                    if (accessorSymbol.type == this.semanticInfoChain.anyTypeSymbol) {
-                        context.postError(this.unitPath, funcDeclAST.minChar, funcDeclAST.getLength(),
-                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [funcDeclAST.name.actualText]);
-                    }
-                }
-            }
-
-            if (this.canTypeCheckAST(funcDeclAST, context)) {
-                this.typeCheckSetAccessorDeclaration(funcDeclAST, context);
-            }
-
-            return accessorSymbol;
-        }
 
         private typeCheckSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(funcDeclAST, context);
@@ -3702,8 +3739,6 @@ module TypeScript {
             this.seenSuperConstructorCall = prevSeenSuperConstructorCall;
 
             this.validateVariableDeclarationGroups(funcDecl, context);
-
-            var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
             var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
@@ -3846,9 +3881,9 @@ module TypeScript {
 
             // September 17, ... and classified as a reference(section 4.1).
             if (!this.isReference(unaryExpression.operand, expression)) {
-                context.postError(this.unitPath, unaryExpression.operand.minChar, unaryExpression.operand.getLength(), DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_property_or_indexer, null);
+                        context.postError(this.unitPath, unaryExpression.operand.minChar, unaryExpression.operand.getLength(), DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_property_or_indexer, null);
+                    }
             }
-        }
 
         private resolveBinaryArithmeticExpression(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(binaryExpression, context)) {
@@ -4039,7 +4074,7 @@ module TypeScript {
                 context.postError(this.unitPath, binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), DiagnosticCode.The_right_hand_side_of_an_in_expression_must_be_of_type_any_an_object_type_or_a_type_parameter);
             }
         }
-
+        
         private resolveForStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckForStatement(ast, enclosingDecl, context);
@@ -4250,122 +4285,127 @@ module TypeScript {
             var canTypeCheckAST = this.canTypeCheckAST(ast, context);
             var inContextuallyTypedAssignment = false;
             if (!returnType || canTypeCheckAST) {
-                while (parentDecl) {
-                    if (parentDecl.kind & PullElementKind.SomeFunction) {
-                        parentDecl.setFlag(PullElementFlags.HasReturnStatement);
-                        break;
-                    }
-
-                    parentDecl = parentDecl.getParentDecl();
+            while (parentDecl) {
+                if (parentDecl.kind & PullElementKind.SomeFunction) {
+                    parentDecl.setFlag(PullElementFlags.HasReturnStatement);
+                    break;
                 }
 
-                // push contextual type
-                var inContextuallyTypedAssignment = false;
-                var enclosingDeclAST: FunctionDeclaration;
+                parentDecl = parentDecl.getParentDecl();
+            }
 
-                if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                    enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
-                    if (enclosingDeclAST.returnTypeAnnotation) {
-                        // The containing function has a type annotation, propagate it as the contextual type
-                        var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
-                        if (returnTypeAnnotationSymbol) {
+            // push contextual type
+            var inContextuallyTypedAssignment = false;
+            var enclosingDeclAST: FunctionDeclaration;
+
+            if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+                enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
+                if (enclosingDeclAST.returnTypeAnnotation) {
+                    // The containing function has a type annotation, propagate it as the contextual type
+                    var returnTypeAnnotationSymbol = this.resolveTypeReference(<TypeReference>enclosingDeclAST.returnTypeAnnotation, enclosingDecl, context);
+                    if (returnTypeAnnotationSymbol) {
+                        inContextuallyTypedAssignment = true;
+                        context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
+                    }
+                }
+                else {
+                    // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                    var currentContextualType = context.getContextualType();
+                    if (currentContextualType && currentContextualType.isFunction()) {
+                        var currentContextTypeDecls = currentContextualType.getDeclarations();
+                        var currentContextualTypeSignatureSymbol =
+                            currentContextTypeDecls && currentContextTypeDecls.length > 0 ?
+                            currentContextTypeDecls[0].getSignatureSymbol() :
+                            currentContextualType.getCallSignatures()[0];
+
+                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
+                        if (currentContextualTypeReturnTypeSymbol) {
                             inContextuallyTypedAssignment = true;
-                            context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
-                        }
-                    }
-                    else {
-                        // No type annotation, check if there is a contextual type enforced on the function, and propagate that
-                        var currentContextualType = context.getContextualType();
-                        if (currentContextualType && currentContextualType.isFunction()) {
-                            var currentContextualTypeSignatureSymbol = currentContextualType.getDeclarations()[0].getSignatureSymbol();
-                            var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
-                            if (currentContextualTypeReturnTypeSymbol) {
-                                inContextuallyTypedAssignment = true;
-                                context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
-                            }
+                            context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
                         }
                     }
                 }
+            }
 
-                var resolvedReturnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
-                if (inContextuallyTypedAssignment) {
-                    context.popContextualType();
-                }
+            var resolvedReturnType = returnExpr ? this.resolveAST(returnExpr, inContextuallyTypedAssignment, enclosingDecl, context).type : this.semanticInfoChain.voidTypeSymbol;
+            if (inContextuallyTypedAssignment) {
+                context.popContextualType();
+            }
 
-                if (!returnType) {
-                    returnType = resolvedReturnType;
-                    this.setSymbolForAST(ast, resolvedReturnType, context);
-                }
+            if (!returnType) {
+                returnType = resolvedReturnType;
+                this.setSymbolForAST(ast, resolvedReturnType, context);
+            }
 
                 if (returnExpr && canTypeCheckAST) {
-                    this.setTypeChecked(ast, context);
-                    // Return type of constructor signature must be assignable to the instance type of the class.
-                    if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
-                        var classDecl = parentDecl.getParentDecl();
-                        if (classDecl) {
-                            var classSymbol = classDecl.getSymbol();
+                this.setTypeChecked(ast, context);
+                // Return type of constructor signature must be assignable to the instance type of the class.
+                if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
+                    var classDecl = parentDecl.getParentDecl();
+                    if (classDecl) {
+                        var classSymbol = classDecl.getSymbol();
                             this.resolveDeclaredSymbol(classSymbol, context);
 
-                            var comparisonInfo = new TypeComparisonInfo();
-                            var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, classSymbol.type, context, comparisonInfo);
-                            if (!isAssignable) {
-                                context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class, null);
-                            }
+                        var comparisonInfo = new TypeComparisonInfo();
+                        var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, classSymbol.type, context, comparisonInfo);
+                        if (!isAssignable) {
+                            context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class, null);
                         }
                     }
+                }
 
-                    if (enclosingDecl.kind === PullElementKind.SetAccessor) {
-                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null);
-                    }
+                if (enclosingDecl.kind === PullElementKind.SetAccessor) {
+                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Setters_cannot_return_a_value, null);
+                }
 
-                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                        var enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
+                if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+                    var enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
 
-                        if (enclosingDeclAST.returnTypeAnnotation) {
-                            var signatureSymbol = enclosingDecl.getSignatureSymbol();
-                            var sigReturnType = signatureSymbol.returnType;
+                    if (enclosingDeclAST.returnTypeAnnotation || enclosingDecl.kind == PullElementKind.GetAccessor) {
+                        var signatureSymbol = enclosingDecl.getSignatureSymbol();
+                        var sigReturnType = signatureSymbol.returnType;
 
-                            if (resolvedReturnType && sigReturnType) {
-                                var comparisonInfo = new TypeComparisonInfo();
-                                var upperBound: PullTypeSymbol = null;
+                        if (resolvedReturnType && sigReturnType) {
+                            var comparisonInfo = new TypeComparisonInfo();
+                            var upperBound: PullTypeSymbol = null;
 
-                                if (resolvedReturnType.isTypeParameter()) {
-                                    upperBound = (<PullTypeParameterSymbol>resolvedReturnType).getConstraint();
+                            if (resolvedReturnType.isTypeParameter()) {
+                                upperBound = (<PullTypeParameterSymbol>resolvedReturnType).getConstraint();
 
-                                    if (upperBound) {
-                                        resolvedReturnType = upperBound;
-                                    }
+                                if (upperBound) {
+                                    resolvedReturnType = upperBound;
                                 }
+                            }
 
-                                if (sigReturnType.isTypeParameter()) {
-                                    upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
+                            if (sigReturnType.isTypeParameter()) {
+                                upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
 
-                                    if (upperBound) {
-                                        sigReturnType = upperBound;
-                                    }
+                                if (upperBound) {
+                                    sigReturnType = upperBound;
                                 }
+                            }
 
                                 this.resolveDeclaredSymbol(resolvedReturnType, context);
                                 this.resolveDeclaredSymbol(sigReturnType, context);
 
-                                var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, sigReturnType, context, comparisonInfo);
+                            var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, sigReturnType, context, comparisonInfo);
 
-                                if (!isAssignable) {
-                                    if (comparisonInfo.message) {
-                                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [resolvedReturnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
-                                    } else {
-                                        context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [resolvedReturnType.toString(), sigReturnType.toString()]);
-                                    }
+                            if (!isAssignable) {
+                                if (comparisonInfo.message) {
+                                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [resolvedReturnType.toString(), sigReturnType.toString(), comparisonInfo.message]);
+                                } else {
+                                    context.postError(this.unitPath, returnExpr.minChar, returnExpr.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [resolvedReturnType.toString(), sigReturnType.toString()]);
                                 }
                             }
                         }
                     }
                 }
             }
+            }
 
             return returnType;
         }
-
+        
         private resolveSwitchStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckSwitchStatement(ast, enclosingDecl, context);
@@ -4431,7 +4471,7 @@ module TypeScript {
         private resolveLabeledStatement(ast: LabeledStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckLabeledStatement(ast, enclosingDecl, context);
-            }
+        }
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
@@ -5632,11 +5672,11 @@ module TypeScript {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
                         var typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
-                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {
-                            typeArgs[i] = context.findSpecializationForType(typeArg);
-                        }
-                        else {
-                            typeArgs[i] = typeArg;
+                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {   
+                            typeArgs[i] = context.findSpecializationForType(typeArg);   
+                        }   
+                        else {   
+                            typeArgs[i] = typeArg;   
                         }
 
                         if (typeArgs[i].isError()) {
@@ -6038,34 +6078,34 @@ module TypeScript {
             }
 
             return thisTypeSymbol;
-        }
+                }
 
         private computeThisTypeSymbol(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             return this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context) || this.semanticInfoChain.anyTypeSymbol;
-        }
+                }
 
         private typeCheckThisExpression(thisExpression: ThisExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
-            var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
+                    var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
 
             var thisTypeSymbol = this.computeThisTypeSymbol(enclosingDecl, context);
             var decls = thisTypeSymbol.getDeclarations();
             var classDecl = decls && decls[0] ? decls[0] : null;
 
-            if (context.isResolvingSuperConstructorCallArgument &&
-                this.superCallMustBeFirstStatementInConstructor(enclosingDecl, classDecl)) {
+                    if (context.isResolvingSuperConstructorCallArgument &&
+                        this.superCallMustBeFirstStatementInConstructor(enclosingDecl, classDecl)) {
 
                 context.postError(this.unitPath, thisExpression.minChar, thisExpression.getLength(), DiagnosticCode.this_cannot_be_referenced_in_current_location, null);
-            }
-            else if (enclosingNonLambdaDecl) {
-                if (enclosingNonLambdaDecl.kind === PullElementKind.Class && context.isInStaticInitializer) {
+                    }
+                    else if (enclosingNonLambdaDecl) {
+                        if (enclosingNonLambdaDecl.kind === PullElementKind.Class && context.isInStaticInitializer) {
                     context.postError(this.unitPath, thisExpression.minChar, thisExpression.getLength(), DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body, null);
-                }
-                else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
+                        }
+                        else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
                     context.postError(this.unitPath, thisExpression.minChar, thisExpression.getLength(), DiagnosticCode.this_cannot_be_referenced_within_module_bodies, null);
-                }
-                else if (context.inConstructorArguments) {
+                        }
+                        else if (context.inConstructorArguments) {
                     context.postError(this.unitPath, thisExpression.minChar, thisExpression.getLength(), DiagnosticCode.this_cannot_be_referenced_in_constructor_arguments, null);
-                }
+            }
             }
 
             this.checkForThisCaptureInArrowFunction(thisExpression, enclosingDecl);
@@ -6268,21 +6308,22 @@ module TypeScript {
             }
 
             if (memberDecls) {
-                var binex: BinaryExpression;
-                var memberSymbol: PullSymbol;
-                var assigningSymbol: PullSymbol = null;
-                var acceptedContextualType = false;
+                var binex: BinaryExpression,
+                    memberSymbol: PullSymbol,
+                    assigningSymbol: PullSymbol = null,
+                    acceptedContextualType = false,
+                    objectLiteralMembers : BinaryExpression[] = <BinaryExpression[]>memberDecls.members;
 
                 if (additionalResults) {
                     additionalResults.membersContextTypeSymbols = [];
                 }
 
+                // first bind decls and symbols
                 for (var i = 0, len = memberDecls.members.length; i < len; i++) {
-                    binex = <BinaryExpression>memberDecls.members[i];
-
-                    var id = binex.operand1;
-                    var text: string;
-                    var actualText: string;
+                    binex = objectLiteralMembers[i];
+                    var id = binex.operand1,
+                        text: string,
+                        actualText: string;
 
                     if (id.nodeType() === NodeType.Name) {
                         actualText = (<Identifier>id).actualText;
@@ -6326,6 +6367,61 @@ module TypeScript {
                             memberSymbol = decl.getSymbol();
                         }
                     }
+                    else {
+                        var funcDeclAST = <FunctionDeclaration>binex.operand2;
+                        if (!isUsingExistingDecl) {
+                            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                            var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
+
+                            declCollectionContext.pushParent(objectLitDecl);
+
+                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                            var functionDecl = this.getDeclForAST(funcDeclAST);
+                            this.currentUnit.addSynthesizedDecl(functionDecl);
+                        }
+
+                        if (!isUsingExistingSymbol) {
+                            var binder = new PullSymbolBinder(this.semanticInfoChain);
+                            binder.setUnit(this.unitPath);
+
+                            if (funcDeclAST.isGetAccessor()) {
+                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
+                            }
+                            else {
+                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
+                            }
+                        }
+                    }
+
+                    if (!isUsingExistingSymbol && !isAccessor) {
+                        // Make sure this was not defined before
+                        if (typeSymbol.findMember(memberSymbol.name)) {
+                            context.postError(this.getUnitPath(), binex.minChar, binex.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
+                        }
+                        else {
+                            typeSymbol.addMember(memberSymbol);
+                        }
+                    }
+                }
+
+                // now perform symbol resolution
+                for (var i = 0, len = memberDecls.members.length; i < len; i++) {
+                    binex = objectLiteralMembers[i];
+
+                    var id = binex.operand1,
+                        text: string;
+
+                    if (id.nodeType() === NodeType.Name) {
+                        text = (<Identifier>id).text();
+                    }
+                    else if (id.nodeType() === NodeType.StringLiteral) {
+                        text = (<StringLiteral>id).text();
+                    }
+                    else if (id.nodeType() === NodeType.NumericLiteral) {
+                        text = (<NumericLiteral>id).text();
+                    }
+                    // else would be caught in the first pass above
 
                     if (contextualType) {
                         assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, contextualType);
@@ -6354,34 +6450,9 @@ module TypeScript {
                         }
                     }
 
-                    // if operand 2 is a getter or a setter, we need to resolve it properly
-                    if (isAccessor) {
-                        var funcDeclAST = <FunctionDeclaration>binex.operand2;
-                        if (!isUsingExistingDecl) {
-                            var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
-
-                            declCollectionContext.pushParent(objectLitDecl);
-
-                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                            var functionDecl = this.getDeclForAST(funcDeclAST);
-                            this.currentUnit.addSynthesizedDecl(functionDecl);
-                        }
-
-                        if (!isUsingExistingSymbol) {
-                            var binder = new PullSymbolBinder(this.semanticInfoChain);
-                            binder.setUnit(this.unitPath);
-
-                            if (funcDeclAST.isGetAccessor()) {
-                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                            else {
-                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                        }
-                    }
-
                     var memberExpr = this.widenType(binex.operand2, this.resolveAST(binex.operand2, contextualMemberType != null, enclosingDecl, context).type, enclosingDecl, context);
+
+                    memberSymbol = typeSymbol.findMember(text);
 
                     if (memberExpr.type) {
                         if (memberExpr.type.isGeneric()) {
@@ -6397,26 +6468,22 @@ module TypeScript {
                         }
                     }
 
-                    if (acceptedContextualType) {
-                        context.popContextualType();
-                        acceptedContextualType = false;
-                    }
-
+                    var isAccessor = binex.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor();
                     if (!isUsingExistingSymbol) {
                         if (isAccessor) {
                             this.setSymbolForAST(binex.operand1, memberExpr, context);
-                        } else {
-                            // Make sure this was not defined before
-                            if (typeSymbol.findMember(memberSymbol.name)) {
-                                context.postError(this.getUnitPath(), binex.minChar, binex.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
                             }
-
+                        else {
                             context.setTypeInContext(memberSymbol, memberExpr.type);
                             memberSymbol.setResolved();
 
                             this.setSymbolForAST(binex.operand1, memberSymbol, context);
-                            typeSymbol.addMember(memberSymbol);
                         }
+                        }
+
+                    if (acceptedContextualType) {
+                        context.popContextualType();
+                        acceptedContextualType = false;
                     }
                 }
 
@@ -6556,7 +6623,7 @@ module TypeScript {
         private resolveIndexExpression(callEx: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var symbolAndDiagnostic = this.computeIndexExpressionSymbolAndDiagnostic(callEx, enclosingDecl, context);
 
-            if (this.canTypeCheckAST(callEx, context)) {
+                if (this.canTypeCheckAST(callEx, context)) {
                 this.typeCheckIndexExpression(callEx, enclosingDecl, context, symbolAndDiagnostic);
             }
 
@@ -6600,7 +6667,7 @@ module TypeScript {
 
                 if (member) {
                     this.resolveDeclaredSymbol(member, context);
-
+                    
                     return { symbol: member.type };
                 }
             }
@@ -6755,12 +6822,12 @@ module TypeScript {
 
             var bestCommonType = this.bestCommonTypeOfTwoTypes(leftType, rightType, context);
 
-            if (this.canTypeCheckAST(binex, context)) {
+                if (this.canTypeCheckAST(binex, context)) {
                 this.typeCheckLogicalOrExpression(binex, enclosingDecl, context);
-            }
+                }
 
             return bestCommonType;
-        }
+            }
 
         private bestCommonTypeOfTwoTypes(type1: PullTypeSymbol, type2: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
             // findBestCommonType skips the first type (since it is explicitly provided as an 
@@ -6789,14 +6856,14 @@ module TypeScript {
         }
 
         private typeCheckLogicalAndExpression(binex: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
-            this.setTypeChecked(binex, context);
+                this.setTypeChecked(binex, context);
 
             this.resolveAST(binex.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
             this.resolveAST(binex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
         private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            if (this.canTypeCheckAST(trinex, context)) {
+                if (this.canTypeCheckAST(trinex, context)) {
                 this.typeCheckConditionalExpression(trinex, enclosingDecl, context);
             }
 
@@ -6812,12 +6879,12 @@ module TypeScript {
             // already handled by the subtyping check.
             if (!this.sourceIsSubtypeOfTarget(leftType, rightType, context) && !this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
                 return this.getNewErrorTypeSymbol();
-            }
+        }
 
             // September 17, 2013: The result is of the best common type (section 3.10) of the two 
             // expression types.
             return this.bestCommonTypeOfTwoTypes(leftType, rightType, context);
-        }
+            }
 
         private typeCheckConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             this.setTypeChecked(trinex, context);
@@ -6837,19 +6904,19 @@ module TypeScript {
                 context.postError(this.getUnitPath(), trinex.operand2.minChar, trinex.operand2.getLength(),
                     DiagnosticCode.Type_of_conditional_expression_cannot_be_determined_0_is_not_identical_to_a_supertype_of_or_a_subtype_of_1,
                     [leftType.toString(), rightType.toString()]);
+                }
             }
-        }
 
         private resolveParenthesizedExpression(ast: ParenthesizedExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             // September 17, 2013: A parenthesized expression (Expression) has the same type and 
             // classification as the Expression itself
             return this.resolveAST(ast.expression, false, enclosingDecl, context);
-        }
+            }
 
         private resolveExpressionStatement(ast: ExpressionStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckExpressionStatement(ast, enclosingDecl, context);
-            }
+        }
 
             // All statements have the 'void' type.
             return this.semanticInfoChain.voidTypeSymbol;
@@ -6904,7 +6971,7 @@ module TypeScript {
                     this.seenSuperConstructorCall = true;
                 }
             }
-
+            
             if (callEx.arguments) {
                 var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
                 var isSuperCall = callEx.target.nodeType() === NodeType.SuperExpression;
@@ -7701,7 +7768,7 @@ module TypeScript {
             // assignable to T or T to be assignable to the type of e, or otherwise a compilew - 
             // time error occurs.The type of the result is T.
             return typeAssertionType;
-        }
+                }
 
         private typeCheckCastExpression(assertionExpression: CastExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             this.setTypeChecked(assertionExpression, context);
@@ -7715,20 +7782,20 @@ module TypeScript {
             // September 17, 2013: A type assertion expression of the form < T > e requires the 
             // type of e to be assignable to T or T to be assignable to the type of e, or otherwise
             // a compile - time error occurs. 
-            var comparisonInfo = new TypeComparisonInfo();
+                var comparisonInfo = new TypeComparisonInfo();
 
             var isAssignable =
                 this.sourceIsAssignableToTarget(typeAssertionType, exprType, context, comparisonInfo) ||
-                this.sourceIsAssignableToTarget(exprType, typeAssertionType, context, comparisonInfo);
+                    this.sourceIsAssignableToTarget(exprType, typeAssertionType, context, comparisonInfo);
 
-            if (!isAssignable) {
-                if (comparisonInfo.message) {
-                    context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [exprType.toString(), typeAssertionType.toString(), comparisonInfo.message]);
-                } else {
-                    context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [exprType.toString(), typeAssertionType.toString()]);
+                if (!isAssignable) {
+                    if (comparisonInfo.message) {
+                        context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1_NL_2, [exprType.toString(), typeAssertionType.toString(), comparisonInfo.message]);
+                    } else {
+                        context.postError(this.unitPath, assertionExpression.minChar, assertionExpression.getLength(), DiagnosticCode.Cannot_convert_0_to_1, [exprType.toString(), typeAssertionType.toString()]);
+                    }
                 }
             }
-        }
 
         private resolveAssignmentExpression(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             // September 17, 2013: An assignment of the form
@@ -7759,12 +7826,12 @@ module TypeScript {
         }
 
         private typeCheckAssignmentExpression(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, leftExpr: PullSymbol, rightType: PullTypeSymbol): void {
-            this.setTypeChecked(binaryExpression, context);
+                this.setTypeChecked(binaryExpression, context);
 
             if (!this.isReference(binaryExpression.operand1, leftExpr)) {
-                context.postError(this.unitPath, binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null);
-            }
-            else {
+                    context.postError(this.unitPath, binaryExpression.operand1.minChar, binaryExpression.operand1.getLength(), DiagnosticCode.Invalid_left_hand_side_of_assignment_expression, null);
+                }
+                else {
                 this.checkAssignability(binaryExpression.operand1, rightType, leftExpr.type, enclosingDecl, context);
             }
         }
@@ -8302,8 +8369,8 @@ module TypeScript {
                 }
             }
 
-            return false;
-        }
+                return false;
+            }
 
         public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
@@ -8594,7 +8661,7 @@ module TypeScript {
 
         private sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
             comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
-            var targetProps = target.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+             var targetProps = target.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
             for (var itargetProp = 0; itargetProp < targetProps.length; itargetProp++) {
 
@@ -8929,8 +8996,8 @@ module TypeScript {
             }
 
             var sourceReturnType = sourceSig.returnType;
-            var targetReturnType = targetSig.returnType;
-
+            var targetReturnType = targetSig.returnType;             
+                                            
             if (targetReturnType != this.semanticInfoChain.voidTypeSymbol) {
                 if (!this.sourceIsRelatableToTarget(sourceReturnType, targetReturnType, assignableTo, comparisonCache, context, comparisonInfo)) {
                     if (comparisonInfo) {
@@ -8938,7 +9005,7 @@ module TypeScript {
                         // No need to print this one here - it's printed as part of the signature error in sourceIsRelatableToTarget
                         //comparisonInfo.addMessage("Incompatible return types: '" + sourceReturnType.getTypeName() + "' and '" + targetReturnType.getTypeName() + "'");
                     }
-
+                    
                     return false;
                 }
             }
@@ -9013,10 +9080,10 @@ module TypeScript {
 
             var signature: PullSignatureSymbol;
             var returnType: PullTypeSymbol;
-            var initialCandidates = ArrayUtilities.where(group, signature =>
+            var initialCandidates = ArrayUtilities.where(group, signature => 
                 // Filter out definition if overloads are available, and nongeneric signatures if type arguments are supplied
                 !(hasOverloads && signature.isDefinition() || (haveTypeArgumentsAtCallSite && !signature.isGeneric()))
-                );
+            );
 
             var applicableCandidates = this.getApplicableSignatures(initialCandidates, args, comparisonInfo, enclosingDecl, context);
             if (applicableCandidates.length > 0) {
@@ -9979,18 +10046,18 @@ module TypeScript {
                 var typeSymbol = <PullTypeSymbol>symbol;
                 var isNamedType = typeSymbol.isNamedTypeSymbol();
                 var isArrayType = typeSymbol.isArray();
-                if (typeSymbol.inSymbolPrivacyCheck) {
+                    if (typeSymbol.inSymbolPrivacyCheck) {
                     if (!isArrayType && !isNamedType) {
                         var associatedContainerType = typeSymbol.getAssociatedContainerType();
                         if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
                             this.checkSymbolPrivacy(declSymbol, associatedContainerType, privacyErrorReporter);
                         }
+                        }
+
+                        return;
                     }
 
-                    return;
-                }
-
-                typeSymbol.inSymbolPrivacyCheck = true;
+                    typeSymbol.inSymbolPrivacyCheck = true;
 
                 var typars = typeSymbol.getTypeArgumentsOrTypeParameters();
                 if (typars) {
@@ -10003,10 +10070,10 @@ module TypeScript {
                     if (isArrayType) {
                         this.checkSymbolPrivacy(declSymbol, typeSymbol.getElementType(), privacyErrorReporter);
                     } else {
-                        var members = typeSymbol.getMembers();
-                        for (var i = 0; i < members.length; i++) {
+                    var members = typeSymbol.getMembers();
+                    for (var i = 0; i < members.length; i++) {
                             this.checkSymbolPrivacy(declSymbol, members[i].type, privacyErrorReporter);
-                        }
+                    }
 
                         this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getCallSignatures(), privacyErrorReporter);
                         this.checkTypePrivacyOfSignatures(declSymbol, typeSymbol.getConstructSignatures(), privacyErrorReporter);
@@ -10016,7 +10083,7 @@ module TypeScript {
                     this.checkSymbolPrivacy(declSymbol, (<PullTypeParameterSymbol>typeSymbol).getConstraint(), privacyErrorReporter);
                 }
 
-                typeSymbol.inSymbolPrivacyCheck = false;
+                    typeSymbol.inSymbolPrivacyCheck = false;
 
                 if (!isNamedType) {
                     return;

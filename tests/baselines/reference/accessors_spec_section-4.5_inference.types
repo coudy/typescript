@@ -1,0 +1,39 @@
+=== tests/cases/compiler/accessors_spec_section-4.5_inference.ts ===
+Line 0 col 6 IdentifierName "A" = A
+Line 1 col 6 IdentifierName "B" = B
+Line 1 col 16 IdentifierName "A" = A
+Line 3 col 6 IdentifierName "LanguageSpec_section_4_5_inference" = LanguageSpec_section_4_5_inference
+Line 5 col 15 IdentifierName "InferredGetterFromSetterAnnotation" = (a: A) => void
+Line 5 col 50 IdentifierName "a" = A
+Line 5 col 53 IdentifierName "A" = A
+Line 6 col 15 IdentifierName "InferredGetterFromSetterAnnotation" = () => A
+Line 7 col 15 ObjectCreationExpression "new B()" = B
+Line 7 col 19 IdentifierName "B" = new() => B
+Line 10 col 15 IdentifierName "InferredGetterFromSetterAnnotation_GetterFirst" = () => A
+Line 11 col 15 ObjectCreationExpression "new B()" = B
+Line 11 col 19 IdentifierName "B" = new() => B
+Line 13 col 15 IdentifierName "InferredGetterFromSetterAnnotation_GetterFirst" = (a: A) => void
+Line 13 col 62 IdentifierName "a" = A
+Line 13 col 65 IdentifierName "A" = A
+Line 16 col 15 IdentifierName "InferredFromGetter" = () => B
+Line 17 col 15 ObjectCreationExpression "new B()" = B
+Line 17 col 19 IdentifierName "B" = new() => B
+Line 19 col 15 IdentifierName "InferredFromGetter" = (a: B) => void
+Line 19 col 34 IdentifierName "a" = B
+Line 21 col 15 IdentifierName "InferredFromGetter_SetterFirst" = (a: B) => void
+Line 21 col 46 IdentifierName "a" = B
+Line 22 col 15 IdentifierName "InferredFromGetter_SetterFirst" = () => B
+Line 23 col 15 ObjectCreationExpression "new B()" = B
+Line 23 col 19 IdentifierName "B" = new() => B
+Line 26 col 15 IdentifierName "InferredSetterFromGetterAnnotation" = (a: A) => void
+Line 26 col 50 IdentifierName "a" = A
+Line 27 col 15 IdentifierName "InferredSetterFromGetterAnnotation" = () => A
+Line 27 col 54 IdentifierName "A" = A
+Line 28 col 15 ObjectCreationExpression "new B()" = B
+Line 28 col 19 IdentifierName "B" = new() => B
+Line 31 col 15 IdentifierName "InferredSetterFromGetterAnnotation_GetterFirst" = () => A
+Line 31 col 66 IdentifierName "A" = A
+Line 32 col 15 ObjectCreationExpression "new B()" = B
+Line 32 col 19 IdentifierName "B" = new() => B
+Line 34 col 15 IdentifierName "InferredSetterFromGetterAnnotation_GetterFirst" = (a: A) => void
+Line 34 col 62 IdentifierName "a" = A
