@@ -226,7 +226,7 @@ module TypeScript {
             }
         }
 
-        public getSymbolForAST(ast: IAST, context: PullTypeResolutionContext): PullSymbol {
+        private getSymbolForAST(ast: IAST, context: PullTypeResolutionContext): PullSymbol {
             // Check global cache
             var symbol = this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
 
@@ -240,7 +240,7 @@ module TypeScript {
             return symbol;
         }
 
-        public getASTForSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): AST {
+        private getASTForSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): AST {
             // Check global cache
             var ast = this.semanticInfoChain.getASTForSymbol(symbol, this.unitPath);
 
@@ -258,7 +258,7 @@ module TypeScript {
             return this.semanticInfoChain.getASTForDecl(decl);
         }
 
-        public getNewErrorTypeSymbol(name: string = null): PullErrorTypeSymbol {
+        private getNewErrorTypeSymbol(name: string = null): PullErrorTypeSymbol {
             return new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, name);
         }
 
@@ -797,11 +797,11 @@ module TypeScript {
             return prototypeSymbol;
         }
 
-        public isAnyOrEquivalent(type: PullTypeSymbol) {
+        private isAnyOrEquivalent(type: PullTypeSymbol) {
             return (type === this.semanticInfoChain.anyTypeSymbol) || type.isError();
         }
 
-        public isNumberOrEquivalent(type: PullTypeSymbol) {
+        private isNumberOrEquivalent(type: PullTypeSymbol) {
             return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType() && type === this.cachedNumberInterfaceType());
         }
 
@@ -1102,7 +1102,7 @@ module TypeScript {
             }
         }
 
-        public isTypeRefWithoutTypeArgs(typeRef: TypeReference) {
+        private isTypeRefWithoutTypeArgs(typeRef: TypeReference) {
             if (typeRef.nodeType() != NodeType.TypeRef) {
                 return false;
             }
@@ -1804,7 +1804,7 @@ module TypeScript {
             }
         }
 
-        public resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (exportAssignmentAST.id.isMissing()) {
                 // No point trying to resolve an export assignment without an actual identifier.
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -1894,7 +1894,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        public resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
 
             var funcDeclSymbol: PullTypeSymbol = null;
 
@@ -2123,7 +2123,7 @@ module TypeScript {
             }
         }
 
-        public resolveObjectTypeTypeReference(objectType: ObjectType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveObjectTypeTypeReference(objectType: ObjectType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var interfaceSymbol: PullTypeSymbol = null;
 
             var interfaceDecl = this.getDeclForAST(objectType);
@@ -5302,7 +5302,7 @@ module TypeScript {
             }
         }
 
-        public processPostTypeCheckWorkItems(context: PullTypeResolutionContext) {
+        private processPostTypeCheckWorkItems(context: PullTypeResolutionContext) {
             while (PullTypeResolver.postTypeCheckWorkitems.length) {
                 var workItem = PullTypeResolver.postTypeCheckWorkitems.pop();
                 this.postTypeCheck(workItem.ast, workItem.enclosingDecl, context);
@@ -5366,7 +5366,7 @@ module TypeScript {
             this.checkNameForCompilerGeneratedDeclarationCollision(nameAST, /*isDeclaration*/ false, nameAST, enclosingDecl, context);
         }
 
-        public resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var nameSymbol = this.getSymbolForAST(nameAST, context);
             var foundCached = nameSymbol != null;
 
@@ -5489,7 +5489,7 @@ module TypeScript {
             return nameSymbol;
         }
 
-        public resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var symbol = this.getSymbolForAST(dottedNameAST, context);
             var foundCached = symbol != null;
 
@@ -5513,7 +5513,7 @@ module TypeScript {
             return symbol;
         }
 
-        public isPrototypeMember(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): boolean {
+        private isPrototypeMember(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): boolean {
             var rhsName = (<Identifier>dottedNameAST.operand2).text();
             if (rhsName === "prototype") {
                 var prevCanUseTypeSymbol = context.canUseTypeSymbol;
@@ -5690,7 +5690,7 @@ module TypeScript {
             return nameSymbol;
         }
 
-        public resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveTypeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var typeNameSymbol = <PullTypeSymbol>this.getSymbolForAST(nameAST, context);
 
             // TODO(cyrusn): We really shouldn't be checking "isType" here.  However, we currently
@@ -6435,11 +6435,11 @@ module TypeScript {
             }
         }
 
-        public resolveSimplePropertyAssignment(propertyAssignment: SimplePropertyAssignment, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveSimplePropertyAssignment(propertyAssignment: SimplePropertyAssignment, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAST(propertyAssignment.expression, inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
-        public resolveFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             context.jumpRecordStack.push(new JumpRecord());
 
             var result = this.resolveAnyFunctionExpression(
@@ -6451,7 +6451,7 @@ module TypeScript {
             return result;
         }
 
-        public resolveMemberPropertyAssignment(propertyAssignment: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveMemberPropertyAssignment(propertyAssignment: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAST(propertyAssignment.operand2, inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
@@ -7235,7 +7235,7 @@ module TypeScript {
             }
         }
 
-        public computeInvocationExpressionSymbol(callEx: InvocationExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
+        private computeInvocationExpressionSymbol(callEx: InvocationExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
             // resolve the target
             var targetSymbol = this.resolveAST(callEx.target, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
             var targetAST = this.getCallTargetErrorSpanAST(callEx);
@@ -7670,7 +7670,7 @@ module TypeScript {
             }
         }
 
-        public computeObjectCreationExpressionSymbol(callEx: ObjectCreationExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
+        private computeObjectCreationExpressionSymbol(callEx: ObjectCreationExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
@@ -7989,7 +7989,7 @@ module TypeScript {
             return this.getNewErrorTypeSymbol();
         }
 
-        public resolveCastExpression(assertionExpression: CastExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveCastExpression(assertionExpression: CastExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var typeAssertionType = this.resolveAST(assertionExpression.castType, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             if (this.canTypeCheckAST(assertionExpression, context)) {
@@ -8490,7 +8490,7 @@ module TypeScript {
             return true;
         }
 
-        public signaturesAreIdentical(s1: PullSignatureSymbol, s2: PullSignatureSymbol, includingReturnType = true) {
+        private signaturesAreIdentical(s1: PullSignatureSymbol, s2: PullSignatureSymbol, includingReturnType = true) {
 
             if (s1.hasVarArgs != s2.hasVarArgs) {
                 return false;
@@ -8530,7 +8530,7 @@ module TypeScript {
 
         // Assignment Compatibility and Subtyping
 
-        public substituteUpperBoundForType(type: PullTypeSymbol) {
+        private substituteUpperBoundForType(type: PullTypeSymbol) {
             if (!type || !type.isTypeParameter()) {
                 return type;
             }
@@ -8605,37 +8605,37 @@ module TypeScript {
             return false;
         }
 
-        public sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        private sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceMembersAreSubtypeOfTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        private sourceMembersAreSubtypeOfTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceMembersAreRelatableToTargetMembers(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourcePropertyIsSubtypeOfTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
+        private sourcePropertyIsSubtypeOfTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
             sourceProp: PullSymbol, targetProp: PullSymbol, context: PullTypeResolutionContext,
             comparisonInfo?: TypeComparisonInfo) {
             return this.sourcePropertyIsRelatableToTargetProperty(source, target, sourceProp, targetProp,
                 false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceCallSignaturesAreSubtypeOfTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
+        private sourceCallSignaturesAreSubtypeOfTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
             context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
+        private sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
             context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
+        private sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
             context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public typeIsSubtypeOfFunction(source: PullTypeSymbol, context: PullTypeResolutionContext): boolean {
+        private typeIsSubtypeOfFunction(source: PullTypeSymbol, context: PullTypeResolutionContext): boolean {
             // Note that object types containing one or more call or construct signatures are 
             // automatically subtypes of the ‘Function’ interface type, as described in section 3.3.
             if (source.getCallSignatures().length || source.getConstructSignatures().length) {
@@ -8650,11 +8650,11 @@ module TypeScript {
             return this.signatureGroupIsRelatableToTarget(sg1, sg2, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public signatureIsSubtypeOfTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        private signatureIsSubtypeOfTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.signatureIsRelatableToTarget(s1, s2, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        public sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isInProvisionalResolution: boolean = false): boolean {
+        private sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isInProvisionalResolution: boolean = false): boolean {
             var cache = isInProvisionalResolution ? {} : this.assignableCache;
             return this.sourceIsRelatableToTarget(source, target, true, cache, context, comparisonInfo);
         }
@@ -8663,7 +8663,7 @@ module TypeScript {
             return this.signatureGroupIsRelatableToTarget(sg1, sg2, true, this.assignableCache, context, comparisonInfo);
         }
 
-        public signatureIsAssignableToTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
+        private signatureIsAssignableToTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
             return this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, context, comparisonInfo);
         }
 
@@ -10013,7 +10013,7 @@ module TypeScript {
             this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
         }
 
-        public specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var prevSpecialize = context.specializingToAny;
 
             context.specializingToAny = true;
@@ -10051,7 +10051,7 @@ module TypeScript {
             return sig;
         }
 
-        public specializeSignatureToObject(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
+        private specializeSignatureToObject(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
             if (!signatureToSpecialize.cachedObjectSpecialization) {
                 var typeParameters = signatureToSpecialize.getTypeParameters();
 
@@ -10074,7 +10074,7 @@ module TypeScript {
             return signatureToSpecialize.cachedObjectSpecialization;
         }
 
-        public static globalTypeCheckPhase = 0;
+        private static globalTypeCheckPhase = 0;
 
         // type check infrastructure
         public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
@@ -10936,7 +10936,7 @@ module TypeScript {
             }
         }
 
-        public enclosingClassIsDerived(decl: PullDecl): boolean {
+        private enclosingClassIsDerived(decl: PullDecl): boolean {
             if (decl) {
                 var classSymbol: PullTypeSymbol = null;
 
@@ -11383,7 +11383,7 @@ module TypeScript {
             }
             else {
                 Debug.assert(classOrInterface.nodeType() === NodeType.ClassDeclaration);
-                // If class implementes interface or class, verify all the public members are implemented
+                // If class implementes interface or class, verify all the private members are implemented
                 this.typeCheckIfClassImplementsType(<ClassDeclaration>classOrInterface, typeSymbol, baseType, enclosingDecl, context);
             }
 
@@ -11612,7 +11612,7 @@ module TypeScript {
             }
         }
 
-        public setMessage(message: string) {
+        private setMessage(message: string) {
             this.message = this.indentString() + message;
         }
     }
