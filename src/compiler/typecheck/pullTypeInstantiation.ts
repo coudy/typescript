@@ -87,7 +87,8 @@ module TypeScript {
             Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addContainedNonMember");
         }
         public findContainedNonMemberContainer(containerName: string, kind = PullElementKind.None): PullTypeSymbol {
-            // do not need to resolve
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.findContainedNonMemberContainer(containerName, kind);
         }
 
@@ -143,10 +144,13 @@ module TypeScript {
         }
         public getHasDefaultConstructor(): boolean {
             // don't need to resolve the referenced type first - this is computed in the binder
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getHasDefaultConstructor();
         }
         public getConstructorMethod(): PullSymbol {
-            // don't need to resolve the referenced type first - this is computed in the binder
+            // need to resolve so we don't accidentally substitute in a default constructor
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getConstructorMethod();
         }
         public setConstructorMethod(constructorMethod: PullSymbol): void {
@@ -154,15 +158,21 @@ module TypeScript {
         }
         public getTypeParameters(): PullTypeParameterSymbol[]{
             // don't need to resolve the referenced type first - this is computed in the binder
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypeParameters();
         }
 
         public isGeneric(): boolean {
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.isGeneric();
         }
         public isFixed(): boolean {
             // GTODO: necessary?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.isFixed();
         }
 
@@ -171,14 +181,20 @@ module TypeScript {
         }
         public getSpecialization(substitutingTypes: PullTypeSymbol[]): PullTypeSymbol {
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getSpecialization(substitutingTypes);
         }
         public getKnownSpecializations(): PullTypeSymbol[]{
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getKnownSpecializations();
         }
         public getTypeArguments(): PullTypeSymbol[] {
             // GTODO: necessary?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypeArguments();
         }
         public setTypeArguments(typeArgs: PullTypeSymbol[]): void {
@@ -186,6 +202,8 @@ module TypeScript {
         }
         public getTypeArgumentsOrTypeParameters(): PullTypeSymbol[] {
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypeArgumentsOrTypeParameters();
         }
 
@@ -201,6 +219,8 @@ module TypeScript {
 
         public hasOwnCallSignatures(): boolean {
             // no need to resolve first - call signatures are computed in the binder
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.hasOwnCallSignatures();
         }
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
@@ -210,6 +230,8 @@ module TypeScript {
         }
         public hasOwnConstructSignatures(): boolean {
             // no need to resolve first - construct signatures are computed in the binder
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.hasOwnConstructSignatures();
         }
         public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
@@ -219,6 +241,8 @@ module TypeScript {
         }
         public hasOwnIndexSignatures(): boolean {
             // no need to resolve first - index signatures are computed in the binder
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.hasOwnIndexSignatures();
         }
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
@@ -233,6 +257,8 @@ module TypeScript {
         public getImplementedTypes(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getImplementedTypes();
         }
         public addExtendedType(extendedType: PullTypeSymbol): void {
@@ -241,6 +267,8 @@ module TypeScript {
         public getExtendedTypes(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getExtendedTypes();
         }
         public addTypeThatExtendsThisType(type: PullTypeSymbol): void {
@@ -249,6 +277,8 @@ module TypeScript {
         public getTypesThatExtendThisType(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypesThatExtendThisType();
         }
         public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol): void {
@@ -257,17 +287,23 @@ module TypeScript {
         public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypesThatExplicitlyImplementThisType();
         }
 
         public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
             // GTODO: account for generic specialization?
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.hasBase(potentialBase, visited);
         }
         public isValidBaseKind(baseType: PullTypeSymbol, isExtendedType: boolean): boolean {
             // GTODO: account for generic specialization?
             // GTODO: resolve first?
+            // GTODO: do not need to resolve
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.isValidBaseKind(baseType, isExtendedType);
         }
 
