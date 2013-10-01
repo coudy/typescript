@@ -691,26 +691,5 @@ module TypeScript {
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
         }
-
-
-        public removeSymbolFromCache(symbol: PullSymbol) {
-
-            var path = [symbol.name];
-            var kind = (symbol.kind & PullElementKind.SomeType) !== 0 ? PullElementKind.SomeType : PullElementKind.SomeValue;
-
-            var kindID = this.getDeclPathCacheID(path, kind);
-            var symID = this.getDeclPathCacheID(path, symbol.kind);
-        }
-
-        public postDiagnostics(): Diagnostic[] {
-            var errors: Diagnostic[] = [];
-
-            // PULLTODO: Why are we indexing from 1?
-            for (var i = 1; i < this.units.length; i++) {
-                this.units[i].getDiagnostics(errors);
-            }
-
-            return errors;
-        }
     }
 }
