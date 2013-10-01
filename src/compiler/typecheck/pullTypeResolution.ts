@@ -6072,10 +6072,11 @@ module TypeScript {
             returnTypeAnnotation: TypeReference,
             context: PullTypeResolutionContext): boolean {
 
-            // September 21, 2013: If e is a FunctionExpression or ArrowFunctionExpression with no type parameters and no parameter
-            // or return type annotations, and T is a function type with exactly one non - generic call signature, then any
-            // inferences made for type parameters referenced by the parameters of T’s call signature are fixed(section 4.12.2)
-            // and e is processed with the contextual type T, as described in section 4.9.3.
+            // October 1, 2013: If e is a FunctionExpression or ArrowFunctionExpression with no type parameters 
+            // and no parameter or return type annotations, T is a function type with exactly one call signature 
+            // and T’s call signature is non - generic, then any inferences made for type parameters referenced 
+            // by the parameters of T’s call signature are fixed(section 4.12.2) and e is processed with the 
+            // contextual type T, as described in section 4.9.3.
 
             // No type parameters
             if (typeParameters && typeParameters.members.length > 0) {
@@ -6099,16 +6100,16 @@ module TypeScript {
 
             var contextualFunctionTypeSymbol = context.getContextualType();
 
-            // Exactly one non-generic call signature (note that this means it must have exactly one call signature,
-            // AND that call signature must be non-generic)
             if (contextualFunctionTypeSymbol) {
                 this.resolveDeclaredSymbol(contextualFunctionTypeSymbol, context);
+                // Exactly one call signature
                 var callSignatures = contextualFunctionTypeSymbol.getCallSignatures();
                 var exactlyOneCallSignature = callSignatures && callSignatures.length == 1;
                 if (!exactlyOneCallSignature) {
                     return false;
                 }
 
+                // Call signature is non-generic
                 var callSignatureIsGeneric = callSignatures[0].typeParameters && callSignatures[0].typeParameters.length > 0;
                 return !callSignatureIsGeneric;
                     }
@@ -8625,9 +8626,8 @@ module TypeScript {
             return this.signatureIsRelatableToTarget(s1, s2, false, this.subtypeCache, context, comparisonInfo);
         }
 
-        private sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isInProvisionalResolution: boolean = false): boolean {
-            var cache = isInProvisionalResolution ? {} : this.assignableCache;
-            return this.sourceIsRelatableToTarget(source, target, true, cache, context, comparisonInfo);
+        private sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
+            return this.sourceIsRelatableToTarget(source, target, true, this.assignableCache, context, comparisonInfo);
         }
 
         private signatureIsAssignableToTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
@@ -8695,17 +8695,17 @@ module TypeScript {
                 return true;
             }
 
+            if (source === this.semanticInfoChain.stringTypeSymbol && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
+                return comparisonInfo &&
+                    comparisonInfo.stringConstantVal &&
+                    (comparisonInfo.stringConstantVal.nodeType() === NodeType.StringLiteral) &&
+                    (stripStartAndEndQuotes((<StringLiteral>comparisonInfo.stringConstantVal).actualText) === stripStartAndEndQuotes(target.name));
+            }
+
             // this is one difference between subtyping and assignment compatibility
             if (assignableTo) {
                 if (this.isAnyOrEquivalent(source) || this.isAnyOrEquivalent(target)) {
                     return true;
-                }
-
-                if (source === this.semanticInfoChain.stringTypeSymbol && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
-                    return comparisonInfo &&
-                        comparisonInfo.stringConstantVal &&
-                        (comparisonInfo.stringConstantVal.nodeType() === NodeType.StringLiteral) &&
-                        (stripStartAndEndQuotes((<StringLiteral>comparisonInfo.stringConstantVal).actualText) === stripStartAndEndQuotes(target.name));
                 }
             }
             else {
@@ -9301,12 +9301,11 @@ module TypeScript {
             context: PullTypeResolutionContext,
             diagnostics: Diagnostic[]): PullSignatureSymbol {
             var hasOverloads = group.length > 1;
-            var comparisonInfo = new TypeComparisonInfo();
             var args: ASTList = application.arguments;
 
             var signature: PullSignatureSymbol;
             var returnType: PullTypeSymbol;
-            var firstApplicableSignature = ArrayUtilities.firstOrDefault(group, signature => {
+            var initialCandidates = ArrayUtilities.where(group, signature => {
                 // Filter out definition if overloads are available
                 if (hasOverloads && signature.isDefinition()) {
                     return false;
@@ -9316,8 +9315,25 @@ module TypeScript {
                     return false;
                 }
 
-                return this.overloadIsApplicable(signature, args, enclosingDecl, context, comparisonInfo);
+                // Filter out overloads with the wrong arity
+                return this.overloadHasCorrectArity(signature, args);
             });
+
+            // Now that we have an initial set of candidates, pick the first one whose parameter types are a *supertype*
+            // of the argument types. If none exists, pick the first one whose parameter types are *assignable* from
+            // the argument types. Note that the spec says to build up a list based on assignment compatibility,
+            // and then pick the first one based on subtype, but this should be equivalent.
+            var comparisonInfo = new TypeComparisonInfo();
+            var firstApplicableSignature = ArrayUtilities.firstOrDefault(initialCandidates, overload => 
+                this.overloadIsApplicable(overload, args, /*assignableTo*/ false, enclosingDecl, context, comparisonInfo));
+
+            if (!firstApplicableSignature) {
+                // Check with assignability
+                // We create a new TypeComparisonInfo object in order to throw away the errors collected during the subtype pass
+                comparisonInfo = new TypeComparisonInfo();
+                firstApplicableSignature = ArrayUtilities.firstOrDefault(initialCandidates, overload =>
+                    this.overloadIsApplicable(overload, args, /*assignableTo*/ true, enclosingDecl, context, comparisonInfo));
+            }
 
             if (firstApplicableSignature) {
                 return firstApplicableSignature;
@@ -9356,8 +9372,7 @@ module TypeScript {
             if (numberOfArgs < signature.nonOptionalParamCount) {
                 return false;
             }
-            // The spec does not say this, but if there are more arguments than parameters, the signature is not applicable.
-            // TODO: Update this comment when the spec is updated.
+            // If there are more arguments than parameters, the signature is not applicable.
             if (!signature.hasVarArgs && numberOfArgs > signature.parameters.length) {
                 return false;
             }
@@ -9365,49 +9380,44 @@ module TypeScript {
             return true;
         }
         
-        //September 21, 2013 - section 4.12.1:
+        //October 1, 2013 - section 4.12.1:
         //A signature is said to be an applicable signature with respect to an argument list when
-        //	- each non-optional parameter has a corresponding argument, and
-        //	- each argument expression, contextually typed(section 4.19) by the corresponding parameter type in the signature, is of a type that is assignable to(section 3.8.4) that parameter type.
-        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
-            if (args == null) {
-                // If arguments are required in this signature, the signature doesn't fit
-                return signature.nonOptionalParamCount == 0;
-            }
-            else {
-                // Check arity bounds
-                if (!this.overloadHasCorrectArity(signature, args)) {
-                    return false;
-                }
-
-                var isInVarArg = false;
-                var parameters = signature.parameters;
-                var paramType: PullTypeSymbol = null;
-
-                for (var i = 0; i < args.members.length; i++) {
-                    if (!isInVarArg) {
-                        this.resolveDeclaredSymbol(parameters[i], context);
-
-                        if (parameters[i].isVarArg) {
-                            // If the vararg has no element type, it is malformed, so just use the any symbol (we will have errored when resolving the signature).
-                            paramType = parameters[i].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
-                            isInVarArg = true;
-                        }
-                        else {
-                            paramType = parameters[i].type;
-                        }
-                    }
-
-                    if (!this.overloadIsApplicableForArgument(paramType, args.members[i], i, enclosingDecl, context, comparisonInfo)) {
-                        return false;
-                    }
-                }
-
+        //-	the number of arguments is not less than the number of required parameters (checked in overloadHasCorrectArity), 
+        //-	the number of arguments is not greater than the number of parameters  (checked in overloadHasCorrectArity), and
+        //-	for each argument expression e and its corresponding parameter P, and when e contextually typed(section 4.19) by the type of P, the type of e is assignable to(section 3.8.4) the type of P.
+        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTList, assignableTo: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+            // Note that in this method we assume the arity is already correct. Since this method is called in two separate passes, we don't want to check arity twice.
+            if (!args) {
                 return true;
             }
+
+            var isInVarArg = false;
+            var parameters = signature.parameters;
+            var paramType: PullTypeSymbol = null;
+
+            for (var i = 0; i < args.members.length; i++) {
+                if (!isInVarArg) {
+                    this.resolveDeclaredSymbol(parameters[i], context);
+
+                    if (parameters[i].isVarArg) {
+                        // If the vararg has no element type, it is malformed, so just use the any symbol (we will have errored when resolving the signature).
+                        paramType = parameters[i].type.getElementType() || this.semanticInfoChain.anyTypeSymbol;
+                        isInVarArg = true;
+                    }
+                    else {
+                        paramType = parameters[i].type;
+                    }
+                }
+
+                if (!this.overloadIsApplicableForArgument(paramType, args.members[i], i, assignableTo, enclosingDecl, context, comparisonInfo)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
-        private overloadIsApplicableForArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+        private overloadIsApplicableForArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, assignableTo: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             if (this.isAnyOrEquivalent(paramType)) {
                 return true;
             }
@@ -9415,22 +9425,22 @@ module TypeScript {
                 var arrowFunction = <ArrowFunctionExpression>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
                     arg, arrowFunction.typeParameters, arrowFunction.parameterList, arrowFunction.returnTypeAnnotation, arrowFunction.block,
-                    argIndex, enclosingDecl, context, comparisonInfo);
+                    argIndex, assignableTo, enclosingDecl, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.FunctionExpression) {
                 var functionExpression = <FunctionExpression>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
                     arg, functionExpression.typeParameters, functionExpression.parameterList, functionExpression.returnTypeAnnotation, functionExpression.block,
-                    argIndex, enclosingDecl, context, comparisonInfo);
+                    argIndex, assignableTo, enclosingDecl, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ObjectLiteralExpression) {
-                return this.overloadIsApplicableForObjectLiteralArgument(paramType, <ObjectLiteralExpression>arg, argIndex, enclosingDecl, context, comparisonInfo);
+                return this.overloadIsApplicableForObjectLiteralArgument(paramType, <ObjectLiteralExpression>arg, argIndex, assignableTo, enclosingDecl, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ArrayLiteralExpression) {
-                return this.overloadIsApplicableForArrayLiteralArgument(paramType, <ArrayLiteralExpression>arg, argIndex, enclosingDecl, context, comparisonInfo);
+                return this.overloadIsApplicableForArrayLiteralArgument(paramType, <ArrayLiteralExpression>arg, argIndex, assignableTo, enclosingDecl, context, comparisonInfo);
             }
             else {
-                return this.overloadIsApplicableForOtherArgument(paramType, arg, argIndex, enclosingDecl, context, comparisonInfo);
+                return this.overloadIsApplicableForOtherArgument(paramType, arg, argIndex, assignableTo, enclosingDecl, context, comparisonInfo);
             }
         }
 
@@ -9442,6 +9452,7 @@ module TypeScript {
             returnTypeAnnotation: TypeReference,
             block: Block,
             argIndex: number,
+            assignableTo: boolean,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo): boolean {
@@ -9455,7 +9466,7 @@ module TypeScript {
             var argSym = this.resolveAnyFunctionExpression(arg, typeParameters, parameters, returnTypeAnnotation, block,
                 true, enclosingDecl, context);
 
-            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
             var cxt = context.popContextualType();
 
             return applicable;
@@ -9465,6 +9476,7 @@ module TypeScript {
             paramType: PullTypeSymbol,
             arg: ObjectLiteralExpression,
             argIndex: number,
+            assignableTo: boolean,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo): boolean {
@@ -9477,13 +9489,13 @@ module TypeScript {
             context.pushContextualType(paramType, true, null);
             var argSym = this.resolveObjectLiteralExpression(arg, true, enclosingDecl, context);
 
-            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
 
             var cxt = context.popContextualType();
             return applicable;
         }
 
-        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: ArrayLiteralExpression, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+        private overloadIsApplicableForArrayLiteralArgument(paramType: PullTypeSymbol, arg: ArrayLiteralExpression, argIndex: number, assignableTo: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             // attempt to contextually type the array literal
             if (paramType === this.cachedArrayInterfaceType()) {
                 return true;
@@ -9492,14 +9504,14 @@ module TypeScript {
             context.pushContextualType(paramType, true, null);
             var argSym = this.resolveArrayLiteralExpression(arg, true, enclosingDecl, context);
 
-            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
 
             var cxt = context.popContextualType();
 
             return applicable;
         }
 
-        private overloadIsApplicableForOtherArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
+        private overloadIsApplicableForOtherArgument(paramType: PullTypeSymbol, arg: AST, argIndex: number, assignableTo: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): boolean {
             // No need to contextually type or mark as provisional
             var argSym = this.resolveAST(arg, false, enclosingDecl, context);
 
@@ -9512,35 +9524,24 @@ module TypeScript {
             // Just in case the argument is a string literal, and are checking overload on const, we set this stringConstantVal
             // (sourceIsAssignableToTarget will internally check if the argument is actually a string)
             comparisonInfo.stringConstantVal = arg;
-            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
+            return this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
         }
 
-        private overloadIsApplicableForArgumentHelper(paramType: PullTypeSymbol, argSym: PullSymbol, argumentIndex: number, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): boolean {
-            if (this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo, /*isInProvisionalResolution*/ true)) {
+        private overloadIsApplicableForArgumentHelper(paramType: PullTypeSymbol, argSym: PullSymbol, argumentIndex: number, assignableTo: boolean, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): boolean {
+            if (assignableTo && this.sourceIsAssignableToTarget(argSym.type, paramType, context, comparisonInfo)) {
+                return true;
+            }
+            if (!assignableTo && this.sourceIsSubtypeOfTarget(argSym.type, paramType, context, comparisonInfo)) {
                 return true;
             }
 
-            if (comparisonInfo && !comparisonInfo.message) {
+            // Only give the error when we are in the assignability pass
+            if (comparisonInfo && !comparisonInfo.message && assignableTo) {
                 comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Could_not_apply_type_0_to_argument_1_which_is_of_type_2,
                     [paramType.toString(), (argumentIndex + 1), argSym.getTypeName()]));
             }
 
             return false;
-        }
-
-        private getFirstApplicableSignature(candidateSignatures: PullSignatureSymbol[],
-            args: ASTList,
-            comparisonInfo: TypeComparisonInfo,
-            enclosingDecl: PullDecl,
-            context: PullTypeResolutionContext): PullSignatureSymbol {
-
-            for (var i = 0; i < candidateSignatures.length; i++) {
-                if (this.overloadIsApplicable(candidateSignatures[i], args, enclosingDecl, context, comparisonInfo)) {
-                    return candidateSignatures[i];
-                }
-            }
-
-            return null;
         }
 
         private inferArgumentTypesForSignature(signature: PullSignatureSymbol,
