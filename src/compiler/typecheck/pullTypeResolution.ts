@@ -11383,7 +11383,7 @@ module TypeScript {
             }
             else {
                 Debug.assert(classOrInterface.nodeType() === NodeType.ClassDeclaration);
-                // If class implementes interface or class, verify all the private members are implemented
+                // If class implementes interface or class, verify all the public members are implemented
                 this.typeCheckIfClassImplementsType(<ClassDeclaration>classOrInterface, typeSymbol, baseType, enclosingDecl, context);
             }
 
