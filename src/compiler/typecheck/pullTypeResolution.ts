@@ -8169,33 +8169,6 @@ module TypeScript {
                 type === this.semanticInfoChain.undefinedTypeSymbol;
         }
 
-        private canApplyContextualType(type: PullTypeSymbol) {
-
-            if (!type) {
-                return true;
-            }
-
-            var kind = type.kind;
-
-            if ((kind & PullElementKind.ObjectType) != 0) {
-                return true;
-            }
-            if ((kind & PullElementKind.Interface) != 0) {
-                return true;
-            }
-            else if ((kind & PullElementKind.SomeFunction) != 0) {
-                return this.canApplyContextualTypeToFunction(type, <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(type.getDeclarations[0]), true);
-            }
-            else if ((kind & PullElementKind.Array) != 0) {
-                return true;
-            }
-            else if (type == this.semanticInfoChain.anyTypeSymbol || kind != PullElementKind.Primitive) {
-                return true;
-            }
-
-            return false;
-        }
-
         public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
             var nlastChecked = 0;
@@ -9624,54 +9597,6 @@ module TypeScript {
             }
 
             return best.signature;
-        }
-
-        private canApplyContextualTypeToFunction(candidateType: PullTypeSymbol, funcDecl: FunctionDeclaration, beStringent: boolean): boolean {
-
-            // in these cases, we do not attempt to apply a contextual type
-            //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type
-            //  to its body - instead, it should be applied to its return type
-            if (funcDecl.isMethod() ||
-                beStringent && funcDecl.returnTypeAnnotation) {
-                return false;
-            }
-
-            beStringent = beStringent || (this.cachedFunctionInterfaceType() === candidateType);
-
-            // At this point, if we're not being stringent, there's no need to check for multiple call sigs
-            // or count parameters - we just want to unblock typecheck
-            if (!beStringent) {
-                return true;
-            }
-            var functionSymbol = this.getDeclForAST(funcDecl).getSymbol();
-            var signature = functionSymbol.type.getCallSignatures()[0];
-            var parameters = signature.parameters;
-            var paramLen = parameters.length;
-
-            // Check that the argument declarations have no type annotations
-            for (var i = 0; i < paramLen; i++) {
-                var param = parameters[i];
-                var argDecl = <Parameter>this.getASTForDecl(param.getDeclarations()[0]);
-
-                // REVIEW: a valid typeExpr is a requirement for varargs,
-                // so we may want to revise our invariant
-                if (beStringent && argDecl.typeExpr) {
-                    return false;
-                }
-            }
-
-            if (candidateType.getConstructSignatures().length && candidateType.getCallSignatures().length) {
-                return false;
-            }
-
-            var candidateSigs = candidateType.getConstructSignatures().length ? candidateType.getConstructSignatures() : candidateType.getCallSignatures();
-
-            if (!candidateSigs || candidateSigs.length > 1) {
-                return false;
-            }
-
-            // if we're here, the contextual type can be applied to the function
-            return true;
         }
 
         private inferArgumentTypesForSignature(signature: PullSignatureSymbol,

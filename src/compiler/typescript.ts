@@ -39,7 +39,6 @@
 ///<reference path='typecheck\pullFlags.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
 ///<reference path='typecheck\pullSymbols.ts' />
-///<reference path='typecheck\pullSymbolBindingContext.ts' />
 ///<reference path='typecheck\pullTypeResolutionContext.ts' />
 ///<reference path='typecheck\pullTypeResolution.ts' />
 ///<reference path='typecheck\pullSemanticInfo.ts' />
@@ -843,7 +842,6 @@ module TypeScript {
 
             this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
             this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-            this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
             this.logger.log("Number of symbols created: " + pullSymbolID);
             this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
             this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
