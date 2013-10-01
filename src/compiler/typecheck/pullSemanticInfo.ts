@@ -660,8 +660,7 @@ module TypeScript {
             this.topLevelDecls = [];
         }
 
-        public update() {
-
+        public invalidate() {
             // PULLTODO: Be less aggressive about clearing the cache
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
@@ -673,13 +672,6 @@ module TypeScript {
                     this.unitCache[unit].invalidate();
                 }
             } 
-        }
-
-        public invalidateUnit(compilationUnitPath: string) {
-            var unit: SemanticInfo = this.unitCache[compilationUnitPath];
-            if (unit) {
-                unit.invalidate();
-            }
         }
 
         public getDeclForAST(ast: AST, unitPath: string): PullDecl {

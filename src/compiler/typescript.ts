@@ -881,7 +881,7 @@ module TypeScript {
 
                 this.logger.log("Cleaning symbols...");
                 var cleanStart = new Date().getTime();
-                this.semanticInfoChain.update();
+                this.semanticInfoChain.invalidate();
                 var cleanEnd = new Date().getTime();
                 this.logger.log("   time to clean: " +(cleanEnd - cleanStart));
 
