@@ -26,15 +26,8 @@ module TypeScript {
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
 
-        // <-- Data to clear when we get invalidated
-        private astSymbolMap = new DataMap<PullSymbol>();
-        private astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
-        private symbolASTMap = new DataMap<AST>();
         private diagnostics: Diagnostic[] = null;
         public hasBeenTypeChecked = false;
-
-        private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
-            Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
         private importDeclarationNames: BlockIntrinsics<boolean> = null;
         // Data to clear when we get invalidated --> 
@@ -43,12 +36,8 @@ module TypeScript {
             this.compilationUnitPath = compilationUnitPath;
         }
 
-        public invalidate() {
-            this.astSymbolMap = new DataMap<PullSymbol>();
-            this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
-            this.symbolASTMap = new DataMap<AST>();
+        public invalidate(): void {
             this.diagnostics = null;
-            this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
             this.importDeclarationNames = null;
             this.hasBeenTypeChecked = false;
         }
@@ -106,69 +95,6 @@ module TypeScript {
 
             this.declASTMap.link(decl.declIDString, ast);
         }
-
-        public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-
-            if (useDirectTypeStorage) {
-                ast.symbol = symbol;
-                symbol.ast = ast;
-                return;
-            }
-
-            this.astSymbolMap.link(ast.astIDString, symbol);
-            this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
-        }
-
-        public getSymbolForAST(ast: IAST): PullSymbol {
-            if (useDirectTypeStorage) {
-                return (<AST>ast).symbol;
-            }
-
-            return this.astSymbolMap.read(ast.astIDString);
-        }
-
-        public getASTForSymbol(symbol: PullSymbol): AST {
-            if (useDirectTypeStorage) {
-                return symbol.ast;
-            }
-
-            return this.symbolASTMap.read(symbol.pullSymbolIDString);
-        }
-
-        public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
-            if (useDirectTypeStorage) {
-                ast.aliasSymbol = symbol;
-                return;
-            }
-            this.astAliasSymbolMap.link(ast.astIDString, symbol);
-        }
-
-        public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
-            if (useDirectTypeStorage) {
-                return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
-            }
-
-            return this.astAliasSymbolMap.read(ast.astIDString);
-        }
-
-
-        public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
-            if (useDirectTypeStorage) {
-                return (<InvocationExpression>ast).callResolutionData;
-            }
-            return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
-        }
-
-        public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
-            if (callResolutionData) {
-                if (useDirectTypeStorage) {
-                    (<InvocationExpression>ast).callResolutionData = callResolutionData;
-                    return;
-                }
-                this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
-            }
-        }
-
 
         public getDiagnostics(semanticErrors: Diagnostic[]) {
             if (this.diagnostics) {
@@ -250,6 +176,13 @@ module TypeScript {
         public undefinedTypeSymbol: PullTypeSymbol = null;
         public voidTypeSymbol: PullTypeSymbol = null;
         public emptyTypeSymbol: PullTypeSymbol = null;
+
+        // <-- Data to clear when we get invalidated
+        private astSymbolMap = new DataMap<PullSymbol>();
+        private astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
+        private symbolASTMap = new DataMap<AST>();
+        private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
+            Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
         public addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
@@ -661,12 +594,17 @@ module TypeScript {
         }
 
         public invalidate() {
-            // PULLTODO: Be less aggressive about clearing the cache
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
             this.units[0] = new SemanticInfo("");
             this.units[0].addTopLevelDecl(this.getGlobalDecl());
             this.cleanAllDecls();
+
+            this.astSymbolMap = new DataMap<PullSymbol>();
+            this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
+            this.symbolASTMap = new DataMap<AST>();
+            this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
+
             for (var unit in this.unitCache) {
                 if (this.unitCache[unit]) {
                     this.unitCache[unit].invalidate();
@@ -694,62 +632,66 @@ module TypeScript {
             return null;
         }
 
-        public getSymbolForAST(ast: IAST, unitPath: string): PullSymbol {
+        public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
+            if (useDirectTypeStorage) {
+                ast.symbol = symbol;
+                symbol.ast = ast;
+                return;
+            }
 
+            this.astSymbolMap.link(ast.astIDString, symbol);
+            this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
+        }
+
+        public getSymbolForAST(ast: IAST): PullSymbol {
             if (useDirectTypeStorage) {
                 return (<AST>ast).symbol;
             }
 
-            var unit = <SemanticInfo>this.unitCache[unitPath];
-
-            if (unit) {
-                return unit.getSymbolForAST(ast);
-            }
-
-            return null;
+            return this.astSymbolMap.read(ast.astIDString);
         }
 
-        public getASTForSymbol(symbol: PullSymbol, unitPath: string) {
-
+        public getASTForSymbol(symbol: PullSymbol): AST {
             if (useDirectTypeStorage) {
                 return symbol.ast;
             }
 
-            var unit = <SemanticInfo>this.unitCache[unitPath];
-
-            if (unit) {
-                return unit.getASTForSymbol(symbol);
-            }
-
-            return null;
+            return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
-        public setSymbolForAST(ast: AST, symbol: PullSymbol, unitPath: string): void {
+        public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
             if (useDirectTypeStorage) {
-                ast.symbol = symbol;
+                ast.aliasSymbol = symbol;
                 return;
             }
-
-            var unit = <SemanticInfo>this.unitCache[unitPath];
-
-            if (unit) {
-                unit.setSymbolForAST(ast, symbol);
-            }
+            this.astAliasSymbolMap.link(ast.astIDString, symbol);
         }
 
-        public getAliasSymbolForAST(ast: IAST, unitPath: string): PullTypeAliasSymbol {
+        public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
             if (useDirectTypeStorage) {
                 return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
             }
 
-            var unit = <SemanticInfo>this.unitCache[unitPath];
-
-            if (unit) {
-                return unit.getAliasSymbolForAST(ast);
-            }
-
-            return null;
+            return this.astAliasSymbolMap.read(ast.astIDString);
         }
+
+        public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
+            if (useDirectTypeStorage) {
+                return (<InvocationExpression>ast).callResolutionData;
+            }
+            return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
+        }
+
+        public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
+            if (callResolutionData) {
+                if (useDirectTypeStorage) {
+                    (<InvocationExpression>ast).callResolutionData = callResolutionData;
+                    return;
+                }
+                this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
+            }
+        }
+
 
         public removeSymbolFromCache(symbol: PullSymbol) {
 

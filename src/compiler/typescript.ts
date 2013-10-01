@@ -1099,7 +1099,7 @@ module TypeScript {
                             inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
                             this.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
-                            var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+                            var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                             if (varSymbol && inContextuallyTypedAssignment) {
                                 var contextualType = varSymbol.type;
@@ -1242,7 +1242,7 @@ module TypeScript {
                         if (inContextuallyTypedAssignment) {
                             if (propagateContextualTypes) {
                                 this.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
-                                var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST, scriptName);
+                                var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                                 var contextualType: PullTypeSymbol = null;
                                 if (varSymbol && inContextuallyTypedAssignment) {
@@ -1491,7 +1491,7 @@ module TypeScript {
 
             var ast = path.ast();
             var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
-            var aliasSymbol = this.semanticInfoChain.getUnit(document.fileName).getAliasSymbolForAST(ast);
+            var aliasSymbol = this.semanticInfoChain.getAliasSymbolForAST(ast);
 
             return {
                 symbol: symbol,

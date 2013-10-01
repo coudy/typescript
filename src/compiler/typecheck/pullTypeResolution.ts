@@ -223,13 +223,13 @@ module TypeScript {
             }
             else {
                 // Cache globally
-                this.semanticInfoChain.setSymbolForAST(ast, symbol, this.unitPath);
+                this.semanticInfoChain.setSymbolForAST(ast, symbol);
             }
         }
 
         private getSymbolForAST(ast: IAST, context: PullTypeResolutionContext): PullSymbol {
             // Check global cache
-            var symbol = this.semanticInfoChain.getSymbolForAST(ast, this.unitPath);
+            var symbol = this.semanticInfoChain.getSymbolForAST(ast);
 
             if (!symbol) {
                 // Check provisional cache
@@ -243,7 +243,7 @@ module TypeScript {
 
         private getASTForSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): AST {
             // Check global cache
-            var ast = this.semanticInfoChain.getASTForSymbol(symbol, this.unitPath);
+            var ast = this.semanticInfoChain.getASTForSymbol(symbol);
 
             if (!ast) {
                 // Check provisional cache
@@ -2207,7 +2207,7 @@ module TypeScript {
 
             if (type && !type.isGeneric()) {
                 if (aliasType) {
-                    this.currentUnit.setAliasSymbolForAST(typeRef, aliasType);
+                    this.semanticInfoChain.setAliasSymbolForAST(typeRef, aliasType);
                 }
             }
 
@@ -5465,7 +5465,7 @@ module TypeScript {
             }
 
             if (aliasSymbol) {
-                this.currentUnit.setAliasSymbolForAST(nameAST, aliasSymbol);
+                this.semanticInfoChain.setAliasSymbolForAST(nameAST, aliasSymbol);
             }
 
             return nameSymbol;
@@ -7139,14 +7139,14 @@ module TypeScript {
                 if (symbol != this.semanticInfoChain.anyTypeSymbol) {
                     this.setSymbolForAST(callEx, symbol, context);
                 }
-                this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
+                this.semanticInfoChain.setCallResolutionDataForAST(callEx, additionalResults);
             }
             else {
                 if (this.canTypeCheckAST(callEx, context)) {
                     this.typeCheckInvocationExpression(callEx, enclosingDecl, context);
                 }
 
-                var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
+                var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
                 if (additionalResults && (callResolutionData != additionalResults)) {
                     additionalResults.actualParametersContextTypeSymbols = callResolutionData.actualParametersContextTypeSymbols;
                     additionalResults.candidateSignature = callResolutionData.candidateSignature;
@@ -7170,7 +7170,7 @@ module TypeScript {
             }
 
             if (callEx.arguments) {
-                var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
+                var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
                 var isSuperCall = callEx.target.nodeType() === NodeType.SuperExpression;
 
                 var len = callEx.arguments.members.length;
@@ -7590,14 +7590,14 @@ module TypeScript {
                     this.setTypeChecked(callEx, context);
                 }
                 this.setSymbolForAST(callEx, symbol, context);
-                this.currentUnit.setCallResolutionDataForAST(callEx, additionalResults);
+                this.semanticInfoChain.setCallResolutionDataForAST(callEx, additionalResults);
             }
             else {
                 if (this.canTypeCheckAST(callEx, context)) {
                     this.typeCheckObjectCreationExpression(callEx, enclosingDecl, context);
                 }
 
-                var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
+                var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
                 if (additionalResults && (callResolutionData != additionalResults)) {
                     additionalResults.actualParametersContextTypeSymbols = callResolutionData.actualParametersContextTypeSymbols;
                     additionalResults.candidateSignature = callResolutionData.candidateSignature;
@@ -7613,9 +7613,9 @@ module TypeScript {
         private typeCheckObjectCreationExpression(callEx: ObjectCreationExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(callEx, context);
             this.resolveAST(callEx.target, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
+            var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
             if (callEx.arguments) {
-                var callResolutionData = this.currentUnit.getCallResolutionDataForAST(callEx);
+                var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
                 var len = callEx.arguments.members.length;
 
                 for (var i = 0; i < len; i++) {
@@ -8550,7 +8550,7 @@ module TypeScript {
 
                     if (extendsList && extendsList.members && extendsList.members.length) {
                         for (var j = 0; j < extendsList.members.length; j++) {
-                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsList.members[j], sourceDecls[i].getScriptName());
+                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsList.members[j]);
 
                             if (extendsSymbol && (extendsSymbol == target || this.sourceExtendsTarget(extendsSymbol, target, context))) {
                                 return true;
@@ -11247,15 +11247,15 @@ module TypeScript {
             typeSymbol: PullTypeSymbol,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext) {
-            var typeSymbolAlias = this.currentUnit.getAliasSymbolForAST(valueDeclAST);
+            var typeSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(valueDeclAST);
             var tempResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = true;
             var valueSymbol = this.computeNameExpression(valueDeclAST, enclosingDecl, context);
             context.resolvingTypeNameAsNameExpression = tempResolvingTypeNameAsNameExpression;
-            var valueSymbolAlias = this.currentUnit.getAliasSymbolForAST(valueDeclAST);
+            var valueSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(valueDeclAST);
 
             // Reset the alias value 
-            this.currentUnit.setAliasSymbolForAST(valueDeclAST, typeSymbolAlias);
+            this.semanticInfoChain.setAliasSymbolForAST(valueDeclAST, typeSymbolAlias);
 
             // If aliases are same
             if (typeSymbolAlias && valueSymbolAlias) {

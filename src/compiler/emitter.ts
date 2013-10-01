@@ -479,7 +479,7 @@ module TypeScript {
         }
 
         public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr, this.document.fileName);
+            var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
@@ -1113,7 +1113,7 @@ module TypeScript {
         public emitVariableDeclaration(declaration: VariableDeclaration) {
             var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
-            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
 
             var parentSymbol = symbol ? symbol.getContainer() : null;
             var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
@@ -1164,7 +1164,7 @@ module TypeScript {
                 var varDeclName = varDecl.id.actualText;
                 var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isNumber;
 
-                var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
+                var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
                 var parentDecl = pullDecl && pullDecl.getParentDecl();
                 var parentIsClass = parentDecl && parentDecl.kind === PullElementKind.Class;
@@ -1354,11 +1354,11 @@ module TypeScript {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
-                var pullSymbol = this.semanticInfoChain.getSymbolForAST(name, this.document.fileName);
+                var pullSymbol = this.semanticInfoChain.getSymbolForAST(name);
                 if (!pullSymbol) {
                     pullSymbol = this.semanticInfoChain.anyTypeSymbol;
                 }
-                var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name, this.document.fileName);
+                var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name);
                 if (pullSymbol && pullSymbolAlias) {
                     var symbolToCompare = this.resolvingContext.resolvingTypeReference ?
                         pullSymbolAlias.getExportAssignedTypeSymbol() :

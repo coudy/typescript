@@ -122,7 +122,7 @@ module TypeScript {
             if (container.nodeType() === NodeType.ModuleDeclaration) {
                 if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
                     var start = new Date().getTime();
-                    var declSymbol = this.compiler.semanticInfoChain.getSymbolForAST(declAST, this.document.fileName);
+                    var declSymbol = this.compiler.semanticInfoChain.getSymbolForAST(declAST);
                     var result = declSymbol && declSymbol.isExternallyVisible();
                     TypeScript.declarationEmitIsExternallyVisibleTime += new Date().getTime() - start;
 
@@ -410,7 +410,7 @@ module TypeScript {
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
 
             var start = new Date().getTime();
-            var funcSymbol = this.compiler.semanticInfoChain.getSymbolForAST(funcDecl, this.document.fileName);
+            var funcSymbol = this.compiler.semanticInfoChain.getSymbolForAST(funcDecl);
 
             TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
@@ -536,7 +536,7 @@ module TypeScript {
                     if (i > 0) {
                         this.declFile.Write(", ");
                     }
-                    var baseType = <PullTypeSymbol>this.compiler.semanticInfoChain.getSymbolForAST(bases.members[i], this.document.fileName);
+                    var baseType = <PullTypeSymbol>this.compiler.semanticInfoChain.getSymbolForAST(bases.members[i]);
                     this.emitTypeSignature(baseType);
                 }
             }
