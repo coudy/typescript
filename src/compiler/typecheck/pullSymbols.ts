@@ -627,6 +627,9 @@ module TypeScript {
     }
 
     export class PullSignatureSymbol extends PullSymbol {
+        private _specializationCache: any = {};
+        private _memberTypeParameterNameCache: BlockIntrinsics<PullTypeParameterSymbol> = null;
+        private _stringConstantOverload: boolean = undefined;
 
         public parameters: PullSymbol[] = sentinelEmptyArray;
         public typeParameters: PullTypeParameterSymbol[] = null;
@@ -640,14 +643,8 @@ module TypeScript {
 
         public cachedObjectSpecialization: PullSignatureSymbol = null;
 
-        private specializationCache: any = {};
-
-        private memberTypeParameterNameCache: BlockIntrinsics<PullTypeParameterSymbol> = null;
-
         // GTODO
         public hasAGenericParameter = false;
-
-        private stringConstantOverload: boolean = undefined;
 
         public hasBeenChecked = false;
         public inWrapCheck = false;
@@ -680,14 +677,14 @@ module TypeScript {
 
         public addSpecialization(signature: PullSignatureSymbol, typeArguments: PullTypeSymbol[]) {
             if (typeArguments && typeArguments.length) {
-                this.specializationCache[getIDForTypeSubstitutions(typeArguments)] = signature;
+                this._specializationCache[getIDForTypeSubstitutions(typeArguments)] = signature;
             }
         }
 
         public getSpecialization(typeArguments: PullTypeSymbol[]): PullSignatureSymbol {
 
             if (typeArguments) {
-                var sig = <PullSignatureSymbol>this.specializationCache[getIDForTypeSubstitutions(typeArguments)];
+                var sig = <PullSignatureSymbol>this._specializationCache[getIDForTypeSubstitutions(typeArguments)];
 
                 if (sig) {
                     return sig;
@@ -702,13 +699,13 @@ module TypeScript {
                 this.typeParameters = [];
             }
 
-            if (!this.memberTypeParameterNameCache) {
-                this.memberTypeParameterNameCache = new BlockIntrinsics();
+            if (!this._memberTypeParameterNameCache) {
+                this._memberTypeParameterNameCache = new BlockIntrinsics();
             }
 
             this.typeParameters[this.typeParameters.length] = typeParameter;
 
-            this.memberTypeParameterNameCache[typeParameter.getName()] = typeParameter;
+            this._memberTypeParameterNameCache[typeParameter.getName()] = typeParameter;
         }
 
         public getTypeParameters(): PullTypeParameterSymbol[] {
@@ -723,17 +720,17 @@ module TypeScript {
         public findTypeParameter(name: string): PullTypeParameterSymbol {
             var memberSymbol: PullTypeParameterSymbol;
 
-            if (!this.memberTypeParameterNameCache) {
-                this.memberTypeParameterNameCache = new BlockIntrinsics();
+            if (!this._memberTypeParameterNameCache) {
+                this._memberTypeParameterNameCache = new BlockIntrinsics();
 
                 if (this.typeParameters) {
                     for (var i = 0; i < this.typeParameters.length; i++) {
-                        this.memberTypeParameterNameCache[this.typeParameters[i].getName()] = this.typeParameters[i];
+                        this._memberTypeParameterNameCache[this.typeParameters[i].getName()] = this.typeParameters[i];
                     }
                 }
             }
 
-            memberSymbol = this.memberTypeParameterNameCache[name];
+            memberSymbol = this._memberTypeParameterNameCache[name];
 
             return memberSymbol;
         }
@@ -815,24 +812,24 @@ module TypeScript {
             this.nonOptionalParamCount = 0;
             this.hasOptionalParam = false;
             this.hasAGenericParameter = false;
-            this.stringConstantOverload = undefined;
+            this._stringConstantOverload = undefined;
 
             super.invalidate();
         }
 
         public isStringConstantOverloadSignature() {
-            if (this.stringConstantOverload === undefined) {
+            if (this._stringConstantOverload === undefined) {
                 var params = this.parameters;
-                this.stringConstantOverload = false;
+                this._stringConstantOverload = false;
                 for (var i = 0; i < params.length; i++) {
                     var paramType = params[i].type;
                     if (paramType && paramType.isPrimitive() && (<PullPrimitiveTypeSymbol>paramType).isStringConstant()) {
-                        this.stringConstantOverload = true;
+                        this._stringConstantOverload = true;
                     }
                 }
             }
 
-            return this.stringConstantOverload;
+            return this._stringConstantOverload;
         }
 
         static getSignatureTypeMemberName(candidateSignature: PullSignatureSymbol, signatures: PullSignatureSymbol[], scopeSymbol: PullSymbol) {
@@ -1038,13 +1035,16 @@ module TypeScript {
 
         // TODO: Really only used to track doc comments...
         private _functionSymbol: PullSymbol = null;
+        private _inMemberTypeNameEx = false;
+
 
         // GTODO
         public memberWrapsOwnTypeParameter = false;
 
-        private inMemberTypeNameEx = false;
         public inSymbolPrivacyCheck = false;
         public inWrapCheck = false;
+
+        public typeReference: PullTypeReferenceSymbol = null;
 
         constructor(name: string, kind: PullElementKind) {
             super(name, kind);
@@ -1993,7 +1993,7 @@ module TypeScript {
             var indexSignatures = this.getIndexSignatures();
 
             if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
-                if (this.inMemberTypeNameEx) {
+                if (this._inMemberTypeNameEx) {
                     var associatedContainerType = this.getAssociatedContainerType();
                     if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
                         var nameForTypeOf = associatedContainerType.getScopedNameEx(scopeSymbol);
@@ -2004,7 +2004,7 @@ module TypeScript {
                     }
                 }
 
-                this.inMemberTypeNameEx = true;
+                this._inMemberTypeNameEx = true;
 
                 var allMemberNames = new MemberNameArray();
                 var curlies = !topLevel || indexSignatures.length != 0;
@@ -2060,7 +2060,7 @@ module TypeScript {
                     allMemberNames.delim = delim;
                 }
 
-                this.inMemberTypeNameEx = false;
+                this._inMemberTypeNameEx = false;
 
                 return allMemberNames;
 

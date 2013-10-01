@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft. All rights reserved. Licensed under the Apache License, Version 2.0. 
 ///<reference path="..\typescript.ts" />
 
 module TypeScript {
@@ -5,13 +6,32 @@ module TypeScript {
     // Type references and instantiated type references
     export class PullTypeReferenceSymbol extends PullTypeSymbol {
 
+        public static createTypeReference(type: PullTypeSymbol): PullTypeReferenceSymbol {
+
+            if (type.isTypeReference()) {
+                return <PullTypeReferenceSymbol>type;
+            }
+
+            var typeReference = type.typeReference;
+
+            if (!typeReference) {
+                typeReference = new PullTypeReferenceSymbol(type.name, type.kind, type);
+                type.typeReference = typeReference;
+            }
+
+            return typeReference;
+        }
+
         // use the root symbol to model the actual type
+        // do not call this directly!
         constructor(name: string, kind: PullElementKind, public referencedTypeSymbol: PullTypeSymbol) {
             super(name, kind);
 
             Debug.assert(referencedTypeSymbol != null, "Type root symbol may not be null");
 
             this.setRootSymbol(referencedTypeSymbol);
+
+            this.typeReference = this;
         }
 
         public isTypeReference() {
@@ -30,6 +50,12 @@ module TypeScript {
             if (!this.referencedTypeSymbol.isResolved) {
                 globalResolver.resolveDeclaredSymbol(this.referencedTypeSymbol);
             }
+        }
+
+        public getReferencedTypeSymbol(): PullTypeSymbol {
+            this.ensureReferencedTypeIsResolved();
+
+            return this.referencedTypeSymbol;
         }
 
         public hasMembers(): boolean {
@@ -178,7 +204,8 @@ module TypeScript {
             return this.referencedTypeSymbol.hasOwnCallSignatures();
         }
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            // no need to resolve first - call signatures are computed in the binder
+            // GTODO: currently need to resolve to build the 'all' signature list
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getCallSignatures(collectBaseSignatures);
         }
         public hasOwnConstructSignatures(): boolean {
@@ -186,7 +213,8 @@ module TypeScript {
             return this.referencedTypeSymbol.hasOwnConstructSignatures();
         }
         public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            // no need to resolve first - construct signatures are computed in the binder
+            // GTODO: currently need to resolve to build the 'all' signature list
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getConstructSignatures(collectBaseSignatures);
         }
         public hasOwnIndexSignatures(): boolean {
@@ -194,12 +222,13 @@ module TypeScript {
             return this.referencedTypeSymbol.hasOwnIndexSignatures();
         }
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            // no need to resolve first - index signatures are computed in the binder
+            // GTODO: currently need to resolve to build the 'all' signature list
+            this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getIndexSignatures(collectBaseSignatures);
         }
 
         public addImplementedType(implementedType: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addImplementedType");
+            this.referencedTypeSymbol.addImplementedType(implementedType);
         }
         public getImplementedTypes(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
@@ -207,7 +236,7 @@ module TypeScript {
             return this.referencedTypeSymbol.getImplementedTypes();
         }
         public addExtendedType(extendedType: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addExtendedType");
+            this.referencedTypeSymbol.addExtendedType(extendedType);
         }
         public getExtendedTypes(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
@@ -215,7 +244,7 @@ module TypeScript {
             return this.referencedTypeSymbol.getExtendedTypes();
         }
         public addTypeThatExtendsThisType(type: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addTypeThatExtendsThisType");
+            this.referencedTypeSymbol.addTypeThatExtendsThisType(type);
         }
         public getTypesThatExtendThisType(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?
@@ -223,7 +252,7 @@ module TypeScript {
             return this.referencedTypeSymbol.getTypesThatExtendThisType();
         }
         public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addTypeThatExplicitlyImplementsThisType");
+            this.referencedTypeSymbol.addTypeThatExplicitlyImplementsThisType(type);
         }
         public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[]{
             // GTODO: account for generic specialization?

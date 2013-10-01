@@ -5792,6 +5792,10 @@ module TypeScript {
                         }
                     }
                 }
+
+                if (!typeNameSymbol.isGeneric() && (typeNameSymbol.isClass() || typeNameSymbol.isInterface())) {
+                    typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(typeNameSymbol);
+                }
             }
 
             return typeNameSymbol;
@@ -8292,6 +8296,14 @@ module TypeScript {
 
         public typesAreIdentical(t1: PullTypeSymbol, t2: PullTypeSymbol, val?: AST) {
 
+            if (t1 && t1.isTypeReference()) {
+                t1 = (<PullTypeReferenceSymbol>t1).getReferencedTypeSymbol();
+            }
+
+            if (t2 && t2.isTypeReference()) {
+                t2 = (<PullTypeReferenceSymbol>t2).getReferencedTypeSymbol();
+            }
+
             // This clause will cover both primitive types (since the type objects are shared),
             // as well as shared brands
             if (t1 === t2) {
@@ -8677,6 +8689,15 @@ module TypeScript {
             //if (this.typesAreIdentical(source, target)) {
             //    return true;
             //}
+
+            if (source && source.isTypeReference()) {
+                source = (<PullTypeReferenceSymbol>source).getReferencedTypeSymbol();
+            }
+
+            if (target && target.isTypeReference()) {
+                target = (<PullTypeReferenceSymbol>target).getReferencedTypeSymbol();
+            }
+
             if (source === target) {
                 return true;
             }
@@ -8868,7 +8889,9 @@ module TypeScript {
                 return true;
             }
 
-            if (this.cachedFunctionInterfaceType() && (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) && target === this.cachedFunctionInterfaceType()) {
+            if (this.cachedFunctionInterfaceType() &&
+                (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) &&
+                target === this.cachedFunctionInterfaceType()) {
                 return true;
             }
 
