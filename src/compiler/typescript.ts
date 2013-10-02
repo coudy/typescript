@@ -867,9 +867,8 @@ module TypeScript {
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
 
                 // If we havne't yet created a new resolver, clean any cached symbols
-                if (this.resolver) {
-                    this.resolver.cleanCachedGlobals();
-                }
+                this.resolver = new PullTypeResolver(
+                    this.settings, this.semanticInfoChain, oldDocument.fileName);
 
                 // replace the old semantic info               
                 this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
@@ -879,12 +878,6 @@ module TypeScript {
                 this.semanticInfoChain.invalidate();
                 var cleanEnd = new Date().getTime();
                 this.logger.log("   time to clean: " +(cleanEnd - cleanStart));
-
-                // reset the resolver's current unit, since we've replaced those decls they won't
-                // be cleaned
-                if (this.resolver) {
-                    this.resolver.setUnitPath(oldDocument.fileName);
-                }
             } );
         }
 
