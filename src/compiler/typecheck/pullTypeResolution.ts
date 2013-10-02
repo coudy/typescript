@@ -2338,9 +2338,6 @@ module TypeScript {
                 // otherwise, create a new array symbol
                 if (!arraySymbol) {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-
-                    this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), context);
-
                     arraySymbol = specializeType(this.cachedArrayInterfaceType(), [typeDeclSymbol], this, context);
 
                     if (!arraySymbol) {
@@ -6944,8 +6941,6 @@ module TypeScript {
 
             // ...But in case we haven't...
             if (!arraySymbol) {
-                this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), context);
-
                 arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, context);
 
                 if (!arraySymbol) {
@@ -8280,8 +8275,6 @@ module TypeScript {
                 // otherwise, create a new array symbol
                 if (!arraySymbol) {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-
-                    this.resolveDeclaredSymbol(this.cachedArrayInterfaceType(), context);
 
                     arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, context);
 
