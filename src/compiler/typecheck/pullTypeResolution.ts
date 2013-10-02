@@ -22,7 +22,6 @@ module TypeScript {
 
     export class PullAdditionalCallResolutionData {
         public targetSymbol: PullSymbol = null;
-        public targetTypeSymbol: PullTypeSymbol = null;
         public resolvedSignatures: PullSignatureSymbol[] = null;
         public candidateSignature: PullSignatureSymbol = null;
         public actualParametersContextTypeSymbols: PullTypeSymbol[] = null;
@@ -7152,7 +7151,6 @@ module TypeScript {
                     additionalResults.candidateSignature = callResolutionData.candidateSignature;
                     additionalResults.resolvedSignatures = callResolutionData.resolvedSignatures;
                     additionalResults.targetSymbol = callResolutionData.targetSymbol;
-                    additionalResults.targetTypeSymbol = callResolutionData.targetTypeSymbol;
                 }
             }
 
@@ -7419,7 +7417,6 @@ module TypeScript {
 
             if (!signatures.length) {
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = beforeResolutionSignatures;
                 additionalResults.candidateSignature = beforeResolutionSignatures && beforeResolutionSignatures.length ? beforeResolutionSignatures[0] : null;
 
@@ -7556,11 +7553,9 @@ module TypeScript {
 
             // Store any additional resolution results if needed before we return
             additionalResults.targetSymbol = targetSymbol;
-            additionalResults.targetTypeSymbol = targetTypeSymbol;
             if (useBeforeResolutionSignatures && beforeResolutionSignatures) {
                 additionalResults.resolvedSignatures = beforeResolutionSignatures;
                 additionalResults.candidateSignature = beforeResolutionSignatures[0];
-
             } else {
                 additionalResults.resolvedSignatures = signatures;
                 additionalResults.candidateSignature = signature;
@@ -7603,7 +7598,6 @@ module TypeScript {
                     additionalResults.candidateSignature = callResolutionData.candidateSignature;
                     additionalResults.resolvedSignatures = callResolutionData.resolvedSignatures;
                     additionalResults.targetSymbol = callResolutionData.targetSymbol;
-                    additionalResults.targetTypeSymbol = callResolutionData.targetTypeSymbol;
                 }
             }
 
@@ -7811,7 +7805,6 @@ module TypeScript {
 
                 // Store any additional resolution results if needed before we return
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = constructSignatures;
                 additionalResults.candidateSignature = signature;
                 additionalResults.actualParametersContextTypeSymbols = [];
@@ -7928,7 +7921,6 @@ module TypeScript {
 
                 // Store any additional resolution results if needed before we return
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = constructSignatures;
                 additionalResults.candidateSignature = signature;
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
