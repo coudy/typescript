@@ -10920,7 +10920,8 @@ module TypeScript {
                     // NOTE: we don't want to report this diagnostics.  They'll already have been 
                     // reported when we first hit the return statement.
                     var returnExpressionSymbol = this.resolveTypeReference(returnTypeAnnotation, decl, context);
-                    if (returnExpressionSymbol === funcReturnType) {
+                    
+                    if (PullHelpers.typeSymbolsAreIdentical(returnExpressionSymbol, funcReturnType)) {
                         // Error coming from return annotation
                         context.postError(this.unitPath, returnTypeAnnotation.minChar, returnTypeAnnotation.getLength(), messageCode, messageArguments);
                     }
@@ -10941,7 +10942,7 @@ module TypeScript {
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
                                 var returnExpressionSymbol = this.resolveAST(returnStatement.returnExpression, false, decl, context).type;
                                 // Check if return statement's type matches the one that we concluded
-                                if (returnExpressionSymbol === funcReturnType) {
+                                if (PullHelpers.typeSymbolsAreIdentical(returnExpressionSymbol, funcReturnType)) {
                                     context.postError(this.unitPath, returnStatement.minChar, returnStatement.getLength(), messageCode, messageArguments);
                                 } else {
                                     reportOnFuncDecl = true;
