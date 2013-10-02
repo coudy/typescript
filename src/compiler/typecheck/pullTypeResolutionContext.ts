@@ -133,6 +133,7 @@ module TypeScript {
 
     export class PullContextualTypeContext {
         public provisionallyTypedSymbols: PullSymbol[] = [];
+        public hasProvisionalErrors = false;
         private symbolASTMap = new DataMap<AST>();
         private astSymbolMap = new DataMap<PullSymbol>();
 
@@ -189,6 +190,13 @@ module TypeScript {
 
             tc.invalidateProvisionallyTypedSymbols();
 
+            // If the context we just popped off had provisional errors, and we are *still* in a provisional context,
+            // we need to not forget that we had provisional errors in a deeper context. We do this by setting the 
+            // hasProvisioanlErrors flag on the now top context on the stack. 
+            if (tc.hasProvisionalErrors && this.inProvisionalResolution()) {
+                this.contextStack[this.contextStack.length - 1].hasProvisionalErrors = true;
+            }
+
             return tc;
         }
 
@@ -237,6 +245,11 @@ module TypeScript {
             return (!this.contextStack.length ? false : this.contextStack[this.contextStack.length - 1].provisional);
         }
 
+        public hasProvisionalErrors() {
+            return (!this.contextStack.length ? false : this.contextStack[this.contextStack.length - 1].hasProvisionalErrors);
+        }
+
+        public inSpecialization = false;
         private inBaseTypeResolution = false;
 
         public isInBaseTypeResolution() { return this.inBaseTypeResolution; }
@@ -262,8 +275,15 @@ module TypeScript {
         }
 
         public postDiagnostic(diagnostic: Diagnostic): void {
-            if (diagnostic && this.resolver && this.typeCheck()) {
-                this.resolver.semanticInfoChain.addDiagnostic(diagnostic);
+            if (diagnostic) {
+                if (!this.inSpecialization) { // Do not report errors if in specialization resolutions, its not a typeCheckMode
+                    if (this.inProvisionalResolution()) {
+                        (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
+                    }
+                    else if (this.inTypeCheck && this.resolver) {
+                        this.resolver.semanticInfoChain.addDiagnostic(diagnostic);
+                    }
+                }
             }
         }
 

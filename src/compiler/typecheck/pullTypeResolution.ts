@@ -9466,7 +9466,8 @@ module TypeScript {
             var argSym = this.resolveAnyFunctionExpression(arg, typeParameters, parameters, returnTypeAnnotation, block,
                 true, enclosingDecl, context);
 
-            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
+            // If there are provisional errors, this is not a suitable candidate
+            var applicable = !context.hasProvisionalErrors() && this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
             var cxt = context.popContextualType();
 
             return applicable;
@@ -9489,7 +9490,8 @@ module TypeScript {
             context.pushContextualType(paramType, true, null);
             var argSym = this.resolveObjectLiteralExpression(arg, true, enclosingDecl, context);
 
-            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
+            // If there are provisional errors, this is not a suitable candidate
+            var applicable = !context.hasProvisionalErrors() && this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
 
             var cxt = context.popContextualType();
             return applicable;
@@ -9504,7 +9506,8 @@ module TypeScript {
             context.pushContextualType(paramType, true, null);
             var argSym = this.resolveArrayLiteralExpression(arg, true, enclosingDecl, context);
 
-            var applicable = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
+            // If there are provisional errors, this is not a suitable candidate
+            var applicable = !context.hasProvisionalErrors() && this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, assignableTo, comparisonInfo, context);
 
             var cxt = context.popContextualType();
 
