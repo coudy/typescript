@@ -3517,11 +3517,11 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
-            if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
-                return this.resolveTypeReference(<TypeReference>getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
-            }
+                if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
+                    return this.resolveTypeReference(<TypeReference>getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
+                }
 
-            return null;
+                return null;
         }
 
         private resolveSetterArgumentTypeAnnotation(
@@ -3529,15 +3529,14 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
-            if (setterFunctionDeclarationAst &&
-                setterFunctionDeclarationAst.arguments &&
-                setterFunctionDeclarationAst.arguments.members &&
-                setterFunctionDeclarationAst.arguments.members.length > 0) {
-                var argument = <BoundDecl>setterFunctionDeclarationAst.arguments.members[0];
-                return this.resolveTypeReference(<TypeReference>argument.typeExpr, enclosingDecl, context);
-            }
+                if (setterFunctionDeclarationAst &&
+                    setterFunctionDeclarationAst.parameters &&
+                    setterFunctionDeclarationAst.parameters.members.length > 0) {
+                    var parameter = <Parameter>setterFunctionDeclarationAst.parameters.members[0];
+                    return this.resolveTypeReference(parameter.typeExpr, enclosingDecl, context);
+                }
 
-            return null;
+                return null;
         }
 
         private resolveAccessorDeclaration(funcDeclAst: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
@@ -3582,9 +3581,16 @@ module TypeScript {
 
             //resolve accessors
             if (hasGetter) {
-                getterSymbol = this.resolveGetAccessorDeclaration(getterFunctionDeclarationAst, funcDecl.getFunctionFlags(), funcDecl.name,
-                    funcDecl.parameters, funcDecl.returnTypeAnnotation,
-                    funcDecl.block, setterAnnotatedType, context);
+                getterSymbol =
+                    this.resolveGetAccessorDeclaration(
+                        getterFunctionDeclarationAst,
+                        funcDeclAst.getFunctionFlags(),
+                        funcDeclAst.name,
+                        funcDeclAst.parameters,
+                        funcDeclAst.returnTypeAnnotation,
+                        funcDeclAst.block,
+                        setterAnnotatedType,
+                        context);
             }
 
             if (hasSetter) {
@@ -3653,7 +3659,14 @@ module TypeScript {
             if (hasGetter) {
                 if (this.canTypeCheckAST(getterFunctionDeclarationAst, context)) {
                     context.pushContextualType(getterSymbol.type, context.inProvisionalResolution(), null);
-                    this.typeCheckGetAccessorDeclaration(getterFunctionDeclarationAst, context);
+                    this.typeCheckGetAccessorDeclaration(
+                        getterFunctionDeclarationAst,
+                        getterFunctionDeclarationAst.getFunctionFlags(),
+                        getterFunctionDeclarationAst.name,
+                        getterFunctionDeclarationAst.parameters,
+                        getterFunctionDeclarationAst.returnTypeAnnotation,
+                        getterFunctionDeclarationAst.block,
+                        context);
                     context.popContextualType();
                 }
             }
@@ -3666,8 +3679,6 @@ module TypeScript {
 
             return accessorSymbol;
         }
-
-        private resolveGetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
         private resolveGetAccessorDeclaration(
             funcDeclAST: AST,
@@ -3762,13 +3773,14 @@ module TypeScript {
                 }
 
         private typeCheckGetAccessorDeclaration(
-                    funcDeclAST: AST,
-                    flags: FunctionFlags,
-                    name: Identifier,
-                    parameters: ASTList,
-                    returnTypeAnnotation: TypeReference,
-                    block: Block,
-                    context: PullTypeResolutionContext) {
+            funcDeclAST: AST,
+            flags: FunctionFlags,
+            name: Identifier,
+            parameters: ASTList,
+            returnTypeAnnotation: TypeReference,
+            block: Block,
+            context: PullTypeResolutionContext) {
+
             this.setTypeChecked(funcDeclAST, context);
 
             var funcDecl = this.getDeclForAST(funcDeclAST);
@@ -6493,14 +6505,214 @@ module TypeScript {
             return symbol;
         }
 
+        private tryBindObjectLiteralMembers(
+            objectLiteralDeclaration: PullDecl,
+            objectLiteralTypeSymbol: PullTypeSymbol,
+            objectLiteralMembers: ASTList,
+            isUsingExistingDecl: boolean,
+            isUsingExistingSymbol: boolean,
+            pullTypeContext: PullTypeResolutionContext): boolean {
+
+            var memberSymbol: PullSymbol;
+            for (var i = 0, len = objectLiteralMembers.members.length; i < len; i++) {
+                var propertyAssignment = objectLiteralMembers.members[i];
+
+                var id = this.getPropertyAssignmentName(propertyAssignment);
+                var text: string;
+                var actualText: string;
+
+                if (id.nodeType() === NodeType.Name) {
+                    actualText = (<Identifier>id).actualText;
+                    text = (<Identifier>id).text();
+                }
+                else if (id.nodeType() === NodeType.StringLiteral) {
+                    actualText = (<StringLiteral>id).actualText;
+                    text = (<StringLiteral>id).text();
+                }
+                else if (id.nodeType() === NodeType.NumericLiteral) {
+                    actualText = text = (<NumericLiteral>id).text();
+                }
+                else {
+                    return false;
+                }
+
+                // PULLTODO: Collect these at decl collection time, add them to the var decl
+                var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
+
+                var isAccessor = this.propertyAssignmentIsAccessor(propertyAssignment);
+
+                var decl = this.getDeclForAST(propertyAssignment);
+                if (!isAccessor) {
+                    if (!isUsingExistingDecl) {
+                        decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, objectLiteralDeclaration, span, this.unitPath);
+
+                        this.currentUnit.setDeclForAST(propertyAssignment, decl);
+                        this.currentUnit.setASTForDecl(decl, propertyAssignment);
+                    }
+
+                    if (!isUsingExistingSymbol) {
+                        memberSymbol = new PullSymbol(text, PullElementKind.Property);
+                        memberSymbol.addDeclaration(decl);
+                        decl.setSymbol(memberSymbol);
+                    } else {
+                        memberSymbol = decl.getSymbol();
+                    }
+                }
+                else {
+                    var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
+                    var functionDeclaration: PullDecl = null;
+
+                    if (!isUsingExistingDecl) {
+                        var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
+                        var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
+
+                        declCollectionContext.pushParent(objectLiteralDeclaration);
+
+                        getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                        functionDeclaration = this.getDeclForAST(funcDeclAST);
+                    }
+
+                    if (!isUsingExistingSymbol) {
+                        var binder = new PullSymbolBinder(this.semanticInfoChain);
+                        binder.setUnit(this.unitPath);
+
+                        if (funcDeclAST.isGetAccessor()) {
+                            binder.bindGetAccessorDeclarationToPullSymbol(functionDeclaration);
+                        }
+                        else {
+                            binder.bindSetAccessorDeclarationToPullSymbol(functionDeclaration);
+                        }
+                    }
+                }
+
+                if (!isUsingExistingSymbol && !isAccessor) {
+                    // Make sure this was not defined before
+                    if (objectLiteralTypeSymbol.findMember(memberSymbol.name)) {
+                        pullTypeContext.postError(this.getUnitPath(), propertyAssignment.minChar, propertyAssignment.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
+                    }
+                    else {
+                        objectLiteralTypeSymbol.addMember(memberSymbol);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private resolveObjectLiteralMembers(
+            enclosingDecl: PullDecl,
+            objectLiteralDeclaration: PullDecl,
+            objectLiteralTypeSymbol: PullTypeSymbol,
+            objectLiteralContextualType: PullTypeSymbol,
+            objectLiteralMembers: ASTList,
+            stringIndexerSignature: PullSignatureSymbol,
+            numericIndexerSignature: PullSignatureSymbol,
+            allMemberTypes: PullTypeSymbol[],
+            allNumericMemberTypes: PullTypeSymbol[],
+            isUsingExistingDecl: boolean,
+            isUsingExistingSymbol: boolean,
+            pullTypeContext: PullTypeResolutionContext,
+            additionalResults?: PullAdditionalObjectLiteralResolutionData) {
+
+
+            for (var i = 0, len = objectLiteralMembers.members.length; i < len; i++) {
+                var propertyAssignment = objectLiteralMembers.members[i];
+
+                var acceptedContextualType = false;
+                var assigningSymbol: PullSymbol = null;
+
+                var id = this.getPropertyAssignmentName(propertyAssignment);
+                var text: string;
+
+                if (id.nodeType() === NodeType.Name) {
+                    text = (<Identifier>id).text();
+                }
+                else if (id.nodeType() === NodeType.StringLiteral) {
+                    text = (<StringLiteral>id).text();
+                }
+                else if (id.nodeType() === NodeType.NumericLiteral) {
+                    text = (<NumericLiteral>id).text();
+                }
+                // else would be caught in the binding pass
+
+                if (objectLiteralContextualType) {
+                    assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, objectLiteralContextualType);
+
+                    // Consider index signatures as potential contextual types
+                    if (!assigningSymbol) {
+                        if (numericIndexerSignature && PullHelpers.isNameNumeric(text)) {
+                            assigningSymbol = numericIndexerSignature;
+                        }
+                        else if (stringIndexerSignature) {
+                            assigningSymbol = stringIndexerSignature;
+                        }
+                    }
+
+                    if (assigningSymbol) {
+                        this.resolveDeclaredSymbol(assigningSymbol, pullTypeContext);
+
+                        var contextualMemberType = assigningSymbol.kind === PullElementKind.IndexSignature ? (<PullSignatureSymbol>assigningSymbol).returnType : assigningSymbol.type;
+                        pullTypeContext.pushContextualType(contextualMemberType, pullTypeContext.inProvisionalResolution(), null);
+
+                        acceptedContextualType = true;
+
+                        if (additionalResults) {
+                            additionalResults.membersContextTypeSymbols[i] = contextualMemberType;
+                        }
+                    }
+                }
+
+                var propertySymbol = this.resolveAST(propertyAssignment, contextualMemberType != null, enclosingDecl, pullTypeContext);
+                var memberExpr = this.widenType(propertyAssignment, propertySymbol.type, enclosingDecl, pullTypeContext);
+
+                if (memberExpr.type) {
+                    if (memberExpr.type.isGeneric()) {
+                        objectLiteralTypeSymbol.setHasGenericMember();
+                    }
+
+                    // Add the member to the appropriate member type lists to compute the type of the synthesized index signatures
+                    if (stringIndexerSignature) {
+                        allMemberTypes.push(memberExpr.type);
+                    }
+                    if (numericIndexerSignature && PullHelpers.isNameNumeric(propertySymbol.name)) {
+                        allNumericMemberTypes.push(memberExpr.type);
+                    }
+                }
+
+                var isAccessor = this.propertyAssignmentIsAccessor(propertyAssignment);
+                if (!isUsingExistingSymbol) {
+                    if (isAccessor) {
+                        this.setSymbolForAST(id, memberExpr, pullTypeContext);
+                    } else {
+
+                        pullTypeContext.setTypeInContext(propertySymbol, memberExpr.type);
+                        propertySymbol.setResolved();
+
+                        this.setSymbolForAST(id, propertySymbol, pullTypeContext);
+
+                        if (acceptedContextualType) {
+                            pullTypeContext.popContextualType();
+                        }
+                    }
+                }
+            }
+        }
+
         // if there's no type annotation on the assigning AST, we need to create a type from each binary expression
         // in the object literal
-        private computeObjectLiteralExpression(objectLitAST: ObjectLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
+        private computeObjectLiteralExpression(
+            objectLitAST: ObjectLiteralExpression,
+            inContextuallyTypedAssignment: boolean,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext,
+            additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             // PULLTODO: Create a decl for the object literal
 
             // walk the members of the object literal,
             // create fields for each based on the value assigned in
             var span = TextSpan.fromBounds(objectLitAST.minChar, objectLitAST.limChar);
+
 
             var objectLitDecl = this.getDeclForAST(objectLitAST);
             var typeSymbol = <PullTypeSymbol>this.getSymbolForAST(objectLitAST, context);
@@ -6521,256 +6733,74 @@ module TypeScript {
                 objectLitDecl.setSymbol(typeSymbol);
             }
 
-            var memberDecls = objectLitAST.propertyAssignments;
+            var propertyAssignments = objectLitAST.propertyAssignments;
             var contextualType: PullTypeSymbol = null;
 
             if (inContextuallyTypedAssignment) {
                 contextualType = context.getContextualType();
-
                 this.resolveDeclaredSymbol(contextualType, context);
             }
 
+            var stringIndexerSignature: PullSignatureSymbol = null;
+            var numericIndexerSignature: PullSignatureSymbol = null;
+            var allMemberTypes: PullTypeSymbol[] = null;
+            var allNumericMemberTypes: PullTypeSymbol[] = null;
+             
             // Get the index signatures for contextual typing
             if (contextualType) {
                 var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
-                var stringSignature = indexSignatures.stringSignature;
-                var numberSignature = indexSignatures.numericSignature;
+
+                stringIndexerSignature = indexSignatures.stringSignature;
+                numericIndexerSignature = indexSignatures.numericSignature;
 
                 // Start collecting the types of all the members so we can stamp the object literal with the proper index signatures
-                var allMemberTypes: PullTypeSymbol[] = null;
-                var allNumericMemberTypes: PullTypeSymbol[] = null;
-                if (stringSignature) {
-                    allMemberTypes = [stringSignature.returnType];
+                if (stringIndexerSignature) {
+                    allMemberTypes = [stringIndexerSignature.returnType];
                 }
-                if (numberSignature) {
-                    allNumericMemberTypes = [numberSignature.returnType];
+
+                if (numericIndexerSignature) {
+                    allNumericMemberTypes = [numericIndexerSignature.returnType];
                 }
             }
 
-            if (memberDecls) {
-                var memberSymbol: PullSymbol;
-                var assigningSymbol: PullSymbol = null;
-                var acceptedContextualType = false;
+            if (propertyAssignments) {
 
                 if (additionalResults) {
                     additionalResults.membersContextTypeSymbols = [];
                 }
 
                 // first bind decls and symbols
-                for (var i = 0, len = memberDecls.members.length; i < len; i++) {
-                    var propertyAssignment = memberDecls.members[i];
-
-                    var id = this.getPropertyAssignmentName(propertyAssignment);
-                    var text: string;
-                    var actualText: string;
-
-                    if (id.nodeType() === NodeType.Name) {
-                        actualText = (<Identifier>id).actualText;
-                        text = (<Identifier>id).text();
-                    }
-                    else if (id.nodeType() === NodeType.StringLiteral) {
-                        actualText = (<StringLiteral>id).actualText;
-                        text = (<StringLiteral>id).text();
-                    }
-                    else if (id.nodeType() === NodeType.NumericLiteral) {
-                        actualText = text = (<NumericLiteral>id).text();
-                    }
-                    else {
-                        // TODO: no error for this?
-                        return this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    // PULLTODO: Collect these at decl collection time, add them to the var decl
-                    span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
-
-                    var isAccessor = this.propertyAssignmentIsAccessor(propertyAssignment);
-
-                    var decl = this.getDeclForAST(propertyAssignment);
-                    if (!isAccessor) {
-                        if (!isUsingExistingDecl) {
-                            decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, objectLitDecl, span, this.unitPath);
-
-                            this.currentUnit.setDeclForAST(propertyAssignment, decl);
-                            this.currentUnit.setASTForDecl(decl, propertyAssignment);
-                        }
-
-                        if (!isUsingExistingSymbol) {
-                            memberSymbol = new PullSymbol(text, PullElementKind.Property);
-                            memberSymbol.addDeclaration(decl);
-                            decl.setSymbol(memberSymbol);
-                        } else {
-                            memberSymbol = decl.getSymbol();
-                        }
-                    }
-                    else {
-                        var funcDeclAST = <FunctionDeclaration>binex.operand2;
-                        if (!isUsingExistingDecl) {
-                            var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                            var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
-
-                            declCollectionContext.pushParent(objectLitDecl);
-
-                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                            var functionDecl = this.getDeclForAST(funcDeclAST);
-                            this.currentUnit.addSynthesizedDecl(functionDecl);
-                        }
-
-                        if (!isUsingExistingSymbol) {
-                            var binder = new PullSymbolBinder(this.semanticInfoChain);
-                            binder.setUnit(this.unitPath);
-
-                            if (funcDeclAST.isGetAccessor()) {
-                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                            else {
-                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                        }
-                    }
-
-                    if (!isUsingExistingSymbol && !isAccessor) {
-                        // Make sure this was not defined before
-                        if (typeSymbol.findMember(memberSymbol.name)) {
-                            context.postError(this.getUnitPath(), binex.minChar, binex.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
-                        }
-                        else {
-                            typeSymbol.addMember(memberSymbol);
-                        }
-                    }
+                if (!this.tryBindObjectLiteralMembers(objectLitDecl, typeSymbol, propertyAssignments, isUsingExistingDecl, isUsingExistingSymbol, context)) {
+                    // TODO: no error for this?
+                    return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                // now perform symbol resolution
-                for (var i = 0, len = memberDecls.members.length; i < len; i++) {
-                    binex = objectLiteralMembers[i];
-
-                    var id = binex.operand1,
-                        text: string;
-
-                    if (id.nodeType() === NodeType.Name) {
-                        text = (<Identifier>id).text();
-                    }
-                    else if (id.nodeType() === NodeType.StringLiteral) {
-                        text = (<StringLiteral>id).text();
-                    }
-                    else if (id.nodeType() === NodeType.NumericLiteral) {
-                        text = (<NumericLiteral>id).text();
-                    }
-                    // else would be caught in the first pass above
-
-                    if (contextualType) {
-                        assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, contextualType);
-
-                        // Consider index signatures as potential contextual types
-                        if (!assigningSymbol) {
-                            if (numberSignature && PullHelpers.isNameNumeric(text)) {
-                                assigningSymbol = numberSignature;
-                            }
-                            else if (stringSignature) {
-                                assigningSymbol = stringSignature;
-                            }
-                        }
-
-                        if (assigningSymbol) {
-                            this.resolveDeclaredSymbol(assigningSymbol, context);
-
-                            var contextualMemberType = assigningSymbol.kind === PullElementKind.IndexSignature ? (<PullSignatureSymbol>assigningSymbol).returnType : assigningSymbol.type;
-                            context.pushContextualType(contextualMemberType, context.inProvisionalResolution(), null);
-
-                            acceptedContextualType = true;
-
-                            if (additionalResults) {
-                                additionalResults.membersContextTypeSymbols[i] = contextualMemberType;
-                            }
-                        }
-                    }
-                    //MERGED
-                    // if operand 2 is a getter or a setter, we need to resolve it properly
-                    if (isAccessor) {
-                        var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
-                        if (!isUsingExistingDecl) {
-                            var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
-
-                            declCollectionContext.pushParent(objectLitDecl);
-
-                            getAstWalkerFactory().walk(funcDeclAST, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                            var functionDecl = this.getDeclForAST(funcDeclAST);
-                        }
-
-                        if (!isUsingExistingSymbol) {
-                            var binder = new PullSymbolBinder(this.semanticInfoChain);
-                            binder.setUnit(this.unitPath);
-
-                            if (funcDeclAST.isGetAccessor()) {
-                                binder.bindGetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                            else {
-                                binder.bindSetAccessorDeclarationToPullSymbol(functionDecl);
-                            }
-                        }
-                    }
-                    else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
-                        if (!isUsingExistingDecl) {
-                            var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
-                            /// MEREGED CONTENT
-                            declCollectionContext.pushParent(objectLitDecl);
-                            ////MERGED
-                            getAstWalkerFactory().walk(propertyAssignment, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                            var functionDecl = this.getDeclForAST(propertyAssignment);
-                        }
-
-                        var binder = new PullSymbolBinder(this.semanticInfoChain);
-                        binder.setUnit(this.unitPath);
-
-                        binder.bindFunctionExpressionToPullSymbol(decl);
-                    }
-
-                    var propertySymbol = this.resolveAST(propertyAssignment, contextualMemberType != null, enclosingDecl, context);
-                    var memberExpr = this.widenType(propertyAssignment, propertySymbol.type, enclosingDecl, context);
-                    ///merged
-                    if (memberExpr.type) {
-                        if (memberExpr.type.isGeneric()) {
-                            typeSymbol.setHasGenericMember();
-                        }
-
-                        // Add the member to the appropriate member type lists to compute the type of the synthesized index signatures
-                        if (stringSignature) {
-                            allMemberTypes.push(memberExpr.type);
-                        }
-                        if (numberSignature && PullHelpers.isNameNumeric(memberSymbol.name)) {
-                            allNumericMemberTypes.push(memberExpr.type);
-                        }
-                    }
-
-                    var isAccessor = binex.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor();
-                    if (!isUsingExistingSymbol) {
-                        if (isAccessor) {
-                            this.setSymbolForAST(id, memberExpr, context);
-                        } else {
-                            
-                            context.setTypeInContext(memberSymbol, memberExpr.type);
-                            memberSymbol.setResolved();
-
-                            this.setSymbolForAST(id, memberSymbol, context);
-                       
-
-                    if (acceptedContextualType) {
-                        context.popContextualType();
-                        acceptedContextualType = false;
-                    }
-                }
+                // now perform member symbol resolution
+                this.resolveObjectLiteralMembers(
+                    enclosingDecl,
+                    objectLitDecl,
+                    typeSymbol,
+                    contextualType,
+                    propertyAssignments,
+                    stringIndexerSignature,
+                    numericIndexerSignature,
+                    allMemberTypes,
+                    allNumericMemberTypes,
+                    isUsingExistingDecl,
+                    isUsingExistingSymbol,
+                    context,
+                    additionalResults);
 
                 if (!isUsingExistingSymbol) {
-                    this.stampObjectLiteralWithIndexSignature(typeSymbol, allMemberTypes, stringSignature, context);
-                    this.stampObjectLiteralWithIndexSignature(typeSymbol, allNumericMemberTypes, numberSignature, context);
+                    this.stampObjectLiteralWithIndexSignature(typeSymbol, allMemberTypes, stringIndexerSignature, context);
+                    this.stampObjectLiteralWithIndexSignature(typeSymbol, allNumericMemberTypes, numericIndexerSignature, context);
                 }
             }
 
             if (!this.getSymbolForAST(objectLitAST, context)) {
                 objectLitDecl.setSymbol(null);
             }
+
             typeSymbol.setResolved();
             return typeSymbol;
         }
