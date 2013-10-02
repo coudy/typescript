@@ -723,7 +723,6 @@ module TypeScript {
         }
 
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
-            var errors: Diagnostic[] = [];
             var unit = this.semanticInfoChain.getUnit(fileName);
 
             globalSemanticInfoChain = this.semanticInfoChain;
@@ -735,16 +734,14 @@ module TypeScript {
                 var document = this.getDocument(fileName);
                 var script = document.script;
 
-                if (script) {
-                    var startTime = (new Date()).getTime();
-                    PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
+                var startTime = (new Date()).getTime();
+                PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
                     var endTime = (new Date()).getTime();
 
-                    typeCheckTime += endTime - startTime;
-
-                    unit.getDiagnostics(errors);
-                }
+                typeCheckTime += endTime - startTime;
             }
+
+            var errors = this.semanticInfoChain.getDiagnostics(fileName);
 
             errors = ArrayUtilities.distinct(errors, Diagnostic.equals);
             errors.sort((d1, d2) => {
