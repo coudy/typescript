@@ -1004,6 +1004,8 @@ module TypeScript {
         }
 
         private typeCheckScript(script: Script, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+            this.setTypeChecked(script, context);
+
             this.typeCheckAST(script.moduleElements, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
@@ -9933,20 +9935,18 @@ module TypeScript {
             return signatureToSpecialize.cachedObjectSpecialization;
         }
 
-        private static globalTypeCheckPhase = 0;
+        public static globalTypeCheckPhase = 0;
 
         // type check infrastructure
         public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
             var unit = semanticInfoChain.getUnit(scriptName);
 
-            if (!unit.hasBeenTypeChecked) {
-                unit.hasBeenTypeChecked = true;
+            var scriptDecl = unit.getTopLevelDecl();
 
-                var scriptDecl = unit.getTopLevelDecl();
+            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+            var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
 
-                var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
-                var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
-
+            if (resolver.canTypeCheckAST(script, context)) {
                 resolver.resolveAST(script, /*inContextuallyTypedAssignment:*/ false, scriptDecl, context);
                 resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
@@ -9956,8 +9956,6 @@ module TypeScript {
                 }
 
                 resolver.processPostTypeCheckWorkItems(context);
-
-                PullTypeResolver.globalTypeCheckPhase++;
             }
         }
 

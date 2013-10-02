@@ -26,10 +26,7 @@ module TypeScript {
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
 
-        public hasBeenTypeChecked = false;
-
         private importDeclarationNames: BlockIntrinsics<boolean> = null;
-        // Data to clear when we get invalidated --> 
 
         constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
@@ -37,7 +34,6 @@ module TypeScript {
 
         public invalidate(): void {
             this.importDeclarationNames = null;
-            this.hasBeenTypeChecked = false;
         }
 
         public addTopLevelDecl(decl: PullDecl) {

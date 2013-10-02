@@ -846,7 +846,6 @@ module TypeScript {
 
         private pullUpdateScript(oldDocument: Document, newDocument: Document): void {
             this.timeFunction("pullUpdateScript: ", () => {
-
                 var oldScript = oldDocument.script;
                 var newScript = newDocument.script;
                 
@@ -877,8 +876,12 @@ module TypeScript {
                 var cleanStart = new Date().getTime();
                 this.semanticInfoChain.invalidate();
                 var cleanEnd = new Date().getTime();
-                this.logger.log("   time to clean: " +(cleanEnd - cleanStart));
-            } );
+                this.logger.log("   time to clean: " + (cleanEnd - cleanStart));
+
+                // A file has changed, increment the type check phase so that future type chech
+                // operations will proceed.
+                PullTypeResolver.globalTypeCheckPhase++;
+            });
         }
 
         public getSymbolOfDeclaration(decl: PullDecl): PullSymbol {
