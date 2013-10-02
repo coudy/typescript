@@ -90,15 +90,19 @@ module TypeScript {
     }
 
     export interface BoundDeclInfo {
-        boundDecl: BoundDecl;
+        boundDecl: VariableDeclarator;
         pullDecl: PullDecl;
+    }
+
+    export function lastParameterIsRest(parameters: ASTList): boolean {
+        return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).isRest;
     }
 
     export class Emitter {
         public globalThisCapturePrologueEmitted = false;
         public extendsPrologueEmitted = false;
         public thisClassNode: ClassDeclaration = null;
-        public thisFunctionDeclaration: FunctionDeclaration = null;
+        public inArrowFunction: boolean = false;
         public moduleName = "";
         public emitState = new EmitState();
         public indenter = new Indenter();
@@ -394,11 +398,13 @@ module TypeScript {
             }
         }
 
-        public emitObjectLiteral(objectLiteral: UnaryExpression) {
+        public emitObjectLiteralExpression(objectLiteral: ObjectLiteralExpression) {
             var useNewLines = !hasFlag(objectLiteral.getFlags(), ASTFlags.SingleLine);
 
+            this.recordSourceMappingStart(objectLiteral);
+
             this.writeToOutput("{");
-            var list = <ASTList>objectLiteral.operand;
+            var list = objectLiteral.propertyAssignments;
             if (list.members.length > 0) {
                 if (useNewLines) {
                     this.writeLineToOutput("");
@@ -418,13 +424,17 @@ module TypeScript {
                 }
             }
             this.writeToOutput("}");
+
+            this.recordSourceMappingEnd(objectLiteral);
         }
 
-        public emitArrayLiteral(arrayLiteral: UnaryExpression) {
+        public emitArrayLiteralExpression(arrayLiteral: ArrayLiteralExpression) {
             var useNewLines = !hasFlag(arrayLiteral.getFlags(), ASTFlags.SingleLine);
 
+            this.recordSourceMappingStart(arrayLiteral);
+
             this.writeToOutput("[");
-            var list = <ASTList>arrayLiteral.operand;
+            var list = arrayLiteral.expressions;
             if (list.members.length > 0) {
                 if (useNewLines) {
                     this.writeLineToOutput("");
@@ -438,6 +448,8 @@ module TypeScript {
                 }
             }
             this.writeToOutput("]");
+
+            this.recordSourceMappingEnd(arrayLiteral);
         }
 
         public emitObjectCreationExpression(objectCreationExpression: ObjectCreationExpression) {
@@ -466,32 +478,8 @@ module TypeScript {
             this.recordSourceMappingEnd(objectCreationExpression);
         }
 
-        public getVarDeclFromIdentifier(boundDeclInfo: BoundDeclInfo): BoundDeclInfo {
-            CompilerDiagnostics.assert(boundDeclInfo.boundDecl && boundDeclInfo.boundDecl.init &&
-                boundDeclInfo.boundDecl.init.nodeType() === NodeType.Name,
-                "The init expression of bound declaration when emitting as constant has to be indentifier");
-
-            var init = boundDeclInfo.boundDecl.init;
-            var ident = <Identifier>init;
-
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(boundDeclInfo.boundDecl, this.document.fileName);
-
-            if (pullSymbol) {
-                var pullDecls = pullSymbol.getDeclarations();
-                if (pullDecls.length === 1) {
-                    var pullDecl = pullDecls[0];
-                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    if (ast && ast.nodeType() === NodeType.VariableDeclarator) {
-                        return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
-                    }
-                }
-            }
-
-            return null;
-        }
-
         public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
-            var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr, this.document.fileName);
+            var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
@@ -572,6 +560,32 @@ module TypeScript {
             this.recordSourceMappingEnd(callNode);
         }
 
+        private emitFunctionParameters(parameters: ASTList): void {
+            var argsLen = 0;
+
+            if (parameters) {
+                this.emitComments(parameters, true);
+
+                var tempContainer = this.setContainer(EmitContainer.Args);
+                argsLen = parameters.members.length;
+                var printLen = argsLen;
+                if (lastParameterIsRest(parameters)) {
+                    printLen--;
+                }
+                for (var i = 0; i < printLen; i++) {
+                    var arg = <Parameter>parameters.members[i];
+                    arg.emit(this);
+
+                    if (i < (printLen - 1)) {
+                        this.writeToOutput(", ");
+                    }
+                }
+                this.setContainer(tempContainer);
+
+                this.emitComments(parameters, false);
+            }
+        }
+
         public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, includePreComments = true) {
 
             /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
@@ -609,7 +623,7 @@ module TypeScript {
                 this.writeToOutput("function ");
             }
 
-            if (funcDecl.isConstructor) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.writeToOutput(this.thisClassNode.name.actualText);
             }
 
@@ -627,31 +641,10 @@ module TypeScript {
             }
 
             this.writeToOutput("(");
-            var argsLen = 0;
-            if (funcDecl.arguments) {
-                this.emitComments(funcDecl.arguments, true);
-
-                var tempContainer = this.setContainer(EmitContainer.Args);
-                argsLen = funcDecl.arguments.members.length;
-                var printLen = argsLen;
-                if (funcDecl.variableArgList) {
-                    printLen--;
-                }
-                for (var i = 0; i < printLen; i++) {
-                    var arg = <Parameter>funcDecl.arguments.members[i];
-                    arg.emit(this);
-
-                    if (i < (printLen - 1)) {
-                        this.writeToOutput(", ");
-                    }
-                }
-                this.setContainer(tempContainer);
-
-                this.emitComments(funcDecl.arguments, false);
-            }
+            this.emitFunctionParameters(funcDecl.parameters);
             this.writeLineToOutput(") {");
 
-            if (funcDecl.isConstructor) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.recordSourceMappingNameStart("constructor");
             } else if (funcDecl.isGetAccessor()) {
                 this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
@@ -662,14 +655,14 @@ module TypeScript {
             }
             this.indenter.increaseIndent();
 
-            this.emitDefaultValueAssignments(funcDecl);
-            this.emitRestParameterInitializer(funcDecl);
+            this.emitDefaultValueAssignments(funcDecl.parameters);
+            this.emitRestParameterInitializer(funcDecl.parameters);
 
             if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
-            if (funcDecl.isConstructor) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 this.emitConstructorStatements(funcDecl);
             }
             else {
@@ -697,14 +690,14 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
-        private emitDefaultValueAssignments(funcDecl: FunctionDeclaration): void {
-            var n = funcDecl.arguments.members.length;
-            if (funcDecl.variableArgList) {
+        private emitDefaultValueAssignments(parameters: ASTList): void {
+            var n = parameters.members.length;
+            if (lastParameterIsRest(parameters)) {
                 n--;
             }
 
             for (var i = 0; i < n; i++) {
-                var arg = <Parameter>funcDecl.arguments.members[i];
+                var arg = <Parameter>parameters.members[i];
                 if (arg.init) {
                     this.emitIndent();
                     this.recordSourceMappingStart(arg);
@@ -718,10 +711,10 @@ module TypeScript {
             }
         }
 
-        private emitRestParameterInitializer(funcDecl: FunctionDeclaration): void {
-            if (funcDecl.variableArgList) {
-                var n = funcDecl.arguments.members.length;
-                var lastArg = <Parameter>funcDecl.arguments.members[n - 1];
+        private emitRestParameterInitializer(parameters: ASTList): void {
+            if (lastParameterIsRest(parameters)) {
+                var n = parameters.members.length;
+                var lastArg = <Parameter>parameters.members[n - 1];
                 this.emitIndent();
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("var ");
@@ -991,15 +984,69 @@ module TypeScript {
             this.writeToOutput("]");
         }
 
+        public emitArrowFunctionExpression(arrowFunction: ArrowFunctionExpression): void {
+            var savedInArrowFunction = this.inArrowFunction;
+            this.inArrowFunction = true;
+
+            var temp = this.setContainer(EmitContainer.Function);
+
+            var funcName = arrowFunction.getNameText();
+
+            this.recordSourceMappingStart(arrowFunction);
+
+            // Start
+            var pullDecl = this.semanticInfoChain.getDeclForAST(arrowFunction, this.document.fileName);
+            this.pushDecl(pullDecl);
+
+            this.emitComments(arrowFunction, true);
+
+            this.recordSourceMappingStart(arrowFunction);
+            this.writeToOutput("function ");
+            this.writeToOutput("(");
+            this.emitFunctionParameters(arrowFunction.parameters);
+            this.writeLineToOutput(") {");
+
+            this.recordSourceMappingNameStart(arrowFunction.getNameText());
+
+            this.indenter.increaseIndent();
+
+            this.emitDefaultValueAssignments(arrowFunction.parameters);
+            this.emitRestParameterInitializer(arrowFunction.parameters);
+
+            if (this.shouldCaptureThis(arrowFunction)) {
+                this.writeCaptureThisStatement(arrowFunction);
+            }
+
+            this.emitList(arrowFunction.block.statements);
+
+            this.emitCommentsArray(arrowFunction.block.closeBraceLeadingComments);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", arrowFunction.block.closeBraceSpan);
+
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(arrowFunction);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(arrowFunction);
+
+            this.emitComments(arrowFunction, false);
+
+            this.popDecl(pullDecl);
+            this.setContainer(temp);
+            this.inArrowFunction = savedInArrowFunction;
+        }
+
         public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
             var temp: number;
-            var tempFnc = this.thisFunctionDeclaration;
-            this.thisFunctionDeclaration = funcDecl;
+            var savedInArrowFunction = this.inArrowFunction;
+            this.inArrowFunction = false;
 
-            if (funcDecl.isConstructor) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
                 temp = this.setContainer(EmitContainer.Constructor);
             }
             else {
@@ -1014,7 +1061,7 @@ module TypeScript {
                 this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()));
             }
             this.setContainer(temp);
-            this.thisFunctionDeclaration = tempFnc;
+            this.inArrowFunction = savedInArrowFunction;
 
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
                 var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
@@ -1066,7 +1113,7 @@ module TypeScript {
         public emitVariableDeclaration(declaration: VariableDeclaration) {
             var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
-            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
 
             var parentSymbol = symbol ? symbol.getContainer() : null;
             var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
@@ -1117,7 +1164,7 @@ module TypeScript {
                 var varDeclName = varDecl.id.actualText;
                 var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isNumber;
 
-                var symbol = this.semanticInfoChain.getSymbolForAST(varDecl, this.document.fileName);
+                var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
                 var parentDecl = pullDecl && pullDecl.getParentDecl();
                 var parentIsClass = parentDecl && parentDecl.kind === PullElementKind.Class;
@@ -1253,7 +1300,8 @@ module TypeScript {
         // Emits the container name of the symbol in the given enclosing context
         private emitSymbolContainerNameInEnclosingContext(pullSymbol: PullSymbol) {
             var decl = pullSymbol.getDeclarations()[0];
-            var symbolContainerDeclPath = getPathToDecl(decl.getParentDecl());
+            var parentDecl = decl.getParentDecl();
+            var symbolContainerDeclPath = parentDecl? parentDecl.getParentPath(): <PullDecl[]>[];
 
             var enclosingContextDeclPath = this.declStack;
             var potentialDeclPath = symbolContainerDeclPath;
@@ -1306,11 +1354,11 @@ module TypeScript {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
             if (!name.isMissing()) {
-                var pullSymbol = this.semanticInfoChain.getSymbolForAST(name, this.document.fileName);
+                var pullSymbol = this.semanticInfoChain.getSymbolForAST(name);
                 if (!pullSymbol) {
                     pullSymbol = this.semanticInfoChain.anyTypeSymbol;
                 }
-                var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name, this.document.fileName);
+                var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name);
                 if (pullSymbol && pullSymbolAlias) {
                     var symbolToCompare = this.resolvingContext.resolvingTypeReference ?
                         pullSymbolAlias.getExportAssignedTypeSymbol() :
@@ -1471,9 +1519,9 @@ module TypeScript {
             // emit any parameter properties first
             var constructorDecl = this.thisClassNode.constructorDecl;
 
-            if (constructorDecl && constructorDecl.arguments) {
-                for (var i = 0, n = constructorDecl.arguments.members.length; i < n; i++) {
-                    var arg = <BoundDecl>constructorDecl.arguments.members[i];
+            if (constructorDecl && constructorDecl.parameters) {
+                for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
+                    var arg = <Parameter>constructorDecl.parameters.members[i];
                     if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
                         this.emitIndent();
                         this.recordSourceMappingStart(arg);
@@ -2030,7 +2078,7 @@ module TypeScript {
         }
 
         public emitThis() {
-            if (this.thisFunctionDeclaration && hasFlag(this.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction)) {
+            if (this.inArrowFunction) {
                 this.writeToOutput("_this");
             }
             else {
@@ -2081,7 +2129,7 @@ module TypeScript {
         }
 
         public emitThisExpression(expression: ThisExpression): void {
-            if (this.thisFunctionDeclaration && (hasFlag(this.thisFunctionDeclaration.getFunctionFlags(), FunctionFlags.IsFatArrowFunction))) {
+            if (this.inArrowFunction) {
                 this.writeToOutputWithSourceMapRecord("_this", expression);
             }
             else {
@@ -2129,12 +2177,6 @@ module TypeScript {
                 case NodeType.PostDecrementExpression:
                     expression.operand.emit(this);
                     this.writeToOutput("--");
-                    break;
-                case NodeType.ObjectLiteralExpression:
-                    this.emitObjectLiteral(expression);
-                    break;
-                case NodeType.ArrayLiteralExpression:
-                    this.emitArrayLiteral(expression);
                     break;
                 case NodeType.BitwiseNotExpression:
                     this.writeToOutput("~");
@@ -2236,6 +2278,77 @@ module TypeScript {
             this.recordSourceMappingEnd(expression);
         }
 
+        public emitSimplePropertyAssignment(property: SimplePropertyAssignment): void {
+            this.recordSourceMappingStart(property);
+            property.propertyName.emit(this);
+            this.writeToOutput(": ");
+            property.expression.emit(this);
+            this.recordSourceMappingEnd(property);
+        }
+
+        public emitFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment): void {
+            this.recordSourceMappingStart(funcProp);
+
+            funcProp.propertyName.emit(this);
+            this.writeToOutput(": ");
+
+            var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcProp, this.document.fileName);
+
+            var savedInArrowFunction = this.inArrowFunction;
+            this.inArrowFunction = false;
+
+            var temp = this.setContainer(EmitContainer.Function);
+            var funcName = funcProp.propertyName;
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcProp, this.document.fileName);
+            this.pushDecl(pullDecl);
+
+            this.emitComments(funcProp, true);
+
+            this.recordSourceMappingStart(funcProp);
+            this.writeToOutput("function ");
+
+            //this.recordSourceMappingStart(funcProp.propertyName);
+            //this.writeToOutput(funcProp.propertyName.actualText);
+            //this.recordSourceMappingEnd(funcProp.propertyName);
+
+            this.writeToOutput("(");
+            this.emitFunctionParameters(funcProp.parameters);
+            this.writeLineToOutput(") {");
+
+            this.recordSourceMappingNameStart(funcProp.propertyName.actualText);
+            this.indenter.increaseIndent();
+
+            this.emitDefaultValueAssignments(funcProp.parameters);
+            this.emitRestParameterInitializer(funcProp.parameters);
+
+            if (this.shouldCaptureThis(funcProp)) {
+                this.writeCaptureThisStatement(funcProp);
+            }
+
+            this.emitList(funcProp.block.statements);
+            this.emitCommentsArray(funcProp.block.closeBraceLeadingComments);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", funcProp.block.closeBraceSpan);
+
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(funcProp);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcProp);
+
+            this.emitComments(funcProp, false);
+
+            this.popDecl(pullDecl);
+
+            this.setContainer(temp);
+            this.inArrowFunction = savedInArrowFunction;
+
+            this.recordSourceMappingEnd(funcProp);
+        }
+
         public emitConditionalExpression(expression: ConditionalExpression): void {
             expression.operand1.emit(this);
             this.writeToOutput(" ? ");
@@ -2253,8 +2366,7 @@ module TypeScript {
         }
 
         public emitExpressionStatement(statement: ExpressionStatement): void {
-            var isArrowExpression = statement.expression.nodeType() === NodeType.FunctionDeclaration &&
-                hasFlag((<FunctionDeclaration>statement.expression).getFunctionFlags(), FunctionFlags.IsFatArrowFunction);
+            var isArrowExpression = statement.expression.nodeType() === NodeType.ArrowFunctionExpression;
 
             this.recordSourceMappingStart(statement);
             if (isArrowExpression) {

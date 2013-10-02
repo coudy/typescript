@@ -6,12 +6,17 @@
 module TypeScript {
 
     export module PullHelpers {
+        export function isConstructor(ast: AST) {
+            return ast.nodeType() === NodeType.FunctionDeclaration &&
+                hasFlag((<FunctionDeclaration>ast).getFunctionFlags(), FunctionFlags.Constructor);
+        }
+
         export interface SignatureInfoForFuncDecl {
             signature: PullSignatureSymbol;
             allSignatures: PullSignatureSymbol[];
         }
 
-        export function getSignatureForFuncDecl(funcDecl: FunctionDeclaration, semanticInfo: SemanticInfo) {
+        export function getSignatureForFuncDecl(funcDecl: AST, semanticInfo: SemanticInfo) {
             var functionDecl = semanticInfo.getDeclForAST(funcDecl);
             var funcSymbol = functionDecl.getSymbol();
 
@@ -25,18 +30,23 @@ module TypeScript {
                 functionSignature = <PullSignatureSymbol>funcSymbol;
                 var parent = functionDecl.getParentDecl();
                 typeSymbolWithAllSignatures = parent.getSymbol().type;                
-            } else {
+            }
+            else {
                 functionSignature = functionDecl.getSignatureSymbol();
                 typeSymbolWithAllSignatures = funcSymbol.type;
             }
             var signatures: PullSignatureSymbol[];
-            if (funcDecl.isConstructor || funcDecl.isConstructMember()) {
+
+            if (isConstructor(funcDecl) || functionDecl.kind === PullElementKind.ConstructSignature) {
                 signatures = typeSymbolWithAllSignatures.getConstructSignatures();
-            } else if (funcDecl.isIndexerMember()) {
+            }
+            else if (functionDecl.kind === PullElementKind.IndexSignature) {
                 signatures = typeSymbolWithAllSignatures.getIndexSignatures();
-            } else {
+            }
+            else {
                 signatures = typeSymbolWithAllSignatures.getCallSignatures();
             }
+
             return {
                 signature: functionSignature,
                 allSignatures: signatures

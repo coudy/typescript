@@ -2853,7 +2853,6 @@ module TypeScript {
         // specialize any extends/implements types
         var extendedTypesToSpecialize = typeToSpecialize.getExtendedTypes();
         var typeDecl: PullDecl;
-        var typeAST: TypeDeclaration;
         var unitPath: string;
         var decls: PullDecl[] = typeToSpecialize.getDeclarations();
         var extendTypeSymbol: PullTypeSymbol = null;
@@ -2862,15 +2861,18 @@ module TypeScript {
         if (extendedTypesToSpecialize.length) {
             for (var i = 0; i < decls.length; i++) {
                 typeDecl = decls[i];
-                typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
+                var typeAST = resolver.semanticInfoChain.getASTForDecl(typeDecl);
+                var extendsList = typeAST.nodeType() === NodeType.ClassDeclaration
+                    ? (<ClassDeclaration>typeAST).extendsList
+                    : (<InterfaceDeclaration>typeAST).extendsList;
 
                 // if this is an 'extended' interface declaration, the AST's extends list may not match
-                if (typeAST.extendsList) {
+                if (extendsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.getScriptName());
-                    for (var j = 0; j < typeAST.extendsList.members.length; j++) {
+                    for (var j = 0; j < extendsList.members.length; j++) {
                         context.pushTypeSpecializationCache(typeReplacementMap);
-                        extendTypeSymbol = resolver.resolveTypeReference(<TypeReference>typeAST.extendsList.members[j], typeDecl, context);
+                        extendTypeSymbol = resolver.resolveTypeReference(<TypeReference>extendsList.members[j], typeDecl, context);
                         resolver.setUnitPath(unitPath);
                         context.popTypeSpecializationCache();
 
@@ -2885,14 +2887,17 @@ module TypeScript {
         if (implementedTypesToSpecialize.length) {
             for (var i = 0; i < decls.length; i++) {
                 typeDecl = decls[i];
-                typeAST = <TypeDeclaration>resolver.semanticInfoChain.getASTForDecl(typeDecl);
+                var typeAST = resolver.semanticInfoChain.getASTForDecl(typeDecl);
+                var implementsList = typeAST.nodeType() === NodeType.ClassDeclaration
+                    ? (<ClassDeclaration>typeAST).implementsList
+                    : null;
 
-                if (typeAST.implementsList) {
+                if (implementsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.getScriptName());
-                    for (var j = 0; j < typeAST.implementsList.members.length; j++) {
+                    for (var j = 0; j < implementsList.members.length; j++) {
                         context.pushTypeSpecializationCache(typeReplacementMap);
-                        implementedTypeSymbol = resolver.resolveTypeReference(<TypeReference>typeAST.implementsList.members[j], typeDecl, context);
+                        implementedTypeSymbol = resolver.resolveTypeReference(<TypeReference>implementsList.members[j], typeDecl, context);
                         resolver.setUnitPath(unitPath);
                         context.popTypeSpecializationCache();
 
@@ -2906,7 +2911,15 @@ module TypeScript {
         var callSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getCallSignatures(false) : typeToSpecialize.getCallSignatures(false);
         var constructSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getConstructSignatures(false) : typeToSpecialize.getConstructSignatures(false);
         var indexSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getIndexSignatures(false) : typeToSpecialize.getIndexSignatures(false);
-        var members = typeToSpecialize.memberWrapsOwnTypeParameter? rootType.getMembers() : typeToSpecialize.getMembers();
+        var members = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getMembers() : typeToSpecialize.getMembers();
+
+        // if no members of any kind were found on a class type, we may not have yet specialized the parent type's members, so we'll need to do so now
+        if (typeToSpecialize.isClass() && !(members.length || callSignatures.length || constructSignatures.length || indexSignatures.length)) {
+            callSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getCallSignatures(true) : typeToSpecialize.getCallSignatures(true);
+            constructSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getConstructSignatures(true) : typeToSpecialize.getConstructSignatures(true);
+            indexSignatures = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getIndexSignatures(true) : typeToSpecialize.getIndexSignatures(true);
+            members = typeToSpecialize.memberWrapsOwnTypeParameter ? rootType.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all) : typeToSpecialize.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+        }
 
         // specialize call signatures
         var newSignature: PullSignatureSymbol;

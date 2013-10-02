@@ -376,7 +376,7 @@ module TypeScript {
             this.genericASTResolutionStack.length--;
         }
 
-        public pushParameterIndexContext(enclosingFunction: FunctionDeclaration) {
+        public pushParameterIndexContext(enclosingFunction: AST) {
             this.enclosingFunctionParameterIndexStack.push({
                 enclosingFunction: enclosingFunction,
                 index: 0

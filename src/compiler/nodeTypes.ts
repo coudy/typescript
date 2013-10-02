@@ -40,11 +40,14 @@ module TypeScript {
         FunctionDeclaration,
         ClassDeclaration,
         InterfaceDeclaration,
+        ObjectType,
         ModuleDeclaration,
         ImportDeclaration,
         VariableDeclarator,
         VariableDeclaration,
         Parameter,
+        SimplePropertyAssignment,
+        FunctionPropertyAssignment,
 
         // Expressions
         Name,
@@ -107,6 +110,7 @@ module TypeScript {
         PostDecrementExpression,
         CastExpression,
         ParenthesizedExpression,
+        ArrowFunctionExpression,
         Member,
 
         // Statements
