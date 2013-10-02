@@ -26,18 +26,8 @@ module TypeScript {
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
 
-        public hasBeenTypeChecked = false;
-
-        private importDeclarationNames: BlockIntrinsics<boolean> = null;
-        // Data to clear when we get invalidated --> 
-
         constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
-        }
-
-        public invalidate(): void {
-            this.importDeclarationNames = null;
-            this.hasBeenTypeChecked = false;
         }
 
         public addTopLevelDecl(decl: PullDecl) {
@@ -84,27 +74,6 @@ module TypeScript {
             }
 
             this.declASTMap.link(decl.declIDString, ast);
-        }
-
-        public getImportDeclarationNames(): BlockIntrinsics<boolean> {
-            if (this.importDeclarationNames === null) {
-                this.importDeclarationNames = new BlockIntrinsics();
-                this.populateImportDeclarationNames([this.topLevelDecl]);
-            }
-
-            return this.importDeclarationNames;
-        }
-
-        private populateImportDeclarationNames(decls: PullDecl[]): void {
-            for (var i = 0, n = decls.length; i < n; i++) {
-                var decl = decls[i];
-                if (decl.kind === PullElementKind.TypeAlias) {
-                    this.importDeclarationNames[decl.name] = true;
-                }
-                else {
-                    this.populateImportDeclarationNames(decl.getChildDecls());
-                }
-            }
         }
 
         public isExternalModule() {
@@ -169,7 +138,7 @@ module TypeScript {
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> =
             Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
-        public addPrimitiveType(name: string, globalDecl: PullDecl) {
+        private addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
             var decl = new PullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span, "");
             var symbol = new PullPrimitiveTypeSymbol(name);
@@ -182,7 +151,7 @@ module TypeScript {
             return symbol;
         }
 
-        public addPrimitiveValue(name: string, type: PullTypeSymbol, globalDecl: PullDecl) {
+        private addPrimitiveValue(name: string, type: PullTypeSymbol, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
             var decl = new PullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span, "");
             var symbol = new PullSymbol(name, PullElementKind.Variable);
@@ -193,7 +162,7 @@ module TypeScript {
             symbol.setResolved();
         }
 
-        public getGlobalDecl() {
+        private getGlobalDecl() {
             var span = new TextSpan(0, 0);
             var globalDecl = new PullDecl("", "", PullElementKind.Global, PullElementFlags.None, /*parentDecl*/ null, span, "");
 
@@ -272,34 +241,6 @@ module TypeScript {
 
             return cacheID + "#" + declKind.toString();
         }
-        
-        // REVIEW: The method below is part of an experiment on how to speed up up dynamic module lookup
-        //public findExternalModuleSymbol(name) {
-        //    var cacheID = this.getDeclPathCacheID([name], PullElementKind.DynamicModule);
-
-        //    var symbol = this.symbolCache[name];
-
-        //    if (!symbol) {
-        //        var unit = <SemanticInfo>this.unitCache[name];
-        //        var symbol: PullContainerTypeSymbol = null;
-        //        if (unit) {
-        //            // the dynamic module will be the only child
-        //            var decl = unit.getTopLevelDecls()[0].getChildDecls()[0];
-
-        //            if (decl.kind == PullElementKind.DynamicModule) {
-        //                symbol = decl.getSymbol();
-        //            }
-        //        }
-        //    }
-
-        //    if (symbol) {
-        //        this.symbolCache[cacheID] = symbol;
-
-        //        symbol.addCacheID(cacheID);
-        //    }
-
-        //    return symbol;
-        //}
 
         public findTopLevelSymbol(name: string, kind: PullElementKind, stopAtFile: string): PullSymbol {
             var cacheID = this.getDeclPathCacheID([name], kind);
@@ -591,12 +532,6 @@ module TypeScript {
             this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
             this.symbolASTMap = new DataMap<AST>();
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
-
-            for (var unit in this.unitCache) {
-                if (this.unitCache[unit]) {
-                    this.unitCache[unit].invalidate();
-                }
-            } 
         }
 
         public getDeclForAST(ast: AST, unitPath: string): PullDecl {

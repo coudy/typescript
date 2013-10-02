@@ -22,7 +22,6 @@ module TypeScript {
 
     export class PullAdditionalCallResolutionData {
         public targetSymbol: PullSymbol = null;
-        public targetTypeSymbol: PullTypeSymbol = null;
         public resolvedSignatures: PullSignatureSymbol[] = null;
         public candidateSignature: PullSignatureSymbol = null;
         public actualParametersContextTypeSymbols: PullTypeSymbol[] = null;
@@ -55,22 +54,6 @@ module TypeScript {
         private identicalCache: any[] = <any>{};
 
         public currentUnit: SemanticInfo = null;
-
-        public cleanCachedGlobals() {
-            this._cachedArrayInterfaceType = null;
-            this._cachedNumberInterfaceType = null;
-            this._cachedStringInterfaceType = null;
-            this._cachedBooleanInterfaceType = null;
-            this._cachedObjectInterfaceType = null;
-            this._cachedFunctionInterfaceType = null;
-            this._cachedIArgumentsInterfaceType = null;
-            this._cachedRegExpInterfaceType = null;
-            this.cachedFunctionArgumentsSymbol = null;
-
-            this.identicalCache = <any[]>{};
-            this.subtypeCache = <any[]>{};
-            this.assignableCache = <any[]>{};
-        }
 
         private cachedArrayInterfaceType() {
             if (!this._cachedArrayInterfaceType) {
@@ -1026,6 +1009,8 @@ module TypeScript {
         }
 
         private typeCheckScript(script: Script, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+            this.setTypeChecked(script, context);
+
             this.typeCheckAST(script.moduleElements, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
@@ -7308,7 +7293,6 @@ module TypeScript {
                     additionalResults.candidateSignature = callResolutionData.candidateSignature;
                     additionalResults.resolvedSignatures = callResolutionData.resolvedSignatures;
                     additionalResults.targetSymbol = callResolutionData.targetSymbol;
-                    additionalResults.targetTypeSymbol = callResolutionData.targetTypeSymbol;
                 }
             }
 
@@ -7575,7 +7559,6 @@ module TypeScript {
 
             if (!signatures.length) {
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = beforeResolutionSignatures;
                 additionalResults.candidateSignature = beforeResolutionSignatures && beforeResolutionSignatures.length ? beforeResolutionSignatures[0] : null;
 
@@ -7712,11 +7695,9 @@ module TypeScript {
 
             // Store any additional resolution results if needed before we return
             additionalResults.targetSymbol = targetSymbol;
-            additionalResults.targetTypeSymbol = targetTypeSymbol;
             if (useBeforeResolutionSignatures && beforeResolutionSignatures) {
                 additionalResults.resolvedSignatures = beforeResolutionSignatures;
                 additionalResults.candidateSignature = beforeResolutionSignatures[0];
-
             } else {
                 additionalResults.resolvedSignatures = signatures;
                 additionalResults.candidateSignature = signature;
@@ -7759,7 +7740,6 @@ module TypeScript {
                     additionalResults.candidateSignature = callResolutionData.candidateSignature;
                     additionalResults.resolvedSignatures = callResolutionData.resolvedSignatures;
                     additionalResults.targetSymbol = callResolutionData.targetSymbol;
-                    additionalResults.targetTypeSymbol = callResolutionData.targetTypeSymbol;
                 }
             }
 
@@ -7967,7 +7947,6 @@ module TypeScript {
 
                 // Store any additional resolution results if needed before we return
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = constructSignatures;
                 additionalResults.candidateSignature = signature;
                 additionalResults.actualParametersContextTypeSymbols = [];
@@ -8084,7 +8063,6 @@ module TypeScript {
 
                 // Store any additional resolution results if needed before we return
                 additionalResults.targetSymbol = targetSymbol;
-                additionalResults.targetTypeSymbol = targetTypeSymbol;
                 additionalResults.resolvedSignatures = constructSignatures;
                 additionalResults.candidateSignature = signature;
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
@@ -10113,20 +10091,18 @@ module TypeScript {
             return signatureToSpecialize.cachedObjectSpecialization;
         }
 
-        private static globalTypeCheckPhase = 0;
+        public static globalTypeCheckPhase = 0;
 
         // type check infrastructure
         public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
             var unit = semanticInfoChain.getUnit(scriptName);
 
-            if (!unit.hasBeenTypeChecked) {
-                unit.hasBeenTypeChecked = true;
+            var scriptDecl = unit.getTopLevelDecl();
 
-                var scriptDecl = unit.getTopLevelDecl();
+            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+            var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
 
-                var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
-                var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
-
+            if (resolver.canTypeCheckAST(script, context)) {
                 resolver.resolveAST(script, /*inContextuallyTypedAssignment:*/ false, scriptDecl, context);
                 resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
@@ -10136,8 +10112,6 @@ module TypeScript {
                 }
 
                 resolver.processPostTypeCheckWorkItems(context);
-
-                PullTypeResolver.globalTypeCheckPhase++;
             }
         }
 
