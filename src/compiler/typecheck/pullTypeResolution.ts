@@ -6503,6 +6503,28 @@ module TypeScript {
             return symbol;
         }
 
+        private getPropertyAssignmentNameTextFromIdentifier(identifier: AST): { actualText: string; memberName: string } {
+            var actualText: string;
+            var text: string;
+
+            if (identifier.nodeType() === NodeType.Name) {
+                actualText = (<Identifier>identifier).actualText;
+                text = (<Identifier>identifier).text();
+            }
+            else if (identifier.nodeType() === NodeType.StringLiteral) {
+                actualText = (<StringLiteral>identifier).actualText;
+                text = (<StringLiteral>identifier).text();
+            }
+            else if (identifier.nodeType() === NodeType.NumericLiteral) {
+                actualText = text = (<NumericLiteral>identifier).text();
+            }
+            else {
+                return null;
+            }
+
+            return { actualText: actualText, memberName: text };
+        }
+
         private tryBindObjectLiteralMembers(
             objectLiteralDeclaration: PullDecl,
             objectLiteralTypeSymbol: PullTypeSymbol,
@@ -6517,21 +6539,9 @@ module TypeScript {
                 var propertyAssignment = objectLiteralMembers.members[i];
 
                 var id = this.getPropertyAssignmentName(propertyAssignment);
-                var text: string;
-                var actualText: string;
+                var assignmentText = this.getPropertyAssignmentNameTextFromIdentifier(id);
 
-                if (id.nodeType() === NodeType.Name) {
-                    actualText = (<Identifier>id).actualText;
-                    text = (<Identifier>id).text();
-                }
-                else if (id.nodeType() === NodeType.StringLiteral) {
-                    actualText = (<StringLiteral>id).actualText;
-                    text = (<StringLiteral>id).text();
-                }
-                else if (id.nodeType() === NodeType.NumericLiteral) {
-                    actualText = text = (<NumericLiteral>id).text();
-                }
-                else {
+                if (!assignmentText) {
                     return false;
                 }
 
@@ -6543,14 +6553,14 @@ module TypeScript {
                 var decl = this.getDeclForAST(propertyAssignment);
                 if (!isAccessor) {
                     if (!isUsingExistingDecl) {
-                        decl = new PullDecl(text, actualText, PullElementKind.Property, PullElementFlags.Public, objectLiteralDeclaration, span, this.unitPath);
+                        decl = new PullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, objectLiteralDeclaration, span, this.unitPath);
 
                         this.currentUnit.setDeclForAST(propertyAssignment, decl);
                         this.currentUnit.setASTForDecl(decl, propertyAssignment);
                     }
 
                     if (!isUsingExistingSymbol) {
-                        memberSymbol = new PullSymbol(text, PullElementKind.Property);
+                        memberSymbol = new PullSymbol(assignmentText.memberName, PullElementKind.Property);
                         memberSymbol.addDeclaration(decl);
                         decl.setSymbol(memberSymbol);
                     } else {
@@ -6588,6 +6598,8 @@ module TypeScript {
                             binder.bindSetAccessorDeclarationToPullSymbol(functionDeclaration);
                         }
                     }
+
+                    memberSymbol = objectLiteralTypeSymbol.findMember(assignmentText.memberName);
                 }
                 else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
                     if (!isUsingExistingDecl) {
@@ -6609,7 +6621,7 @@ module TypeScript {
                 if (!isUsingExistingSymbol && !isAccessor) {
                     // Make sure this was not defined before
                     if (objectLiteralTypeSymbol.findMember(memberSymbol.name)) {
-                        pullTypeContext.postError(this.getUnitPath(), propertyAssignment.minChar, propertyAssignment.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
+                        pullTypeContext.postError(this.getUnitPath(), propertyAssignment.minChar, propertyAssignment.getLength(), DiagnosticCode.Duplicate_identifier_0, [assignmentText.actualText]);
                     }
 
                     objectLiteralTypeSymbol.addMember(memberSymbol);
