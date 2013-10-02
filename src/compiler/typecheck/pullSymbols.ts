@@ -2151,12 +2151,6 @@ module TypeScript {
             return this.assignedContainer;
         }
 
-        public resetExportAssignedSymbols() {
-            this.assignedValue = null;
-            this.assignedType = null;
-            this.assignedContainer = null;
-        }
-
         static usedAsSymbol(containerSymbol: PullSymbol, symbol: PullSymbol): boolean {
             if (!containerSymbol || !containerSymbol.isContainer()) {
                 return false;

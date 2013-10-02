@@ -26,7 +26,6 @@ module TypeScript {
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
 
-        private diagnostics: Diagnostic[] = null;
         public hasBeenTypeChecked = false;
 
         private importDeclarationNames: BlockIntrinsics<boolean> = null;
@@ -37,17 +36,8 @@ module TypeScript {
         }
 
         public invalidate(): void {
-            this.diagnostics = null;
             this.importDeclarationNames = null;
             this.hasBeenTypeChecked = false;
-        }
-
-        public addDiagnostic(diagnostic: Diagnostic): void {
-            if (this.diagnostics === null) {
-                this.diagnostics = [];
-            }
-
-            this.diagnostics.push(diagnostic);
         }
 
         public addTopLevelDecl(decl: PullDecl) {
@@ -94,12 +84,6 @@ module TypeScript {
             }
 
             this.declASTMap.link(decl.declIDString, ast);
-        }
-
-        public getDiagnostics(semanticErrors: Diagnostic[]) {
-            if (this.diagnostics) {
-                semanticErrors.push.apply(semanticErrors, this.diagnostics);
-            }
         }
 
         public getImportDeclarationNames(): BlockIntrinsics<boolean> {
@@ -166,6 +150,7 @@ module TypeScript {
         private declCache = new BlockIntrinsics<PullDecl[]>();
         private symbolCache = new BlockIntrinsics<PullSymbol>();
         private unitCache = new BlockIntrinsics<SemanticInfo>();
+        private fileNameToDiagnostics = new BlockIntrinsics<Diagnostic[]>();
         private topLevelDecls: PullDecl[] = [];
 
         public anyTypeSymbol: PullTypeSymbol = null;
@@ -596,6 +581,8 @@ module TypeScript {
         public invalidate() {
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
+            this.fileNameToDiagnostics = new BlockIntrinsics();
+
             this.units[0] = new SemanticInfo("");
             this.units[0].addTopLevelDecl(this.getGlobalDecl());
             this.cleanAllDecls();
@@ -690,6 +677,22 @@ module TypeScript {
                 }
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
+        }
+
+        public addDiagnostic(diagnostic: Diagnostic): void {
+            var fileName = diagnostic.fileName();
+            var diagnostics = this.fileNameToDiagnostics[fileName];
+            if (!diagnostics) {
+                diagnostics = [];
+                this.fileNameToDiagnostics[fileName] = diagnostics;
+            }
+
+            diagnostics.push(diagnostic);
+        }
+
+        public getDiagnostics(fileName: string): Diagnostic[] {
+            var diagnostics = this.fileNameToDiagnostics[fileName];
+            return diagnostics ? diagnostics : [];
         }
     }
 }

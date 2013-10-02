@@ -39,7 +39,6 @@
 ///<reference path='typecheck\pullFlags.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
 ///<reference path='typecheck\pullSymbols.ts' />
-///<reference path='typecheck\pullSymbolBindingContext.ts' />
 ///<reference path='typecheck\pullTypeResolutionContext.ts' />
 ///<reference path='typecheck\pullTypeResolution.ts' />
 ///<reference path='typecheck\pullSemanticInfo.ts' />
@@ -724,7 +723,6 @@ module TypeScript {
         }
 
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
-            var errors: Diagnostic[] = [];
             var unit = this.semanticInfoChain.getUnit(fileName);
 
             globalSemanticInfoChain = this.semanticInfoChain;
@@ -736,16 +734,14 @@ module TypeScript {
                 var document = this.getDocument(fileName);
                 var script = document.script;
 
-                if (script) {
-                    var startTime = (new Date()).getTime();
-                    PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
+                var startTime = (new Date()).getTime();
+                PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
                     var endTime = (new Date()).getTime();
 
-                    typeCheckTime += endTime - startTime;
-
-                    unit.getDiagnostics(errors);
-                }
+                typeCheckTime += endTime - startTime;
             }
+
+            var errors = this.semanticInfoChain.getDiagnostics(fileName);
 
             errors = ArrayUtilities.distinct(errors, Diagnostic.equals);
             errors.sort((d1, d2) => {
@@ -843,7 +839,6 @@ module TypeScript {
 
             this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
             this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-            this.logger.log("    Time in findSymbol: " + time_in_findSymbol);
             this.logger.log("Number of symbols created: " + pullSymbolID);
             this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
             this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
@@ -1210,7 +1205,6 @@ module TypeScript {
             }
 
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
-            resolutionContext.resolveAggressively = true;
 
             if (path.count() === 0) {
                 return null;

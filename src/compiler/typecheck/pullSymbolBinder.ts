@@ -168,7 +168,7 @@ module TypeScript {
             if ((isExported !== prevIsExported) && !prevSymbol.isSignature() && (decl.kind & PullElementKind.SomeSignature) == 0) {
                 if (reportError) {
                     var ast = this.semanticInfo.getASTForDecl(decl);
-                    this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), ast.minChar, ast.getLength(),
+                    this.semanticInfoChain.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), ast.minChar, ast.getLength(),
                         DiagnosticCode.All_declarations_of_merged_declaration_0_must_be_exported_or_not_exported, [decl.getDisplayName()]));
                 }
                 return false;
@@ -208,7 +208,7 @@ module TypeScript {
 
             if (parent && moduleKind == PullElementKind.DynamicModule) {
                 // Dynamic modules cannot be parented
-                this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_must_be_defined_in_global_context, null));
+                this.semanticInfoChain.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_must_be_defined_in_global_context, null));
             }
 
             var createdNewSymbol = false;
@@ -220,13 +220,13 @@ module TypeScript {
                 if (moduleContainerTypeSymbol.kind !== moduleKind) {
                     // duplicate symbol error
                     if (isInitializedModule) {
-                        this.semanticInfo.addDiagnostic(
+                        this.semanticInfoChain.addDiagnostic(
                             new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [moduleContainerDecl.getDisplayName()]));
                     }
                     moduleContainerTypeSymbol = null;
                 } else if (moduleKind == PullElementKind.DynamicModule) {
                     // Dynamic modules cannot be reopened.
-                    this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_be_reopened, null));
+                    this.semanticInfoChain.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), moduleAST.minChar, moduleAST.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_be_reopened, null));
                 } else if (!this.checkThatExportsMatch(moduleContainerDecl, moduleContainerTypeSymbol)) {
                     moduleContainerTypeSymbol = null;
                 }
@@ -346,7 +346,7 @@ module TypeScript {
                     var firstVariable = <VariableStatement>moduleAST.members.members[0];
                     var firstVariableDeclarator = <VariableDeclarator>firstVariable.declaration.declarators.members[0];
                     if (!firstVariableDeclarator.init) {
-                        this.semanticInfo.addDiagnostic(new Diagnostic(
+                        this.semanticInfoChain.addDiagnostic(new Diagnostic(
                             this.semanticInfo.getPath(), firstVariableDeclarator.minChar, firstVariableDeclarator.getLength(), DiagnosticCode.Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element, null));
                     }
                 }
@@ -413,7 +413,7 @@ module TypeScript {
             }
 
             if (importSymbol) {
-                this.semanticInfo.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), importDeclAST.minChar, importDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [importDeclaration.getDisplayName()]));
                 importSymbol = null;
             }
@@ -462,7 +462,7 @@ module TypeScript {
 
             // Only error if it is an interface (for classes and enums we will error when we bind the implicit variable)
             if (classSymbol && classSymbol.kind === PullElementKind.Interface) {
-                this.semanticInfo.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), classAST.minChar, classAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [classDecl.getDisplayName()]));
                 classSymbol = null;
             }
@@ -546,7 +546,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
             }
@@ -577,7 +577,7 @@ module TypeScript {
 
             if (interfaceSymbol) {
                 if (!(interfaceSymbol.kind & acceptableSharedKind)) {
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), interfaceAST.minChar, interfaceAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [interfaceDecl.getDisplayName()]));
                     interfaceSymbol = null;
                 }
@@ -636,7 +636,7 @@ module TypeScript {
 
                         if (typeParameterDeclParent && typeParameterDeclParent === interfaceDecl) {
                             var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterDecls[0]);
-                            this.semanticInfo.addDiagnostic(
+                            this.semanticInfoChain.addDiagnostic(
                                 new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
 
                             break;
@@ -687,7 +687,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
 
@@ -736,7 +736,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
 
@@ -811,7 +811,7 @@ module TypeScript {
                 if (acceptableRedeclaration && (prevIsClassConstructorVariable || prevIsFunction) && !prevIsAmbient) {
                     if (prevDecl.getScriptName() != variableDeclaration.getScriptName()) {
                         span = variableDeclaration.getSpan();
-                        this.semanticInfo.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(),
+                        this.semanticInfoChain.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(),
                             DiagnosticCode.Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2, [declName, declName, prevDecl.getScriptName()]));
                         variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                     }
@@ -823,7 +823,7 @@ module TypeScript {
                     if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0) || !shareParent) {
                         span = variableDeclaration.getSpan();
                         var diagnostic = new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]);
-                        this.semanticInfo.addDiagnostic(diagnostic);
+                        this.semanticInfoChain.addDiagnostic(diagnostic);
                         variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                     }
                     else { // double var declaration (keep them separate so we can verify type sameness during type check)
@@ -1067,7 +1067,7 @@ module TypeScript {
 
                 var span = propertyDeclaration.getSpan();
 
-                this.semanticInfo.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(), DiagnosticCode.Duplicate_identifier_0, [propertyDeclaration.getDisplayName()]));
             }
 
@@ -1125,7 +1125,7 @@ module TypeScript {
                     }
 
                     if (params[argDecl.id.text()]) {
-                        this.semanticInfo.addDiagnostic(
+                        this.semanticInfoChain.addDiagnostic(
                             new Diagnostic(this.semanticInfo.getPath(), argDecl.minChar, argDecl.getLength(), DiagnosticCode.Duplicate_identifier_0, [argDecl.id.actualText]));
                     }
                     else {
@@ -1194,7 +1194,7 @@ module TypeScript {
                 var acceptableRedeclaration = functionSymbol.kind === PullElementKind.Function && (isSignature || functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)) ||
                     functionSymbol.hasFlag(PullElementFlags.InitializedModule) && isAmbient;
                 if (!acceptableRedeclaration) {
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [functionDeclaration.getDisplayName()]));
                     functionSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, funcName);
                 }
@@ -1257,7 +1257,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
 
@@ -1323,7 +1323,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
@@ -1375,7 +1375,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
 
@@ -1421,7 +1421,7 @@ module TypeScript {
             if (methodSymbol &&
                 (methodSymbol.kind !== PullElementKind.Method ||
                 (!isSignature && !methodSymbol.allDeclsHaveFlag(PullElementFlags.Signature)))) {
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), methodAST.minChar, methodAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [methodDeclaration.getDisplayName()]));
                 methodSymbol = null;
             }
@@ -1493,7 +1493,7 @@ module TypeScript {
                 }
                 else {
                     typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
@@ -1552,7 +1552,7 @@ module TypeScript {
                 }
 
                 if (hasDefinitionSignature) {
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), constructorAST.minChar, constructorAST.getLength(), DiagnosticCode.Multiple_constructor_implementations_are_not_allowed, null));
 
                     constructorSymbol = null;
@@ -1632,7 +1632,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
@@ -1674,7 +1674,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
 
@@ -1709,7 +1709,7 @@ module TypeScript {
                 }
                 else {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), typeParameterAST.minChar, typeParameterAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]));
                 }
 
@@ -1769,7 +1769,7 @@ module TypeScript {
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [getAccessorDeclaration.getDisplayName()]));
                     accessorSymbol = null;
                 }
@@ -1777,7 +1777,7 @@ module TypeScript {
                     getterSymbol = accessorSymbol.getGetter();
 
                     if (getterSymbol) {
-                        this.semanticInfo.addDiagnostic(
+                        this.semanticInfoChain.addDiagnostic(
                             new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Getter_0_already_declared, [getAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         getterSymbol = null;
@@ -1829,7 +1829,7 @@ module TypeScript {
             var typeParameters = getAccessorDeclaration.getTypeParameters();
 
             if (typeParameters.length) {
-                this.semanticInfo.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(),
                         DiagnosticCode.Accessors_cannot_have_type_parameters, null));
             }
@@ -1869,7 +1869,7 @@ module TypeScript {
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
-                    this.semanticInfo.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Duplicate_identifier_0, [setAccessorDeclaration.getDisplayName()]));
                     accessorSymbol = null;
                 }
@@ -1877,7 +1877,7 @@ module TypeScript {
                     setterSymbol = accessorSymbol.getSetter();
 
                     if (setterSymbol) {
-                        this.semanticInfo.addDiagnostic(
+                        this.semanticInfoChain.addDiagnostic(
                             new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Setter_0_already_declared, [setAccessorDeclaration.getDisplayName()]));
                         accessorSymbol = null;
                         setterSymbol = null;
@@ -1930,7 +1930,7 @@ module TypeScript {
             var typeParameters = setAccessorDeclaration.getTypeParameters();
 
             if (typeParameters.length) {
-                this.semanticInfo.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(this.semanticInfo.getPath(), funcDeclAST.minChar, funcDeclAST.getLength(), DiagnosticCode.Accessors_cannot_have_type_parameters, null));
             }
 

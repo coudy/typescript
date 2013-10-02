@@ -192,8 +192,6 @@ module TypeScript {
         public resolvingNamespaceMemberAccess = false;
         public resolvingTypeQueryExpression = false;
 
-        public resolveAggressively = false;
-
         public canUseTypeSymbol = false;
 
         public specializingToAny = false;
@@ -348,7 +346,7 @@ module TypeScript {
                         (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
                     }
                     else if (this.inTypeCheck && this.resolver) {
-                        this.resolver.currentUnit.addDiagnostic(diagnostic);
+                        this.resolver.semanticInfoChain.addDiagnostic(diagnostic);
                     }
                 }
             }

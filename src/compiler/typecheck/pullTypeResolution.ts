@@ -1087,7 +1087,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(containerDecl, context);
 
             if (isRelative(stripStartAndEndQuotes(ast.name.actualText))) {
-                this.currentUnit.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
+                this.semanticInfoChain.addDiagnostic(new Diagnostic(this.currentUnit.getPath(),
                     ast.name.minChar, ast.name.getLength(), DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name));
             }
         }
@@ -1546,7 +1546,7 @@ module TypeScript {
 
             // check for valid export assignment type (variable, function, class, interface, enum, internal module)
             if (!acceptableAlias) {
-                this.currentUnit.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(importDecl.getScriptName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Import_declaration_referencing_identifier_from_internal_module_can_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
                 return null;
             }
@@ -1563,7 +1563,7 @@ module TypeScript {
             }
 
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
-                this.currentUnit.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(importDecl.getScriptName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Could_not_find_symbol_0_in_module_1, [rhsName, moduleSymbol.toString()]));
                 return null;
             }
@@ -1592,7 +1592,7 @@ module TypeScript {
                     moduleName = (<Identifier>dottedNameAST.operand2).text();
                     moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
                     if (!moduleSymbol) {
-                        this.currentUnit.addDiagnostic(
+                        this.semanticInfoChain.addDiagnostic(
                             new Diagnostic(importDecl.getScriptName(), dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
                     }
                 }
@@ -1603,7 +1603,7 @@ module TypeScript {
                     // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
                     this.setSymbolForAST(moduleNameExpr, moduleSymbol, null);
                 } else {
-                    this.currentUnit.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(importDecl.getScriptName(), moduleNameExpr.minChar, moduleNameExpr.getLength(), DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]));
                 }
             }
@@ -1683,7 +1683,7 @@ module TypeScript {
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());
 
                 if (!aliasedType) {
-                    this.currentUnit.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.alias).actualText]));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
@@ -1693,7 +1693,7 @@ module TypeScript {
 
             if (aliasedType) {
                 if (!aliasedType.isContainer()) {
-                    this.currentUnit.addDiagnostic(
+                    this.semanticInfoChain.addDiagnostic(
                         new Diagnostic(this.currentUnit.getPath(), importStatementAST.minChar, importStatementAST.getLength(), DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
@@ -1811,7 +1811,7 @@ module TypeScript {
             if (!parentSymbol.isType() && (<PullTypeSymbol>parentSymbol).isContainer()) {
                 // Error
                 // Export assignments may only be used at the top-level of external modules
-                this.currentUnit.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_at_the_top_level_of_external_modules));
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -1848,7 +1848,7 @@ module TypeScript {
             if (!acceptableAlias) {
                 // Error
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
-                this.currentUnit.addDiagnostic(
+                this.semanticInfoChain.addDiagnostic(
                     new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
                 return this.semanticInfoChain.voidTypeSymbol;
             }
@@ -8299,33 +8299,6 @@ module TypeScript {
                 type === this.semanticInfoChain.undefinedTypeSymbol;
         }
 
-        private canApplyContextualType(type: PullTypeSymbol) {
-
-            if (!type) {
-                return true;
-            }
-
-            var kind = type.kind;
-
-            if ((kind & PullElementKind.ObjectType) != 0) {
-                return true;
-            }
-            if ((kind & PullElementKind.Interface) != 0) {
-                return true;
-            }
-            else if ((kind & PullElementKind.SomeFunction) != 0) {
-                return this.canApplyContextualTypeToFunction(type, <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(type.getDeclarations[0]), true);
-            }
-            else if ((kind & PullElementKind.Array) != 0) {
-                return true;
-            }
-            else if (type == this.semanticInfoChain.anyTypeSymbol || kind != PullElementKind.Primitive) {
-                return true;
-            }
-
-            return false;
-        }
-
         public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
             var nlastChecked = 0;
@@ -9754,54 +9727,6 @@ module TypeScript {
             }
 
             return best.signature;
-        }
-
-        private canApplyContextualTypeToFunction(candidateType: PullTypeSymbol, funcDecl: FunctionDeclaration, beStringent: boolean): boolean {
-
-            // in these cases, we do not attempt to apply a contextual type
-            //  RE: isInlineCallLiteral - if the call target is a function literal, we don't want to apply the target type
-            //  to its body - instead, it should be applied to its return type
-            if (funcDecl.isMethod() ||
-                beStringent && funcDecl.returnTypeAnnotation) {
-                return false;
-            }
-
-            beStringent = beStringent || (this.cachedFunctionInterfaceType() === candidateType);
-
-            // At this point, if we're not being stringent, there's no need to check for multiple call sigs
-            // or count parameters - we just want to unblock typecheck
-            if (!beStringent) {
-                return true;
-            }
-            var functionSymbol = this.getDeclForAST(funcDecl).getSymbol();
-            var signature = functionSymbol.type.getCallSignatures()[0];
-            var parameters = signature.parameters;
-            var paramLen = parameters.length;
-
-            // Check that the argument declarations have no type annotations
-            for (var i = 0; i < paramLen; i++) {
-                var param = parameters[i];
-                var argDecl = <Parameter>this.getASTForDecl(param.getDeclarations()[0]);
-
-                // REVIEW: a valid typeExpr is a requirement for varargs,
-                // so we may want to revise our invariant
-                if (beStringent && argDecl.typeExpr) {
-                    return false;
-                }
-            }
-
-            if (candidateType.getConstructSignatures().length && candidateType.getCallSignatures().length) {
-                return false;
-            }
-
-            var candidateSigs = candidateType.getConstructSignatures().length ? candidateType.getConstructSignatures() : candidateType.getCallSignatures();
-
-            if (!candidateSigs || candidateSigs.length > 1) {
-                return false;
-            }
-
-            // if we're here, the contextual type can be applied to the function
-            return true;
         }
 
         private inferArgumentTypesForSignature(signature: PullSignatureSymbol,
