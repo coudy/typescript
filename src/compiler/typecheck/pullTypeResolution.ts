@@ -5903,7 +5903,7 @@ module TypeScript {
                         }
                     }
 
-                    if (typeArg.inResolution) {
+                    if (typeArg.inResolution || (typeArg.isTypeReference() && (<PullTypeReferenceSymbol>typeArg).referencedTypeSymbol.inResolution)) {
                         return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
