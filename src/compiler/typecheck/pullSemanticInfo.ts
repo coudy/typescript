@@ -26,14 +26,8 @@ module TypeScript {
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
 
-        private importDeclarationNames: BlockIntrinsics<boolean> = null;
-
         constructor(compilationUnitPath: string) {
             this.compilationUnitPath = compilationUnitPath;
-        }
-
-        public invalidate(): void {
-            this.importDeclarationNames = null;
         }
 
         public addTopLevelDecl(decl: PullDecl) {
@@ -80,27 +74,6 @@ module TypeScript {
             }
 
             this.declASTMap.link(decl.declIDString, ast);
-        }
-
-        public getImportDeclarationNames(): BlockIntrinsics<boolean> {
-            if (this.importDeclarationNames === null) {
-                this.importDeclarationNames = new BlockIntrinsics();
-                this.populateImportDeclarationNames([this.topLevelDecl]);
-            }
-
-            return this.importDeclarationNames;
-        }
-
-        private populateImportDeclarationNames(decls: PullDecl[]): void {
-            for (var i = 0, n = decls.length; i < n; i++) {
-                var decl = decls[i];
-                if (decl.kind === PullElementKind.TypeAlias) {
-                    this.importDeclarationNames[decl.name] = true;
-                }
-                else {
-                    this.populateImportDeclarationNames(decl.getChildDecls());
-                }
-            }
         }
 
         public isExternalModule() {
@@ -587,12 +560,6 @@ module TypeScript {
             this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
             this.symbolASTMap = new DataMap<AST>();
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
-
-            for (var unit in this.unitCache) {
-                if (this.unitCache[unit]) {
-                    this.unitCache[unit].invalidate();
-                }
-            } 
         }
 
         public getDeclForAST(ast: AST, unitPath: string): PullDecl {
