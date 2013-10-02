@@ -242,6 +242,11 @@ module TypeScript {
         }
 
         private getASTForSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): AST {
+
+            if (!symbol) {
+                return null;
+            } 
+
             // Check global cache
             var ast = this.semanticInfoChain.getASTForSymbol(symbol);
 
@@ -3541,13 +3546,6 @@ module TypeScript {
 
         private resolveAccessorDeclaration(funcDeclAst: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
-            var safeGetFunctionDeclarationASTForSymbol = (symbol: PullSymbol): FunctionDeclaration => {
-                if (symbol) {
-                    return <FunctionDeclaration>this.getASTForSymbol(symbol, context);
-                }
-                return null;
-            }
-
             var functionDeclaration = this.getDeclForAST(funcDeclAst);
             var accessorSymbol = <PullAccessorSymbol> functionDeclaration.getSymbol();
 
@@ -3566,15 +3564,16 @@ module TypeScript {
 
             var getterSymbol = accessorSymbol.getGetter(),
                 hasGetter = !!getterSymbol,
-                getterFunctionDeclarationAst = safeGetFunctionDeclarationASTForSymbol(getterSymbol);
+                getterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(getterSymbol, context);
 
             var setterSymbol = accessorSymbol.getSetter(),
                 hasSetter = !!setterSymbol,
-                setterFunctionDeclarationAst = safeGetFunctionDeclarationASTForSymbol(setterSymbol);
+                setterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(setterSymbol, context);
 
             var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(getterFunctionDeclarationAst, functionDeclaration, context),
-                setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(setterFunctionDeclarationAst, functionDeclaration, context),
-                getterHasTypeAnnotation = !!getterAnnotatedType,
+                getterHasTypeAnnotation = !!getterAnnotatedType;
+
+            var setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(setterFunctionDeclarationAst, functionDeclaration, context),
                 setterHasTypeAnnotation = !!setterAnnotatedType;
 
             accessorSymbol.startResolving();
@@ -3584,11 +3583,11 @@ module TypeScript {
                 getterSymbol =
                     this.resolveGetAccessorDeclaration(
                         getterFunctionDeclarationAst,
-                        funcDeclAst.getFunctionFlags(),
-                        funcDeclAst.name,
-                        funcDeclAst.parameters,
-                        funcDeclAst.returnTypeAnnotation,
-                        funcDeclAst.block,
+                        getterFunctionDeclarationAst.getFunctionFlags(),
+                        getterFunctionDeclarationAst.name,
+                        getterFunctionDeclarationAst.parameters,
+                        getterFunctionDeclarationAst.returnTypeAnnotation,
+                        getterFunctionDeclarationAst.block,
                         setterAnnotatedType,
                         context);
             }
@@ -3763,14 +3762,13 @@ module TypeScript {
                     }
                 }
 
-
                 if (!hadError) {
                     signature.setResolved();
                 }
             }
 
             return getterSymbol;
-                }
+       }
 
         private typeCheckGetAccessorDeclaration(
             funcDeclAST: AST,
@@ -6511,6 +6509,7 @@ module TypeScript {
             objectLiteralMembers: ASTList,
             isUsingExistingDecl: boolean,
             isUsingExistingSymbol: boolean,
+            boundMemberSymbols: PullSymbol[],
             pullTypeContext: PullTypeResolutionContext): boolean {
 
             var memberSymbol: PullSymbol;
@@ -6558,7 +6557,12 @@ module TypeScript {
                         memberSymbol = decl.getSymbol();
                     }
                 }
-                else {
+
+                
+                if (isAccessor) {
+
+                    // Pre-bind the getter and setter so that they are both bound before we resolve accessor declaration.
+                    // This happens for the class member case, and we need to mimic that for the object literal case.
                     var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
                     var functionDeclaration: PullDecl = null;
 
@@ -6585,16 +6589,33 @@ module TypeScript {
                         }
                     }
                 }
+                else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
+                    if (!isUsingExistingDecl) {
+                        var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
+
+                        declCollectionContext.pushParent(objectLiteralDeclaration);
+
+                        getAstWalkerFactory().walk(propertyAssignment, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+                        var functionDecl = this.getDeclForAST(propertyAssignment);
+                    }
+
+                    var binder = new PullSymbolBinder(this.semanticInfoChain);
+                    binder.setUnit(this.unitPath);
+
+                    binder.bindFunctionExpressionToPullSymbol(decl);
+                }
 
                 if (!isUsingExistingSymbol && !isAccessor) {
                     // Make sure this was not defined before
                     if (objectLiteralTypeSymbol.findMember(memberSymbol.name)) {
                         pullTypeContext.postError(this.getUnitPath(), propertyAssignment.minChar, propertyAssignment.getLength(), DiagnosticCode.Duplicate_identifier_0, [actualText]);
                     }
-                    else {
-                        objectLiteralTypeSymbol.addMember(memberSymbol);
-                    }
+
+                    objectLiteralTypeSymbol.addMember(memberSymbol);
                 }
+
+                boundMemberSymbols[i] = memberSymbol;
             }
 
             return true;
@@ -6610,6 +6631,7 @@ module TypeScript {
             numericIndexerSignature: PullSignatureSymbol,
             allMemberTypes: PullTypeSymbol[],
             allNumericMemberTypes: PullTypeSymbol[],
+            boundMemberSymbols: PullSymbol[],
             isUsingExistingDecl: boolean,
             isUsingExistingSymbol: boolean,
             pullTypeContext: PullTypeResolutionContext,
@@ -6618,30 +6640,19 @@ module TypeScript {
 
             for (var i = 0, len = objectLiteralMembers.members.length; i < len; i++) {
                 var propertyAssignment = objectLiteralMembers.members[i];
-
+                
                 var acceptedContextualType = false;
                 var assigningSymbol: PullSymbol = null;
 
                 var id = this.getPropertyAssignmentName(propertyAssignment);
-                var text: string;
-
-                if (id.nodeType() === NodeType.Name) {
-                    text = (<Identifier>id).text();
-                }
-                else if (id.nodeType() === NodeType.StringLiteral) {
-                    text = (<StringLiteral>id).text();
-                }
-                else if (id.nodeType() === NodeType.NumericLiteral) {
-                    text = (<NumericLiteral>id).text();
-                }
-                // else would be caught in the binding pass
+                var memberSymbol = boundMemberSymbols[i];
 
                 if (objectLiteralContextualType) {
-                    assigningSymbol = this.getMemberSymbol(text, PullElementKind.SomeValue, objectLiteralContextualType);
+                    assigningSymbol = this.getMemberSymbol(memberSymbol.name, PullElementKind.SomeValue, objectLiteralContextualType);
 
                     // Consider index signatures as potential contextual types
                     if (!assigningSymbol) {
-                        if (numericIndexerSignature && PullHelpers.isNameNumeric(text)) {
+                        if (numericIndexerSignature && PullHelpers.isNameNumeric(memberSymbol.name)) {
                             assigningSymbol = numericIndexerSignature;
                         }
                         else if (stringIndexerSignature) {
@@ -6675,9 +6686,13 @@ module TypeScript {
                     if (stringIndexerSignature) {
                         allMemberTypes.push(memberExpr.type);
                     }
-                    if (numericIndexerSignature && PullHelpers.isNameNumeric(propertySymbol.name)) {
+                    if (numericIndexerSignature && PullHelpers.isNameNumeric(memberSymbol.name)) {
                         allNumericMemberTypes.push(memberExpr.type);
                     }
+                }
+
+                if (acceptedContextualType) {
+                    pullTypeContext.popContextualType();
                 }
 
                 var isAccessor = this.propertyAssignmentIsAccessor(propertyAssignment);
@@ -6686,14 +6701,10 @@ module TypeScript {
                         this.setSymbolForAST(id, memberExpr, pullTypeContext);
                     } else {
 
-                        pullTypeContext.setTypeInContext(propertySymbol, memberExpr.type);
-                        propertySymbol.setResolved();
+                        pullTypeContext.setTypeInContext(memberSymbol, memberExpr.type);
+                        memberSymbol.setResolved();
 
-                        this.setSymbolForAST(id, propertySymbol, pullTypeContext);
-
-                        if (acceptedContextualType) {
-                            pullTypeContext.popContextualType();
-                        }
+                        this.setSymbolForAST(id, memberSymbol, pullTypeContext);
                     }
                 }
             }
@@ -6770,7 +6781,9 @@ module TypeScript {
                 }
 
                 // first bind decls and symbols
-                if (!this.tryBindObjectLiteralMembers(objectLitDecl, typeSymbol, propertyAssignments, isUsingExistingDecl, isUsingExistingSymbol, context)) {
+                var boundMemberSymbols: PullSymbol[] = [];
+
+                if (!this.tryBindObjectLiteralMembers(objectLitDecl, typeSymbol, propertyAssignments, isUsingExistingDecl, isUsingExistingSymbol, boundMemberSymbols, context)) {
                     // TODO: no error for this?
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
@@ -6786,6 +6799,7 @@ module TypeScript {
                     numericIndexerSignature,
                     allMemberTypes,
                     allNumericMemberTypes,
+                    boundMemberSymbols,
                     isUsingExistingDecl,
                     isUsingExistingSymbol,
                     context,
