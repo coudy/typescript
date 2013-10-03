@@ -593,7 +593,7 @@ module TypeScript {
             }
         }
 
-        public getVisibleDecls(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullDecl[] {
+        public getVisibleDecls(enclosingDecl: PullDecl): PullDecl[] {
             var declPath = enclosingDecl.getParentPath();
 
             var declSearchKind: PullElementKind = PullElementKind.SomeType | PullElementKind.SomeContainer | PullElementKind.SomeValue;

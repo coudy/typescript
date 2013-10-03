@@ -1604,7 +1604,7 @@ module TypeScript {
                 return null;
             }
 
-            return this.resolver.getVisibleDecls(context.enclosingDecl, context.resolutionContext);
+            return this.resolver.getVisibleDecls(context.enclosingDecl);
         }
 
         public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
