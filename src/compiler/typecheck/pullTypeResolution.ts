@@ -3507,11 +3507,11 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
-                if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
-                    return this.resolveTypeReference(<TypeReference>getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
-                }
+            if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
+                return this.resolveTypeReference(<TypeReference>getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
+            }
 
-                return null;
+            return null;
         }
 
         private resolveSetterArgumentTypeAnnotation(
@@ -3519,14 +3519,13 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
-                if (setterFunctionDeclarationAst &&
-                    setterFunctionDeclarationAst.parameters &&
-                    setterFunctionDeclarationAst.parameters.members.length > 0) {
-                    var parameter = <Parameter>setterFunctionDeclarationAst.parameters.members[0];
-                    return this.resolveTypeReference(parameter.typeExpr, enclosingDecl, context);
-                }
+            if (setterFunctionDeclarationAst &&
+                setterFunctionDeclarationAst.parameters.members.length > 0) {
+                var parameter = <Parameter>setterFunctionDeclarationAst.parameters.members[0];
+                return this.resolveTypeReference(parameter.typeExpr, enclosingDecl, context);
+            }
 
-                return null;
+            return null;
         }
 
         private resolveAccessorDeclaration(funcDeclAst: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
@@ -3547,23 +3546,23 @@ module TypeScript {
                 return accessorSymbol;
             }
 
-            var getterSymbol = accessorSymbol.getGetter(),
-                hasGetter = !!getterSymbol,
-                getterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(getterSymbol, context);
+            var getterSymbol = accessorSymbol.getGetter();
+            var getterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(getterSymbol, context);
+            var hasGetter = getterSymbol !== null;
 
-            var setterSymbol = accessorSymbol.getSetter(),
-                hasSetter = !!setterSymbol,
-                setterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(setterSymbol, context);
+            var setterSymbol = accessorSymbol.getSetter();
+            var setterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(setterSymbol, context);
+            var hasSetter = setterSymbol !== null;
 
-            var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(getterFunctionDeclarationAst, functionDeclaration, context),
-                getterHasTypeAnnotation = !!getterAnnotatedType;
+            var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(getterFunctionDeclarationAst, functionDeclaration, context);
+            var getterHasTypeAnnotation = getterAnnotatedType !== null;
 
-            var setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(setterFunctionDeclarationAst, functionDeclaration, context),
-                setterHasTypeAnnotation = !!setterAnnotatedType;
+            var setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(setterFunctionDeclarationAst, functionDeclaration, context);
+            var setterHasTypeAnnotation = setterAnnotatedType !== null;
 
             accessorSymbol.startResolving();
 
-            //resolve accessors
+            // resolve accessors - resolution order doesn't matter
             if (hasGetter) {
                 getterSymbol =
                     this.resolveGetAccessorDeclaration(
@@ -3583,20 +3582,25 @@ module TypeScript {
 
             // enforce spec resolution rules
             if (hasGetter && hasSetter) {
-                var setterSig = setterSymbol.type.getCallSignatures()[0],
-                    setterParameters = setterSig.parameters,
-                    setterHasParameters = setterParameters.length > 0,
-                    getterSig = getterSymbol.type.getCallSignatures()[0];
+                var setterSig = setterSymbol.type.getCallSignatures()[0];
+                var setterParameters = setterSig.parameters;
+                var setterHasParameters = setterParameters.length > 0;
+                var getterSig = getterSymbol.type.getCallSignatures()[0];
 
-                var setterSuppliedTypeSymbol: PullTypeSymbol = setterHasParameters ? setterParameters[0].type : null,
-                    getterSuppliedTypeSymbol: PullTypeSymbol = getterSig.returnType;
+                var setterSuppliedTypeSymbol: PullTypeSymbol = setterHasParameters ? setterParameters[0].type : null;
+                var getterSuppliedTypeSymbol: PullTypeSymbol = getterSig.returnType;
 
-                // if setter has a type annotation, the getters relevant type constraint should be set to that.
+                // SPEC: October 1, 2013 section 4.5 -
+                // • If only one accessor includes a type annotation, the other behaves as if it had the same type annotation.
+                // -- In this case setter has annotation and getter does not.
                 if (setterHasTypeAnnotation && !getterHasTypeAnnotation) {
                     getterSuppliedTypeSymbol = setterSuppliedTypeSymbol;
                     getterSig.returnType = setterSuppliedTypeSymbol;
                 }
-                // if the getter was annotated or neither were annotated, use the getters resolved type
+                // SPEC: October 1, 2013 section 4.5 -
+                // • If only one accessor includes a type annotation, the other behaves as if it had the same type annotation.
+                // • If neither accessor includes a type annotation, the inferred return type of the get accessor becomes the parameter type of the set accessor.
+                // -- In this case getter has annotation and setter does not - or neither do, so use getter.
                 else if ((getterHasTypeAnnotation && !setterHasTypeAnnotation) ||
                     (!getterHasTypeAnnotation && !setterHasTypeAnnotation)) {
 
@@ -3607,6 +3611,8 @@ module TypeScript {
                     }
                 }
 
+                // SPEC: October 1, 2013 section 4.5 -
+                // • If both accessors include type annotations, the specified types must be identical.
                 if (!this.typesAreIdentical(setterSuppliedTypeSymbol, getterSuppliedTypeSymbol)) {
                     context.postError(this.unitPath, funcDeclAst.minChar, funcDeclAst.getLength(), DiagnosticCode.get_and_set_accessor_must_have_the_same_type, null);
                     accessorSymbol.type = this.getNewErrorTypeSymbol();
@@ -3616,9 +3622,10 @@ module TypeScript {
                 }
             }
             else if (hasSetter) {
-                var setterSig = setterSymbol.type.getCallSignatures()[0],
-                    setterParameters = setterSig.parameters,
-                    setterHasParameters = setterParameters.length > 0;
+                // only has setter
+                var setterSig = setterSymbol.type.getCallSignatures()[0];
+                var setterParameters = setterSig.parameters;
+                var setterHasParameters = setterParameters.length > 0;
 
                 accessorSymbol.type = setterHasParameters ? setterParameters[0].type : this.semanticInfoChain.anyTypeSymbol;
 
@@ -3632,7 +3639,8 @@ module TypeScript {
                     }
                 }
             }
-            else {
+            else { 
+                // only has getter 
                 var getterSig = getterSymbol.type.getCallSignatures()[0];
                 accessorSymbol.type = getterSig.returnType;
             }
@@ -3640,25 +3648,25 @@ module TypeScript {
             accessorSymbol.setResolved();
 
             // type check if possible
-            if (hasGetter) {
-                if (this.canTypeCheckAST(getterFunctionDeclarationAst, context)) {
-                    context.pushContextualType(getterSymbol.type, context.inProvisionalResolution(), null);
-                    this.typeCheckGetAccessorDeclaration(
-                        getterFunctionDeclarationAst,
-                        getterFunctionDeclarationAst.getFunctionFlags(),
-                        getterFunctionDeclarationAst.name,
-                        getterFunctionDeclarationAst.parameters,
-                        getterFunctionDeclarationAst.returnTypeAnnotation,
-                        getterFunctionDeclarationAst.block,
-                        context);
-                    context.popContextualType();
-                }
+            if (hasGetter &&
+                this.canTypeCheckAST(getterFunctionDeclarationAst, context)) {
+
+                context.pushContextualType(getterSymbol.type, context.inProvisionalResolution(), null);
+                this.typeCheckGetAccessorDeclaration(
+                    getterFunctionDeclarationAst,
+                    getterFunctionDeclarationAst.getFunctionFlags(),
+                    getterFunctionDeclarationAst.name,
+                    getterFunctionDeclarationAst.parameters,
+                    getterFunctionDeclarationAst.returnTypeAnnotation,
+                    getterFunctionDeclarationAst.block,
+                    context);
+                context.popContextualType();
             }
 
-            if (hasSetter) {
-                if (this.canTypeCheckAST(setterFunctionDeclarationAst, context)) {
-                    this.typeCheckSetAccessorDeclaration(setterFunctionDeclarationAst, context);
-                }
+            if (hasSetter &&
+                this.canTypeCheckAST(setterFunctionDeclarationAst, context)) {
+
+                this.typeCheckSetAccessorDeclaration(setterFunctionDeclarationAst, context);
             }
 
             return accessorSymbol;
@@ -3700,13 +3708,6 @@ module TypeScript {
 
                 signature.startResolving();
 
-                // resolve parameter type annotations as necessary
-                if (parameters) {
-                    for (var i = 0; i < parameters.members.length; i++) {
-                        this.resolveParameter(<Parameter>parameters.members[i], context, funcDecl);
-                    }
-                }
-
                 if (signature.hasAGenericParameter) {
                         getterTypeSymbol.setHasGenericSignature();
                     }
@@ -3733,9 +3734,13 @@ module TypeScript {
                 }
 
                 // if there's no return-type annotation
-                //     - if it's not a definition signature, set the return type to 'any'
-                //     - if it's a definition sigature, take the best common type of all return expressions
+                //     - if it's a definition signature, set the return type to 'any'
+                //     - if it's not a definition sigature, take the best common type of all return expressions
                 else {
+                    // SPEC: October 1, 2013 section 4.5 -
+                    // • If only one accessor includes a type annotation, the other behaves as if it had the same type annotation.
+                    // -- Use setterAnnotatedType if available
+                    // • If neither accessor includes a type annotation, the inferred return type of the get accessor becomes the parameter type of the set accessor.
                     if (hasFlag(flags, FunctionFlags.Signature)) {
                         signature.returnType = setterAnnotatedType || this.semanticInfoChain.anyTypeSymbol;
                     }
@@ -3768,13 +3773,6 @@ module TypeScript {
 
             var funcDecl = this.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
-
-            // resolve parameter type annotations as necessary
-            if (parameters) {
-                for (var i = 0; i < parameters.members.length; i++) {
-                    this.resolveParameter(<Parameter>parameters.members[i], context, funcDecl);
-                }
-            }
 
             this.resolveReturnTypeAnnotationOfFunctionDeclaration(
                 funcDeclAST, flags, returnTypeAnnotation, context);
@@ -3857,13 +3855,13 @@ module TypeScript {
                     }
                 }
 
+                // SPEC: October 1, 2013 section 4.5 -
+                // • A set accessor declaration is processed in the same manner as an ordinary function declaration
+                //      with a single parameter and a Void return type. 
                 signature.returnType = this.semanticInfoChain.voidTypeSymbol;
 
                 if (signature.hasAGenericParameter) {
-                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                    if (setterSymbol) {
-                        setterTypeSymbol.setHasGenericSignature();
-                    }
+                    setterTypeSymbol.setHasGenericSignature();
                 }
 
                 if (!hadError) {
@@ -3872,7 +3870,7 @@ module TypeScript {
             }
 
             return setterSymbol;
-                }
+        }
 
         private typeCheckSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(funcDeclAST, context);
