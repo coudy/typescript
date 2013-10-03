@@ -172,7 +172,7 @@ module TypeScript {
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
             this.cachedFunctionArgumentsSymbol.setResolved();
 
-            var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0), unitPath);
+            var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0));
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
 
@@ -768,7 +768,7 @@ module TypeScript {
             var prototypeStr = "prototype";
             var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
             var parentDecl = constructorTypeSymbol.getDeclarations()[0];
-            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan(), parentDecl.getScriptName());
+            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan());
 
             prototypeSymbol.addDeclaration(prototypeDecl);
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
@@ -938,7 +938,7 @@ module TypeScript {
                     return symbol;
                 }
 
-                this.setUnitPath(decl.getScriptName());
+                this.setUnitPath(decl.fileName());
                 var resolvedSymbol = this.resolveAST(ast, /*inContextuallyTypedAssignment*/false, this.getEnclosingDecl(decl), context);
 
                 // if the symbol is a parameter property referenced in an out-of-order fashion, it may not have been resolved
@@ -989,7 +989,7 @@ module TypeScript {
                 var astForCurrentDecl = this.getASTForDecl(currentDecl);
                 if (astForCurrentDecl != ast) {
                     var unitPath = this.unitPath;
-                    this.setUnitPath(currentDecl.getScriptName());
+                    this.setUnitPath(currentDecl.fileName());
                     this.resolveAST(astForCurrentDecl, false, this.getEnclosingDecl(currentDecl), context);
                     this.setUnitPath(unitPath);
                 }
@@ -1207,7 +1207,7 @@ module TypeScript {
                 // base type resolution, making the type otherwise inaccessible).
                 PullTypeResolver.typeCheckCallBacks.push((context) => {
                     var currentUnitPath = this.unitPath;
-                    this.setUnitPath(typeDecl.getScriptName());
+                    this.setUnitPath(typeDecl.fileName());
 
                     if (classOrInterface.nodeType() == NodeType.ClassDeclaration) {
                         this.resolveClassDeclaration(<ClassDeclaration>classOrInterface, context);
@@ -1535,7 +1535,7 @@ module TypeScript {
             // check for valid export assignment type (variable, function, class, interface, enum, internal module)
             if (!acceptableAlias) {
                 this.semanticInfoChain.addDiagnostic(
-                    new Diagnostic(importDecl.getScriptName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Import_declaration_referencing_identifier_from_internal_module_can_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
+                    new Diagnostic(importDecl.fileName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Import_declaration_referencing_identifier_from_internal_module_can_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
                 return null;
             }
 
@@ -1552,7 +1552,7 @@ module TypeScript {
 
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
                 this.semanticInfoChain.addDiagnostic(
-                    new Diagnostic(importDecl.getScriptName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Could_not_find_symbol_0_in_module_1, [rhsName, moduleSymbol.toString()]));
+                    new Diagnostic(importDecl.fileName(), identifier.minChar, identifier.getLength(), DiagnosticCode.Could_not_find_symbol_0_in_module_1, [rhsName, moduleSymbol.toString()]));
                 return null;
             }
 
@@ -1581,7 +1581,7 @@ module TypeScript {
                     moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
                     if (!moduleSymbol) {
                         this.semanticInfoChain.addDiagnostic(
-                            new Diagnostic(importDecl.getScriptName(), dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
+                            new Diagnostic(importDecl.fileName(), dottedNameAST.operand2.minChar, dottedNameAST.operand2.getLength(), DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
                     }
                 }
             } else if (!(<Identifier>moduleNameExpr).isMissing()) {
@@ -1592,7 +1592,7 @@ module TypeScript {
                     this.setSymbolForAST(moduleNameExpr, moduleSymbol, null);
                 } else {
                     this.semanticInfoChain.addDiagnostic(
-                        new Diagnostic(importDecl.getScriptName(), moduleNameExpr.minChar, moduleNameExpr.getLength(), DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]));
+                        new Diagnostic(importDecl.fileName(), moduleNameExpr.minChar, moduleNameExpr.getLength(), DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]));
                 }
             }
 
@@ -1668,7 +1668,7 @@ module TypeScript {
                 var modPath = (<Identifier>importStatementAST.alias).text();
                 var declPath = enclosingDecl.getParentPath();
 
-                aliasedType = this.resolveExternalModuleReference(modPath, importDecl.getScriptName());
+                aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
 
                 if (!aliasedType) {
                     this.semanticInfoChain.addDiagnostic(
@@ -1800,7 +1800,7 @@ module TypeScript {
                 // Error
                 // Export assignments may only be used at the top-level of external modules
                 this.semanticInfoChain.addDiagnostic(
-                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_at_the_top_level_of_external_modules));
+                    new Diagnostic(enclosingDecl.fileName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_used_at_the_top_level_of_external_modules));
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -1837,7 +1837,7 @@ module TypeScript {
                 // Error
                 // Export assignments may only be made with variables, functions, classes, interfaces, enums and internal modules
                 this.semanticInfoChain.addDiagnostic(
-                    new Diagnostic(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
+                    new Diagnostic(enclosingDecl.fileName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Export_assignments_may_only_be_made_with_variables_functions_classes_interfaces_enums_and_internal_modules));
                 return this.semanticInfoChain.voidTypeSymbol;
             }
 
@@ -1851,7 +1851,7 @@ module TypeScript {
 
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
                 // Error
-                context.postError(enclosingDecl.getScriptName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [id]);
+                context.postError(enclosingDecl.fileName(), exportAssignmentAST.minChar, exportAssignmentAST.getLength(), DiagnosticCode.Could_not_find_symbol_0, [id]);
                 return this.semanticInfoChain.voidTypeSymbol;
             }
 
@@ -2272,7 +2272,7 @@ module TypeScript {
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
                 var decl = new PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText,
                     typeDeclSymbol.kind, null, enclosingDecl,
-                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.getScriptName());
+                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()));
                 typeDeclSymbol.addDeclaration(decl);
             }
             else if (typeRef.term.nodeType() === NodeType.TypeQuery) {
@@ -3160,7 +3160,7 @@ module TypeScript {
 
             PullTypeResolver.typeCheckCallBacks.push((context) => {
                 var currentUnitPath = this.unitPath;
-                this.setUnitPath(funcDecl.getScriptName());
+                this.setUnitPath(funcDecl.fileName());
 
                 if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
                     // Function or constructor
@@ -6282,7 +6282,7 @@ module TypeScript {
 
             PullTypeResolver.typeCheckCallBacks.push((context) => {
                 var currentUnitPath = this.unitPath;
-                this.setUnitPath(functionDecl.getScriptName());
+                this.setUnitPath(functionDecl.fileName());
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
                 this.setUnitPath(currentUnitPath);
             });
@@ -6531,7 +6531,7 @@ module TypeScript {
                 var decl = this.getDeclForAST(propertyAssignment);
                 if (!isAccessor) {
                     if (!isUsingExistingDecl) {
-                        decl = new PullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, objectLiteralDeclaration, span, this.unitPath);
+                        decl = new NormalPullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, objectLiteralDeclaration, span);
 
                         this.currentUnit.setDeclForAST(propertyAssignment, decl);
                         this.currentUnit.setASTForDecl(decl, propertyAssignment);
@@ -6721,7 +6721,7 @@ module TypeScript {
             var isUsingExistingSymbol = !!typeSymbol;
 
             if (!objectLitDecl) {
-                objectLitDecl = new PullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, enclosingDecl, span, this.unitPath);
+                objectLitDecl = new NormalPullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, enclosingDecl, span);
 
                 this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
                 this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
@@ -10089,7 +10089,7 @@ module TypeScript {
                 // If we are in a script context, we need to check more than just the current file. We need to check var type identity between files as well.
                 if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
                     var name = declGroups[i][0].name;
-                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl.getScriptName());
+                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl.fileName());
                     if (candidateSymbol && candidateSymbol.isResolved) {
                         if (!candidateSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
                             firstSymbol = candidateSymbol;

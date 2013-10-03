@@ -101,8 +101,8 @@ module TypeScript {
             containingSymbol.addIndexSignature(indexSignature);
 
             var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
-            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, containingDecl, span, this.getPath());
-            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl , span, this.getPath());
+            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, containingDecl, span);
+            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl , span);
             indexSigDecl.setSignatureSymbol(indexSignature);
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);
@@ -140,7 +140,7 @@ module TypeScript {
 
         private addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
-            var decl = new PullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span, "");
+            var decl = new NormalPullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
             var symbol = new PullPrimitiveTypeSymbol(name);
 
             symbol.addDeclaration(decl);
@@ -153,7 +153,7 @@ module TypeScript {
 
         private addPrimitiveValue(name: string, type: PullTypeSymbol, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
-            var decl = new PullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span, "");
+            var decl = new NormalPullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span);
             var symbol = new PullSymbol(name, PullElementKind.Variable);
 
             symbol.addDeclaration(decl);
@@ -164,7 +164,7 @@ module TypeScript {
 
         private getGlobalDecl() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new PullDecl("", "", PullElementKind.Global, PullElementFlags.None, /*parentDecl*/ null, span, "");
+            var globalDecl = new RootPullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "");
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
@@ -174,12 +174,13 @@ module TypeScript {
             this.voidTypeSymbol = this.addPrimitiveType("void", globalDecl);
 
             // add the global primitive values for "null" and "undefined"
+            // Because you cannot reference them by name, they're not parented by any actual decl.
             this.nullTypeSymbol = this.addPrimitiveType("null", null);
             this.undefinedTypeSymbol = this.addPrimitiveType("undefined", null);
             this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
 
             // other decls not reachable from the globalDecl
-            var emptyTypeDecl = new PullSynthesizedDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, /*parentDecl*/ null, span, "");
+            var emptyTypeDecl = new PullSynthesizedDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, null, span);
             var emptyTypeSymbol = new PullTypeSymbol("{}", PullElementKind.ObjectType);
             emptyTypeDecl.setSymbol(emptyTypeSymbol);
             emptyTypeSymbol.addDeclaration(emptyTypeDecl);
@@ -413,7 +414,7 @@ module TypeScript {
         }
 
         public findMatchingValidDecl(invalidatedDecl: PullDecl): PullDecl[]{
-            var unitPath = invalidatedDecl.getScriptName();
+            var unitPath = invalidatedDecl.fileName();
             var unit = this.getUnit(unitPath);
             if (!unit) {
                 return null;
@@ -545,7 +546,7 @@ module TypeScript {
         }
 
         public getASTForDecl(decl: PullDecl): AST {
-            var unit = <SemanticInfo>this.unitCache[decl.getScriptName()];
+            var unit = <SemanticInfo>this.unitCache[decl.fileName()];
 
             if (unit) {
                 return unit.getASTForDecl(decl);

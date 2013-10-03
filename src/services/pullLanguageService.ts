@@ -628,7 +628,7 @@ module Services {
         private addDeclaration(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declaration: TypeScript.PullDecl, result: DefinitionInfo[]): void {
             var span = declaration.getSpan();
             result.push(new DefinitionInfo(
-                this.compilerState.getHostFileName(declaration.getScriptName()),
+                this.compilerState.getHostFileName(declaration.fileName()),
                 span.start(), span.end(), symbolKind, symbolName, containerKind, containerName));
         }
 
@@ -1276,7 +1276,7 @@ module Services {
                 var decl = (<DeclReferenceCompletionEntry>entry).decl;
 
                 // If this decl has been invalidated becuase of a user edit, try to find the new decl that matches it
-                if (decl.getScriptName() === TypeScript.switchToForwardSlashes(fileName) && this.compilerState.getScriptVersion(fileName) !== this.activeCompletionSession.version) {
+                if (decl.fileName() === TypeScript.switchToForwardSlashes(fileName) && this.compilerState.getScriptVersion(fileName) !== this.activeCompletionSession.version) {
                     decl = this.compilerState.findMatchingValidDecl(decl)[0];
 
                     if (decl) {

@@ -809,10 +809,10 @@ module TypeScript {
 
                 // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
                 if (acceptableRedeclaration && (prevIsClassConstructorVariable || prevIsFunction) && !prevIsAmbient) {
-                    if (prevDecl.getScriptName() != variableDeclaration.getScriptName()) {
+                    if (prevDecl.fileName() != variableDeclaration.fileName()) {
                         span = variableDeclaration.getSpan();
                         this.semanticInfoChain.addDiagnostic(new Diagnostic(this.semanticInfo.getPath(), span.start(), span.length(),
-                            DiagnosticCode.Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2, [declName, declName, prevDecl.getScriptName()]));
+                            DiagnosticCode.Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2, [declName, declName, prevDecl.fileName()]));
                         variableSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, declName);
                     }
                 }
