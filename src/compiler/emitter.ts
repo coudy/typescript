@@ -89,11 +89,6 @@ module TypeScript {
         }
     }
 
-    export interface BoundDeclInfo {
-        boundDecl: VariableDeclarator;
-        pullDecl: PullDecl;
-    }
-
     export function lastParameterIsRest(parameters: ASTList): boolean {
         return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).isRest;
     }
@@ -478,7 +473,7 @@ module TypeScript {
             this.recordSourceMappingEnd(objectCreationExpression);
         }
 
-        public getConstantDecl(dotExpr: BinaryExpression): BoundDeclInfo {
+        public getConstantDecl(dotExpr: BinaryExpression): VariableDeclarator {
             var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
@@ -486,7 +481,15 @@ module TypeScript {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
                     if (ast && ast.nodeType() === NodeType.VariableDeclarator) {
-                        return { boundDecl: <VariableDeclarator>ast, pullDecl: pullDecl };
+                        var varDecl = <VariableDeclarator>ast;
+                        // If the enum member declaration is in an ambient context, don't propagate the constant because 
+                        // the ambient enum member may have been generated based on a computed value - unless it is
+                        // explicitly initialized in the ambient enum to an integer constant.
+                        var memberIsAmbient = hasFlag(pullDecl.getParentDecl().flags, PullElementFlags.Ambient);
+                        var memberIsInitialized = varDecl.init != null;
+                        if (!memberIsAmbient || memberIsInitialized) {
+                            return varDecl;
+                        }
                     }
                 }
             }
@@ -499,9 +502,9 @@ module TypeScript {
                 return false;
             }
             var propertyName = <Identifier>dotExpr.operand2;
-            var boundDeclInfo = this.getConstantDecl(dotExpr);
-            if (boundDeclInfo) {
-                var value = boundDeclInfo.boundDecl.constantValue;
+            var boundDecl = this.getConstantDecl(dotExpr);
+            if (boundDecl) {
+                var value = boundDecl.constantValue;
                 if (value !== null) {
                     this.writeToOutput(value.toString());
                     var comment = " /* ";
@@ -2719,19 +2722,20 @@ module TypeScript {
             return <VariableDeclarator>statement.declaration.declarators.members[0];
         }
 
-        private isNotAmbientOrHasInitializer(statement: VariableStatement): boolean {
-            var varDecl = this.firstVariableDeclarator(statement);
+        private isNotAmbientOrHasInitializer(varDecl: VariableDeclarator): boolean {
             return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
         }
 
         public shouldEmitVariableStatement(statement: VariableStatement): boolean {
-            return this.firstVariableDeclarator(statement).preComments() !== null || this.isNotAmbientOrHasInitializer(statement);
+            var varDecl = this.firstVariableDeclarator(statement);
+            return varDecl.preComments() !== null || this.isNotAmbientOrHasInitializer(varDecl);
         }
 
         public emitVariableStatement(statement: VariableStatement): void {
-            if (this.isNotAmbientOrHasInitializer(statement)) {
+            var varDecl = this.firstVariableDeclarator(statement);
+            if (this.isNotAmbientOrHasInitializer(varDecl)) {
                 if (hasFlag(statement.getFlags(), ASTFlags.EnumElement)) {
-                    this.emitEnumElement(this.firstVariableDeclarator(statement));
+                    this.emitEnumElement(varDecl);
                 }
                 else {
                     statement.declaration.emit(this);
@@ -2739,7 +2743,7 @@ module TypeScript {
                 }
             }
             else {
-                this.emitComments(this.firstVariableDeclarator(statement), /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+                this.emitComments(varDecl, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
             }
         }
 
