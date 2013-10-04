@@ -9,11 +9,8 @@ module TypeScript {
         public parentChain = new Array<PullDecl>();
         public containingModuleHasExportAssignmentArray: boolean[] = [false];
         public isParsingAmbientModuleArray: boolean[] = [false];
-        public semanticInfo: SemanticInfo;
 
         constructor(public semanticInfoChain: SemanticInfoChain, public scriptName: string) {
-            this.semanticInfo = semanticInfoChain.getUnit(scriptName);
-            Debug.assert(this.semanticInfo);
         }
 
         public getParent() { return this.parentChain ? this.parentChain[this.parentChain.length - 1] : null; }
