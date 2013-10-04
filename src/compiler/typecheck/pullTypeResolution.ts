@@ -53,8 +53,6 @@ module TypeScript {
         private subtypeCache: any[] = <any>{};
         private identicalCache: any[] = <any>{};
 
-        public currentUnit: SemanticInfo = null;
-
         private cachedArrayInterfaceType() {
             if (!this._cachedArrayInterfaceType) {
                 this._cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
@@ -175,16 +173,12 @@ module TypeScript {
             var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0));
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
-
-            this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
 
         public getUnitPath() { return this.unitPath; }
 
         public setUnitPath(unitPath: string) {
             this.unitPath = unitPath;
-
-            this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
         }
 
         private setTypeChecked(ast: AST, context: PullTypeResolutionContext) {
@@ -568,7 +562,7 @@ module TypeScript {
             var units = this.semanticInfoChain.units;
             for (var i = 0, n = units.length; i < n; i++) {
                 var unit = units[i];
-                if (unit === this.currentUnit && declPath.length != 0) {
+                if (declPath.length > 0 && unit.getPath() === declPath[0].fileName()) {
                     // Current unit has already been processed. skip it.
                     continue;
                 }
