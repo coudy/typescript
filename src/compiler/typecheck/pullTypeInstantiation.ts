@@ -709,10 +709,18 @@ module TypeScript {
 
         var typeArguments = type.getTypeArguments();
 
+        // If there are no type arguments, we could be instantiating the 'root' type
+        // declaration
+        if (type.isGeneric() && !typeArguments) {
+            typeArguments = type.getTypeParameters();
+        }
+
         // if it's a generic type, scan the type arguments to see which may wrap type parameters
-        for (var i = 0; i < typeArguments.length; i++) {
-            if (typeWrapsSomeTypeParameter(typeArguments[i], typeParameterArgumentMap)) {
-                return true;
+        if (typeArguments) {
+            for (var i = 0; i < typeArguments.length; i++) {
+                if (typeWrapsSomeTypeParameter(typeArguments[i], typeParameterArgumentMap)) {
+                    return true;
+                }
             }
         }
 
@@ -770,7 +778,7 @@ module TypeScript {
 
     export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: any): PullSignatureSymbol {
 
-        if (!signatureWrapsTypeParameter(signature, typeParameterArgumentMap)) {
+        if (!signatureWrapsSomeTypeParameter(signature, typeParameterArgumentMap)) {
             return signature;
         }
 
