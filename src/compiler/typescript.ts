@@ -1346,6 +1346,24 @@ module TypeScript {
                         break;
 
                     case NodeType.TypeRef:
+                        var typeExpressionNode = path.asts[i + 1];
+
+                        // ObjectType are just like Object Literals are bound when needed, ensure we have a decl, by forcing it to be 
+                        // resolved before descending into it.
+                        if (typeExpressionNode && typeExpressionNode.nodeType() === NodeType.ObjectType) {
+                            this.resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
+                        }
+
+                        // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
+                        // when we are looking at a function type (e.g. var y : (a) => void)
+                        if (!typeExpressionNode ||
+                            typeExpressionNode.nodeType() == NodeType.Name ||
+                            typeExpressionNode.nodeType() == NodeType.MemberAccessExpression) {
+                            resolutionContext.resolvingTypeReference = true;
+                        }
+
+                        break;
+
                     case NodeType.TypeParameter:
                         // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
                         // when we are looking at a function type (e.g. var y : (a) => void)
