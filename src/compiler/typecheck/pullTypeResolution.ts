@@ -7,14 +7,6 @@ module TypeScript {
         getTypeAtIndex(index: number): PullTypeSymbol;
     }
 
-    export interface IPullResolutionData {
-        actuals: PullTypeSymbol[];
-        exactCandidates: PullSignatureSymbol[];
-        conversionCandidates: PullSignatureSymbol[];
-
-        id: number;
-    }
-
     export interface PullApplicableSignature {
         signature: PullSignatureSymbol;
         hasProvisionalErrors: boolean;

@@ -324,19 +324,17 @@ module TypeScript {
     // the file name by queryign their parent.  In other words, a Root Decl allows us to trade
     // space for logarithmic speed. 
     export class RootPullDecl extends PullDecl {
-        private _fileName: string;
         private _semanticInfoChain: SemanticInfoChain;
         private _isExternalModule: boolean;
 
-        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, fileName: string, semanticInfoChain: SemanticInfoChain, isExternalModule: boolean) {
-            super(declName, displayName, kind, declFlags, span);
-            this._fileName = fileName;
+        constructor(fileName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, semanticInfoChain: SemanticInfoChain, isExternalModule: boolean) {
+            super(fileName, fileName, kind, declFlags, span);
             this._semanticInfoChain = semanticInfoChain;
             this._isExternalModule = isExternalModule;
         }
 
         public fileName(): string {
-            return this._fileName;
+            return this.name;
         }
 
         public getParentPath(): PullDecl[]{

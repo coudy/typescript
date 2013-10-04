@@ -131,7 +131,7 @@ module TypeScript {
 
         private getGlobalDecl() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new RootPullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "", this, /*isExternalModule:*/ false);
+            var globalDecl = new RootPullDecl(/*fileName:*/ "", PullElementKind.Global, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);

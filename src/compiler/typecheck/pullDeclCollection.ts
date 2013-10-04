@@ -59,7 +59,7 @@ module TypeScript {
 
         var fileName = script.fileName();
         var decl = new RootPullDecl(
-            fileName, fileName, PullElementKind.Script, PullElementFlags.None, span, fileName, context.semanticInfoChain, script.isExternalModule);
+            fileName, PullElementKind.Script, PullElementFlags.None, span, context.semanticInfoChain, script.isExternalModule);
         context.semanticInfoChain.setDeclForAST(script, decl);
         context.semanticInfoChain.setASTForDecl(decl, script);
 
