@@ -980,7 +980,7 @@ module Services {
                     path.ast().nodeType() === TypeScript.NodeType.ArrowFunctionExpression) {
                     var funcDecl = path.ast();
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
-                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain().getUnit(fileName));
+                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain());
                         isCallExpression = true;
                         candidateSignature = signatureInfo.signature;
                         resolvedSignatures = signatureInfo.allSignatures;

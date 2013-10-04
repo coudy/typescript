@@ -1108,13 +1108,13 @@ module TypeScript {
             var parameterSymbol: PullSymbol = null;
             var isProperty = false;
             var params = new BlockIntrinsics<boolean>();
-            var funcDecl = this.semanticInfo.getDeclForAST(functionDeclaration);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(functionDeclaration);
 
             if (functionDeclaration.parameters) {
 
                 for (var i = 0; i < functionDeclaration.parameters.members.length; i++) {
                     argDecl = <Parameter>functionDeclaration.parameters.members[i];
-                    decl = this.semanticInfo.getDeclForAST(argDecl);
+                    decl = this.semanticInfoChain.getDeclForAST(argDecl);
                     isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
                     parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
 

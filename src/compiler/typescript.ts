@@ -892,7 +892,6 @@ module TypeScript {
             var script = document.script;
             var scriptName = document.fileName;
 
-            var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var lastDeclAST: AST = null;
             var foundAST: AST = null;
             var symbol: PullSymbol = null;
@@ -918,7 +917,7 @@ module TypeScript {
 
                         if (previous === undefined || (cur.minChar >= previous.minChar && cur.limChar <= previous.limChar)) {
 
-                            var decl = semanticInfo.getDeclForAST(cur);
+                            var decl = this.semanticInfoChain.getDeclForAST(cur);
 
                             if (decl) {
                                 declStack[declStack.length] = decl;
@@ -1096,7 +1095,7 @@ module TypeScript {
 
                     if (lambdaAST) {
                         this.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
-                        enclosingDecl = semanticInfo.getDeclForAST(lambdaAST);
+                        enclosingDecl = this.semanticInfoChain.getDeclForAST(lambdaAST);
                     }
 
                     symbol = this.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
@@ -1138,7 +1137,7 @@ module TypeScript {
 
                 if (funcDecl) {
                     if (symbol && symbol.kind !== PullElementKind.Property) {
-                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain.getUnit(scriptName));
+                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain);
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }
@@ -1411,7 +1410,7 @@ module TypeScript {
                 }
 
                 // Record enclosing Decl
-                var decl = semanticInfo.getDeclForAST(current);
+                var decl = this.semanticInfoChain.getDeclForAST(current);
                 if (decl && !(decl.kind & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
                     enclosingDecl = decl;
                     enclosingDeclAST = current;
@@ -1479,7 +1478,7 @@ module TypeScript {
             }
 
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
-            var decl = semanticInfo.getDeclForAST(ast);
+            var decl = this.semanticInfoChain.getDeclForAST(ast);
             var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
             this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
 

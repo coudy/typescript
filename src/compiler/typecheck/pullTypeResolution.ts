@@ -198,7 +198,7 @@ module TypeScript {
         }
 
         public getDeclForAST(ast: AST): PullDecl {
-            return this.semanticInfoChain.getDeclForAST(ast, this.unitPath);
+            return this.semanticInfoChain.getDeclForAST(ast);
         }
 
         private setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext): void {
@@ -10130,7 +10130,7 @@ module TypeScript {
             allSignatures?: PullSignatureSymbol[]) {
 
             if (!signature) {
-                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.currentUnit);
+                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain);
                 signature = functionSignatureInfo.signature;
                 allSignatures = functionSignatureInfo.allSignatures;
             }

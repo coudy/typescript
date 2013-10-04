@@ -40,7 +40,7 @@ module TypeScript {
             return this.compilationUnitPath;
         }
 
-        public getDeclForAST(ast: AST): PullDecl {
+        public _getDeclForAST(ast: AST): PullDecl {
             if (useDirectTypeStorage) {
                 return ast.decl ? ast.decl : null;
             }
@@ -521,16 +521,6 @@ module TypeScript {
             this.logger.log("   time to clean: " + (cleanEnd - cleanStart));
         }
 
-        public getDeclForAST(ast: AST, unitPath: string): PullDecl {
-            var unit = <SemanticInfo>this.unitCache[unitPath];
-
-            if (unit) {
-                return unit.getDeclForAST(ast);
-            }
-
-            return null;
-        }
-
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             if (useDirectTypeStorage) {
                 ast.symbol = symbol;
@@ -641,6 +631,16 @@ module TypeScript {
             this.setASTForDecl(indexParamDecl, ast);
             indexSigDecl.setIsBound(true);
             indexParamDecl.setIsBound(true);
+        }
+
+        public getDeclForAST(ast: AST): PullDecl {
+            var unit = this.getUnit(ast.fileName());
+
+            if (unit) {
+                return unit._getDeclForAST(ast);
+            }
+
+            return null;
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {

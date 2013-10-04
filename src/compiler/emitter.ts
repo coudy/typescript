@@ -150,7 +150,7 @@ module TypeScript {
 
         public shouldEmitImportDeclaration(importDeclAST: ImportDeclaration) {
             var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
-            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
             var isAmdCodeGen = this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous;
 
@@ -176,7 +176,7 @@ module TypeScript {
 
         public emitImportDeclaration(importDeclAST: ImportDeclaration) {
             var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
-            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST, this.document.fileName);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
             var isAmdCodeGen = this.emitOptions.compilationSettings.moduleGenTarget == ModuleGenTarget.Asynchronous;
 
@@ -602,7 +602,7 @@ module TypeScript {
             //    emitIndent();
             //}
 
-            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             this.pushDecl(pullDecl);
 
             // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
@@ -617,7 +617,7 @@ module TypeScript {
                 this.writeToOutput("(");
             }
             this.recordSourceMappingStart(funcDecl);
-            var accessorSymbol = funcDecl.isAccessor() ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.document.fileName) : null;
+            var accessorSymbol = funcDecl.isAccessor() ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain) : null;
             var container = accessorSymbol ? accessorSymbol.getContainer() : null;
             var containerKind = container ? container.kind : PullElementKind.None;
             if (!(funcDecl.isAccessor() && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
@@ -809,7 +809,7 @@ module TypeScript {
                 return (scriptDecl.flags & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
 
-            var decl = this.semanticInfoChain.getDeclForAST(ast, this.document.fileName);
+            var decl = this.semanticInfoChain.getDeclForAST(ast);
             if (decl) {
                 return (decl.flags & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
@@ -818,7 +818,7 @@ module TypeScript {
         }
 
         public emitModule(moduleDecl: ModuleDeclaration) {
-            var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl, this.document.fileName);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
             this.pushDecl(pullDecl);
 
             var svModuleName = this.moduleName;
@@ -995,7 +995,7 @@ module TypeScript {
             this.recordSourceMappingStart(arrowFunction);
 
             // Start
-            var pullDecl = this.semanticInfoChain.getDeclForAST(arrowFunction, this.document.fileName);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(arrowFunction);
             this.pushDecl(pullDecl);
 
             this.emitComments(arrowFunction, true);
@@ -1064,7 +1064,7 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
 
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
-                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl, this.document.fileName);
+                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
                 if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");
@@ -1121,7 +1121,7 @@ module TypeScript {
 
             this.emitComments(declaration, true);
 
-            var pullVarDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
+            var pullVarDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             var isAmbientWithoutInit = pullVarDecl && hasFlag(pullVarDecl.flags, PullElementFlags.Ambient) && varDecl.init === null;
             if (!isAmbientWithoutInit) {
                 var prevVariableDeclaration = this.currentVariableDeclaration;
@@ -1151,7 +1151,7 @@ module TypeScript {
         }
 
         public emitVariableDeclarator(varDecl: VariableDeclarator) {
-            var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl, this.document.fileName);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             this.pushDecl(pullDecl);
             if (pullDecl && (pullDecl.flags & PullElementFlags.Ambient) === PullElementFlags.Ambient) {
                 this.emitAmbientVarDecl(varDecl);
@@ -1779,7 +1779,7 @@ module TypeScript {
 
         public emitPropertyAccessor(funcDecl: FunctionDeclaration, className: string, isProto: boolean) {
             if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
-                var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain, this.document.fileName);
+                var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
                 if (accessorSymbol.getGetter()) {
                     return;
                 }
@@ -1808,7 +1808,7 @@ module TypeScript {
 
             this.indenter.increaseIndent();
 
-            var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain, this.document.fileName);
+            var accessors = PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain);
             if (accessors.getter) {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.getter);
@@ -1858,7 +1858,7 @@ module TypeScript {
         }
 
         public emitClass(classDecl: ClassDeclaration) {
-            var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl, this.document.fileName);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl);
             this.pushDecl(pullDecl);
 
             var svClassNode = this.thisClassNode;
@@ -2292,7 +2292,7 @@ module TypeScript {
             funcProp.propertyName.emit(this);
             this.writeToOutput(": ");
 
-            var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcProp, this.document.fileName);
+            var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcProp);
 
             var savedInArrowFunction = this.inArrowFunction;
             this.inArrowFunction = false;
@@ -2300,7 +2300,7 @@ module TypeScript {
             var temp = this.setContainer(EmitContainer.Function);
             var funcName = funcProp.propertyName;
 
-            var pullDecl = this.semanticInfoChain.getDeclForAST(funcProp, this.document.fileName);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcProp);
             this.pushDecl(pullDecl);
 
             this.emitComments(funcProp, true);

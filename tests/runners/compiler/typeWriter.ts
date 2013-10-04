@@ -91,9 +91,11 @@ class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
         var astPath = TypeScript.getAstPathToPosition(this.compilerState.getDocument(this.filename).script, pos, false, false);
         while (astPath.count() > 0) {
             var pop = astPath.pop();
-            var decl = this.resolver.getDeclForAST(pop);
-            if (decl) {
-                return decl;
+            if (pop.nodeType() !== TypeScript.NodeType.Comment) {
+                var decl = this.resolver.getDeclForAST(pop);
+                if (decl) {
+                    return decl;
+                }
             }
         }
         return null;
