@@ -301,7 +301,7 @@ module TypeScript {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
-                if (!script.isDeclareFile && script.isExternalModule) {
+                if (!script.isDeclareFile() && script.isExternalModule) {
                     return true;
                 }
             }
@@ -318,7 +318,7 @@ module TypeScript {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
 
-                if (!script.isDeclareFile) {
+                if (!script.isDeclareFile()) {
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength === -1) {
                         // First time at finding common path
@@ -464,7 +464,7 @@ module TypeScript {
             }
 
             // If its already a declare file or is resident or does not contain body 
-            if (!!script && (script.isDeclareFile || script.moduleElements === null)) {
+            if (!!script && (script.isDeclareFile() || script.moduleElements === null)) {
                 return false;
             }
 
@@ -583,7 +583,7 @@ module TypeScript {
                      emitter?: Emitter): Emitter {
 
             var script = document.script;
-            if (!script.isDeclareFile) {
+            if (!script.isDeclareFile()) {
                 var typeScriptFileName = document.fileName;
                 if (!emitter) {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);

@@ -2633,7 +2633,7 @@ module TypeScript {
         }
 
         public emitScript(script: Script): void {
-            if (!script.isDeclareFile) {
+            if (!script.isDeclareFile()) {
                 this.emitScriptElements(script);
             }
         }

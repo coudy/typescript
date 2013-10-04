@@ -358,7 +358,7 @@ module TypeScript {
                 this.setSpanExplicit(bod, start, this.position);
             }
 
-            var result = new Script(bod, isExternalModule, isDTSFile(this.fileName), amdDependencies);
+            var result = new Script(bod, this.fileName, isExternalModule, amdDependencies);
             this.setSpanExplicit(result, start, start + node.fullWidth());
 
             result.setModuleFlags(moduleFlags);

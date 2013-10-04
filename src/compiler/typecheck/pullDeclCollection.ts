@@ -62,7 +62,7 @@ module TypeScript {
         context.semanticInfoChain.setASTForDecl(decl, script);
 
         context.pushParent(decl);
-        context.isDeclareFile = script.isDeclareFile;
+        context.isDeclareFile = script.isDeclareFile();
     }
 
     function preCollectModuleDecls(moduleDecl: ModuleDeclaration, context: DeclCollectionContext) {

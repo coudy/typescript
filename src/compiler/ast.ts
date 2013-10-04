@@ -86,6 +86,10 @@ module TypeScript {
         constructor() {
         }
 
+        public fileName(): string {
+            return this.parent.fileName();
+        }
+
         public nodeType(): NodeType {
             throw Errors.abstract();
         }
@@ -959,9 +963,20 @@ module TypeScript {
     export class Script extends AST {
         private _moduleFlags = ModuleFlags.None;
 
-        constructor(public moduleElements: ASTList, public isExternalModule: boolean, public isDeclareFile: boolean, public amdDependencies: string[]) {
+        constructor(public moduleElements: ASTList,
+                    private _fileName: string,
+                    public isExternalModule: boolean,
+                    public amdDependencies: string[]) {
             super();
             moduleElements && (moduleElements.parent = this);
+        }
+
+        public fileName(): string {
+            return this._fileName;
+        }
+
+        public isDeclareFile(): boolean {
+            return isDTSFile(this.fileName());
         }
 
         public nodeType(): NodeType {
