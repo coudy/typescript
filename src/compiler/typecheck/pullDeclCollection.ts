@@ -57,7 +57,8 @@ module TypeScript {
     function preCollectScriptDecls(script: Script, context: DeclCollectionContext): void {
         var span = TextSpan.fromBounds(script.minChar, script.limChar);
 
-        var decl = new RootPullDecl(context.scriptName, context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName, context.semanticInfoChain);
+        var decl = new RootPullDecl(
+            context.scriptName, context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName, context.semanticInfoChain, script.isExternalModule);
         context.semanticInfoChain.setDeclForAST(script, decl);
         context.semanticInfoChain.setASTForDecl(decl, script);
 

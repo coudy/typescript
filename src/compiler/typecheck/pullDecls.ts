@@ -76,6 +76,10 @@ module TypeScript {
             throw Errors.abstract();
         }
 
+        public isExternalModule(): boolean {
+            throw Errors.abstract();
+        }
+
         public clean() {
             // Clean this decl
             this._isBound = false;
@@ -322,11 +326,13 @@ module TypeScript {
     export class RootPullDecl extends PullDecl {
         private _fileName: string;
         private _semanticInfoChain: SemanticInfoChain;
+        private _isExternalModule: boolean;
 
-        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, fileName: string, semanticInfoChain: SemanticInfoChain) {
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, fileName: string, semanticInfoChain: SemanticInfoChain, isExternalModule: boolean) {
             super(declName, displayName, kind, declFlags, span);
             this._fileName = fileName;
             this._semanticInfoChain = semanticInfoChain;
+            this._isExternalModule = isExternalModule;
         }
 
         public fileName(): string {
@@ -343,6 +349,10 @@ module TypeScript {
 
         public semanticInfoChain(): SemanticInfoChain {
             return this._semanticInfoChain;
+        }
+
+        public isExternalModule(): boolean {
+            return this._isExternalModule;
         }
     }
 
@@ -394,6 +404,10 @@ module TypeScript {
         public semanticInfoChain(): SemanticInfoChain {
             Debug.assert(this.getParentDecl());
             return this.getParentDecl().semanticInfoChain();
+        }
+
+        public isExternalModule(): boolean {
+            return false;
         }
     }
 

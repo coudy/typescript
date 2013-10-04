@@ -2055,7 +2055,7 @@ module TypeScript {
         }
 
         public bindDeclsForUnit() {
-            var topLevelDecl = this.semanticInfoChain.getUnit(this.fileName).getTopLevelDecl();
+            var topLevelDecl = this.semanticInfoChain.getTopLevelDecl(this.fileName);
             this.bindDeclToPullSymbol(topLevelDecl);
         }
     }

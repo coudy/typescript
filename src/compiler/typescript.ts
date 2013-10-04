@@ -721,18 +721,14 @@ module TypeScript {
         }
 
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
-            var unit = this.semanticInfoChain.getUnit(fileName);
+            var document = this.getDocument(fileName);
+            var script = document.script;
 
-            if (unit) {
-                var document = this.getDocument(fileName);
-                var script = document.script;
-
-                var startTime = (new Date()).getTime();
-                PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
+            var startTime = (new Date()).getTime();
+            PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
                     var endTime = (new Date()).getTime();
 
-                typeCheckTime += endTime - startTime;
-            }
+            typeCheckTime += endTime - startTime;
 
             var errors = this.semanticInfoChain.getDiagnostics(fileName);
 
@@ -791,25 +787,13 @@ module TypeScript {
                 this.resolver.semanticInfoChain = this.semanticInfoChain;
             }
 
-            var declCollectionContext: DeclCollectionContext = null;
-            var i: number, n: number;
-
             var createDeclsStartTime = new Date().getTime();
 
             var fileNames = this.fileNameToDocument.getAllKeys();
-            var n = fileNames.length;
-            for (var i = 0; i < n; i++) {
+            for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileName);
-                var semanticInfo = new SemanticInfo(fileName);
-                this.semanticInfoChain.addUnit(semanticInfo);
-
-                declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, fileName);
-
-                // create decls
-                getAstWalkerFactory().walk(document.script, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
+                this.semanticInfoChain.addScript(document.script);
             }
 
             var createDeclsEndTime = new Date().getTime();
@@ -818,9 +802,11 @@ module TypeScript {
             var bindStartTime = new Date().getTime();
 
             // start at '1', so as to skip binding for global primitives such as 'any'
-            for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
-                var fileName = this.semanticInfoChain.units[i].getPath();
-                var binder = this.semanticInfoChain.getBinder(fileName);
+            var topLevelDecls = this.semanticInfoChain.getTopLevelDecls();
+            for (var i = 1, n = topLevelDecls.length; i < n; i++) {
+                var topLevelDecl = topLevelDecls[i];
+
+                var binder = this.semanticInfoChain.getBinder(topLevelDecl.fileName());
                 binder.bindDeclsForUnit();
             }
 
@@ -835,26 +821,13 @@ module TypeScript {
 
         private pullUpdateScript(oldDocument: Document, newDocument: Document): void {
             this.timeFunction("pullUpdateScript: ", () => {
-                var oldScript = oldDocument.script;
+                Debug.assert(oldDocument.fileName === newDocument.fileName);
                 var newScript = newDocument.script;
-                
-                // want to name the new script semantic info the same as the old one
-                var newScriptSemanticInfo = new SemanticInfo(oldDocument.fileName);
-                var oldScriptSemanticInfo = this.semanticInfoChain.getUnit(oldDocument.fileName);
 
                 lastBoundPullDeclId = pullDeclID;
 
                 // replace the old semantic info               
-                this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
-
-                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, oldDocument.fileName);
-
-                // create decls
-                getAstWalkerFactory().walk(newScript, preCollectDecls, postCollectDecls, null, declCollectionContext);
-
-                var newTopLevelDecl = declCollectionContext.getParent();
-
-                newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
+                this.semanticInfoChain.updateScript(newScript);
 
                 // If we havne't yet created a new resolver, clean any cached symbols
                 this.resolver = new PullTypeResolver(
@@ -1166,7 +1139,6 @@ module TypeScript {
             var script = document.script;
             var scriptName = document.fileName;
 
-            var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var enclosingDecl: PullDecl = null;
             var enclosingDeclAST: AST = null;
             var inContextuallyTypedAssignment = false;
@@ -1177,7 +1149,7 @@ module TypeScript {
                 return null;
             }
 
-            this.setUnit(semanticInfo.getPath());
+            this.setUnit(scriptName);
 
             // Extract infromation from path
             for (var i = 0 , n = path.count(); i < n; i++) {
@@ -1477,7 +1449,6 @@ module TypeScript {
                 return null;
             }
 
-            var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var decl = this.semanticInfoChain.getDeclForAST(ast);
             var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
             this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
@@ -1594,14 +1565,8 @@ module TypeScript {
             });
         }
 
-        public getTopLevelDeclaration(scriptName: string) : PullDecl {
-            var unit = this.semanticInfoChain.getUnit(scriptName);
-
-            if (!unit) {
-                return null;
-            }
-
-            return unit.getTopLevelDecl();
+        public getTopLevelDeclaration(fileName: string) : PullDecl {
+            return this.semanticInfoChain.getTopLevelDecl(fileName);
         }
 
         public reportDiagnostics(errors: Diagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {

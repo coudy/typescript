@@ -18,7 +18,7 @@ module TypeScript {
 
     var sentinalEmptyArray: any[] = [];
 
-    export class SemanticInfo {
+    class SemanticInfo {
         private compilationUnitPath: string;  // the "file" this is associated with
 
         private topLevelDecl: PullDecl = null;
@@ -77,24 +77,13 @@ module TypeScript {
 
             this.declASTMap.link(decl.declIDString, ast);
         }
-
-        public isExternalModule() {
-            var topLevelDecl = this.getTopLevelDecl();
-            if (topLevelDecl.kind == PullElementKind.Script) {
-                var script = <Script>this._getASTForDecl(topLevelDecl);
-                return script.isExternalModule;
-            }
-
-            // Global context
-            return false;
-        }
     }
 
     export class SemanticInfoChain {
-        public units: SemanticInfo[] = [new SemanticInfo("")];
+        private units: SemanticInfo[] = [new SemanticInfo("")];
         private declCache = new BlockIntrinsics<PullDecl[]>();
         private symbolCache = new BlockIntrinsics<PullSymbol>();
-        private unitCache = new BlockIntrinsics<SemanticInfo>();
+        private fileNameToSemanticInfo = new BlockIntrinsics<SemanticInfo>();
         private fileNameToDiagnostics = new BlockIntrinsics<Diagnostic[]>();
         private fileNameToBinder = new BlockIntrinsics<PullSymbolBinder>();
 
@@ -142,7 +131,7 @@ module TypeScript {
 
         private getGlobalDecl() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new RootPullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "", this);
+            var globalDecl = new RootPullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "", this, /*isExternalModule:*/ false);
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
@@ -174,29 +163,50 @@ module TypeScript {
             globalInfo.addTopLevelDecl(globalDecl);
         }
 
-        public addUnit(unit: SemanticInfo) {
-            this.units[this.units.length] = unit;
-            this.unitCache[unit.getPath()] = unit;
+        public addScript(script: Script) {
+            var fileName = script.fileName();
+
+            var semanticInfo = new SemanticInfo(fileName);
+            this.units.push(semanticInfo);
+            this.fileNameToSemanticInfo[fileName] = semanticInfo;
+
+            this.createTopLevelDecl(semanticInfo, script);
         }
 
-        public getUnit(compilationUnitPath: string): SemanticInfo {
-            return this.unitCache[compilationUnitPath];
+        private createTopLevelDecl(semanticInfo: SemanticInfo, script: Script): void {
+            var declCollectionContext = new DeclCollectionContext(this, script.fileName());
+
+            // create decls
+            getAstWalkerFactory().walk(script, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+            semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
+        }
+
+        private getSemanticInfo(compilationUnitPath: string): SemanticInfo {
+            return this.fileNameToSemanticInfo[compilationUnitPath];
         }
 
         // PULLTODO: compilationUnitPath is only really there for debug purposes
-        public updateUnit(oldUnit: SemanticInfo, newUnit: SemanticInfo) {
-            this.updateUnitWorker(oldUnit, newUnit);
+        public updateScript(newScript: Script): void {
+            var newSemanticInfo = this.updateScriptWorker(newScript);
+            this.createTopLevelDecl(newSemanticInfo, newScript);
+
             this.invalidate();
         }
 
-        private updateUnitWorker(oldUnit: SemanticInfo, newUnit: SemanticInfo) {
+        private updateScriptWorker(newScript: Script): SemanticInfo {
+            var fileName = newScript.fileName();
+            var newSemanticInfo = new SemanticInfo(fileName);
+
             for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i].getPath() === oldUnit.getPath()) {
-                    this.units[i] = newUnit;
-                    this.unitCache[oldUnit.getPath()] = newUnit;
-                    return;
+                if (this.units[i].getPath() === fileName) {
+                    this.units[i] = newSemanticInfo;
+                    this.fileNameToSemanticInfo[fileName] = newSemanticInfo;
+                    break;
                 }
             }
+
+            return newSemanticInfo;
         }
 
         private collectAllTopLevelDecls() {
@@ -274,11 +284,12 @@ module TypeScript {
             symbol = null;
             for (var i = 0; i < this.units.length; i++) {
                 var unit = this.units[i];
-                if (unit.isExternalModule()) {
+                var topLevelDecl = unit.getTopLevelDecl(); // Script
+
+                if (topLevelDecl.isExternalModule()) {
                     var unitPath = unit.getPath();
                     var isDtsFile = unitPath == dtsFile;
                     if (isDtsFile || unitPath == tsFile) {
-                        var topLevelDecl = unit.getTopLevelDecl(); // Script
                         var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
                         symbol = <PullContainerSymbol>dynamicModuleDecl.getSymbol();
                         this.symbolCache[dtsCacheID] = isDtsFile ? symbol : null;
@@ -302,8 +313,9 @@ module TypeScript {
                 symbol = null;
                 for (var i = 0; i < this.units.length; i++) {
                     var unit = this.units[i];
-                    if (!unit.isExternalModule()) {
-                        var topLevelDecl = unit.getTopLevelDecl();
+                    var topLevelDecl = unit.getTopLevelDecl();
+
+                    if (!topLevelDecl.isExternalModule()) {
                         var dynamicModules = topLevelDecl.searchChildDecls(id, PullElementKind.DynamicModule);
                         if (dynamicModules.length) {
                             symbol = <PullContainerSymbol>dynamicModules[0].getSymbol();
@@ -394,7 +406,7 @@ module TypeScript {
 
         public findMatchingValidDecl(invalidatedDecl: PullDecl): PullDecl[]{
             var unitPath = invalidatedDecl.fileName();
-            var unit = this.getUnit(unitPath);
+            var unit = this.getSemanticInfo(unitPath);
             if (!unit) {
                 return null;
             }
@@ -634,7 +646,7 @@ module TypeScript {
         }
 
         public getDeclForAST(ast: AST): PullDecl {
-            var unit = this.getUnit(ast.fileName());
+            var unit = this.getSemanticInfo(ast.fileName());
 
             if (unit) {
                 return unit._getDeclForAST(ast);
@@ -644,11 +656,11 @@ module TypeScript {
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
-            this.getUnit(decl.fileName())._setDeclForAST(ast, decl);
+            this.getSemanticInfo(decl.fileName())._setDeclForAST(ast, decl);
         }
 
         public getASTForDecl(decl: PullDecl): AST {
-            var unit = this.getUnit(decl.fileName());
+            var unit = this.getSemanticInfo(decl.fileName());
             if (unit) {
                 return unit._getASTForDecl(decl);
             }
@@ -657,7 +669,15 @@ module TypeScript {
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
-            this.getUnit(decl.fileName())._setASTForDecl(decl, ast);
+            this.getSemanticInfo(decl.fileName())._setASTForDecl(decl, ast);
+        }
+
+        public getTopLevelDecl(fileName: string): PullDecl {
+            return this.getSemanticInfo(fileName).getTopLevelDecl();
+        }
+
+        public getTopLevelDecls(): PullDecl[] {
+            return ArrayUtilities.select(this.units, u => u.getTopLevelDecl());
         }
     }
 }

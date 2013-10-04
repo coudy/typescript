@@ -559,16 +559,15 @@ module TypeScript {
             }
 
             // Get the global decls
-            var units = this.semanticInfoChain.units;
-            for (var i = 0, n = units.length; i < n; i++) {
-                var unit = units[i];
-                if (declPath.length > 0 && unit.getPath() === declPath[0].fileName()) {
+            var topLevelDecls = this.semanticInfoChain.getTopLevelDecls();
+            for (var i = 0, n = topLevelDecls.length; i < n; i++) {
+                var topLevelDecl = topLevelDecls[i];
+                if (declPath.length > 0 && topLevelDecl.fileName() === declPath[0].fileName()) {
                     // Current unit has already been processed. skip it.
                     continue;
                 }
 
-                if (!unit.isExternalModule()) {
-                    var topLevelDecl = unit.getTopLevelDecl();
+                if (!topLevelDecl.isExternalModule()) {
                     this.addFilteredDecls(topLevelDecl.getChildDecls(), declSearchKind, result)
                 }
             }
@@ -10025,9 +10024,7 @@ module TypeScript {
 
         // type check infrastructure
         public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
-            var unit = semanticInfoChain.getUnit(scriptName);
-
-            var scriptDecl = unit.getTopLevelDecl();
+            var scriptDecl = semanticInfoChain.getTopLevelDecl(scriptName);
 
             var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
