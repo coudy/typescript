@@ -7301,7 +7301,9 @@ module TypeScript {
 
                 var len = callEx.arguments.members.length;
                 for (var i = 0; i < len; i++) {
-                    var contextualType = callResolutionData.actualParametersContextTypeSymbols[i];
+                    // Ensure call resolution data contains additional information. 
+                    // Actual parameters context type symbols will be undefined if the call target resolves to any or error types.
+                    var contextualType = callResolutionData.actualParametersContextTypeSymbols ? callResolutionData.actualParametersContextTypeSymbols[i] : null;
                     if (contextualType) {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                     }
@@ -7741,7 +7743,9 @@ module TypeScript {
                 var len = callEx.arguments.members.length;
 
                 for (var i = 0; i < len; i++) {
-                    var contextualType = callResolutionData.actualParametersContextTypeSymbols[i];
+                    // Ensure call resolution data contains additional information. 
+                    // Actual parameters context type symbols will be undefined if the call target resolves to any or error types.
+                    var contextualType = callResolutionData.actualParametersContextTypeSymbols ? callResolutionData.actualParametersContextTypeSymbols[i] : null;
                     if (contextualType) {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                     }
