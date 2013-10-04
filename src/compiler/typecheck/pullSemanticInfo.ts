@@ -19,15 +19,15 @@ module TypeScript {
     var sentinalEmptyArray: any[] = [];
 
     class SemanticInfo {
-        private compilationUnitPath: string;  // the "file" this is associated with
+        private _fileName: string;  // the "file" this is associated with
 
         private topLevelDecl: PullDecl = null;
 
         private declASTMap = new DataMap<AST>();
         private astDeclMap = new DataMap<PullDecl>();
 
-        constructor(compilationUnitPath: string) {
-            this.compilationUnitPath = compilationUnitPath;
+        constructor(fileName: string) {
+            this._fileName = fileName;
         }
 
         public addTopLevelDecl(decl: PullDecl) {
@@ -36,8 +36,8 @@ module TypeScript {
 
         public getTopLevelDecl() { return this.topLevelDecl; }
 
-        public getPath(): string {
-            return this.compilationUnitPath;
+        public fileName(): string {
+            return this._fileName;
         }
 
         public _getDeclForAST(ast: AST): PullDecl {
@@ -49,7 +49,7 @@ module TypeScript {
         }
 
         public _setDeclForAST(ast: AST, decl: PullDecl): void {
-            Debug.assert(decl.fileName() === this.compilationUnitPath);
+            Debug.assert(decl.fileName() === this._fileName);
 
             if (useDirectTypeStorage) {
                 ast.decl = decl;
@@ -68,7 +68,7 @@ module TypeScript {
         }
 
         public _setASTForDecl(decl: PullDecl, ast: AST): void {
-            Debug.assert(decl.fileName() === this.compilationUnitPath);
+            Debug.assert(decl.fileName() === this._fileName);
 
             if (useDirectTypeStorage) {
                 decl.ast = ast;
@@ -182,11 +182,10 @@ module TypeScript {
             semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
         }
 
-        private getSemanticInfo(compilationUnitPath: string): SemanticInfo {
-            return this.fileNameToSemanticInfo[compilationUnitPath];
+        private getSemanticInfo(fileName: string): SemanticInfo {
+            return this.fileNameToSemanticInfo[fileName];
         }
 
-        // PULLTODO: compilationUnitPath is only really there for debug purposes
         public updateScript(newScript: Script): void {
             var newSemanticInfo = this.updateScriptWorker(newScript);
             this.createTopLevelDecl(newSemanticInfo, newScript);
@@ -199,7 +198,7 @@ module TypeScript {
             var newSemanticInfo = new SemanticInfo(fileName);
 
             for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i].getPath() === fileName) {
+                if (this.units[i].fileName() === fileName) {
                     this.units[i] = newSemanticInfo;
                     this.fileNameToSemanticInfo[fileName] = newSemanticInfo;
                     break;
@@ -287,7 +286,7 @@ module TypeScript {
                 var topLevelDecl = unit.getTopLevelDecl(); // Script
 
                 if (topLevelDecl.isExternalModule()) {
-                    var unitPath = unit.getPath();
+                    var unitPath = unit.fileName();
                     var isDtsFile = unitPath == dtsFile;
                     if (isDtsFile || unitPath == tsFile) {
                         var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
