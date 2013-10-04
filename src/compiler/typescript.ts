@@ -806,8 +806,8 @@ module TypeScript {
             for (var i = 1, n = topLevelDecls.length; i < n; i++) {
                 var topLevelDecl = topLevelDecls[i];
 
-                var binder = this.semanticInfoChain.getBinder(topLevelDecl.fileName());
-                binder.bindDeclsForUnit();
+                var binder = this.semanticInfoChain.getBinder();
+                binder.bindDeclToPullSymbol(topLevelDecl);
             }
 
             var bindEndTime = new Date().getTime();

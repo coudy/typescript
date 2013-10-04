@@ -120,7 +120,7 @@ module TypeScript {
 
         public ensureSymbolIsBound(bindSignatureSymbol=false) {
             if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.kind != PullElementKind.Script) {
-                var binder = this.semanticInfoChain().getBinder(this.fileName());
+                var binder = this.semanticInfoChain().getBinder();
                 binder.bindDeclToPullSymbol(this);
             }
         }

@@ -85,7 +85,7 @@ module TypeScript {
         private symbolCache = new BlockIntrinsics<PullSymbol>();
         private fileNameToSemanticInfo = new BlockIntrinsics<SemanticInfo>();
         private fileNameToDiagnostics = new BlockIntrinsics<Diagnostic[]>();
-        private fileNameToBinder = new BlockIntrinsics<PullSymbolBinder>();
+        private binder: PullSymbolBinder = null;
 
         private topLevelDecls: PullDecl[] = [];
 
@@ -517,7 +517,7 @@ module TypeScript {
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
             this.fileNameToDiagnostics = new BlockIntrinsics();
-            this.fileNameToBinder = new BlockIntrinsics();
+            this.binder = null;
 
             this.units[0] = new SemanticInfo("");
             this.units[0].addTopLevelDecl(this.getGlobalDecl());
@@ -608,14 +608,12 @@ module TypeScript {
             return diagnostics ? diagnostics : [];
         }
 
-        public getBinder(fileName: string): PullSymbolBinder {
-            var binder = this.fileNameToBinder[fileName];
-            if (!binder) {
-                binder = new PullSymbolBinder(this, fileName);
-                this.fileNameToBinder[fileName] = binder;
+        public getBinder(): PullSymbolBinder {
+            if (!this.binder) {
+                this.binder = new PullSymbolBinder(this);
             }
 
-            return binder;
+            return this.binder;
         }
 
         public addSyntheticIndexSignature(containingDecl: PullDecl, containingSymbol: PullTypeSymbol, ast: AST,

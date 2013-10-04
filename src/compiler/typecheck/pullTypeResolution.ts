@@ -1882,7 +1882,7 @@ module TypeScript {
             }
 
             if (!functionDecl.hasSymbol()) {
-                var binder = this.semanticInfoChain.getBinder(this.unitPath);
+                var binder = this.semanticInfoChain.getBinder();
 
                 if (functionDecl.kind === PullElementKind.ConstructorType) {
                     binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
@@ -2107,7 +2107,7 @@ module TypeScript {
 
                 var interfaceDecl = this.getDeclForAST(objectType);
 
-                var binder = this.semanticInfoChain.getBinder(this.unitPath);
+                var binder = this.semanticInfoChain.getBinder();
                 binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
             }
 
@@ -6078,7 +6078,7 @@ module TypeScript {
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
 
-                var binder = this.semanticInfoChain.getBinder(this.unitPath);
+                var binder = this.semanticInfoChain.getBinder();
                 binder.bindFunctionExpressionToPullSymbol(functionDecl);
             }
 
@@ -6544,7 +6544,7 @@ module TypeScript {
                     }
 
                     if (!isUsingExistingSymbol) {
-                        var binder = this.semanticInfoChain.getBinder(this.unitPath);
+                        var binder = this.semanticInfoChain.getBinder();
 
                         if (funcDeclAST.isGetAccessor()) {
                             binder.bindGetAccessorDeclarationToPullSymbol(functionDeclaration);
@@ -6567,7 +6567,7 @@ module TypeScript {
                         var functionDecl = this.getDeclForAST(propertyAssignment);
                     }
 
-                    var binder = this.semanticInfoChain.getBinder(this.unitPath);
+                    var binder = this.semanticInfoChain.getBinder();
                     binder.bindFunctionExpressionToPullSymbol(decl);
                 }
 
