@@ -1481,7 +1481,6 @@ module TypeScript {
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
-                    typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfoChain.addDiagnostic(
                         diagnosticFromAST(typeParameterAST, DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]));
                 }
