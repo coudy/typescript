@@ -19,11 +19,7 @@ module TypeScript {
             this.functionTypeParameterCache = new BlockIntrinsics();
         }
 
-        private semanticInfo: SemanticInfo = null;
-
-        constructor(private semanticInfoChain: SemanticInfoChain, fileName: string) {
-            this.semanticInfo = semanticInfoChain.getUnit(fileName);
-            Debug.assert(this.semanticInfo);
+        constructor(private semanticInfoChain: SemanticInfoChain, private fileName: string) {
         }
 
         private getParent(decl: PullDecl, returnInstanceType = false): PullTypeSymbol {
@@ -144,7 +140,7 @@ module TypeScript {
             else {
                 var parentDecl = decl.getParentDecl();
                 if (parentDecl && parentDecl.kind === PullElementKind.Script) {
-                    return this.semanticInfoChain.findTopLevelSymbol(name, searchKind, this.semanticInfo.getPath());
+                    return this.semanticInfoChain.findTopLevelSymbol(name, searchKind, this.fileName);
                 }
                 else {
                     // The decl is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
@@ -657,7 +653,7 @@ module TypeScript {
         }
 
         public bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
-            Debug.assert(objectDecl.fileName() === this.semanticInfo.getPath());
+            Debug.assert(objectDecl.fileName() === this.fileName);
 
             var objectSymbolAST: AST = this.semanticInfoChain.getASTForDecl(objectDecl);
 
@@ -699,7 +695,7 @@ module TypeScript {
         }
 
         public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
-            Debug.assert(constructorTypeDeclaration.fileName() === this.semanticInfo.getPath());
+            Debug.assert(constructorTypeDeclaration.fileName() === this.fileName);
 
             var declKind = constructorTypeDeclaration.kind;
             var declFlags = constructorTypeDeclaration.flags;
@@ -894,7 +890,7 @@ module TypeScript {
                         }
 
                         if (!classTypeSymbol) {
-                            classTypeSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeType, this.semanticInfo.getPath());
+                            classTypeSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeType, this.fileName);
                         }
                     }
 
@@ -969,10 +965,10 @@ module TypeScript {
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.semanticInfo.getPath());
+                            moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, this.fileName);
 
                             if (!moduleContainerTypeSymbol) {
-                                moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, this.semanticInfo.getPath());
+                                moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, this.fileName);
                             }
                         }
                     }
@@ -1275,7 +1271,7 @@ module TypeScript {
         }
 
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
-            Debug.assert(functionExpressionDeclaration.fileName() === this.semanticInfo.getPath());
+            Debug.assert(functionExpressionDeclaration.fileName() === this.fileName);
 
             var declKind = functionExpressionDeclaration.kind;
             var declFlags = functionExpressionDeclaration.flags;
@@ -1340,7 +1336,7 @@ module TypeScript {
         }
 
         public bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
-            Debug.assert(functionTypeDeclaration.fileName() === this.semanticInfo.getPath());
+            Debug.assert(functionTypeDeclaration.fileName() === this.fileName);
 
             var declKind = functionTypeDeclaration.kind;
             var declFlags = functionTypeDeclaration.flags;
@@ -1740,7 +1736,7 @@ module TypeScript {
         // getters and setters
 
         public bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
-            Debug.assert(getAccessorDeclaration.fileName() === this.semanticInfo.getPath());
+            Debug.assert(getAccessorDeclaration.fileName() === this.fileName);
 
             var declKind = getAccessorDeclaration.kind;
             var declFlags = getAccessorDeclaration.flags;
@@ -1842,7 +1838,7 @@ module TypeScript {
         }
 
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
-            Debug.assert(setAccessorDeclaration.fileName() === this.semanticInfo.getPath());
+            Debug.assert(setAccessorDeclaration.fileName() === this.fileName);
 
             var declKind = setAccessorDeclaration.kind;
             var declFlags = setAccessorDeclaration.flags;
@@ -1945,7 +1941,7 @@ module TypeScript {
 
         // binding
         public bindDeclToPullSymbol(decl: PullDecl) {
-            Debug.assert(decl.fileName() === this.semanticInfo.getPath());
+            Debug.assert(decl.fileName() === this.fileName);
 
             if (decl.isBound()) {
                 return;
@@ -2059,7 +2055,7 @@ module TypeScript {
         }
 
         public bindDeclsForUnit() {
-            var topLevelDecl = this.semanticInfo.getTopLevelDecl();
+            var topLevelDecl = this.semanticInfoChain.getUnit(this.fileName).getTopLevelDecl();
             this.bindDeclToPullSymbol(topLevelDecl);
         }
     }
