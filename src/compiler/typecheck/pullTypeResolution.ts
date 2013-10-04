@@ -1870,7 +1870,7 @@ module TypeScript {
             var functionDecl = this.getDeclForAST(funcDeclAST);
 
             if (!functionDecl) {
-                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -2097,7 +2097,7 @@ module TypeScript {
             var interfaceDecl = this.getDeclForAST(objectType);
 
             if (!interfaceDecl) {
-                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -6068,7 +6068,7 @@ module TypeScript {
 
             // If necessary, create a new function decl and symbol
             if (!functionDecl) {
-                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -6534,7 +6534,7 @@ module TypeScript {
                     var functionDeclaration: PullDecl = null;
 
                     if (!isUsingExistingDecl) {
-                        var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
+                        var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain);
 
                         declCollectionContext.pushParent(objectLiteralDeclaration);
 
@@ -6558,7 +6558,7 @@ module TypeScript {
                 }
                 else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
                     if (!isUsingExistingDecl) {
-                        var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
+                        var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain);
 
                         declCollectionContext.pushParent(objectLiteralDeclaration);
 

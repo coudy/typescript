@@ -174,7 +174,7 @@ module TypeScript {
         }
 
         private createTopLevelDecl(semanticInfo: SemanticInfo, script: Script): void {
-            var declCollectionContext = new DeclCollectionContext(this, script.fileName());
+            var declCollectionContext = new DeclCollectionContext(this);
 
             // create decls
             getAstWalkerFactory().walk(script, preCollectDecls, postCollectDecls, null, declCollectionContext);

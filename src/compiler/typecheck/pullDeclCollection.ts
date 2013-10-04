@@ -10,7 +10,7 @@ module TypeScript {
         public containingModuleHasExportAssignmentArray: boolean[] = [false];
         public isParsingAmbientModuleArray: boolean[] = [false];
 
-        constructor(public semanticInfoChain: SemanticInfoChain, public scriptName: string) {
+        constructor(public semanticInfoChain: SemanticInfoChain) {
         }
 
         public getParent() { return this.parentChain ? this.parentChain[this.parentChain.length - 1] : null; }
@@ -57,8 +57,9 @@ module TypeScript {
     function preCollectScriptDecls(script: Script, context: DeclCollectionContext): void {
         var span = TextSpan.fromBounds(script.minChar, script.limChar);
 
+        var fileName = script.fileName();
         var decl = new RootPullDecl(
-            context.scriptName, context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName, context.semanticInfoChain, script.isExternalModule);
+            fileName, fileName, PullElementKind.Script, PullElementFlags.None, span, fileName, context.semanticInfoChain, script.isExternalModule);
         context.semanticInfoChain.setDeclForAST(script, decl);
         context.semanticInfoChain.setASTForDecl(decl, script);
 
@@ -232,8 +233,7 @@ module TypeScript {
             (argDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
              argDecl.typeExpr.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(
-                context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             if (parent) {
                 declCollectionContext.pushParent(parent);
@@ -264,7 +264,7 @@ module TypeScript {
             (typeParameterDecl.constraint.term.nodeType() === NodeType.ObjectType ||
              typeParameterDecl.constraint.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             if (parent) {
                 declCollectionContext.pushParent(parent);
@@ -300,7 +300,7 @@ module TypeScript {
             (propertyDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
              propertyDecl.typeExpr.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             if (parent) {
                 declCollectionContext.pushParent(parent);
@@ -339,7 +339,7 @@ module TypeScript {
             (memberDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
              memberDecl.typeExpr.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             if (parent) {
                 declCollectionContext.pushParent(parent);
@@ -379,7 +379,7 @@ module TypeScript {
             (varDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
              varDecl.typeExpr.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             if (parent) {
                 declCollectionContext.pushParent(parent);
@@ -431,7 +431,7 @@ module TypeScript {
             (functionTypeDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
             functionTypeDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -464,7 +464,7 @@ module TypeScript {
             (constructorTypeDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              constructorTypeDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -509,7 +509,7 @@ module TypeScript {
             (funcDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              funcDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -551,7 +551,7 @@ module TypeScript {
             (returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -598,7 +598,7 @@ module TypeScript {
             (memberFunctionDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              memberFunctionDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -634,7 +634,7 @@ module TypeScript {
             (indexSignatureDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              indexSignatureDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             if (parent) {
                 declCollectionContext.pushParent(parent);
@@ -669,7 +669,7 @@ module TypeScript {
             (callSignatureDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              callSignatureDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -702,7 +702,7 @@ module TypeScript {
             (constructSignatureDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              constructSignatureDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -744,7 +744,7 @@ module TypeScript {
             (constructorDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              constructorDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
@@ -791,7 +791,7 @@ module TypeScript {
             (getAccessorDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.ObjectType ||
              getAccessorDeclAST.returnTypeAnnotation.term.nodeType() === NodeType.FunctionDeclaration)) {
 
-            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain, context.scriptName);
+            var declCollectionContext = new DeclCollectionContext(context.semanticInfoChain);
 
             declCollectionContext.pushParent(decl);
 
