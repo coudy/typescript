@@ -51,8 +51,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(importDecl.id.text(), importDecl.id.actualText, PullElementKind.TypeAlias, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfoChain.setDeclForAST(ast, decl);
+        context.semanticInfoChain.setASTForDecl(decl, ast);
 
         return false;
     }
@@ -61,8 +61,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(script.minChar, script.limChar);
 
         var decl = new RootPullDecl(context.scriptName, context.scriptName, PullElementKind.Script, PullElementFlags.None, span, context.scriptName, context.semanticInfoChain);
-        context.semanticInfo.setDeclForAST(script, decl);
-        context.semanticInfo.setASTForDecl(decl, script);
+        context.semanticInfoChain.setDeclForAST(script, decl);
+        context.semanticInfoChain.setASTForDecl(decl, script);
 
         context.pushParent(decl);
         context.isDeclareFile = script.isDeclareFile;
@@ -94,8 +94,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
 
         var decl = new NormalPullDecl(modName, (<Identifier>moduleDecl.name).actualText, kind, declFlags, context.getParent(), span);
-        context.semanticInfo.setDeclForAST(moduleDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, moduleDecl);
+        context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
 
         context.pushParent(decl);
 
@@ -130,9 +130,9 @@ module TypeScript {
 
         context.pushParent(decl);
 
-        context.semanticInfo.setDeclForAST(classDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, classDecl);
-        context.semanticInfo.setASTForDecl(constructorDecl, classDecl);
+        context.semanticInfoChain.setDeclForAST(classDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, classDecl);
+        context.semanticInfoChain.setASTForDecl(constructorDecl, classDecl);
 
         return true;
     }
@@ -149,8 +149,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", PullElementKind.ObjectType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(objectType, decl);
-        context.semanticInfo.setASTForDecl(decl, objectType);
+        context.semanticInfoChain.setDeclForAST(objectType, decl);
+        context.semanticInfoChain.setASTForDecl(decl, objectType);
 
         context.pushParent(decl);
 
@@ -168,8 +168,8 @@ module TypeScript {
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(interfaceDecl.name.text(), interfaceDecl.name.actualText, PullElementKind.Interface, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(interfaceDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, interfaceDecl);
+        context.semanticInfoChain.setDeclForAST(interfaceDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, interfaceDecl);
 
         context.pushParent(decl);
 
@@ -221,13 +221,13 @@ module TypeScript {
                 propDecl.setFlag(PullElementFlags.ConstructorParameter);
             }
 
-            context.semanticInfo.setASTForDecl(decl, argDecl);
-            context.semanticInfo.setASTForDecl(propDecl, argDecl);
-            context.semanticInfo.setDeclForAST(argDecl, propDecl);
+            context.semanticInfoChain.setASTForDecl(decl, argDecl);
+            context.semanticInfoChain.setASTForDecl(propDecl, argDecl);
+            context.semanticInfoChain.setDeclForAST(argDecl, propDecl);
         }
         else {
-            context.semanticInfo.setASTForDecl(decl, argDecl);
-            context.semanticInfo.setDeclForAST(argDecl, decl);
+            context.semanticInfoChain.setASTForDecl(decl, argDecl);
+            context.semanticInfoChain.setDeclForAST(argDecl, decl);
         }
 
         if (argDecl.typeExpr &&
@@ -259,8 +259,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(typeParameterDecl.name.text(), typeParameterDecl.name.actualText, PullElementKind.TypeParameter, declFlags, parent, span);
-        context.semanticInfo.setASTForDecl(decl, typeParameterDecl);
-        context.semanticInfo.setDeclForAST(typeParameterDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, typeParameterDecl);
+        context.semanticInfoChain.setDeclForAST(typeParameterDecl, decl);
 
         if (typeParameterDecl.constraint &&
             (typeParameterDecl.constraint.term.nodeType() === NodeType.ObjectType ||
@@ -295,8 +295,8 @@ module TypeScript {
         var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
 
         var decl = new NormalPullDecl(propertyDecl.id.text(), propertyDecl.id.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(propertyDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, propertyDecl);
+        context.semanticInfoChain.setDeclForAST(propertyDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, propertyDecl);
 
         if (propertyDecl.typeExpr &&
             (propertyDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
@@ -334,8 +334,8 @@ module TypeScript {
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(memberDecl.id.text(), memberDecl.id.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(memberDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, memberDecl);
+        context.semanticInfoChain.setDeclForAST(memberDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, memberDecl);
 
         if (memberDecl.typeExpr &&
             (memberDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
@@ -374,8 +374,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(varDecl.id.text(), varDecl.id.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(varDecl, decl);
-        context.semanticInfo.setASTForDecl(decl, varDecl);
+        context.semanticInfoChain.setDeclForAST(varDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, varDecl);
 
         if (varDecl.typeExpr &&
             (varDecl.typeExpr.term.nodeType() === NodeType.ObjectType ||
@@ -424,8 +424,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(functionTypeDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, functionTypeDeclAST);
+        context.semanticInfoChain.setDeclForAST(functionTypeDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, functionTypeDeclAST);
 
         context.pushParent(decl);
 
@@ -457,8 +457,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(constructorTypeDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, constructorTypeDeclAST);
+        context.semanticInfoChain.setDeclForAST(constructorTypeDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, constructorTypeDeclAST);
 
         context.pushParent(decl);
 
@@ -502,8 +502,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(funcDeclAST.name.text(), funcDeclAST.name.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(funcDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, funcDeclAST);
+        context.semanticInfoChain.setDeclForAST(funcDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, funcDeclAST);
 
         context.pushParent(decl);
 
@@ -544,8 +544,8 @@ module TypeScript {
 
         var name = id ? id.actualText : "";
         var decl = new PullFunctionExpressionDecl(name, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(functionExpressionDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, functionExpressionDeclAST);
+        context.semanticInfoChain.setDeclForAST(functionExpressionDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, functionExpressionDeclAST);
 
         context.pushParent(decl);
 
@@ -591,8 +591,8 @@ module TypeScript {
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(memberFunctionDeclAST.name.text(), memberFunctionDeclAST.name.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(memberFunctionDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, memberFunctionDeclAST);
+        context.semanticInfoChain.setDeclForAST(memberFunctionDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, memberFunctionDeclAST);
 
         context.pushParent(decl);
 
@@ -627,8 +627,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "" , declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(indexSignatureDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, indexSignatureDeclAST);
+        context.semanticInfoChain.setDeclForAST(indexSignatureDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, indexSignatureDeclAST);
 
         context.pushParent(decl);
 
@@ -662,8 +662,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(callSignatureDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, callSignatureDeclAST);
+        context.semanticInfoChain.setDeclForAST(callSignatureDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, callSignatureDeclAST);
 
         context.pushParent(decl);
 
@@ -695,8 +695,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(constructSignatureDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, constructSignatureDeclAST);
+        context.semanticInfoChain.setDeclForAST(constructSignatureDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, constructSignatureDeclAST);
 
         context.pushParent(decl);
 
@@ -737,8 +737,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(parent.name, parent.getDisplayName(), declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(constructorDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, constructorDeclAST);
+        context.semanticInfoChain.setDeclForAST(constructorDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, constructorDeclAST);
 
         context.pushParent(decl);
 
@@ -784,8 +784,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(getAccessorDeclAST.name.text(), getAccessorDeclAST.name.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(getAccessorDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, getAccessorDeclAST);
+        context.semanticInfoChain.setDeclForAST(getAccessorDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, getAccessorDeclAST);
 
         context.pushParent(decl);
 
@@ -832,8 +832,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl(setAccessorDeclAST.name.actualText, setAccessorDeclAST.name.actualText, declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(setAccessorDeclAST, decl);
-        context.semanticInfo.setASTForDecl(decl, setAccessorDeclAST);
+        context.semanticInfoChain.setDeclForAST(setAccessorDeclAST, decl);
+        context.semanticInfoChain.setASTForDecl(decl, setAccessorDeclAST);
 
         context.pushParent(decl);
 
@@ -853,8 +853,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfoChain.setDeclForAST(ast, decl);
+        context.semanticInfoChain.setASTForDecl(decl, ast);
 
         context.pushParent(decl);
 
@@ -870,8 +870,8 @@ module TypeScript {
         var parent = context.getParent();
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfo.setDeclForAST(ast, decl);
-        context.semanticInfo.setASTForDecl(decl, ast);
+        context.semanticInfoChain.setDeclForAST(ast, decl);
+        context.semanticInfoChain.setASTForDecl(decl, ast);
 
         context.pushParent(decl);
 
@@ -1080,7 +1080,7 @@ module TypeScript {
 
                 thisModule.setValueDecl(valueDecl);
 
-                context.semanticInfo.setASTForDecl(valueDecl, ast);
+                context.semanticInfoChain.setASTForDecl(valueDecl, ast);
             }
         }
         else if (ast.nodeType() === NodeType.ClassDeclaration) {

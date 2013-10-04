@@ -753,7 +753,7 @@ module TypeScript {
                 var decl = queue[i];
 
                 if (decl.kind & PullElementKind.TypeAlias) {
-                    var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(decl);
+                    var importStatementAST = <ImportDeclaration>this.semanticInfoChain.getASTForDecl(decl);
                     if (importStatementAST.isExternalImportDeclaration()) { // external module
                         var symbol = decl.getSymbol();
                         var typeSymbol = symbol && symbol.type;
@@ -771,7 +771,6 @@ module TypeScript {
             var importList = "";
             var dependencyList = "";
 
-            var semanticInfo = this.semanticInfoChain.getUnit(this.document.fileName);
             var importDecls = this.getImportDecls(this.document.fileName);
 
             // all dependencies are quoted
@@ -779,7 +778,7 @@ module TypeScript {
                 for (var i = 0; i < importDecls.length; i++) {
                     var importStatementDecl = importDecls[i];
                     var importStatementSymbol = <PullTypeAliasSymbol>importStatementDecl.getSymbol();
-                    var importStatementAST = <ImportDeclaration>semanticInfo.getASTForDecl(importStatementDecl);
+                    var importStatementAST = <ImportDeclaration>this.semanticInfoChain.getASTForDecl(importStatementDecl);
 
                     if (importStatementSymbol.isUsedAsValue) {
                         if (i <= importDecls.length - 1) {

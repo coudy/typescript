@@ -48,7 +48,7 @@ module TypeScript {
             return this.astDeclMap.read(ast.astIDString);
         }
 
-        public setDeclForAST(ast: AST, decl: PullDecl): void {
+        public _setDeclForAST(ast: AST, decl: PullDecl): void {
             Debug.assert(decl.fileName() === this.compilationUnitPath);
 
             if (useDirectTypeStorage) {
@@ -59,7 +59,7 @@ module TypeScript {
             this.astDeclMap.link(ast.astIDString, decl);
         }
 
-        public getASTForDecl(decl: PullDecl): AST {
+        public _getASTForDecl(decl: PullDecl): AST {
             if (useDirectTypeStorage) {
                 return decl.ast;
             }
@@ -67,7 +67,7 @@ module TypeScript {
             return this.declASTMap.read(decl.declIDString);
         }
 
-        public setASTForDecl(decl: PullDecl, ast: AST): void {
+        public _setASTForDecl(decl: PullDecl, ast: AST): void {
             Debug.assert(decl.fileName() === this.compilationUnitPath);
 
             if (useDirectTypeStorage) {
@@ -81,38 +81,12 @@ module TypeScript {
         public isExternalModule() {
             var topLevelDecl = this.getTopLevelDecl();
             if (topLevelDecl.kind == PullElementKind.Script) {
-                var script = <Script>this.getASTForDecl(topLevelDecl);
+                var script = <Script>this._getASTForDecl(topLevelDecl);
                 return script.isExternalModule;
             }
 
             // Global context
             return false;
-        }
-
-        public addSyntheticIndexSignature(containingDecl: PullDecl, containingSymbol: PullTypeSymbol, ast: AST,
-            indexParamName: string, indexParamType: PullTypeSymbol, returnType: PullTypeSymbol): void {
-
-            var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
-            var indexParameterSymbol = new PullSymbol(indexParamName, PullElementKind.Parameter);
-            indexParameterSymbol.type = indexParamType;
-            indexSignature.addParameter(indexParameterSymbol);
-            indexSignature.returnType = returnType;
-            indexSignature.setResolved();
-            indexParameterSymbol.setResolved();
-
-            containingSymbol.addIndexSignature(indexSignature);
-
-            var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
-            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, containingDecl, span);
-            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl , span);
-            indexSigDecl.setSignatureSymbol(indexSignature);
-            indexParamDecl.setSymbol(indexParameterSymbol);
-            indexSignature.addDeclaration(indexSigDecl);
-            indexParameterSymbol.addDeclaration(indexParamDecl);
-            this.setASTForDecl(indexSigDecl, ast);
-            this.setASTForDecl(indexParamDecl, ast);
-            indexSigDecl.setIsBound(true);
-            indexParamDecl.setIsBound(true);
         }
     }
 
@@ -557,16 +531,6 @@ module TypeScript {
             return null;
         }
 
-        public getASTForDecl(decl: PullDecl): AST {
-            var unit = <SemanticInfo>this.unitCache[decl.fileName()];
-
-            if (unit) {
-                return unit.getASTForDecl(decl);
-            }
-
-            return null;
-        }
-
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             if (useDirectTypeStorage) {
                 ast.symbol = symbol;
@@ -651,6 +615,49 @@ module TypeScript {
             }
 
             return binder;
+        }
+
+        public addSyntheticIndexSignature(containingDecl: PullDecl, containingSymbol: PullTypeSymbol, ast: AST,
+            indexParamName: string, indexParamType: PullTypeSymbol, returnType: PullTypeSymbol): void {
+
+            var indexSignature = new PullSignatureSymbol(PullElementKind.IndexSignature);
+            var indexParameterSymbol = new PullSymbol(indexParamName, PullElementKind.Parameter);
+            indexParameterSymbol.type = indexParamType;
+            indexSignature.addParameter(indexParameterSymbol);
+            indexSignature.returnType = returnType;
+            indexSignature.setResolved();
+            indexParameterSymbol.setResolved();
+
+            containingSymbol.addIndexSignature(indexSignature);
+
+            var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, containingDecl, span);
+            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl, span);
+            indexSigDecl.setSignatureSymbol(indexSignature);
+            indexParamDecl.setSymbol(indexParameterSymbol);
+            indexSignature.addDeclaration(indexSigDecl);
+            indexParameterSymbol.addDeclaration(indexParamDecl);
+            this.setASTForDecl(indexSigDecl, ast);
+            this.setASTForDecl(indexParamDecl, ast);
+            indexSigDecl.setIsBound(true);
+            indexParamDecl.setIsBound(true);
+        }
+
+        public setDeclForAST(ast: AST, decl: PullDecl): void {
+            this.getUnit(decl.fileName())._setDeclForAST(ast, decl);
+        }
+
+        public getASTForDecl(decl: PullDecl): AST {
+            var unit = this.getUnit(decl.fileName());
+            if (unit) {
+                return unit._getASTForDecl(decl);
+            }
+
+            return null;
+        }
+
+        public setASTForDecl(decl: PullDecl, ast: AST): void {
+            this.getUnit(decl.fileName())._setASTForDecl(decl, ast);
         }
     }
 }

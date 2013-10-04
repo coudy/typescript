@@ -6522,8 +6522,8 @@ module TypeScript {
                     if (!isUsingExistingDecl) {
                         decl = new NormalPullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, objectLiteralDeclaration, span);
 
-                        this.currentUnit.setDeclForAST(propertyAssignment, decl);
-                        this.currentUnit.setASTForDecl(decl, propertyAssignment);
+                        this.semanticInfoChain.setDeclForAST(propertyAssignment, decl);
+                        this.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
                     }
 
                     if (!isUsingExistingSymbol) {
@@ -6708,8 +6708,8 @@ module TypeScript {
             if (!objectLitDecl) {
                 objectLitDecl = new NormalPullDecl("", "", PullElementKind.ObjectLiteral, PullElementFlags.None, enclosingDecl, span);
 
-                this.currentUnit.setDeclForAST(objectLitAST, objectLitDecl);
-                this.currentUnit.setASTForDecl(objectLitDecl, objectLitAST);
+                this.semanticInfoChain.setDeclForAST(objectLitAST, objectLitDecl);
+                this.semanticInfoChain.setASTForDecl(objectLitDecl, objectLitAST);
             }
 
             if (!typeSymbol) {
@@ -6830,7 +6830,7 @@ module TypeScript {
                 }
                 else {
                     // Create an index signature
-                    this.currentUnit.addSyntheticIndexSignature(decl, objectLiteralSymbol, this.getASTForDecl(decl),
+                    this.semanticInfoChain.addSyntheticIndexSignature(decl, objectLiteralSymbol, this.getASTForDecl(decl),
                         contextualIndexSignature.parameters[0].name, /*indexParamType*/ contextualIndexSignature.parameters[0].type, /*returnType*/ indexerReturnType);
                 }
             }
