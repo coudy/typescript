@@ -5,27 +5,25 @@
 
 module TypeScript {
     export class PullSymbolBinder {
-        private functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
+        private static functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
 
-        private findTypeParameterInCache(name: string) {
+        private static findTypeParameterInCache(name: string) {
             return this.functionTypeParameterCache[name];
         }
 
-        private addTypeParameterToCache(typeParameter: PullTypeParameterSymbol) {
+        private static addTypeParameterToCache(typeParameter: PullTypeParameterSymbol) {
             this.functionTypeParameterCache[typeParameter.getName()] = typeParameter;
         }
 
-        public resetTypeParameterCache() {
+        public static resetTypeParameterCache() {
             this.functionTypeParameterCache = new BlockIntrinsics();
         }
 
-        public semanticInfo: SemanticInfo = null;
+        private semanticInfo: SemanticInfo = null;
 
-        constructor(public semanticInfoChain: SemanticInfoChain) {
-        }
-
-        public setUnit(fileName: string) {
-            this.semanticInfo = this.semanticInfoChain.getUnit(fileName);
+        constructor(private semanticInfoChain: SemanticInfoChain, fileName: string) {
+            this.semanticInfo = semanticInfoChain.getUnit(fileName);
+            Debug.assert(this.semanticInfo);
         }
 
         private getParent(decl: PullDecl, returnInstanceType = false): PullTypeSymbol {
@@ -491,7 +489,7 @@ module TypeScript {
                 }
             }
 
-            this.resetTypeParameterCache();
+            PullSymbolBinder.resetTypeParameterCache();
 
             constructorSymbol = classSymbol.getConstructorMethod();
             constructorTypeSymbol = constructorSymbol ? constructorSymbol.type : null;
@@ -610,7 +608,7 @@ module TypeScript {
                 }
             }
 
-            this.resetTypeParameterCache();
+            PullSymbolBinder.resetTypeParameterCache();
 
             var typeParameters = interfaceDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
@@ -658,6 +656,8 @@ module TypeScript {
         }
 
         public bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
+            Debug.assert(objectDecl.fileName() === this.semanticInfo.getPath());
+
             var objectSymbolAST: AST = this.semanticInfo.getASTForDecl(objectDecl);
 
             var objectSymbol = new PullTypeSymbol("", PullElementKind.ObjectType);
@@ -698,6 +698,8 @@ module TypeScript {
         }
 
         public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
+            Debug.assert(constructorTypeDeclaration.fileName() === this.semanticInfo.getPath());
+
             var declKind = constructorTypeDeclaration.kind;
             var declFlags = constructorTypeDeclaration.flags;
             var constructorTypeAST = this.semanticInfo.getASTForDecl(constructorTypeDeclaration);
@@ -1278,6 +1280,8 @@ module TypeScript {
         }
 
         public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
+            Debug.assert(functionExpressionDeclaration.fileName() === this.semanticInfo.getPath());
+
             var declKind = functionExpressionDeclaration.kind;
             var declFlags = functionExpressionDeclaration.flags;
             var funcExpAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionExpressionDeclaration);
@@ -1341,6 +1345,8 @@ module TypeScript {
         }
 
         public bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
+            Debug.assert(functionTypeDeclaration.fileName() === this.semanticInfo.getPath());
+
             var declKind = functionTypeDeclaration.kind;
             var declFlags = functionTypeDeclaration.flags;
             var funcTypeAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(functionTypeDeclaration);
@@ -1478,14 +1484,14 @@ module TypeScript {
                 if (!typeParameter) {
 
                     if (!typeParameterAST.constraint) {
-                        typeParameter = this.findTypeParameterInCache(typeParameterName);
+                        typeParameter = PullSymbolBinder.findTypeParameterInCache(typeParameterName);
                     }
 
                     if (!typeParameter) {
                         typeParameter = new PullTypeParameterSymbol(typeParameterName, true);
 
                         if (!typeParameterAST.constraint) {
-                            this.addTypeParameterToCache(typeParameter);
+                            PullSymbolBinder.addTypeParameterToCache(typeParameter);
                         }
                     }
 
@@ -1739,6 +1745,8 @@ module TypeScript {
         // getters and setters
 
         public bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
+            Debug.assert(getAccessorDeclaration.fileName() === this.semanticInfo.getPath());
+
             var declKind = getAccessorDeclaration.kind;
             var declFlags = getAccessorDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(getAccessorDeclaration);
@@ -1839,6 +1847,8 @@ module TypeScript {
         }
 
         public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
+            Debug.assert(setAccessorDeclaration.fileName() === this.semanticInfo.getPath());
+
             var declKind = setAccessorDeclaration.kind;
             var declFlags = setAccessorDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfo.getASTForDecl(setAccessorDeclaration);
@@ -1940,6 +1950,7 @@ module TypeScript {
 
         // binding
         public bindDeclToPullSymbol(decl: PullDecl) {
+            Debug.assert(decl.fileName() === this.semanticInfo.getPath());
 
             if (decl.isBound()) {
                 return;
@@ -2052,9 +2063,7 @@ module TypeScript {
             }
         }
 
-        public bindDeclsForUnit(filePath: string) {
-            this.setUnit(filePath);
-
+        public bindDeclsForUnit() {
             var topLevelDecl = this.semanticInfo.getTopLevelDecl();
             this.bindDeclToPullSymbol(topLevelDecl);
         }

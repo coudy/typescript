@@ -237,14 +237,11 @@ module TypeScript {
         //}
     }
 
-    export var globalSemanticInfoChain: SemanticInfoChain = null;
-    export var globalBinder: PullSymbolBinder = null;
     export var globalLogger: ILogger = null;
 
     export var useDirectTypeStorage = false;
 
     export class TypeScriptCompiler {
-
         public resolver: PullTypeResolver = null;
 
         public semanticInfoChain: SemanticInfoChain = null;
@@ -256,6 +253,7 @@ module TypeScript {
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings()) {
             this.emitOptions = new EmitOptions(this.settings);
+            this.semanticInfoChain = new SemanticInfoChain(logger);
             globalLogger = logger;
         }
 
@@ -725,11 +723,6 @@ module TypeScript {
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
             var unit = this.semanticInfoChain.getUnit(fileName);
 
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
-
             if (unit) {
                 var document = this.getDocument(fileName);
                 var script = document.script;
@@ -793,9 +786,7 @@ module TypeScript {
         public pullTypeCheck() {
             var start = new Date().getTime();
 
-            this.semanticInfoChain = new SemanticInfoChain();
-            globalSemanticInfoChain = this.semanticInfoChain;
-
+            this.semanticInfoChain = new SemanticInfoChain(this.logger);
             if (this.resolver) {
                 this.resolver.semanticInfoChain = this.semanticInfoChain;
             }
@@ -811,15 +802,14 @@ module TypeScript {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileName);
                 var semanticInfo = new SemanticInfo(fileName);
+                this.semanticInfoChain.addUnit(semanticInfo);
 
-                declCollectionContext = new DeclCollectionContext(semanticInfo, fileName);
+                declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, fileName);
 
                 // create decls
                 getAstWalkerFactory().walk(document.script, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
                 semanticInfo.addTopLevelDecl(declCollectionContext.getParent());
-
-                this.semanticInfoChain.addUnit(semanticInfo);
             }
 
             var createDeclsEndTime = new Date().getTime();
@@ -827,12 +817,11 @@ module TypeScript {
             // bind declaration symbols
             var bindStartTime = new Date().getTime();
 
-            var binder = new PullSymbolBinder(this.semanticInfoChain);
-            globalBinder = binder;
-
             // start at '1', so as to skip binding for global primitives such as 'any'
             for (var i = 1; i < this.semanticInfoChain.units.length; i++) {
-                binder.bindDeclsForUnit(this.semanticInfoChain.units[i].getPath());
+                var fileName = this.semanticInfoChain.units[i].getPath();
+                var binder = this.semanticInfoChain.getBinder(fileName);
+                binder.bindDeclsForUnit();
             }
 
             var bindEndTime = new Date().getTime();
@@ -855,12 +844,14 @@ module TypeScript {
 
                 lastBoundPullDeclId = pullDeclID;
 
-                var declCollectionContext = new DeclCollectionContext(newScriptSemanticInfo, oldDocument.fileName);
+                // replace the old semantic info               
+                this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
+
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, oldDocument.fileName);
 
                 // create decls
                 getAstWalkerFactory().walk(newScript, preCollectDecls, postCollectDecls, null, declCollectionContext);
 
-                var oldTopLevelDecl = oldScriptSemanticInfo.getTopLevelDecl();
                 var newTopLevelDecl = declCollectionContext.getParent();
 
                 newScriptSemanticInfo.addTopLevelDecl(newTopLevelDecl);
@@ -868,15 +859,6 @@ module TypeScript {
                 // If we havne't yet created a new resolver, clean any cached symbols
                 this.resolver = new PullTypeResolver(
                     this.settings, this.semanticInfoChain, oldDocument.fileName);
-
-                // replace the old semantic info               
-                this.semanticInfoChain.updateUnit(oldScriptSemanticInfo, newScriptSemanticInfo);
-
-                this.logger.log("Cleaning symbols...");
-                var cleanStart = new Date().getTime();
-                this.semanticInfoChain.invalidate();
-                var cleanEnd = new Date().getTime();
-                this.logger.log("   time to clean: " + (cleanEnd - cleanStart));
 
                 // A file has changed, increment the type check phase so that future type chech
                 // operations will proceed.
@@ -927,11 +909,6 @@ module TypeScript {
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
-
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }            
 
             var pre = (cur: AST) => {
                 if (isValidAstNode(cur)) {
@@ -1194,11 +1171,6 @@ module TypeScript {
             var enclosingDecl: PullDecl = null;
             var enclosingDeclAST: AST = null;
             var inContextuallyTypedAssignment = false;
-
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
 
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
 
@@ -1474,11 +1446,6 @@ module TypeScript {
                 return null;
             }
 
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }            
-
             var ast = path.ast();
             var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
             var aliasSymbol = this.semanticInfoChain.getAliasSymbolForAST(ast);
@@ -1511,11 +1478,6 @@ module TypeScript {
                 return null;
             }
 
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
-
             var semanticInfo = this.semanticInfoChain.getUnit(scriptName);
             var decl = semanticInfo.getDeclForAST(ast);
             var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
@@ -1545,11 +1507,6 @@ module TypeScript {
                 return null;
             }
 
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }            
-
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
@@ -1570,12 +1527,6 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
-
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
-
             var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
@@ -1593,12 +1544,6 @@ module TypeScript {
         }
 
         public pullGetVisibleDeclsFromPath(path: AstPath, document: Document): PullDecl[] {
-
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
-
             var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ false);
             if (!context) {
                 return null;
@@ -1608,12 +1553,6 @@ module TypeScript {
         }
 
         public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
-
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
-
             // Input has to be an object literal
             if (path.ast().nodeType() !== NodeType.ObjectLiteralExpression) {
                 return null;
@@ -1636,11 +1575,6 @@ module TypeScript {
             var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
-            }
-
-            globalSemanticInfoChain = this.semanticInfoChain;
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
             }
 
             var symbol = decl.getSymbol();

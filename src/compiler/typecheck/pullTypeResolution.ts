@@ -1223,9 +1223,7 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isResolved) {
-                if (globalBinder) {
-                    globalBinder.resetTypeParameterCache();
-                }
+                PullSymbolBinder.resetTypeParameterCache();
 
                 if (!typeDeclIsClass) {
                     // Resolve call, construct and index signatures
@@ -1879,7 +1877,7 @@ module TypeScript {
             var functionDecl = this.getDeclForAST(funcDeclAST);
 
             if (!functionDecl) {
-                var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -1891,8 +1889,8 @@ module TypeScript {
             }
 
             if (!functionDecl.hasSymbol()) {
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
-                binder.setUnit(this.unitPath);
+                var binder = this.semanticInfoChain.getBinder(this.unitPath);
+
                 if (functionDecl.kind === PullElementKind.ConstructorType) {
                     binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
                 }
@@ -2106,7 +2104,7 @@ module TypeScript {
             var interfaceDecl = this.getDeclForAST(objectType);
 
             if (!interfaceDecl) {
-                var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -2116,9 +2114,7 @@ module TypeScript {
 
                 var interfaceDecl = this.getDeclForAST(objectType);
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
-
-                binder.setUnit(this.unitPath);
+                var binder = this.semanticInfoChain.getBinder(this.unitPath);
                 binder.bindObjectTypeDeclarationToPullSymbol(interfaceDecl);
             }
 
@@ -4772,12 +4768,6 @@ module TypeScript {
         // Expression resolution
 
         public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, specializingSignature= false): PullSymbol {
-            globalSemanticInfoChain = this.semanticInfoChain;
-
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this.semanticInfoChain;
-            }
-
             if (!ast) {
                 return;
             }
@@ -6088,7 +6078,7 @@ module TypeScript {
 
             // If necessary, create a new function decl and symbol
             if (!functionDecl) {
-                var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
+                var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
 
                 if (enclosingDecl) {
                     declCollectionContext.pushParent(enclosingDecl);
@@ -6098,8 +6088,7 @@ module TypeScript {
 
                 functionDecl = this.getDeclForAST(funcDeclAST);
 
-                var binder = new PullSymbolBinder(this.semanticInfoChain);
-                binder.setUnit(this.unitPath);
+                var binder = this.semanticInfoChain.getBinder(this.unitPath);
                 binder.bindFunctionExpressionToPullSymbol(functionDecl);
             }
 
@@ -6555,8 +6544,7 @@ module TypeScript {
                     var functionDeclaration: PullDecl = null;
 
                     if (!isUsingExistingDecl) {
-                        var semanticInfo = this.semanticInfoChain.getUnit(this.unitPath);
-                        var declCollectionContext = new DeclCollectionContext(semanticInfo, this.unitPath);
+                        var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
 
                         declCollectionContext.pushParent(objectLiteralDeclaration);
 
@@ -6566,8 +6554,7 @@ module TypeScript {
                     }
 
                     if (!isUsingExistingSymbol) {
-                        var binder = new PullSymbolBinder(this.semanticInfoChain);
-                        binder.setUnit(this.unitPath);
+                        var binder = this.semanticInfoChain.getBinder(this.unitPath);
 
                         if (funcDeclAST.isGetAccessor()) {
                             binder.bindGetAccessorDeclarationToPullSymbol(functionDeclaration);
@@ -6581,7 +6568,7 @@ module TypeScript {
                 }
                 else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
                     if (!isUsingExistingDecl) {
-                        var declCollectionContext = new DeclCollectionContext(this.currentUnit, this.unitPath);
+                        var declCollectionContext = new DeclCollectionContext(this.semanticInfoChain, this.unitPath);
 
                         declCollectionContext.pushParent(objectLiteralDeclaration);
 
@@ -6590,9 +6577,7 @@ module TypeScript {
                         var functionDecl = this.getDeclForAST(propertyAssignment);
                     }
 
-                    var binder = new PullSymbolBinder(this.semanticInfoChain);
-                    binder.setUnit(this.unitPath);
-
+                    var binder = this.semanticInfoChain.getBinder(this.unitPath);
                     binder.bindFunctionExpressionToPullSymbol(decl);
                 }
 

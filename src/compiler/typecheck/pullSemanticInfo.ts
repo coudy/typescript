@@ -49,6 +49,7 @@ module TypeScript {
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
+            Debug.assert(decl.fileName() === this.compilationUnitPath);
 
             if (useDirectTypeStorage) {
                 ast.decl = decl;
@@ -67,6 +68,7 @@ module TypeScript {
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
+            Debug.assert(decl.fileName() === this.compilationUnitPath);
 
             if (useDirectTypeStorage) {
                 decl.ast = ast;
@@ -120,6 +122,8 @@ module TypeScript {
         private symbolCache = new BlockIntrinsics<PullSymbol>();
         private unitCache = new BlockIntrinsics<SemanticInfo>();
         private fileNameToDiagnostics = new BlockIntrinsics<Diagnostic[]>();
+        private fileNameToBinder = new BlockIntrinsics<PullSymbolBinder>();
+
         private topLevelDecls: PullDecl[] = [];
 
         public anyTypeSymbol: PullTypeSymbol = null;
@@ -164,7 +168,7 @@ module TypeScript {
 
         private getGlobalDecl() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new RootPullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "");
+            var globalDecl = new RootPullDecl("", "", PullElementKind.Global, PullElementFlags.None, span, "", this);
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
@@ -190,11 +194,7 @@ module TypeScript {
             return globalDecl;
         }
 
-        constructor() {
-            if (globalBinder) {
-                globalBinder.semanticInfoChain = this;
-            }
-
+        constructor(private logger: ILogger) {
             var globalDecl = this.getGlobalDecl();
             var globalInfo = this.units[0];
             globalInfo.addTopLevelDecl(globalDecl);
@@ -211,6 +211,11 @@ module TypeScript {
 
         // PULLTODO: compilationUnitPath is only really there for debug purposes
         public updateUnit(oldUnit: SemanticInfo, newUnit: SemanticInfo) {
+            this.updateUnitWorker(oldUnit, newUnit);
+            this.invalidate();
+        }
+
+        private updateUnitWorker(oldUnit: SemanticInfo, newUnit: SemanticInfo) {
             for (var i = 0; i < this.units.length; i++) {
                 if (this.units[i].getPath() === oldUnit.getPath()) {
                     this.units[i] = newUnit;
@@ -520,10 +525,14 @@ module TypeScript {
             this.topLevelDecls = [];
         }
 
-        public invalidate() {
+        private invalidate() {
+            this.logger.log("Cleaning symbols...");
+            var cleanStart = new Date().getTime();
+
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
             this.fileNameToDiagnostics = new BlockIntrinsics();
+            this.fileNameToBinder = new BlockIntrinsics();
 
             this.units[0] = new SemanticInfo("");
             this.units[0].addTopLevelDecl(this.getGlobalDecl());
@@ -533,6 +542,9 @@ module TypeScript {
             this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
             this.symbolASTMap = new DataMap<AST>();
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
+
+            var cleanEnd = new Date().getTime();
+            this.logger.log("   time to clean: " + (cleanEnd - cleanStart));
         }
 
         public getDeclForAST(ast: AST, unitPath: string): PullDecl {
@@ -629,6 +641,16 @@ module TypeScript {
         public getDiagnostics(fileName: string): Diagnostic[] {
             var diagnostics = this.fileNameToDiagnostics[fileName];
             return diagnostics ? diagnostics : [];
+        }
+
+        public getBinder(fileName: string): PullSymbolBinder {
+            var binder = this.fileNameToBinder[fileName];
+            if (!binder) {
+                binder = new PullSymbolBinder(this, fileName);
+                this.fileNameToBinder[fileName] = binder;
+            }
+
+            return binder;
         }
     }
 }

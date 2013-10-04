@@ -72,6 +72,10 @@ module TypeScript {
             throw Errors.abstract();
         }
 
+        public semanticInfoChain(): SemanticInfoChain {
+            throw Errors.abstract();
+        }
+
         public clean() {
             // Clean this decl
             this._isBound = false;
@@ -111,15 +115,9 @@ module TypeScript {
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
 
         public ensureSymbolIsBound(bindSignatureSymbol=false) {
-
             if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.kind != PullElementKind.Script) {
-                //var binder = new PullSymbolBinder(globalSemanticInfoChain);
-                var prevUnit = globalBinder.semanticInfo;
-                globalBinder.setUnit(this.fileName());
-                globalBinder.bindDeclToPullSymbol(this);
-                if (prevUnit) {
-                    globalBinder.setUnit(prevUnit.getPath());
-                }
+                var binder = this.semanticInfoChain().getBinder(this.fileName());
+                binder.bindDeclToPullSymbol(this);
             }
         }
 
@@ -317,10 +315,12 @@ module TypeScript {
 
     export class RootPullDecl extends PullDecl {
         private _fileName: string;
+        private _semanticInfoChain: SemanticInfoChain;
 
-        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, fileName: string) {
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan, fileName: string, semanticInfoChain: SemanticInfoChain) {
             super(declName, displayName, kind, declFlags, span);
             this._fileName = fileName;
+            this._semanticInfoChain = semanticInfoChain;
         }
 
         public fileName(): string {
@@ -333,6 +333,10 @@ module TypeScript {
 
         public getParentDecl(): PullDecl {
             return null;
+        }
+
+        public semanticInfoChain(): SemanticInfoChain {
+            return this._semanticInfoChain;
         }
     }
 
@@ -379,6 +383,11 @@ module TypeScript {
             }
 
             return this.parentPath;
+        }
+
+        public semanticInfoChain(): SemanticInfoChain {
+            Debug.assert(this.getParentDecl());
+            return this.getParentDecl().semanticInfoChain();
         }
     }
 
