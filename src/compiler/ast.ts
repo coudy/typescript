@@ -1442,7 +1442,7 @@ module TypeScript {
     }
 
     export class SwitchStatement extends AST {
-        constructor(public val: AST, public caseList: ASTList, public defaultCase: CaseClause, public statement: ASTSpan) {
+        constructor(public val: AST, public caseList: ASTList, public statement: ASTSpan) {
             super();
         }
 

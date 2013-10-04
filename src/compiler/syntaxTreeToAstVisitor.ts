@@ -1809,15 +1809,10 @@ module TypeScript {
             this.movePast(node.openBraceToken);
 
             var array = new Array(node.switchClauses.childCount());
-            var defaultCase: CaseClause = null;
 
             for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
                 var switchClause = node.switchClauses.childAt(i);
                 var translated = switchClause.accept(this);
-
-                if (switchClause.kind() === SyntaxKind.DefaultSwitchClause) {
-                    defaultCase = translated;
-                }
 
                 array[i] = translated;
             }
@@ -1828,7 +1823,7 @@ module TypeScript {
 
             this.movePast(node.closeBraceToken);
 
-            var result = new SwitchStatement(expression, new ASTList(array), defaultCase, span);
+            var result = new SwitchStatement(expression, new ASTList(array), span);
             this.setSpan(result, start, node);
 
             return result;

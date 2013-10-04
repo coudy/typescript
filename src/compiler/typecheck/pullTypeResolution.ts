@@ -4571,14 +4571,13 @@ module TypeScript {
             jumpRecord.inSwitchStatement = true;
 
             this.resolveAST(switchStatement.caseList, false, enclosingDecl, context);
-            this.resolveAST(switchStatement.defaultCase, false, enclosingDecl, context);
 
             jumpRecord.inSwitchStatement = savedInSwitchStatement;
 
             if (switchStatement.caseList && switchStatement.caseList.members) {
                 for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
                     var caseClause = <CaseClause>switchStatement.caseList.members[i];
-                    if (caseClause !== switchStatement.defaultCase) {
+                    if (caseClause.expr) {
                         var caseClauseExpressionType = this.resolveAST(caseClause.expr, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
                         var comparisonInfo = new TypeComparisonInfo();
