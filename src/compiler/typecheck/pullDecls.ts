@@ -313,6 +313,12 @@ module TypeScript {
         }
     }
 
+    // A root decl represents the top level decl for a file.  By specializing this decl, we 
+    // provide a location, per file, to store data that all decls in the file would otherwise
+    // have to duplicate.  For example, there is no need to store the 'fileName' in each decl.
+    // Instead, only the root decl needs to store this data.  Decls underneath it can determine
+    // the file name by queryign their parent.  In other words, a Root Decl allows us to trade
+    // space for logarithmic speed. 
     export class RootPullDecl extends PullDecl {
         private _fileName: string;
         private _semanticInfoChain: SemanticInfoChain;
