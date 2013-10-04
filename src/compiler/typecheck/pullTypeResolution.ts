@@ -7438,9 +7438,15 @@ module TypeScript {
                                         }
                                         if (typeConstraint.isTypeParameter()) {
                                             context.pushTypeSpecializationCache(typeReplacementMap);
-                                            typeConstraint = specializeType(typeConstraint, null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
+                                            typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
                                             context.popTypeSpecializationCache();
                                         }
+                                        else if (typeConstraint.isGeneric()) {
+                                            context.pushTypeSpecializationCache(typeReplacementMap);
+                                            typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);
+                                            context.popTypeSpecializationCache();
+                                        }
+
                                         context.isComparingSpecializedSignatures = true;
                                         if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                             constraintDiagnostic = diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
@@ -7833,7 +7839,12 @@ module TypeScript {
                                             }
                                             if (typeConstraint.isTypeParameter()) {
                                                 context.pushTypeSpecializationCache(typeReplacementMap);
-                                                typeConstraint = specializeType(typeConstraint, null, this, context);
+                                                typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);
+                                                context.popTypeSpecializationCache();
+                                            }
+                                            else if (typeConstraint.isGeneric()) {
+                                                context.pushTypeSpecializationCache(typeReplacementMap);
+                                                typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);
                                                 context.popTypeSpecializationCache();
                                             }
 
