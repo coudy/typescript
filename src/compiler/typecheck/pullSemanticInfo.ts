@@ -107,7 +107,10 @@ module TypeScript {
 
         private addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
-            var decl = new NormalPullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
+
+            var decl = globalDecl
+                ? <PullDecl>new NormalPullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span)
+                : new RootPullDecl(name, "", PullElementKind.Primitive, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
             var symbol = new PullPrimitiveTypeSymbol(name);
 
             symbol.addDeclaration(decl);
@@ -131,7 +134,7 @@ module TypeScript {
 
         private getGlobalDecl() {
             var span = new TextSpan(0, 0);
-            var globalDecl = new RootPullDecl(/*fileName:*/ "", PullElementKind.Global, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
+            var globalDecl = new RootPullDecl(/*name:*/ "", /*fileName:*/ "", PullElementKind.Global, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
 
             // add primitive types
             this.anyTypeSymbol = this.addPrimitiveType("any", globalDecl);
