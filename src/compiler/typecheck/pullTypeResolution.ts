@@ -814,46 +814,7 @@ module TypeScript {
             return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType() && type === this.cachedNumberInterfaceType());
         }
 
-        public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
-            if (!type) {
-                return false;
-            }
-
-            if (!type.isGeneric()) {
-                return false;
-            }
-
-            if (type.isTypeParameter()) {
-                return true;
-            }
-
-            if (type.isArray()) {
-                return this.isTypeArgumentOrWrapper(type.getElementType());
-            }
-
-            var typeArguments = type.getTypeArguments();
-
-            if (typeArguments) {
-                for (var i = 0; i < typeArguments.length; i++) {
-                    if (this.isTypeArgumentOrWrapper(typeArguments[i])) {
-                        return true;
-                    }
-                }
-            }
-            else {
-                // if there are no type arguments, but the type is generic, we're just returning
-                // the unspecialized version of the type (e.g., via a recursive call)
-                return true;
-            }
-
-            if (type.kind & (PullElementKind.ObjectLiteral | PullElementKind.ObjectType)) {
-                return type.getHasGenericMember();
-            }
-
-            return false;
-        }
-
-        private resolveExternalModuleReference(idText: string, currentFileName: string): PullContainerSymbol {
+                private resolveExternalModuleReference(idText: string, currentFileName: string): PullContainerSymbol {
             var originalIdText = idText;
             var symbol: PullContainerSymbol = null;
 
@@ -1964,14 +1925,6 @@ module TypeScript {
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
                 signature.returnType = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, functionDecl, context);
-
-                if (this.isTypeArgumentOrWrapper(signature.returnType)) {
-                    signature.hasAGenericParameter = true;
-
-                    if (funcDeclSymbol) {
-                        funcDeclSymbol.type.setHasGenericSignature();
-                    }
-                }
             }
 
             if (funcDeclAST.typeParameters) {
@@ -1984,18 +1937,6 @@ module TypeScript {
             if (funcDeclAST.parameters) {
                 for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
                     this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.parameters.members[i], signature, functionDecl, context);
-                }
-            }
-
-            // Flag if one of the arguments has a generic parameter
-            if (funcDeclSymbol && signature.hasAGenericParameter) {
-                funcDeclSymbol.type.setHasGenericSignature();
-            }
-
-            if (signature.hasAGenericParameter) {
-                // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                if (funcDeclSymbol) {
-                    funcDeclSymbol.type.setHasGenericSignature();
                 }
             }
 
@@ -2022,11 +1963,6 @@ module TypeScript {
                 }
 
                 context.setTypeInContext(paramSymbol, typeRef);
-
-                // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
-                if (this.isTypeArgumentOrWrapper(typeRef)) {
-                    signature.hasAGenericParameter = true;
-                }
             }
             else {
                 if (paramSymbol.isVarArg && paramSymbol.type) {
@@ -2624,17 +2560,6 @@ module TypeScript {
                 if (typeExprSymbol.kind == PullElementKind.FunctionType) {
                     typeExprSymbol.setFunctionSymbol(declSymbol);
                 }
-
-                // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
-                // we filter out arrays, since for those we just want to know if their element type is a type parameter...
-                if (varDeclOrParameter.nodeType() === NodeType.Parameter && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArray()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
-                    var signature = enclosingDecl.getSpecializingSignatureSymbol();
-
-                    if (signature) {
-                        signature.hasAGenericParameter = true;
-                    }
-                }
-
             }
 
             return typeExprSymbol;
@@ -3113,10 +3038,6 @@ module TypeScript {
                     if (!functionSymbol.type && functionSymbol.isAccessor()) {
                         functionSymbol.type = signature.returnType;
                     }
-
-                    if (this.isTypeArgumentOrWrapper(returnType) && functionSymbol) {
-                        functionSymbol.type.setHasGenericSignature();
-                    }
                 }
             }
         }
@@ -3400,12 +3321,6 @@ module TypeScript {
                             signature.returnType = this.getNewErrorTypeSymbol();
                             hadError = true;
                         } else {
-                            if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
-                                signature.hasAGenericParameter = true;
-                                if (funcSymbol) {
-                                    funcSymbol.type.setHasGenericSignature();
-                                }
-                            }
                             signature.returnType = returnTypeSymbol;
 
                             if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
@@ -3482,17 +3397,6 @@ module TypeScript {
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
                         hadError = true;
-                    }
-                    else if (!(this.isTypeArgumentOrWrapper(returnTypeSymbol) && prevReturnTypeSymbol && !this.isTypeArgumentOrWrapper(prevReturnTypeSymbol))) {
-                        if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
-                            signature.hasAGenericParameter = true;
-
-                            if (funcSymbol) {
-                                funcSymbol.type.setHasGenericSignature();
-                            }
-                        }
-
-                        signature.returnType = returnTypeSymbol;
                     }
                 }
                 // if there's no return-type annotation
@@ -3614,13 +3518,6 @@ module TypeScript {
                     }
                 }
 
-                if (signature.hasAGenericParameter) {
-                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                    if (getterSymbol) {
-                        getterTypeSymbol.setHasGenericSignature();
-                    }
-                }
-
                 // resolve the return type annotation
                 if (returnTypeAnnotation) {
                     var returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
@@ -3632,15 +3529,6 @@ module TypeScript {
                         hadError = true;
                     }
                     else {
-
-                        if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
-                            signature.hasAGenericParameter = true;
-
-                            if (getterSymbol) {
-                                getterTypeSymbol.setHasGenericSignature();
-                            }
-                        }
-
                         signature.returnType = returnTypeSymbol;
                     }
                 }
@@ -3809,13 +3697,6 @@ module TypeScript {
                 if (funcDeclAST.parameters) {
                     for (var i = 0; i < funcDeclAST.parameters.members.length; i++) {
                         this.resolveParameter(<Parameter>funcDeclAST.parameters.members[i], context, funcDecl);
-                    }
-                }
-
-                if (signature.hasAGenericParameter) {
-                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                    if (setterSymbol) {
-                        setterTypeSymbol.setHasGenericSignature();
                     }
                 }
 
@@ -7431,12 +7312,7 @@ module TypeScript {
                                 if (triedToInferTypeArgs) {
 
                                     if (signatures[i].isFixed()) {
-                                        if (signatures[i].hasAGenericParameter) {
-                                            context.specializingToAny = true;
-                                        }
-                                        else {
                                             resolvedSignatures[resolvedSignatures.length] = signatures[i];
-                                        }
                                     }
                                     else {
                                         continue;
@@ -7830,9 +7706,7 @@ module TypeScript {
                                     if (triedToInferTypeArgs) {
 
                                         if (constructSignatures[i].isFixed()) {
-                                            if (!constructSignatures[i].hasAGenericParameter) {
-                                                resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
-                                            }
+                                            resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
                                         }
                                         else {
                                             continue;

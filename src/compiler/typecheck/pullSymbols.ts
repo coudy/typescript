@@ -774,10 +774,6 @@ module TypeScript {
             // specialization
 
             var returnType = signature.returnType;
-
-            if (!resolver.isTypeArgumentOrWrapper(returnType)) {
-                this.returnType = returnType;
-            }
         }
 
         // GTODO
@@ -3469,10 +3465,6 @@ module TypeScript {
             if (parameters[k].isVarArg) {
                 newParameter.isVarArg = true;
                 newSignature.hasVarArgs = true;
-            }
-
-            if (resolver.isTypeArgumentOrWrapper(newParameterType)) {
-                newSignature.hasAGenericParameter = true;
             }
 
             newParameter.type = newParameterType;

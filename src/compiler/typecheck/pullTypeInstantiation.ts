@@ -347,6 +347,10 @@ module TypeScript {
 
         public isReferencedType: boolean = false;
 
+        public getIsSpecialized() { return !this.isReferencedType; }
+
+        public isArray() { return this.getRootSymbol() == globalResolver.getCachedArrayType(); }
+
         // GTODO: Rather than pass in the map, pass in a list that we can construct from?
         // Or, just introduce a helper function to create the map for us
         public static create(type: PullTypeSymbol, typeParameterArgumentMap: any): PullInstantiatedTypeReferenceSymbol {
@@ -368,10 +372,13 @@ module TypeScript {
 
             var typeParameters = rootType.getTypeParameters();
 
+            // If the reference is made to itself (e.g., referring to Array<T> within the declaration of Array<T>,
+            // We want to special-case the reference so later calls to getMember, etc., will delegate directly
+            // to the referenced declaration type, and not force any additional instantiation
             var isReferencedType = true;
+
             if (typeParameters && typeArgumentList && (typeParameters.length == typeArgumentList.length)) {
                 
-
                 for (var i = 0; i < typeParameters.length; i++) {
                     if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
                         isReferencedType = false;
@@ -392,7 +399,6 @@ module TypeScript {
                 instantiation.isReferencedType = true;
             }
 
-            // GTODO: read from/write to specialization cache
             return instantiation;
         }
 
@@ -416,6 +422,11 @@ module TypeScript {
         }
 
         public getTypeArguments(): PullTypeSymbol[]{
+
+            if (this.isReferencedType) {
+                return null;
+            }
+
             if (!this._typeArgumentReferences) {
                 var typeParameters = this.referencedTypeSymbol.getTypeParameters();
 
@@ -435,9 +446,10 @@ module TypeScript {
 
                     this._typeArgumentReferences = typeArguments;
                 }
-                else {
-                    this._typeArgumentReferences = sentinelEmptyArray;
-                }
+            }
+
+            if (this._typeArgumentReferences) {
+                this.toString();
             }
 
             return this._typeArgumentReferences;
