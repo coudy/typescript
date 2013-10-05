@@ -4650,7 +4650,7 @@ module TypeScript {
             }
         }
 
-        private resolveContinueStatement(ast: Jump, context: PullTypeResolutionContext): PullSymbol {
+        private resolveContinueStatement(ast: ContinueStatement, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckContinueStatement(ast, context);
             }
@@ -4658,7 +4658,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckContinueStatement(ast: Jump, context: PullTypeResolutionContext): void {
+        private typeCheckContinueStatement(ast: ContinueStatement, context: PullTypeResolutionContext): void {
             this.setTypeChecked(ast, context);
 
             var jumpRecord = context.currentJumpRecord();
@@ -4666,15 +4666,15 @@ module TypeScript {
                 context.postDiagnostic(diagnosticFromAST(ast,
                     DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement));
             }
-            else if (ast.target) {
+            else if (ast.identifier) {
                 var continuableLabels = jumpRecord.continuableLabels;
 
-                if (!ArrayUtilities.contains(continuableLabels, ast.target)) {
+                if (!ArrayUtilities.contains(continuableLabels, ast.identifier)) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
-                    if (ArrayUtilities.any(context.jumpRecordStack, jr => ArrayUtilities.contains(jr.continuableLabels, ast.target))) {
+                    if (ArrayUtilities.any(context.jumpRecordStack, jr => ArrayUtilities.contains(jr.continuableLabels, ast.identifier))) {
                         context.postDiagnostic(diagnosticFromAST(ast,
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary));
                     }
@@ -4686,7 +4686,7 @@ module TypeScript {
             }
         }
 
-        private resolveBreakStatement(ast: Jump, context: PullTypeResolutionContext): PullSymbol {
+        private resolveBreakStatement(ast: BreakStatement, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckBreakStatement(ast, context);
             }
@@ -4694,22 +4694,22 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckBreakStatement(ast: Jump, context: PullTypeResolutionContext): void {
+        private typeCheckBreakStatement(ast: BreakStatement, context: PullTypeResolutionContext): void {
             this.setTypeChecked(ast, context);
 
             // Note: the order here is important.  If the 'break' has a target, then it can jump to
             // any enclosing laballed statment.  If it has no target, it must be in an iteration or
             // swtich statement.
             var jumpRecord = context.currentJumpRecord();
-            if (ast.target) {
+            if (ast.identifier) {
                 var breakableLabels = jumpRecord.breakableLabels;
 
-                if (!ArrayUtilities.contains(breakableLabels, ast.target)) {
+                if (!ArrayUtilities.contains(breakableLabels, ast.identifier)) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
-                    if (ArrayUtilities.any(context.jumpRecordStack, jr => ArrayUtilities.contains(jr.breakableLabels, ast.target))) {
+                    if (ArrayUtilities.any(context.jumpRecordStack, jr => ArrayUtilities.contains(jr.breakableLabels, ast.identifier))) {
                         context.postDiagnostic(diagnosticFromAST(ast,
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary));
                     }
@@ -4975,10 +4975,10 @@ module TypeScript {
                     return this.resolveSwitchStatement(ast, enclosingDecl, context);
 
                 case NodeType.ContinueStatement:
-                    return this.resolveContinueStatement(<Jump>ast, context);
+                    return this.resolveContinueStatement(<ContinueStatement>ast, context);
 
                 case NodeType.BreakStatement:
-                    return this.resolveBreakStatement(<Jump>ast, context);
+                    return this.resolveBreakStatement(<BreakStatement>ast, context);
 
                 case NodeType.CaseClause:
                     return this.resolveCaseClause(ast, enclosingDecl, context);

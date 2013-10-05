@@ -2412,17 +2412,26 @@ module TypeScript {
             this.recordSourceMappingEnd(block);
         }
 
-        public emitJump(jump: Jump): void {
+        public emitBreakStatement(jump: BreakStatement): void {
             this.recordSourceMappingStart(jump);
-            if (jump.nodeType() === NodeType.BreakStatement) {
-                this.writeToOutput("break");
+            this.writeToOutput("break");
+
+            if (jump.identifier) {
+                this.writeToOutput(" " + jump.identifier);
             }
-            else {
-                this.writeToOutput("continue");
+
+            this.recordSourceMappingEnd(jump);
+            this.writeToOutput(";");
+        }
+
+        public emitContinueStatement(jump: ContinueStatement): void {
+            this.recordSourceMappingStart(jump);
+            this.writeToOutput("continue");
+
+            if (jump.identifier) {
+                this.writeToOutput(" " + jump.identifier);
             }
-            if (jump.target) {
-                this.writeToOutput(" " + jump.target);
-            }
+
             this.recordSourceMappingEnd(jump);
             this.writeToOutput(";");
         }

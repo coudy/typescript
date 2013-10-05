@@ -459,6 +459,50 @@ module TypeScript {
         }
     }
 
+    export class ContinueStatement extends AST {
+        constructor(public identifier: string) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ContinueStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitContinueStatement(this);
+        }
+
+        public structuralEquals(ast: ContinueStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class BreakStatement extends AST {
+        constructor(public identifier: string) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.BreakStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitBreakStatement(this);
+        }
+
+        public structuralEquals(ast: BreakStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
     export class TypeOfExpression extends AST {
         constructor(public expression: AST) {
             super();
@@ -1375,29 +1419,6 @@ module TypeScript {
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.statements, ast.statements, includingPosition);
-        }
-    }
-
-    export class Jump extends AST {
-        constructor(private _nodeType: NodeType, public target: string) {
-            super();
-        }
-
-        public nodeType(): NodeType {
-            return this._nodeType;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitJump(this);
-        }
-
-        public structuralEquals(ast: Jump, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   this.target === ast.target;
         }
     }
 

@@ -1856,7 +1856,7 @@ module TypeScript {
             return result;
         }
 
-        public visitBreakStatement(node: BreakStatementSyntax): Jump {
+        public visitBreakStatement(node: BreakStatementSyntax): BreakStatement {
             var start = this.position;
 
             this.movePast(node.breakKeyword);
@@ -1864,20 +1864,21 @@ module TypeScript {
             this.movePast(node.semicolonToken);
             var identifier = node.identifier ? node.identifier.valueText() : null;
 
-            var result = new Jump(NodeType.BreakStatement, identifier);
+            var result = new BreakStatement(identifier);
             this.setSpan(result, start, node);
 
             return result;
         }
 
-        public visitContinueStatement(node: ContinueStatementSyntax): Jump {
+        public visitContinueStatement(node: ContinueStatementSyntax): ContinueStatement {
             var start = this.position;
 
             this.movePast(node.continueKeyword);
             this.movePast(node.identifier);
             this.movePast(node.semicolonToken);
 
-            var result = new Jump(NodeType.ContinueStatement, node.identifier ? node.identifier.valueText() : null);
+            var identifier = node.identifier ? node.identifier.valueText() : null;
+            var result = new ContinueStatement(identifier);
             this.setSpan(result, start, node);
 
             return result;
@@ -2852,8 +2853,8 @@ module TypeScript {
             return result;
         }
 
-        public visitBreakStatement(node: BreakStatementSyntax): Jump {
-            var result: Jump = this.getAndMovePastAST(node);
+        public visitBreakStatement(node: BreakStatementSyntax): BreakStatement {
+            var result: BreakStatement = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitBreakStatement(node);
                 this.setAST(node, result);
@@ -2862,8 +2863,8 @@ module TypeScript {
             return result;
         }
 
-        public visitContinueStatement(node: ContinueStatementSyntax): Jump {
-            var result: Jump = this.getAndMovePastAST(node);
+        public visitContinueStatement(node: ContinueStatementSyntax): ContinueStatement {
+            var result: ContinueStatement = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitContinueStatement(node);
                 this.setAST(node, result);
