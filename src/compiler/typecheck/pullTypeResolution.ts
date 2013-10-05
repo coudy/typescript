@@ -4418,11 +4418,11 @@ module TypeScript {
                         // No type annotation, check if there is a contextual type enforced on the function, and propagate that
                         var currentContextualType = context.getContextualType();
                         if (currentContextualType && currentContextualType.isFunction()) {
-                        var currentContextTypeDecls = currentContextualType.getDeclarations();
-                        var currentContextualTypeSignatureSymbol =
-                            currentContextTypeDecls && currentContextTypeDecls.length > 0 ?
-                            currentContextTypeDecls[0].getSignatureSymbol() :
-                            currentContextualType.getCallSignatures()[0];
+                            var currentContextTypeDecls = currentContextualType.getDeclarations();
+                            var currentContextualTypeSignatureSymbol =
+                                currentContextTypeDecls && currentContextTypeDecls.length > 0 ?
+                                currentContextTypeDecls[0].getSignatureSymbol() :
+                                currentContextualType.getCallSignatures()[0];
 
                             var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
                             if (currentContextualTypeReturnTypeSymbol) {
@@ -4467,7 +4467,7 @@ module TypeScript {
                     if (enclosingDecl.kind & PullElementKind.SomeFunction) {
                         var enclosingDeclAST = <FunctionDeclaration>this.getASTForDecl(enclosingDecl);
 
-                    if (enclosingDeclAST.returnTypeAnnotation || enclosingDecl.kind == PullElementKind.GetAccessor) {
+                        if (enclosingDeclAST.returnTypeAnnotation || enclosingDecl.kind == PullElementKind.GetAccessor) {
                             var signatureSymbol = enclosingDecl.getSignatureSymbol();
                             var sigReturnType = signatureSymbol.returnType;
 
