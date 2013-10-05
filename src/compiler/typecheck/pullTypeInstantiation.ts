@@ -344,7 +344,8 @@ module TypeScript {
         private _instantiatedConstructSignatures: PullSignatureSymbol[] = null;
         private _instantiatedIndexSignatures: PullSignatureSymbol[] = null;
         private _typeArgumentReferences: PullTypeSymbol[] = null;
-        private _isReferencedType: boolean = true;
+
+        public isReferencedType: boolean = false;
 
         // GTODO: Rather than pass in the map, pass in a list that we can construct from?
         // Or, just introduce a helper function to create the map for us
@@ -365,9 +366,31 @@ module TypeScript {
                 return instantiation;
             }
 
+            var typeParameters = rootType.getTypeParameters();
+
+            var isReferencedType = true;
+            if (typeParameters && typeArgumentList && (typeParameters.length == typeArgumentList.length)) {
+                
+
+                for (var i = 0; i < typeParameters.length; i++) {
+                    if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
+                        isReferencedType = false;
+                        break;
+                    }
+                }
+
+                if (isReferencedType) {
+                    typeParameterArgumentMap = {};
+                }
+            }
+
             instantiation = new PullInstantiatedTypeReferenceSymbol(type, typeParameterArgumentMap);
 
             rootType.addSpecialization(instantiation, typeArgumentList);
+
+            if (isReferencedType) {
+                instantiation.isReferencedType = true;
+            }
 
             // GTODO: read from/write to specialization cache
             return instantiation;
@@ -430,7 +453,7 @@ module TypeScript {
             // need to resolve the referenced types to get the members
             this.ensureReferencedTypeIsResolved();
 
-            if (this._isReferencedType) {
+            if (this.isReferencedType) {
                 return this.referencedTypeSymbol.getMembers();
             }
 
@@ -475,7 +498,7 @@ module TypeScript {
             // ensure that the type is resolved before looking for members
             this.ensureReferencedTypeIsResolved();
 
-            if (this._isReferencedType) {
+            if (this.isReferencedType) {
                 return this.referencedTypeSymbol.findMember(name, lookInParent);
             }
 
@@ -501,7 +524,7 @@ module TypeScript {
             // ensure that the type is resolved before trying to collect all members
             this.ensureReferencedTypeIsResolved();
 
-            if (this._isReferencedType) {
+            if (this.isReferencedType) {
                 return this.referencedTypeSymbol.getAllMembers(searchDeclKind, memberVisiblity);
             }
 
@@ -549,7 +572,7 @@ module TypeScript {
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
             this.ensureReferencedTypeIsResolved();
 
-            if (this._isReferencedType) {
+            if (this.isReferencedType) {
                 return this.referencedTypeSymbol.getCallSignatures(collectBaseSignatures);
             }
 
@@ -571,7 +594,7 @@ module TypeScript {
         public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
             this.ensureReferencedTypeIsResolved();
 
-            if (this._isReferencedType) {
+            if (this.isReferencedType) {
                 return this.referencedTypeSymbol.getConstructSignatures(collectBaseSignatures);
             }
 
@@ -593,7 +616,7 @@ module TypeScript {
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
             this.ensureReferencedTypeIsResolved();
 
-            if (this._isReferencedType) {
+            if (this.isReferencedType) {
                 return this.referencedTypeSymbol.getIndexSignatures(collectBaseSignatures);
             }
 
@@ -679,6 +702,10 @@ module TypeScript {
             return type;
         }
 
+        if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
+            return typeParameterArgumentMap[type.pullSymbolIDString]
+        }
+
         if (typeWrapsSomeTypeParameter(type, typeParameterArgumentMap)) {
             return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap);
         }
@@ -696,67 +723,89 @@ module TypeScript {
     // ever decide to go that route) allows for partial specialization
     function typeWrapsSomeTypeParameter(type: PullTypeSymbol, typeParameterArgumentMap: any): boolean {
 
+        var wrapsSomeTypeParameter = false;
+
         if (type.inWrapCheck) {
-            return false;
+            return wrapsSomeTypeParameter;
         }
 
         type.inWrapCheck = true;
 
+        
+
         // if we encounter a type paramter, we're obviously wrapping
         if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
-            return true;
+            wrapsSomeTypeParameter = true;
         }
 
-        var typeArguments = type.getTypeArguments();
+        if (!wrapsSomeTypeParameter) {
+            var typeArguments = type.getTypeArguments();
 
-        // If there are no type arguments, we could be instantiating the 'root' type
-        // declaration
-        if (type.isGeneric() && !typeArguments) {
-            typeArguments = type.getTypeParameters();
-        }
+            // If there are no type arguments, we could be instantiating the 'root' type
+            // declaration
+            if (type.isGeneric() && !typeArguments) {
+                typeArguments = type.getTypeParameters();
+            }
 
-        // if it's a generic type, scan the type arguments to see which may wrap type parameters
-        if (typeArguments) {
-            for (var i = 0; i < typeArguments.length; i++) {
-                if (typeWrapsSomeTypeParameter(typeArguments[i], typeParameterArgumentMap)) {
-                    return true;
+            // if it's a generic type, scan the type arguments to see which may wrap type parameters
+            if (typeArguments) {
+                for (var i = 0; i < typeArguments.length; i++) {
+                    if (typeWrapsSomeTypeParameter(typeArguments[i], typeParameterArgumentMap)) {
+                        wrapsSomeTypeParameter = true;
+                        break;
+                    }
                 }
             }
         }
 
-        // otherwise, walk the member list and signatures, checking for wraps
-        var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+        if (!wrapsSomeTypeParameter) {
+            // otherwise, walk the member list and signatures, checking for wraps
+            var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
-        for (var i = 0; i < members.length; i++) {
-            if (typeWrapsSomeTypeParameter(members[i].type, typeParameterArgumentMap)) {
-                return true;
+            for (var i = 0; i < members.length; i++) {
+                if (typeWrapsSomeTypeParameter(members[i].type, typeParameterArgumentMap)) {
+                    wrapsSomeTypeParameter = true;
+                    break;
+                }
             }
         }
 
-        var sigs = type.getCallSignatures(true);
+        if (!wrapsSomeTypeParameter) {
+            var sigs = type.getCallSignatures(true);
 
-        for (var i = 0; i < sigs.length; i++) {
-            if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                return true;
+            for (var i = 0; i < sigs.length; i++) {
+                if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
+                    wrapsSomeTypeParameter = true;
+                    break;
+                }
             }
         }
 
-        sigs = type.getConstructSignatures(true);
+        if (!wrapsSomeTypeParameter) {
+            sigs = type.getConstructSignatures(true);
 
-        for (var i = 0; i < sigs.length; i++) {
-            if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                return true;
+            for (var i = 0; i < sigs.length; i++) {
+                if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
+                    wrapsSomeTypeParameter = true;
+                    break;
+                }
             }
         }
-        
-        sigs = type.getIndexSignatures(true);
 
-        for (var i = 0; i < sigs.length; i++) {
-            if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                return true;
+        if (!wrapsSomeTypeParameter) {
+            sigs = type.getIndexSignatures(true);
+
+            for (var i = 0; i < sigs.length; i++) {
+                if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
+                    wrapsSomeTypeParameter = true;
+                    break;
+                }
             }
-        } 
-        return true;
+        }
+
+        type.inWrapCheck = false;
+
+        return wrapsSomeTypeParameter;
     }
 
     function signatureWrapsSomeTypeParameter(signature: PullSignatureSymbol, typeParameterArgumentMap: any): boolean {
