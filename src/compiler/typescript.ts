@@ -1347,7 +1347,7 @@ module TypeScript {
                         break;
 
                     case NodeType.TypeRef:
-                        var typeExpressionNode = path.asts[i + 1];
+                        var typeExpressionNode = path[i + 1];
 
                         // ObjectType are just like Object Literals are bound when needed, ensure we have a decl, by forcing it to be 
                         // resolved before descending into it.
