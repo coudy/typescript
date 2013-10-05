@@ -2232,13 +2232,13 @@ module TypeScript {
             return result;
         }
 
-        public visitVoidExpression(node: VoidExpressionSyntax): UnaryExpression {
+        public visitVoidExpression(node: VoidExpressionSyntax): VoidExpression {
             var start = this.position;
 
             this.movePast(node.voidKeyword);
             var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.VoidExpression, expression);
+            var result = new VoidExpression(expression);
             this.setSpan(result, start, node);
 
             return result;
@@ -3052,8 +3052,8 @@ module TypeScript {
             return result;
         }
 
-        public visitVoidExpression(node: VoidExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitVoidExpression(node: VoidExpressionSyntax): VoidExpression {
+            var result: VoidExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitVoidExpression(node);
                 this.setAST(node, result);

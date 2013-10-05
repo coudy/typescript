@@ -2212,14 +2212,17 @@ module TypeScript {
                     this.writeToOutput("delete ");
                     expression.operand.emit(this);
                     break;
-                case NodeType.VoidExpression:
-                    this.writeToOutput("void ");
-                    expression.operand.emit(this);
-                    break;
                 default:
                     throw Errors.abstract();
             }
 
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitVoidExpression(expression: VoidExpression): void {
+            this.recordSourceMappingStart(expression);
+            this.writeToOutput("void ");
+            expression.expression.emit(this);
             this.recordSourceMappingEnd(expression);
         }
 

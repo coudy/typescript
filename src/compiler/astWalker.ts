@@ -103,7 +103,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ObjectLiteralExpression] = ChildrenWalkers.walkObjectLiteralExpressionChildren;
             this.childrenWalkers[NodeType.SimplePropertyAssignment] = ChildrenWalkers.walkSimplePropertyAssignmentChildren;
             this.childrenWalkers[NodeType.FunctionPropertyAssignment] = ChildrenWalkers.walkFunctionPropertyAssignmentChildren;
-            this.childrenWalkers[NodeType.VoidExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.VoidExpression] = ChildrenWalkers.walkVoidExpressionChildren;
             this.childrenWalkers[NodeType.CommaExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.PlusExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.NegateExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
@@ -235,6 +235,10 @@ module TypeScript {
 
         export function walkUnaryExpressionChildren(preAst: UnaryExpression, walker: IAstWalker): void {
             walker.walk(preAst.operand);
+        }
+
+        export function walkVoidExpressionChildren(preAst: VoidExpression, walker: IAstWalker): void {
+            walker.walk(preAst.expression);
         }
 
         export function walkArrayLiteralExpressionChildren(preAst: ArrayLiteralExpression, walker: IAstWalker): void {

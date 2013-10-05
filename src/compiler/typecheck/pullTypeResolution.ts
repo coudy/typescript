@@ -3886,7 +3886,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private resolveVoidExpression(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveVoidExpression(ast: VoidExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckVoidExpression(ast, enclosingDecl, context);
             }
@@ -3896,9 +3896,9 @@ module TypeScript {
             return this.semanticInfoChain.undefinedTypeSymbol;
         }
 
-        private typeCheckVoidExpression(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private typeCheckVoidExpression(ast: VoidExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
-            this.resolveAST(ast.operand, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(ast.expression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
         private resolveLogicalOperation(ast: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4844,7 +4844,7 @@ module TypeScript {
                     return this.semanticInfoChain.booleanTypeSymbol;
 
                 case NodeType.VoidExpression:
-                    return this.resolveVoidExpression(<UnaryExpression>ast, enclosingDecl, context);
+                    return this.resolveVoidExpression(<VoidExpression>ast, enclosingDecl, context);
 
                 // assignment
                 case NodeType.AssignmentExpression:
@@ -5116,7 +5116,7 @@ module TypeScript {
                     return;
 
                 case NodeType.VoidExpression:
-                    this.typeCheckVoidExpression(<UnaryExpression>ast, enclosingDecl, context);
+                    this.typeCheckVoidExpression(<VoidExpression>ast, enclosingDecl, context);
                     return;
 
                 // boolean operations

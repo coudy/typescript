@@ -459,6 +459,26 @@ module TypeScript {
         }
     }
 
+    export class VoidExpression extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.VoidExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitVoidExpression(this);
+        }
+
+        public structuralEquals(ast: VoidExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+    }
+
     export interface ICallExpression extends IAST {
         target: AST;
         typeArguments: ASTList;
