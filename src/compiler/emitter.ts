@@ -742,7 +742,7 @@ module TypeScript {
         }
 
         private getImportDecls(fileName: string): PullDecl[] {
-            var topLevelDecl = this.semanticInfoChain.getTopLevelDecl(this.document.fileName);
+            var topLevelDecl = this.semanticInfoChain.topLevelDecl(this.document.fileName);
             var result: PullDecl[] = [];
 
             var dynamicModuleDecl = topLevelDecl.getChildDecls()[0]; // Dynamic module declaration has to be present
@@ -804,7 +804,7 @@ module TypeScript {
 
         public shouldCaptureThis(ast: AST) {
             if (ast.nodeType() === NodeType.Script) {
-                var scriptDecl = this.semanticInfoChain.getTopLevelDecl(this.document.fileName);
+                var scriptDecl = this.semanticInfoChain.topLevelDecl(this.document.fileName);
                 return (scriptDecl.flags & PullElementFlags.MustCaptureThis) === PullElementFlags.MustCaptureThis;
             }
 

@@ -4,7 +4,7 @@
 ///<reference path='..\typescript.ts' />
 
 module TypeScript {
-    export class DeclCollectionContext {
+    class DeclCollectionContext {
         public isDeclareFile = false;
         public parentChain = new Array<PullDecl>();
         public containingModuleHasExportAssignmentArray: boolean[] = [false];
@@ -740,7 +740,7 @@ module TypeScript {
             propertyAssignment, propertyAssignment.propertyName, propertyAssignment.returnTypeAnnotation, context, propertyAssignment.propertyName);
     }
 
-    export function preCollectDecls(ast: AST, walker: IAstWalker) {
+    function preCollectDecls(ast: AST, walker: IAstWalker) {
         var context: DeclCollectionContext = walker.state;
 
         switch (ast.nodeType()) {
@@ -871,7 +871,7 @@ module TypeScript {
         return false;
     }
 
-    export function postCollectDecls(ast: AST, walker: IAstWalker) {
+    function postCollectDecls(ast: AST, walker: IAstWalker) {
         var context: DeclCollectionContext = walker.state;
         var parentDecl: PullDecl;
         var initFlag = PullElementFlags.None;
@@ -992,6 +992,17 @@ module TypeScript {
                 // need to pop a decl here.
                 // context.popParent();
                 break;
+        }
+    }
+
+    export class PullDeclWalker {
+        public static create(script: Script, semanticInfoChain: SemanticInfoChain): PullDecl {
+            var declCollectionContext = new DeclCollectionContext(semanticInfoChain);
+
+            // create decls
+            getAstWalkerFactory().walk(script, preCollectDecls, postCollectDecls, null, declCollectionContext);
+
+            return declCollectionContext.getParent();
         }
     }
 }

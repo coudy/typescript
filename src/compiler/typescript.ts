@@ -801,7 +801,7 @@ module TypeScript {
             var bindStartTime = new Date().getTime();
 
             // start at '1', so as to skip binding for global primitives such as 'any'
-            var topLevelDecls = this.semanticInfoChain.getTopLevelDecls();
+            var topLevelDecls = this.semanticInfoChain.topLevelDecls();
             for (var i = 1, n = topLevelDecls.length; i < n; i++) {
                 var topLevelDecl = topLevelDecls[i];
 
@@ -1588,7 +1588,7 @@ module TypeScript {
         }
 
         public getTopLevelDeclaration(fileName: string) : PullDecl {
-            return this.semanticInfoChain.getTopLevelDecl(fileName);
+            return this.semanticInfoChain.topLevelDecl(fileName);
         }
 
         public reportDiagnostics(errors: Diagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {

@@ -551,7 +551,7 @@ module TypeScript {
             }
 
             // Get the global decls
-            var topLevelDecls = this.semanticInfoChain.getTopLevelDecls();
+            var topLevelDecls = this.semanticInfoChain.topLevelDecls();
             for (var i = 0, n = topLevelDecls.length; i < n; i++) {
                 var topLevelDecl = topLevelDecls[i];
                 if (declPath.length > 0 && topLevelDecl.fileName() === declPath[0].fileName()) {
@@ -9922,7 +9922,7 @@ module TypeScript {
 
         // type check infrastructure
         public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
-            var scriptDecl = semanticInfoChain.getTopLevelDecl(scriptName);
+            var scriptDecl = semanticInfoChain.topLevelDecl(scriptName);
 
             var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
