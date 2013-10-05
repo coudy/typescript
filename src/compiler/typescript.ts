@@ -1591,11 +1591,5 @@ module TypeScript {
         public getTopLevelDeclaration(fileName: string) : PullDecl {
             return this.semanticInfoChain.topLevelDecl(fileName);
         }
-
-        public reportDiagnostics(errors: Diagnostic[], errorReporter: TypeScript.IDiagnosticReporter): void {
-            for (var i = 0; i < errors.length; i++) {
-                errorReporter.addDiagnostic(errors[i]);
-            }
-        }
     }
 }
