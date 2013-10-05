@@ -179,7 +179,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.WhileStatement] = ChildrenWalkers.walkWhileStatementChildren;
             this.childrenWalkers[NodeType.DoStatement] = ChildrenWalkers.walkDoStatementChildren;
             this.childrenWalkers[NodeType.Block] = ChildrenWalkers.walkBlockChildren;
-            this.childrenWalkers[NodeType.CaseClause] = ChildrenWalkers.walkCaseClauseChildren;
+            this.childrenWalkers[NodeType.CaseSwitchClause] = ChildrenWalkers.walkCaseSwitchClauseChildren;
+            this.childrenWalkers[NodeType.DefaultSwitchClause] = ChildrenWalkers.walkDefaultSwitchClauseChildren;
             this.childrenWalkers[NodeType.SwitchStatement] = ChildrenWalkers.walkSwitchStatementChildren;
             this.childrenWalkers[NodeType.TryStatement] = ChildrenWalkers.walkTryStatementChildren;
             this.childrenWalkers[NodeType.CatchClause] = ChildrenWalkers.walkCatchClauseChildren;
@@ -389,8 +390,12 @@ module TypeScript {
             walker.walk(preAst.declarators);
         }
 
-        export function walkCaseClauseChildren(preAst: CaseClause, walker: IAstWalker): void {
+        export function walkCaseSwitchClauseChildren(preAst: CaseSwitchClause, walker: IAstWalker): void {
             walker.walk(preAst.expr);
+            walker.walk(preAst.body);
+        }
+
+        export function walkDefaultSwitchClauseChildren(preAst: DefaultSwitchClause, walker: IAstWalker): void {
             walker.walk(preAst.body);
         }
 

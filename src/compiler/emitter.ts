@@ -2562,29 +2562,37 @@ module TypeScript {
             this.recordSourceMappingEnd(statement);
         }
 
-        public emitCaseClause(clause: CaseClause): void {
+        public emitCaseSwitchClause(clause: CaseSwitchClause): void {
             this.recordSourceMappingStart(clause);
-            if (clause.expr) {
-                this.writeToOutput("case ");
-                clause.expr.emit(this);
-            }
-            else {
-                this.writeToOutput("default");
-            }
+            this.writeToOutput("case ");
+            clause.expr.emit(this);
             this.writeToOutput(":");
 
-            if (clause.body.members.length === 1 && clause.body.members[0].nodeType() === NodeType.Block) {
+            this.emitSwitchClauseBody(clause.body);
+            this.recordSourceMappingEnd(clause);
+        }
+
+        private emitSwitchClauseBody(body: ASTList): void {
+            if (body.members.length === 1 && body.members[0].nodeType() === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
-                clause.body.members[0].emit(this);
+                body.members[0].emit(this);
                 this.writeLineToOutput("");
             }
             else {
                 // No curly braces. Format in the expected way
                 this.writeLineToOutput("");
                 this.indenter.increaseIndent();
-                clause.body.emit(this);
+                body.emit(this);
                 this.indenter.decreaseIndent();
             }
+        }
+
+        public emitDefaultSwitchClause(clause: DefaultSwitchClause): void {
+            this.recordSourceMappingStart(clause);
+            this.writeToOutput("default");
+            this.writeToOutput(":");
+
+            this.emitSwitchClauseBody(clause.body);
             this.recordSourceMappingEnd(clause);
         }
 

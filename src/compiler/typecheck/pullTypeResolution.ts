@@ -4537,20 +4537,23 @@ module TypeScript {
 
             if (switchStatement.caseList && switchStatement.caseList.members) {
                 for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
-                    var caseClause = <CaseClause>switchStatement.caseList.members[i];
-                    if (caseClause.expr) {
-                        var caseClauseExpressionType = this.resolveAST(caseClause.expr, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+                    var switchClause = switchStatement.caseList.members[i];
+                    if (switchClause.nodeType() === NodeType.CaseSwitchClause) {
+                        var caseSwitchClause = <CaseSwitchClause>switchClause;
+                        if (caseSwitchClause.expr) {
+                            var caseClauseExpressionType = this.resolveAST(caseSwitchClause.expr, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
-                        var comparisonInfo = new TypeComparisonInfo();
-                        if (!this.sourceIsAssignableToTarget(expressionType, caseClauseExpressionType, context, comparisonInfo) &&
-                            !this.sourceIsAssignableToTarget(caseClauseExpressionType, expressionType, context, comparisonInfo)) {
-                            if (comparisonInfo.message) {
-                                context.postDiagnostic(diagnosticFromAST(caseClause.expr,
-                                    DiagnosticCode.Cannot_convert_0_to_1_NL_2, [caseClauseExpressionType.toString(), expressionType.toString(), comparisonInfo.message]));
-                            }
-                            else {
-                                context.postDiagnostic(diagnosticFromAST(caseClause.expr,
-                                    DiagnosticCode.Cannot_convert_0_to_1, [caseClauseExpressionType.toString(), expressionType.toString()]));
+                            var comparisonInfo = new TypeComparisonInfo();
+                            if (!this.sourceIsAssignableToTarget(expressionType, caseClauseExpressionType, context, comparisonInfo) &&
+                                !this.sourceIsAssignableToTarget(caseClauseExpressionType, expressionType, context, comparisonInfo)) {
+                                if (comparisonInfo.message) {
+                                    context.postDiagnostic(diagnosticFromAST(caseSwitchClause.expr,
+                                        DiagnosticCode.Cannot_convert_0_to_1_NL_2, [caseClauseExpressionType.toString(), expressionType.toString(), comparisonInfo.message]));
+                                }
+                                else {
+                                    context.postDiagnostic(diagnosticFromAST(caseSwitchClause.expr,
+                                        DiagnosticCode.Cannot_convert_0_to_1, [caseClauseExpressionType.toString(), expressionType.toString()]));
+                                }
                             }
                         }
                     }
@@ -4558,19 +4561,33 @@ module TypeScript {
             }
         }
 
-        private resolveCaseClause(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveCaseSwitchClause(ast: CaseSwitchClause, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckCaseClause(ast, enclosingDecl, context);
+                this.typeCheckCaseSwitchClause(ast, enclosingDecl, context);
             }
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckCaseClause(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private resolveDefaultSwitchClause(ast: DefaultSwitchClause, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckDefaultSwitchClause(ast, enclosingDecl, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckCaseSwitchClause(ast: CaseSwitchClause, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST((<CaseClause>ast).expr, false, enclosingDecl, context);
-            this.resolveAST((<CaseClause>ast).body, false, enclosingDecl, context);
+            this.resolveAST(ast.expr, false, enclosingDecl, context);
+            this.resolveAST(ast.body, false, enclosingDecl, context);
+        }
+
+        private typeCheckDefaultSwitchClause(ast: DefaultSwitchClause, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            this.setTypeChecked(ast, context);
+
+            this.resolveAST(ast.body, false, enclosingDecl, context);
         }
 
         private resolveLabeledStatement(ast: LabeledStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4980,8 +4997,11 @@ module TypeScript {
                 case NodeType.BreakStatement:
                     return this.resolveBreakStatement(<BreakStatement>ast, context);
 
-                case NodeType.CaseClause:
-                    return this.resolveCaseClause(ast, enclosingDecl, context);
+                case NodeType.CaseSwitchClause:
+                    return this.resolveCaseSwitchClause(<CaseSwitchClause>ast, enclosingDecl, context);
+
+                case NodeType.DefaultSwitchClause:
+                    return this.resolveDefaultSwitchClause(<DefaultSwitchClause>ast, enclosingDecl, context);
 
                 case NodeType.LabeledStatement:
                     return this.resolveLabeledStatement(<LabeledStatement>ast, enclosingDecl, context);
@@ -5245,8 +5265,12 @@ module TypeScript {
                     this.typeCheckSwitchStatement(ast, enclosingDecl, context);
                     return;
 
-                case NodeType.CaseClause:
-                    this.typeCheckCaseClause(ast, enclosingDecl, context);
+                case NodeType.CaseSwitchClause:
+                    this.typeCheckCaseSwitchClause(<CaseSwitchClause>ast, enclosingDecl, context);
+                    return;
+
+                case NodeType.DefaultSwitchClause:
+                    this.typeCheckDefaultSwitchClause(<DefaultSwitchClause>ast, enclosingDecl, context);
                     return;
 
                 // Below ones should never reach because we never cache these symbols

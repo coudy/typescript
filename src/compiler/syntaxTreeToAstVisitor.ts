@@ -1829,7 +1829,7 @@ module TypeScript {
             return result;
         }
 
-        public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseClause {
+        public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseSwitchClause {
             var start = this.position;
 
             this.movePast(node.caseKeyword);
@@ -1837,20 +1837,20 @@ module TypeScript {
             this.movePast(node.colonToken);
             var statements = this.visitSyntaxList(node.statements);
 
-            var result = new CaseClause(expression, statements);
+            var result = new CaseSwitchClause(expression, statements);
             this.setSpan(result, start, node);
 
             return result;
         }
 
-        public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseClause {
+        public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): DefaultSwitchClause {
             var start = this.position;
 
             this.movePast(node.defaultKeyword);
             this.movePast(node.colonToken);
             var statements = this.visitSyntaxList(node.statements);
 
-            var result = new CaseClause(null, statements);
+            var result = new DefaultSwitchClause(statements);
             this.setSpan(result, start, node);
 
             return result;
@@ -2833,8 +2833,8 @@ module TypeScript {
             return result;
         }
 
-        public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseClause {
-            var result: CaseClause = this.getAndMovePastAST(node);
+        public visitCaseSwitchClause(node: CaseSwitchClauseSyntax): CaseSwitchClause {
+            var result: CaseSwitchClause = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitCaseSwitchClause(node);
                 this.setAST(node, result);
@@ -2843,8 +2843,8 @@ module TypeScript {
             return result;
         }
 
-        public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): CaseClause {
-            var result: CaseClause = this.getAndMovePastAST(node);
+        public visitDefaultSwitchClause(node: DefaultSwitchClauseSyntax): DefaultSwitchClause {
+            var result: DefaultSwitchClause = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitDefaultSwitchClause(node);
                 this.setAST(node, result);

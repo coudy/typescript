@@ -135,7 +135,8 @@ module TypeScript {
         WithStatement,
 
         // Clauses
-        CaseClause,
+        CaseSwitchClause,
+        DefaultSwitchClause,
         CatchClause,
 
         Comment,

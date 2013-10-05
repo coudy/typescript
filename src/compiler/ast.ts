@@ -1641,7 +1641,7 @@ module TypeScript {
         }
     }
 
-    export class CaseClause extends AST {
+    export class CaseSwitchClause extends AST {
         constructor(public expr: AST, public body: ASTList) {
             super();
             expr && (expr.parent = this);
@@ -1649,17 +1649,37 @@ module TypeScript {
         }
 
         public nodeType(): NodeType {
-            return NodeType.CaseClause;
+            return NodeType.CaseSwitchClause;
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.emitCaseClause(this);
+            emitter.emitCaseSwitchClause(this);
         }
 
-        public structuralEquals(ast: CaseClause, includingPosition: boolean): boolean {
+        public structuralEquals(ast: CaseSwitchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expr, ast.expr, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition);
+        }
+    }
+
+    export class DefaultSwitchClause extends AST {
+        constructor(public body: ASTList) {
+            super();
+            body && (body.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.DefaultSwitchClause;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitDefaultSwitchClause(this);
+        }
+
+        public structuralEquals(ast: DefaultSwitchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.body, ast.body, includingPosition);
         }
     }
 
