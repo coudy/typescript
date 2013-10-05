@@ -23,7 +23,6 @@
 ///<reference path='hashTable.ts' />
 ///<reference path='ast.ts' />
 ///<reference path='astWalker.ts' />
-///<reference path='astPath.ts' />
 ///<reference path='base64.ts' />
 ///<reference path='sourceMapping.ts' />
 ///<reference path='emitter.ts' />
@@ -1135,7 +1134,7 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromPath(path: AstPath, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; } {
+        private extractResolutionContextFromAST(ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 
@@ -1145,15 +1144,17 @@ module TypeScript {
 
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
 
-            if (path.count() === 0) {
+            if (!ast) {
                 return null;
             }
 
             this.setUnit(scriptName);
 
+            var path = this.getASTPath(ast);
+
             // Extract infromation from path
-            for (var i = 0 , n = path.count(); i < n; i++) {
-                var current = path.asts[i];
+            for (var i = 0 , n = path.length; i < n; i++) {
+                var current = path[i];
 
                 switch (current.nodeType()) {
                     case NodeType.FunctionDeclaration:
@@ -1200,7 +1201,7 @@ module TypeScript {
                             var contextualType: PullTypeSymbol = null;
 
                             // Check if we are in an argumnt for a call, propagate the contextual typing
-                            if ((i + 1 < n) && callExpression.arguments === path.asts[i + 1]) {
+                            if ((i + 1 < n) && callExpression.arguments === path[i + 1]) {
                                 var callResolutionResults = new PullAdditionalCallResolutionData();
                                 if (isNew) {
                                     this.resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
@@ -1211,7 +1212,7 @@ module TypeScript {
 
                                 // Find the index in the arguments list
                                 if (callResolutionResults.actualParametersContextTypeSymbols) {
-                                    var argExpression = (path.asts[i + 1] && path.asts[i + 1].nodeType() === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
+                                    var argExpression = (path[i + 1] && path[i + 1].nodeType() === NodeType.List) ? path[i + 2] : path[i + 1];
                                     if (argExpression) {
                                         for (var j = 0, m = callExpression.arguments.members.length; j < m; j++) {
                                             if (callExpression.arguments.members[j] === argExpression) {
@@ -1261,7 +1262,7 @@ module TypeScript {
                             this.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
 
                             // find the member in the path
-                            var memeberAST = (path.asts[i + 1] && path.asts[i + 1].nodeType() === NodeType.List) ? path.asts[i + 2] : path.asts[i + 1];
+                            var memeberAST = (path[i + 1] && path[i + 1].nodeType() === NodeType.List) ? path[i + 2] : path[i + 1];
                             if (memeberAST) {
                                 // Propagate the member contextual type
                                 var contextualType: PullTypeSymbol = null;
@@ -1289,7 +1290,7 @@ module TypeScript {
                             var assignmentExpression = <BinaryExpression>current;
                             var contextualType: PullTypeSymbol = null;
 
-                            if (path.asts[i + 1] && path.asts[i + 1] === assignmentExpression.operand2) {
+                            if (path[i + 1] && path[i + 1] === assignmentExpression.operand2) {
                                 // propagate the left hand side type as a contextual type
                                 var leftType = this.resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
                                 if (leftType) {
@@ -1367,7 +1368,7 @@ module TypeScript {
                     case NodeType.TypeParameter:
                         // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
                         // when we are looking at a function type (e.g. var y : (a) => void)
-                        var typeExpressionNode = path.asts[i + 1];
+                        var typeExpressionNode = path[i + 1];
                         if (!typeExpressionNode ||
                             typeExpressionNode.nodeType() == NodeType.Name ||
                             typeExpressionNode.nodeType() == NodeType.MemberAccessExpression) {
@@ -1378,9 +1379,9 @@ module TypeScript {
 
                     case NodeType.ClassDeclaration:
                         var classDeclaration = <ClassDeclaration>current;
-                        if (path.asts[i + 1]) {
-                            if (path.asts[i + 1] === classDeclaration.extendsList ||
-                                path.asts[i + 1] === classDeclaration.implementsList) {
+                        if (path[i + 1]) {
+                            if (path[i + 1] === classDeclaration.extendsList ||
+                                path[i + 1] === classDeclaration.implementsList) {
                                 resolutionContext.resolvingTypeReference = true;
                             }
                         }
@@ -1389,9 +1390,9 @@ module TypeScript {
 
                     case NodeType.InterfaceDeclaration:
                         var interfaceDeclaration = <InterfaceDeclaration>current;
-                        if (path.asts[i + 1]) {
-                            if (path.asts[i + 1] === interfaceDeclaration.extendsList ||
-                                path.asts[i + 1] === interfaceDeclaration.name) {
+                        if (path[i + 1]) {
+                            if (path[i + 1] === interfaceDeclaration.extendsList ||
+                                path[i + 1] === interfaceDeclaration.name) {
                                 resolutionContext.resolvingTypeReference = true;
                             }
                         }
@@ -1409,49 +1410,52 @@ module TypeScript {
 
             // if the found AST is a named, we want to check for previous dotted expressions,
             // since those will give us the right typing
-            if (path.ast().nodeType() === NodeType.Name && path.count() > 1) {
-                for (var i = path.count() - 1; i >= 0; i--) {
-                    if (path.asts[path.top - 1].nodeType() === NodeType.MemberAccessExpression &&
-                    (<BinaryExpression>path.asts[path.top - 1]).operand2 === path.asts[path.top]) {
-                        path.pop();
-                    }
-                    else {
-                        break;
-                    }
+            if (ast && ast.parent && ast.nodeType() === NodeType.Name && ast.parent.nodeType() === NodeType.MemberAccessExpression) {
+                if ((<BinaryExpression>ast.parent).operand2 === ast) {
+                    ast = ast.parent;
                 }
             }
 
             return {
-                ast: path.ast(),
+                ast: ast,
                 enclosingDecl: enclosingDecl,
                 resolutionContext: resolutionContext,
                 inContextuallyTypedAssignment: inContextuallyTypedAssignment
             };
         }
 
-        public pullGetSymbolInformationFromPath(path: AstPath, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
+        private getASTPath(ast: AST): AST[] {
+            var result: AST[] = [];
+
+            while (ast) {
+                result.unshift(ast);
+                ast = ast.parent;
+            }
+
+            return result;
+        }
+
+        public pullGetSymbolInformationFromAST(ast: AST, document: Document): PullSymbolInfo {
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
 
-            var ast = path.ast();
+            ast = context.ast;
             var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
             var aliasSymbol = this.semanticInfoChain.getAliasSymbolForAST(ast);
 
             return {
                 symbol: symbol,
                 aliasSymbol: aliasSymbol,
-                ast: path.ast(),
+                ast: ast,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
         }
 
-        public pullGetDeclarationSymbolInformation(path: AstPath, document: Document): PullSymbolInfo {
+        public pullGetDeclarationSymbolInformation(ast: AST, document: Document): PullSymbolInfo {
             var script = document.script;
             var scriptName = document.fileName;
-
-            var ast = path.ast();
 
             if (ast.nodeType() !== NodeType.ClassDeclaration &&
                 ast.nodeType() !== NodeType.InterfaceDeclaration &&
@@ -1462,7 +1466,7 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1477,20 +1481,20 @@ module TypeScript {
             return {
                 symbol: symbol,
                 aliasSymbol: null,
-                ast: path.ast(),
+                ast: ast,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
         }
 
-        public pullGetCallInformationFromPath(path: AstPath, document: Document): PullCallSymbolInfo {
+        public pullGetCallInformationFromAST(ast: AST, document: Document): PullCallSymbolInfo {
             // AST has to be a call expression
-            if (path.ast().nodeType() !== NodeType.InvocationExpression && path.ast().nodeType() !== NodeType.ObjectCreationExpression) {
+            if (ast.nodeType() !== NodeType.InvocationExpression && ast.nodeType() !== NodeType.ObjectCreationExpression) {
                 return null;
             }
 
-            var isNew = (path.ast().nodeType() === NodeType.ObjectCreationExpression);
+            var isNew = ast.nodeType() === NodeType.ObjectCreationExpression;
 
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1498,29 +1502,29 @@ module TypeScript {
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                this.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>path.ast(), context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.resolver.resolveInvocationExpression(<InvocationExpression>path.ast(), context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                this.resolver.resolveInvocationExpression(<InvocationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {
                 targetSymbol: callResolutionResults.targetSymbol,
                 resolvedSignatures: callResolutionResults.resolvedSignatures,
                 candidateSignature: callResolutionResults.candidateSignature,
-                ast: path.ast(),
+                ast: ast,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl),
                 isConstructorCall: isNew
             };
         }
 
-        public pullGetVisibleMemberSymbolsFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
+        public pullGetVisibleMemberSymbolsFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
 
-            var symbols = this.resolver.getVisibleMembersFromExpression(path.ast(), context.enclosingDecl, context.resolutionContext);
+            var symbols = this.resolver.getVisibleMembersFromExpression(ast, context.enclosingDecl, context.resolutionContext);
             if (!symbols) {
                 return null;
             }
@@ -1531,8 +1535,8 @@ module TypeScript {
             };
         }
 
-        public pullGetVisibleDeclsFromPath(path: AstPath, document: Document): PullDecl[] {
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ false);
+        public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[] {
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ false);
             if (!context) {
                 return null;
             }
@@ -1540,13 +1544,13 @@ module TypeScript {
             return this.resolver.getVisibleDecls(context.enclosingDecl);
         }
 
-        public pullGetContextualMembersFromPath(path: AstPath, document: Document): PullVisibleSymbolsInfo {
+        public pullGetContextualMembersFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
             // Input has to be an object literal
-            if (path.ast().nodeType() !== NodeType.ObjectLiteralExpression) {
+            if (ast.nodeType() !== NodeType.ObjectLiteralExpression) {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1559,8 +1563,8 @@ module TypeScript {
             };
         }
 
-        public pullGetDeclInformation(decl: PullDecl, path: AstPath, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromPath(path, document, /*propagateContextualTypes*/ true);
+        public pullGetDeclInformation(decl: PullDecl, ast: AST, document: Document): PullSymbolInfo {
+            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
             if (!context) {
                 return null;
             }
@@ -1572,7 +1576,7 @@ module TypeScript {
             return {
                 symbol: symbol,
                 aliasSymbol: null,
-                ast: path.ast(),
+                ast: ast,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
         }
