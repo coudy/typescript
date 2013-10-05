@@ -2204,14 +2204,17 @@ module TypeScript {
                     this.writeToOutput("--");
                     expression.operand.emit(this);
                     break;
-                case NodeType.TypeOfExpression:
-                    this.writeToOutput("typeof ");
-                    expression.operand.emit(this);
-                    break;
                 default:
                     throw Errors.abstract();
             }
 
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitTypeOfExpression(expression: TypeOfExpression): void {
+            this.recordSourceMappingStart(expression);
+            this.writeToOutput("typeof ");
+            expression.expression.emit(this);
             this.recordSourceMappingEnd(expression);
         }
 

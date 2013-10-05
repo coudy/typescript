@@ -459,6 +459,26 @@ module TypeScript {
         }
     }
 
+    export class TypeOfExpression extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TypeOfExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitTypeOfExpression(this);
+        }
+
+        public structuralEquals(ast: TypeOfExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+    }
+
     export class DeleteExpression extends AST {
         constructor(public expression: AST) {
             super();

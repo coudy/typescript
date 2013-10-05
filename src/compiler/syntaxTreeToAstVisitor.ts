@@ -2208,13 +2208,13 @@ module TypeScript {
             return result;
         }
 
-        public visitTypeOfExpression(node: TypeOfExpressionSyntax): UnaryExpression {
+        public visitTypeOfExpression(node: TypeOfExpressionSyntax): TypeOfExpression {
             var start = this.position;
 
             this.movePast(node.typeOfKeyword);
             var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.TypeOfExpression, expression);
+            var result = new TypeOfExpression(expression);
             this.setSpan(result, start, node);
 
             return result;
@@ -3032,8 +3032,8 @@ module TypeScript {
             return result;
         }
 
-        public visitTypeOfExpression(node: TypeOfExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitTypeOfExpression(node: TypeOfExpressionSyntax): TypeOfExpression {
+            var result: TypeOfExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitTypeOfExpression(node);
                 this.setAST(node, result);

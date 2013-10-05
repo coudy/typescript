@@ -4056,7 +4056,7 @@ module TypeScript {
             }
         }
 
-        private resolveTypeOfExpression(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveTypeOfExpression(ast: TypeOfExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckTypeOfExpression(ast, enclosingDecl, context);
             }
@@ -4066,9 +4066,9 @@ module TypeScript {
             return this.semanticInfoChain.stringTypeSymbol;
         }
 
-        private typeCheckTypeOfExpression(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private typeCheckTypeOfExpression(ast: TypeOfExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
-            this.resolveAST(ast.operand, /*inContextuallyTypedAssignment*/ false, enclosingDecl, context);
+            this.resolveAST(ast.expression, /*inContextuallyTypedAssignment*/ false, enclosingDecl, context);
         }
 
         private resolveThrowStatement(ast: ThrowStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4909,7 +4909,7 @@ module TypeScript {
                     return this.resolveLogicalAndExpression(<BinaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.TypeOfExpression:
-                    return this.resolveTypeOfExpression(<UnaryExpression>ast, enclosingDecl, context);
+                    return this.resolveTypeOfExpression(<TypeOfExpression>ast, enclosingDecl, context);
 
                 case NodeType.ThrowStatement:
                     return this.resolveThrowStatement(<ThrowStatement>ast, enclosingDecl, context);
@@ -5177,7 +5177,7 @@ module TypeScript {
                     return;
 
                 case NodeType.TypeOfExpression:
-                    this.typeCheckTypeOfExpression(<UnaryExpression>ast, enclosingDecl, context);
+                    this.typeCheckTypeOfExpression(<TypeOfExpression>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.ThrowStatement:
