@@ -338,14 +338,14 @@ module TypeScript {
 
         export function walkParameterChildren(preAst: Parameter, walker: IAstWalker): void {
             walker.walk(preAst.id);
-            walker.walk(preAst.init);
             walker.walk(preAst.typeExpr);
+            walker.walk(preAst.init);
         }
 
         export function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: IAstWalker): void {
             walker.walk(preAst.id);
-            walker.walk(preAst.init);
             walker.walk(preAst.typeExpr);
+            walker.walk(preAst.init);
         }
 
         export function walkReturnStatementChildren(preAst: ReturnStatement, walker: IAstWalker): void {
