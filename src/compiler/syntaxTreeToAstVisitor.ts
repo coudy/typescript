@@ -2220,13 +2220,13 @@ module TypeScript {
             return result;
         }
 
-        public visitDeleteExpression(node: DeleteExpressionSyntax): UnaryExpression {
+        public visitDeleteExpression(node: DeleteExpressionSyntax): DeleteExpression {
             var start = this.position;
 
             this.movePast(node.deleteKeyword);
             var expression = node.expression.accept(this);
 
-            var result = new UnaryExpression(NodeType.DeleteExpression, expression);
+            var result = new DeleteExpression(expression);
             this.setSpan(result, start, node);
 
             return result;
@@ -3042,8 +3042,8 @@ module TypeScript {
             return result;
         }
 
-        public visitDeleteExpression(node: DeleteExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitDeleteExpression(node: DeleteExpressionSyntax): DeleteExpression {
+            var result: DeleteExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitDeleteExpression(node);
                 this.setAST(node, result);

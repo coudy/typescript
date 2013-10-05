@@ -2208,14 +2208,17 @@ module TypeScript {
                     this.writeToOutput("typeof ");
                     expression.operand.emit(this);
                     break;
-                case NodeType.DeleteExpression:
-                    this.writeToOutput("delete ");
-                    expression.operand.emit(this);
-                    break;
                 default:
                     throw Errors.abstract();
             }
 
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitDeleteExpression(expression: DeleteExpression): void {
+            this.recordSourceMappingStart(expression);
+            this.writeToOutput("delete ");
+            expression.expression.emit(this);
             this.recordSourceMappingEnd(expression);
         }
 

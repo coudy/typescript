@@ -4085,7 +4085,7 @@ module TypeScript {
             this.resolveAST(ast.expression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
-        private resolveDeleteExpression(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveDeleteExpression(ast: DeleteExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckDeleteExpression(ast, enclosingDecl, context);
             }
@@ -4095,9 +4095,9 @@ module TypeScript {
             return this.semanticInfoChain.booleanTypeSymbol;
         }
 
-        private typeCheckDeleteExpression(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private typeCheckDeleteExpression(ast: DeleteExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
-            this.resolveAST(ast.operand, false, enclosingDecl, context);
+            this.resolveAST(ast.expression, false, enclosingDecl, context);
         }
 
         private resolveInstanceOfExpression(ast: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4915,7 +4915,7 @@ module TypeScript {
                     return this.resolveThrowStatement(<ThrowStatement>ast, enclosingDecl, context);
 
                 case NodeType.DeleteExpression:
-                    return this.resolveDeleteExpression(<UnaryExpression>ast, enclosingDecl, context);
+                    return this.resolveDeleteExpression(<DeleteExpression>ast, enclosingDecl, context);
 
                 case NodeType.ConditionalExpression:
                     return this.resolveConditionalExpression(<ConditionalExpression>ast, enclosingDecl, context);
@@ -5185,7 +5185,7 @@ module TypeScript {
                     return;
 
                 case NodeType.DeleteExpression:
-                    this.typeCheckDeleteExpression(<UnaryExpression>ast, enclosingDecl, context);
+                    this.typeCheckDeleteExpression(<DeleteExpression>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.ConditionalExpression:
