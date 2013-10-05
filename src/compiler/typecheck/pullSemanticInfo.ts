@@ -173,30 +173,27 @@ module TypeScript {
             this.invalidate();
         }
 
-        public addScript(script: Script) {
-            var fileName = script.fileName();
-
-            var semanticInfo = new SemanticInfo(this, fileName, script);
-            this.units.push(semanticInfo);
-            this.fileNameToSemanticInfo[fileName] = semanticInfo;
-        }
-
         private getSemanticInfo(fileName: string): SemanticInfo {
             return this.fileNameToSemanticInfo[fileName];
         }
 
-        public updateScript(newScript: Script): void {
-            var fileName = newScript.fileName();
-            var newSemanticInfo = new SemanticInfo(this, fileName, newScript);
+        public addScript(script: Script): void {
+            var fileName = script.fileName();
+            var semanticInfo = new SemanticInfo(this, fileName, script);
 
-            for (var i = 0; i < this.units.length; i++) {
-                if (this.units[i].fileName() === fileName) {
-                    this.units[i] = newSemanticInfo;
-                    this.fileNameToSemanticInfo[fileName] = newSemanticInfo;
-                    break;
-                }
+            var existingIndex = ArrayUtilities.indexOf(this.units, u => u.fileName() === fileName);
+            if (existingIndex < 0) {
+                // Adding the script for the first time.
+                this.units.push(semanticInfo);
+            }
+            else {
+                this.units[existingIndex] = semanticInfo;
             }
 
+            this.fileNameToSemanticInfo[fileName] = semanticInfo;
+
+            // We changed the scripts we're responsible for.  Invalidate all existing cached
+            // semantic information.
             this.invalidate();
         }
 

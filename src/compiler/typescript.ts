@@ -825,8 +825,9 @@ module TypeScript {
 
                 lastBoundPullDeclId = pullDeclID;
 
-                // replace the old semantic info               
-                this.semanticInfoChain.updateScript(newScript);
+                // Note: the semantic info chain will recognize that this is a replacement of an
+                // existing script, and will handle it appropriately.
+                this.semanticInfoChain.addScript(newScript);
 
                 // If we havne't yet created a new resolver, clean any cached symbols
                 this.resolver = new PullTypeResolver(
