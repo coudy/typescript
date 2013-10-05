@@ -414,8 +414,8 @@ module TypeScript {
     export class PullFunctionExpressionDecl extends NormalPullDecl {
         private functionExpressionName: string;
 
-        constructor(expressionName: string, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan) {
-            super("", "", PullElementKind.FunctionExpression, declFlags, parentDecl, span);
+        constructor(expressionName: string, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan, displayName: string = "") {
+            super("", displayName, PullElementKind.FunctionExpression, declFlags, parentDecl, span);
             this.functionExpressionName = expressionName;
         }
 

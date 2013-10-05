@@ -672,7 +672,6 @@ module TypeScript {
             var typeParameter: PullTypeParameterSymbol;
 
             for (var i = 0; i < typeParameters.length; i++) {
-
                 typeParameter = objectSymbol.findTypeParameter(typeParameters[i].name);
 
                 if (!typeParameter) {
@@ -689,7 +688,6 @@ module TypeScript {
                 typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
             }
-
         }
 
         public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
