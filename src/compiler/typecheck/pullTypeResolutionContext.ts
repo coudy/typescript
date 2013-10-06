@@ -186,7 +186,6 @@ module TypeScript {
         public isSpecializingSignatureTypeParameters = false;
         public isSpecializingConstructorMethod = false;
         public isComparingSpecializedSignatures = false;
-        public isResolvingSuperConstructorCallArgument = false;
         public isInStaticInitializer = false;
         public resolvingTypeNameAsNameExpression = false;
         public recursiveMemberSpecializationDepth = 0;

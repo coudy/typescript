@@ -858,9 +858,6 @@ module TypeScript {
             var savedIsInStaticInitializer = context.isInStaticInitializer
             context.isInStaticInitializer = false;
 
-            var savedIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
-            context.isResolvingSuperConstructorCallArgument = false;
-
             var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = false;
 
@@ -875,7 +872,6 @@ module TypeScript {
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
-            context.isResolvingSuperConstructorCallArgument = savedIsResolvingSuperConstructorCallArgument;
             context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
 
@@ -6544,6 +6540,32 @@ module TypeScript {
             return this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context) || this.semanticInfoChain.anyTypeSymbol;
         }
 
+        private inArgumentListOfSuperInvocation(ast: AST): boolean {
+            var previous: AST = null;
+            var current = ast;
+            while (current) {
+                switch (current.nodeType()) {
+                    case NodeType.InvocationExpression:
+                        var invocationExpression = <InvocationExpression>current;
+                        if (previous === invocationExpression.arguments &&
+                            invocationExpression.target.nodeType() === NodeType.SuperExpression) {
+                                return true;
+                        }
+                        break;
+                    
+                    case NodeType.ConstructorDeclaration:
+                    case NodeType.ClassDeclaration:
+                    case NodeType.ModuleDeclaration:
+                        return false;
+                }
+
+                previous = current;
+                current = current.parent;
+            }
+
+            return false;
+        }
+
         private inConstructorParameterList(ast: AST): boolean {
             var previous: AST = null;
             var current = ast;
@@ -6572,7 +6594,7 @@ module TypeScript {
             var decls = thisTypeSymbol.getDeclarations();
             var classDecl = decls && decls[0] ? decls[0] : null;
 
-            if (context.isResolvingSuperConstructorCallArgument &&
+            if (this.inArgumentListOfSuperInvocation(thisExpression) &&
                 this.superCallMustBeFirstStatementInConstructor(enclosingDecl, classDecl)) {
 
                 context.postDiagnostic(diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_current_location));
@@ -6689,7 +6711,7 @@ module TypeScript {
             if (nonLambdaEnclosingDecl) {
 
                 var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.kind;
-                var inSuperConstructorTarget = context.isResolvingSuperConstructorCallArgument;
+                var inSuperConstructorTarget = this.inArgumentListOfSuperInvocation(ast);
 
                 // Super calls are not permitted outside constructors or in local functions inside constructors.
                 if (inSuperConstructorTarget && enclosingDecl.kind !== PullElementKind.ConstructorMethod) {
@@ -7481,7 +7503,6 @@ module TypeScript {
 
             if (callEx.arguments) {
                 var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
-                var isSuperCall = callEx.target.nodeType() === NodeType.SuperExpression;
 
                 var len = callEx.arguments.members.length;
                 for (var i = 0; i < len; i++) {
@@ -7491,17 +7512,8 @@ module TypeScript {
                     if (contextualType) {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                     }
-                    var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
-
-                    if (isSuperCall) {
-                        context.isResolvingSuperConstructorCallArgument = true;
-                    }
 
                     this.resolveAST(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
-
-                    if (isSuperCall) {
-                        context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
-                    }
 
                     if (contextualType) {
                         context.popContextualType();
@@ -7742,17 +7754,9 @@ module TypeScript {
 
                 additionalResults.actualParametersContextTypeSymbols = actualParametersContextTypeSymbols;
 
-                var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
-                if (isSuperCall) {
-                    context.isResolvingSuperConstructorCallArgument = true;
-                }
                 this.resolveAST(callEx.arguments, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-                if (isSuperCall) {
-                    context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
-                }
 
                 if (!couldNotFindGenericOverload) {
-
                     // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                     if (this.cachedFunctionInterfaceType() && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), context)) {
                         if (callEx.typeArguments) {
@@ -7776,18 +7780,8 @@ module TypeScript {
                 return errorCondition;
             }
 
-            var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
-
-            if (isSuperCall) {
-                context.isResolvingSuperConstructorCallArgument = true;
-            }
-
             var signature = this.resolveOverloads(callEx, signatures, enclosingDecl, callEx.typeArguments != null, context, diagnostics);
             var useBeforeResolutionSignatures = signature == null;
-
-            if (isSuperCall) {
-                context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
-            }
 
             if (!signature) {
                 for (var i = 0; i < diagnostics.length; i++) {
@@ -7852,17 +7846,7 @@ module TypeScript {
                         actualParametersContextTypeSymbols[i] = contextualType;
                     }
 
-                    var prevIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
-
-                    if (isSuperCall) {
-                        context.isResolvingSuperConstructorCallArgument = true;
-                    }
-
                     this.resolveAST(callEx.arguments.members[i], contextualType != null, enclosingDecl, context);
-
-                    if (isSuperCall) {
-                        context.isResolvingSuperConstructorCallArgument = prevIsResolvingSuperConstructorCallArgument;
-                    }
 
                     if (contextualType) {
                         context.popContextualType();
