@@ -4324,7 +4324,7 @@ module TypeScript {
             jumpRecord.inIterationStatement = savedInIterationStatement;
         }
 
-        private resolveIfStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveIfStatement(ast: IfStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckIfStatement(ast, enclosingDecl, context);
             }
@@ -4332,12 +4332,26 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckIfStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private typeCheckIfStatement(ast: IfStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST((<IfStatement>ast).condition, false, enclosingDecl, context);
-            this.resolveAST((<IfStatement>ast).statement, false, enclosingDecl, context);
-            this.resolveAST((<IfStatement>ast).elseClause, false, enclosingDecl, context);
+            this.resolveAST(ast.condition, false, enclosingDecl, context);
+            this.resolveAST(ast.statement, false, enclosingDecl, context);
+            this.resolveAST(ast.elseClause, false, enclosingDecl, context);
+        }
+
+        private resolveElseClause(ast: ElseClause, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckElseClause(ast, enclosingDecl, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckElseClause(ast: ElseClause, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            this.setTypeChecked(ast, context);
+
+            this.resolveAST(ast.statement, false, enclosingDecl, context);
         }
 
         private resolveBlock(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4999,7 +5013,10 @@ module TypeScript {
                     return this.resolveDoStatement(ast, enclosingDecl, context);
 
                 case NodeType.IfStatement:
-                    return this.resolveIfStatement(ast, enclosingDecl, context);
+                    return this.resolveIfStatement(<IfStatement>ast, enclosingDecl, context);
+
+                case NodeType.ElseClause:
+                    return this.resolveElseClause(<ElseClause>ast, enclosingDecl, context);
 
                 case NodeType.Block:
                     return this.resolveBlock(ast, enclosingDecl, context);
@@ -5274,7 +5291,11 @@ module TypeScript {
                     return;
 
                 case NodeType.IfStatement:
-                    this.typeCheckIfStatement(ast, enclosingDecl, context);
+                    this.typeCheckIfStatement(<IfStatement>ast, enclosingDecl, context);
+                    return;
+
+                case NodeType.ElseClause:
+                    this.typeCheckElseClause(<ElseClause>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.WithStatement:

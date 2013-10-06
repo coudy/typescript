@@ -2488,16 +2488,20 @@ module TypeScript {
                     this.writeToOutput(" ");
                 }
 
-                if (statement.elseClause.nodeType() === NodeType.IfStatement) {
-                    this.writeToOutput("else ");
-                    statement.elseClause.emit(this);
-                }
-                else {
-                    this.writeToOutput("else");
-                    this.emitBlockOrStatement(statement.elseClause);
-                }
+                statement.elseClause.emit(this);
             }
             this.recordSourceMappingEnd(statement);
+        }
+
+        public emitElseClause(elseClause: ElseClause): void {
+            if (elseClause.statement.nodeType() === NodeType.IfStatement) {
+                this.writeToOutput("else ");
+                elseClause.statement.emit(this);
+            }
+            else {
+                this.writeToOutput("else");
+                this.emitBlockOrStatement(elseClause.statement);
+            }
         }
 
         public emitReturnStatement(statement: ReturnStatement): void {

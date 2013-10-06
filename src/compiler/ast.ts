@@ -1608,7 +1608,7 @@ module TypeScript {
     export class IfStatement extends AST {
         constructor(public condition: AST,
                     public statement: AST,
-                    public elseClause: AST) {
+                    public elseClause: ElseClause) {
             super();
             condition && (condition.parent = this);
             statement && (statement.parent = this);
@@ -1632,6 +1632,26 @@ module TypeScript {
                    structuralEquals(this.condition, ast.condition, includingPosition) &&
                    structuralEquals(this.statement, ast.statement, includingPosition) &&
                    structuralEquals(this.elseClause, ast.elseClause, includingPosition);
+        }
+    }
+
+    export class ElseClause extends AST {
+        constructor(public statement: AST) {
+            super();
+            statement && (statement.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ElseClause;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitElseClause(this);
+        }
+
+        public structuralEquals(ast: ElseClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.statement, ast.statement, includingPosition);
         }
     }
 

@@ -177,6 +177,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ForStatement] = ChildrenWalkers.walkForStatementChildren;
             this.childrenWalkers[NodeType.ForInStatement] = ChildrenWalkers.walkForInStatementChildren;
             this.childrenWalkers[NodeType.IfStatement] = ChildrenWalkers.walkIfStatementChildren;
+            this.childrenWalkers[NodeType.ElseClause] = ChildrenWalkers.walkElseClauseChildren;
             this.childrenWalkers[NodeType.WhileStatement] = ChildrenWalkers.walkWhileStatementChildren;
             this.childrenWalkers[NodeType.DoStatement] = ChildrenWalkers.walkDoStatementChildren;
             this.childrenWalkers[NodeType.Block] = ChildrenWalkers.walkBlockChildren;
@@ -393,6 +394,10 @@ module TypeScript {
             walker.walk(preAst.condition);
             walker.walk(preAst.statement);
             walker.walk(preAst.elseClause);
+        }
+
+        export function walkElseClauseChildren(preAst: ElseClause, walker: IAstWalker): void {
+            walker.walk(preAst.statement);
         }
 
         export function walkWhileStatementChildren(preAst: WhileStatement, walker: IAstWalker): void {

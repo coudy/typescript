@@ -142,6 +142,7 @@ module TypeScript {
         CatchClause,
         ExtendsHeritageClause,
         ImplementsHeritageClause,
+        ElseClause,
 
         Comment,
     }

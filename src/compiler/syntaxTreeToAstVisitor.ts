@@ -1554,7 +1554,7 @@ module TypeScript {
             var condition = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             var thenBod = node.statement.accept(this);
-            var elseBod = node.elseClause ? node.elseClause.accept(this) : null;
+            var elseBod: ElseClause = node.elseClause ? node.elseClause.accept(this) : null;
 
             var result = new IfStatement(condition, thenBod, elseBod);
             this.setSpan(result, start, node);
@@ -1562,9 +1562,16 @@ module TypeScript {
             return result;
         }
 
-        public visitElseClause(node: ElseClauseSyntax): AST {
+        public visitElseClause(node: ElseClauseSyntax): ElseClause {
+            var start = this.position;
+
             this.movePast(node.elseKeyword);
-            return node.statement.accept(this);
+            var statement = node.statement.accept(this);
+
+            var result = new ElseClause(statement);
+            this.setSpan(result, start, node);
+
+            return result;
         }
 
         public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
