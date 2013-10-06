@@ -1279,13 +1279,13 @@ module TypeScript {
             return result;
         }
 
-        public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): UnaryExpression {
+        public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): PostfixUnaryExpression {
             var start = this.position;
 
             var operand = node.operand.accept(this);
             this.movePast(node.operatorToken);
 
-            var result = new UnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.PostIncrementExpression : NodeType.PostDecrementExpression, operand);
+            var result = new PostfixUnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.PostIncrementExpression : NodeType.PostDecrementExpression, operand);
             this.setSpan(result, start, node);
 
             return result;
@@ -2623,8 +2623,8 @@ module TypeScript {
             return result;
         }
 
-        public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitPostfixUnaryExpression(node: PostfixUnaryExpressionSyntax): PostfixUnaryExpression {
+            var result: PostfixUnaryExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitPostfixUnaryExpression(node);
                 this.setAST(node, result);

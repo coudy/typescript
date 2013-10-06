@@ -403,6 +403,8 @@ module Services {
 
                     case TypeScript.NodeType.PreIncrementExpression:
                     case TypeScript.NodeType.PostIncrementExpression:
+                        return true;
+
                     case TypeScript.NodeType.PreDecrementExpression:
                     case TypeScript.NodeType.PostDecrementExpression:
                         return true;

@@ -3954,6 +3954,17 @@ module TypeScript {
             return this.semanticInfoChain.numberTypeSymbol;
         }
 
+        private resolvePostfixUnaryExpression(ast: PostfixUnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckPostfixUnaryExpression(ast, enclosingDecl, context);
+            }
+
+            // September 17, 2013:
+            // The ++ and-- operators ... produce a result of the Number primitive type.
+            // The +, –, and ~ operators ... produce a result of the Number primitive type.
+            return this.semanticInfoChain.numberTypeSymbol;
+        }
+
         private isAnyOrNumberOrEnum(type: PullTypeSymbol): boolean {
             return this.isAnyOrEquivalent(type) || type === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(type);
         }
@@ -3976,6 +3987,30 @@ module TypeScript {
                 nodeType === NodeType.PreIncrementExpression ||
                 nodeType === NodeType.PostDecrementExpression ||
                 nodeType === NodeType.PreDecrementExpression);
+
+            // September 17, 2013: 4.14.1	The ++ and -- operators
+            // These operators, in prefix or postfix form, require their operand to be of type Any,
+            // the Number primitive type, or an enum type, and classified as a reference(section 4.1).
+            var operandType = expression.type;
+            if (!this.isAnyOrNumberOrEnum(operandType)) {
+                context.postDiagnostic(diagnosticFromAST(unaryExpression.operand, DiagnosticCode.The_type_of_a_unary_arithmetic_operation_operand_must_be_of_type_any_number_or_an_enum_type));
+            }
+
+            // September 17, ... and classified as a reference(section 4.1).
+            if (!this.isReference(unaryExpression.operand, expression)) {
+                context.postDiagnostic(diagnosticFromAST(unaryExpression.operand, DiagnosticCode.The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_property_or_indexer));
+            }
+        }
+
+        private typeCheckPostfixUnaryExpression(unaryExpression: PostfixUnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+            this.setTypeChecked(unaryExpression, context);
+
+            var nodeType = unaryExpression.nodeType();
+            var expression = this.resolveAST(unaryExpression.operand, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+
+            Debug.assert(
+                nodeType === NodeType.PostIncrementExpression ||
+                nodeType === NodeType.PostDecrementExpression);
 
             // September 17, 2013: 4.14.1	The ++ and -- operators
             // These operators, in prefix or postfix form, require their operand to be of type Any,
@@ -4888,11 +4923,13 @@ module TypeScript {
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
                 case NodeType.BitwiseNotExpression:
-                case NodeType.PostIncrementExpression:
                 case NodeType.PreIncrementExpression:
-                case NodeType.PostDecrementExpression:
                 case NodeType.PreDecrementExpression:
                     return this.resolveUnaryArithmeticOperation(<UnaryExpression>ast, enclosingDecl, context);
+
+                case NodeType.PostIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                    return this.resolvePostfixUnaryExpression(<PostfixUnaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.SubtractExpression:
                 case NodeType.MultiplyExpression:
@@ -5158,11 +5195,14 @@ module TypeScript {
                 case NodeType.PlusExpression:
                 case NodeType.NegateExpression:
                 case NodeType.BitwiseNotExpression:
-                case NodeType.PostIncrementExpression:
                 case NodeType.PreIncrementExpression:
-                case NodeType.PostDecrementExpression:
                 case NodeType.PreDecrementExpression:
                     this.typeCheckUnaryArithmeticOperation(<UnaryExpression>ast, enclosingDecl, context);
+                    return;
+
+                case NodeType.PostIncrementExpression:
+                case NodeType.PostDecrementExpression:
+                    this.typeCheckPostfixUnaryExpression(<PostfixUnaryExpression>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.SubtractExpression:

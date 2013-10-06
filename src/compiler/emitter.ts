@@ -2168,17 +2168,9 @@ module TypeScript {
 
             this.recordSourceMappingStart(expression);
             switch (nodeType) {
-                case NodeType.PostIncrementExpression:
-                    expression.operand.emit(this);
-                    this.writeToOutput("++");
-                    break;
                 case NodeType.LogicalNotExpression:
                     this.writeToOutput("!");
                     expression.operand.emit(this);
-                    break;
-                case NodeType.PostDecrementExpression:
-                    expression.operand.emit(this);
-                    this.writeToOutput("--");
                     break;
                 case NodeType.BitwiseNotExpression:
                     this.writeToOutput("~");
@@ -2205,6 +2197,26 @@ module TypeScript {
                 case NodeType.PreDecrementExpression:
                     this.writeToOutput("--");
                     expression.operand.emit(this);
+                    break;
+                default:
+                    throw Errors.abstract();
+            }
+
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitPostfixUnaryExpression(expression: PostfixUnaryExpression): void {
+            var nodeType = expression.nodeType();
+
+            this.recordSourceMappingStart(expression);
+            switch (nodeType) {
+                case NodeType.PostIncrementExpression:
+                    expression.operand.emit(this);
+                    this.writeToOutput("++");
+                    break;
+                case NodeType.PostDecrementExpression:
+                    expression.operand.emit(this);
+                    this.writeToOutput("--");
                     break;
                 default:
                     throw Errors.abstract();

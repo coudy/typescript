@@ -159,8 +159,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.LogicalNotExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.PreIncrementExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.PreDecrementExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.PostIncrementExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.PostDecrementExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.PostIncrementExpression] = ChildrenWalkers.walkPostfixUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.PostDecrementExpression] = ChildrenWalkers.walkPostfixUnaryExpressionChildren;
             this.childrenWalkers[NodeType.CastExpression] = ChildrenWalkers.walkCastExpressionChildren;
             this.childrenWalkers[NodeType.ParenthesizedExpression] = ChildrenWalkers.walkParenthesizedExpressionChildren;
             this.childrenWalkers[NodeType.ArrowFunctionExpression] = ChildrenWalkers.walkArrowFunctionExpressionChildren;
@@ -235,6 +235,10 @@ module TypeScript {
         }
 
         export function walkUnaryExpressionChildren(preAst: UnaryExpression, walker: IAstWalker): void {
+            walker.walk(preAst.operand);
+        }
+
+        export function walkPostfixUnaryExpressionChildren(preAst: PostfixUnaryExpression, walker: IAstWalker): void {
             walker.walk(preAst.operand);
         }
 

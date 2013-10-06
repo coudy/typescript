@@ -439,6 +439,26 @@ module TypeScript {
         }
     }
 
+    export class PostfixUnaryExpression extends AST {
+        constructor(private _nodeType: NodeType, public operand: AST) {
+            super();
+            operand && (operand.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitPostfixUnaryExpression(this);
+        }
+
+        public structuralEquals(ast: PostfixUnaryExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.operand, ast.operand, includingPosition);
+        }
+    }
+
     export class UnaryExpression extends AST {
         constructor(private _nodeType: NodeType, public operand: AST) {
             super();
