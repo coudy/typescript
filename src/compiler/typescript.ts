@@ -876,7 +876,7 @@ module TypeScript {
             var declarationInitASTs: VariableDeclarator[] = [];
             var objectLitAST: ObjectLiteralExpression = null;
             var asgAST: BinaryExpression = null;
-            var typeAssertionASTs: UnaryExpression[] = [];
+            var typeAssertionASTs: CastExpression[] = [];
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
@@ -910,7 +910,7 @@ module TypeScript {
                                 objectLitAST = <ObjectLiteralExpression>cur;
                             }
                             else if (cur.nodeType() === NodeType.CastExpression) {
-                                typeAssertionASTs[typeAssertionASTs.length] = <UnaryExpression>cur;
+                                typeAssertionASTs.push(<CastExpression>cur);
                             }
                             else if (cur.nodeType() === NodeType.AssignmentExpression) {
                                 asgAST = <BinaryExpression>cur;

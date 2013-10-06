@@ -3926,9 +3926,9 @@ module TypeScript {
             }
         }
 
-        private resolveUnaryLogicalOperation(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveLogicalNotExpression(ast: PrefixUnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckUnaryLogicalOperation(ast, enclosingDecl, context);
+                this.typeCheckLogicalNotExpression(ast, enclosingDecl, context);
             }
 
             // September 17, 2013: The ! operator permits its operand to be of any type and 
@@ -3936,12 +3936,12 @@ module TypeScript {
             return this.semanticInfoChain.booleanTypeSymbol;
         }
 
-        private typeCheckUnaryLogicalOperation(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+        private typeCheckLogicalNotExpression(ast: PrefixUnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
             this.resolveAST(ast.operand, false, enclosingDecl, context);
         }
 
-        private resolveUnaryArithmeticOperation(ast: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveUnaryArithmeticOperation(ast: PrefixUnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckUnaryArithmeticOperation(ast, enclosingDecl, context);
             }
@@ -3967,7 +3967,7 @@ module TypeScript {
             return this.isAnyOrEquivalent(type) || type === this.semanticInfoChain.numberTypeSymbol || PullHelpers.symbolIsEnum(type);
         }
 
-        private typeCheckUnaryArithmeticOperation(unaryExpression: UnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
+        private typeCheckUnaryArithmeticOperation(unaryExpression: PrefixUnaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             this.setTypeChecked(unaryExpression, context);
 
             var nodeType = unaryExpression.nodeType();
@@ -3981,9 +3981,7 @@ module TypeScript {
             }
 
             Debug.assert(
-                nodeType === NodeType.PostIncrementExpression ||
                 nodeType === NodeType.PreIncrementExpression ||
-                nodeType === NodeType.PostDecrementExpression ||
                 nodeType === NodeType.PreDecrementExpression);
 
             // September 17, 2013: 4.14.1	The ++ and -- operators
@@ -4900,7 +4898,7 @@ module TypeScript {
 
                 // boolean operations
                 case NodeType.LogicalNotExpression:
-                    return this.resolveUnaryLogicalOperation(<UnaryExpression>ast, enclosingDecl, context);
+                    return this.resolveLogicalNotExpression(<PrefixUnaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.NotEqualsWithTypeConversionExpression:
                 case NodeType.EqualsWithTypeConversionExpression:
@@ -4921,7 +4919,7 @@ module TypeScript {
                 case NodeType.BitwiseNotExpression:
                 case NodeType.PreIncrementExpression:
                 case NodeType.PreDecrementExpression:
-                    return this.resolveUnaryArithmeticOperation(<UnaryExpression>ast, enclosingDecl, context);
+                    return this.resolveUnaryArithmeticOperation(<PrefixUnaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.PostIncrementExpression:
                 case NodeType.PostDecrementExpression:
@@ -5173,7 +5171,7 @@ module TypeScript {
 
                 // boolean operations
                 case NodeType.LogicalNotExpression:
-                    this.typeCheckUnaryLogicalOperation(<UnaryExpression>ast, enclosingDecl, context);
+                    this.typeCheckLogicalNotExpression(<PrefixUnaryExpression>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.NotEqualsWithTypeConversionExpression:
@@ -5192,7 +5190,7 @@ module TypeScript {
                 case NodeType.BitwiseNotExpression:
                 case NodeType.PreIncrementExpression:
                 case NodeType.PreDecrementExpression:
-                    this.typeCheckUnaryArithmeticOperation(<UnaryExpression>ast, enclosingDecl, context);
+                    this.typeCheckUnaryArithmeticOperation(<PrefixUnaryExpression>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.PostIncrementExpression:

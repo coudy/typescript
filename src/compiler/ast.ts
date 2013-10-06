@@ -459,7 +459,7 @@ module TypeScript {
         }
     }
 
-    export class UnaryExpression extends AST {
+    export class PrefixUnaryExpression extends AST {
         constructor(private _nodeType: NodeType, public operand: AST) {
             super();
             operand && (operand.parent = this);
@@ -470,12 +470,12 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter) {
-            emitter.emitUnaryExpression(this);
+            emitter.emitPrefixUnaryExpression(this);
         }
 
-        public structuralEquals(ast: UnaryExpression, includingPosition: boolean): boolean {
+        public structuralEquals(ast: PrefixUnaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.operand, ast.operand, includingPosition);
+                structuralEquals(this.operand, ast.operand, includingPosition);
         }
     }
 

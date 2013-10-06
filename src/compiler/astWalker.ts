@@ -105,8 +105,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.FunctionPropertyAssignment] = ChildrenWalkers.walkFunctionPropertyAssignmentChildren;
             this.childrenWalkers[NodeType.VoidExpression] = ChildrenWalkers.walkVoidExpressionChildren;
             this.childrenWalkers[NodeType.CommaExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
-            this.childrenWalkers[NodeType.PlusExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.NegateExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.PlusExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.NegateExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
             this.childrenWalkers[NodeType.DeleteExpression] = ChildrenWalkers.walkDeleteExpressionChildren;
             this.childrenWalkers[NodeType.InExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.MemberAccessExpression] = ChildrenWalkers.walkMemberAccessExpressionChildren;
@@ -156,10 +156,10 @@ module TypeScript {
             this.childrenWalkers[NodeType.LeftShiftExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.SignedRightShiftExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.UnsignedRightShiftExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
-            this.childrenWalkers[NodeType.BitwiseNotExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.LogicalNotExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.PreIncrementExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
-            this.childrenWalkers[NodeType.PreDecrementExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.BitwiseNotExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.LogicalNotExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.PreIncrementExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
+            this.childrenWalkers[NodeType.PreDecrementExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
             this.childrenWalkers[NodeType.PostIncrementExpression] = ChildrenWalkers.walkPostfixUnaryExpressionChildren;
             this.childrenWalkers[NodeType.PostDecrementExpression] = ChildrenWalkers.walkPostfixUnaryExpressionChildren;
             this.childrenWalkers[NodeType.CastExpression] = ChildrenWalkers.walkCastExpressionChildren;
@@ -238,7 +238,7 @@ module TypeScript {
             walker.walk(preAst.expression);
         }
 
-        export function walkUnaryExpressionChildren(preAst: UnaryExpression, walker: IAstWalker): void {
+        export function walkPrefixUnaryExpressionChildren(preAst: PrefixUnaryExpression, walker: IAstWalker): void {
             walker.walk(preAst.operand);
         }
 

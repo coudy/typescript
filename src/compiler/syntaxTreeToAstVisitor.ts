@@ -894,13 +894,13 @@ module TypeScript {
             }
         }
 
-        public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
+        public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): PrefixUnaryExpression {
             var start = this.position;
 
             this.movePast(node.operatorToken);
             var operand = node.operand.accept(this);
 
-            var result = new UnaryExpression(this.getUnaryExpressionNodeType(node.kind()), operand);
+            var result = new PrefixUnaryExpression(this.getUnaryExpressionNodeType(node.kind()), operand);
             this.setSpan(result, start, node);
 
             return result;
@@ -2452,8 +2452,8 @@ module TypeScript {
             return result;
         }
 
-        public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): UnaryExpression {
-            var result: UnaryExpression = this.getAndMovePastAST(node);
+        public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): PrefixUnaryExpression {
+            var result: PrefixUnaryExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitPrefixUnaryExpression(node);
                 this.setAST(node, result);

@@ -2152,7 +2152,7 @@ module TypeScript {
             expression.operand.emit(this);
         }
 
-        public emitUnaryExpression(expression: UnaryExpression): void {
+        public emitPrefixUnaryExpression(expression: PrefixUnaryExpression): void {
             var nodeType = expression.nodeType();
 
             this.recordSourceMappingStart(expression);
