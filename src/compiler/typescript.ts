@@ -1345,7 +1345,6 @@ module TypeScript {
 
                     case NodeType.TypeQuery:
                         resolutionContext.resolvingTypeReference = false;
-                        resolutionContext.resolvingTypeQueryExpression = true;
                         break;
 
                     case NodeType.TypeRef:

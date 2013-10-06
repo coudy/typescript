@@ -2230,10 +2230,7 @@ module TypeScript {
 
                 var savedResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = false;
-                var savedResolvingTypeQueryExpression = context.resolvingTypeQueryExpression;
-                context.resolvingTypeQueryExpression = true;
                 var valueSymbol = this.resolveAST(typeQueryTerm, false, enclosingDecl, context);
-                context.resolvingTypeQueryExpression = savedResolvingTypeQueryExpression;
                 context.resolvingTypeReference = savedResolvingTypeReference;
 
                 if (valueSymbol && valueSymbol.isAlias()) {
@@ -5704,7 +5701,7 @@ module TypeScript {
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
-                if (!context.resolvingTypeQueryExpression) {
+                if (!this.inTypeQuery(nameAST)) {
                     aliasSymbol.isUsedAsValue = true;
                 }
 
@@ -5808,7 +5805,7 @@ module TypeScript {
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
-                if (!context.resolvingTypeQueryExpression) {
+                if (!this.inTypeQuery(expression)) {
                     (<PullTypeAliasSymbol>lhs).isUsedAsValue = true;
                 }
                 lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
@@ -6158,7 +6155,7 @@ module TypeScript {
         }
 
         private resolveQualifiedName(dottedNameAST: QualifiedName, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            if (context.resolvingTypeQueryExpression) {
+            if (this.inTypeQuery(dottedNameAST)) {
                 // If we're in a type query, then treat the qualified name as a normal dotted
                 // name expression.
                 return this.resolveDottedNameExpression(
@@ -6568,6 +6565,25 @@ module TypeScript {
                         // parented by either a class or an interface.  So check the grandparent.
                         return heritageClause.parent.parent.nodeType() === NodeType.ClassDeclaration;
 
+                    case NodeType.ConstructorDeclaration:
+                    case NodeType.ClassDeclaration:
+                    case NodeType.ModuleDeclaration:
+                        return false;
+                }
+
+                ast = ast.parent;
+            }
+
+            return false;
+        }
+
+        private inTypeQuery(ast: AST) {
+            while (ast) {
+                switch (ast.nodeType()) {
+                    case NodeType.TypeQuery:
+                        return true;
+                    case NodeType.FunctionDeclaration:
+                    case NodeType.InvocationExpression:
                     case NodeType.ConstructorDeclaration:
                     case NodeType.ClassDeclaration:
                     case NodeType.ModuleDeclaration:
