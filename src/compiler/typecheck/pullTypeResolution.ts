@@ -1239,9 +1239,6 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isResolved) {
-                if (globalBinder) {
-                    globalBinder.resetTypeParameterCache();
-                }
 
                 if (!typeDeclIsClass) {
                     // Resolve call, construct and index signatures
@@ -8715,7 +8712,11 @@ module TypeScript {
 
             if (source.isArray() && target.isArray()) {
                 comparisonCache[comboId] = false;
-                var ret = this.sourceIsRelatableToTarget(source.getElementType(), target.getElementType(), assignableTo, comparisonCache, context, comparisonInfo);
+
+                var sourceElementType = source.getTypeArguments()[0];
+                var targetElementType = target.getTypeArguments()[0];
+                var ret = this.sourceIsRelatableToTarget(sourceElementType, targetElementType, assignableTo, comparisonCache, context, comparisonInfo);
+
                 if (ret) {
                     comparisonCache[comboId] = true;
                 }

@@ -1954,10 +1954,11 @@ module TypeScript {
         public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean): MemberName {
 
             if (this.isArray()) {
-                var elementMemberName = this._elementType ?
-                    (this._elementType.isArray() || this._elementType.isNamedTypeSymbol() ?
-                    this._elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
-                    this._elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
+                var elementType = (this.isGeneric() && this.isTypeReference()) ? this.getTypeArguments()[0] : this._elementType;
+                var elementMemberName = elementType ?
+                    (elementType.isArray() || elementType.isNamedTypeSymbol() ?
+                    elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
+                    elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
                     MemberName.create("any");
                 return MemberName.create(elementMemberName, "", "[]");
             }

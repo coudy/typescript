@@ -304,6 +304,7 @@ module TypeScript {
             return this.referencedTypeSymbol.findTypeParameter(name);
         }
 
+        /*
         public getNamePartForFullName(): string {
             return this.referencedTypeSymbol.getNamePartForFullName();
         }
@@ -321,6 +322,7 @@ module TypeScript {
         public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean): MemberName {
             return this.referencedTypeSymbol.getScopedNameEx(scopeSymbol, useConstraintInName, getPrettyTypeName, getTypeParamMarkerInfo);
         }
+        */
 
         public hasOnlyOverloadCallSignatures(): boolean {
             // no need to resolve the referenced type - only computed during printing
@@ -350,6 +352,12 @@ module TypeScript {
         public getIsSpecialized() { return !this.isReferencedType; }
 
         public isArray() { return this.getRootSymbol() == globalResolver.getCachedArrayType(); }
+
+        public getReferencedTypeSymbol(): PullTypeSymbol {
+            this.ensureReferencedTypeIsResolved();
+
+            return this;
+        }
 
         // GTODO: Rather than pass in the map, pass in a list that we can construct from?
         // Or, just introduce a helper function to create the map for us
@@ -446,10 +454,6 @@ module TypeScript {
 
                     this._typeArgumentReferences = typeArguments;
                 }
-            }
-
-            if (this._typeArgumentReferences) {
-                this.toString();
             }
 
             return this._typeArgumentReferences;
