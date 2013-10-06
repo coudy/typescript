@@ -428,6 +428,9 @@ module TypeScript {
             if (isReferencedType) {
                 instantiation.isReferencedType = true;
             }
+            else {
+                instantiation._typeArgumentReferences = typeArgumentList;
+            }
 
             return instantiation;
         }
@@ -455,6 +458,7 @@ module TypeScript {
                 return this.getTypeParameters();
             }
 
+            // GTODO: given that we now set the type arguments in "create", this may be redundant
             if (!this._typeArgumentReferences) {
                 var typeParameters = this.referencedTypeSymbol.getTypeParameters();
 
@@ -944,7 +948,7 @@ module TypeScript {
                     parameter.isVarArg = true;
                     instantiatedSignature.hasVarArgs = true;
                 }
-                instantiatedSignature.addParameter(parameter);
+                instantiatedSignature.addParameter(parameter, parameter.isOptional);
 
                 parameter.type = instantiateType(parameters[j].type, typeParameterArgumentMap);
             }
