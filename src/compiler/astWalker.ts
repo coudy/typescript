@@ -190,6 +190,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ClassDeclaration] = ChildrenWalkers.walkClassDeclChildren;
             this.childrenWalkers[NodeType.InterfaceDeclaration] = ChildrenWalkers.walkInterfaceDeclerationChildren;
             this.childrenWalkers[NodeType.ObjectType] = ChildrenWalkers.walkObjectTypeChildren;
+            this.childrenWalkers[NodeType.ArrayType] = ChildrenWalkers.walkArrayTypeChildren;
             this.childrenWalkers[NodeType.ModuleDeclaration] = ChildrenWalkers.walkModuleDeclChildren;
             this.childrenWalkers[NodeType.ImportDeclaration] = ChildrenWalkers.walkImportDeclChildren;
             this.childrenWalkers[NodeType.ExportAssignment] = ChildrenWalkers.walkExportAssignmentChildren;
@@ -456,6 +457,10 @@ module TypeScript {
 
         export function walkObjectTypeChildren(preAst: ObjectType, walker: IAstWalker): void {
             walker.walk(preAst.members);
+        }
+
+        export function walkArrayTypeChildren(preAst: ArrayType, walker: IAstWalker): void {
+            walker.walk(preAst.type);
         }
 
         export function walkModuleDeclChildren(preAst: ModuleDeclaration, walker: IAstWalker): void {

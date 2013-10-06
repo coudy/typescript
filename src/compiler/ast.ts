@@ -1339,6 +1339,30 @@ module TypeScript {
         }
     }
 
+    export class ArrayType extends AST {
+        constructor(public type: AST) {
+            super();
+            type && (type.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ArrayType;
+        }
+
+        public isDeclaration() {
+            return true;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return false;
+        }
+
+        public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.type, ast.type, includingPosition);
+        }
+    }
+
     export class ObjectType extends AST {
         constructor(public members: ASTList) {
             super();
@@ -1833,7 +1857,7 @@ module TypeScript {
     }
 
     export class TypeReference extends AST {
-        constructor(public term: AST, public arrayCount: number) {
+        constructor(public term: AST) {
             super();
             term && (term.parent = this);
             Debug.assert(term !== null && term !== undefined);
@@ -1851,8 +1875,7 @@ module TypeScript {
 
         public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.term, ast.term, includingPosition) &&
-                   this.arrayCount === ast.arrayCount;
+                structuralEquals(this.term, ast.term, includingPosition);
         }
     }
 

@@ -1065,16 +1065,12 @@ module TypeScript {
             }
         }
 
-        private isTypeRefWithoutTypeArgs(typeRef: TypeReference) {
-            if (typeRef.nodeType() != NodeType.TypeRef) {
-                return false;
-            }
-
-            if (typeRef.term.nodeType() == NodeType.Name) {
+        private isTypeRefWithoutTypeArgs(term: AST) {
+            if (term.nodeType() == NodeType.Name) {
                 return true;
             }
-            else if (typeRef.term.nodeType() == NodeType.QualifiedName) {
-                var binex = <QualifiedName>typeRef.term;
+            else if (term.nodeType() == NodeType.QualifiedName) {
+                var binex = <QualifiedName>term;
 
                 if (binex.right.nodeType() == NodeType.Name) {
                     return true;
@@ -2178,7 +2174,7 @@ module TypeScript {
             return type;
         }
 
-        private computeTypeReferenceSymbol(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private computeTypeReferenceSymbolWorker(term: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             // the type reference can be
             // a name
             // a function
@@ -2188,54 +2184,49 @@ module TypeScript {
             // a type query
 
             var typeDeclSymbol: PullTypeSymbol = null;
-            var typeSymbol: PullTypeSymbol = null;
 
             // a name
-            if (typeRef.term.nodeType() === NodeType.Name) {
+            if (term.nodeType() === NodeType.Name) {
                 var prevResolvingTypeReference = context.resolvingTypeReference;
                 context.resolvingTypeReference = true;
-                typeSymbol = this.resolveTypeNameExpression(<Identifier>typeRef.term, enclosingDecl, context);
-                typeDeclSymbol = <PullTypeSymbol>typeSymbol;
+                typeDeclSymbol = this.resolveTypeNameExpression(<Identifier>term, enclosingDecl, context);
 
                 context.resolvingTypeReference = prevResolvingTypeReference;
-
             }
             // a function
-            else if (typeRef.term.nodeType() === NodeType.FunctionDeclaration) {
-                typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>typeRef.term, enclosingDecl, context);
+            else if (term.nodeType() === NodeType.FunctionDeclaration) {
+                typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>term, enclosingDecl, context);
             }
-            else if (typeRef.term.nodeType() === NodeType.ObjectType) {
-                typeDeclSymbol = this.resolveObjectTypeTypeReference(<ObjectType>typeRef.term, enclosingDecl, context);
+            else if (term.nodeType() === NodeType.ObjectType) {
+                typeDeclSymbol = this.resolveObjectTypeTypeReference(<ObjectType>term, enclosingDecl, context);
             }
-            else if (typeRef.term.nodeType() === NodeType.GenericType) {
-                typeSymbol = this.resolveGenericTypeReference(<GenericType>typeRef.term, enclosingDecl, context);
-                typeDeclSymbol = typeSymbol;
+            else if (term.nodeType() === NodeType.GenericType) {
+                typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>term, enclosingDecl, context);
             }
             // a dotted name
-            else if (typeRef.term.nodeType() === NodeType.QualifiedName) {
+            else if (term.nodeType() === NodeType.QualifiedName) {
                 // assemble the dotted name path
-                var dottedName = <QualifiedName> typeRef.term;
+                var dottedName = <QualifiedName>term;
 
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
                 var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
                 context.resolvingNamespaceMemberAccess = false;
                 context.resolvingTypeReference = true;
-                typeSymbol = this.resolveQualifiedName(dottedName, enclosingDecl, context);
-                typeDeclSymbol = typeSymbol;
+                typeDeclSymbol = this.resolveQualifiedName(dottedName, enclosingDecl, context);
                 context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
-            else if (typeRef.term.nodeType() === NodeType.StringLiteral) {
-                var stringConstantAST = <StringLiteral>typeRef.term;
+            else if (term.nodeType() === NodeType.StringLiteral) {
+                var stringConstantAST = <StringLiteral>term;
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
                 var decl = new PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText,
                     typeDeclSymbol.kind, null, enclosingDecl,
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()));
                 typeDeclSymbol.addDeclaration(decl);
             }
-            else if (typeRef.term.nodeType() === NodeType.TypeQuery) {
-                var typeQuery = <TypeQuery>typeRef.term;
+            else if (term.nodeType() === NodeType.TypeQuery) {
+                var typeQuery = <TypeQuery>term;
 
                 // TODO: This is a workaround if we encounter a TypeReference AST node. Remove it when we remove the AST.
                 var typeQueryTerm = typeQuery.name;
@@ -2268,60 +2259,58 @@ module TypeScript {
                     typeDeclSymbol = this.getNewErrorTypeSymbol();
                 }
             }
+            else if (term.nodeType() === NodeType.ArrayType) {
+                var arrayType = <ArrayType>term;
+                var underlying = this.computeTypeReferenceSymbolWorker(arrayType.type, enclosingDecl, context);
 
-            if (!typeDeclSymbol) {
-                context.postDiagnostic(diagnosticFromAST(typeRef.term, DiagnosticCode.Unable_to_resolve_type));
-                return this.getNewErrorTypeSymbol();
-            }
-
-            if (typeDeclSymbol.isError()) {
-                // TODO(cyrusn): We shouldn't be returning early here.  Even if we couldn't resolve 
-                // the type name, we still want to be able to create an array from it if it had
-                // array parameters.
-                // 
-                return typeDeclSymbol;
-            }
-
-            if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, typeRef, context)) {
-                context.postDiagnostic(diagnosticFromAST(typeRef, DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
-                typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
-            }
-
-            // an array of any of the above
-            if (typeRef.arrayCount) {
-
-                var arraySymbol: PullTypeSymbol = typeDeclSymbol.getArrayType();
+                var arraySymbol: PullTypeSymbol = underlying.getArrayType();
 
                 // otherwise, create a new array symbol
                 if (!arraySymbol) {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [typeDeclSymbol], this, context);
+                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [underlying], this, context);
 
                     if (!arraySymbol) {
                         arraySymbol = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
 
-                if (typeRef.arrayCount > 1) {
-                    for (var arity = typeRef.arrayCount - 1; arity > 0; arity--) {
-                        var existingArraySymbol = arraySymbol.getArrayType();
-
-                        if (!existingArraySymbol) {
-                            arraySymbol = specializeType(this.cachedArrayInterfaceType(), [arraySymbol], this, context);
-                        }
-                        else {
-                            arraySymbol = existingArraySymbol;
-                        }
-                    }
-                }
-
                 typeDeclSymbol = arraySymbol;
+            }
+
+            if (!typeDeclSymbol) {
+                context.postDiagnostic(diagnosticFromAST(term, DiagnosticCode.Unable_to_resolve_type));
+                return this.getNewErrorTypeSymbol();
+            }
+
+            if (typeDeclSymbol.isError()) {
+                return typeDeclSymbol;
+            }
+
+            if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, term, context)) {
+                context.postDiagnostic(diagnosticFromAST(term, DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
+                typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
             }
 
             return typeDeclSymbol;
         }
 
-        private genericTypeIsUsedWithoutRequiredTypeArguments(typeSymbol: PullTypeSymbol, typeReference: TypeReference, context: PullTypeResolutionContext): boolean {
+        private computeTypeReferenceSymbol(typeRef: TypeReference, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            // the type reference can be
+            // a name
+            // a function
+            // an interface
+            // a dotted name
+            // an array of any of the above
+            // a type query
+
+            var typeDeclSymbol = this.computeTypeReferenceSymbolWorker(
+                typeRef.term, enclosingDecl, context);
+
+            return typeDeclSymbol;
+        }
+
+        private genericTypeIsUsedWithoutRequiredTypeArguments(typeSymbol: PullTypeSymbol, term: AST, context: PullTypeResolutionContext): boolean {
             return typeSymbol.isNamedTypeSymbol() &&
                 typeSymbol.isGeneric() &&
                 !typeSymbol.isTypeParameter() &&
@@ -2329,7 +2318,7 @@ module TypeScript {
                 !typeSymbol.getIsSpecialized() &&
                 typeSymbol.getTypeParameters().length &&
                 typeSymbol.getTypeArguments() == null &&
-                this.isTypeRefWithoutTypeArgs(typeReference);
+                this.isTypeRefWithoutTypeArgs(term);
         }
 
         private resolveVariableDeclarator(

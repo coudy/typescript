@@ -450,24 +450,14 @@ module TypeScript {
             this.writeToOutput("new ");
             var target = objectCreationExpression.target;
             var args = objectCreationExpression.arguments;
-            if (target.nodeType() === NodeType.TypeRef) {
-                var typeRef = <TypeReference>target;
-                if (typeRef.arrayCount) {
-                    this.writeToOutput("Array()");
-                }
-                else {
-                    typeRef.term.emit(this);
-                    this.writeToOutput("()");
-                }
-            }
-            else {
-                target.emit(this);
-                this.recordSourceMappingStart(args);
-                this.writeToOutput("(");
-                this.emitCommaSeparatedList(args);
-                this.writeToOutputWithSourceMapRecord(")", objectCreationExpression.closeParenSpan);
-                this.recordSourceMappingEnd(args);
-            }
+
+            target.emit(this);
+            this.recordSourceMappingStart(args);
+            this.writeToOutput("(");
+            this.emitCommaSeparatedList(args);
+            this.writeToOutputWithSourceMapRecord(")", objectCreationExpression.closeParenSpan);
+            this.recordSourceMappingEnd(args);
+
             this.recordSourceMappingEnd(objectCreationExpression);
         }
 

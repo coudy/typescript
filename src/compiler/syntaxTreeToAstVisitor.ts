@@ -144,12 +144,6 @@ module TypeScript {
             return result;
         }
 
-        private createRef(text: string, minChar: number): Identifier {
-            var id = new Identifier(text, null);
-            id.minChar = minChar;
-            return id;
-        }
-
         private convertComment(trivia: ISyntaxTrivia, commentStartPosition: number, hasTrailingNewLine: boolean): Comment {
             var comment = new Comment(trivia.fullText(), trivia.kind() === SyntaxKind.MultiLineCommentTrivia, hasTrailingNewLine);
 
@@ -648,7 +642,11 @@ module TypeScript {
                     
                     var init = enumElement.equalsValueClause !== null ? enumElement.equalsValueClause.accept(this) : null;
 
-                    var typeReference = new TypeReference(this.createRef(name.actualText, -1), 0);
+                    var id = new Identifier(name.actualText, name.actualText);
+                    id.minChar = name.minChar;
+                    id.limChar = name.limChar;
+
+                    var typeReference = new TypeReference(id);
                     typeReference.minChar = name.minChar;
                     typeReference.limChar = name.limChar;
 
@@ -1048,7 +1046,7 @@ module TypeScript {
             var result: TypeReference;
             if (type.isToken()) {
                 var start = this.position;
-                result = new TypeReference(type.accept(this), 0);
+                result = new TypeReference(type.accept(this));
                 this.setSpan(result, start, type);
             }
             else {
@@ -1066,7 +1064,7 @@ module TypeScript {
             var typeQuery = new TypeQuery(name);
             this.setSpan(typeQuery, start, node);
 
-            var result = new TypeReference(typeQuery, 0);
+            var result = new TypeReference(typeQuery);
             this.copySpan(typeQuery, result);
 
             return result;
@@ -1082,7 +1080,7 @@ module TypeScript {
             var term = new QualifiedName(left, right);
             this.setSpan(term, start, node);
 
-            var result = new TypeReference(term, 0);
+            var result = new TypeReference(term);
             this.copySpan(term, result);
 
             return result;
@@ -1129,7 +1127,7 @@ module TypeScript {
             funcDecl.hint = "_construct";
             funcDecl.classDecl = null;
 
-            var result = new TypeReference(funcDecl, 0);
+            var result = new TypeReference(funcDecl);
             this.copySpan(funcDecl, result);
 
             return result;
@@ -1148,7 +1146,7 @@ module TypeScript {
             funcDecl.setFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature);
             funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(funcDecl, 0);
+            var result = new TypeReference(funcDecl);
             this.copySpan(funcDecl, result);
 
             return result;
@@ -1166,7 +1164,7 @@ module TypeScript {
 
             objectType.setFlags(objectType.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(objectType, 0);
+            var result = new TypeReference(objectType);
             this.copySpan(objectType, result);
 
             return result;
@@ -1175,19 +1173,18 @@ module TypeScript {
         public visitArrayType(node: ArrayTypeSyntax): TypeReference {
             var start = this.position;
 
-            var result: TypeReference;
-            var underlying = this.visitType(node.type);
+            var underlying: AST = this.visitType(node.type);
             this.movePast(node.openBracketToken);
             this.movePast(node.closeBracketToken);
 
             if (underlying.nodeType() === NodeType.TypeRef) {
-                result = <TypeReference>underlying;
-                result.arrayCount++;
-            }
-            else {
-                result = new TypeReference(underlying, 1);
+                underlying = (<TypeReference>underlying).term;
             }
 
+            var arrayType = new ArrayType(underlying);
+            this.setSpan(arrayType, start, node);
+
+            var result = new TypeReference(arrayType);
             result.setFlags(result.getFlags() | ASTFlags.TypeReference);
 
             this.setSpan(result, start, node);
@@ -1205,7 +1202,7 @@ module TypeScript {
 
             genericType.setFlags(genericType.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(genericType, 0);
+            var result = new TypeReference(genericType);
             this.copySpan(genericType, result);
 
             return result;
