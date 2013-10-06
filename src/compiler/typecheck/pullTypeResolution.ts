@@ -7222,7 +7222,7 @@ module TypeScript {
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
             // otherwise, try to specialize to the type arguments above
-            if (targetTypeSymbol.isGeneric()) {
+            //if (targetTypeSymbol.isGeneric()) {
 
                 var resolvedSignatures: PullSignatureSymbol[] = [];
                 var inferredTypeArgs: PullTypeSymbol[];
@@ -7331,7 +7331,7 @@ module TypeScript {
                             resolvedSignatures[resolvedSignatures.length] = signatures[i];
                         }
                     }
-                }
+                //}
                 // PULLTODO: Try to avoid copying here...
 
                 if (signatures.length && !resolvedSignatures.length) {

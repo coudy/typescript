@@ -354,7 +354,7 @@ module TypeScript {
 
         public isArray(): boolean {
             if (this._isArray === undefined) {
-                this._isArray = this.getRootSymbol() == globalResolver.getCachedArrayType();
+                this._isArray = (this.getRootSymbol() == globalResolver.getCachedArrayType());
             }
             return this._isArray;
         }
@@ -403,19 +403,21 @@ module TypeScript {
             // If the reference is made to itself (e.g., referring to Array<T> within the declaration of Array<T>,
             // We want to special-case the reference so later calls to getMember, etc., will delegate directly
             // to the referenced declaration type, and not force any additional instantiation
-            var isReferencedType = true;
+            var isReferencedType = (type.kind & PullElementKind.SomeNamedType) != 0;
 
-            if (typeParameters && typeArgumentList && (typeParameters.length == typeArgumentList.length)) {
-                
-                for (var i = 0; i < typeParameters.length; i++) {
-                    if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
-                        isReferencedType = false;
-                        break;
+            if (isReferencedType) {
+                if (typeParameters && typeArgumentList && (typeParameters.length == typeArgumentList.length)) {
+
+                    for (var i = 0; i < typeParameters.length; i++) {
+                        if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
+                            isReferencedType = false;
+                            break;
+                        }
                     }
-                }
 
-                if (isReferencedType) {
-                    typeParameterArgumentMap = {};
+                    if (isReferencedType) {
+                        typeParameterArgumentMap = {};
+                    }
                 }
             }
 
@@ -450,7 +452,7 @@ module TypeScript {
         public getTypeArguments(): PullTypeSymbol[]{
 
             if (this.isReferencedType) {
-                return null;
+                return this.getTypeParameters();
             }
 
             if (!this._typeArgumentReferences) {
@@ -543,16 +545,22 @@ module TypeScript {
 
             if (!memberSymbol) {
                 var referencedMemberSymbol = this.referencedTypeSymbol.findMember(name, lookInParent);
-                memberSymbol = new PullSymbol(referencedMemberSymbol.name, referencedMemberSymbol.kind);
-                memberSymbol.setRootSymbol(referencedMemberSymbol);
 
-                //if (!referencedMemberSymbol.isResolved) {
-                //    globalResolver.resolveDeclaredSymbol(referencedMemberSymbol);
-                //}
+                if (referencedMemberSymbol) {
+                    memberSymbol = new PullSymbol(referencedMemberSymbol.name, referencedMemberSymbol.kind);
+                    memberSymbol.setRootSymbol(referencedMemberSymbol);
 
-                memberSymbol.type = instantiateType(referencedMemberSymbol.type, this._typeParameterArgumentMap);
+                    //if (!referencedMemberSymbol.isResolved) {
+                    //    globalResolver.resolveDeclaredSymbol(referencedMemberSymbol);
+                    //}
 
-                this._instantiatedMemberNameCache[memberSymbol.name] = memberSymbol;
+                    memberSymbol.type = instantiateType(referencedMemberSymbol.type, this._typeParameterArgumentMap);
+
+                    this._instantiatedMemberNameCache[memberSymbol.name] = memberSymbol;
+                }
+                else {
+                    memberSymbol = null;
+                }
             }
 
             return memberSymbol;
@@ -804,8 +812,8 @@ module TypeScript {
             }
         }
 
-        // if it's not a 'named' type, we'll need to introspect its member list
-        if (type.kind & (PullElementKind.ObjectType | PullElementKind.ObjectLiteral)) {
+        // if it's not a named type, we'll need to introspect its member list
+        if (!(type.kind & PullElementKind.SomeNamedType)) {
             if (!wrapsSomeTypeParameter) {
                 // otherwise, walk the member list and signatures, checking for wraps
                 var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
