@@ -3212,8 +3212,7 @@ module TypeScript {
 
                 // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                 // on the function when resolving the return type
-                returnTypeSymbol = this.resolveTypeReference(
-                    returnTypeAnnotation, funcDecl, context);
+                returnTypeSymbol = this.resolveTypeReference(returnTypeAnnotation, funcDecl, context);
 
                 if (!returnTypeSymbol) {
                     context.postError(this.unitPath, returnTypeAnnotation.minChar, returnTypeAnnotation.getLength(), DiagnosticCode.Cannot_resolve_return_type_reference, null);
@@ -3374,19 +3373,9 @@ module TypeScript {
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
-                if (signature.isGeneric()) {
-                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                    if (funcSymbol) {
-                        funcSymbol.type.setHasGenericSignature();
-                    }
-                }
 
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
-
-                    // We may have a return type from a previous resolution - if the function's generic,
-                    // we can reuse it
-                    var prevReturnTypeSymbol = signature.returnType;
 
                     returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
                         funcDeclAST, funcDeclAST.getFunctionFlags(), funcDeclAST.returnTypeAnnotation, context);
@@ -3394,6 +3383,9 @@ module TypeScript {
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
                         hadError = true;
+                    }
+                    else {
+                        signature.returnType = returnTypeSymbol;
                     }
                 }
                 // if there's no return-type annotation

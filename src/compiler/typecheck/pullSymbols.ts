@@ -1954,7 +1954,7 @@ module TypeScript {
         public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean): MemberName {
 
             if (this.isArray()) {
-                var elementType = (this.isGeneric() && this.isTypeReference()) ? this.getTypeArguments()[0] : this._elementType;
+                var elementType = this.getElementType();
                 var elementMemberName = elementType ?
                     (elementType.isArray() || elementType.isNamedTypeSymbol() ?
                     elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :

@@ -340,18 +340,38 @@ module TypeScript {
     export class PullInstantiatedTypeReferenceSymbol extends PullTypeReferenceSymbol {
 
         private _instantiatedMembers: PullSymbol[] = null;
-        private _allInstantiatedMembers: PullSymbol[] = null;
+        private _allInstantiatedMemberNameCache: any = null;
         private _instantiatedMemberNameCache: any = new BlockIntrinsics(); // cache from member names to pull symbols
         private _instantiatedCallSignatures: PullSignatureSymbol[] = null;
         private _instantiatedConstructSignatures: PullSignatureSymbol[] = null;
         private _instantiatedIndexSignatures: PullSignatureSymbol[] = null;
         private _typeArgumentReferences: PullTypeSymbol[] = null;
+        private _isArray:boolean = undefined;
 
         public isReferencedType: boolean = false;
 
         public getIsSpecialized() { return !this.isReferencedType; }
 
-        public isArray() { return this.getRootSymbol() == globalResolver.getCachedArrayType(); }
+        public isArray(): boolean {
+            if (this._isArray === undefined) {
+                this._isArray = this.getRootSymbol() == globalResolver.getCachedArrayType();
+            }
+            return this._isArray;
+        }
+
+        public getElementType(): PullTypeSymbol {
+            if (!this.isArray()) {
+                return null;
+            }
+
+            var typeArguments = this.getTypeArguments();
+
+            if (typeArguments != null) {
+                return typeArguments[0];
+            }
+
+            return null;
+        }
 
         public getReferencedTypeSymbol(): PullTypeSymbol {
             this.ensureReferencedTypeIsResolved();
@@ -414,8 +434,6 @@ module TypeScript {
             super(referencedTypeSymbol);
 
             nSpecializationsCreated++;
-
-            Debug.assert(referencedTypeSymbol.isGeneric(), "Cannot instantiate a non-generic type");
         }
 
         public isGeneric(): boolean {
@@ -527,6 +545,11 @@ module TypeScript {
                 var referencedMemberSymbol = this.referencedTypeSymbol.findMember(name, lookInParent);
                 memberSymbol = new PullSymbol(referencedMemberSymbol.name, referencedMemberSymbol.kind);
                 memberSymbol.setRootSymbol(referencedMemberSymbol);
+
+                //if (!referencedMemberSymbol.isResolved) {
+                //    globalResolver.resolveDeclaredSymbol(referencedMemberSymbol);
+                //}
+
                 memberSymbol.type = instantiateType(referencedMemberSymbol.type, this._typeParameterArgumentMap);
 
                 this._instantiatedMemberNameCache[memberSymbol.name] = memberSymbol;
@@ -547,12 +570,14 @@ module TypeScript {
             var requestedMembers: PullSymbol[] = [];
             var allReferencedMembers = this.referencedTypeSymbol.getAllMembers(searchDeclKind, memberVisiblity);
 
-            if (!this._allInstantiatedMembers) {
+            if (!this._allInstantiatedMemberNameCache) {
+                this._allInstantiatedMemberNameCache = new BlockIntrinsics();
+
                 // first, seed with this type's members
                 var members = this.getMembers();
 
                 for (var i = 0; i < members.length; i++) {
-                    this._allInstantiatedMembers[this._allInstantiatedMembers.length] = members[i];
+                    this._allInstantiatedMemberNameCache[members[i].name] = members[i];
                 }
 
                 // next, for add any symbols belonging to the parent type, if necessary
@@ -562,20 +587,25 @@ module TypeScript {
                 for (var i = 0; i < allReferencedMembers.length; i++) {
                     referencedMember = allReferencedMembers[i];
 
-                    if (this._allInstantiatedMembers[referencedMember.name]) {
-                        requestedMembers[requestedMembers.length] = this._allInstantiatedMembers[referencedMember.name];
+                    if (this._allInstantiatedMemberNameCache[referencedMember.name]) {
+                        requestedMembers[requestedMembers.length] = this._allInstantiatedMemberNameCache[referencedMember.name];
                     }
                     else {
                         if (!typeWrapsSomeTypeParameter(referencedMember.type, this._typeParameterArgumentMap)) {
-                            this._allInstantiatedMembers[referencedMember.name] = referencedMember;
+                            this._allInstantiatedMemberNameCache[referencedMember.name] = referencedMember;
                             requestedMembers[requestedMembers.length] = referencedMember;
                         }
                         else {
                             requestedMember = new PullSymbol(referencedMember.name, referencedMember.kind);
                             requestedMember.setRootSymbol(referencedMember);
+
+                            //if (!referencedMember.isResolved) {
+                            //    globalResolver.resolveDeclaredSymbol(referencedMember);
+                            //}
+
                             requestedMember.type = instantiateType(referencedMember.type, this._typeParameterArgumentMap);
 
-                            this._allInstantiatedMembers[requestedMember.name] = requestedMember;
+                            this._allInstantiatedMemberNameCache[requestedMember.name] = requestedMember;
                             requestedMembers[requestedMembers.length] = requestedMember;
                         }
                     }
@@ -774,47 +804,50 @@ module TypeScript {
             }
         }
 
-        if (!wrapsSomeTypeParameter) {
-            // otherwise, walk the member list and signatures, checking for wraps
-            var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+        // if it's not a 'named' type, we'll need to introspect its member list
+        if (type.kind & (PullElementKind.ObjectType | PullElementKind.ObjectLiteral)) {
+            if (!wrapsSomeTypeParameter) {
+                // otherwise, walk the member list and signatures, checking for wraps
+                var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
-            for (var i = 0; i < members.length; i++) {
-                if (typeWrapsSomeTypeParameter(members[i].type, typeParameterArgumentMap)) {
-                    wrapsSomeTypeParameter = true;
-                    break;
+                for (var i = 0; i < members.length; i++) {
+                    if (typeWrapsSomeTypeParameter(members[i].type, typeParameterArgumentMap)) {
+                        wrapsSomeTypeParameter = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (!wrapsSomeTypeParameter) {
-            var sigs = type.getCallSignatures(true);
+            if (!wrapsSomeTypeParameter) {
+                var sigs = type.getCallSignatures(true);
 
-            for (var i = 0; i < sigs.length; i++) {
-                if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                    wrapsSomeTypeParameter = true;
-                    break;
+                for (var i = 0; i < sigs.length; i++) {
+                    if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
+                        wrapsSomeTypeParameter = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (!wrapsSomeTypeParameter) {
-            sigs = type.getConstructSignatures(true);
+            if (!wrapsSomeTypeParameter) {
+                sigs = type.getConstructSignatures(true);
 
-            for (var i = 0; i < sigs.length; i++) {
-                if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                    wrapsSomeTypeParameter = true;
-                    break;
+                for (var i = 0; i < sigs.length; i++) {
+                    if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
+                        wrapsSomeTypeParameter = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (!wrapsSomeTypeParameter) {
-            sigs = type.getIndexSignatures(true);
+            if (!wrapsSomeTypeParameter) {
+                sigs = type.getIndexSignatures(true);
 
-            for (var i = 0; i < sigs.length; i++) {
-                if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                    wrapsSomeTypeParameter = true;
-                    break;
+                for (var i = 0; i < sigs.length; i++) {
+                    if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
+                        wrapsSomeTypeParameter = true;
+                        break;
+                    }
                 }
             }
         }
@@ -826,19 +859,32 @@ module TypeScript {
 
     function signatureWrapsSomeTypeParameter(signature: PullSignatureSymbol, typeParameterArgumentMap: any): boolean {
 
-        if (typeWrapsSomeTypeParameter(signature.returnType, typeParameterArgumentMap)) {
-            return true;
+        if (signature.inWrapCheck) {
+            return false;
         }
 
-        var parameters = signature.parameters;
+        signature.inWrapCheck = true;
 
-        for (var i = 0; i < parameters.length; i++) {
-            if (typeWrapsSomeTypeParameter(parameters[i].type, typeParameterArgumentMap)) {
-                return true;
+        var wrapsSomeTypeParameter = false;
+
+        if (typeWrapsSomeTypeParameter(signature.returnType, typeParameterArgumentMap)) {
+            wrapsSomeTypeParameter = true;
+        }
+
+        if (!wrapsSomeTypeParameter) {
+            var parameters = signature.parameters;
+
+            for (var i = 0; i < parameters.length; i++) {
+                if (typeWrapsSomeTypeParameter(parameters[i].type, typeParameterArgumentMap)) {
+                    wrapsSomeTypeParameter = true;
+                    break;
+                }
             }
         }
 
-        return false;
+        signature.inWrapCheck = false;
+
+        return wrapsSomeTypeParameter;
     }
 
     export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: any): PullSignatureSymbol {
@@ -888,9 +934,9 @@ module TypeScript {
                 }
                 if (parameters[j].isVarArg) {
                     parameter.isVarArg = true;
-                    this.hasVarArgs = true;
+                    instantiatedSignature.hasVarArgs = true;
                 }
-                this.addParameter(parameter);
+                instantiatedSignature.addParameter(parameter);
 
                 parameter.type = instantiateType(parameters[j].type, typeParameterArgumentMap);
             }
