@@ -861,9 +861,6 @@ module TypeScript {
             var savedIsResolvingSuperConstructorCallArgument = context.isResolvingSuperConstructorCallArgument;
             context.isResolvingSuperConstructorCallArgument = false;
 
-            var savedInConstructorArguments = context.inConstructorArguments;
-            context.inConstructorArguments = false;
-
             var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = false;
 
@@ -878,7 +875,6 @@ module TypeScript {
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
-            context.inConstructorArguments = savedInConstructorArguments;
             context.isResolvingSuperConstructorCallArgument = savedIsResolvingSuperConstructorCallArgument;
             context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
@@ -2396,8 +2392,6 @@ module TypeScript {
                 declSymbol.startResolving();
 
                 var typeExprSymbol: PullTypeSymbol = null;
-                var inConstructorArgumentList = context.inConstructorArguments;
-                context.inConstructorArguments = false;
 
                 // Does this have a type expression? If so, that's the type
                 typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(
@@ -2560,12 +2554,9 @@ module TypeScript {
             var wrapperDecl = this.getEnclosingDecl(decl);
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
-            var inConstructorArgumentList = context.inConstructorArguments;
-            context.inConstructorArguments = inConstructorArgumentList || (decl.flags & PullElementFlags.PropertyParameter) !== 0;
             context.isInStaticInitializer = (decl.flags & PullElementFlags.Static) != 0;
             var initExprSymbol = this.resolveAST(init, typeExprSymbol != null, wrapperDecl, context);
             context.isInStaticInitializer = false;
-            context.inConstructorArguments = inConstructorArgumentList;
 
             if (typeExprSymbol) {
                 context.popContextualType();
@@ -3021,8 +3012,6 @@ module TypeScript {
 
             // resolve parameter type annotations as necessary
             if (funcDeclAST.parameterList) {
-                var prevInConstructorArguments = context.inConstructorArguments;
-                context.inConstructorArguments = true;
                 var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
                 if (hasDefaultArgs) {
                     context.pushParameterIndexContext(funcDeclAST);
@@ -3036,7 +3025,6 @@ module TypeScript {
                 if (hasDefaultArgs) {
                     context.popParameterIndexContext();
                 }
-                context.inConstructorArguments = prevInConstructorArguments;
             }
 
             var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
@@ -3116,8 +3104,6 @@ module TypeScript {
             // resolve parameter type annotations as necessary
             if (parameters) {
                 var isConstructor = hasFlag(flags, FunctionFlags.ConstructMember);
-                var prevInConstructorArguments = context.inConstructorArguments;
-                context.inConstructorArguments = isConstructor;
                 var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
                 if (hasDefaultArgs) {
                     context.pushParameterIndexContext(funcDeclAST);
@@ -3131,7 +3117,6 @@ module TypeScript {
                 if (hasDefaultArgs) {
                     context.popParameterIndexContext();
                 }
-                context.inConstructorArguments = prevInConstructorArguments;
             }
 
             var prevSeenSuperConstructorCall = this.seenSuperConstructorCall;
@@ -3363,9 +3348,7 @@ module TypeScript {
                 // resolve parameter type annotations as necessary
 
                 if (funcDeclAST.parameterList) {
-                    var prevInConstructorArguments = context.inConstructorArguments;
                     var prevInTypeCheck = context.inTypeCheck;
-                    context.inConstructorArguments = true;
                     context.inTypeCheck = false;
                     var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
                     if (hasDefaultArgs) {
@@ -3380,7 +3363,6 @@ module TypeScript {
                     if (hasDefaultArgs) {
                         context.popParameterIndexContext();
                     }
-                    context.inConstructorArguments = prevInConstructorArguments;
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
@@ -3502,9 +3484,7 @@ module TypeScript {
                 // resolve parameter type annotations as necessary
 
                 if (funcDeclAST.parameterList) {
-                    var prevInConstructorArguments = context.inConstructorArguments;
                     var prevInTypeCheck = context.inTypeCheck;
-                    context.inConstructorArguments = isConstructor;
                     context.inTypeCheck = false;
                     var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
                     if (hasDefaultArgs) {
@@ -3519,7 +3499,6 @@ module TypeScript {
                     if (hasDefaultArgs) {
                         context.popParameterIndexContext();
                     }
-                    context.inConstructorArguments = prevInConstructorArguments;
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
@@ -6565,6 +6544,27 @@ module TypeScript {
             return this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context) || this.semanticInfoChain.anyTypeSymbol;
         }
 
+        private inConstructorParameterList(ast: AST): boolean {
+            var previous: AST = null;
+            var current = ast;
+            while (current) {
+                switch (current.nodeType()) {
+                    case NodeType.ConstructorDeclaration:
+                        var constructorDecl = <ConstructorDeclaration>current;
+                        return previous === constructorDecl.parameterList;
+
+                    case NodeType.ClassDeclaration:
+                    case NodeType.ModuleDeclaration:
+                        return false;
+                }
+
+                previous = current;
+                current = current.parent;
+            }
+
+            return false;
+        }
+
         private typeCheckThisExpression(thisExpression: ThisExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
 
@@ -6584,7 +6584,7 @@ module TypeScript {
                 else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
                     context.postDiagnostic(diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_within_module_bodies));
                 }
-                else if (context.inConstructorArguments) {
+                else if (this.inConstructorParameterList(thisExpression)) {
                     context.postDiagnostic(diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_constructor_arguments));
                 }
             }
@@ -6705,7 +6705,7 @@ module TypeScript {
                     context.postDiagnostic(diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
                 }
                 // Cannot be referenced in constructor arguments
-                else if (context.inConstructorArguments) {
+                else if (this.inConstructorParameterList(ast)) {
                     context.postDiagnostic(diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
                 }
             }
