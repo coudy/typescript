@@ -24,6 +24,7 @@ module TypeScript {
 
     export class AstWalkOptions {
         public goChildren = true;
+        public stopWalking = false;
     }
 
     export interface IAstWalkCallback {
@@ -48,7 +49,17 @@ module TypeScript {
                 return;
             }
 
+            // If we're stopping, then bail out immediately.
+            if (this.options.stopWalking) {
+                return;
+            }
+
             this.pre(ast, this);
+
+            // If we were asked to stop, then stop.
+            if (this.options.stopWalking) {
+                return;
+            }
 
             if (this.options.goChildren) {
                 // Call the "walkChildren" function corresponding to "nodeType".
