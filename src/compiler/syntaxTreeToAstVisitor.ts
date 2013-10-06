@@ -1572,7 +1572,7 @@ module TypeScript {
             return result;
         }
 
-        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): FunctionDeclaration {
+        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): ConstructorDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.parameterList);
@@ -1582,14 +1582,12 @@ module TypeScript {
 
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(null, null, parameters, null, block);
+            var result = new ConstructorDeclaration(parameters, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
             }
-
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Constructor);
 
             return result;
         }
@@ -2726,8 +2724,8 @@ module TypeScript {
             return result;
         }
 
-        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): ConstructorDeclaration {
+            var result: ConstructorDeclaration = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitConstructorDeclaration(node);
                 this.setAST(node, result);

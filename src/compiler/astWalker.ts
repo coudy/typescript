@@ -166,6 +166,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ParenthesizedExpression] = ChildrenWalkers.walkParenthesizedExpressionChildren;
             this.childrenWalkers[NodeType.ArrowFunctionExpression] = ChildrenWalkers.walkArrowFunctionExpressionChildren;
             this.childrenWalkers[NodeType.FunctionDeclaration] = ChildrenWalkers.walkFuncDeclChildren;
+            this.childrenWalkers[NodeType.ConstructorDeclaration] = ChildrenWalkers.walkConstructorDeclarationChildren;
             this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.VariableDeclarator] = ChildrenWalkers.walkVariableDeclaratorChildren;
             this.childrenWalkers[NodeType.VariableDeclaration] = ChildrenWalkers.walkVariableDeclarationChildren;
@@ -271,7 +272,7 @@ module TypeScript {
         export function walkFunctionPropertyAssignmentChildren(preAst: FunctionPropertyAssignment, walker: IAstWalker): void {
             walker.walk(preAst.propertyName);
             walker.walk(preAst.typeParameters);
-            walker.walk(preAst.parameters);
+            walker.walk(preAst.parameterList);
             walker.walk(preAst.returnTypeAnnotation);
             walker.walk(preAst.block);
         }
@@ -348,7 +349,7 @@ module TypeScript {
 
         export function walkArrowFunctionExpressionChildren(preAst: ArrowFunctionExpression, walker: IAstWalker): void {
             walker.walk(preAst.typeParameters);
-            walker.walk(preAst.parameters);
+            walker.walk(preAst.parameterList);
             walker.walk(preAst.returnTypeAnnotation);
             walker.walk(preAst.block);
         }
@@ -356,8 +357,13 @@ module TypeScript {
         export function walkFuncDeclChildren(preAst: FunctionDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.name);
             walker.walk(preAst.typeParameters);
-            walker.walk(preAst.parameters);
+            walker.walk(preAst.parameterList);
             walker.walk(preAst.returnTypeAnnotation);
+            walker.walk(preAst.block);
+        }
+
+        export function walkConstructorDeclarationChildren(preAst: ConstructorDeclaration, walker: IAstWalker): void {
+            walker.walk(preAst.parameterList);
             walker.walk(preAst.block);
         }
 

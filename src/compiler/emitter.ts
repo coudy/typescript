@@ -613,10 +613,6 @@ module TypeScript {
                 this.writeToOutput("function ");
             }
 
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                this.writeToOutput(this.thisClassNode.identifier.actualText);
-            }
-
             if (printName) {
                 var id = funcDecl.getNameText();
                 if (id && !funcDecl.isAccessor()) {
@@ -631,12 +627,10 @@ module TypeScript {
             }
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcDecl.parameters);
+            this.emitFunctionParameters(funcDecl.parameterList);
             this.writeLineToOutput(") {");
 
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                this.recordSourceMappingNameStart("constructor");
-            } else if (funcDecl.isGetAccessor()) {
+            if (funcDecl.isGetAccessor()) {
                 this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
             } else if (funcDecl.isSetAccessor()) {
                 this.recordSourceMappingNameStart("set_" + funcDecl.getNameText());
@@ -645,19 +639,14 @@ module TypeScript {
             }
             this.indenter.increaseIndent();
 
-            this.emitDefaultValueAssignments(funcDecl.parameters);
-            this.emitRestParameterInitializer(funcDecl.parameters);
+            this.emitDefaultValueAssignments(funcDecl.parameterList);
+            this.emitRestParameterInitializer(funcDecl.parameterList);
 
             if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
 
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                this.emitConstructorStatements(funcDecl);
-            }
-            else {
-                this.emitList(funcDecl.block.statements);
-            }
+            this.emitList(funcDecl.block.statements);
 
             this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
 
@@ -993,15 +982,15 @@ module TypeScript {
             this.recordSourceMappingStart(arrowFunction);
             this.writeToOutput("function ");
             this.writeToOutput("(");
-            this.emitFunctionParameters(arrowFunction.parameters);
+            this.emitFunctionParameters(arrowFunction.parameterList);
             this.writeLineToOutput(") {");
 
             this.recordSourceMappingNameStart(arrowFunction.getNameText());
 
             this.indenter.increaseIndent();
 
-            this.emitDefaultValueAssignments(arrowFunction.parameters);
-            this.emitRestParameterInitializer(arrowFunction.parameters);
+            this.emitDefaultValueAssignments(arrowFunction.parameterList);
+            this.emitRestParameterInitializer(arrowFunction.parameterList);
 
             if (this.shouldCaptureThis(arrowFunction)) {
                 this.writeCaptureThisStatement(arrowFunction);
@@ -1028,20 +1017,64 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
         }
 
+        public emitConstructor(funcDecl: ConstructorDeclaration) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
+                return;
+            }
+            var temp = this.setContainer(EmitContainer.Constructor);
+
+            this.recordSourceMappingStart(funcDecl);
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            this.pushDecl(pullDecl);
+
+                this.emitComments(funcDecl, true);
+
+            this.recordSourceMappingStart(funcDecl);
+            this.writeToOutput("function ");
+            this.writeToOutput(this.thisClassNode.identifier.actualText);
+            this.writeToOutput("(");
+            this.emitFunctionParameters(funcDecl.parameterList);
+            this.writeLineToOutput(") {");
+
+            this.recordSourceMappingNameStart("constructor");
+            this.indenter.increaseIndent();
+
+            this.emitDefaultValueAssignments(funcDecl.parameterList);
+            this.emitRestParameterInitializer(funcDecl.parameterList);
+
+            if (this.shouldCaptureThis(funcDecl)) {
+                this.writeCaptureThisStatement(funcDecl);
+            }
+
+
+            this.emitConstructorStatements(funcDecl);
+            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceSpan);
+
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(funcDecl);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcDecl);
+
+            this.emitComments(funcDecl, false);
+
+            this.popDecl(pullDecl);
+            this.setContainer(temp);
+        }
+
         public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
             }
-            var temp: number;
             var savedInArrowFunction = this.inArrowFunction;
             this.inArrowFunction = false;
 
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                temp = this.setContainer(EmitContainer.Constructor);
-            }
-            else {
-                temp = this.setContainer(EmitContainer.Function);
-            }
+            var temp = this.setContainer(EmitContainer.Function);
 
             var funcName = funcDecl.getNameText();
 
@@ -1509,9 +1542,9 @@ module TypeScript {
             // emit any parameter properties first
             var constructorDecl = getLastConstructor(this.thisClassNode);
 
-            if (constructorDecl && constructorDecl.parameters) {
-                for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
-                    var parameter = <Parameter>constructorDecl.parameters.members[i];
+            if (constructorDecl && constructorDecl.parameterList) {
+                for (var i = 0, n = constructorDecl.parameterList.members.length; i < n; i++) {
+                    var parameter = <Parameter>constructorDecl.parameterList.members[i];
                     var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         this.emitIndent();
@@ -1714,7 +1747,7 @@ module TypeScript {
             this.emitList(list, /*useNewLineSeparator:*/ true, /*startInclusive:*/ i, /*endExclusive:*/ n);
         }
 
-        public emitConstructorStatements(funcDecl: FunctionDeclaration) {
+        public emitConstructorStatements(funcDecl: ConstructorDeclaration) {
             var list = funcDecl.block.statements;
 
             if (list === null) {
@@ -2337,14 +2370,14 @@ module TypeScript {
             //this.recordSourceMappingEnd(funcProp.propertyName);
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcProp.parameters);
+            this.emitFunctionParameters(funcProp.parameterList);
             this.writeLineToOutput(") {");
 
             this.recordSourceMappingNameStart(funcProp.propertyName.actualText);
             this.indenter.increaseIndent();
 
-            this.emitDefaultValueAssignments(funcProp.parameters);
-            this.emitRestParameterInitializer(funcProp.parameters);
+            this.emitDefaultValueAssignments(funcProp.parameterList);
+            this.emitRestParameterInitializer(funcProp.parameterList);
 
             if (this.shouldCaptureThis(funcProp)) {
                 this.writeCaptureThisStatement(funcProp);
@@ -2659,17 +2692,30 @@ module TypeScript {
             this.writeToOutputWithSourceMapRecord(parameter.id.actualText, parameter);
         }
 
-        private isNonAmbientAndNotSignature(declaration: FunctionDeclaration): boolean {
-            return !hasFlag(declaration.getFunctionFlags(), FunctionFlags.Signature) &&
-                !hasFlag(declaration.getFunctionFlags(), FunctionFlags.Ambient);
+        private isNonAmbientAndNotSignature(flags: FunctionFlags): boolean {
+            return !hasFlag(flags, FunctionFlags.Signature) &&
+                   !hasFlag(flags, FunctionFlags.Ambient);
+        }
+
+        public shouldEmitConstructorDeclaration(declaration: ConstructorDeclaration): boolean {
+            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
+        }
+
+        public emitConstructorDeclaration(declaration: ConstructorDeclaration): void {
+            if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
+                this.emitConstructor(declaration);
+            }
+            else {
+                this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
         }
 
         public shouldEmitFunctionDeclaration(declaration: FunctionDeclaration): boolean {
-            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration);
+            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
         }
 
         public emitFunctionDeclaration(declaration: FunctionDeclaration): void {
-            if (this.isNonAmbientAndNotSignature(declaration)) {
+            if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
                 this.emitFunction(declaration);
             }
             else {
@@ -2794,9 +2840,8 @@ module TypeScript {
         }
     }
 
-    export function getLastConstructor(classDecl: ClassDeclaration): FunctionDeclaration {
-        return <FunctionDeclaration>ArrayUtilities.lastOrDefault(classDecl.classElements.members,
-            m => m.nodeType() === NodeType.FunctionDeclaration &&
-                hasFlag((<FunctionDeclaration>m).getFunctionFlags(), FunctionFlags.Constructor));
+    export function getLastConstructor(classDecl: ClassDeclaration): ConstructorDeclaration {
+        return <ConstructorDeclaration>ArrayUtilities.lastOrDefault(classDecl.classElements.members,
+            m => m.nodeType() === NodeType.ConstructorDeclaration);
     }
 }

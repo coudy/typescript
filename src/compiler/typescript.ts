@@ -1470,6 +1470,7 @@ module TypeScript {
             if (ast.nodeType() !== NodeType.ClassDeclaration &&
                 ast.nodeType() !== NodeType.InterfaceDeclaration &&
                 ast.nodeType() !== NodeType.ModuleDeclaration &&
+                ast.nodeType() !== NodeType.ConstructorDeclaration &&
                 ast.nodeType() !== NodeType.FunctionDeclaration &&
                 ast.nodeType() !== NodeType.ArrowFunctionExpression &&
                 ast.nodeType() !== NodeType.VariableDeclarator) {

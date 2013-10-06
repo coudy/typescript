@@ -39,6 +39,7 @@ module TypeScript {
 
         // Declarations
         FunctionDeclaration,
+        ConstructorDeclaration,
         ClassDeclaration,
         InterfaceDeclaration,
         ObjectType,

@@ -621,13 +621,13 @@ module TypeScript {
     export class FunctionPropertyAssignment extends AST {
         constructor(public propertyName: Identifier,
                     public typeParameters: ASTList,
-                    public parameters: ASTList,
+                    public parameterList: ASTList,
                     public returnTypeAnnotation: TypeReference,
                     public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             typeParameters && (typeParameters.parent = this);
-            parameters && (parameters.parent = this);
+            parameterList && (parameterList.parent = this);
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
             block && (block.parent = this);
         }
@@ -1205,12 +1205,12 @@ module TypeScript {
         public hint: string = null;
 
         constructor(public typeParameters: ASTList,
-                    public parameters: ASTList,
+                    public parameterList: ASTList,
                     public returnTypeAnnotation: TypeReference,
                     public block: Block) {
             super();
             typeParameters && (typeParameters.parent = this);
-            parameters && (parameters.parent = this);
+            parameterList && (parameterList.parent = this);
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
             block && (block.parent = this);
         }
@@ -1226,7 +1226,7 @@ module TypeScript {
                 this.hint === ast.hint &&
                 structuralEquals(this.block, ast.block, includingPosition) &&
                 structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                structuralEquals(this.parameters, ast.parameters, includingPosition);
+                structuralEquals(this.parameterList, ast.parameterList, includingPosition);
         }
 
         public emit(emitter: Emitter) {
@@ -1238,19 +1238,52 @@ module TypeScript {
         }
     }
 
+    export class ConstructorDeclaration extends AST {
+        private _functionFlags = FunctionFlags.None;
+
+        constructor(public parameterList: ASTList, public block: Block) {
+                super();
+            parameterList && (parameterList.parent = this);
+            block && (block.parent = this);
+        }
+
+        public isDeclaration() { return true; }
+
+        public getFunctionFlags(): FunctionFlags {
+            return this._functionFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setFunctionFlags(flags: FunctionFlags): void {
+            this._functionFlags = flags;
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ConstructorDeclaration;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitConstructorDeclaration(this);
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitConstructorDeclaration(this);
+        }
+    }
+
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
 
         constructor(public name: Identifier,
                     public typeParameters: ASTList,
-                    public parameters: ASTList,
+                    public parameterList: ASTList,
                     public returnTypeAnnotation: TypeReference,
                     public block: Block) {
             super();
             name && (name.parent = this);
             typeParameters && (typeParameters.parent = this);
-            parameters && (parameters.parent = this);
+            parameterList && (parameterList.parent = this);
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
             block && (block.parent = this);
         }
@@ -1277,7 +1310,7 @@ module TypeScript {
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition) &&
                    structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                   structuralEquals(this.parameters, ast.parameters, includingPosition);
+                   structuralEquals(this.parameterList, ast.parameterList, includingPosition);
         }
 
         public shouldEmit(emitter: Emitter): boolean {

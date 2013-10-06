@@ -549,7 +549,7 @@ module TypeScript {
     }
 
     // class constructors
-    function createClassConstructorDeclaration(constructorDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createClassConstructorDeclaration(constructorDeclAST: ConstructorDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.ConstructorMethod;
 
@@ -768,13 +768,13 @@ module TypeScript {
             case NodeType.FunctionPropertyAssignment:
                 preCollectFunctionPropertyAssignmentDecls(<FunctionPropertyAssignment>ast, context);
                 break;
+            case NodeType.ConstructorDeclaration:
+                createClassConstructorDeclaration(<ConstructorDeclaration>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
 
-                if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                    createClassConstructorDeclaration(funcDecl, context);
-                }
-                else if (funcDecl.isGetAccessor()) {
+                if (funcDecl.isGetAccessor()) {
                     createGetAccessorDeclaration(funcDecl, context);
                 }
                 else if (funcDecl.isSetAccessor()) {
@@ -937,6 +937,7 @@ module TypeScript {
                     parentDecl.setFlags(parentDecl.flags | initFlag);
                 }
                 break;
+            case NodeType.ConstructorDeclaration:
             case NodeType.FunctionPropertyAssignment:
             case NodeType.FunctionDeclaration:
             case NodeType.ArrowFunctionExpression:

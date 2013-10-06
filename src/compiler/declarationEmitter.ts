@@ -88,6 +88,8 @@ module TypeScript {
                     return this.emitDeclarationsForVariableDeclaration(<VariableDeclaration>ast);
                 case NodeType.VariableDeclarator:
                     return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
+                case NodeType.ConstructorDeclaration:
+                    return this.emitDeclarationsForConstructorDeclaration(<ConstructorDeclaration>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.ClassDeclaration:
@@ -373,7 +375,7 @@ module TypeScript {
             }
         }
 
-        private emitArgDecl(argDecl: Parameter, funcDecl: FunctionDeclaration) {
+        private emitArgDecl(argDecl: Parameter, functionFlags: FunctionFlags) {
             this.indenter.increaseIndent();
 
             this.emitDeclarationComments(argDecl, false);
@@ -384,7 +386,7 @@ module TypeScript {
 
             this.indenter.decreaseIndent();
 
-            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
+            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
                 this.emitTypeOfVariableDeclaratorOrParameter(argDecl);
             }
         }
@@ -401,6 +403,82 @@ module TypeScript {
 
             return result;
         }
+
+        private emitDeclarationsForConstructorDeclaration(funcDecl: ConstructorDeclaration) {
+            var start = new Date().getTime();
+            var funcSymbol = this.compiler.semanticInfoChain.getSymbolForAST(funcDecl);
+
+            TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
+
+            var funcTypeSymbol = funcSymbol.type;
+            if (funcDecl.block) {
+                var constructSignatures = funcTypeSymbol.getConstructSignatures();
+                if (constructSignatures && constructSignatures.length > 1) {
+                    return;
+                }
+                //else if (this.isOverloadedCallSignature(funcDecl)) {
+                //    // This means its implementation of overload signature. do not emit
+                //    return;
+                //}
+            }
+            /*
+            else if (!isInterfaceMember && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
+                // Print only first overload of private function
+                var callSignatures = funcTypeSymbol.getCallSignatures();
+                Debug.assert(callSignatures && callSignatures.length > 1);
+                var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
+                var firstSignatureDecl = firstSignature.getDeclarations()[0];
+                var firstFuncDecl = <FunctionDeclaration>this.compiler.semanticInfoChain.getASTForDecl(firstSignatureDecl);
+                if (firstFuncDecl !== funcDecl) {
+                    return;
+                }
+            }
+            */
+
+            if (!this.canEmitDeclarations(ToDeclFlags(funcDecl.getFunctionFlags()), funcDecl)) {
+                return;
+            }
+
+            var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
+            var funcSignature = funcPullDecl.getSignatureSymbol();
+            this.emitDeclarationComments(funcDecl);
+
+            this.emitIndent();
+            this.declFile.Write("constructor");
+
+            this.declFile.Write("(");
+
+            if (funcDecl.parameterList) {
+                var argsLen = funcDecl.parameterList.members.length;
+                if (lastParameterIsRest(funcDecl.parameterList)) {
+                    argsLen--;
+                }
+
+                for (var i = 0; i < argsLen; i++) {
+                    var argDecl = <Parameter>funcDecl.parameterList.members[i];
+                    this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
+                    if (i < (argsLen - 1)) {
+                        this.declFile.Write(", ");
+                    }
+                }
+            }
+
+            if (lastParameterIsRest(funcDecl.parameterList)) {
+                var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
+                if (funcDecl.parameterList.members.length > 1) {
+                    this.declFile.Write(", ...");
+                }
+                else {
+                    this.declFile.Write("...");
+                }
+
+                this.emitArgDecl(lastArg, funcDecl.getFunctionFlags());
+            }
+
+            this.declFile.Write(")");
+            this.declFile.WriteLine(";");
+        }
+
 
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {
             if (funcDecl.isAccessor()) {
@@ -444,37 +522,31 @@ module TypeScript {
             var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                this.emitIndent();
-                this.declFile.Write("constructor");
-                this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+
+            var id = funcDecl.getNameText();
+            if (!isInterfaceMember) {
+                this.emitDeclFlags(ToDeclFlags(funcDecl.getFunctionFlags()), funcPullDecl, "function");
+                if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
+                    this.declFile.Write(id);
+                }
+                else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
+                    this.declFile.Write("new");
+                }
             }
             else {
-                var id = funcDecl.getNameText();
-                if (!isInterfaceMember) {
-                    this.emitDeclFlags(ToDeclFlags(funcDecl.getFunctionFlags()), funcPullDecl, "function");
-                    if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
-                        this.declFile.Write(id);
-                    }
-                    else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
-                        this.declFile.Write("new");
+                this.emitIndent();
+                if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
+                    this.declFile.Write("new");
+                }
+                else if (funcPullDecl.kind !== PullElementKind.CallSignature &&
+                            funcPullDecl.kind !== PullElementKind.IndexSignature) {
+                    this.declFile.Write(id);
+                    if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
+                        this.declFile.Write("? ");
                     }
                 }
-                else {
-                    this.emitIndent();
-                    if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
-                        this.declFile.Write("new");
-                    }
-                    else if (funcPullDecl.kind !== PullElementKind.CallSignature &&
-                             funcPullDecl.kind !== PullElementKind.IndexSignature) {
-                        this.declFile.Write(id);
-                        if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
-                            this.declFile.Write("? ");
-                        }
-                    }
-                }
-                this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
             }
+            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
 
             if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
                 this.declFile.Write("(");
@@ -483,31 +555,31 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
-            if (funcDecl.parameters) {
-                var argsLen = funcDecl.parameters.members.length;
-                if (lastParameterIsRest(funcDecl.parameters)) {
+            if (funcDecl.parameterList) {
+                var argsLen = funcDecl.parameterList.members.length;
+                if (lastParameterIsRest(funcDecl.parameterList)) {
                     argsLen--;
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <Parameter>funcDecl.parameters.members[i];
-                    this.emitArgDecl(argDecl, funcDecl);
+                    var argDecl = <Parameter>funcDecl.parameterList.members[i];
+                    this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
                     if (i < (argsLen - 1)) {
                         this.declFile.Write(", ");
                     }
                 }
             }
 
-            if (lastParameterIsRest(funcDecl.parameters)) {
-                var lastArg = <Parameter>funcDecl.parameters.members[funcDecl.parameters.members.length - 1];
-                if (funcDecl.parameters.members.length > 1) {
+            if (lastParameterIsRest(funcDecl.parameterList)) {
+                var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
+                if (funcDecl.parameterList.members.length > 1) {
                     this.declFile.Write(", ...");
                 }
                 else {
                     this.declFile.Write("...");
                 }
 
-                this.emitArgDecl(lastArg, funcDecl);
+                this.emitArgDecl(lastArg, funcDecl.getFunctionFlags());
             }
 
             if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
@@ -517,8 +589,7 @@ module TypeScript {
                 this.declFile.Write("]");
             }
 
-            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor) &&
-                this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
+            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 var returnType = funcSignature.returnType;
                 this.declFile.Write(": ");
                 this.emitTypeSignature(returnType);
@@ -583,15 +654,15 @@ module TypeScript {
             this.declFile.WriteLine(";");
         }
 
-        private emitClassMembersFromConstructorDefinition(funcDecl: FunctionDeclaration) {
-            if (funcDecl.parameters) {
-                var argsLen = funcDecl.parameters.members.length;
-                if (lastParameterIsRest(funcDecl.parameters)) {
+        private emitClassMembersFromConstructorDefinition(funcDecl: ConstructorDeclaration) {
+            if (funcDecl.parameterList) {
+                var argsLen = funcDecl.parameterList.members.length;
+                if (lastParameterIsRest(funcDecl.parameterList)) {
                     argsLen--;
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var parameter = <Parameter>funcDecl.parameters.members[i];
+                    var parameter = <Parameter>funcDecl.parameterList.members[i];
                     var parameterDecl = this.compiler.semanticInfoChain.getDeclForAST(parameter);
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);

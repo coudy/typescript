@@ -922,15 +922,17 @@ module Services {
             switch (cur.nodeType()) {
                 default:
                     return null;
-                case TypeScript.NodeType.FunctionDeclaration:
-                    var funcDecl = <TypeScript.FunctionDeclaration>cur;
-                    // constructor keyword
-                    if (!isConstructorValidPosition || !TypeScript.hasFlag(funcDecl.getFunctionFlags(), TypeScript.FunctionFlags.Constructor) || !(position >= funcDecl.minChar && position <= funcDecl.minChar + 11 /*constructor*/)) {
+                case TypeScript.NodeType.ConstructorDeclaration:
+                    var constructorAST = <TypeScript.ConstructorDeclaration>ast;
+                    if (!isConstructorValidPosition || !(position >= constructorAST.minChar && position <= constructorAST.minChar + 11 /*constructor*/)) {
                         return null;
                     }
                     else {
                         return ast;
                     }
+
+                case TypeScript.NodeType.FunctionDeclaration:
+                    return null;
 
                 case TypeScript.NodeType.MemberAccessExpression:
                 case TypeScript.NodeType.QualifiedName:
@@ -973,7 +975,8 @@ module Services {
                 symbol = declarationInformation.symbol;
                 enclosingScopeSymbol = declarationInformation.enclosingScopeSymbol;
 
-                if (node.nodeType() === TypeScript.NodeType.FunctionDeclaration ||
+                if (node.nodeType() === TypeScript.NodeType.ConstructorDeclaration ||
+                    node.nodeType() === TypeScript.NodeType.FunctionDeclaration ||
                     node.nodeType() === TypeScript.NodeType.ArrowFunctionExpression) {
                     var funcDecl = node;
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
@@ -1869,6 +1872,7 @@ module Services {
                 case TypeScript.NodeType.ClassDeclaration:
                 case TypeScript.NodeType.InterfaceDeclaration:
                 case TypeScript.NodeType.ModuleDeclaration:
+                case TypeScript.NodeType.ConstructorDeclaration:
                 case TypeScript.NodeType.FunctionDeclaration:
                 case TypeScript.NodeType.VariableDeclarator:
                 case TypeScript.NodeType.ArrowFunctionExpression:
