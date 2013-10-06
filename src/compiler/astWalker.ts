@@ -109,7 +109,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.NegateExpression] = ChildrenWalkers.walkUnaryExpressionChildren;
             this.childrenWalkers[NodeType.DeleteExpression] = ChildrenWalkers.walkDeleteExpressionChildren;
             this.childrenWalkers[NodeType.InExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
-            this.childrenWalkers[NodeType.MemberAccessExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
+            this.childrenWalkers[NodeType.MemberAccessExpression] = ChildrenWalkers.walkMemberAccessExpressionChildren;
+            this.childrenWalkers[NodeType.QualifiedName] = ChildrenWalkers.walkQualifiedNameChildren;
             this.childrenWalkers[NodeType.InstanceOfExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.TypeOfExpression] = ChildrenWalkers.walkTypeOfExpressionChildren;
             this.childrenWalkers[NodeType.NumericLiteral] = ChildrenWalkers.walkNone;
@@ -287,6 +288,16 @@ module TypeScript {
         export function walkElementAccessExpressionChildren(preAst: ElementAccessExpression, walker: IAstWalker): void {
             walker.walk(preAst.expression);
             walker.walk(preAst.argumentExpression);
+        }
+
+        export function walkMemberAccessExpressionChildren(preAst: MemberAccessExpression, walker: IAstWalker): void {
+            walker.walk(preAst.expression);
+            walker.walk(preAst.name);
+        }
+
+        export function walkQualifiedNameChildren(preAst: QualifiedName, walker: IAstWalker): void {
+            walker.walk(preAst.left);
+            walker.walk(preAst.right);
         }
 
         export function walkBinaryExpressionChildren(preAst: BinaryExpression, walker: IAstWalker): void {

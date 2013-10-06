@@ -933,6 +933,7 @@ module Services {
                     }
 
                 case TypeScript.NodeType.MemberAccessExpression:
+                case TypeScript.NodeType.QualifiedName:
                 case TypeScript.NodeType.SuperExpression:
                 case TypeScript.NodeType.StringLiteral:
                 case TypeScript.NodeType.ThisExpression:
@@ -1085,17 +1086,33 @@ module Services {
             var isRightOfDot = false;
             if (node &&
                 node.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-                (<TypeScript.BinaryExpression>node).operand1.limChar < position) {
+                (<TypeScript.MemberAccessExpression>node).expression.limChar < position) {
 
                 isRightOfDot = true;
-                node = (<TypeScript.BinaryExpression>node).operand1;
+                node = (<TypeScript.MemberAccessExpression>node).expression;
+            }
+            else if (node &&
+                node.nodeType() === TypeScript.NodeType.QualifiedName &&
+                (<TypeScript.QualifiedName>node).left.limChar < position) {
+
+                isRightOfDot = true;
+                node = (<TypeScript.QualifiedName>node).left;
             }
             else if (node && node.parent &&
                 node.nodeType() === TypeScript.NodeType.Name &&
                 node.parent.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-                (<TypeScript.BinaryExpression>node.parent).operand2 === node) {
+                (<TypeScript.MemberAccessExpression>node.parent).name === node) {
+
                 isRightOfDot = true;
-                node = (<TypeScript.BinaryExpression>node.parent).operand1;
+                node = (<TypeScript.MemberAccessExpression>node.parent).expression;
+            }
+            else if (node && node.parent &&
+                node.nodeType() === TypeScript.NodeType.Name &&
+                node.parent.nodeType() === TypeScript.NodeType.QualifiedName &&
+                (<TypeScript.QualifiedName>node.parent).right === node) {
+
+                isRightOfDot = true;
+                node = (<TypeScript.QualifiedName>node.parent).left;
             }
 
             // Get the completions
@@ -1520,7 +1537,8 @@ module Services {
             }
 
             while (node) {
-                if (isMemberOfMemberAccessExpression(node)) {
+                if (isNameOfMemberAccessExpression(node) ||
+                    isRightSideOfQualifiedName(node)) {
                     node = node.parent;
                 } else {
                     break;
@@ -1768,7 +1786,7 @@ module Services {
 
         while (current && current.parent) {
             if (current.parent.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-                (<TypeScript.BinaryExpression>current.parent).operand2 === current) {
+                (<TypeScript.MemberAccessExpression>current.parent).name === current) {
                 current = current.parent;
                 continue;
             }
@@ -1821,11 +1839,23 @@ module Services {
             (<TypeScript.VariableDeclarator>ast.parent).id === ast;
     }
 
-    function isMemberOfMemberAccessExpression(ast: TypeScript.AST) {
+    function isNameOfMemberAccessExpression(ast: TypeScript.AST) {
         if (ast &&
             ast.parent &&
             ast.parent.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-            (<TypeScript.BinaryExpression>ast.parent).operand2 === ast) {
+            (<TypeScript.MemberAccessExpression>ast.parent).name === ast) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    function isRightSideOfQualifiedName(ast: TypeScript.AST) {
+        if (ast &&
+            ast.parent &&
+            ast.parent.nodeType() === TypeScript.NodeType.QualifiedName &&
+            (<TypeScript.QualifiedName>ast.parent).right === ast) {
 
             return true;
         }

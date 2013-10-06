@@ -1073,10 +1073,10 @@ module TypeScript {
             if (typeRef.term.nodeType() == NodeType.Name) {
                 return true;
             }
-            else if (typeRef.term.nodeType() == NodeType.MemberAccessExpression) {
-                var binex = <BinaryExpression>typeRef.term;
+            else if (typeRef.term.nodeType() == NodeType.QualifiedName) {
+                var binex = <QualifiedName>typeRef.term;
 
-                if (binex.operand2.nodeType() == NodeType.Name) {
+                if (binex.right.nodeType() == NodeType.Name) {
                     return true;
                 }
             }
@@ -1551,20 +1551,20 @@ module TypeScript {
         }
 
         private resolveModuleReference(importDecl: PullDecl, moduleNameExpr: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext, declPath: PullDecl[]) {
-            CompilerDiagnostics.assert(moduleNameExpr.nodeType() == NodeType.MemberAccessExpression || moduleNameExpr.nodeType() == NodeType.Name, "resolving module reference should always be either name or member reference");
+            CompilerDiagnostics.assert(moduleNameExpr.nodeType() == NodeType.QualifiedName || moduleNameExpr.nodeType() == NodeType.Name, "resolving module reference should always be either name or member reference");
 
             var moduleSymbol: PullSymbol = null;
             var moduleName: string;
 
-            if (moduleNameExpr.nodeType() == NodeType.MemberAccessExpression) {
-                var dottedNameAST = <BinaryExpression>moduleNameExpr;
-                var moduleContainer = this.resolveModuleReference(importDecl, dottedNameAST.operand1, enclosingDecl, context, declPath);
+            if (moduleNameExpr.nodeType() == NodeType.QualifiedName) {
+                var dottedNameAST = <QualifiedName>moduleNameExpr;
+                var moduleContainer = this.resolveModuleReference(importDecl, dottedNameAST.left, enclosingDecl, context, declPath);
                 if (moduleContainer) {
-                    moduleName = (<Identifier>dottedNameAST.operand2).text();
+                    moduleName = dottedNameAST.right.text();
                     moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
                     if (!moduleSymbol) {
                         this.semanticInfoChain.addDiagnostic(
-                            diagnosticFromAST(dottedNameAST.operand2, DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
+                            diagnosticFromAST(dottedNameAST.right, DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]));
                     }
                 }
             } else if (!(<Identifier>moduleNameExpr).isMissing()) {
@@ -1606,12 +1606,12 @@ module TypeScript {
                 } else {
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
-            } else if (aliasExpr.nodeType() == NodeType.MemberAccessExpression) {
+            } else if (aliasExpr.nodeType() == NodeType.QualifiedName) {
                 var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-                var dottedNameAST = <BinaryExpression>aliasExpr;
-                var moduleSymbol = this.resolveModuleReference(importDecl, dottedNameAST.operand1, enclosingDecl, context, declPath);
+                var dottedNameAST = <QualifiedName>aliasExpr;
+                var moduleSymbol = this.resolveModuleReference(importDecl, dottedNameAST.left, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
-                    var identifierResolution = this.resolveIdentifierOfInternalModuleReference(importDecl, <Identifier>dottedNameAST.operand2, moduleSymbol, enclosingDecl, context);
+                    var identifierResolution = this.resolveIdentifierOfInternalModuleReference(importDecl, dottedNameAST.right, moduleSymbol, enclosingDecl, context);
                     if (identifierResolution) {
                         importDeclSymbol.setAssignedValueSymbol(identifierResolution.valueSymbol);
                         importDeclSymbol.setAssignedTypeSymbol(identifierResolution.typeSymbol);
@@ -2212,16 +2212,16 @@ module TypeScript {
                 typeDeclSymbol = typeSymbol;
             }
             // a dotted name
-            else if (typeRef.term.nodeType() === NodeType.MemberAccessExpression) {
+            else if (typeRef.term.nodeType() === NodeType.QualifiedName) {
                 // assemble the dotted name path
-                var dottedName = <BinaryExpression> typeRef.term;
+                var dottedName = <QualifiedName> typeRef.term;
 
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
                 var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
                 context.resolvingNamespaceMemberAccess = false;
                 context.resolvingTypeReference = true;
-                typeSymbol = this.resolveDottedTypeNameExpression(dottedName, enclosingDecl, context);
+                typeSymbol = this.resolveQualifiedName(dottedName, enclosingDecl, context);
                 typeDeclSymbol = typeSymbol;
                 context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
                 context.resolvingTypeReference = prevResolvingTypeReference;
@@ -4847,12 +4847,10 @@ module TypeScript {
                     }
 
                 case NodeType.MemberAccessExpression:
-                    if (context.resolvingTypeReference) {
-                        return this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    }
-                    else {
-                        return this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    }
+                    return this.resolveMemberAccessExpression(<MemberAccessExpression>ast, enclosingDecl, context);
+
+                case NodeType.QualifiedName:
+                    return this.resolveQualifiedName(<QualifiedName>ast, enclosingDecl, context);
 
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -5104,12 +5102,11 @@ module TypeScript {
                     return;
 
                 case NodeType.MemberAccessExpression:
-                    if (context.resolvingTypeReference) {
-                        this.resolveDottedTypeNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    }
-                    else {
-                        this.resolveDottedNameExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    }
+                    this.resolveMemberAccessExpression(<MemberAccessExpression>ast, enclosingDecl, context);
+                    return;
+
+                case NodeType.QualifiedName:
+                    this.resolveQualifiedName(<QualifiedName>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.FunctionPropertyAssignment:
@@ -5522,7 +5519,18 @@ module TypeScript {
             return nameSymbol;
         }
 
-        private resolveDottedNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveMemberAccessExpression(dottedNameAST: MemberAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveDottedNameExpression(
+                dottedNameAST, dottedNameAST.expression, dottedNameAST.name, enclosingDecl, context);
+        }
+
+        private resolveDottedNameExpression(
+            dottedNameAST: AST,
+            expression: AST,
+            name: Identifier,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): PullSymbol {
+
             var symbol = this.getSymbolForAST(dottedNameAST, context);
             var foundCached = symbol != null;
 
@@ -5531,7 +5539,9 @@ module TypeScript {
                 if (canTypeCheckDottedNameAST) {
                     this.setTypeChecked(dottedNameAST, context);
                 }
-                symbol = this.computeDottedNameExpressionSymbol(dottedNameAST, enclosingDecl, context, canTypeCheckDottedNameAST);
+
+                symbol = this.computeDottedNameExpression(
+                    expression, name, enclosingDecl, context, canTypeCheckDottedNameAST);
             }
 
             this.resolveDeclaredSymbol(symbol, context);
@@ -5540,18 +5550,20 @@ module TypeScript {
                 (symbol.type != this.semanticInfoChain.anyTypeSymbol ||
                 symbol.hasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !symbol.inResolution*/) {
                 this.setSymbolForAST(dottedNameAST, symbol, context);
-                this.setSymbolForAST(dottedNameAST.operand2, symbol, context);
+                this.setSymbolForAST(name, symbol, context);
             }
 
             return symbol;
         }
 
-        private isPrototypeMember(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): boolean {
-            var rhsName = (<Identifier>dottedNameAST.operand2).text();
+        private isPrototypeMember(
+            expression: AST, name: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): boolean {
+
+            var rhsName = name.text();
             if (rhsName === "prototype") {
                 var prevCanUseTypeSymbol = context.canUseTypeSymbol;
                 context.canUseTypeSymbol = true;
-                var lhsType = this.resolveAST(dottedNameAST.operand1, /*inContextuallyTypedAssignment*/false, enclosingDecl, context).type;
+                var lhsType = this.resolveAST(expression, /*inContextuallyTypedAssignment*/false, enclosingDecl, context).type;
                 context.canUseTypeSymbol = prevCanUseTypeSymbol;
 
                 if (lhsType) {
@@ -5571,16 +5583,16 @@ module TypeScript {
             return false;
         }
 
-        private computeDottedNameExpressionSymbol(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, checkSuperPrivateAndStaticAccess: boolean): PullSymbol {
-            if ((<Identifier>dottedNameAST.operand2).isMissing()) {
+        private computeDottedNameExpression(expression: AST, name: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext, checkSuperPrivateAndStaticAccess: boolean): PullSymbol {
+            if (name.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             // assemble the dotted name path
-            var rhsName = (<Identifier>dottedNameAST.operand2).text();
+            var rhsName = name.text();
             var prevCanUseTypeSymbol = context.canUseTypeSymbol;
             context.canUseTypeSymbol = true;
-            var lhs = this.resolveAST(dottedNameAST.operand1, /*inContextuallyTypedAssignment*/false, enclosingDecl, context);
+            var lhs = this.resolveAST(expression, /*inContextuallyTypedAssignment*/false, enclosingDecl, context);
             context.canUseTypeSymbol = prevCanUseTypeSymbol;
             var lhsType = lhs.type;
 
@@ -5601,7 +5613,7 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                context.postDiagnostic(diagnosticFromAST(dottedNameAST.operand2, DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [(<Identifier>dottedNameAST.operand2).actualText]));
+                context.postDiagnostic(diagnosticFromAST(name, DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [name.actualText]));
                 return this.getNewErrorTypeSymbol();
             }
 
@@ -5627,9 +5639,9 @@ module TypeScript {
                 }
             }
 
-            if (this.isPrototypeMember(dottedNameAST, enclosingDecl, context)) {
+            if (this.isPrototypeMember(expression, name, enclosingDecl, context)) {
                 if (lhsType.isClass()) {
-                    this.checkForStaticMemberAccess(dottedNameAST, lhsType, lhsType, enclosingDecl, context);
+                    this.checkForStaticMemberAccess(expression, name, lhsType, lhsType, enclosingDecl, context);
 
                     if (lhsType.isGeneric()) {
                         return this.specializeTypeToAny(lhsType, enclosingDecl, context);
@@ -5651,7 +5663,7 @@ module TypeScript {
                     }
 
                     if (instanceType && instanceType.isClass()) {
-                        this.checkForStaticMemberAccess(dottedNameAST, lhsType, instanceType, enclosingDecl, context);
+                        this.checkForStaticMemberAccess(expression, name, lhsType, instanceType, enclosingDecl, context);
 
                         return instanceType;
                     }
@@ -5709,15 +5721,15 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    context.postDiagnostic(diagnosticFromAST(dottedNameAST.operand2, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                    context.postDiagnostic(diagnosticFromAST(name, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [name.actualText, lhsType.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                     return this.getNewErrorTypeSymbol(rhsName);
                 }
             }
 
             if (checkSuperPrivateAndStaticAccess) {
-                this.checkForSuperMemberAccess(dottedNameAST, nameSymbol, enclosingDecl, context) ||
-                this.checkForPrivateMemberAccess(dottedNameAST, lhsType, nameSymbol, enclosingDecl, context) ||
-                this.checkForStaticMemberAccess(dottedNameAST, lhsType, nameSymbol, enclosingDecl, context);
+                this.checkForSuperMemberAccess(expression, name, nameSymbol, enclosingDecl, context) ||
+                this.checkForPrivateMemberAccess(name, lhsType, nameSymbol, enclosingDecl, context) ||
+                this.checkForStaticMemberAccess(expression, name, lhsType, nameSymbol, enclosingDecl, context);
             }
 
             return nameSymbol;
@@ -5936,13 +5948,22 @@ module TypeScript {
             return specializedSymbol;
         }
 
-        private resolveDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveQualifiedName(dottedNameAST: QualifiedName, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            if (context.resolvingTypeQueryExpression) {
+                // If we're in a type query, then treat the qualified name as a normal dotted
+                // name expression.
+                return this.resolveDottedNameExpression(
+                    dottedNameAST, dottedNameAST.left, dottedNameAST.right, enclosingDecl, context).type;
+            }
+
             var symbol = <PullTypeSymbol>this.getSymbolForAST(dottedNameAST, context);
             if (!symbol || this.canTypeCheckAST(dottedNameAST, context)) {
-                if (this.canTypeCheckAST(dottedNameAST, context)) {
+                var canTypeCheck = this.canTypeCheckAST(dottedNameAST, context);
+                if (canTypeCheck) {
                     this.setTypeChecked(dottedNameAST, context);
                 }
-                symbol = this.computeDottedTypeNameExpression(dottedNameAST, enclosingDecl, context);
+
+                symbol = this.computeQualifiedName(dottedNameAST, enclosingDecl, context);
                 this.setSymbolForAST(dottedNameAST, symbol, context);
             }
 
@@ -5951,13 +5972,13 @@ module TypeScript {
             return symbol;
         }
 
-        private computeDottedTypeNameExpression(dottedNameAST: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            if ((<Identifier>dottedNameAST.operand2).isMissing()) {
+        private computeQualifiedName(dottedNameAST: QualifiedName, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            if (dottedNameAST.right.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             // assemble the dotted name path
-            var rhsName = (<Identifier>dottedNameAST.operand2).text();
+            var rhsName = dottedNameAST.right.text();
 
             // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
             // gotten into this code path if it was already set.
@@ -5965,7 +5986,7 @@ module TypeScript {
             var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.resolvingNamespaceMemberAccess = true;
             context.resolvingTypeReference = true;
-            var lhs = this.resolveAST(dottedNameAST.operand1, false, enclosingDecl, context);
+            var lhs = this.resolveAST(dottedNameAST.left, false, enclosingDecl, context);
             context.resolvingTypeReference = savedResolvingTypeReference;
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
 
@@ -6022,7 +6043,7 @@ module TypeScript {
             }
 
             if (!childTypeSymbol) {
-                context.postDiagnostic(diagnosticFromAST(dottedNameAST.operand2, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [(<Identifier>dottedNameAST.operand2).actualText, lhsType.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                context.postDiagnostic(diagnosticFromAST(dottedNameAST.right, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [dottedNameAST.right.actualText, lhsType.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                 return this.getNewErrorTypeSymbol(rhsName);
             }
 
@@ -9300,7 +9321,7 @@ module TypeScript {
         }
 
         private getCallTargetErrorSpanAST(callEx: ICallExpression): AST {
-            return (callEx.target.nodeType() === NodeType.MemberAccessExpression) ? (<BinaryExpression>callEx.target).operand2 : callEx.target;
+            return (callEx.target.nodeType() === NodeType.MemberAccessExpression) ? (<MemberAccessExpression>callEx.target).name : callEx.target;
         }
 
         private overloadHasCorrectArity(signature: PullSignatureSymbol, args: ASTList): boolean {
@@ -11396,16 +11417,18 @@ module TypeScript {
             return true;
         }
 
-        private checkForSuperMemberAccess(memberAccessExpression: BinaryExpression,
+        private checkForSuperMemberAccess(
+            expression: AST,
+            name: Identifier,
             resolvedName: PullSymbol,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): boolean {
             if (resolvedName) {
-                if (memberAccessExpression.operand1.nodeType() === NodeType.SuperExpression &&
+                if (expression.nodeType() === NodeType.SuperExpression &&
                     !resolvedName.isError() &&
                     resolvedName.kind !== PullElementKind.Method) {
 
-                    context.postDiagnostic(diagnosticFromAST(memberAccessExpression.operand2,
+                    context.postDiagnostic(diagnosticFromAST(name,
                         DiagnosticCode.Only_public_methods_of_the_base_class_are_accessible_via_the_super_keyword));
                     return true;
                 }
@@ -11414,7 +11437,8 @@ module TypeScript {
             return false;
         }
 
-        private checkForPrivateMemberAccess(memberAccessExpression: BinaryExpression,
+        private checkForPrivateMemberAccess(
+            name: Identifier,
             expressionType: PullTypeSymbol,
             resolvedName: PullSymbol,
             enclosingDecl: PullDecl,
@@ -11436,7 +11460,6 @@ module TypeScript {
                         }
 
                         if (!containingClass || containingClass.getSymbol() !== memberContainer) {
-                            var name = <Identifier>memberAccessExpression.operand2;
                             context.postDiagnostic(diagnosticFromAST(name, DiagnosticCode._0_1_is_inaccessible, [memberContainer.toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ false), name.actualText]));
                             return true;
                         }
@@ -11447,16 +11470,17 @@ module TypeScript {
             return false;
         }
 
-        private checkForStaticMemberAccess(memberAccessExpression: BinaryExpression,
+        private checkForStaticMemberAccess(
+            expression: AST,
+            name: Identifier,
             expressionType: PullTypeSymbol,
             resolvedName: PullSymbol,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): boolean {
+
             if (expressionType && resolvedName && !resolvedName.isError()) {
                 if (expressionType.isClass() || expressionType.kind === PullElementKind.ConstructorType) {
-                    var name = <Identifier>memberAccessExpression.operand2;
-
-                    if (resolvedName.hasFlag(PullElementFlags.Static) || this.isPrototypeMember(memberAccessExpression, enclosingDecl, context)) {
+                    if (resolvedName.hasFlag(PullElementFlags.Static) || this.isPrototypeMember(expression, name, enclosingDecl, context)) {
                         if (expressionType.kind !== PullElementKind.ConstructorType) {
                             context.postDiagnostic(diagnosticFromAST(name,
                                 DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable));

@@ -670,6 +670,52 @@ module TypeScript {
         }
     }
 
+    export class MemberAccessExpression extends AST {
+        constructor(public expression: AST,
+                    public name: Identifier) {
+            super();
+            expression && (expression.parent = this);
+            name && (name.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberAccessExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitMemberAccessExpression(this);
+        }
+
+        public structuralEquals(ast: MemberAccessExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.name, ast.name, includingPosition);
+        }
+    }
+
+    export class QualifiedName extends AST {
+        constructor(public left: AST,
+                    public right: Identifier) {
+            super();
+            left && (left.parent = this);
+            right && (right.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.QualifiedName;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitQualifiedName(this);
+        }
+
+        public structuralEquals(ast: QualifiedName, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.left, ast.left, includingPosition) &&
+                structuralEquals(this.right, ast.right, includingPosition);
+        }
+    }
+
     export class BinaryExpression extends AST {
         constructor(private _nodeType: NodeType,
                     public operand1: AST,
@@ -880,8 +926,8 @@ module TypeScript {
             if (aliasAST.nodeType() === NodeType.Name) {
                 return (<Identifier>aliasAST).actualText;
             } else {
-                var dotExpr = <BinaryExpression>aliasAST;
-                return this.getAliasName(dotExpr.operand1) + "." + this.getAliasName(dotExpr.operand2);
+                var dotExpr = <QualifiedName>aliasAST;
+                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
             }
         }
 
@@ -2250,6 +2296,7 @@ module TypeScript {
                         forceInclusive ||
                         cur.nodeType() === TypeScript.NodeType.Name ||
                         cur.nodeType() === TypeScript.NodeType.MemberAccessExpression ||
+                        cur.nodeType() === TypeScript.NodeType.QualifiedName ||
                         cur.nodeType() === TypeScript.NodeType.TypeRef ||
                         cur.nodeType() === TypeScript.NodeType.VariableDeclaration ||
                         cur.nodeType() === TypeScript.NodeType.VariableDeclarator ||

@@ -35,6 +35,7 @@ module TypeScript {
         GenericType,
         TypeRef,
         TypeQuery,
+        QualifiedName,
 
         // Declarations
         FunctionDeclaration,

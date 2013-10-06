@@ -1079,7 +1079,7 @@ module TypeScript {
             var right = this.identifierFromToken(node.right, /*isOptional:*/ false);
             this.movePast(node.right);
 
-            var term = new BinaryExpression(NodeType.MemberAccessExpression, left, right);
+            var term = new QualifiedName(left, right);
             this.setSpan(term, start, node);
 
             var result = new TypeReference(term, 0);
@@ -1265,7 +1265,7 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): BinaryExpression {
+        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpression {
             var start = this.position;
 
             var expression: AST = node.expression.accept(this);
@@ -1273,7 +1273,7 @@ module TypeScript {
             var name = this.identifierFromToken(node.name, /*isOptional:*/ false);
             this.movePast(node.name);
 
-            var result = new BinaryExpression(NodeType.MemberAccessExpression, expression, name);
+            var result = new MemberAccessExpression(expression, name);
             this.setSpan(result, start, node);
 
             return result;
@@ -1411,7 +1411,7 @@ module TypeScript {
 
             if (right.nodeType() === NodeType.FunctionDeclaration ||
                 right.nodeType() === NodeType.ArrowFunctionExpression) {
-                var id = left.nodeType() === NodeType.MemberAccessExpression ? (<BinaryExpression>left).operand2 : left;
+                var id = left.nodeType() === NodeType.MemberAccessExpression ? (<MemberAccessExpression>left).name : left;
                 var idHint: string = id.nodeType() === NodeType.Name ? id.actualText : null;
 
                 var funcDecl = <FunctionDeclaration>right;
@@ -2613,8 +2613,8 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): BinaryExpression {
-            var result: BinaryExpression = this.getAndMovePastAST(node);
+        public visitMemberAccessExpression(node: MemberAccessExpressionSyntax): MemberAccessExpression {
+            var result: MemberAccessExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitMemberAccessExpression(node);
                 this.setAST(node, result);

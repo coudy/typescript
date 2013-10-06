@@ -471,7 +471,7 @@ module TypeScript {
             this.recordSourceMappingEnd(objectCreationExpression);
         }
 
-        public getConstantDecl(dotExpr: BinaryExpression): VariableDeclarator {
+        public getConstantDecl(dotExpr: MemberAccessExpression): VariableDeclarator {
             var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
@@ -495,11 +495,11 @@ module TypeScript {
             return null;
         }
 
-        public tryEmitConstant(dotExpr: BinaryExpression) {
+        public tryEmitConstant(dotExpr: MemberAccessExpression) {
             if (!this.emitOptions.compilationSettings.propagateEnumConstants) {
                 return false;
             }
-            var propertyName = <Identifier>dotExpr.operand2;
+            var propertyName = dotExpr.name;
             var boundDecl = this.getConstantDecl(dotExpr);
             if (boundDecl) {
                 var value = boundDecl.constantValue;
@@ -521,9 +521,8 @@ module TypeScript {
             var target = callNode.target;
             var args = callNode.arguments;
 
-            if (target.nodeType() === NodeType.MemberAccessExpression && (<BinaryExpression>target).operand1.nodeType() === NodeType.SuperExpression) {
-                var dotNode = <BinaryExpression>target;
-                dotNode.emit(this);
+            if (target.nodeType() === NodeType.MemberAccessExpression && (<MemberAccessExpression>target).expression.nodeType() === NodeType.SuperExpression) {
+                target.emit(this);
                 this.writeToOutput(".call");
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
@@ -2246,17 +2245,31 @@ module TypeScript {
             this.recordSourceMappingEnd(expression);
         }
 
+        public emitMemberAccessExpression(expression: MemberAccessExpression): void {
+            this.recordSourceMappingStart(expression);
+
+            if (!this.tryEmitConstant(expression)) {
+                expression.expression.emit(this);
+                this.writeToOutput(".");
+                this.emitName(expression.name, false);
+            }
+
+            this.recordSourceMappingEnd(expression);
+        }
+
+        public emitQualifiedName(name: QualifiedName): void {
+            this.recordSourceMappingStart(name);
+
+            name.left.emit(this);
+            this.writeToOutput(".");
+            this.emitName(name.right, false);
+
+            this.recordSourceMappingEnd(name);
+        }
+
         public emitBinaryExpression(expression: BinaryExpression): void {
             this.recordSourceMappingStart(expression);
             switch (expression.nodeType()) {
-                case NodeType.MemberAccessExpression:
-                    if (!this.tryEmitConstant(expression)) {
-                        expression.operand1.emit(this);
-                        this.writeToOutput(".");
-                        this.emitName(<Identifier>expression.operand2, false);
-                    }
-                    break;
-
                 case NodeType.Member:
                     if (expression.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>expression.operand2).isAccessor()) {
                         var funcDecl = <FunctionDeclaration>expression.operand2;

@@ -997,10 +997,11 @@ module TypeScript {
                     // since those will give us the right typing
                     var callExpression: ICallExpression = null;
                     if ((foundAST.nodeType() === NodeType.SuperExpression || foundAST.nodeType() === NodeType.ThisExpression || foundAST.nodeType() === NodeType.Name) &&
-                    resultASTs.length > 1) {
+                        resultASTs.length > 1) {
+
                         for (var i = resultASTs.length - 2; i >= 0; i--) {
                             if (resultASTs[i].nodeType() === NodeType.MemberAccessExpression &&
-                            (<BinaryExpression>resultASTs[i]).operand2 === resultASTs[i + 1]) {
+                                (<MemberAccessExpression>resultASTs[i]).name === resultASTs[i + 1]) {
                                 foundAST = resultASTs[i];
                             }
                             else if ((resultASTs[i].nodeType() === NodeType.InvocationExpression || resultASTs[i].nodeType() === NodeType.ObjectCreationExpression) &&
@@ -1359,8 +1360,9 @@ module TypeScript {
                         // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
                         // when we are looking at a function type (e.g. var y : (a) => void)
                         if (!typeExpressionNode ||
-                            typeExpressionNode.nodeType() == NodeType.Name ||
-                            typeExpressionNode.nodeType() == NodeType.MemberAccessExpression) {
+                            typeExpressionNode.nodeType() === NodeType.Name ||
+                            typeExpressionNode.nodeType() === NodeType.QualifiedName ||
+                            typeExpressionNode.nodeType() === NodeType.MemberAccessExpression) {
                             resolutionContext.resolvingTypeReference = true;
                         }
 
@@ -1371,8 +1373,9 @@ module TypeScript {
                         // when we are looking at a function type (e.g. var y : (a) => void)
                         var typeExpressionNode = path[i + 1];
                         if (!typeExpressionNode ||
-                            typeExpressionNode.nodeType() == NodeType.Name ||
-                            typeExpressionNode.nodeType() == NodeType.MemberAccessExpression) {
+                            typeExpressionNode.nodeType() === NodeType.Name ||
+                            typeExpressionNode.nodeType() === NodeType.QualifiedName ||
+                            typeExpressionNode.nodeType() === NodeType.MemberAccessExpression) {
                             resolutionContext.resolvingTypeReference = true;
                         }
 
@@ -1411,9 +1414,16 @@ module TypeScript {
 
             // if the found AST is a named, we want to check for previous dotted expressions,
             // since those will give us the right typing
-            if (ast && ast.parent && ast.nodeType() === NodeType.Name && ast.parent.nodeType() === NodeType.MemberAccessExpression) {
-                if ((<BinaryExpression>ast.parent).operand2 === ast) {
-                    ast = ast.parent;
+            if (ast && ast.parent && ast.nodeType() === NodeType.Name) {
+                if (ast.parent.nodeType() === NodeType.MemberAccessExpression) {
+                    if ((<MemberAccessExpression>ast.parent).name === ast) {
+                        ast = ast.parent;
+                    }
+                }
+                else if (ast.parent.nodeType() === NodeType.QualifiedName) {
+                    if ((<QualifiedName>ast.parent).right === ast) {
+                        ast = ast.parent;
+                    }
                 }
             }
 
