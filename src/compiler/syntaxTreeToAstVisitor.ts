@@ -1291,7 +1291,7 @@ module TypeScript {
             return result;
         }
 
-        public visitElementAccessExpression(node: ElementAccessExpressionSyntax): BinaryExpression {
+        public visitElementAccessExpression(node: ElementAccessExpressionSyntax): ElementAccessExpression {
             var start = this.position;
 
             var expression = node.expression.accept(this);
@@ -1299,7 +1299,7 @@ module TypeScript {
             var argumentExpression = node.argumentExpression.accept(this);
             this.movePast(node.closeBracketToken);
 
-            var result = new BinaryExpression(NodeType.ElementAccessExpression, expression, argumentExpression);
+            var result = new ElementAccessExpression(expression, argumentExpression);
             this.setSpan(result, start, node);
 
             return result;
@@ -2633,8 +2633,8 @@ module TypeScript {
             return result;
         }
 
-        public visitElementAccessExpression(node: ElementAccessExpressionSyntax): BinaryExpression {
-            var result: BinaryExpression = this.getAndMovePastAST(node);
+        public visitElementAccessExpression(node: ElementAccessExpressionSyntax): ElementAccessExpression {
+            var result: ElementAccessExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitElementAccessExpression(node);
                 this.setAST(node, result);

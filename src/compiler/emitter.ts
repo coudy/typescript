@@ -976,11 +976,13 @@ module TypeScript {
             this.writeToOutput(';');
         }
 
-        public emitIndex(operand1: AST, operand2: AST) {
-            operand1.emit(this);
+        public emitElementAccessExpression(expression: ElementAccessExpression) {
+            this.recordSourceMappingStart(expression);
+            expression.expression.emit(this);
             this.writeToOutput("[");
-            operand2.emit(this);
+            expression.argumentExpression.emit(this);
             this.writeToOutput("]");
+            this.recordSourceMappingEnd(expression);
         }
 
         public emitArrowFunctionExpression(arrowFunction: ArrowFunctionExpression): void {
@@ -2241,9 +2243,6 @@ module TypeScript {
                         this.writeToOutput(".");
                         this.emitName(<Identifier>expression.operand2, false);
                     }
-                    break;
-                case NodeType.ElementAccessExpression:
-                    this.emitIndex(expression.operand1, expression.operand2);
                     break;
 
                 case NodeType.Member:

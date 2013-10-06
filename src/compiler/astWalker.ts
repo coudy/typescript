@@ -118,7 +118,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.GenericType] = ChildrenWalkers.walkGenericTypeChildren;
             this.childrenWalkers[NodeType.TypeRef] = ChildrenWalkers.walkTypeReferenceChildren;
             this.childrenWalkers[NodeType.TypeQuery] = ChildrenWalkers.walkTypeQueryChildren;
-            this.childrenWalkers[NodeType.ElementAccessExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
+            this.childrenWalkers[NodeType.ElementAccessExpression] = ChildrenWalkers.walkElementAccessExpressionChildren;
             this.childrenWalkers[NodeType.InvocationExpression] = ChildrenWalkers.walkInvocationExpressionChildren;
             this.childrenWalkers[NodeType.ObjectCreationExpression] = ChildrenWalkers.walkObjectCreationExpressionChildren;
             this.childrenWalkers[NodeType.AssignmentExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
@@ -278,6 +278,11 @@ module TypeScript {
 
         export function walkParenthesizedExpressionChildren(preAst: ParenthesizedExpression, walker: IAstWalker): void {
             walker.walk(preAst.expression);
+        }
+
+        export function walkElementAccessExpressionChildren(preAst: ElementAccessExpression, walker: IAstWalker): void {
+            walker.walk(preAst.expression);
+            walker.walk(preAst.argumentExpression);
         }
 
         export function walkBinaryExpressionChildren(preAst: BinaryExpression, walker: IAstWalker): void {

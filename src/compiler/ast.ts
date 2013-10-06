@@ -627,6 +627,29 @@ module TypeScript {
         }
     }
 
+    export class ElementAccessExpression extends AST {
+        constructor(public expression: AST,
+                    public argumentExpression: AST) {
+            super();
+            expression && (expression.parent = this);
+            argumentExpression && (argumentExpression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ElementAccessExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitElementAccessExpression(this);
+        }
+
+        public structuralEquals(ast: ElementAccessExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.argumentExpression, ast.argumentExpression, includingPosition);
+        }
+    }
+
     export class BinaryExpression extends AST {
         constructor(private _nodeType: NodeType,
                     public operand1: AST,

@@ -4917,7 +4917,7 @@ module TypeScript {
                     return this.resolveBinaryArithmeticExpression(<BinaryExpression>ast, enclosingDecl, context);
 
                 case NodeType.ElementAccessExpression:
-                    return this.resolveIndexExpression(<BinaryExpression>ast, enclosingDecl, context);
+                    return this.resolveElementAccessExpression(<ElementAccessExpression>ast, enclosingDecl, context);
 
                 case NodeType.LogicalOrExpression:
                     return this.resolveLogicalOrExpression(<BinaryExpression>ast, enclosingDecl, context);
@@ -5189,7 +5189,7 @@ module TypeScript {
                     return;
 
                 case NodeType.ElementAccessExpression:
-                    this.typeCheckIndexExpression(<BinaryExpression>ast, enclosingDecl, context);
+                    this.typeCheckElementAccessExpression(<ElementAccessExpression>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.LogicalOrExpression:
@@ -6830,27 +6830,27 @@ module TypeScript {
             return arraySymbol;
         }
 
-        private resolveIndexExpression(callEx: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var symbolAndDiagnostic = this.computeIndexExpressionSymbolAndDiagnostic(callEx, enclosingDecl, context);
+        private resolveElementAccessExpression(callEx: ElementAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            var symbolAndDiagnostic = this.computeElementAccessExpressionSymbolAndDiagnostic(callEx, enclosingDecl, context);
 
             if (this.canTypeCheckAST(callEx, context)) {
-                this.typeCheckIndexExpression(callEx, enclosingDecl, context, symbolAndDiagnostic);
+                this.typeCheckElementAccessExpression(callEx, enclosingDecl, context, symbolAndDiagnostic);
             }
 
             return symbolAndDiagnostic.symbol;
         }
 
-        private typeCheckIndexExpression(callEx: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, symbolAndDiagnostic: { symbol: PullSymbol; diagnostic?: Diagnostic } = null): void {
+        private typeCheckElementAccessExpression(callEx: ElementAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, symbolAndDiagnostic: { symbol: PullSymbol; diagnostic?: Diagnostic } = null): void {
             this.setTypeChecked(callEx, context);
-            var symbolAndDiagnostic = symbolAndDiagnostic || this.computeIndexExpressionSymbolAndDiagnostic(callEx, enclosingDecl, context);
+            var symbolAndDiagnostic = symbolAndDiagnostic || this.computeElementAccessExpressionSymbolAndDiagnostic(callEx, enclosingDecl, context);
 
             context.postDiagnostic(symbolAndDiagnostic.diagnostic);
         }
 
-        private computeIndexExpressionSymbolAndDiagnostic(callEx: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): { symbol: PullSymbol; diagnostic?: Diagnostic } {
+        private computeElementAccessExpressionSymbolAndDiagnostic(callEx: ElementAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): { symbol: PullSymbol; diagnostic?: Diagnostic } {
             // resolve the target
-            var targetSymbol = this.resolveAST(callEx.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            var indexType = this.resolveAST(callEx.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var targetSymbol = this.resolveAST(callEx.expression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            var indexType = this.resolveAST(callEx.argumentExpression, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             var targetTypeSymbol = targetSymbol.type;
 
@@ -6868,10 +6868,10 @@ module TypeScript {
 
             // if the index expression is a string literal or a numberic literal and the object expression has
             // a property with that name,  the property access is the type of that property
-            if (callEx.operand2.nodeType() === NodeType.StringLiteral || callEx.operand2.nodeType() === NodeType.NumericLiteral) {
-                var memberName = callEx.operand2.nodeType() === NodeType.StringLiteral
-                    ? stripStartAndEndQuotes((<StringLiteral>callEx.operand2).actualText)
-                    : (<NumericLiteral>callEx.operand2).value.toString();
+            if (callEx.argumentExpression.nodeType() === NodeType.StringLiteral || callEx.argumentExpression.nodeType() === NodeType.NumericLiteral) {
+                var memberName = callEx.argumentExpression.nodeType() === NodeType.StringLiteral
+                    ? stripStartAndEndQuotes((<StringLiteral>callEx.argumentExpression).actualText)
+                    : (<NumericLiteral>callEx.argumentExpression).value.toString();
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 
