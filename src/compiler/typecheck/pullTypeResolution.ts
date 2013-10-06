@@ -4335,9 +4335,9 @@ module TypeScript {
         private typeCheckIfStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST((<IfStatement>ast).cond, false, enclosingDecl, context);
-            this.resolveAST((<IfStatement>ast).thenBod, false, enclosingDecl, context);
-            this.resolveAST((<IfStatement>ast).elseBod, false, enclosingDecl, context);
+            this.resolveAST((<IfStatement>ast).condition, false, enclosingDecl, context);
+            this.resolveAST((<IfStatement>ast).statement, false, enclosingDecl, context);
+            this.resolveAST((<IfStatement>ast).elseClause, false, enclosingDecl, context);
         }
 
         private resolveBlock(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {

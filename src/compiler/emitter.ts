@@ -2474,13 +2474,13 @@ module TypeScript {
         public emitIfStatement(statement: IfStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("if (");
-            statement.cond.emit(this);
+            statement.condition.emit(this);
             this.writeToOutput(")");
 
-            this.emitBlockOrStatement(statement.thenBod);
+            this.emitBlockOrStatement(statement.statement);
 
-            if (statement.elseBod) {
-                if (statement.thenBod.nodeType() !== NodeType.Block) {
+            if (statement.elseClause) {
+                if (statement.statement.nodeType() !== NodeType.Block) {
                     this.writeLineToOutput("");
                     this.emitIndent();
                 }
@@ -2488,13 +2488,13 @@ module TypeScript {
                     this.writeToOutput(" ");
                 }
 
-                if (statement.elseBod.nodeType() === NodeType.IfStatement) {
+                if (statement.elseClause.nodeType() === NodeType.IfStatement) {
                     this.writeToOutput("else ");
-                    statement.elseBod.emit(this);
+                    statement.elseClause.emit(this);
                 }
                 else {
                     this.writeToOutput("else");
-                    this.emitBlockOrStatement(statement.elseBod);
+                    this.emitBlockOrStatement(statement.elseClause);
                 }
             }
             this.recordSourceMappingEnd(statement);

@@ -390,9 +390,9 @@ module TypeScript {
         }
 
         export function walkIfStatementChildren(preAst: IfStatement, walker: IAstWalker): void {
-            walker.walk(preAst.cond);
-            walker.walk(preAst.thenBod);
-            walker.walk(preAst.elseBod);
+            walker.walk(preAst.condition);
+            walker.walk(preAst.statement);
+            walker.walk(preAst.elseClause);
         }
 
         export function walkWhileStatementChildren(preAst: WhileStatement, walker: IAstWalker): void {

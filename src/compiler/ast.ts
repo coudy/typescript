@@ -1606,13 +1606,13 @@ module TypeScript {
     }
 
     export class IfStatement extends AST {
-        constructor(public cond: AST,
-                    public thenBod: AST,
-                    public elseBod: AST) {
+        constructor(public condition: AST,
+                    public statement: AST,
+                    public elseClause: AST) {
             super();
-            cond && (cond.parent = this);
-            thenBod && (thenBod.parent = this);
-            elseBod && (elseBod.parent = this);
+            condition && (condition.parent = this);
+            statement && (statement.parent = this);
+            elseClause && (elseClause.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -1629,9 +1629,9 @@ module TypeScript {
 
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.cond, ast.cond, includingPosition) &&
-                   structuralEquals(this.thenBod, ast.thenBod, includingPosition) &&
-                   structuralEquals(this.elseBod, ast.elseBod, includingPosition);
+                   structuralEquals(this.condition, ast.condition, includingPosition) &&
+                   structuralEquals(this.statement, ast.statement, includingPosition) &&
+                   structuralEquals(this.elseClause, ast.elseClause, includingPosition);
         }
     }
 
