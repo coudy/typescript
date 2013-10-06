@@ -697,6 +697,7 @@ module TypeScript {
         //
         // Base type checking
         //
+        /*
         public addImplementedType(implementedType: PullTypeSymbol): void {
             Debug.fail("addImplementedType");
         }
@@ -729,6 +730,7 @@ module TypeScript {
             // GTODO: resolve first?
             return this.referencedTypeSymbol.getTypesThatExplicitlyImplementThisType();
         }
+        */
 
         public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
             // GTODO: account for generic specialization?

@@ -7222,124 +7222,121 @@ module TypeScript {
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
             // otherwise, try to specialize to the type arguments above
-            //if (targetTypeSymbol.isGeneric()) {
 
-                var resolvedSignatures: PullSignatureSymbol[] = [];
-                var inferredTypeArgs: PullTypeSymbol[];
-                var specializedSignature: PullSignatureSymbol;
-                var typeParameters: PullTypeParameterSymbol[];
-                var typeConstraint: PullTypeSymbol = null;
-                var prevSpecializingToAny = context.specializingToAny;
-                var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
-                var beforeResolutionSignatures = signatures;
+            var resolvedSignatures: PullSignatureSymbol[] = [];
+            var inferredTypeArgs: PullTypeSymbol[];
+            var specializedSignature: PullSignatureSymbol;
+            var typeParameters: PullTypeParameterSymbol[];
+            var typeConstraint: PullTypeSymbol = null;
+            var prevSpecializingToAny = context.specializingToAny;
+            var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
+            var beforeResolutionSignatures = signatures;
 
-                for (var i = 0; i < signatures.length; i++) {
-                    typeParameters = signatures[i].getTypeParameters();
-                    couldNotAssignToConstraint = false;
-                    triedToInferTypeArgs = false;
+            for (var i = 0; i < signatures.length; i++) {
+                typeParameters = signatures[i].getTypeParameters();
+                couldNotAssignToConstraint = false;
+                triedToInferTypeArgs = false;
 
-                    if (signatures[i].isGeneric() && typeParameters.length && (!signatures[i].isFixed() || typeArgs)) {
-                        if (typeArgs) {
-                            inferredTypeArgs = typeArgs;
-                        }
-                        else if (callEx.arguments) {
-                            inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
-                            triedToInferTypeArgs = true;
-                        }
-                        else {
-                            inferredTypeArgs = [];
-                        }
+                if (signatures[i].isGeneric() && typeParameters.length && (!signatures[i].isFixed() || typeArgs)) {
+                    if (typeArgs) {
+                        inferredTypeArgs = typeArgs;
+                    }
+                    else if (callEx.arguments) {
+                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                        triedToInferTypeArgs = true;
+                    }
+                    else {
+                        inferredTypeArgs = [];
+                    }
 
-                        // if we could infer Args, or we have type arguments, then attempt to specialize the signature
-                        if (inferredTypeArgs) {
+                    // if we could infer Args, or we have type arguments, then attempt to specialize the signature
+                    if (inferredTypeArgs) {
 
-                            typeReplacementMap = {};
+                        typeReplacementMap = {};
 
-                            if (inferredTypeArgs.length) {
+                        if (inferredTypeArgs.length) {
 
-                                if (inferredTypeArgs.length != typeParameters.length) {
-                                    continue;
-                                }
-
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
-                                }
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    typeConstraint = typeParameters[j].getConstraint();
-
-                                    // test specialization type for assignment compatibility with the constraint
-                                    if (typeConstraint) {
-                                        if (typeConstraint.isTypeParameter()) {
-                                            for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
-                                                if (typeParameters[k] == typeConstraint) {
-                                                    typeConstraint = inferredTypeArgs[k];
-                                                }
-                                            }
-                                        }
-                                        // GTODO
-                                        //if (typeConstraint.isTypeParameter()) {
-                                        //    context.pushTypeSpecializationCache(typeReplacementMap);
-                                        //    typeConstraint = specializeType(typeConstraint, null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
-                                        //    context.popTypeSpecializationCache();
-                                        //}
-                                        context.isComparingSpecializedSignatures = true;
-                                        if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
-                                            couldNotAssignToConstraint = true;
-                                        }
-                                        context.isComparingSpecializedSignatures = false;
-
-                                        if (couldNotAssignToConstraint) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else {
-
-                                // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
-                                if (triedToInferTypeArgs) {
-
-                                    if (signatures[i].isFixed()) {
-                                            resolvedSignatures[resolvedSignatures.length] = signatures[i];
-                                    }
-                                    else {
-                                        continue;
-                                    }
-                                }
-
-                                context.specializingToAny = true;
-                            }
-
-                            if (couldNotAssignToConstraint) {
+                            if (inferredTypeArgs.length != typeParameters.length) {
                                 continue;
                             }
 
-                            context.isSpecializingSignatureTypeParameters = true;
-                            specializedSignature = instantiateSignature(signatures[i], typeReplacementMap);
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
+                            }
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeConstraint = typeParameters[j].getConstraint();
 
-                            context.isSpecializingSignatureTypeParameters = prevSpecializing;
-                            context.specializingToAny = prevSpecializingToAny;
+                                // test specialization type for assignment compatibility with the constraint
+                                if (typeConstraint) {
+                                    if (typeConstraint.isTypeParameter()) {
+                                        for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
+                                            if (typeParameters[k] == typeConstraint) {
+                                                typeConstraint = inferredTypeArgs[k];
+                                            }
+                                        }
+                                    }
+                                    // GTODO
+                                    //if (typeConstraint.isTypeParameter()) {
+                                    //    context.pushTypeSpecializationCache(typeReplacementMap);
+                                    //    typeConstraint = specializeType(typeConstraint, null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
+                                    //    context.popTypeSpecializationCache();
+                                    //}
+                                    context.isComparingSpecializedSignatures = true;
+                                    if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
+                                        constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
+                                        couldNotAssignToConstraint = true;
+                                    }
+                                    context.isComparingSpecializedSignatures = false;
 
-                            if (specializedSignature) {
-                                resolvedSignatures[resolvedSignatures.length] = specializedSignature;
+                                    if (couldNotAssignToConstraint) {
+                                        break;
+                                    }
+                                }
                             }
                         }
-                    }
-                    else {
-                        if (!(callEx.typeArguments && callEx.typeArguments.members.length)) {
-                            resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                        else {
+
+                            // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
+                            if (triedToInferTypeArgs) {
+
+                                if (signatures[i].isFixed()) {
+                                        resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                                }
+                                else {
+                                    continue;
+                                }
+                            }
+
+                            context.specializingToAny = true;
+                        }
+
+                        if (couldNotAssignToConstraint) {
+                            continue;
+                        }
+
+                        context.isSpecializingSignatureTypeParameters = true;
+                        specializedSignature = instantiateSignature(signatures[i], typeReplacementMap);
+
+                        context.isSpecializingSignatureTypeParameters = prevSpecializing;
+                        context.specializingToAny = prevSpecializingToAny;
+
+                        if (specializedSignature) {
+                            resolvedSignatures[resolvedSignatures.length] = specializedSignature;
                         }
                     }
-                //}
-                // PULLTODO: Try to avoid copying here...
-
-                if (signatures.length && !resolvedSignatures.length) {
-                    couldNotFindGenericOverload = true;
                 }
-
-                signatures = resolvedSignatures;
+                else {
+                    if (!(callEx.typeArguments && callEx.typeArguments.members.length)) {
+                        resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                    }
+                }
             }
+
+            if (signatures.length && !resolvedSignatures.length) {
+                couldNotFindGenericOverload = true;
+            }
+
+            signatures = resolvedSignatures;
 
             // the target should be a function
             //if (!targetTypeSymbol.isType()) {
