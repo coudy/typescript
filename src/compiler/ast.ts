@@ -212,6 +212,128 @@ module TypeScript {
         }
     }
 
+    export class Script extends AST {
+        private _moduleFlags = ModuleFlags.None;
+
+        constructor(public moduleElements: ASTList,
+                    private _fileName: string,
+                    public isExternalModule: boolean,
+                    public amdDependencies: string[]) {
+            super();
+            moduleElements && (moduleElements.parent = this);
+        }
+
+        public fileName(): string {
+            return this._fileName;
+        }
+
+        public isDeclareFile(): boolean {
+            return isDTSFile(this.fileName());
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.Script;
+        }
+
+        public getModuleFlags(): ModuleFlags {
+            return this._moduleFlags;
+        }
+
+        public setModuleFlags(flags: ModuleFlags): void {
+            this._moduleFlags = flags;
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitScript(this);
+        }
+
+        public structuralEquals(ast: Script, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.moduleElements, ast.moduleElements, includingPosition);
+        }
+    }
+
+    export class ImportDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+        constructor(public identifier: Identifier, public moduleReference: AST) {
+            super();
+            identifier && (identifier.parent = this);
+            moduleReference && (moduleReference.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ImportDeclaration;
+        }
+
+        public isDeclaration() { return true; }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public isExternalImportDeclaration() {
+            if (this.moduleReference.nodeType() == NodeType.Name) {
+                var text = (<Identifier>this.moduleReference).actualText;
+                return isQuoted(text);
+            }
+
+            return false;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitImportDeclaration(this);
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitImportDeclaration(this);
+        }
+
+        public getAliasName(aliasAST: AST = this.moduleReference): string {
+            if (aliasAST.nodeType() == NodeType.TypeRef) {
+                aliasAST = (<TypeReference>aliasAST).term;
+            }
+
+            if (aliasAST.nodeType() === NodeType.Name) {
+                return (<Identifier>aliasAST).actualText;
+            } else {
+                var dotExpr = <QualifiedName>aliasAST;
+                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
+            }
+        }
+
+        public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.moduleReference, ast.moduleReference, includingPosition);
+        }
+    }
+
+    export class ExportAssignment extends AST {
+        constructor(public identifier: Identifier) {
+            super();
+            identifier && (identifier.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ExportAssignment;
+        }
+
+        public structuralEquals(ast: ExportAssignment, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition);
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.setExportAssignmentIdentifier(this.identifier.actualText);
+        }
+    }
+
     export class Identifier extends AST {
         private _text: string;
 
@@ -878,87 +1000,6 @@ module TypeScript {
         }
     }
 
-    export class ImportDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-        constructor(public id: Identifier, public alias: AST) {
-            super();
-            id && (id.parent = this);
-            alias && (alias.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ImportDeclaration;
-        }
-
-        public isDeclaration() { return true; }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public isExternalImportDeclaration() {
-            if (this.alias.nodeType() == NodeType.Name) {
-                var text = (<Identifier>this.alias).actualText;
-                return isQuoted(text);
-            }
-
-            return false;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitImportDeclaration(this);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitImportDeclaration(this);
-        }
-
-        public getAliasName(aliasAST: AST = this.alias): string {
-            if (aliasAST.nodeType() == NodeType.TypeRef) {
-                aliasAST = (<TypeReference>aliasAST).term;
-            }
-
-            if (aliasAST.nodeType() === NodeType.Name) {
-                return (<Identifier>aliasAST).actualText;
-            } else {
-                var dotExpr = <QualifiedName>aliasAST;
-                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
-            }
-        }
-
-        public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
-                structuralEquals(this.id, ast.id, includingPosition) &&
-                structuralEquals(this.alias, ast.alias, includingPosition);
-        }
-    }
-
-    export class ExportAssignment extends AST {
-        constructor(public id: Identifier) {
-            super();
-            id && (id.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ExportAssignment;
-        }
-
-        public structuralEquals(ast: ExportAssignment, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.id, ast.id, includingPosition);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.setExportAssignmentIdentifier(this.id.actualText);
-        }
-    }
-
     export class VariableDeclarator extends AST {
         public constantValue: number = null;
         private _varFlags = VariableFlags.None;
@@ -1147,47 +1188,6 @@ module TypeScript {
         public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
 
         public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) !== FunctionFlags.None; }
-    }
-
-    export class Script extends AST {
-        private _moduleFlags = ModuleFlags.None;
-
-        constructor(public moduleElements: ASTList,
-                    private _fileName: string,
-                    public isExternalModule: boolean,
-                    public amdDependencies: string[]) {
-            super();
-            moduleElements && (moduleElements.parent = this);
-        }
-
-        public fileName(): string {
-            return this._fileName;
-        }
-
-        public isDeclareFile(): boolean {
-            return isDTSFile(this.fileName());
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.Script;
-        }
-
-        public getModuleFlags(): ModuleFlags {
-            return this._moduleFlags;
-        }
-
-        public setModuleFlags(flags: ModuleFlags): void {
-            this._moduleFlags = flags;
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitScript(this);
-        }
-
-        public structuralEquals(ast: Script, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.moduleElements, ast.moduleElements, includingPosition);
-        }
     }
 
     export class ModuleDeclaration extends AST {

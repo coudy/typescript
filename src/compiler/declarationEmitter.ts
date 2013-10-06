@@ -720,7 +720,7 @@ module TypeScript {
                     this.declFile.Write("export ");
                 }
                 this.declFile.Write("import ");
-                this.declFile.Write(importDeclAST.id.actualText + " = ");
+                this.declFile.Write(importDeclAST.identifier.actualText + " = ");
                 if (importDeclAST.isExternalImportDeclaration()) {
                     this.declFile.WriteLine("require(" + importDeclAST.getAliasName() + ");");
                 }
@@ -824,7 +824,7 @@ module TypeScript {
         private emitDeclarationsForExportAssignment(ast: ExportAssignment) {
             this.emitIndent();
             this.declFile.Write("export = ");
-            this.declFile.Write(ast.id.actualText);
+            this.declFile.Write(ast.identifier.actualText);
             this.declFile.WriteLine(";");
         }
 

@@ -378,7 +378,7 @@ module Services {
                         return (<TypeScript.FunctionDeclaration>parent).name === current;
 
                     case TypeScript.NodeType.ImportDeclaration:
-                        return (<TypeScript.ImportDeclaration>parent).id === current;
+                        return (<TypeScript.ImportDeclaration>parent).identifier === current;
 
                     case TypeScript.NodeType.VariableDeclarator:
                         var varDeclarator = <TypeScript.VariableDeclarator>parent;

@@ -479,12 +479,12 @@ module TypeScript {
         }
 
         export function walkImportDeclChildren(preAst: ImportDeclaration, walker: IAstWalker): void {
-            walker.walk(preAst.id);
-            walker.walk(preAst.alias);
+            walker.walk(preAst.identifier);
+            walker.walk(preAst.moduleReference);
         }
 
         export function walkExportAssignmentChildren(preAst: ExportAssignment, walker: IAstWalker): void {
-            walker.walk(preAst.id);
+            walker.walk(preAst.identifier);
         }
 
         export function walkWithStatementChildren(preAst: WithStatement, walker: IAstWalker): void {

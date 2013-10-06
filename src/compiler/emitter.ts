@@ -231,8 +231,8 @@ module TypeScript {
                 } else {
                     this.writeToOutput("var ");
                 }
-                this.writeToOutput(importDeclAST.id.actualText + " = ");
-                var aliasAST = importDeclAST.alias.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.alias).term : importDeclAST.alias;
+                this.writeToOutput(importDeclAST.identifier.actualText + " = ");
+                var aliasAST = importDeclAST.moduleReference.nodeType() === NodeType.TypeRef ? (<TypeReference>importDeclAST.moduleReference).term : importDeclAST.moduleReference;
 
                 if (isExternalModuleReference) {
                     this.writeToOutput("require(" + (<Identifier>aliasAST).actualText + ")");
@@ -250,7 +250,7 @@ module TypeScript {
             }
 
             if (needsPropertyAssignment) {
-                this.writeToOutputWithSourceMapRecord(moduleNamePrefix + importDeclAST.id.actualText + " = " + importDeclAST.id.actualText, importDeclAST);
+                this.writeToOutputWithSourceMapRecord(moduleNamePrefix + importDeclAST.identifier.actualText + " = " + importDeclAST.identifier.actualText, importDeclAST);
                 this.writeToOutput(";");
             }
             this.emitComments(importDeclAST, false);

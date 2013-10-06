@@ -1592,7 +1592,7 @@ module TypeScript {
             var importDecl = this.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
-            var aliasExpr = importStatementAST.alias.nodeType() == NodeType.TypeRef ? (<TypeReference>importStatementAST.alias).term : importStatementAST.alias;
+            var aliasExpr = importStatementAST.moduleReference.nodeType() == NodeType.TypeRef ? (<TypeReference>importStatementAST.moduleReference).term : importStatementAST.moduleReference;
             var declPath = enclosingDecl.getParentPath();
             var aliasedType: PullTypeSymbol = null;
 
@@ -1653,14 +1653,14 @@ module TypeScript {
             // reference
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
-                var modPath = (<Identifier>importStatementAST.alias).text();
+                var modPath = (<Identifier>importStatementAST.moduleReference).text();
                 var declPath = enclosingDecl.getParentPath();
 
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
 
                 if (!aliasedType) {
                     this.semanticInfoChain.addDiagnostic(
-                        diagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.alias).actualText]));
+                        diagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.moduleReference).actualText]));
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
             } else {
@@ -1683,7 +1683,7 @@ module TypeScript {
                 importDeclSymbol.setAssignedTypeSymbol(aliasedType);
 
                 // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
-                this.setSymbolForAST(importStatementAST.alias, aliasedType, null);
+                this.setSymbolForAST(importStatementAST.moduleReference, aliasedType, null);
             }
 
             importDeclSymbol.setResolved();
@@ -1712,7 +1712,7 @@ module TypeScript {
                         DiagnosticCode.Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set, null));
                 }
 
-                var modPath = (<Identifier>importStatementAST.alias).text();
+                var modPath = (<Identifier>importStatementAST.moduleReference).text();
                 if (enclosingDecl.kind === PullElementKind.DynamicModule) {
                     var ast = this.getASTForDecl(enclosingDecl);
                     if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
@@ -1771,13 +1771,13 @@ module TypeScript {
         }
 
         private resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            if (exportAssignmentAST.id.isMissing()) {
+            if (exportAssignmentAST.identifier.isMissing()) {
                 // No point trying to resolve an export assignment without an actual identifier.
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             // get the identifier text
-            var id = exportAssignmentAST.id.text();
+            var id = exportAssignmentAST.identifier.text();
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
             var containerSymbol: PullSymbol = null;
