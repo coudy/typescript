@@ -1382,9 +1382,9 @@ module TypeScript {
     }
 
     export class ObjectType extends AST {
-        constructor(public members: ASTList) {
+        constructor(public typeMembers: ASTList) {
             super();
-            members && (members.parent = this);
+            typeMembers && (typeMembers.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -1399,9 +1399,9 @@ module TypeScript {
             return false;
         }
 
-        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
+        public structuralEquals(ast: ObjectType, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.members, ast.members, includingPosition);
+                structuralEquals(this.typeMembers, ast.typeMembers, includingPosition);
         }
     }
 

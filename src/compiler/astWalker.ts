@@ -466,7 +466,7 @@ module TypeScript {
         }
 
         export function walkObjectTypeChildren(preAst: ObjectType, walker: IAstWalker): void {
-            walker.walk(preAst.members);
+            walker.walk(preAst.typeMembers);
         }
 
         export function walkArrayTypeChildren(preAst: ArrayType, walker: IAstWalker): void {

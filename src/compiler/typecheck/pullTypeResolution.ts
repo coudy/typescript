@@ -2088,11 +2088,11 @@ module TypeScript {
             interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
             Debug.assert(interfaceSymbol);
 
-            if (objectType.members) {
+            if (objectType.typeMembers) {
                 var memberDecl: PullDecl = null;
                 var memberSymbol: PullSymbol = null;
                 var memberType: PullTypeSymbol = null;
-                var typeMembers = <ASTList> objectType.members;
+                var typeMembers = objectType.typeMembers;
 
                 for (var i = 0; i < typeMembers.members.length; i++) {
                     memberDecl = this.getDeclForAST(typeMembers.members[i]);
