@@ -1242,7 +1242,6 @@ module TypeScript {
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
-        public classDecl: ClassDeclaration = null;
 
         constructor(public name: Identifier,
                     public typeParameters: ASTList,

@@ -3239,8 +3239,19 @@ module TypeScript {
                 inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
-        private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
+        private getEnclosingClassDeclaration(ast: AST): ClassDeclaration {
+            while (ast) {
+                if (ast.nodeType() === NodeType.ClassDeclaration) {
+                    return <ClassDeclaration>ast;
+                }
 
+                ast = ast.parent;
+            }
+
+            return null;
+        }
+
+        private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
@@ -3263,7 +3274,7 @@ module TypeScript {
                 }
 
                 if (isConstructor && !signature.inResolution) {
-                    var classAST = funcDeclAST.classDecl;
+                    var classAST = this.getEnclosingClassDeclaration(funcDeclAST);
 
                     if (classAST) {
                         var classDecl = this.getDeclForAST(classAST);

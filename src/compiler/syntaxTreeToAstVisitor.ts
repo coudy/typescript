@@ -399,8 +399,6 @@ module TypeScript {
                     var funcDecl = <FunctionDeclaration>member;
 
                     if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                        funcDecl.classDecl = result;
-
                         result.constructorDecl = funcDecl;
                     }
                 }
@@ -1108,7 +1106,6 @@ module TypeScript {
 
             funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
             funcDecl.hint = "_construct";
-            funcDecl.classDecl = null;
 
             var result = new TypeReference(funcDecl);
             this.copySpan(funcDecl, result);
