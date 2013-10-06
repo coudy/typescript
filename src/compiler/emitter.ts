@@ -1723,7 +1723,7 @@ module TypeScript {
 
             this.emitComments(list, true);
 
-            var emitPropertyAssignmentsAfterSuperCall = this.thisClassNode.extendsList && this.thisClassNode.extendsList.members.length > 0;
+            var emitPropertyAssignmentsAfterSuperCall = getExtendsHeritageClause(this.thisClassNode.heritageClauses) !== null;
             var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
             var lastEmittedNode: AST = null;
 
@@ -1861,7 +1861,7 @@ module TypeScript {
             this.recordSourceMappingStart(classDecl);
             this.writeToOutput("var " + className);
 
-            var hasBaseClass = classDecl.extendsList && classDecl.extendsList.members.length;
+            var hasBaseClass = getExtendsHeritageClause(classDecl.heritageClauses) !== null;
             var baseTypeReference: TypeReference = null;
             var varDecl: VariableDeclarator = null;
 
@@ -1875,7 +1875,7 @@ module TypeScript {
             this.indenter.increaseIndent();
 
             if (hasBaseClass) {
-                baseTypeReference = <TypeReference>classDecl.extendsList.members[0];
+                baseTypeReference = <TypeReference>getExtendsHeritageClause(classDecl.heritageClauses).typeNames.members[0];
                 this.emitIndent();
                 this.writeLineToOutput("__extends(" + className + ", _super);");
             }
@@ -2038,7 +2038,7 @@ module TypeScript {
                 else if (moduleElement.nodeType() === NodeType.ClassDeclaration) {
                     var classDeclaration = <ClassDeclaration>moduleElement;
 
-                    if (!hasFlag(classDeclaration.getVarFlags(), VariableFlags.Ambient) && classDeclaration.extendsList && classDeclaration.extendsList.members.length > 0) {
+                    if (!hasFlag(classDeclaration.getVarFlags(), VariableFlags.Ambient) && getExtendsHeritageClause(classDeclaration.heritageClauses) !== null) {
                         return true;
                     }
                 }

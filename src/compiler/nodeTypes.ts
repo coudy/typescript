@@ -140,6 +140,8 @@ module TypeScript {
         CaseSwitchClause,
         DefaultSwitchClause,
         CatchClause,
+        ExtendsHeritageClause,
+        ImplementsHeritageClause,
 
         Comment,
     }

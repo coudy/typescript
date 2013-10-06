@@ -1236,21 +1236,40 @@ module TypeScript {
         }
     }
 
+    export class HeritageClause extends AST {
+        constructor(private _nodeType: NodeType, public typeNames: ASTList   ) {
+            super();
+            typeNames && (typeNames.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return false;
+        }
+
+        public structuralEquals(ast: HeritageClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.typeNames, ast.typeNames, includingPosition);
+        }
+
+    }
+
     export class ClassDeclaration extends AST {
         public constructorDecl: FunctionDeclaration = null;
         private _varFlags = VariableFlags.None;
 
         constructor(public name: Identifier,
                     public typeParameters: ASTList,
-                    public extendsList: ASTList,
-                    public implementsList: ASTList,
+                    public heritageClauses: ASTList,
                     public members: ASTList,
                     public endingToken: ASTSpan) {
             super();
             name && (name.parent = this);
             typeParameters && (typeParameters.parent = this);
-            extendsList && (extendsList.parent = this);
-            implementsList && (implementsList.parent = this);
+            heritageClauses && (heritageClauses.parent = this);
             members && (members.parent = this);
         }
 
@@ -1285,8 +1304,7 @@ module TypeScript {
                    structuralEquals(this.name, ast.name, includingPosition) &&
                    structuralEquals(this.members, ast.members, includingPosition) &&
                    structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                   structuralEquals(this.extendsList, ast.extendsList, includingPosition) &&
-                   structuralEquals(this.implementsList, ast.implementsList, includingPosition);
+                   structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
         }
     }
 
@@ -1295,13 +1313,13 @@ module TypeScript {
 
         constructor(public name: Identifier,
                     public typeParameters: ASTList,
-                    public members: ASTList,
-                    public extendsList: ASTList) {
+                    public heritageClauses: ASTList,
+                    public members: ASTList) {
             super();
             name && (name.parent = this);
             typeParameters && (typeParameters.parent = this);
             members && (members.parent = this);
-            extendsList && (extendsList.parent = this);
+            heritageClauses && (heritageClauses.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -1335,7 +1353,7 @@ module TypeScript {
                 structuralEquals(this.name, ast.name, includingPosition) &&
                 structuralEquals(this.members, ast.members, includingPosition) &&
                 structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                structuralEquals(this.extendsList, ast.extendsList, includingPosition);
+                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
         }
     }
 
@@ -2361,5 +2379,23 @@ module TypeScript {
 
         TypeScript.getAstWalkerFactory().walk(script, pre);
         return top;
+    }
+
+    export function getExtendsHeritageClause(clauses: ASTList): HeritageClause {
+        if (!clauses) {
+            return null;
+        }
+
+        return ArrayUtilities.firstOrDefault(<HeritageClause[]>clauses.members,
+            c => c.typeNames.members.length > 0 && c.nodeType() === NodeType.ExtendsHeritageClause);
+    }
+
+    export function getImplementsHeritageClause(clauses: ASTList): HeritageClause {
+        if (!clauses) {
+            return null;
+        }
+
+        return ArrayUtilities.firstOrDefault(<HeritageClause[]>clauses.members,
+            c => c.typeNames.members.length > 0 && c.nodeType() === NodeType.ImplementsHeritageClause);
     }
 }

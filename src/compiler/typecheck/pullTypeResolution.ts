@@ -1083,7 +1083,12 @@ module TypeScript {
         //
         // Resolve a reference type (class or interface) type parameters, implements and extends clause, members, call, construct and index signatures
         //
-        private resolveReferenceTypeDeclaration(classOrInterface: AST, name: Identifier, extendsList: ASTList, implementsList: ASTList, context: PullTypeResolutionContext): PullSymbol {
+        private resolveReferenceTypeDeclaration(
+            classOrInterface: AST,
+            name: Identifier,
+            heritageClauses: ASTList,
+            context: PullTypeResolutionContext): PullSymbol {
+
             var typeDecl = this.getDeclForAST(classOrInterface);
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
@@ -1125,18 +1130,19 @@ module TypeScript {
             }
 
             // Extends list
-            if (extendsList) {
+            var extendsClause = getExtendsHeritageClause(heritageClauses);
+            if (extendsClause) {
                 var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
                 if (typeDeclIsClass) {
                     context.isResolvingClassExtendedType = true;
                 }
 
-                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < extendsList.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < extendsClause.typeNames.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var parentType = this.resolveTypeReference(<TypeReference>extendsList.members[i], typeDecl, context);
+                    var parentType = this.resolveTypeReference(<TypeReference>extendsClause.typeNames.members[i], typeDecl, context);
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
-                        this.setSymbolForAST(extendsList.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
+                        this.setSymbolForAST(extendsClause.typeNames.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
 
                         // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
                         if (!typeDeclSymbol.hasBase(parentType) && !parentType.hasBase(typeDeclSymbol)) {
@@ -1148,30 +1154,33 @@ module TypeScript {
                                 specializations[j].addExtendedType(parentType);
                             }
                         }
-                    } else if (parentType && !this.getSymbolForAST(extendsList.members[i], context)) {
-                        this.setSymbolForAST(extendsList.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
+                    }
+                    else if (parentType && !this.getSymbolForAST(extendsClause.typeNames.members[i], context)) {
+                        this.setSymbolForAST(extendsClause.typeNames.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
 
                 context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
             }
 
-            if (implementsList && typeDeclIsClass) {
-                var extendsCount = extendsList ? extendsList.members.length : 0;
-                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < implementsList.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
+            var implementsClause = getImplementsHeritageClause(heritageClauses);
+            if (implementsClause && typeDeclIsClass) {
+                var extendsCount = extendsClause ? extendsClause.typeNames.members.length : 0;
+                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < implementsClause.typeNames.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var implementedTypeAST = <TypeReference>implementsList.members[i - extendsCount];
+                    var implementedTypeAST = <TypeReference>implementsClause.typeNames.members[i - extendsCount];
                     var implementedType = this.resolveTypeReference(implementedTypeAST, typeDecl, context);
 
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
-                        this.setSymbolForAST(implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
+                        this.setSymbolForAST(implementsClause.typeNames.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
 
                         // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
                         if (!typeDeclSymbol.hasBase(implementedType) && !implementedType.hasBase(typeDeclSymbol)) {
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
-                    } else if (implementedType && !this.getSymbolForAST(implementsList.members[i - extendsCount], context)) {
-                        this.setSymbolForAST(implementsList.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
+                    }
+                    else if (implementedType && !this.getSymbolForAST(implementsClause.typeNames.members[i - extendsCount], context)) {
+                        this.setSymbolForAST(implementsClause.typeNames.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
             }
@@ -1243,7 +1252,7 @@ module TypeScript {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (!classDeclSymbol.isResolved) {
-                this.resolveReferenceTypeDeclaration(classDeclAST, classDeclAST.name, classDeclAST.extendsList, classDeclAST.implementsList, context);
+                this.resolveReferenceTypeDeclaration(classDeclAST, classDeclAST.name, classDeclAST.heritageClauses, context);
 
                 var constructorMethod = classDeclSymbol.getConstructorMethod();
                 var extendedTypes = classDeclSymbol.getExtendedTypes();
@@ -1380,7 +1389,7 @@ module TypeScript {
             this.resolveAST(classDeclAST.members, false, classDecl, context);
 
             this.typeCheckTypeParametersOfTypeDeclaration(classDeclAST, context);
-            this.typeCheckBases(classDeclAST, classDeclAST.name, classDeclAST.extendsList, classDeclAST.implementsList, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
+            this.typeCheckBases(classDeclAST, classDeclAST.name, classDeclAST.heritageClauses, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
 
             if (!classDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
@@ -1415,7 +1424,7 @@ module TypeScript {
         }
 
         private resolveInterfaceDeclaration(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            this.resolveReferenceTypeDeclaration(interfaceDeclAST, interfaceDeclAST.name, interfaceDeclAST.extendsList, /*implementsList:*/null, context);
+            this.resolveReferenceTypeDeclaration(interfaceDeclAST, interfaceDeclAST.name, interfaceDeclAST.heritageClauses, context);
 
             var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
@@ -1442,7 +1451,7 @@ module TypeScript {
             this.resolveAST(interfaceDeclAST.members, false, interfaceDecl, context);
 
             this.typeCheckTypeParametersOfTypeDeclaration(interfaceDeclAST, context);
-            this.typeCheckBases(interfaceDeclAST, interfaceDeclAST.name, interfaceDeclAST.extendsList, /*implementsList:*/null, interfaceDeclSymbol, this.getEnclosingDecl(interfaceDecl), context);
+            this.typeCheckBases(interfaceDeclAST, interfaceDeclAST.name, interfaceDeclAST.heritageClauses, interfaceDeclSymbol, this.getEnclosingDecl(interfaceDecl), context);
 
             if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
@@ -8549,17 +8558,15 @@ module TypeScript {
                 (source.kind & (PullElementKind.Interface | PullElementKind.Class)) &&
                 (target.kind & (PullElementKind.Interface | PullElementKind.Class))) {
                 var sourceDecls = source.getDeclarations();
-                    var sourceAST: ClassDeclaration = null;
                 var extendsSymbol: PullTypeSymbol = null;
-                var extendsList: ASTList = null;
 
                 for (var i = 0; i < sourceDecls.length; i++) {
-                    sourceAST = <ClassDeclaration>this.semanticInfoChain.getASTForDecl(sourceDecls[i]);
-                    extendsList = sourceAST.extendsList;
+                    var sourceAST = <ClassDeclaration>this.semanticInfoChain.getASTForDecl(sourceDecls[i]);
+                    var extendsClause = getExtendsHeritageClause(sourceAST.heritageClauses);
 
-                    if (extendsList && extendsList.members && extendsList.members.length) {
-                        for (var j = 0; j < extendsList.members.length; j++) {
-                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsList.members[j]);
+                    if (extendsClause) {
+                        for (var j = 0; j < extendsClause.typeNames.members.length; j++) {
+                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsClause.typeNames.members[j]);
 
                             if (extendsSymbol && (extendsSymbol == target || this.sourceExtendsTarget(extendsSymbol, target, context))) {
                                 return true;
@@ -11295,31 +11302,34 @@ module TypeScript {
                 this.baseListPrivacyErrorReporter(classOrInterface, typeSymbol, baseDeclAST, isExtendedType, errorSymbol, context));
         }
 
-        private typeCheckBases(classOrInterface: AST, name: Identifier, extendsList: ASTList, implementsList: ASTList, typeSymbol: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            if (!extendsList && !implementsList) {
+        private typeCheckBases(classOrInterface: AST, name: Identifier, heritageClauses: ASTList, typeSymbol: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            var extendsClause = getExtendsHeritageClause(heritageClauses);
+            var implementsClause = getImplementsHeritageClause(heritageClauses);
+            if (!extendsClause && !implementsClause) {
                 return;
             }
 
             var typeDeclIsClass = classOrInterface.nodeType() === NodeType.ClassDeclaration;
 
-            if (extendsList) {
-                for (var i = 0; i < extendsList.members.length; i++) {
-                    this.typeCheckBase(classOrInterface, name, typeSymbol, <TypeReference>extendsList.members[i], /*isExtendedType:*/ true, enclosingDecl, context);
+            if (extendsClause) {
+                for (var i = 0; i < extendsClause.typeNames.members.length; i++) {
+                    this.typeCheckBase(classOrInterface, name, typeSymbol, <TypeReference>extendsClause.typeNames.members[i], /*isExtendedType:*/ true, enclosingDecl, context);
                 }
             }
 
             if (typeSymbol.isClass()) {
-                if (implementsList) {
-                    for (var i = 0; i < implementsList.members.length; i++) {
-                        this.typeCheckBase(classOrInterface, name, typeSymbol, <TypeReference>implementsList.members[i], /*isExtendedType:*/false, enclosingDecl, context);
+                if (implementsClause) {
+                    for (var i = 0; i < implementsClause.typeNames.members.length; i++) {
+                        this.typeCheckBase(classOrInterface, name, typeSymbol, <TypeReference>implementsClause.typeNames.members[i], /*isExtendedType:*/false, enclosingDecl, context);
                     }
                 }
             }
             else {
-                if (implementsList) {
-                    context.postDiagnostic(diagnosticFromAST(implementsList, DiagnosticCode.An_interface_cannot_implement_another_type));
+                if (implementsClause) {
+                    // Unnecessary to report this.  The parser already did.
+                    // context.postDiagnostic(diagnosticFromAST(implementsClause, DiagnosticCode.An_interface_cannot_implement_another_type));
                 }
-                if (extendsList && extendsList.members.length > 1 && !typeSymbol.hasBaseTypeConflict()) {
+                if (extendsClause && extendsClause.typeNames.members.length > 1 && !typeSymbol.hasBaseTypeConflict()) {
                     this.checkPropertyTypeIdentityBetweenBases(classOrInterface, name, typeSymbol, context);
                 }
             }

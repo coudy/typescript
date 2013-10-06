@@ -2955,17 +2955,17 @@ module TypeScript {
             for (var i = 0; i < decls.length; i++) {
                 typeDecl = decls[i];
                 var typeAST = resolver.semanticInfoChain.getASTForDecl(typeDecl);
-                var extendsList = typeAST.nodeType() === NodeType.ClassDeclaration
-                    ? (<ClassDeclaration>typeAST).extendsList
-                    : (<InterfaceDeclaration>typeAST).extendsList;
+                var extendsList: HeritageClause = typeAST.nodeType() === NodeType.ClassDeclaration
+                    ? getExtendsHeritageClause((<ClassDeclaration>typeAST).heritageClauses)
+                    : getExtendsHeritageClause((<InterfaceDeclaration>typeAST).heritageClauses);
 
                 // if this is an 'extended' interface declaration, the AST's extends list may not match
                 if (extendsList) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.fileName());
-                    for (var j = 0; j < extendsList.members.length; j++) {
+                    for (var j = 0; j < extendsList.typeNames.members.length; j++) {
                         context.pushTypeSpecializationCache(typeReplacementMap);
-                        extendTypeSymbol = resolver.resolveTypeReference(<TypeReference>extendsList.members[j], typeDecl, context);
+                        extendTypeSymbol = resolver.resolveTypeReference(<TypeReference>extendsList.typeNames.members[j], typeDecl, context);
                         resolver.setUnitPath(unitPath);
                         context.popTypeSpecializationCache();
 
@@ -2981,16 +2981,16 @@ module TypeScript {
             for (var i = 0; i < decls.length; i++) {
                 typeDecl = decls[i];
                 var typeAST = resolver.semanticInfoChain.getASTForDecl(typeDecl);
-                var implementsList = typeAST.nodeType() === NodeType.ClassDeclaration
-                    ? (<ClassDeclaration>typeAST).implementsList
+                var implementsClause = typeAST.nodeType() === NodeType.ClassDeclaration
+                    ? getImplementsHeritageClause((<ClassDeclaration>typeAST).heritageClauses)
                     : null;
 
-                if (implementsList) {
+                if (implementsClause) {
                     unitPath = resolver.getUnitPath();
                     resolver.setUnitPath(typeDecl.fileName());
-                    for (var j = 0; j < implementsList.members.length; j++) {
+                    for (var j = 0; j < implementsClause.typeNames.members.length; j++) {
                         context.pushTypeSpecializationCache(typeReplacementMap);
-                        implementedTypeSymbol = resolver.resolveTypeReference(<TypeReference>implementsList.members[j], typeDecl, context);
+                        implementedTypeSymbol = resolver.resolveTypeReference(<TypeReference>implementsClause.typeNames.members[j], typeDecl, context);
                         resolver.setUnitPath(unitPath);
                         context.popTypeSpecializationCache();
 

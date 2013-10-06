@@ -189,6 +189,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.Script] = ChildrenWalkers.walkScriptChildren;
             this.childrenWalkers[NodeType.ClassDeclaration] = ChildrenWalkers.walkClassDeclChildren;
             this.childrenWalkers[NodeType.InterfaceDeclaration] = ChildrenWalkers.walkInterfaceDeclerationChildren;
+            this.childrenWalkers[NodeType.ExtendsHeritageClause] = ChildrenWalkers.walkHeritageClauseChildren;
+            this.childrenWalkers[NodeType.ImplementsHeritageClause] = ChildrenWalkers.walkHeritageClauseChildren;
             this.childrenWalkers[NodeType.ObjectType] = ChildrenWalkers.walkObjectTypeChildren;
             this.childrenWalkers[NodeType.ArrayType] = ChildrenWalkers.walkArrayTypeChildren;
             this.childrenWalkers[NodeType.ModuleDeclaration] = ChildrenWalkers.walkModuleDeclChildren;
@@ -439,8 +441,7 @@ module TypeScript {
         export function walkClassDeclChildren(preAst: ClassDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.name);
             walker.walk(preAst.typeParameters);
-            walker.walk(preAst.extendsList);
-            walker.walk(preAst.implementsList);
+            walker.walk(preAst.heritageClauses);
             walker.walk(preAst.members);
         }
 
@@ -448,10 +449,14 @@ module TypeScript {
             walker.walk(preAst.moduleElements);
         }
 
+        export function walkHeritageClauseChildren(preAst: HeritageClause, walker: IAstWalker): void {
+            walker.walk(preAst.typeNames);
+        }
+
         export function walkInterfaceDeclerationChildren(preAst: InterfaceDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.name);
             walker.walk(preAst.typeParameters);
-            walker.walk(preAst.extendsList);
+            walker.walk(preAst.heritageClauses);
             walker.walk(preAst.members);
         }
 

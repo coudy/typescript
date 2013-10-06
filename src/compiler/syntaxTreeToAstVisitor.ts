@@ -381,18 +381,7 @@ module TypeScript {
             this.movePast(node.identifier);
 
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-            var extendsList: ASTList = null;
-            var implementsList: ASTList = null;
-
-            for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
-                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
-                if (heritageClause.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword) {
-                    extendsList = heritageClause.accept(this);
-                }
-                else {
-                    implementsList = heritageClause.accept(this);
-                }
-            }
+            var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
 
             this.movePast(node.openBraceToken);
             var members = this.visitSyntaxList(node.classElements);
@@ -401,7 +390,7 @@ module TypeScript {
             var closeBraceSpan = new ASTSpan();
             this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
-            var result = new ClassDeclaration(name, typeParameters, extendsList, implementsList, members, closeBraceSpan);
+            var result = new ClassDeclaration(name, typeParameters, heritageClauses, members, closeBraceSpan);
             this.setCommentsAndSpan(result, start, node);
 
             for (var i = 0; i < members.members.length; i++) {
@@ -438,25 +427,14 @@ module TypeScript {
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
-
-            var extendsList: ASTList = null;
-
-            for (var i = 0, n = node.heritageClauses.childCount(); i < n; i++) {
-                var heritageClause = <HeritageClauseSyntax>node.heritageClauses.childAt(i);
-                if (i === 0) {
-                    extendsList = heritageClause.accept(this);
-                }
-                else {
-                    this.movePast(heritageClause);
-                }
-            }
+            var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
 
             this.movePast(node.body.openBraceToken);
             var members = this.visitSeparatedSyntaxList(node.body.typeMembers);
 
             this.movePast(node.body.closeBraceToken);
 
-            var result = new InterfaceDeclaration(name, typeParameters, members, extendsList);
+            var result = new InterfaceDeclaration(name, typeParameters, heritageClauses, members);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
@@ -466,7 +444,7 @@ module TypeScript {
             return result;
         }
 
-        public visitHeritageClause(node: HeritageClauseSyntax): ASTList {
+        public visitHeritageClause(node: HeritageClauseSyntax): HeritageClause {
             var start = this.position;
             var array = new Array(node.typeNames.nonSeparatorCount());
 
@@ -484,7 +462,12 @@ module TypeScript {
             var result = new ASTList(array);
             this.setSpan(result, start, node);
 
-            return result;
+            var heritageClause = new HeritageClause(
+                node.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword ? NodeType.ExtendsHeritageClause : NodeType.ImplementsHeritageClause,
+                result);
+            this.setSpan(heritageClause, start, node);
+
+            return heritageClause;
         }
 
         private getModuleNames(node: ModuleDeclarationSyntax): Identifier[] {
@@ -2419,8 +2402,8 @@ module TypeScript {
             return result;
         }
 
-        public visitHeritageClause(node: HeritageClauseSyntax): ASTList {
-            var result: ASTList = this.getAndMovePastAST(node);
+        public visitHeritageClause(node: HeritageClauseSyntax): HeritageClause {
+            var result: HeritageClause = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitHeritageClause(node);
                 this.setAST(node, result);

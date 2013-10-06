@@ -620,8 +620,7 @@ module TypeScript {
             this.declFile.Write(className);
             this.pushDeclarationContainer(classDecl);
             this.emitTypeParameters(classDecl.typeParameters);
-            this.emitBaseList(classDecl.extendsList, true);
-            this.emitBaseList(classDecl.implementsList, false);
+            this.emitHeritageClauses(classDecl.heritageClauses);
             this.declFile.WriteLine(" {");
 
             this.indenter.increaseIndent();
@@ -636,6 +635,18 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.WriteLine("}");
+        }
+
+        private emitHeritageClauses(clauses: ASTList): void {
+            if (clauses) {
+                for (var i = 0, n = clauses.members.length; i < n; i++) {
+                    this.emitHeritageClause(<HeritageClause>clauses.members[i]);
+                }
+            }
+        }
+
+        private emitHeritageClause(clause: HeritageClause) {
+            this.emitBaseList(clause.typeNames, clause.nodeType() === NodeType.ExtendsHeritageClause);
         }
 
         private emitTypeParameters(typeParams: ASTList, funcSignature?: PullSignatureSymbol) {
@@ -683,7 +694,7 @@ module TypeScript {
             this.declFile.Write(interfaceName);
             this.pushDeclarationContainer(interfaceDecl);
             this.emitTypeParameters(interfaceDecl.typeParameters);
-            this.emitBaseList(interfaceDecl.extendsList, true);
+            this.emitHeritageClauses(interfaceDecl.heritageClauses);
             this.declFile.WriteLine(" {");
 
             this.indenter.increaseIndent();

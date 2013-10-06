@@ -1384,8 +1384,7 @@ module TypeScript {
                     case NodeType.ClassDeclaration:
                         var classDeclaration = <ClassDeclaration>current;
                         if (path[i + 1]) {
-                            if (path[i + 1] === classDeclaration.extendsList ||
-                                path[i + 1] === classDeclaration.implementsList) {
+                            if (path[i + 1] === classDeclaration.heritageClauses) {
                                 resolutionContext.resolvingTypeReference = true;
                             }
                         }
@@ -1395,7 +1394,7 @@ module TypeScript {
                     case NodeType.InterfaceDeclaration:
                         var interfaceDeclaration = <InterfaceDeclaration>current;
                         if (path[i + 1]) {
-                            if (path[i + 1] === interfaceDeclaration.extendsList ||
+                            if (path[i + 1] === interfaceDeclaration.heritageClauses ||
                                 path[i + 1] === interfaceDeclaration.name) {
                                 resolutionContext.resolvingTypeReference = true;
                             }
