@@ -393,17 +393,6 @@ module TypeScript {
             var result = new ClassDeclaration(name, typeParameters, heritageClauses, members, closeBraceSpan);
             this.setCommentsAndSpan(result, start, node);
 
-            for (var i = 0; i < members.members.length; i++) {
-                var member = members.members[i];
-                if (member.nodeType() === NodeType.FunctionDeclaration) {
-                    var funcDecl = <FunctionDeclaration>member;
-
-                    if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                        result.constructorDecl = funcDecl;
-                    }
-                }
-            }
-
             var flags = result.getVarFlags();
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | VariableFlags.Exported;

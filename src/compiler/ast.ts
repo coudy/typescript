@@ -335,7 +335,6 @@ module TypeScript {
     }
 
     export class ClassDeclaration extends AST {
-        public constructorDecl: FunctionDeclaration = null;
         private _varFlags = VariableFlags.None;
 
         constructor(public identifier: Identifier,

@@ -111,6 +111,17 @@ module TypeScript {
             return array[array.length - 1];
         }
 
+        public static lastOrDefault<T>(array: T[], predicate: (v: T) => boolean): T {
+            for (var i = array.length - 1; i >= 0; i--) {
+                var v = array[i];
+                if (predicate(v)) {
+                    return v;
+                }
+            }
+
+            return null;
+        }
+
         public static firstOrDefault<T>(array: T[], func: (v: T) => boolean): T {
             for (var i = 0, n = array.length; i < n; i++) {
                 var value = array[i];

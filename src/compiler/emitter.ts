@@ -1291,7 +1291,7 @@ module TypeScript {
         private emitSymbolContainerNameInEnclosingContext(pullSymbol: PullSymbol) {
             var decl = pullSymbol.getDeclarations()[0];
             var parentDecl = decl.getParentDecl();
-            var symbolContainerDeclPath = parentDecl? parentDecl.getParentPath(): <PullDecl[]>[];
+            var symbolContainerDeclPath = parentDecl ? parentDecl.getParentPath() : <PullDecl[]>[];
 
             var enclosingContextDeclPath = this.declStack;
             var potentialDeclPath = symbolContainerDeclPath;
@@ -1387,7 +1387,7 @@ module TypeScript {
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
                                 pullSymbolKind === PullElementKind.Variable &&
                                 !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.InitializedEnum)) {
-                                    this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
+                                this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
                             else if (pullSymbol.hasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
                                 this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
@@ -1507,7 +1507,7 @@ module TypeScript {
 
         private emitParameterPropertyAndMemberVariableAssignments(): void {
             // emit any parameter properties first
-            var constructorDecl = this.thisClassNode.constructorDecl;
+            var constructorDecl = getLastConstructor(this.thisClassNode);
 
             if (constructorDecl && constructorDecl.parameters) {
                 for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
@@ -1882,7 +1882,7 @@ module TypeScript {
 
             this.emitIndent();
 
-            var constrDecl = classDecl.constructorDecl;
+            var constrDecl = getLastConstructor(classDecl);
 
             // output constructor
             if (constrDecl) {
@@ -2791,5 +2791,11 @@ module TypeScript {
         public emitGenericType(type: GenericType): void {
             type.name.emit(this);
         }
+    }
+
+    export function getLastConstructor(classDecl: ClassDeclaration): FunctionDeclaration {
+        return <FunctionDeclaration>ArrayUtilities.lastOrDefault(classDecl.classElements.members,
+            m => m.nodeType() === NodeType.FunctionDeclaration &&
+                hasFlag((<FunctionDeclaration>m).getFunctionFlags(), FunctionFlags.Constructor));
     }
 }
