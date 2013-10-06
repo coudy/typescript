@@ -444,10 +444,10 @@ module TypeScript {
         }
 
         export function walkClassDeclChildren(preAst: ClassDeclaration, walker: IAstWalker): void {
-            walker.walk(preAst.name);
-            walker.walk(preAst.typeParameters);
+            walker.walk(preAst.identifier);
+            walker.walk(preAst.typeParameterList);
             walker.walk(preAst.heritageClauses);
-            walker.walk(preAst.members);
+            walker.walk(preAst.classElements);
         }
 
         export function walkScriptChildren(preAst: Script, walker: IAstWalker): void {
@@ -459,8 +459,8 @@ module TypeScript {
         }
 
         export function walkInterfaceDeclerationChildren(preAst: InterfaceDeclaration, walker: IAstWalker): void {
-            walker.walk(preAst.name);
-            walker.walk(preAst.typeParameters);
+            walker.walk(preAst.identifier);
+            walker.walk(preAst.typeParameterList);
             walker.walk(preAst.heritageClauses);
             walker.walk(preAst.members);
         }

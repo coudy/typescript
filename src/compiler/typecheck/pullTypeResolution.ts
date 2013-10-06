@@ -1252,7 +1252,7 @@ module TypeScript {
             var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (!classDeclSymbol.isResolved) {
-                this.resolveReferenceTypeDeclaration(classDeclAST, classDeclAST.name, classDeclAST.heritageClauses, context);
+                this.resolveReferenceTypeDeclaration(classDeclAST, classDeclAST.identifier, classDeclAST.heritageClauses, context);
 
                 var constructorMethod = classDeclSymbol.getConstructorMethod();
                 var extendedTypes = classDeclSymbol.getExtendedTypes();
@@ -1382,14 +1382,14 @@ module TypeScript {
             // Add for post typeChecking if we want to verify name collision with _this
             if ((/* In global context*/ !classDeclSymbol.getContainer() ||
                 /* In Dynamic Module */ classDeclSymbol.getContainer().kind == PullElementKind.DynamicModule) &&
-                classDeclAST.name.text() == "_this") {
+                classDeclAST.identifier.text() == "_this") {
                 PullTypeResolver.postTypeCheckWorkitems.push({ ast: classDeclAST, enclosingDecl: this.getEnclosingDecl(classDecl) });
             }
 
-            this.resolveAST(classDeclAST.members, false, classDecl, context);
+            this.resolveAST(classDeclAST.classElements, false, classDecl, context);
 
             this.typeCheckTypeParametersOfTypeDeclaration(classDeclAST, context);
-            this.typeCheckBases(classDeclAST, classDeclAST.name, classDeclAST.heritageClauses, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
+            this.typeCheckBases(classDeclAST, classDeclAST.identifier, classDeclAST.heritageClauses, classDeclSymbol, this.getEnclosingDecl(classDecl), context);
 
             if (!classDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
@@ -1424,7 +1424,7 @@ module TypeScript {
         }
 
         private resolveInterfaceDeclaration(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            this.resolveReferenceTypeDeclaration(interfaceDeclAST, interfaceDeclAST.name, interfaceDeclAST.heritageClauses, context);
+            this.resolveReferenceTypeDeclaration(interfaceDeclAST, interfaceDeclAST.identifier, interfaceDeclAST.heritageClauses, context);
 
             var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
@@ -1451,7 +1451,7 @@ module TypeScript {
             this.resolveAST(interfaceDeclAST.members, false, interfaceDecl, context);
 
             this.typeCheckTypeParametersOfTypeDeclaration(interfaceDeclAST, context);
-            this.typeCheckBases(interfaceDeclAST, interfaceDeclAST.name, interfaceDeclAST.heritageClauses, interfaceDeclSymbol, this.getEnclosingDecl(interfaceDecl), context);
+            this.typeCheckBases(interfaceDeclAST, interfaceDeclAST.identifier, interfaceDeclAST.heritageClauses, interfaceDeclSymbol, this.getEnclosingDecl(interfaceDecl), context);
 
             if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
@@ -10363,8 +10363,8 @@ module TypeScript {
             var messageCode: string;
 
             var typeParameters = classOrInterface.nodeType() === NodeType.ClassDeclaration
-                ? (<ClassDeclaration>classOrInterface).typeParameters
-                : (<InterfaceDeclaration>classOrInterface).typeParameters;
+                ? (<ClassDeclaration>classOrInterface).typeParameterList
+                : (<InterfaceDeclaration>classOrInterface).typeParameterList;
 
             var typeParameterAST = typeParameters.members[indexOfTypeParameter];
 
@@ -11209,7 +11209,7 @@ module TypeScript {
 
             // Report error
             if (foundError) {
-                context.postDiagnostic(diagnosticFromAST(classDecl.name, DiagnosticCode.Class_0_declares_interface_1_but_does_not_implement_it_NL_2, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message]));
+                context.postDiagnostic(diagnosticFromAST(classDecl.identifier, DiagnosticCode.Class_0_declares_interface_1_but_does_not_implement_it_NL_2, [classSymbol.getScopedName(), implementedType.getScopedName(), comparisonInfo.message]));
             }
         }
 

@@ -366,10 +366,10 @@ module Services {
                 var parentNodeType = parent.nodeType();
                 switch (parentNodeType) {
                     case TypeScript.NodeType.ClassDeclaration:
-                        return (<TypeScript.ClassDeclaration>parent).name === current;
+                        return (<TypeScript.ClassDeclaration>parent).identifier === current;
 
                     case TypeScript.NodeType.InterfaceDeclaration:
-                        return (<TypeScript.InterfaceDeclaration>parent).name === current;
+                        return (<TypeScript.InterfaceDeclaration>parent).identifier === current;
 
                     case TypeScript.NodeType.ModuleDeclaration:
                         return (<TypeScript.ModuleDeclaration>parent).name === current;
@@ -1809,7 +1809,7 @@ module Services {
 
         return ast.nodeType() === TypeScript.NodeType.Name &&
             ast.parent.nodeType() === TypeScript.NodeType.ClassDeclaration &&
-            (<TypeScript.ClassDeclaration>ast.parent).name === ast;
+            (<TypeScript.ClassDeclaration>ast.parent).identifier === ast;
     }
 
     function isNameOfFunction(ast: TypeScript.AST): boolean {
@@ -1827,7 +1827,7 @@ module Services {
 
         return ast.nodeType() === TypeScript.NodeType.Name &&
             ast.parent.nodeType() === TypeScript.NodeType.InterfaceDeclaration &&
-            (<TypeScript.InterfaceDeclaration>ast.parent).name === ast;
+            (<TypeScript.InterfaceDeclaration>ast.parent).identifier === ast;
     }
 
     function isNameOfVariable(ast: TypeScript.AST): boolean {

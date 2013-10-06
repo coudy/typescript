@@ -1541,7 +1541,15 @@ module Harness {
                 var name = '';
                 // Depending on the node type one of these properties will be there and have the value we care about
                 var a = <any>ast;
-                name = a.id ? a.id.actualText : a.name ? a.name.actualText : a.text ? a.text : '';
+                name = a.id
+                    ? a.id.actualText
+                    : a.name
+                        ? a.name.actualText
+                        : a.text
+                            ? a.text
+                            : a.identifier
+                                ? a.identifier.actualText
+                                : '';
 
                 return name;
             }

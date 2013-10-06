@@ -614,7 +614,7 @@ module TypeScript {
             }
 
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Constructor)) {
-                this.writeToOutput(this.thisClassNode.name.actualText);
+                this.writeToOutput(this.thisClassNode.identifier.actualText);
             }
 
             if (printName) {
@@ -1059,12 +1059,12 @@ module TypeScript {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");
                         if (funcDecl.isAccessor()) {
-                            this.emitPropertyAccessor(funcDecl, this.thisClassNode.name.actualText, false);
+                            this.emitPropertyAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
                         }
                         else {
                             this.emitIndent();
                             this.recordSourceMappingStart(funcDecl);
-                            this.writeToOutput(this.thisClassNode.name.actualText + "." + funcName + " = " + funcName + ";");
+                            this.writeToOutput(this.thisClassNode.identifier.actualText + "." + funcName + " = " + funcName + ";");
                             this.recordSourceMappingEnd(funcDecl);
                         }
                     }
@@ -1525,9 +1525,9 @@ module TypeScript {
                 }
             }
 
-            for (var i = 0, n = this.thisClassNode.members.members.length; i < n; i++) {
-                if (this.thisClassNode.members.members[i].nodeType() === NodeType.VariableDeclarator) {
-                    var varDecl = <VariableDeclarator>this.thisClassNode.members.members[i];
+            for (var i = 0, n = this.thisClassNode.classElements.members.length; i < n; i++) {
+                if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.VariableDeclarator) {
+                    var varDecl = <VariableDeclarator>this.thisClassNode.classElements.members[i];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
                         this.emitVariableDeclarator(varDecl);
@@ -1854,7 +1854,7 @@ module TypeScript {
 
             var svClassNode = this.thisClassNode;
             this.thisClassNode = classDecl;
-            var className = classDecl.name.actualText;
+            var className = classDecl.identifier.actualText;
             this.emitComments(classDecl, true);
             var temp = this.setContainer(EmitContainer.Class);
 
@@ -1894,7 +1894,7 @@ module TypeScript {
                 this.recordSourceMappingStart(classDecl);
                 // default constructor
                 this.indenter.increaseIndent();
-                this.writeLineToOutput("function " + classDecl.name.actualText + "() {");
+                this.writeLineToOutput("function " + classDecl.identifier.actualText + "() {");
                 this.recordSourceMappingNameStart("constructor");
                 if (hasBaseClass) {
                     this.emitIndent();
@@ -1953,8 +1953,8 @@ module TypeScript {
             // First, emit all the functions.
             var lastEmittedMember: AST = null;
 
-            for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
-                var memberDecl = classDecl.members.members[i];
+            for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
+                var memberDecl = classDecl.classElements.members[i];
 
                 if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
                     var functionDeclaration = <FunctionDeclaration>memberDecl;
@@ -1963,12 +1963,12 @@ module TypeScript {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, functionDeclaration);
 
                         if (!hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Static)) {
-                            this.emitPrototypeMember(functionDeclaration, classDecl.name.actualText);
+                            this.emitPrototypeMember(functionDeclaration, classDecl.identifier.actualText);
                         }
                         else {
                             // static functions
                             if (functionDeclaration.isAccessor()) {
-                                this.emitPropertyAccessor(functionDeclaration, this.thisClassNode.name.actualText, false);
+                                this.emitPropertyAccessor(functionDeclaration, this.thisClassNode.identifier.actualText, false);
                             }
                             else {
                                 this.emitIndent();
@@ -1977,10 +1977,10 @@ module TypeScript {
 
                                 var functionName = functionDeclaration.name.actualText;
                                 if (isQuoted(functionName) || functionDeclaration.name.isNumber) {
-                                    this.writeToOutput(classDecl.name.actualText + "[" + functionName + "] = ");
+                                    this.writeToOutput(classDecl.identifier.actualText + "[" + functionName + "] = ");
                                 }
                                 else {
-                                    this.writeToOutput(classDecl.name.actualText + "." + functionName + " = ");
+                                    this.writeToOutput(classDecl.identifier.actualText + "." + functionName + " = ");
                                 }
 
                                 this.emitInnerFunction(functionDeclaration, /*printName:*/ false, /*includePreComments:*/ false);
@@ -1994,8 +1994,8 @@ module TypeScript {
             }
 
             // Now emit all the statics.
-            for (var i = 0, n = classDecl.members.members.length; i < n; i++) {
-                var memberDecl = classDecl.members.members[i];
+            for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
+                var memberDecl = classDecl.classElements.members[i];
 
                 if (memberDecl.nodeType() === NodeType.VariableDeclarator) {
                     var varDecl = <VariableDeclarator>memberDecl;
@@ -2008,10 +2008,10 @@ module TypeScript {
 
                         var varDeclName = varDecl.id.actualText;
                         if (isQuoted(varDeclName) || varDecl.id.isNumber) {
-                            this.writeToOutput(classDecl.name.actualText + "[" + varDeclName + "] = ");
+                            this.writeToOutput(classDecl.identifier.actualText + "[" + varDeclName + "] = ");
                         }
                         else {
-                            this.writeToOutput(classDecl.name.actualText + "." + varDeclName + " = ");
+                            this.writeToOutput(classDecl.identifier.actualText + "." + varDeclName + " = ");
                         }
 
                         varDecl.init.emit(this);

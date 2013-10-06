@@ -334,6 +334,127 @@ module TypeScript {
         }
     }
 
+    export class ClassDeclaration extends AST {
+        public constructorDecl: FunctionDeclaration = null;
+        private _varFlags = VariableFlags.None;
+
+        constructor(public identifier: Identifier,
+            public typeParameterList: ASTList,
+            public heritageClauses: ASTList,
+            public classElements: ASTList,
+            public endingToken: ASTSpan) {
+            super();
+                identifier && (identifier.parent = this);
+                typeParameterList && (typeParameterList.parent = this);
+                heritageClauses && (heritageClauses.parent = this);
+                classElements && (classElements.parent = this);
+        }
+
+        public isDeclaration() {
+            return true;
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ClassDeclaration;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitClassDeclaration(this);
+        }
+
+        public emit(emitter: Emitter): void {
+            emitter.emitClassDeclaration(this);
+        }
+
+        public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.classElements, ast.classElements, includingPosition) &&
+                structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
+                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
+        }
+    }
+
+    export class InterfaceDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public identifier: Identifier,
+            public typeParameterList: ASTList,
+            public heritageClauses: ASTList,
+            public members: ASTList) {
+            super();
+                identifier && (identifier.parent = this);
+                typeParameterList && (typeParameterList.parent = this);
+            members && (members.parent = this);
+            heritageClauses && (heritageClauses.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.InterfaceDeclaration;
+        }
+
+        public isDeclaration() {
+            return true;
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitInterfaceDeclaration(this);
+        }
+
+        public emit(emitter: Emitter): void {
+            emitter.emitInterfaceDeclaration(this);
+        }
+
+        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.members, ast.members, includingPosition) &&
+                structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
+                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
+        }
+    }
+
+    export class HeritageClause extends AST {
+        constructor(private _nodeType: NodeType, public typeNames: ASTList) {
+            super();
+            typeNames && (typeNames.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return false;
+        }
+
+        public structuralEquals(ast: HeritageClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.typeNames, ast.typeNames, includingPosition);
+        }
+
+    }
+
     export class Identifier extends AST {
         private _text: string;
 
@@ -1233,127 +1354,6 @@ module TypeScript {
 
         public emit(emitter: Emitter) {
             return emitter.emitModuleDeclaration(this);
-        }
-    }
-
-    export class HeritageClause extends AST {
-        constructor(private _nodeType: NodeType, public typeNames: ASTList   ) {
-            super();
-            typeNames && (typeNames.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return this._nodeType;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return false;
-        }
-
-        public structuralEquals(ast: HeritageClause, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.typeNames, ast.typeNames, includingPosition);
-        }
-
-    }
-
-    export class ClassDeclaration extends AST {
-        public constructorDecl: FunctionDeclaration = null;
-        private _varFlags = VariableFlags.None;
-
-        constructor(public name: Identifier,
-                    public typeParameters: ASTList,
-                    public heritageClauses: ASTList,
-                    public members: ASTList,
-                    public endingToken: ASTSpan) {
-            super();
-            name && (name.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            heritageClauses && (heritageClauses.parent = this);
-            members && (members.parent = this);
-        }
-
-        public isDeclaration() {
-            return true;
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ClassDeclaration;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitClassDeclaration(this);
-        }
-
-        public emit(emitter: Emitter): void {
-            emitter.emitClassDeclaration(this);
-        }
-
-        public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   this._varFlags === ast._varFlags &&
-                   structuralEquals(this.name, ast.name, includingPosition) &&
-                   structuralEquals(this.members, ast.members, includingPosition) &&
-                   structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                   structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
-        }
-    }
-
-    export class InterfaceDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public name: Identifier,
-                    public typeParameters: ASTList,
-                    public heritageClauses: ASTList,
-                    public members: ASTList) {
-            super();
-            name && (name.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            members && (members.parent = this);
-            heritageClauses && (heritageClauses.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.InterfaceDeclaration;
-        }
-
-        public isDeclaration() {
-            return true;
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitInterfaceDeclaration(this);
-        }
-
-        public emit(emitter: Emitter): void {
-            emitter.emitInterfaceDeclaration(this);
-        }
-
-        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
-                structuralEquals(this.name, ast.name, includingPosition) &&
-                structuralEquals(this.members, ast.members, includingPosition) &&
-                structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
         }
     }
 

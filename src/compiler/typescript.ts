@@ -938,12 +938,12 @@ module TypeScript {
                     var previousAST = resultASTs[resultASTs.length - 2];
                     switch (previousAST.nodeType()) {
                         case NodeType.InterfaceDeclaration:
-                            if (foundAST === (<InterfaceDeclaration>previousAST).name) {
+                            if (foundAST === (<InterfaceDeclaration>previousAST).identifier) {
                                 foundAST = previousAST;
                             }
                             break;
                         case NodeType.ClassDeclaration:
-                            if (foundAST === (<ClassDeclaration>previousAST).name) {
+                            if (foundAST === (<ClassDeclaration>previousAST).identifier) {
                                 foundAST = previousAST;
                             }
                             break;
@@ -1395,7 +1395,7 @@ module TypeScript {
                         var interfaceDeclaration = <InterfaceDeclaration>current;
                         if (path[i + 1]) {
                             if (path[i + 1] === interfaceDeclaration.heritageClauses ||
-                                path[i + 1] === interfaceDeclaration.name) {
+                                path[i + 1] === interfaceDeclaration.identifier) {
                                 resolutionContext.resolvingTypeReference = true;
                             }
                         }

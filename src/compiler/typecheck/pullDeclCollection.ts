@@ -122,9 +122,9 @@ module TypeScript {
         var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);
         var parent = context.getParent();
 
-        var decl = new NormalPullDecl(classDecl.name.text(), classDecl.name.actualText, PullElementKind.Class, declFlags, parent, span);
+        var decl = new NormalPullDecl(classDecl.identifier.text(), classDecl.identifier.actualText, PullElementKind.Class, declFlags, parent, span);
 
-        var constructorDecl = new NormalPullDecl(classDecl.name.text(), classDecl.name.actualText, constructorDeclKind, declFlags | PullElementFlags.ClassConstructorVariable, parent, span);
+        var constructorDecl = new NormalPullDecl(classDecl.identifier.text(), classDecl.identifier.actualText, constructorDeclKind, declFlags | PullElementFlags.ClassConstructorVariable, parent, span);
 
         decl.setValueDecl(constructorDecl);
 
@@ -163,7 +163,7 @@ module TypeScript {
         var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
         var parent = context.getParent();
 
-        var decl = new NormalPullDecl(interfaceDecl.name.text(), interfaceDecl.name.actualText, PullElementKind.Interface, declFlags, parent, span);
+        var decl = new NormalPullDecl(interfaceDecl.identifier.text(), interfaceDecl.identifier.actualText, PullElementKind.Interface, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(interfaceDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, interfaceDecl);
 

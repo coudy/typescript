@@ -613,13 +613,13 @@ module TypeScript {
                 return;
             }
 
-            var className = classDecl.name.actualText;
+            var className = classDecl.identifier.actualText;
             this.emitDeclarationComments(classDecl);
             var classPullDecl = this.compiler.semanticInfoChain.getDeclForAST(classDecl);
             this.emitDeclFlags(ToDeclFlags(classDecl.getVarFlags()), classPullDecl, "class");
             this.declFile.Write(className);
             this.pushDeclarationContainer(classDecl);
-            this.emitTypeParameters(classDecl.typeParameters);
+            this.emitTypeParameters(classDecl.typeParameterList);
             this.emitHeritageClauses(classDecl.heritageClauses);
             this.declFile.WriteLine(" {");
 
@@ -628,7 +628,7 @@ module TypeScript {
                 this.emitClassMembersFromConstructorDefinition(classDecl.constructorDecl);
             }
 
-            this.emitDeclarationsForList(classDecl.members);
+            this.emitDeclarationsForList(classDecl.classElements);
 
             this.indenter.decreaseIndent();
             this.popDeclarationContainer(classDecl);
@@ -687,13 +687,13 @@ module TypeScript {
                 return;
             }
 
-            var interfaceName = interfaceDecl.name.actualText;
+            var interfaceName = interfaceDecl.identifier.actualText;
             this.emitDeclarationComments(interfaceDecl);
             var interfacePullDecl = this.compiler.semanticInfoChain.getDeclForAST(interfaceDecl);
             this.emitDeclFlags(ToDeclFlags(interfaceDecl.getVarFlags()), interfacePullDecl, "interface");
             this.declFile.Write(interfaceName);
             this.pushDeclarationContainer(interfaceDecl);
-            this.emitTypeParameters(interfaceDecl.typeParameters);
+            this.emitTypeParameters(interfaceDecl.typeParameterList);
             this.emitHeritageClauses(interfaceDecl.heritageClauses);
             this.declFile.WriteLine(" {");
 

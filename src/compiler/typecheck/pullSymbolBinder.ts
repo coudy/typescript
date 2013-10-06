@@ -474,7 +474,7 @@ module TypeScript {
 
             classDecl.setSymbol(classSymbol);
 
-            this.semanticInfoChain.setSymbolForAST(classAST.name, classSymbol);
+            this.semanticInfoChain.setSymbolForAST(classAST.identifier, classSymbol);
             this.semanticInfoChain.setSymbolForAST(classAST, classSymbol);
 
             if (parent) {
