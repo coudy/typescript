@@ -3399,7 +3399,7 @@ module TypeScript {
                 //     - if it's a definition sigature, take the best common type of all return expressions
                 //     - if it's a constructor, we set the return type link during binding
                 else if (!hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Constructor) && funcDecl.kind !== PullElementKind.ConstructSignature) {
-                    if (funcDeclAST.isSignature()) {
+                    if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Signature)) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                         var parentDeclFlags = TypeScript.PullElementFlags.None;
                         if (TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.Method) ||
@@ -3428,7 +3428,7 @@ module TypeScript {
                     }
                     }
                 else if (funcDecl.kind === PullElementKind.ConstructSignature) {
-                    if (funcDeclAST.isSignature()) {
+                    if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Signature)) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if the noImplicitAny flag is set to be true, report an error

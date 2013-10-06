@@ -1305,8 +1305,6 @@ module TypeScript {
         public isGetAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.GetAccessor); }
         public isSetAccessor() { return hasFlag(this.getFunctionFlags(), FunctionFlags.SetAccessor); }
         public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
-
-        public isSignature() { return (this.getFunctionFlags() & FunctionFlags.Signature) !== FunctionFlags.None; }
     }
 
     export class ModuleDeclaration extends AST {

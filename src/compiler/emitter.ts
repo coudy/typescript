@@ -1959,7 +1959,8 @@ module TypeScript {
                 if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
                     var functionDeclaration = <FunctionDeclaration>memberDecl;
 
-                    if (hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Method) && !functionDeclaration.isSignature()) {
+                    if (hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Method) &&
+                        !hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Signature)) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, functionDeclaration);
 
                         if (!hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Static)) {
