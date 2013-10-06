@@ -1124,11 +1124,6 @@ module TypeScript {
             // Extends list
             var extendsClause = getExtendsHeritageClause(heritageClauses);
             if (extendsClause) {
-                var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
-                if (typeDeclIsClass) {
-                    context.isResolvingClassExtendedType = true;
-                }
-
                 for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < extendsClause.typeNames.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
                     var parentType = this.resolveTypeReference(<TypeReference>extendsClause.typeNames.members[i], typeDecl, context);
@@ -1151,8 +1146,6 @@ module TypeScript {
                         this.setSymbolForAST(extendsClause.typeNames.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
-
-                context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
             }
 
             var implementsClause = getImplementsHeritageClause(heritageClauses);
@@ -6078,8 +6071,6 @@ module TypeScript {
 
             if (!context.isResolvingTypeArguments(genericTypeAST)) {
                 context.startResolvingTypeArguments(genericTypeAST);
-                var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
-                context.isResolvingClassExtendedType = false;
 
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
@@ -6097,7 +6088,7 @@ module TypeScript {
                         }
                     }
                 }
-                context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
+
                 context.doneResolvingTypeArguments();
             }
 
@@ -6210,7 +6201,8 @@ module TypeScript {
 
             var lhsType = lhs.isAlias() ? (<PullTypeAliasSymbol>lhs).getExportAssignedContainerSymbol() : lhs.type;
 
-            if (context.isResolvingClassExtendedType) {
+            if (this.inClassExtendsHeritageClause(dottedNameAST) &&
+                !this.inTypeArgumentList(dottedNameAST)) {
                 if (lhs.isAlias()) {
                     (<PullTypeAliasSymbol>lhs).isUsedAsValue = true;
                 }
@@ -6538,6 +6530,54 @@ module TypeScript {
 
         private computeThisTypeSymbol(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             return this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context) || this.semanticInfoChain.anyTypeSymbol;
+        }
+
+        private inTypeArgumentList(ast: AST): boolean {
+            var previous: AST = null;
+            var current = ast;
+            
+            while (current) {
+                switch (current.nodeType()) {
+                    case NodeType.GenericType:
+                        var genericType = <GenericType>current;
+                        return genericType.typeArguments === previous;
+
+                    case NodeType.InvocationExpression:
+                        var invocationExpression = <InvocationExpression>current;
+                        return invocationExpression.typeArguments === previous;
+
+                    case NodeType.ObjectCreationExpression:
+                        var objectCreation = <ObjectCreationExpression>current;
+                        return objectCreation.typeArguments === previous;
+                }
+
+                previous = current;
+                current = current.parent;
+            }
+
+            return false;
+        }
+
+        private inClassExtendsHeritageClause(ast: AST): boolean {
+            while (ast) {
+                switch (ast.nodeType()) {
+                    case NodeType.ExtendsHeritageClause:
+                        var heritageClause = <HeritageClause>ast;
+
+                        // Heritage clause is parented by the heritage clause list.  Which is 
+                        // parented by either a class or an interface.  So check the grandparent.
+                        return heritageClause.parent.parent.nodeType() === NodeType.ClassDeclaration;
+
+                    case NodeType.ConstructorDeclaration:
+                    case NodeType.ClassDeclaration:
+                    case NodeType.ModuleDeclaration:
+                        return false;
+                }
+
+                ast = ast.parent;
+            }
+
+            return false;
         }
 
         private inArgumentListOfSuperInvocation(ast: AST): boolean {
