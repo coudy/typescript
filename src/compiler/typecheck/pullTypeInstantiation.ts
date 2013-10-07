@@ -168,7 +168,9 @@ module TypeScript {
         }
 
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addSpecialization");
+            //Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addSpecialization");
+            this.ensureReferencedTypeIsResolved();
+            return this.referencedTypeSymbol.addSpecialization(specializedVersionOfThisType, substitutingTypes);
         }
         public getSpecialization(substitutingTypes: PullTypeSymbol[]): PullTypeSymbol {
             this.ensureReferencedTypeIsResolved();
