@@ -1251,10 +1251,10 @@ module TypeScript {
 
             if (node.publicOrPrivateKeyword) {
                 if (node.publicOrPrivateKeyword.tokenKind === SyntaxKind.PublicKeyword) {
-                    result.setVarFlags(result.getVarFlags() | VariableFlags.Property| VariableFlags.Public);
+                    result.setVarFlags(result.getVarFlags() | VariableFlags.Public);
                 }
-                else {
-                    result.setVarFlags(result.getVarFlags() | VariableFlags.Property| VariableFlags.Private);
+                else if (node.publicOrPrivateKeyword.tokenKind === SyntaxKind.PrivateKeyword) {
+                    result.setVarFlags(result.getVarFlags() | VariableFlags.Private);
                 }
             }
 

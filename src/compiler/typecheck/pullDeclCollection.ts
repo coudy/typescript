@@ -209,7 +209,9 @@ module TypeScript {
         }
 
         // if it's a property type, we'll need to add it to the parent's parent as well
-        if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
+        var isPublicOrPrivate = hasFlag(argDecl.getVarFlags(), VariableFlags.Public | VariableFlags.Private);
+        var isInConstructor = parent.kind === PullElementKind.ConstructorMethod;
+        if (isPublicOrPrivate && isInConstructor) {
             var parentsParent = context.parentChain[context.parentChain.length - 2];
             var propDecl = new NormalPullDecl(argDecl.id.text(), argDecl.id.actualText, PullElementKind.Property, declFlags, parentsParent, span);
             propDecl.setValueDecl(decl);
@@ -393,10 +395,6 @@ module TypeScript {
 
     function preCollectVarDecls(ast: AST, context: DeclCollectionContext) {
         var varDecl = <VariableDeclarator>ast;
-        var declFlags = PullElementFlags.None;
-        var declType = PullElementKind.Variable;
-        var isProperty = false;
-        var isStatic = false;
 
         if (hasFlag(varDecl.getVarFlags(), VariableFlags.ClassProperty)) {
             return createMemberVariableDeclaration(varDecl, context);

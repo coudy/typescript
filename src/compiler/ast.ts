@@ -836,10 +836,6 @@ module TypeScript {
 
         public isOptionalArg(): boolean { return this.isOptional || this.init !== null; }
 
-        public isParameterProperty(): boolean {
-            return hasFlag(this.getVarFlags(), VariableFlags.Property);
-        }
-
         public emitWorker(emitter: Emitter) {
             emitter.emitParameter(this);
         }

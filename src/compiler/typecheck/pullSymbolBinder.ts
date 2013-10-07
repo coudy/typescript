@@ -1102,7 +1102,7 @@ module TypeScript {
                 for (var i = 0; i < functionDeclaration.parameters.members.length; i++) {
                     argDecl = <Parameter>functionDeclaration.parameters.members[i];
                     decl = this.semanticInfoChain.getDeclForAST(argDecl);
-                    isProperty = hasFlag(argDecl.getVarFlags(), VariableFlags.Property);
+                    isProperty = hasFlag(decl.flags, PullElementFlags.PropertyParameter);
                     parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
 
                     if (argDecl.isRest) {

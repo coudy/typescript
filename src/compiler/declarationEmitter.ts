@@ -591,15 +591,16 @@ module TypeScript {
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <Parameter>funcDecl.parameters.members[i];
-                    if (hasFlag(argDecl.getVarFlags(), VariableFlags.Property)) {
+                    var parameter = <Parameter>funcDecl.parameters.members[i];
+                    var parameterDecl = this.compiler.semanticInfoChain.getDeclForAST(parameter);
+                    if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
-                        this.emitDeclarationComments(argDecl);
-                        this.emitDeclFlags(ToDeclFlags(argDecl.getVarFlags()), funcPullDecl, "var");
-                        this.declFile.Write(argDecl.id.actualText);
+                        this.emitDeclarationComments(parameter);
+                        this.emitDeclFlags(ToDeclFlags(parameter.getVarFlags()), funcPullDecl, "var");
+                        this.declFile.Write(parameter.id.actualText);
 
-                        if (this.canEmitTypeAnnotationSignature(ToDeclFlags(argDecl.getVarFlags()))) {
-                            this.emitTypeOfVariableDeclaratorOrParameter(argDecl);
+                        if (this.canEmitTypeAnnotationSignature(ToDeclFlags(parameter.getVarFlags()))) {
+                            this.emitTypeOfVariableDeclaratorOrParameter(parameter);
                         }
                         this.declFile.WriteLine(";");
                     }

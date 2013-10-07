@@ -1520,15 +1520,16 @@ module TypeScript {
 
             if (constructorDecl && constructorDecl.parameters) {
                 for (var i = 0, n = constructorDecl.parameters.members.length; i < n; i++) {
-                    var arg = <Parameter>constructorDecl.parameters.members[i];
-                    if ((arg.getVarFlags() & VariableFlags.Property) !== VariableFlags.None) {
+                    var parameter = <Parameter>constructorDecl.parameters.members[i];
+                    var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
+                    if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         this.emitIndent();
-                        this.recordSourceMappingStart(arg);
-                        this.writeToOutputWithSourceMapRecord("this." + arg.id.actualText, arg.id);
+                        this.recordSourceMappingStart(parameter);
+                        this.writeToOutputWithSourceMapRecord("this." + parameter.id.actualText, parameter.id);
                         this.writeToOutput(" = ");
-                        this.writeToOutputWithSourceMapRecord(arg.id.actualText, arg.id);
+                        this.writeToOutputWithSourceMapRecord(parameter.id.actualText, parameter.id);
                         this.writeLineToOutput(";");
-                        this.recordSourceMappingEnd(arg);
+                        this.recordSourceMappingEnd(parameter);
                     }
                 }
             }
