@@ -106,6 +106,7 @@ module TypeScript {
         private declStack: PullDecl[] = [];
         private resolvingContext = new PullTypeResolutionContext(null);
         private exportAssignmentIdentifier: string = null;
+        private inWithBlock = false;
 
         public document: Document = null;
         private copyrightElement: AST = null;
@@ -2190,7 +2191,7 @@ module TypeScript {
         }
 
         public emitThis() {
-            if (this.inArrowFunction) {
+            if (!this.inWithBlock && this.inArrowFunction) {
                 this.writeToOutput("_this");
             }
             else {
@@ -2227,7 +2228,7 @@ module TypeScript {
         }
 
         public emitThisExpression(expression: ThisExpression): void {
-            if (this.inArrowFunction) {
+            if (!this.inWithBlock && this.inArrowFunction) {
                 this.writeToOutputWithSourceMapRecord("_this", expression);
             }
             else {
@@ -2665,7 +2666,10 @@ module TypeScript {
             }
 
             this.writeToOutput(")");
+            var prevInWithBlock = this.inWithBlock;
+            this.inWithBlock = true;
             this.emitBlockOrStatement(statement.body);
+            this.inWithBlock = prevInWithBlock;
             this.recordSourceMappingEnd(statement);
         }
 
