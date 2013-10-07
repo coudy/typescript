@@ -659,6 +659,10 @@ module TypeScript {
                 return this.referencedTypeSymbol.getCallSignatures(collectBaseSignatures);
             }
 
+            if (this._instantiatedCallSignatures) {
+                return this._instantiatedCallSignatures;
+            }
+
             var referencedCallSignatures = this.referencedTypeSymbol.getCallSignatures(collectBaseSignatures);
             this._instantiatedCallSignatures = [];
 
@@ -681,6 +685,10 @@ module TypeScript {
                 return this.referencedTypeSymbol.getConstructSignatures(collectBaseSignatures);
             }
 
+            if (this._instantiatedConstructSignatures) {
+                return this._instantiatedConstructSignatures;
+            }
+
             var referencedConstructSignatures = this.referencedTypeSymbol.getConstructSignatures(collectBaseSignatures);
             this._instantiatedConstructSignatures = [];
 
@@ -701,6 +709,10 @@ module TypeScript {
 
             if (this.isReferencedType) {
                 return this.referencedTypeSymbol.getIndexSignatures(collectBaseSignatures);
+            }
+
+            if (this._instantiatedIndexSignatures) {
+                return this._instantiatedIndexSignatures;
             }
 
             var referencedIndexSignatures = this.referencedTypeSymbol.getIndexSignatures(collectBaseSignatures);
@@ -814,9 +826,7 @@ module TypeScript {
             return wrapsSomeTypeParameter;
         }
 
-        type.inWrapCheck = true;
-
-        
+        type.inWrapCheck = true;        
 
         // if we encounter a type paramter, we're obviously wrapping
         if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
