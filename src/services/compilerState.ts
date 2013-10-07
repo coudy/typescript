@@ -181,6 +181,14 @@ module Services {
             this.compiler.pullTypeCheck();
         }
 
+        public getResolver() {
+            if (this.compiler) {
+                return this.compiler.resolver;
+            }
+
+            return null;
+        }
+
         public minimalRefresh(): void {
             //if (this.compiler === null) {
             //    this.refresh();

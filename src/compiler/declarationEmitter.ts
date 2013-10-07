@@ -252,7 +252,7 @@ module TypeScript {
             var declarationPullSymbol = declarationContainerDecl.getSymbol();
             TypeScript.declarationEmitTypeSignatureTime += new Date().getTime() - start;
 
-            var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
+            var typeNameMembers = type.getScopedNameEx(/*resolver:*/ null, declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
 
@@ -663,7 +663,7 @@ module TypeScript {
                     this.declFile.Write(", ");
                 }
 
-                var memberName = typars[i].getScopedNameEx(containerSymbol, /*useConstraintInName:*/ true);
+                var memberName = typars[i].getScopedNameEx(/*resolver:*/ null, containerSymbol, /*useConstraintInName:*/ true);
                 this.emitTypeNamesMember(memberName);
             }
 
