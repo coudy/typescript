@@ -50,40 +50,20 @@ module TypeScript {
         }
 
         public _getDeclForAST(ast: AST): PullDecl {
-            if (useDirectTypeStorage) {
-                return ast.decl ? ast.decl : null;
-            }
-
             return this.astDeclMap.read(ast.astIDString);
         }
 
         public _setDeclForAST(ast: AST, decl: PullDecl): void {
             Debug.assert(decl.fileName() === this._fileName);
-
-            if (useDirectTypeStorage) {
-                ast.decl = decl;
-                return;
-            }
-
             this.astDeclMap.link(ast.astIDString, decl);
         }
 
         public _getASTForDecl(decl: PullDecl): AST {
-            if (useDirectTypeStorage) {
-                return decl.ast;
-            }
-
             return this.declASTMap.read(decl.declIDString);
         }
 
         public _setASTForDecl(decl: PullDecl, ast: AST): void {
             Debug.assert(decl.fileName() === this._fileName);
-
-            if (useDirectTypeStorage) {
-                decl.ast = ast;
-                return;
-            }
-
             this.declASTMap.link(decl.declIDString, ast);
         }
     }
@@ -505,61 +485,32 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            if (useDirectTypeStorage) {
-                ast.symbol = symbol;
-                symbol.ast = ast;
-                return;
-            }
-
             this.astSymbolMap.link(ast.astIDString, symbol);
             this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
-            if (useDirectTypeStorage) {
-                return (<AST>ast).symbol;
-            }
-
             return this.astSymbolMap.read(ast.astIDString);
         }
 
         public getASTForSymbol(symbol: PullSymbol): AST {
-            if (useDirectTypeStorage) {
-                return symbol.ast;
-            }
-
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
-            if (useDirectTypeStorage) {
-                ast.aliasSymbol = symbol;
-                return;
-            }
             this.astAliasSymbolMap.link(ast.astIDString, symbol);
         }
 
         public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
-            if (useDirectTypeStorage) {
-                return <PullTypeAliasSymbol>(<AST>ast).aliasSymbol;
-            }
-
             return this.astAliasSymbolMap.read(ast.astIDString);
         }
 
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
-            if (useDirectTypeStorage) {
-                return (<InvocationExpression>ast).callResolutionData;
-            }
             return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
         }
 
         public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
             if (callResolutionData) {
-                if (useDirectTypeStorage) {
-                    (<InvocationExpression>ast).callResolutionData = callResolutionData;
-                    return;
-                }
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
         }

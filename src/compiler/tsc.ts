@@ -36,8 +36,6 @@ module TypeScript {
         }
     }
 
-    useDirectTypeStorage = true;
-
     export class BatchCompiler implements IReferenceResolverHost, EmitterIOHost {
         public compilerVersion = "0.9.1.1";
         private inputFiles: string[] = [];

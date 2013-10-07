@@ -73,12 +73,6 @@ module TypeScript {
         public astIDString: string = astID.toString();
         public astID: number = astID++;
 
-        // These are used to store type resolution information directly on the AST, rather than
-        // within a data map, if the useDirectTypeStorage flag is set
-        public symbol: PullSymbol = null; 
-        public aliasSymbol: PullSymbol = null;
-        public decl: PullDecl = null;
-
         private _preComments: Comment[] = null;
         private _postComments: Comment[] = null;
         private _docComments: Comment[] = null;

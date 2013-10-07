@@ -238,8 +238,6 @@ module TypeScript {
 
     export var globalLogger: ILogger = null;
 
-    export var useDirectTypeStorage = false;
-
     export class TypeScriptCompiler {
         public resolver: PullTypeResolver = null;
 
