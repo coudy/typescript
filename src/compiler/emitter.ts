@@ -2443,8 +2443,6 @@ module TypeScript {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcProp);
             this.pushDecl(pullDecl);
 
-            this.emitComments(funcProp, true);
-
             this.recordSourceMappingStart(funcProp);
             this.writeToOutput("function ");
 

@@ -1972,12 +1972,7 @@ module TypeScript {
             var result = new FunctionPropertyAssignment(
                 propertyName, typeParameters, parameters, returnType, block);
 
-            //functionDeclaration.hint = left.text();
-            //functionDeclaration.block = block;
-            //functionDeclaration.setFunctionFlags(FunctionFlags.IsFunctionProperty);
-
-            //var result = new BinaryExpression(NodeType.Member, left, functionDeclaration);
-            this.setSpan(result, start, node);
+            this.setCommentsAndSpan(result, start, node);
 
             return result;
         }
@@ -2004,7 +1999,7 @@ module TypeScript {
             funcDecl.hint = "get" + node.propertyName.valueText();
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            this.copySpan(funcDecl, result);
+            this.setCommentsAndSpan(result, start, node);
 
             return result;
         }
@@ -2031,7 +2026,7 @@ module TypeScript {
             funcDecl.hint = "set" + node.propertyName.valueText();
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            this.copySpan(funcDecl, result);
+            this.setCommentsAndSpan(result, start, node);
 
             return result;
         }
