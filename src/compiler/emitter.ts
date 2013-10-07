@@ -287,7 +287,12 @@ module TypeScript {
             this.updateLineAndColumn(s);
         }
 
-        public writeLineToOutput(s: string) {
+        public writeLineToOutput(s: string, force = false) {
+            // No need to print a newline if we're already at the start of the line.
+            if (!force && s === "" && this.emitState.column === 0) {
+                return;
+            }
+
             this.outfile.WriteLine(s);
             this.updateLineAndColumn(s);
             this.emitState.column = 0;
@@ -314,7 +319,7 @@ module TypeScript {
             this.writeToOutput(this.getIndentString());
         }
 
-        public emitComment(comment: Comment) {
+        public emitComment(comment: Comment, trailing: boolean, first: boolean) {
             if (this.emitOptions.compilationSettings.removeComments) {
                 return;
             }
@@ -324,6 +329,9 @@ module TypeScript {
 
             if (emitColumn === 0) {
                 this.emitIndent();
+            }
+            else if (trailing && first) {
+                this.writeToOutput(" ");
             }
 
             if (comment.isBlockComment) {
@@ -376,17 +384,17 @@ module TypeScript {
                     preComments = ArrayUtilities.where(preComments, c => c.isPinnedOrTripleSlash());
                 }
 
-                this.emitCommentsArray(preComments);
+                this.emitCommentsArray(preComments, /*trailing:*/ false);
             }
             else {
-                this.emitCommentsArray(ast.postComments());
+                this.emitCommentsArray(ast.postComments(), /*trailing:*/ true);
             }
         }
 
-        public emitCommentsArray(comments: Comment[]): void {
+        public emitCommentsArray(comments: Comment[], trailing: boolean): void {
             if (!this.emitOptions.compilationSettings.removeComments && comments) {
                 for (var i = 0, n = comments.length; i < n; i++) {
-                    this.emitComment(comments[i]);
+                    this.emitComment(comments[i], trailing, /*first:*/ i === 0);
                 }
             }
         }
@@ -648,7 +656,7 @@ module TypeScript {
 
             this.emitList(funcDecl.block.statements);
 
-            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
+            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments, /*trailing:*/ false);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -1081,7 +1089,7 @@ module TypeScript {
 
             this.emitList(arrowFunction.block.statements);
 
-            this.emitCommentsArray(arrowFunction.block.closeBraceLeadingComments);
+            this.emitCommentsArray(arrowFunction.block.closeBraceLeadingComments, /*trailing:*/ false);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -1132,7 +1140,7 @@ module TypeScript {
 
 
             this.emitConstructorStatements(funcDecl);
-            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments);
+            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments, /*trailing:*/ false);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -1727,7 +1735,7 @@ module TypeScript {
             var node2StartLine = lineMap.getLineNumberFromPosition(node2.minChar);
 
             if ((node2StartLine - node1EndLine) > 1) {
-                this.writeLineToOutput("");
+                this.writeLineToOutput("", /*force:*/ true);
             }
         }
 
@@ -1787,7 +1795,7 @@ module TypeScript {
                 }
 
                 this.copyrightElement = firstElement;
-                this.emitCommentsArray(this.getCopyrightComments());
+                this.emitCommentsArray(this.getCopyrightComments(), /*trailing:*/ false);
             }
         }
 
@@ -2258,7 +2266,7 @@ module TypeScript {
             else {
                 this.recordSourceMappingStart(parenthesizedExpression);
                 this.writeToOutput("(");
-                this.emitCommentsArray(parenthesizedExpression.openParenTrailingComments);
+                this.emitCommentsArray(parenthesizedExpression.openParenTrailingComments, /*trailing:*/ false);
                 parenthesizedExpression.expression.emit(this);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(parenthesizedExpression);
@@ -2465,7 +2473,7 @@ module TypeScript {
             }
 
             this.emitList(funcProp.block.statements);
-            this.emitCommentsArray(funcProp.block.closeBraceLeadingComments);
+            this.emitCommentsArray(funcProp.block.closeBraceLeadingComments, /*trailing:*/ false);
 
             this.indenter.decreaseIndent();
             this.emitIndent();
@@ -2534,7 +2542,7 @@ module TypeScript {
             if (block.statements) {
                 this.emitList(block.statements);
             }
-            this.emitCommentsArray(block.closeBraceLeadingComments);
+            this.emitCommentsArray(block.closeBraceLeadingComments, /*trailing:*/ false);
             this.indenter.decreaseIndent();
             this.emitIndent();
             this.writeToOutput("}");

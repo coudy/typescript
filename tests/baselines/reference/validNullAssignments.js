@@ -43,5 +43,4 @@ var h = null;
 function i(a) {
     a = null;
 }
-i = null;// should be an error
-
+i = null; // should be an error

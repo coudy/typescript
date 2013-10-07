@@ -3,11 +3,9 @@ function makePoint(x, y) {
         get x() {
             return x;
         },
-        // shouldn't be "void"
         get y() {
             return y;
         },
-        // shouldn't be "void"
         //x: "yo",
         //y: "boo",
         dist: function () {

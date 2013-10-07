@@ -8,5 +8,4 @@ function f(x) {
 
 f({});
 f(obj1);
-f(obj2);// Error - indexer doesn't match
-
+f(obj2); // Error - indexer doesn't match

@@ -7,5 +7,4 @@ var x = {
     }
 };
 x.a(1);
-x.b();// error
-
+x.b(); // error

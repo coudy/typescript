@@ -57,5 +57,4 @@ b3 = {
     k: function (a) {
         return null;
     }
-};// error
-
+}; // error

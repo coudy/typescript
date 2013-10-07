@@ -41,5 +41,4 @@ i = d;
 d = i;
 
 c = d;
-d = c;// error
-
+d = c; // error

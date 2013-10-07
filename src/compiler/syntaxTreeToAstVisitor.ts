@@ -198,7 +198,7 @@ module TypeScript {
         }
 
         private convertTokenTrailingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
-            if (token === null || !token.hasTrailingComment()) {
+            if (token === null || !token.hasTrailingComment() || token.hasTrailingNewLine()) {
                 return null;
             }
 

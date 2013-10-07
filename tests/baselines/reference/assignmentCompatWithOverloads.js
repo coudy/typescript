@@ -32,5 +32,4 @@ var C = (function () {
 
 var d;
 
-d = C;// Error
-
+d = C; // Error

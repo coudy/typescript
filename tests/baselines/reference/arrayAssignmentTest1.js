@@ -36,15 +36,10 @@ var C3 = (function () {
 })();
 
 /*
-
 This behaves unexpectedly with the following types:
-
 Type 1 of any[]:
-
 * Type 2 of the following throws an error but shouldn't: () => void[], SomeClass[], and {one: 1}[].
-
 * Type 2 of the following doesn't throw an error but should: {one: 1}, new() => SomeClass, SomeClass.
-
 */
 var a1 = null;
 var c1 = new C1();
@@ -103,5 +98,4 @@ arr_any = a1;
 arr_any = c1;
 arr_any = c2;
 arr_any = c3;
-arr_any = i1;// should be an error - is
-
+arr_any = i1; // should be an error - is

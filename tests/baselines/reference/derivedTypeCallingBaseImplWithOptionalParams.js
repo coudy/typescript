@@ -10,5 +10,4 @@ var x = new MyClass();
 x.myMethod();
 
 var y = new MyClass();
-y.myMethod();// error
-
+y.myMethod(); // error

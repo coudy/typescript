@@ -30,5 +30,4 @@ bar([
 
 var arr = [new Giraffe(), new Elephant()];
 foo(arr);
-bar(arr);// Error because of no contextual type
-
+bar(arr); // Error because of no contextual type

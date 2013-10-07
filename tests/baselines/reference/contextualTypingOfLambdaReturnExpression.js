@@ -6,5 +6,4 @@ callb(function (a) {
 });
 callb(function (a) {
     a.length;
-});// Error, we picked the first overload and errored when type checking the lambda body
-
+}); // Error, we picked the first overload and errored when type checking the lambda body

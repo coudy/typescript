@@ -18,5 +18,4 @@ function foo3(a) {
         b[_i] = arguments[_i + 1];
     }
 }
-foo3();// error but shouldn't be
-
+foo3(); // error but shouldn't be

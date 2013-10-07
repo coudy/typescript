@@ -37,5 +37,4 @@ var c2;
 c = c2;
 c2 = c;
 c.bar();
-c2.bar();// should error
-
+c2.bar(); // should error
