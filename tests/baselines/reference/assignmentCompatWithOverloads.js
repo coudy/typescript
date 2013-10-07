@@ -16,13 +16,13 @@ function f4(x) {
 
 var g;
 
-g = f1;
+g = f1; // OK
 
-g = f2;
+g = f2; // Error
 
-g = f3;
+g = f3; // Error
 
-g = f4;
+g = f4; // Error
 
 var C = (function () {
     function C(x) {

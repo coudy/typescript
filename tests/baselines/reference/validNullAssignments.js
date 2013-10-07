@@ -6,7 +6,7 @@ var d = null;
 var e = null;
 
 // BUG 791098
-e = null;
+e = null; // should work
 
 var E;
 (function (E) {

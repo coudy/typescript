@@ -21,4 +21,4 @@ var arr_any = [];
 arr_any = function () {
     return null;
 };
-arr_any = c3;
+arr_any = c3; // should be an error - is

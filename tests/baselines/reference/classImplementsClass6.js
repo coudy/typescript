@@ -36,5 +36,5 @@ var c;
 var c2;
 c = c2;
 c2 = c;
-c.bar();
+c.bar(); // error
 c2.bar(); // should error

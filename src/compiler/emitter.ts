@@ -361,7 +361,7 @@ module TypeScript {
                 // Fall through
             }
 
-            if (emitColumn != 0) {
+            if (!trailing && emitColumn != 0) {
                 // If we were indented before, stay indented after.
                 this.emitIndent();
             }

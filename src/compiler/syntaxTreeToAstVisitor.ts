@@ -1533,11 +1533,20 @@ module TypeScript {
         public visitExpressionStatement(node: ExpressionStatementSyntax): ExpressionStatement {
             var start = this.position;
 
+            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
             var expression = node.expression.accept(this);
+
+            var semicolonPosition = this.position;
+
+            var postComments = this.convertComments(node.semicolonToken.trailingTrivia(),
+                this.position + node.semicolonToken.leadingTriviaWidth() + node.semicolonToken.width());
             this.movePast(node.semicolonToken);
 
             var result = new ExpressionStatement(expression);
-            this.setCommentsAndSpan(result, start, node);
+            this.setSpan(result, start, node);
+
+            result.setPreComments(preComments);
+            result.setPostComments(postComments);
 
             return result;
         }
