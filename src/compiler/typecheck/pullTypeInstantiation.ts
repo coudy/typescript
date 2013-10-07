@@ -433,6 +433,7 @@ module TypeScript {
             // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map
             if (type.isTypeReference() && type.isGeneric()) {
                 var initializationMap = {};
+                var oldmap = typeParameterArgumentMap;
 
                 // first, initialize the argument map
                 for (var typeParameterID in typeParameterArgumentMap) {
@@ -456,9 +457,6 @@ module TypeScript {
             if (isReferencedType) {
                 instantiation.isReferencedType = true;
             }
-            //else {
-            //    instantiation._typeArgumentReferences = typeArgumentList;
-            //}
 
             return instantiation;
         }
@@ -511,6 +509,10 @@ module TypeScript {
         }
         public setTypeArguments(typeArgs: PullTypeSymbol[]): void {
             Debug.fail("setTypeArguments");
+        }
+        
+        public getTypeArgumentsOrTypeParameters() {
+            return this.getTypeArguments();
         }
 
         //
