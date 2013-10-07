@@ -13,6 +13,7 @@ var Test;
         var state = null;
         return {
             tokens: Gar[],
+            //IToken[],  // Missing new. Correct syntax is: tokens: new IToken[]
             endState: state
         };
     }

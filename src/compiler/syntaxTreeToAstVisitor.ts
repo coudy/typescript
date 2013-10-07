@@ -198,7 +198,7 @@ module TypeScript {
         }
 
         private convertTokenTrailingComments(token: ISyntaxToken, commentStartPosition: number): Comment[] {
-            if (token === null || !token.hasTrailingComment() || token.hasTrailingNewLine()) {
+            if (token === null || !token.hasTrailingComment()) {
                 return null;
             }
 
@@ -1939,6 +1939,9 @@ module TypeScript {
         public visitSimplePropertyAssignment(node: SimplePropertyAssignmentSyntax): SimplePropertyAssignment {
             var start = this.position;
 
+            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
+            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
+
             var propertyName = node.propertyName.accept(this);
 
             var afterColonComments = this.convertTokenTrailingComments(
@@ -1949,7 +1952,10 @@ module TypeScript {
             expression.setPreComments(this.mergeComments(afterColonComments, expression.preComments()));
 
             var result = new SimplePropertyAssignment(propertyName, expression);
-            this.setCommentsAndSpan(result, start, node);
+            this.setSpan(result, start, node);
+
+            result.setPreComments(preComments);
+            result.setPostComments(postComments);
 
             if (expression.nodeType() === NodeType.FunctionDeclaration ||
                 expression.nodeType() === NodeType.ArrowFunctionExpression) {
@@ -1980,6 +1986,9 @@ module TypeScript {
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
             var start = this.position;
 
+            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
+            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
+
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
@@ -1999,13 +2008,19 @@ module TypeScript {
             funcDecl.hint = "get" + node.propertyName.valueText();
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            this.setCommentsAndSpan(result, start, node);
+            this.setSpan(result, start, node);
+
+            result.setPreComments(preComments);
+            result.setPostComments(postComments);
 
             return result;
         }
 
         public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
             var start = this.position;
+
+            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
+            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
 
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
@@ -2026,7 +2041,10 @@ module TypeScript {
             funcDecl.hint = "set" + node.propertyName.valueText();
 
             var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            this.setCommentsAndSpan(result, start, node);
+            this.setSpan(result, start, node);
+
+            result.setPreComments(preComments);
+            result.setPostComments(postComments);
 
             return result;
         }
