@@ -969,6 +969,9 @@ module Services {
 
             if (node.isDeclaration()) {
                 var declarationInformation = this.compilerState.getDeclarationSymbolInformation(node, document);
+                if (!declarationInformation) {
+                    return null;
+                }
 
                 ast = declarationInformation.ast;
                 symbol = declarationInformation.symbol;
@@ -996,7 +999,7 @@ module Services {
                 // Get the call expression symbol
                 var callExpressionInformation = this.compilerState.getCallInformationFromAST(node, document);
 
-                if (!callExpressionInformation.targetSymbol) {
+                if (!callExpressionInformation || !callExpressionInformation.targetSymbol) {
                     return null;
                 }
 
@@ -1024,7 +1027,7 @@ module Services {
             else {
                 var symbolInformation = this.compilerState.getSymbolInformationFromAST(node, document);
 
-                if (!symbolInformation.symbol) {
+                if (!symbolInformation || !symbolInformation.symbol) {
                     return null;
                 }
 
@@ -1239,7 +1242,7 @@ module Services {
         }
 
         private getCompletionEntriesFromDecls(decls: TypeScript.PullDecl[], result: TypeScript.IdentiferNameHashTable<CachedCompletionEntryDetails>): void {
-            for (var i = 0, n = decls.length; i < n; i++) {
+            for (var i = 0, n = decls ? decls.length : 0; i < n; i++) {
                 var decl = decls[i];
 
                 var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);

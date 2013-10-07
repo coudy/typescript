@@ -925,13 +925,14 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromAST(ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; } {
+        private extractResolutionContextFromAST(ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; inWithBlock: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 
             var enclosingDecl: PullDecl = null;
             var enclosingDeclAST: AST = null;
             var inContextuallyTypedAssignment = false;
+            var inWithBlock = false;
 
             var resolutionContext = new PullTypeResolutionContext(this.resolver);
 
@@ -1189,6 +1190,10 @@ module TypeScript {
                         }
 
                         break;
+
+                    case NodeType.WithStatement:
+                        inWithBlock = true;
+                        break;
                 }
 
                 // Record enclosing Decl
@@ -1218,7 +1223,8 @@ module TypeScript {
                 ast: ast,
                 enclosingDecl: enclosingDecl,
                 resolutionContext: resolutionContext,
-                inContextuallyTypedAssignment: inContextuallyTypedAssignment
+                inContextuallyTypedAssignment: inContextuallyTypedAssignment,
+                inWithBlock: inWithBlock
             };
         }
 
@@ -1235,7 +1241,7 @@ module TypeScript {
 
         public pullGetSymbolInformationFromAST(ast: AST, document: Document): PullSymbolInfo {
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -1266,7 +1272,7 @@ module TypeScript {
             }
 
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -1294,7 +1300,7 @@ module TypeScript {
             var isNew = ast.nodeType() === NodeType.ObjectCreationExpression;
 
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -1319,7 +1325,7 @@ module TypeScript {
 
         public pullGetVisibleMemberSymbolsFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -1336,7 +1342,7 @@ module TypeScript {
 
         public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[] {
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ false);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -1350,7 +1356,7 @@ module TypeScript {
             }
 
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -1364,7 +1370,7 @@ module TypeScript {
 
         public pullGetDeclInformation(decl: PullDecl, ast: AST, document: Document): PullSymbolInfo {
             var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
