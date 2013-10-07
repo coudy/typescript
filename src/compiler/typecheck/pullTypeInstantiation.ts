@@ -354,7 +354,7 @@ module TypeScript {
 
         public isArray(): boolean {
             if (this._isArray === undefined) {
-                this._isArray = (this.getRootSymbol() == globalResolver.getCachedArrayType());
+                this._isArray = this.getRootSymbol().isArray() || (this.getRootSymbol() == globalResolver.getCachedArrayType());
             }
             return this._isArray;
         }
@@ -381,7 +381,7 @@ module TypeScript {
 
         // GTODO: Rather than pass in the map, pass in a list that we can construct from?
         // Or, just introduce a helper function to create the map for us
-        public static create(type: PullTypeSymbol, typeParameterArgumentMap: any): PullInstantiatedTypeReferenceSymbol {
+        public static create(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
 
             // check for an existing instantiation
             var rootType = <PullTypeSymbol>type.getRootSymbol();
@@ -392,10 +392,12 @@ module TypeScript {
                 typeArgumentList[typeArgumentList.length] = typeParameterArgumentMap[typeParameterID];
             }
 
-            var instantiation = <PullInstantiatedTypeReferenceSymbol>rootType.getSpecialization(typeArgumentList);
+            if (!instantiateFunctionTypeParameters) {
+                var instantiation = <PullInstantiatedTypeReferenceSymbol>rootType.getSpecialization(typeArgumentList);
 
-            if (instantiation) {
-                return instantiation;
+                if (instantiation) {
+                    return instantiation;
+                }
             }
 
             var typeParameters = rootType.getTypeParameters();
@@ -406,19 +408,43 @@ module TypeScript {
             var isReferencedType = (type.kind & PullElementKind.SomeNamedType) != 0;
 
             if (isReferencedType) {
-                if (typeParameters && typeArgumentList && (typeParameters.length == typeArgumentList.length)) {
+                if (typeParameters && typeArgumentList) {
+                    if (typeParameters.length == typeArgumentList.length) {
+                        for (var i = 0; i < typeParameters.length; i++) {
+                            if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
+                                isReferencedType = false;
+                                break;
+                            }
+                        }
 
-                    for (var i = 0; i < typeParameters.length; i++) {
-                        if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
-                            isReferencedType = false;
-                            break;
+                        if (isReferencedType) {
+                            typeParameterArgumentMap = {};
                         }
                     }
-
-                    if (isReferencedType) {
-                        typeParameterArgumentMap = {};
+                    else {
+                        isReferencedType = false; // the same number of type parameters are not shared
                     }
                 }
+            }
+
+            // if we're re-specializing a generic type (say, if a signature parameter gets specialized
+            // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map
+            if (type.isTypeReference() && type.isGeneric()) {
+                var initializationMap = {};
+
+                // first, initialize the argument map
+                for (var typeParameterID in typeParameterArgumentMap) {
+                    initializationMap[typeParameterID] = typeParameterArgumentMap[typeParameterID];
+                }
+
+                // next, overwrite any entries that should be re-directed to new type parameters
+                for (var typeParameterID in (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap) {
+                    if (typeParameterArgumentMap[(<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap[typeParameterID].pullSymbolIDString]) {
+                        initializationMap[typeParameterID] = typeParameterArgumentMap[(<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap[typeParameterID].pullSymbolIDString];
+                    }
+                }
+
+                typeParameterArgumentMap = initializationMap;
             }
 
             instantiation = new PullInstantiatedTypeReferenceSymbol(type, typeParameterArgumentMap);
@@ -428,9 +454,9 @@ module TypeScript {
             if (isReferencedType) {
                 instantiation.isReferencedType = true;
             }
-            else {
-                instantiation._typeArgumentReferences = typeArgumentList;
-            }
+            //else {
+            //    instantiation._typeArgumentReferences = typeArgumentList;
+            //}
 
             return instantiation;
         }
@@ -458,7 +484,6 @@ module TypeScript {
                 return this.getTypeParameters();
             }
 
-            // GTODO: given that we now set the type arguments in "create", this may be redundant
             if (!this._typeArgumentReferences) {
                 var typeParameters = this.referencedTypeSymbol.getTypeParameters();
 
@@ -750,7 +775,7 @@ module TypeScript {
 
     //}
     
-    function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: any): PullTypeSymbol {
+    function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullTypeSymbol {
 
         // if the type is a primitive type, nothing to do here
         if (type.isPrimitive()) {
@@ -767,7 +792,7 @@ module TypeScript {
         }
 
         if (typeWrapsSomeTypeParameter(type, typeParameterArgumentMap)) {
-            return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap);
+            return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
         }
 
         return type;
@@ -901,7 +926,7 @@ module TypeScript {
         return wrapsSomeTypeParameter;
     }
 
-    export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: any): PullSignatureSymbol {
+    export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
 
         if (!signatureWrapsSomeTypeParameter(signature, typeParameterArgumentMap)) {
             return signature;
@@ -915,7 +940,7 @@ module TypeScript {
             typeArguments[typeArguments.length] = typeParameterArgumentMap[typeParameterID];
         }
 
-        var instantiatedSignature = rootSignature.getSpecialization(typeArguments);
+        var instantiatedSignature = instantiateFunctionTypeParameters ? rootSignature.getSpecialization(typeArguments) : null;
 
         if (instantiatedSignature) {
             return instantiatedSignature;
@@ -933,7 +958,9 @@ module TypeScript {
             instantiatedSignature.addTypeParameter(typeParameters[i]);
         }
 
-        instantiatedSignature.returnType = instantiateType(signature.returnType, typeParameterArgumentMap);
+        instantiatedSignature.returnType = instantiateType(signature.returnType, typeParameterArgumentMap, instantiateFunctionTypeParameters);
+
+        var str = instantiatedSignature.returnType.toString();
 
         var parameters = signature.parameters;
         var parameter: PullSymbol = null;
@@ -952,11 +979,13 @@ module TypeScript {
                 }
                 instantiatedSignature.addParameter(parameter, parameter.isOptional);
 
-                parameter.type = instantiateType(parameters[j].type, typeParameterArgumentMap);
+                parameter.type = instantiateType(parameters[j].type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
             }
         }
 
-        signature.addSpecialization(instantiatedSignature, typeArguments);
+        if (instantiateFunctionTypeParameters) {
+            signature.addSpecialization(instantiatedSignature, typeArguments);
+        }
 
         return instantiatedSignature;
     }

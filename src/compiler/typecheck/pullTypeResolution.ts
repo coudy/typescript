@@ -7315,7 +7315,7 @@ module TypeScript {
                         }
 
                         context.isSpecializingSignatureTypeParameters = true;
-                        specializedSignature = instantiateSignature(signatures[i], typeReplacementMap);
+                        specializedSignature = instantiateSignature(signatures[i], typeReplacementMap, true);
 
                         context.isSpecializingSignatureTypeParameters = prevSpecializing;
                         context.specializingToAny = prevSpecializingToAny;
@@ -7707,7 +7707,7 @@ module TypeScript {
                                 }
 
                                 context.isSpecializingSignatureTypeParameters = true;
-                                specializedSignature = instantiateSignature(constructSignatures[i], typeReplacementMap);
+                                specializedSignature = instantiateSignature(constructSignatures[i], typeReplacementMap, true);
 
                                 context.specializingToAny = prevSpecializingToAny;
                                 context.isSpecializingSignatureTypeParameters = prevIsSpecializing;
@@ -9967,7 +9967,7 @@ module TypeScript {
                         typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
                     }
 
-                    signatureToSpecialize.cachedObjectSpecialization = instantiateSignature(signatureToSpecialize, typeReplacementMap);
+                    signatureToSpecialize.cachedObjectSpecialization = instantiateSignature(signatureToSpecialize, typeReplacementMap, true);
                 }
                 else {
                     signatureToSpecialize.cachedObjectSpecialization = signatureToSpecialize;
