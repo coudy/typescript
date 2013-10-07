@@ -200,6 +200,8 @@ module TypeScript {
             ]
 
             this.currentUnit = this.semanticInfoChain.getUnit(unitPath);
+
+            TypeScript.globalResolver = this;
         }
 
         public getUnitPath() { return this.unitPath; }

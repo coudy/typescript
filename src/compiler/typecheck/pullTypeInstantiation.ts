@@ -389,9 +389,25 @@ module TypeScript {
             var rootType = <PullTypeSymbol>type.getRootSymbol();
 
             var typeArgumentList: PullTypeSymbol[] = [];
+            var typeArguments = type.getTypeArguments();
+            var typeParameters = rootType.getTypeParameters();
 
-            for (var typeParameterID in typeParameterArgumentMap) {
-                typeArgumentList[typeArgumentList.length] = typeParameterArgumentMap[typeParameterID];
+            // if the type is already specialized, we need to create a new type argument map
+            if (type.getIsSpecialized() && typeArguments && typeArguments.length) {
+                for (var i = 0; i < typeArguments.length; i++) {
+                    typeArgumentList[typeArgumentList.length] = instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
+                }
+
+                typeParameterArgumentMap = {};
+
+                for (var i = 0; i < typeArguments.length; i++) {
+                    typeParameterArgumentMap[typeArguments[i].pullSymbolIDString] = typeArgumentList[i];
+                }
+            }
+            else {
+                for (var typeParameterID in typeParameterArgumentMap) {
+                    typeArgumentList[typeArgumentList.length] = typeParameterArgumentMap[typeParameterID];
+                }
             }
 
             if (!instantiateFunctionTypeParameters) {
@@ -401,8 +417,6 @@ module TypeScript {
                     return instantiation;
                 }
             }
-
-            var typeParameters = rootType.getTypeParameters();
 
             // If the reference is made to itself (e.g., referring to Array<T> within the declaration of Array<T>,
             // We want to special-case the reference so later calls to getMember, etc., will delegate directly
@@ -433,7 +447,6 @@ module TypeScript {
             // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map
             if (type.isTypeReference() && type.isGeneric()) {
                 var initializationMap = {};
-                var oldmap = typeParameterArgumentMap;
 
                 // first, initialize the argument map
                 for (var typeParameterID in typeParameterArgumentMap) {
@@ -538,6 +551,10 @@ module TypeScript {
                 for (var i = 0; i < referencedMembers.length; i++) {
                     referencedMember = referencedMembers[i];
 
+                    if (!referencedMember.isResolved) {
+                        globalResolver.resolveDeclaredSymbol(referencedMember);
+                    }
+
                     if (!this._instantiatedMemberNameCache[referencedMember.name]) {
 
                         // if the member does not require further specialization, re-use the referenced symbol
@@ -583,9 +600,9 @@ module TypeScript {
                     memberSymbol = new PullSymbol(referencedMemberSymbol.name, referencedMemberSymbol.kind);
                     memberSymbol.setRootSymbol(referencedMemberSymbol);
 
-                    //if (!referencedMemberSymbol.isResolved) {
-                    //    globalResolver.resolveDeclaredSymbol(referencedMemberSymbol);
-                    //}
+                    if (!referencedMemberSymbol.isResolved) {
+                        globalResolver.resolveDeclaredSymbol(referencedMemberSymbol);
+                    }
 
                     memberSymbol.type = instantiateType(referencedMemberSymbol.type, this._typeParameterArgumentMap);
 
@@ -600,7 +617,8 @@ module TypeScript {
         }
 
         // May need to cache based on search kind / visibility combinations
-        public getAllMembers(searchDeclKind: PullElementKind, memberVisiblity: GetAllMembersVisiblity): PullSymbol[] {
+        public getAllMembers(searchDeclKind: PullElementKind, memberVisiblity: GetAllMembersVisiblity): PullSymbol[]{
+
             // ensure that the type is resolved before trying to collect all members
             this.ensureReferencedTypeIsResolved();
 
@@ -620,39 +638,39 @@ module TypeScript {
                 for (var i = 0; i < members.length; i++) {
                     this._allInstantiatedMemberNameCache[members[i].name] = members[i];
                 }
+            }
 
-                // next, for add any symbols belonging to the parent type, if necessary
-                var referencedMember: PullSymbol = null;
-                var requestedMember: PullSymbol = null;
+            // next, for add any symbols belonging to the parent type, if necessary
+            var referencedMember: PullSymbol = null;
+            var requestedMember: PullSymbol = null;
 
-                for (var i = 0; i < allReferencedMembers.length; i++) {
-                    referencedMember = allReferencedMembers[i];
+            for (var i = 0; i < allReferencedMembers.length; i++) {
+                referencedMember = allReferencedMembers[i];
 
-                    if (this._allInstantiatedMemberNameCache[referencedMember.name]) {
-                        requestedMembers[requestedMembers.length] = this._allInstantiatedMemberNameCache[referencedMember.name];
+                if (this._allInstantiatedMemberNameCache[referencedMember.name]) {
+                    requestedMembers[requestedMembers.length] = this._allInstantiatedMemberNameCache[referencedMember.name];
+                }
+                else {
+                    if (!typeWrapsSomeTypeParameter(referencedMember.type, this._typeParameterArgumentMap)) {
+                        this._allInstantiatedMemberNameCache[referencedMember.name] = referencedMember;
+                        requestedMembers[requestedMembers.length] = referencedMember;
                     }
                     else {
-                        if (!typeWrapsSomeTypeParameter(referencedMember.type, this._typeParameterArgumentMap)) {
-                            this._allInstantiatedMemberNameCache[referencedMember.name] = referencedMember;
-                            requestedMembers[requestedMembers.length] = referencedMember;
-                        }
-                        else {
-                            requestedMember = new PullSymbol(referencedMember.name, referencedMember.kind);
-                            requestedMember.setRootSymbol(referencedMember);
+                        requestedMember = new PullSymbol(referencedMember.name, referencedMember.kind);
+                        requestedMember.setRootSymbol(referencedMember);
 
-                            //if (!referencedMember.isResolved) {
-                            //    globalResolver.resolveDeclaredSymbol(referencedMember);
-                            //}
+                        //if (!referencedMember.isResolved) {
+                        //    globalResolver.resolveDeclaredSymbol(referencedMember);
+                        //}
 
-                            requestedMember.type = instantiateType(referencedMember.type, this._typeParameterArgumentMap);
+                        requestedMember.type = instantiateType(referencedMember.type, this._typeParameterArgumentMap);
 
-                            this._allInstantiatedMemberNameCache[requestedMember.name] = requestedMember;
-                            requestedMembers[requestedMembers.length] = requestedMember;
-                        }
+                        this._allInstantiatedMemberNameCache[requestedMember.name] = requestedMember;
+                        requestedMembers[requestedMembers.length] = requestedMember;
                     }
                 }
             }
-
+            
             return requestedMembers;
         }
 
@@ -973,8 +991,6 @@ module TypeScript {
         }
 
         instantiatedSignature.returnType = instantiateType(signature.returnType, typeParameterArgumentMap, instantiateFunctionTypeParameters);
-
-        var str = instantiatedSignature.returnType.toString();
 
         var parameters = signature.parameters;
         var parameter: PullSymbol = null;
