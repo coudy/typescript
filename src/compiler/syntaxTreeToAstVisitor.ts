@@ -586,75 +586,44 @@ module TypeScript {
             return result;
         }
 
-        public visitEnumDeclaration(node: EnumDeclarationSyntax): ModuleDeclaration {
+        public visitEnumDeclaration(node: EnumDeclarationSyntax): EnumDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
+            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
 
             this.movePast(node.openBraceToken);
-            var array: VariableStatement[] = new Array(node.enumElements.nonSeparatorCount());
 
-            var declarators: VariableDeclarator[] = [];
-
+            var enumElements: EnumElement[] = [];
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 if (i % 2 === 1) {
                     this.movePast(node.enumElements.childAt(i));
                 }
                 else {
-                    var enumElement = <EnumElementSyntax>node.enumElements.childAt(i);
+                    var enumElementSyntax = <EnumElementSyntax>node.enumElements.childAt(i);
                     var enumElementFullStart = this.position;
-                    var memberStart = this.position + enumElement.leadingTriviaWidth();
+                    var memberStart = this.position + enumElementSyntax.leadingTriviaWidth();
 
-                    var memberName = this.identifierFromToken(enumElement.propertyName, /*isOptional:*/ false);
-                    this.movePast(enumElement.propertyName);
-                    
-                    var init = enumElement.equalsValueClause !== null ? enumElement.equalsValueClause.accept(this) : null;
+                    var memberName = this.identifierFromToken(enumElementSyntax.propertyName, /*isOptional:*/ false);
+                    this.movePast(enumElementSyntax.propertyName);
 
-                    var id = new Identifier(name.actualText, name.actualText);
-                    id.minChar = name.minChar;
-                    id.limChar = name.limChar;
+                    var value = enumElementSyntax.equalsValueClause !== null ? enumElementSyntax.equalsValueClause.accept(this) : null;
 
-                    var typeReference = new TypeReference(id);
-                    typeReference.minChar = name.minChar;
-                    typeReference.limChar = name.limChar;
+                    var enumElement = new EnumElement(memberName, value);
+                    this.setCommentsAndSpan(enumElement, enumElementFullStart, enumElementSyntax);
+                    enumElement.constantValue = this.determineConstantValue(enumElementSyntax.equalsValueClause, enumElements);
 
-                    var declarator = new VariableDeclarator(memberName, typeReference, init);
-                    declarator.constantValue = this.determineConstantValue(enumElement.equalsValueClause, declarators);
-
-                    declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Property);
-                    this.setSpanExplicit(declarator, memberStart, this.position);
-                    declarator.setPreComments(this.convertTokenLeadingComments(enumElement.firstToken(), enumElementFullStart));
-                    declarator.setPostComments(this.convertNodeTrailingComments(enumElement, enumElement.lastToken(), enumElementFullStart));
-
-                    declarators.push(declarator);
-
-                    var declaration = new VariableDeclaration(new ASTList([declarator]));
-                    this.setSpanExplicit(declaration, memberStart, this.position);
-
-                    var statement = new VariableStatement(declaration);
-                    statement.setFlags(ASTFlags.EnumElement);
-                    this.setSpanExplicit(statement, memberStart, this.position);
-
-                    array[i / 2] = statement;
-
-                    // all enum members are exported
-                    declarator.setVarFlags(declarator.getVarFlags() | VariableFlags.Exported);
+                    enumElements.push(enumElement);
                 }
             }
 
-            var members = new ASTList(array);
-
-            var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
-            var closeBraceSpan = new ASTSpan();
-            this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
-            var result = new ModuleDeclaration(name, members, closeBraceSpan);
+            var result = new EnumDeclaration(identifier, new ASTList(enumElements));
             this.setCommentsAndSpan(result, start, node);
 
-            var flags = result.getModuleFlags() | ModuleFlags.IsEnum;
+            var flags = ModuleFlags.None;
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | ModuleFlags.Exported;
             }
@@ -668,8 +637,14 @@ module TypeScript {
             return result;
         }
 
-        private determineConstantValue(equalsValue: EqualsValueClauseSyntax, declarators: VariableDeclarator[]): number {
+        public visitEnumElement(node: EnumElementSyntax): void {
+            // Processing enum elements should be handled from inside visitEnumDeclaration.
+            throw Errors.invalidOperation();
+        }
+
+        private determineConstantValue(equalsValue: EqualsValueClauseSyntax, declarators: EnumElement[]): number {
             var value = equalsValue === null ? null : equalsValue.value;
+
             if (value === null) {
                 // If they provided no value, then our constant value is 0 if we're the first 
                 // element, or one greater than the last constant value.
@@ -686,7 +661,7 @@ module TypeScript {
             }
         }
 
-        private computeConstantValue(expression: IExpressionSyntax, declarators: VariableDeclarator[]): number {
+        private computeConstantValue(expression: IExpressionSyntax, declarators: EnumElement[]): number {
             if (Syntax.isIntegerLiteral(expression)) {
                 // Always produce a value for an integer literal.
                 var token: ISyntaxToken;
@@ -707,7 +682,7 @@ module TypeScript {
                     case SyntaxKind.IdentifierName:
                         // If it's a name, see if we already had an enum value named this.  If so,
                         // return that value.
-                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.id.text() === (<ISyntaxToken>expression).valueText());
+                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.identifier.text() === (<ISyntaxToken>expression).valueText());
                         return variableDeclarator ? variableDeclarator.constantValue : null;
 
                     case SyntaxKind.LeftShiftExpression:
@@ -729,11 +704,6 @@ module TypeScript {
                 // There is no constant value for this expression.
                 return null;
             }
-        }
-
-        public visitEnumElement(node: EnumElementSyntax): void {
-            // Processing enum elements should be handled from inside visitEnumDeclaration.
-            throw Errors.invalidOperation();
         }
 
         public visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {

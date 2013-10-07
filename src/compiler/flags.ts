@@ -30,7 +30,6 @@ module TypeScript {
         SingleLine = 1 << 1,
         OptionalName = 1 << 2,
         TypeReference = 1 << 3,
-        EnumElement = 1 << 4,
     }
 
     export enum DeclFlags {
@@ -49,7 +48,6 @@ module TypeScript {
         Public = 1 << 2,
         Ambient = 1 << 3,
         Static = 1 << 4,
-        IsEnum = 1 << 7,
         IsExternalModule = 1 << 8,
     }
 

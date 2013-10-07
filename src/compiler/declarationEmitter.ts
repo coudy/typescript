@@ -100,6 +100,8 @@ module TypeScript {
                     return this.emitDeclarationsForImportDeclaration(<ImportDeclaration>ast);
                 case NodeType.ModuleDeclaration:
                     return this.emitDeclarationsForModuleDeclaration(<ModuleDeclaration>ast);
+                case NodeType.EnumDeclaration:
+                    return this.emitDeclarationsForEnumDeclaration(<EnumDeclaration>ast);
                 case NodeType.ExportAssignment:
                     return this.emitDeclarationsForExportAssignment(<ExportAssignment>ast);
             }
@@ -802,7 +804,7 @@ module TypeScript {
             }
         }
 
-        private emitEnumSignature(moduleDecl: ModuleDeclaration) {
+        private emitDeclarationsForEnumDeclaration(moduleDecl: EnumDeclaration): void {
             if (!this.canEmitDeclarations(ToDeclFlags(moduleDecl.getModuleFlags()), moduleDecl)) {
                 return;
             }
@@ -810,19 +812,18 @@ module TypeScript {
             this.emitDeclarationComments(moduleDecl);
             var modulePullDecl = this.compiler.semanticInfoChain.getDeclForAST(moduleDecl);
             this.emitDeclFlags(ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "enum");
-            this.declFile.WriteLine(moduleDecl.name.actualText + " {");
+            this.declFile.WriteLine(moduleDecl.identifier.actualText + " {");
 
             this.indenter.increaseIndent();
-            var membersLen = moduleDecl.members.members.length;
+            var membersLen = moduleDecl.enumElements.members.length;
             for (var j = 0; j < membersLen; j++) {
-                var memberDecl: AST = moduleDecl.members.members[j];
-                var variableStatement = <VariableStatement>memberDecl;
-                var varDeclarator = <VariableDeclarator>variableStatement.declaration.declarators.members[0];
-                this.emitDeclarationComments(varDeclarator);
+                var memberDecl: AST = moduleDecl.enumElements.members[j];
+                var enumElement = <EnumElement>memberDecl;
+                this.emitDeclarationComments(enumElement);
                 this.emitIndent();
-                this.declFile.Write(varDeclarator.id.actualText);
-                if (varDeclarator.init && varDeclarator.init.nodeType() == NodeType.NumericLiteral) {
-                    this.declFile.Write(" = " + (<NumericLiteral>varDeclarator.init).text());
+                this.declFile.Write(enumElement.identifier.actualText);
+                if (enumElement.value && enumElement.value.nodeType() == NodeType.NumericLiteral) {
+                    this.declFile.Write(" = " + (<NumericLiteral>enumElement.value).text());
                 }
                 this.declFile.WriteLine(",");
             }
@@ -833,10 +834,6 @@ module TypeScript {
         }
 
         private emitDeclarationsForModuleDeclaration(moduleDecl: ModuleDeclaration) {
-            if (moduleDecl.isEnum()) {
-                return this.emitEnumSignature(moduleDecl);
-            }
-
             var isExternalModule = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
             if (!isExternalModule && !this.canEmitDeclarations(ToDeclFlags(moduleDecl.getModuleFlags()), moduleDecl)) {
                 return;
@@ -854,7 +851,6 @@ module TypeScript {
                         //  we traverse the module element so we can create a dotted module name.
                         moduleDecl.members.members.length === 1 &&
                         moduleDecl.members.members[0].nodeType() === NodeType.ModuleDeclaration &&
-                        !(<ModuleDeclaration>moduleDecl.members.members[0]).isEnum() &&
                         hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported) &&
                         (moduleDecl.docComments() === null || moduleDecl.docComments().length === 0)
 

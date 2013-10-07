@@ -460,7 +460,7 @@ module Services {
             var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
 
             if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration ||
-                (<TypeScript.ModuleDeclaration>ast).isEnum() || decl.kind != TypeScript.PullElementKind.Variable)) {
+                        decl.kind != TypeScript.PullElementKind.Variable)) {
                 return ast.docComments();
             }
 

@@ -51,6 +51,8 @@ module TypeScript {
         Parameter,
         SimplePropertyAssignment,
         FunctionPropertyAssignment,
+        EnumDeclaration,
+        EnumElement,
 
         // Expressions
         Name,

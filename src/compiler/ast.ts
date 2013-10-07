@@ -1121,7 +1121,6 @@ module TypeScript {
     }
 
     export class VariableDeclarator extends AST {
-        public constantValue: number = null;
         private _varFlags = VariableFlags.None;
 
         constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST) {
@@ -1374,8 +1373,6 @@ module TypeScript {
                 structuralEquals(this.name, ast.name, includingPosition) &&
                 structuralEquals(this.members, ast.members, includingPosition);
         }
-
-        public isEnum() { return hasFlag(this.getModuleFlags(), ModuleFlags.IsEnum); }
 
         public shouldEmit(emitter: Emitter): boolean {
             return emitter.shouldEmitModuleDeclaration(this);
@@ -1792,6 +1789,62 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expr, ast.expr, includingPosition) &&
                    structuralEquals(this.body, ast.body, includingPosition);
+        }
+    }
+
+    export class EnumDeclaration extends AST {
+        private _moduleFlags: ModuleFlags = ModuleFlags.None;
+
+        constructor(public identifier: Identifier, public enumElements: ASTList) {
+            super();
+            identifier && (identifier.parent = this);
+            enumElements && (enumElements.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.EnumDeclaration;
+        }
+
+        public getModuleFlags(): ModuleFlags {
+            return this._moduleFlags;
+        }
+
+        public setModuleFlags(flags: ModuleFlags): void {
+            this._moduleFlags = flags;
+        }
+
+        public isDeclaration(): boolean {
+            return true;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitEnumDeclaration(this);
+        }
+
+        public emit(emitter: Emitter): void {
+            emitter.emitEnumDeclaration(this);
+        }
+    }
+
+    export class EnumElement extends AST {
+        public constantValue: number = null;
+
+        constructor(public identifier: Identifier, public value: AST) {
+            super();
+            identifier && (identifier.parent = this);
+            value && (value.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.EnumElement;
+        }
+
+        public isDeclaration(): boolean {
+            return true;
+        }
+
+        public emit(emitter: Emitter): void {
+            emitter.emitEnumElement(this);
         }
     }
 

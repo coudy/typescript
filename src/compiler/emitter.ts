@@ -461,20 +461,20 @@ module TypeScript {
             this.recordSourceMappingEnd(objectCreationExpression);
         }
 
-        public getConstantDecl(dotExpr: MemberAccessExpression): VariableDeclarator {
+        public getConstantDecl(dotExpr: MemberAccessExpression): EnumElement {
             var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
             if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
                     var pullDecl = pullDecls[0];
                     var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    if (ast && ast.nodeType() === NodeType.VariableDeclarator) {
-                        var varDecl = <VariableDeclarator>ast;
+                    if (ast && ast.nodeType() === NodeType.EnumElement) {
+                        var varDecl = <EnumElement>ast;
                         // If the enum member declaration is in an ambient context, don't propagate the constant because 
                         // the ambient enum member may have been generated based on a computed value - unless it is
                         // explicitly initialized in the ambient enum to an integer constant.
                         var memberIsAmbient = hasFlag(pullDecl.getParentDecl().flags, PullElementFlags.Ambient);
-                        var memberIsInitialized = varDecl.init != null;
+                        var memberIsInitialized = varDecl.value !== null;
                         if (!memberIsAmbient || memberIsInitialized) {
                             return varDecl;
                         }
@@ -794,6 +794,89 @@ module TypeScript {
             return false;
         }
 
+        public emitEnum(moduleDecl: EnumDeclaration) {
+            var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
+            this.pushDecl(pullDecl);
+
+            var svModuleName = this.moduleName;
+            this.moduleName = moduleDecl.identifier.actualText;
+
+            var temp = this.setContainer(EmitContainer.Module);
+            var isExported = hasFlag(pullDecl.flags, PullElementFlags.Exported);
+
+            if (!isExported) {
+                this.recordSourceMappingStart(moduleDecl);
+                this.writeToOutput("var ");
+                this.recordSourceMappingStart(moduleDecl.identifier);
+                this.writeToOutput(this.moduleName);
+                this.recordSourceMappingEnd(moduleDecl.identifier);
+                this.writeLineToOutput(";");
+                this.recordSourceMappingEnd(moduleDecl);
+                this.emitIndent();
+            }
+
+            this.writeToOutput("(");
+            this.recordSourceMappingStart(moduleDecl);
+            this.writeToOutput("function (");
+            this.writeToOutputWithSourceMapRecord(this.moduleName, moduleDecl.identifier);
+            this.writeLineToOutput(") {");
+
+            this.recordSourceMappingNameStart(this.moduleName);
+
+            this.indenter.increaseIndent();
+
+            if (this.shouldCaptureThis(moduleDecl)) {
+                this.writeCaptureThisStatement(moduleDecl);
+            }
+
+            this.emitList(moduleDecl.enumElements);
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+
+            var parentIsDynamic = temp === EmitContainer.DynamicModule;
+            if (temp === EmitContainer.Prog && isExported) {
+                this.writeToOutput("}");
+                this.recordSourceMappingNameEnd();
+                this.writeToOutput(")(this." + this.moduleName + " || (this." + this.moduleName + " = {}));");
+            }
+            else if (isExported || temp === EmitContainer.Prog) {
+                var dotMod = svModuleName !== "" ? (parentIsDynamic ? "exports" : svModuleName) + "." : svModuleName;
+                this.writeToOutput("}");
+                this.recordSourceMappingNameEnd();
+                this.writeToOutput(")(" + dotMod + this.moduleName + " || (" + dotMod + this.moduleName + " = {}));");
+            }
+            else if (!isExported && temp !== EmitContainer.Prog) {
+                this.writeToOutput("}");
+                this.recordSourceMappingNameEnd();
+                this.writeToOutput(")(" + this.moduleName + " || (" + this.moduleName + " = {}));");
+            }
+            else {
+                this.writeToOutput("}");
+                this.recordSourceMappingNameEnd();
+                this.writeToOutput(")();");
+            }
+
+            this.recordSourceMappingEnd(moduleDecl);
+            if (temp !== EmitContainer.Prog && isExported) {
+                this.recordSourceMappingStart(moduleDecl);
+                if (parentIsDynamic) {
+                    this.writeLineToOutput("");
+                    this.emitIndent();
+                    this.writeToOutput("var " + this.moduleName + " = exports." + this.moduleName + ";");
+                } else {
+                    this.writeLineToOutput("");
+                    this.emitIndent();
+                    this.writeToOutput("var " + this.moduleName + " = " + svModuleName + "." + this.moduleName + ";");
+                }
+                this.recordSourceMappingEnd(moduleDecl);
+            }
+
+            this.setContainer(temp);
+            this.moduleName = svModuleName;
+
+            this.popDecl(pullDecl);
+        }
+
         public emitModule(moduleDecl: ModuleDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
             this.pushDecl(pullDecl);
@@ -924,11 +1007,11 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
-        public emitEnumElement(varDecl: VariableDeclarator): void {
+        public emitEnumElement(varDecl: EnumElement): void {
             // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
             this.emitComments(varDecl, true);
             this.recordSourceMappingStart(varDecl);
-            var name = varDecl.id.actualText;
+            var name = varDecl.identifier.actualText;
             var quoted = isQuoted(name);
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
@@ -937,8 +1020,8 @@ module TypeScript {
             this.writeToOutput(quoted ? name : '"' + name + '"');
             this.writeToOutput('] = ');
 
-            if (varDecl.init) {
-                varDecl.init.emit(this);
+            if (varDecl.value) {
+                varDecl.value.emit(this);
             }
             else if (varDecl.constantValue !== null) {
                 this.writeToOutput(varDecl.constantValue.toString());
@@ -2737,14 +2820,17 @@ module TypeScript {
             return this.moduleMembersAreElided(script.moduleElements);
         }
 
-        private moduleIsElided(declaration: ModuleDeclaration): boolean {
+        private enumIsElided(declaration: EnumDeclaration): boolean {
             if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
                 return true;
             }
 
-            // Always emit a non ambient enum (even empty ones).
-            if (hasFlag(declaration.getModuleFlags(), ModuleFlags.IsEnum)) {
-                return false;
+            return false;
+        }
+
+        private moduleIsElided(declaration: ModuleDeclaration): boolean {
+            if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
+                return true;
             }
 
             return this.moduleMembersAreElided(declaration.members);
@@ -2768,6 +2854,21 @@ module TypeScript {
             }
 
             return true;
+        }
+
+        public shouldEmitEnumDeclaration(declaration: EnumDeclaration): boolean {
+            return declaration.preComments() !== null || ! this.enumIsElided(declaration);
+        }
+
+        public emitEnumDeclaration(declaration: EnumDeclaration): void {
+            if (!this.enumIsElided(declaration)) {
+                this.emitComments(declaration, true);
+                this.emitEnum(declaration);
+                this.emitComments(declaration, false);
+            }
+            else {
+                this.emitComments(declaration, true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
         }
 
         public shouldEmitModuleDeclaration(declaration: ModuleDeclaration): boolean {
@@ -2822,13 +2923,8 @@ module TypeScript {
         public emitVariableStatement(statement: VariableStatement): void {
             var varDecl = this.firstVariableDeclarator(statement);
             if (this.isNotAmbientOrHasInitializer(varDecl)) {
-                if (hasFlag(statement.getFlags(), ASTFlags.EnumElement)) {
-                    this.emitEnumElement(varDecl);
-                }
-                else {
-                    statement.declaration.emit(this);
-                    this.writeToOutput(";");
-                }
+                statement.declaration.emit(this);
+                this.writeToOutput(";");
             }
             else {
                 this.emitComments(varDecl, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);

@@ -207,6 +207,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.ObjectType] = ChildrenWalkers.walkObjectTypeChildren;
             this.childrenWalkers[NodeType.ArrayType] = ChildrenWalkers.walkArrayTypeChildren;
             this.childrenWalkers[NodeType.ModuleDeclaration] = ChildrenWalkers.walkModuleDeclChildren;
+            this.childrenWalkers[NodeType.EnumDeclaration] = ChildrenWalkers.walkEnumDeclarationChildren;
+            this.childrenWalkers[NodeType.EnumElement] = ChildrenWalkers.walkEnumElementChildren;
             this.childrenWalkers[NodeType.ImportDeclaration] = ChildrenWalkers.walkImportDeclChildren;
             this.childrenWalkers[NodeType.ExportAssignment] = ChildrenWalkers.walkExportAssignmentChildren;
             this.childrenWalkers[NodeType.WithStatement] = ChildrenWalkers.walkWithStatementChildren;
@@ -493,6 +495,16 @@ module TypeScript {
         export function walkModuleDeclChildren(preAst: ModuleDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.name);
             walker.walk(preAst.members);
+        }
+
+        export function walkEnumDeclarationChildren(preAst: EnumDeclaration, walker: IAstWalker): void {
+            walker.walk(preAst.identifier);
+            walker.walk(preAst.enumElements);
+        }
+
+        export function walkEnumElementChildren(preAst: EnumElement, walker: IAstWalker): void {
+            walker.walk(preAst.identifier);
+            walker.walk(preAst.value);
         }
 
         export function walkImportDeclChildren(preAst: ImportDeclaration, walker: IAstWalker): void {

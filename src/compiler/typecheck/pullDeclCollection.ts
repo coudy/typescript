@@ -70,6 +70,52 @@ module TypeScript {
         context.pushParent(decl);
     }
 
+    function preCollectEnumDecls(moduleDecl: EnumDeclaration, context: DeclCollectionContext): void {
+        var declFlags = PullElementFlags.None;
+        var modName = moduleDecl.identifier.text();
+        var kind: PullElementKind = PullElementKind.Container;
+
+        if (!context.containingModuleHasExportAssignment() && (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || context.isParsingAmbientModule())) {
+            declFlags |= PullElementFlags.Exported;
+        }
+
+        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+            declFlags |= PullElementFlags.Ambient;
+        }
+
+        // Consider an enum 'always initialized'.
+        declFlags |= (PullElementFlags.Enum | PullElementFlags.InitializedEnum);
+        kind = PullElementKind.Enum;
+
+        var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
+
+        var decl = new NormalPullDecl(modName, moduleDecl.identifier.actualText, kind, declFlags, context.getParent(), span);
+        context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
+
+        context.pushParent(decl);
+    }
+
+    function createEnumElementDecls(propertyDecl: EnumElement, context: DeclCollectionContext): void {
+        var declFlags = PullElementFlags.Public;
+        var parent = context.getParent();
+        var declType = PullElementKind.EnumMember;
+
+        if (propertyDecl.constantValue !== null) {
+            declFlags |= PullElementFlags.Constant;
+        }
+
+        var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
+
+        var decl = new NormalPullDecl(propertyDecl.identifier.text(), propertyDecl.identifier.actualText, declType, declFlags, parent, span);
+        context.semanticInfoChain.setDeclForAST(propertyDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, propertyDecl);
+
+        // Note: it is intentional that a enum element does not get added to hte context stack.  An 
+        // enum element does not introduce a new name scope, so it shouldn't be in the context decl stack.
+        // context.pushParent(decl);
+    }
+
     function preCollectModuleDecls(moduleDecl: ModuleDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text();
@@ -84,14 +130,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsEnum)) {
-            // Consider an enum 'always initialized'.
-            declFlags |= (PullElementFlags.Enum | PullElementFlags.InitializedEnum);
-            kind = PullElementKind.Enum;
-        }
-        else {
-            kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
-        }
+        kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
 
         var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
 
@@ -256,14 +295,10 @@ module TypeScript {
     function createPropertySignature(propertyDecl: VariableDeclarator, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var parent = context.getParent();
-        var declType = parent.kind === PullElementKind.Enum ? PullElementKind.EnumMember : PullElementKind.Property;
+        var declType = PullElementKind.Property;
 
         if (hasFlag(propertyDecl.id.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
-        }
-
-        if (propertyDecl.constantValue !== null) {
-            declFlags |= PullElementFlags.Constant;
         }
 
         var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
@@ -747,6 +782,12 @@ module TypeScript {
             case NodeType.Script:
                 preCollectScriptDecls(<Script>ast, context);
                 break;
+            case NodeType.EnumDeclaration:
+                preCollectEnumDecls(<EnumDeclaration>ast, context);
+                break;
+            case NodeType.EnumElement:
+                createEnumElementDecls(<EnumElement>ast, context);
+                break;
             case NodeType.ModuleDeclaration:
                 preCollectModuleDecls(<ModuleDeclaration>ast, context);
                 break;
@@ -879,6 +920,26 @@ module TypeScript {
         // Note that we never pop the Script - after the traversal, it should be the
         // one parent left in the context
         switch (ast.nodeType()) {
+            case NodeType.EnumDeclaration:
+                var thisModule = context.getParent();
+                context.popParent();
+                parentDecl = context.getParent();
+
+                if (hasInitializationFlag(thisModule)) {
+                    if (parentDecl && isContainer(parentDecl)) {
+                        initFlag = getInitializationFlag(parentDecl);
+                        parentDecl.setFlags(parentDecl.flags | initFlag);
+                    }
+
+                    // create the value decl
+                    var valueDecl = new NormalPullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.flags, parentDecl, thisModule.getSpan());
+                    thisModule.setValueDecl(valueDecl);
+                    context.semanticInfoChain.setASTForDecl(valueDecl, ast);
+                }
+
+                break;
+
+
             case NodeType.ModuleDeclaration:
                 var thisModule = context.getParent();
                 context.popParent();
@@ -927,6 +988,18 @@ module TypeScript {
                 break;
             case NodeType.VariableDeclarator:
                 // Note: a variable declarator does not introduce a new decl scope.  So there is no
+                // need to pop a decl here.
+                // context.popParent();
+
+                parentDecl = context.getParent();
+
+                if (parentDecl && isContainer(parentDecl)) {
+                    initFlag = getInitializationFlag(parentDecl);
+                    parentDecl.setFlags(parentDecl.flags | initFlag);
+                }
+                break;
+            case NodeType.EnumElement:
+                // Note: a enum element does not introduce a new decl scope.  So there is no
                 // need to pop a decl here.
                 // context.popParent();
 
