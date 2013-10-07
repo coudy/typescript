@@ -1513,7 +1513,7 @@ module TypeScript {
             var elseBod: ElseClause = node.elseClause ? node.elseClause.accept(this) : null;
 
             var result = new IfStatement(condition, thenBod, elseBod);
-            this.setSpan(result, start, node);
+            this.setCommentsAndSpan(result, start, node);
 
             return result;
         }
