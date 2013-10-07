@@ -6620,7 +6620,10 @@ module TypeScript {
                 switch (current.nodeType()) {
                     case NodeType.GenericType:
                         var genericType = <GenericType>current;
-                        return genericType.typeArguments === previous;
+                        if (genericType.typeArguments === previous) {
+                            return true;
+                        }
+                        break;
 
                     case NodeType.InvocationExpression:
                         var invocationExpression = <InvocationExpression>current;
