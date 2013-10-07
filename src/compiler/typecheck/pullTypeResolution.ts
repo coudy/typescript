@@ -895,15 +895,13 @@ module TypeScript {
 
             var decls = symbol.getDeclarations();
 
-            var ast: AST = null;
-
             // We want to walk and resolve all associated decls, so we can catch
             // cases like function overloads that may be spread across multiple
             // logical declarations
             for (var i = 0; i < decls.length; i++) {
                 var decl = decls[i];
 
-                ast = this.semanticInfoChain.getASTForDecl(decl);
+                var ast = this.semanticInfoChain.getASTForDecl(decl);
 
                 // if it's an object literal member, just return the symbol and wait for
                 // the object lit to be resolved
@@ -913,6 +911,9 @@ module TypeScript {
                     return symbol;
                 }
 
+                // This assert is here to catch potential stack overflows. There have been infinite recursions resulting
+                // from one of these decls pointing to a name expression.
+                Debug.assert(ast.nodeType() != NodeType.Name && ast.nodeType() != NodeType.MemberAccessExpression);
                 this.setUnitPath(decl.fileName());
                 var resolvedSymbol = this.resolveAST(ast, /*inContextuallyTypedAssignment*/false, this.getEnclosingDecl(decl), context);
 
