@@ -16,10 +16,10 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
-    export class TextWriter implements ITextWriter {
+    export class TextWriter {
         private contents = "";
         public onNewLine = true;
-        constructor(private ioHost: EmitterIOHost, private path: string, private writeByteOrderMark: boolean) {
+        constructor(private name: string, private writeByteOrderMark: boolean) {
         }
 
         public Write(s: string) {
@@ -33,13 +33,11 @@ module TypeScript {
             this.onNewLine = true;
         }
 
-        public Close() {
-            try {
-                this.ioHost.writeFile(this.path, this.contents, this.writeByteOrderMark);
-            }
-            catch (e) {
-                Emitter.throwEmitterError(e);
-            }
+        public Close(): void {
+        }
+
+        public getOutputFile(): OutputFile {
+            return new OutputFile(this.name, this.writeByteOrderMark, this.contents);
         }
     }
 
@@ -49,8 +47,15 @@ module TypeScript {
         private declarationContainerStack: AST[] = [];
         private emittedReferencePaths = false;
 
-        constructor(private emittingFileName: string, public document: Document, private compiler: TypeScriptCompiler) {
-            this.declFile = new TextWriter(this.compiler.emitOptions.ioHost, emittingFileName, this.document.byteOrderMark !== ByteOrderMark.None);
+        constructor(private emittingFileName: string,
+                    public document: Document,
+                    private compiler: TypeScriptCompiler,
+                    private resolvePath: (path: string) => string) {
+            this.declFile = new TextWriter(emittingFileName, this.document.byteOrderMark !== ByteOrderMark.None);
+        }
+
+        public addOutputFiles(outputFiles: OutputFile[]): void {
+            outputFiles.push(this.declFile.getOutputFile());
         }
 
         private widenType(type: PullTypeSymbol) {
@@ -59,15 +64,6 @@ module TypeScript {
             }
 
             return type;
-        }
-
-        public close() {
-            try {
-                this.declFile.Close();
-            }
-            catch (e) {
-                Emitter.throwEmitterError(e);
-            }
         }
 
         public emitDeclarations(script: Script) {
@@ -902,7 +898,7 @@ module TypeScript {
             }
 
             var documentDir = convertToDirectoryPath(switchToForwardSlashes(getRootFilePath(document.fileName)));
-            var resolvedReferencePath = this.compiler.emitOptions.ioHost.resolvePath(documentDir + reference);
+            var resolvedReferencePath = this.resolvePath(documentDir + reference);
             return resolvedReferencePath;
         }
 

@@ -865,7 +865,7 @@ module Services {
             return this.compilerState.getSemanticDiagnostics(fileName);
         }
 
-        public getEmitOutput(fileName: string): EmitOutput {
+        public getEmitOutput(fileName: string): TypeScript.EmitOutput {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.refresh();
 

@@ -715,8 +715,13 @@ module Harness {
             }
         }
 
+        export interface IEmitterIOHost {
+            writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
+            resolvePath(path: string): string;
+        }
+
         /** Mimics having multiple files, later concatenated to a single file. */
-        export class EmitterIOHost implements TypeScript.EmitterIOHost {
+        export class EmitterIOHost implements IEmitterIOHost {
             private fileCollection = {};
 
             /** create file gets the whole path to create, so this works as expected with the --out parameter */
@@ -1019,7 +1024,7 @@ module Harness {
                 this.compiler.updateFile(unitName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
             }
 
-            public emitAll(ioHost?: TypeScript.EmitterIOHost): TypeScript.Diagnostic[]{
+            public emitAll(ioHost?: IEmitterIOHost): TypeScript.Diagnostic[]{
                 var host = typeof ioHost === "undefined" ? this.ioHost : ioHost;
 
                 this.sourcemapRecorder.reset();
@@ -1038,11 +1043,17 @@ module Harness {
                     this.sourcemapRecorder.WriteLine("");
                 };
 
-                return this.compiler.emitAll(host);
+                var output = this.compiler.emitAll((path: string) => host.resolvePath(path));
+                output.outputFiles.forEach(o => host.writeFile(o.name, o.text, o.writeByteOrderMark));
+
+                return output.diagnostics;
             }
 
-            public emitAllDeclarations() {
-                return this.compiler.emitAllDeclarations();
+            public emitAllDeclarations(ioHost: IEmitterIOHost) {
+                var output = this.compiler.emitAllDeclarations((path: string) => ioHost.resolvePath(path));
+                output.outputFiles.forEach(o => ioHost.writeFile(o.name, o.text, o.writeByteOrderMark));
+
+                return output.diagnostics;
             }
 
             /** If the compiler already contains the contents of interest, this will re-emit for AMD without re-adding or recompiling the current compiler units */
@@ -1053,7 +1064,7 @@ module Harness {
                 this.ioHost.reset();
                 this.errorList = [];
                 this.emitAll(this.ioHost);
-                this.compiler.emitAllDeclarations();
+                this.emitAllDeclarations(this.ioHost);
                 var result = new CompilerResult(this.ioHost.toArray(), this.errorList, this.sourcemapRecorder.lines);
 
                 this.compiler.settings.moduleGenTarget = oldModuleType;
@@ -1081,7 +1092,7 @@ module Harness {
                 emitDiagnostics.forEach(d => this.addError(ErrorType.Emit, d));
 
                 // Emit declarations
-                var emitDeclarationsDiagnostics = this.compiler.emitAllDeclarations();
+                var emitDeclarationsDiagnostics = this.emitAllDeclarations(this.ioHost);
                 emitDeclarationsDiagnostics.forEach(d => this.addError(ErrorType.Declaration, d));
 
                 return this.errorList;

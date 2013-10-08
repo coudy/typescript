@@ -12,7 +12,7 @@ interface testSpec {
     skipTypeCheck?: boolean;
 }
 
-class RWCEmitter implements TypeScript.EmitterIOHost {
+class RWCEmitter implements Harness.Compiler.IEmitterIOHost {
     constructor(private fsOutput: Harness.Compiler.WriterAggregator, private fsDeclOutput: Harness.Compiler.WriterAggregator) {
     }
     writeFile(path: string, contents: string, writeByteOrderMark: boolean) {
@@ -134,7 +134,7 @@ class RWCRunner extends RunnerBase {
 
                         // Emiting the results
                         harnessCompiler.emitAll(emitterIOHost);
-                        harnessCompiler.emitAllDeclarations();
+                        harnessCompiler.emitAllDeclarations(emitterIOHost);
 
                         fsOutput.Close();
                         fsDeclOutput.Close();

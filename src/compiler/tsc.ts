@@ -36,7 +36,7 @@ module TypeScript {
         }
     }
 
-    export class BatchCompiler implements IReferenceResolverHost, EmitterIOHost {
+    export class BatchCompiler implements IReferenceResolverHost {
         public compilerVersion = "0.9.1.1";
         private inputFiles: string[] = [];
         private compilationSettings: CompilationSettings;
@@ -222,9 +222,13 @@ module TypeScript {
 
             if (!this.tcOnly) {
                 // TODO: if there are any emit diagnostics.  Don't proceed.
-                var emitDiagnostics = compiler.emitAll(this);
-                this.reportDiagnostics(emitDiagnostics);
-                if (emitDiagnostics.length > 0) {
+                var emitOutput = compiler.emitAll((path: string) => this.resolvePath(path));
+                this.reportDiagnostics(emitOutput.diagnostics);
+                if (emitOutput.diagnostics.length > 0) {
+                    return true;
+                }
+
+                if (this.writeOutputFiles(emitOutput)) {
                     return true;
                 }
 
@@ -233,9 +237,13 @@ module TypeScript {
                     return true;
                 }
 
-                var emitDeclarationsDiagnostics = compiler.emitAllDeclarations();
-                this.reportDiagnostics(emitDeclarationsDiagnostics);
-                if (emitDeclarationsDiagnostics.length > 0) {
+                var emitDeclarationsOutput = compiler.emitAllDeclarations((path: string) => this.resolvePath(path));
+                this.reportDiagnostics(emitDeclarationsOutput.diagnostics);
+                if (emitDeclarationsOutput.diagnostics.length > 0) {
+                    return true;
+                }
+
+                if (this.writeOutputFiles(emitDeclarationsOutput)) {
                     return true;
                 }
             }
@@ -796,7 +804,23 @@ module TypeScript {
             this.ioHost.stderr.WriteLine(diagnostic.message());
         }
 
-        /// EmitterIOHost methods
+        private writeOutputFiles(emitOutput: EmitOutput): boolean {
+            for (var i = 0, n = emitOutput.outputFiles.length; i < n; i++) {
+                var outputFile = emitOutput.outputFiles[i];
+
+                try {
+                    this.writeFile(outputFile.name, outputFile.text, outputFile.writeByteOrderMark);
+                }
+                catch (e) {
+                    this.addDiagnostic(
+                        new Diagnostic(outputFile.name, 0, 0, DiagnosticCode.Emit_Error_0, [e.message]));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         writeFile(fileName: string, contents: string, writeByteOrderMark: boolean): void {
             var start = new Date().getTime();
             IOUtils.writeFileAndFolderStructure(this.ioHost, fileName, contents, writeByteOrderMark);

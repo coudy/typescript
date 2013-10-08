@@ -40,7 +40,6 @@ module TypeScript {
     }
 
     export class EmitOptions {
-        public ioHost: EmitterIOHost = null;
         public outputMany: boolean = true;
         public commonDirectoryPath = "";
 
@@ -112,9 +111,9 @@ module TypeScript {
         private copyrightElement: AST = null;
 
         constructor(public emittingFileName: string,
-            public outfile: ITextWriter,
-            public emitOptions: EmitOptions,
-            private semanticInfoChain: SemanticInfoChain) {
+                    public outfile: TextWriter,
+                    public emitOptions: EmitOptions,
+                    private semanticInfoChain: SemanticInfoChain) {
         }
 
         private pushDecl(decl: PullDecl) {
@@ -255,8 +254,9 @@ module TypeScript {
             this.emitComments(importDeclAST, false);
         }
 
-        public createSourceMapper(document: Document, jsFileName: string, jsFile: ITextWriter, sourceMapOut: ITextWriter) {
-            this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions);
+        public createSourceMapper(
+            document: Document, jsFileName: string, jsFile: TextWriter, sourceMapOut: TextWriter, resolvePath: (path: string) => string) {
+                this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions, resolvePath);
         }
 
         public setSourceMapperNewSourceFile(document: Document) {
@@ -1614,18 +1614,14 @@ module TypeScript {
         }
 
         // Note: may throw exception.
-        public emitSourceMapsAndClose(): void {
+        public addOutputFiles(outputFiles: OutputFile[]): void {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
             if (this.sourceMapper !== null) {
                 this.sourceMapper.emitSourceMapping(this.emitOptions.compilationSettings.sourceMapEmitterCallback);
+                this.sourceMapper.addOutputFile(outputFiles);
             }
 
-            try {
-                this.outfile.Close();
-            }
-            catch (e) {
-                Emitter.throwEmitterError(e);
-            }
+            outputFiles.push(this.outfile.getOutputFile());
         }
 
         private emitParameterPropertyAndMemberVariableAssignments(): void {
@@ -2211,20 +2207,6 @@ module TypeScript {
                 this.emitJavascript(node, true);
                 this.indenter.decreaseIndent();
             }
-        }
-
-        public static throwEmitterError(e: Error): void {
-            var error: any = new Error(e.message);
-            error.isEmitterError = true;
-            throw error;
-        }
-
-        public static handleEmitterError(fileName: string, e: Error): Diagnostic[] {
-            if ((<any>e).isEmitterError === true) {
-                return [new Diagnostic(fileName, 0, 0, DiagnosticCode.Emit_Error_0, [e.message])];
-            }
-
-            throw e;
         }
 
         public emitLiteralExpression(expression: LiteralExpression): void {

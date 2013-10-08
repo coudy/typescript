@@ -73,7 +73,7 @@ module Services {
         getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[];
 
-        getEmitOutput(fileName: string): EmitOutput;
+        getEmitOutput(fileName: string): TypeScript.EmitOutput;
 
         getSyntaxTree(fileName: string): TypeScript.SyntaxTree;
     }
@@ -335,16 +335,5 @@ module Services {
         static error = "error";
         static warning = "warning";
         static message = "message";
-    }
-
-    export class EmitOutput {
-        public outputFiles: IOutputFile[] = [];
-        public diagnostics: TypeScript.Diagnostic[] = [];
-    }
-
-    export interface IOutputFile {
-        name: string;
-        writeByteOrderMark: boolean;
-        text: string;
     }
 }

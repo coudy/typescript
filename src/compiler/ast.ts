@@ -1961,7 +1961,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            Emitter.throwEmitterError(new Error(getLocalizedText(DiagnosticCode.Should_not_emit_a_type_query, null)));
+            throw Errors.invalidOperation("Should not emit a type query.");
         }
 
         public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
@@ -1984,7 +1984,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            Emitter.throwEmitterError(new Error(getLocalizedText(DiagnosticCode.Should_not_emit_a_type_reference, null)));
+            throw Errors.invalidOperation("Should not emit a type reference.");
         }
 
         public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {

@@ -1562,7 +1562,7 @@ module FourSlash {
         harnessCompiler.addInputFiles(filesToAdd);
         harnessCompiler.compile();
 
-        var emitterIOHost: TypeScript.EmitterIOHost = {
+        var emitterIOHost: Harness.Compiler.IEmitterIOHost = {
             writeFile: (path: string, contents: string, writeByteOrderMark: boolean) => fsOutput.Write(contents),
             resolvePath: (s: string) => s
         }

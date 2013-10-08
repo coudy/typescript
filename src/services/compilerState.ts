@@ -292,28 +292,8 @@ module Services {
             return diagnostics;
         }
 
-        public getEmitOutput(fileName: string): EmitOutput {
-            var result = new EmitOutput();
-
-            var emitterIOHost: TypeScript.EmitterIOHost = {
-                writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => {
-                    result.outputFiles.push({
-                        name: fileName,
-                        text: contents,
-                        writeByteOrderMark: writeByteOrderMark
-                    });
-                },
-                resolvePath: (fileName: string) => this.host.resolveRelativePath(fileName, null)
-            };
-
-            var diagnostics: TypeScript.Diagnostic[];
-
-            // Parse the emit options
-            diagnostics = this.compiler.setEmitOptions(emitterIOHost) || [];
-            result.diagnostics.push.apply(result.diagnostics, diagnostics);
-            if (this.containErrors(diagnostics)) {
-                return result;
-            }
+        public getEmitOutput(fileName: string): TypeScript.EmitOutput {
+            var resolvePath = (fileName: string) => this.host.resolveRelativePath(fileName, null);
 
             var outputMany = this.compiler.emitOptions.outputMany;
 
@@ -321,35 +301,27 @@ module Services {
             var syntacticDiagnostics = outputMany ? this.getSyntacticDiagnostics(fileName) : this.getAllSyntacticDiagnostics();
             if (this.containErrors(syntacticDiagnostics)) {
                 // This file has at least one syntactic error, return and do not emit code.
-                return result;
+                return new TypeScript.EmitOutput();
             }
 
             // Force a type check before emit to ensure that all symbols have been resolved
+            var document = this.getDocument(fileName);
             var semanticDiagnostics = outputMany ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
 
             // Emit output files and source maps
-            diagnostics = this.compiler.emitUnit(fileName, emitterIOHost) || [];
-            result.diagnostics = result.diagnostics.concat(diagnostics);
-            if (this.containErrors(diagnostics)) {
-                return result;
+                // Emit declarations, if there are no semantic errors
+            var emitResult = this.compiler.emit(fileName, resolvePath);
+            if (!this.containErrors(emitResult.diagnostics) &&
+                !this.containErrors(semanticDiagnostics) &&
+                this.compiler.shouldEmitDeclarations(document.script)) {
+
+                // Merge the results
+                var declarationEmitOutput = this.compiler.emitDeclarations(fileName, resolvePath);
+                emitResult.outputFiles.push.apply(emitResult.outputFiles, declarationEmitOutput.outputFiles);
+                emitResult.diagnostics.push.apply(emitResult.diagnostics, declarationEmitOutput.diagnostics);
             }
 
-            // Emit declarations, if there are no semantic errors
-            var document = this.getDocument(fileName);
-            if (this.compiler.shouldEmitDeclarations(document.script)) {
-                if (!this.containErrors(semanticDiagnostics)) {
-                    diagnostics = this.compiler.emitUnitDeclarations(fileName) || [];
-                    result.diagnostics = result.diagnostics.concat(diagnostics);
-                    if (this.containErrors(diagnostics)) {
-                        return result;
-                    }
-                }
-                else {
-                    return result;
-                }
-            }
-
-            return result;
+            return emitResult;
         }
 
         private containErrors(diagnostics: TypeScript.Diagnostic[]): boolean {
