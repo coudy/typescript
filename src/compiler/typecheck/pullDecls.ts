@@ -42,10 +42,6 @@ module TypeScript {
         public childDeclNamespaceCache = new BlockIntrinsics<PullDecl[]>();
         public childDeclTypeParameterCache = new BlockIntrinsics<PullDecl[]>();
 
-        // This is used to store the AST directly on the decl, rather than in a data map,
-        // if the useDirectTypeStorage flag is set
-        public ast: AST = null;
-
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan) {
             this.name = declName;
             this.kind = kind;
@@ -314,6 +310,10 @@ module TypeScript {
 
         public isSynthesized(): boolean {
             return false;
+        }
+
+        public ast(): AST {
+            return this.semanticInfoChain().getASTForDecl(this);
         }
     }
 

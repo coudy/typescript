@@ -47,9 +47,9 @@ module TypeScript {
 
         public isPrinting = false;
 
-        // This is used to store the AST directly on the symbol, rather than using a data map,
-        // if the useDirectTypeStorage flag is set
-        public ast: AST = null;
+        public isAny(): boolean {
+            return false;
+        }
 
         public isType() {
             return (this.kind & PullElementKind.SomeType) != 0;
@@ -2144,6 +2144,10 @@ module TypeScript {
             super(name, PullElementKind.Primitive);
 
             this.isResolved = true;
+        }
+
+        public isAny(): boolean {
+            return this.name === "any";
         }
 
         public isStringConstant() { return false; }

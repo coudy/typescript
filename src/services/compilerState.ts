@@ -137,10 +137,6 @@ module Services {
             return this.hostCache.getVersion(fileName);
         }
 
-        public getSemanticInfoChain() {
-            return this.compiler.semanticInfoChain;
-        }
-
         private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             compiler.addSourceUnit(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
@@ -568,6 +564,10 @@ module Services {
             }
 
             return symbol.docComments;
+        }
+
+        public getDeclForAST(ast: TypeScript.AST): TypeScript.PullDecl {
+            return this.compiler.getDeclForAST(ast);
         }
     }
 }

@@ -1109,7 +1109,7 @@ module TypeScript {
 
                 if (funcDecl) {
                     if (symbol && symbol.kind !== PullElementKind.Property) {
-                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain);
+                        var signatureInfo = PullHelpers.getSignatureForFuncDecl(this.getDeclForAST(funcDecl));
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }
@@ -1597,6 +1597,10 @@ module TypeScript {
 
         public getTopLevelDeclaration(fileName: string) : PullDecl {
             return this.semanticInfoChain.topLevelDecl(fileName);
+        }
+
+        public getDeclForAST(ast: AST): PullDecl {
+            return this.semanticInfoChain.getDeclForAST(ast);
         }
     }
 }

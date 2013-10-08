@@ -11,8 +11,8 @@ module TypeScript {
             allSignatures: PullSignatureSymbol[];
         }
 
-        export function getSignatureForFuncDecl(funcDecl: AST, semanticInfoChain: SemanticInfoChain) {
-            var functionDecl = semanticInfoChain.getDeclForAST(funcDecl);
+        export function getSignatureForFuncDecl(functionDecl: PullDecl) {
+            var funcDecl = functionDecl.ast();
             var funcSymbol = functionDecl.getSymbol();
 
             if (!funcSymbol) {

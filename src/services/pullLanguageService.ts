@@ -67,7 +67,7 @@ module Services {
             if (requireName) {
                 var actualNameAtPosition = (<TypeScript.Identifier>topNode).text();
 
-                if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+                if ((symbol.isError() || symbol.isAny()) && actualNameAtPosition !== symbolName) {
                     this.logger.log("Unknown symbol found at the given position");
                     // only single reference
                     return { symbol: null, containingASTOpt: null };
@@ -205,7 +205,7 @@ module Services {
             var symbolName: string = symbol.getName();
 
             // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
-            if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+            if ((symbol.isError() || symbol.isAny()) && actualNameAtPosition !== symbolName) {
                 this.logger.log("Unknown symbol found at the given position");
                 return result;
             }
@@ -348,8 +348,7 @@ module Services {
                     if (symbolInfoAtPosition !== null) {
                         var searchSymbol = symbolInfoAtPosition.aliasSymbol || symbolInfoAtPosition.symbol;
 
-                        if (FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol, this.compilerState.getSemanticInfoChain())) {
-
+                        if (FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol)) {
                             var isWriteAccess = this.isWriteAccess(nameAST);
                             result.push(new ReferenceEntry(this.compilerState.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
                         }
@@ -980,7 +979,7 @@ module Services {
                     node.nodeType() === TypeScript.NodeType.ArrowFunctionExpression) {
                     var funcDecl = node;
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
-                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain());
+                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(this.compilerState.getDeclForAST(funcDecl));
                         _isCallExpression = true;
                         candidateSignature = signatureInfo.signature;
                         resolvedSignatures = signatureInfo.allSignatures;

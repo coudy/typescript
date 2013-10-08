@@ -10459,7 +10459,7 @@ module TypeScript {
             allSignatures?: PullSignatureSymbol[]) {
 
             if (!signature) {
-                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain);
+                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(this.getDeclForAST(funcDecl));
                 signature = functionSignatureInfo.signature;
                 allSignatures = functionSignatureInfo.allSignatures;
             }
