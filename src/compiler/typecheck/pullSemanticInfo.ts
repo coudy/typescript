@@ -87,6 +87,10 @@ module TypeScript {
         private symbolASTMap = new DataMap<AST>();
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> = null;
 
+        private declSymbolMap = new DataMap<PullSymbol>();
+        private declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
+        private declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
+
         private declCache: BlockIntrinsics<PullDecl[]> = null;
         private symbolCache: BlockIntrinsics<PullSymbol> = null;
         private fileNameToDiagnostics: BlockIntrinsics<Diagnostic[]> = null;
@@ -139,7 +143,7 @@ module TypeScript {
             this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
 
             // other decls not reachable from the globalDecl
-            var emptyTypeDecl = new PullSynthesizedDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, null, span);
+            var emptyTypeDecl = new PullSynthesizedDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, null, span, this);
             var emptyTypeSymbol = new PullTypeSymbol("{}", PullElementKind.ObjectType);
             emptyTypeDecl.setSymbol(emptyTypeSymbol);
             emptyTypeSymbol.addDeclaration(emptyTypeDecl);
@@ -439,6 +443,10 @@ module TypeScript {
             this.binder = null;
             this._topLevelDecls = null;
 
+            this.declSymbolMap = new DataMap<PullSymbol>();
+            this.declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
+            this.declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
+
             this.units[0] = new SemanticInfo(this, "", /*script:*/ null, this.getGlobalDecl());
             this.cleanAllDecls();
 
@@ -475,6 +483,30 @@ module TypeScript {
             if (callResolutionData) {
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
+        }
+
+        public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
+            this.declSymbolMap.link(decl.declIDString, symbol);
+        }
+
+        public getSymbolForDecl(decl: PullDecl): PullSymbol {
+            return this.declSymbolMap.read(decl.declIDString);
+        }
+
+        public setSignatureSymbolForDecl(decl: PullDecl, signatureSymbol: PullSignatureSymbol): void {
+            this.declSignatureSymbolMap.link(decl.declIDString, signatureSymbol);
+        }
+
+        public getSignatureSymbolForDecl(decl: PullDecl): PullSignatureSymbol {
+            return this.declSignatureSymbolMap.read(decl.declIDString);
+        }
+
+        public setSpecializingSignatureSymbolForDecl(decl: PullDecl, signatureSymbol: PullSignatureSymbol): void {
+            this.declSpecializingSignatureSymbolMap.link(decl.declIDString, signatureSymbol);
+        }
+
+        public getSpecializingSignatureSymbolForDecl(decl: PullDecl): PullSignatureSymbol {
+            return this.declSpecializingSignatureSymbolMap.read(decl.declIDString);
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {
@@ -515,8 +547,8 @@ module TypeScript {
             containingSymbol.addIndexSignature(indexSignature);
 
             var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
-            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, containingDecl, span);
-            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl, span);
+            var indexSigDecl = new PullSynthesizedDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, containingDecl, span, containingDecl.semanticInfoChain());
+            var indexParamDecl = new PullSynthesizedDecl(indexParamName, indexParamName, PullElementKind.Parameter, PullElementFlags.None, indexSigDecl, span, containingDecl.semanticInfoChain());
             indexSigDecl.setSignatureSymbol(indexSignature);
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);

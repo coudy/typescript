@@ -18,11 +18,6 @@ module TypeScript {
         public flags: PullElementFlags = PullElementFlags.None;
         private span: TextSpan;
 
-        // Properties that need to be cleaned after a change
-        private symbol: PullSymbol = null;
-        // use this to store the signature symbol for a function declaration
-        private signatureSymbol: PullSignatureSymbol = null;
-        private specializingSignatureSymbol: PullSignatureSymbol = null;
         private declGroups: BlockIntrinsics<PullDeclGroup> = null;
 
         // Child decls
@@ -75,11 +70,6 @@ module TypeScript {
         }
 
         public clean() {
-            // Clean this decl
-            this.symbol = null;
-            this.signatureSymbol = null;
-            this.specializingSignatureSymbol = null;
-
             // Clean child decls
             var children = this.childDecls;
             if (children) {
@@ -108,10 +98,12 @@ module TypeScript {
             return this.declDisplayName === undefined ? this.name : this.declDisplayName;
         }
 
-        public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
+        public setSymbol(symbol: PullSymbol) {
+            this.semanticInfoChain().setSymbolForDecl(this, symbol);
+        }
 
         public ensureSymbolIsBound(bindSignatureSymbol=false) {
-            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && this.kind != PullElementKind.Script) {
+            if (!((bindSignatureSymbol && this.hasSignatureSymbol()) || this.hasSymbol()) && this.kind != PullElementKind.Script) {
                 var binder = this.semanticInfoChain().getBinder();
                 binder.bindDeclToPullSymbol(this);
             }
@@ -124,40 +116,52 @@ module TypeScript {
 
             this.ensureSymbolIsBound();
 
-            return this.symbol;
+            return this.semanticInfoChain().getSymbolForDecl(this);
         }
 
         public hasSymbol() {
-            return !!this.symbol;
+            var symbol = this.semanticInfoChain().getSymbolForDecl(this);
+            return !!symbol;
         }
 
-        public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
+        public setSignatureSymbol(signatureSymbol: PullSignatureSymbol): void {
+            this.semanticInfoChain().setSignatureSymbolForDecl(this, signatureSymbol);
+        }
+
         public getSignatureSymbol(): PullSignatureSymbol { 
             this.ensureSymbolIsBound(true);
 
-            return this.signatureSymbol;
+            return this.semanticInfoChain().getSignatureSymbolForDecl(this);
         }
 
-        public hasSignature() {
-            return !!this.signatureSymbol;
+        public hasSignatureSymbol() {
+            var signatureSymbol = this.semanticInfoChain().getSignatureSymbolForDecl(this);
+            return !!signatureSymbol;
         }
 
-        public setSpecializingSignatureSymbol(signature: PullSignatureSymbol): void { this.specializingSignatureSymbol = signature; }
+        public setSpecializingSignatureSymbol(specializingSignatureSymbol: PullSignatureSymbol): void {
+            this.semanticInfoChain().setSpecializingSignatureSymbolForDecl(this, specializingSignatureSymbol);
+        }
+
         public getSpecializingSignatureSymbol() {
-            if (this.specializingSignatureSymbol) {
-                return this.specializingSignatureSymbol;
+            var specializingSignatureSymbol = this.semanticInfoChain().getSpecializingSignatureSymbolForDecl(this);
+            if (specializingSignatureSymbol) {
+                return specializingSignatureSymbol;
             }
 
-            return this.signatureSymbol;
+            return this.getSignatureSymbol();
         }
 
         public setFlags(flags: PullElementFlags) { this.flags = flags; }
+
         public setFlag(flags: PullElementFlags) { this.flags |= flags; }
 
         public getSpan(): TextSpan { return this.span; }
+
         public setSpan(span: TextSpan) { this.span = span; }
 
         public setValueDecl(valDecl: PullDecl) { this.synthesizedValDecl = valDecl; }
+
         public getValueDecl() { return this.synthesizedValDecl; }
 
         public isEqual(other: PullDecl) {
@@ -297,7 +301,7 @@ module TypeScript {
         }
 
         public hasBeenBound() {
-            return this.hasSymbol() || this.hasSignature();
+            return this.hasSymbol() || this.hasSignatureSymbol();
         }
 
         public isSynthesized(): boolean {
@@ -418,11 +422,18 @@ module TypeScript {
     }
 
     export class PullSynthesizedDecl extends NormalPullDecl {
+        private _semanticInfoChain: SemanticInfoChain;
+
         // This is a synthesized decl; its life time should match that of the symbol using it, and 
         // not that of its parent decl. To enforce this we are not making it reachable from its 
         // parent, but will set the parent link.
-        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan) {
+        constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, parentDecl: PullDecl, span: TextSpan, semanticInfoChain: SemanticInfoChain) {
             super(declName, displayName, kind, declFlags, parentDecl, span, /*addToParent*/ false);
+            this._semanticInfoChain = semanticInfoChain
+        }
+
+        public semanticInfoChain(): SemanticInfoChain {
+            return this._semanticInfoChain;
         }
 
         public isSynthesized(): boolean {
