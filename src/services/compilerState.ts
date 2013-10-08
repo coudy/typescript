@@ -129,10 +129,6 @@ module Services {
             return this.compiler.getDocument(fileName).script;
         }
 
-        public getScripts(): TypeScript.Script[] {
-            return this.compiler.getScripts();
-        }
-
         public getScriptVersion(fileName: string) {
             return this.hostCache.getVersion(fileName);
         }

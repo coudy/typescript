@@ -270,18 +270,6 @@ module TypeScript {
             return null;
         }
 
-        public getScripts(): Script[] {
-            var result: TypeScript.Script[] = [];
-            var fileNames = this.fileNames();
-
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var document = this.getDocument(fileNames[i]);
-                result.push(document.script);
-            }
-
-            return result;
-        }
-
         public getDocuments(): Document[] {
             var result: TypeScript.Document[] = [];
             var fileNames = this.fileNames();
