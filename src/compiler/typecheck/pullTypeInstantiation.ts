@@ -880,7 +880,7 @@ module TypeScript {
         }
 
         // if it's not a named type, we'll need to introspect its member list
-        if (!(type.kind & PullElementKind.SomeNamedType)) {
+        if (!(type.kind & PullElementKind.SomeNamedType) || !type.name) {
             if (!wrapsSomeTypeParameter) {
                 // otherwise, walk the member list and signatures, checking for wraps
                 var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
