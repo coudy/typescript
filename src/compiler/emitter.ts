@@ -101,7 +101,6 @@ module TypeScript {
         public moduleName = "";
         public emitState = new EmitState();
         public indenter = new Indenter();
-        public allSourceMappers: SourceMapper[] = [];
         public sourceMapper: SourceMapper = null;
         public captureThisStmtString = "var _this = this;";
         private currentVariableDeclaration: VariableDeclaration;
