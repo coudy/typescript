@@ -655,7 +655,7 @@ module TypeScript {
 
             // start at '1', so as to skip binding for global primitives such as 'any'
             var topLevelDecls = this.semanticInfoChain.topLevelDecls();
-            for (var i = 1, n = topLevelDecls.length; i < n; i++) {
+            for (var i = 0, n = topLevelDecls.length; i < n; i++) {
                 var topLevelDecl = topLevelDecls[i];
 
                 var binder = this.semanticInfoChain.getBinder();
