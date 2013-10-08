@@ -795,7 +795,7 @@ module Harness {
                 this.compiler.emitOptions.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Unspecified;
                 this.compiler.emitOptions.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
                 var libCode = this.useMinimalDefaultLib ? Compiler.libTextMinimal : Compiler.libText;
-                this.compiler.addSourceUnit("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
+                this.compiler.addFile("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
             }
 
             public resolve() {
@@ -855,7 +855,7 @@ module Harness {
                 var addScriptSnapshot = (path: string, referencedFiles?: string[]) => {
                     if (path.indexOf('lib.d.ts') === -1) {
                         var scriptSnapshot = this.getScriptSnapshot(path);
-                        this.compiler.addSourceUnit(path, scriptSnapshot, /*BOM*/ null, /*version:*/ 0, /*isOpen:*/ false, referencedFiles);
+                        this.compiler.addFile(path, scriptSnapshot, /*BOM*/ null, /*version:*/ 0, /*isOpen:*/ false, referencedFiles);
                     }
                 }
 
@@ -882,7 +882,7 @@ module Harness {
                 }
                 else {
                     this.getAllFilesInCompiler().forEach(file => {
-                        this.compiler.updateSourceUnit(file, this.getScriptSnapshot(file), 0, true, null);
+                        this.compiler.updateFile(file, this.getScriptSnapshot(file), 0, true, null);
                     });
                 }
             }
@@ -947,7 +947,7 @@ module Harness {
                 }
 
                 if (!updatedExistingFile) {
-                    this.compiler.addSourceUnit(justName, TypeScript.ScriptSnapshot.fromString(code), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, []);
+                    this.compiler.addFile(justName, TypeScript.ScriptSnapshot.fromString(code), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, []);
                     this.needsFullTypeCheck = true;
                 }
 
@@ -1022,7 +1022,7 @@ module Harness {
 
             /** Updates an existing unit in the compiler with new code. */
             public updateUnit(code: string, unitName: string) {
-                this.compiler.updateSourceUnit(unitName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
+                this.compiler.updateFile(unitName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
             }
 
             /** Removes all non-lib.d.ts units of code from the compiler's internal data structures */

@@ -74,7 +74,7 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
                 // Log any bugs associated with the test
                 //Harness.Assert.bugs(sourceText);
 
-                compiler.addSourceUnit(code.path, soruceScriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, code.referencedFiles);
+                compiler.addFile(code.path, soruceScriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, code.referencedFiles);
             }
             catch (err) {
                 // This includes syntax errors thrown from error callback if not in recovery mode

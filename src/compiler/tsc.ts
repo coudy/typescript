@@ -196,7 +196,7 @@ module TypeScript {
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var resolvedFile = this.resolvedFiles[i];
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
+                compiler.addFile(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 this.reportDiagnostics(syntacticDiagnostics);
@@ -270,7 +270,7 @@ module TypeScript {
                 // if file resolving is disabled, the file's content will not yet be loaded
 
                 var sourceFile = this.getSourceFile(resolvedFile.path);
-                compiler.addSourceUnit(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
+                compiler.addFile(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
                 this.reportDiagnostics(syntacticDiagnostics);
@@ -306,7 +306,7 @@ module TypeScript {
                     var sourceFile = this.getSourceFile(resolvedFile.path);
                     this.ioHost.stdout.WriteLine("**** Update type check and errors for " + resolvedFile.path + ":");
 
-                    compiler.updateSourceUnit(lastTypecheckedFileName, sourceFile.scriptSnapshot, /*version:*/ 0, /*isOpen:*/ true, null);
+                    compiler.updateFile(lastTypecheckedFileName, sourceFile.scriptSnapshot, /*version:*/ 0, /*isOpen:*/ true, null);
 
                     // resolve the file to simulate an IDE-driven pull
                     semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);

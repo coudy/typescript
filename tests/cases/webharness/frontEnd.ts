@@ -46,8 +46,8 @@ class BatchCompiler implements Services.ILanguageServiceHost {
 
         this.compiler = new TypeScript.TypeScriptCompiler(new DiagnosticsLogger(), settings);
 
-        this.compiler.addSourceUnit("lib.d.ts", this.libScriptSnapshot, ByteOrderMark.None, 0, false, []);
-        this.compiler.addSourceUnit("compiler.ts", this.compilerScriptSnapshot, ByteOrderMark.None, 0, false, []);
+        this.compiler.addFile("lib.d.ts", this.libScriptSnapshot, ByteOrderMark.None, 0, false, []);
+        this.compiler.addFile("compiler.ts", this.compilerScriptSnapshot, ByteOrderMark.None, 0, false, []);
 
         this.compiler.pullTypeCheck();
 

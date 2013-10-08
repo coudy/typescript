@@ -223,12 +223,12 @@ class CompilerBaselineRunner extends RunnerBase {
                     var compiler = new TypeScript.TypeScriptCompiler(
                         new TypeScript.NullLogger(), new TypeScript.CompilationSettings());
 
-                    compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal),
+                    compiler.addFile('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal),
                         ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true);
 
                     var allFiles = toBeCompiled.concat(otherFiles);
                     allFiles.forEach(file => {
-                        compiler.addSourceUnit(file.unitName, TypeScript.ScriptSnapshot.fromString(file.content),
+                        compiler.addFile(file.unitName, TypeScript.ScriptSnapshot.fromString(file.content),
                             ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true);
                     });
 

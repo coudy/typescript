@@ -137,8 +137,8 @@ module Services {
             return this.hostCache.getVersion(fileName);
         }
 
-        private addCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            compiler.addSourceUnit(fileName,
+        private addFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
+            compiler.addFile(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
                 this.hostCache.getByteOrderMark(fileName),
                 this.hostCache.getVersion(fileName),
@@ -170,7 +170,7 @@ module Services {
             // Add unit for all source files
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
-                this.addCompilerUnit(this.compiler, fileNames[i]);
+                this.addFile(this.compiler, fileNames[i]);
             }
 
             // Initial typecheck
@@ -253,10 +253,10 @@ module Services {
                 var fileName = fileNames[i];
 
                 if (this.compiler.getDocument(fileName)) {
-                    this.updateCompilerUnit(this.compiler, fileName);
+                    this.updateFile(this.compiler, fileName);
                 }
                 else {
-                    this.addCompilerUnit(this.compiler, fileName);
+                    this.addFile(this.compiler, fileName);
                     fileAdded = true;
                 }
             }
@@ -434,7 +434,7 @@ module Services {
             return this.compiler.semanticInfoChain.findMatchingValidDecl(decl);
         }
 
-        private updateCompilerUnit(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
+        private updateFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             var document: TypeScript.Document = this.compiler.getDocument(fileName);
 
             //
@@ -447,7 +447,7 @@ module Services {
             }
 
             var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, document.version);
-            compiler.updateSourceUnit(fileName,
+            compiler.updateFile(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
                 version, isOpen, textChangeRange);
         }

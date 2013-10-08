@@ -239,12 +239,12 @@ class RWCRunner extends RunnerBase {
                         var compiler = new TypeScript.TypeScriptCompiler(
                             new TypeScript.NullLogger(), new TypeScript.CompilationSettings());
 
-                        compiler.addSourceUnit('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText),
+                        compiler.addFile('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libText),
                             ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true);
 
                         spec.compileList.forEach((item: string) => {
                             content = IO.readFile(spec.projectRoot + "/" + item, /*codepage*/ null).contents;
-                            compiler.addSourceUnit(spec.projectRoot + "/" + item, TypeScript.ScriptSnapshot.fromString(content),
+                            compiler.addFile(spec.projectRoot + "/" + item, TypeScript.ScriptSnapshot.fromString(content),
                                 ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true);
                         });
 

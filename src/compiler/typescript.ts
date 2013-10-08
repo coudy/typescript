@@ -117,7 +117,7 @@ module TypeScript {
             return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
-        public addSourceUnit(fileName: string,
+        public addFile(fileName: string,
             scriptSnapshot: IScriptSnapshot,
             byteOrderMark: ByteOrderMark,
             version: number,
@@ -134,7 +134,7 @@ module TypeScript {
             return document;
         }
 
-        public updateSourceUnit(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
+        public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var document = this.getDocument(fileName);
