@@ -522,7 +522,6 @@ var TypeScript;
         Array_Literal_implicitly_has_an_any_type_from_widening: "Array Literal implicitly has an 'any' type from widening."
     };
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     var ArrayUtilities = (function () {
@@ -795,7 +794,6 @@ var TypeScript;
     })();
     TypeScript.Debug = Debug;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     var Errors = (function () {
@@ -1293,7 +1291,6 @@ var TypeScript;
     }
     TypeScript.getDiagnosticMessage = getDiagnosticMessage;
 })(TypeScript || (TypeScript = {}));
-
 
 var TypeScript;
 (function (TypeScript) {
@@ -3644,7 +3641,6 @@ var TypeScript;
     })(TypeScript.CharacterCodes || (TypeScript.CharacterCodes = {}));
     var CharacterCodes = TypeScript.CharacterCodes;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     
@@ -3679,8 +3675,6 @@ var TypeScript;
     })(TypeScript.ScriptSnapshot || (TypeScript.ScriptSnapshot = {}));
     var ScriptSnapshot = TypeScript.ScriptSnapshot;
 })(TypeScript || (TypeScript = {}));
-
-
 var TypeScript;
 (function (TypeScript) {
     var LineMap = (function () {
@@ -7107,7 +7101,6 @@ var TypeScript;
     TypeScript.ScannerUtilities = ScannerUtilities;
 })(TypeScript || (TypeScript = {}));
 
-
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
@@ -7737,7 +7730,6 @@ var TypeScript;
     })();
     TypeScript.SlidingWindow = SlidingWindow;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
@@ -8256,7 +8248,6 @@ var TypeScript;
     })(TypeScript.Syntax || (TypeScript.Syntax = {}));
     var Syntax = TypeScript.Syntax;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
@@ -8835,7 +8826,6 @@ var TypeScript;
     })(TypeScript.SyntaxFacts || (TypeScript.SyntaxFacts = {}));
     var SyntaxFacts = TypeScript.SyntaxFacts;
 })(TypeScript || (TypeScript = {}));
-
 
 var TypeScript;
 (function (TypeScript) {
@@ -9569,7 +9559,6 @@ var TypeScript;
     })();
     TypeScript.SyntaxNode = SyntaxNode;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     var SourceUnitSyntax = (function (_super) {
@@ -19430,7 +19419,6 @@ var TypeScript;
     var Syntax = TypeScript.Syntax;
 })(TypeScript || (TypeScript = {}));
 
-
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
@@ -20065,7 +20053,6 @@ var TypeScript;
     TypeScript.SyntaxTokenReplacer = SyntaxTokenReplacer;
 })(TypeScript || (TypeScript = {}));
 
-
 var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
@@ -20196,7 +20183,6 @@ var TypeScript;
     })(TypeScript.Syntax || (TypeScript.Syntax = {}));
     var Syntax = TypeScript.Syntax;
 })(TypeScript || (TypeScript = {}));
-
 
 var TypeScript;
 (function (TypeScript) {
@@ -27301,6 +27287,102 @@ var TypeScript;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
+    var Document = (function () {
+        function Document(fileName, referencedFiles, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {
+            this.fileName = fileName;
+            this.referencedFiles = referencedFiles;
+            this.compilationSettings = compilationSettings;
+            this.scriptSnapshot = scriptSnapshot;
+            this.byteOrderMark = byteOrderMark;
+            this.version = version;
+            this.isOpen = isOpen;
+            this._diagnostics = null;
+            this._syntaxTree = null;
+            this._bloomFilter = null;
+            if (isOpen) {
+                this._syntaxTree = syntaxTree;
+            } else {
+                var start = new Date().getTime();
+                this._diagnostics = syntaxTree.diagnostics();
+                TypeScript.syntaxDiagnosticsTime += new Date().getTime() - start;
+            }
+
+            this.lineMap = syntaxTree.lineMap();
+
+            var start = new Date().getTime();
+            this.script = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings, isOpen);
+            TypeScript.astTranslationTime += new Date().getTime() - start;
+        }
+        Document.prototype.diagnostics = function () {
+            if (this._diagnostics === null) {
+                this._diagnostics = this._syntaxTree.diagnostics();
+            }
+
+            return this._diagnostics;
+        };
+
+        Document.prototype.syntaxTree = function () {
+            if (this._syntaxTree) {
+                return this._syntaxTree;
+            }
+
+            return TypeScript.Parser.parse(this.fileName, TypeScript.SimpleText.fromScriptSnapshot(this.scriptSnapshot), TypeScript.isDTSFile(this.fileName), TypeScript.getParseOptions(this.compilationSettings));
+        };
+
+        Document.prototype.bloomFilter = function () {
+            if (!this._bloomFilter) {
+                var identifiers = new TypeScript.BlockIntrinsics();
+                var pre = function (cur, walker) {
+                    if (TypeScript.isValidAstNode(cur)) {
+                        if (cur.nodeType() === 29 /* Name */) {
+                            var nodeText = cur.text();
+
+                            identifiers[nodeText] = true;
+                        }
+                    }
+                };
+
+                TypeScript.getAstWalkerFactory().walk(this.script, pre, null, null, identifiers);
+
+                var identifierCount = 0;
+                for (var name in identifiers) {
+                    if (identifiers[name]) {
+                        identifierCount++;
+                    }
+                }
+
+                this._bloomFilter = new TypeScript.BloomFilter(identifierCount);
+                this._bloomFilter.addKeys(identifiers);
+            }
+            return this._bloomFilter;
+        };
+
+        Document.prototype.update = function (scriptSnapshot, version, isOpen, textChangeRange, settings) {
+            var oldScript = this.script;
+            var oldSyntaxTree = this._syntaxTree;
+
+            var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
+
+            var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), TypeScript.getParseOptions(this.compilationSettings)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
+
+            return new Document(this.fileName, this.referencedFiles, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
+        };
+
+        Document.create = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, compilationSettings) {
+            var start = new Date().getTime();
+            var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), TypeScript.getParseOptions(compilationSettings));
+            TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
+
+            var document = new Document(fileName, referencedFiles, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
+
+            return document;
+        };
+        return Document;
+    })();
+    TypeScript.Document = Document;
+})(TypeScript || (TypeScript = {}));
+var TypeScript;
+(function (TypeScript) {
     function hasFlag(val, flag) {
         return (val & flag) !== 0;
     }
@@ -27632,6 +27714,13 @@ var TypeScript;
         StringHashTable.prototype.lookup = function (key) {
             var data = this.table[key];
             return data === undefined ? null : data;
+        };
+
+        StringHashTable.prototype.remove = function (key) {
+            if (this.table[key] !== undefined) {
+                this.table[key] = undefined;
+                this.itemCount--;
+            }
         };
         return StringHashTable;
     })();
@@ -28349,15 +28438,19 @@ var TypeScript;
     TypeScript.SourceMapping = SourceMapping;
 
     var SourceMapper = (function () {
-        function SourceMapper(jsFile, sourceMapOut, document, jsFilePath, emitOptions) {
+        function SourceMapper(jsFile, sourceMapOut, document, jsFilePath, emitOptions, resolvePath) {
             this.jsFile = jsFile;
             this.sourceMapOut = sourceMapOut;
             this.names = [];
             this.tsFilePaths = [];
             this.allSourceMappings = [];
-            this.setSourceMapOptions(document, jsFilePath, emitOptions);
+            this.setSourceMapOptions(document, jsFilePath, emitOptions, resolvePath);
             this.setNewSourceFile(document, emitOptions);
         }
+        SourceMapper.prototype.getOutputFile = function () {
+            return this.sourceMapOut.getOutputFile();
+        };
+
         SourceMapper.prototype.setNewSourceFile = function (document, emitOptions) {
             var sourceMappings = [];
             this.allSourceMappings.push(sourceMappings);
@@ -28367,7 +28460,7 @@ var TypeScript;
             this.setNewSourceFilePath(document, emitOptions);
         };
 
-        SourceMapper.prototype.setSourceMapOptions = function (document, jsFilePath, emitOptions) {
+        SourceMapper.prototype.setSourceMapOptions = function (document, jsFilePath, emitOptions, resolvePath) {
             var prettyJsFileName = TypeScript.getPrettyName(jsFilePath, false, true);
             var prettyMapFileName = prettyJsFileName + SourceMapper.MapFileExtension;
             this.jsFileName = prettyJsFileName;
@@ -28380,7 +28473,7 @@ var TypeScript;
 
                 if (TypeScript.isRelative(this.sourceMapDirectory)) {
                     this.sourceMapDirectory = emitOptions.commonDirectoryPath + this.sourceMapDirectory;
-                    this.sourceMapDirectory = TypeScript.convertToDirectoryPath(TypeScript.switchToForwardSlashes(emitOptions.ioHost.resolvePath(this.sourceMapDirectory)));
+                    this.sourceMapDirectory = TypeScript.convertToDirectoryPath(TypeScript.switchToForwardSlashes(resolvePath(this.sourceMapDirectory)));
                     this.sourceMapPath = TypeScript.getRelativePathToFixedPath(TypeScript.getRootFilePath(jsFilePath), this.sourceMapDirectory + prettyMapFileName);
                 } else {
                     this.sourceMapPath = this.sourceMapDirectory + prettyMapFileName;
@@ -28514,7 +28607,6 @@ var TypeScript;
     var EmitOptions = (function () {
         function EmitOptions(compilationSettings) {
             this.compilationSettings = compilationSettings;
-            this.ioHost = null;
             this.outputMany = true;
             this.commonDirectoryPath = "";
         }
@@ -28582,12 +28674,12 @@ var TypeScript;
             this.moduleName = "";
             this.emitState = new EmitState();
             this.indenter = new Indenter();
-            this.allSourceMappers = [];
             this.sourceMapper = null;
             this.captureThisStmtString = "var _this = this;";
             this.declStack = [];
             this.resolvingContext = new TypeScript.PullTypeResolutionContext(null);
             this.exportAssignmentIdentifier = null;
+            this.inWithBlock = false;
             this.document = null;
             this.copyrightElement = null;
         }
@@ -28717,8 +28809,8 @@ var TypeScript;
             this.emitComments(importDeclAST, false);
         };
 
-        Emitter.prototype.createSourceMapper = function (document, jsFileName, jsFile, sourceMapOut) {
-            this.sourceMapper = new TypeScript.SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions);
+        Emitter.prototype.createSourceMapper = function (document, jsFileName, jsFile, sourceMapOut, resolvePath) {
+            this.sourceMapper = new TypeScript.SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions, resolvePath);
         };
 
         Emitter.prototype.setSourceMapperNewSourceFile = function (document) {
@@ -29968,16 +30060,15 @@ var TypeScript;
             }
         };
 
-        Emitter.prototype.emitSourceMapsAndClose = function () {
+        Emitter.prototype.getOutputFiles = function () {
+            var result = [];
             if (this.sourceMapper !== null) {
                 this.sourceMapper.emitSourceMapping(this.emitOptions.compilationSettings.sourceMapEmitterCallback);
+                result.push(this.sourceMapper.getOutputFile());
             }
 
-            try  {
-                this.outfile.Close();
-            } catch (e) {
-                Emitter.throwEmitterError(e);
-            }
+            result.push(this.outfile.getOutputFile());
+            return result;
         };
 
         Emitter.prototype.emitParameterPropertyAndMemberVariableAssignments = function () {
@@ -30509,7 +30600,7 @@ var TypeScript;
         };
 
         Emitter.prototype.emitThis = function () {
-            if (this.inArrowFunction) {
+            if (!this.inWithBlock && this.inArrowFunction) {
                 this.writeToOutput("_this");
             } else {
                 this.writeToOutput("this");
@@ -30525,20 +30616,6 @@ var TypeScript;
                 this.emitJavascript(node, true);
                 this.indenter.decreaseIndent();
             }
-        };
-
-        Emitter.throwEmitterError = function (e) {
-            var error = new Error(e.message);
-            error.isEmitterError = true;
-            throw error;
-        };
-
-        Emitter.handleEmitterError = function (fileName, e) {
-            if (e.isEmitterError === true) {
-                return [new TypeScript.Diagnostic(fileName, 0, 0, TypeScript.DiagnosticCode.Emit_Error_0, [e.message])];
-            }
-
-            throw e;
         };
 
         Emitter.prototype.emitLiteralExpression = function (expression) {
@@ -30558,7 +30635,7 @@ var TypeScript;
         };
 
         Emitter.prototype.emitThisExpression = function (expression) {
-            if (this.inArrowFunction) {
+            if (!this.inWithBlock && this.inArrowFunction) {
                 this.writeToOutputWithSourceMapRecord("_this", expression);
             } else {
                 this.writeToOutputWithSourceMapRecord("this", expression);
@@ -30978,7 +31055,10 @@ var TypeScript;
             }
 
             this.writeToOutput(")");
+            var prevInWithBlock = this.inWithBlock;
+            this.inWithBlock = true;
             this.emitBlockOrStatement(statement.body);
+            this.inWithBlock = prevInWithBlock;
             this.recordSourceMappingEnd(statement);
         };
 
@@ -31560,7 +31640,6 @@ var TypeScript;
     }
     TypeScript.normalizePath = normalizePath;
 })(TypeScript || (TypeScript = {}));
-
 var TypeScript;
 (function (TypeScript) {
     var CompilationSettings = (function () {
@@ -31958,9 +32037,8 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     var TextWriter = (function () {
-        function TextWriter(ioHost, path, writeByteOrderMark) {
-            this.ioHost = ioHost;
-            this.path = path;
+        function TextWriter(name, writeByteOrderMark) {
+            this.name = name;
             this.writeByteOrderMark = writeByteOrderMark;
             this.contents = "";
             this.onNewLine = true;
@@ -31977,41 +32055,37 @@ var TypeScript;
         };
 
         TextWriter.prototype.Close = function () {
-            try  {
-                this.ioHost.writeFile(this.path, this.contents, this.writeByteOrderMark);
-            } catch (e) {
-                TypeScript.Emitter.throwEmitterError(e);
-            }
+        };
+
+        TextWriter.prototype.getOutputFile = function () {
+            return new TypeScript.OutputFile(this.name, this.writeByteOrderMark, this.contents);
         };
         return TextWriter;
     })();
     TypeScript.TextWriter = TextWriter;
 
     var DeclarationEmitter = (function () {
-        function DeclarationEmitter(emittingFileName, document, compiler) {
+        function DeclarationEmitter(emittingFileName, document, compiler, resolvePath) {
             this.emittingFileName = emittingFileName;
             this.document = document;
             this.compiler = compiler;
+            this.resolvePath = resolvePath;
             this.declFile = null;
             this.indenter = new TypeScript.Indenter();
             this.declarationContainerStack = [];
             this.emittedReferencePaths = false;
-            this.declFile = new TextWriter(this.compiler.emitOptions.ioHost, emittingFileName, this.document.byteOrderMark !== 0 /* None */);
+            this.declFile = new TextWriter(emittingFileName, this.document.byteOrderMark !== 0 /* None */);
         }
+        DeclarationEmitter.prototype.getOutputFile = function () {
+            return this.declFile.getOutputFile();
+        };
+
         DeclarationEmitter.prototype.widenType = function (type) {
             if (type === this.compiler.semanticInfoChain.undefinedTypeSymbol || type === this.compiler.semanticInfoChain.nullTypeSymbol) {
                 return this.compiler.semanticInfoChain.anyTypeSymbol;
             }
 
             return type;
-        };
-
-        DeclarationEmitter.prototype.close = function () {
-            try  {
-                this.declFile.Close();
-            } catch (e) {
-                TypeScript.Emitter.throwEmitterError(e);
-            }
         };
 
         DeclarationEmitter.prototype.emitDeclarations = function (script) {
@@ -32783,7 +32857,7 @@ var TypeScript;
             }
 
             var documentDir = TypeScript.convertToDirectoryPath(TypeScript.switchToForwardSlashes(TypeScript.getRootFilePath(document.fileName)));
-            var resolvedReferencePath = this.compiler.emitOptions.ioHost.resolvePath(documentDir + reference);
+            var resolvedReferencePath = this.resolvePath(documentDir + reference);
             return resolvedReferencePath;
         };
 
@@ -32809,12 +32883,13 @@ var TypeScript;
                     }
                 }
             } else {
-                var allDocuments = this.compiler.getDocuments();
-                for (var i = 0; i < allDocuments.length; i++) {
-                    if (!allDocuments[i].script.isDeclareFile() && !allDocuments[i].script.isExternalModule) {
-                        var scriptReferences = allDocuments[i].referencedFiles;
+                var fileNames = this.compiler.fileNames();
+                for (var i = 0; i < fileNames.length; i++) {
+                    var doc = this.compiler.getDocument(fileNames[i]);
+                    if (!doc.script.isDeclareFile() && !doc.script.isExternalModule) {
+                        var scriptReferences = doc.referencedFiles;
                         for (var j = 0; j < scriptReferences.length; j++) {
-                            var currentReference = this.resolveScriptReference(allDocuments[i], scriptReferences[j]);
+                            var currentReference = this.resolveScriptReference(doc, scriptReferences[j]);
                             var document = this.compiler.getDocument(currentReference);
 
                             if (document && (document.script.isDeclareFile() || document.script.isExternalModule)) {
@@ -33083,7 +33158,6 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     TypeScript.pullDeclID = 0;
-    TypeScript.lastBoundPullDeclId = 0;
     var sentinelEmptyPullDeclArray = [];
 
     var PullDecl = (function () {
@@ -33104,7 +33178,6 @@ var TypeScript;
             this.childDeclValueCache = new TypeScript.BlockIntrinsics();
             this.childDeclNamespaceCache = new TypeScript.BlockIntrinsics();
             this.childDeclTypeParameterCache = new TypeScript.BlockIntrinsics();
-            this.ast = null;
             this.name = declName;
             this.kind = kind;
             this.flags = declFlags;
@@ -33351,6 +33424,10 @@ var TypeScript;
         PullDecl.prototype.isSynthesized = function () {
             return false;
         };
+
+        PullDecl.prototype.ast = function () {
+            return this.semanticInfoChain().getASTForDecl(this);
+        };
         return PullDecl;
     })();
     TypeScript.PullDecl = PullDecl;
@@ -33511,11 +33588,14 @@ var TypeScript;
             this._enclosingSignature = null;
             this.docComments = null;
             this.isPrinting = false;
-            this.ast = null;
             this.name = name;
             this.kind = declKind;
             this.pullSymbolIDString = this.pullSymbolID.toString();
         }
+        PullSymbol.prototype.isAny = function () {
+            return false;
+        };
+
         PullSymbol.prototype.isType = function () {
             return (this.kind & 58728539 /* SomeType */) != 0;
         };
@@ -35524,6 +35604,10 @@ var TypeScript;
 
             this.isResolved = true;
         }
+        PullPrimitiveTypeSymbol.prototype.isAny = function () {
+            return this.name === "any";
+        };
+
         PullPrimitiveTypeSymbol.prototype.isStringConstant = function () {
             return false;
         };
@@ -38179,18 +38263,17 @@ var TypeScript;
 
             var decls = symbol.getDeclarations();
 
-            var ast = null;
-
             for (var i = 0; i < decls.length; i++) {
                 var decl = decls[i];
 
-                ast = this.semanticInfoChain.getASTForDecl(decl);
+                var ast = this.semanticInfoChain.getASTForDecl(decl);
 
                 if (!ast || ast.nodeType() === 90 /* Member */) {
                     this.setUnitPath(thisUnit);
                     return symbol;
                 }
 
+                TypeScript.Debug.assert(ast.nodeType() != 29 /* Name */ && ast.nodeType() != 41 /* MemberAccessExpression */);
                 this.setUnitPath(decl.fileName());
                 var resolvedSymbol = this.resolveAST(ast, false, this.getEnclosingDecl(decl), context);
 
@@ -46264,7 +46347,7 @@ var TypeScript;
 
         PullTypeResolver.prototype.typeCheckFunctionOverloads = function (funcDecl, context, signature, allSignatures) {
             if (!signature) {
-                var functionSignatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain);
+                var functionSignatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(this.getDeclForAST(funcDecl));
                 signature = functionSignatureInfo.signature;
                 allSignatures = functionSignatureInfo.allSignatures;
             }
@@ -47562,40 +47645,20 @@ var TypeScript;
         };
 
         SemanticInfo.prototype._getDeclForAST = function (ast) {
-            if (TypeScript.useDirectTypeStorage) {
-                return ast.decl ? ast.decl : null;
-            }
-
             return this.astDeclMap.read(ast.astIDString);
         };
 
         SemanticInfo.prototype._setDeclForAST = function (ast, decl) {
             TypeScript.Debug.assert(decl.fileName() === this._fileName);
-
-            if (TypeScript.useDirectTypeStorage) {
-                ast.decl = decl;
-                return;
-            }
-
             this.astDeclMap.link(ast.astIDString, decl);
         };
 
         SemanticInfo.prototype._getASTForDecl = function (decl) {
-            if (TypeScript.useDirectTypeStorage) {
-                return decl.ast;
-            }
-
             return this.declASTMap.read(decl.declIDString);
         };
 
         SemanticInfo.prototype._setASTForDecl = function (decl, ast) {
             TypeScript.Debug.assert(decl.fileName() === this._fileName);
-
-            if (TypeScript.useDirectTypeStorage) {
-                decl.ast = ast;
-                return;
-            }
-
             this.declASTMap.link(decl.declIDString, ast);
         };
         return SemanticInfo;
@@ -47694,6 +47757,18 @@ var TypeScript;
             this.fileNameToSemanticInfo[fileName] = semanticInfo;
 
             this.invalidate();
+        };
+
+        SemanticInfoChain.prototype.removeScript = function (fileName) {
+            TypeScript.Debug.assert(fileName !== "", "Can't remove the semantic info for the global decl.");
+            var index = TypeScript.ArrayUtilities.indexOf(this.units, function (u) {
+                return u.fileName() === fileName;
+            });
+            if (index > 0) {
+                this.fileNameToSemanticInfo[fileName] = undefined;
+                this.units.splice(index, 1);
+                this.invalidate();
+            }
         };
 
         SemanticInfoChain.prototype.getDeclPathCacheID = function (declPath, declKind) {
@@ -47964,6 +48039,8 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.invalidate = function () {
+            TypeScript.PullTypeResolver.globalTypeCheckPhase++;
+
             this.logger.log("Cleaning symbols...");
             var cleanStart = new Date().getTime();
 
@@ -47988,61 +48065,32 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.setSymbolForAST = function (ast, symbol) {
-            if (TypeScript.useDirectTypeStorage) {
-                ast.symbol = symbol;
-                symbol.ast = ast;
-                return;
-            }
-
             this.astSymbolMap.link(ast.astIDString, symbol);
             this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
         };
 
         SemanticInfoChain.prototype.getSymbolForAST = function (ast) {
-            if (TypeScript.useDirectTypeStorage) {
-                return ast.symbol;
-            }
-
             return this.astSymbolMap.read(ast.astIDString);
         };
 
         SemanticInfoChain.prototype.getASTForSymbol = function (symbol) {
-            if (TypeScript.useDirectTypeStorage) {
-                return symbol.ast;
-            }
-
             return this.symbolASTMap.read(symbol.pullSymbolIDString);
         };
 
         SemanticInfoChain.prototype.setAliasSymbolForAST = function (ast, symbol) {
-            if (TypeScript.useDirectTypeStorage) {
-                ast.aliasSymbol = symbol;
-                return;
-            }
             this.astAliasSymbolMap.link(ast.astIDString, symbol);
         };
 
         SemanticInfoChain.prototype.getAliasSymbolForAST = function (ast) {
-            if (TypeScript.useDirectTypeStorage) {
-                return ast.aliasSymbol;
-            }
-
             return this.astAliasSymbolMap.read(ast.astIDString);
         };
 
         SemanticInfoChain.prototype.getCallResolutionDataForAST = function (ast) {
-            if (TypeScript.useDirectTypeStorage) {
-                return ast.callResolutionData;
-            }
             return this.astCallResolutionDataMap.get(ast.astID);
         };
 
         SemanticInfoChain.prototype.setCallResolutionDataForAST = function (ast, callResolutionData) {
             if (callResolutionData) {
-                if (TypeScript.useDirectTypeStorage) {
-                    ast.callResolutionData = callResolutionData;
-                    return;
-                }
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
         };
@@ -51121,8 +51169,8 @@ var TypeScript;
 var TypeScript;
 (function (TypeScript) {
     (function (PullHelpers) {
-        function getSignatureForFuncDecl(funcDecl, semanticInfoChain) {
-            var functionDecl = semanticInfoChain.getDeclForAST(funcDecl);
+        function getSignatureForFuncDecl(functionDecl) {
+            var funcDecl = functionDecl.ast();
             var funcSymbol = functionDecl.getSymbol();
 
             if (!funcSymbol) {
@@ -52093,7 +52141,12 @@ var TypeScript;
 
                 var statements = new TypeScript.ASTList([returnStatement]);
 
-                var block = new TypeScript.Block(statements, new TypeScript.ASTSpan());
+                var closeBraceSpan = new TypeScript.ASTSpan();
+                closeBraceSpan.minChar = expression.minChar;
+                closeBraceSpan.limChar = expression.limChar;
+                closeBraceSpan.trailingTriviaWidth = expression.trailingTriviaWidth;
+
+                var block = new TypeScript.Block(statements, closeBraceSpan);
                 return block;
             }
         };
@@ -54226,103 +54279,24 @@ var TypeScript;
     TypeScript.ioHostCreateDirectoryStructureTime = 0;
     TypeScript.ioHostWriteFileTime = 0;
 
-    var Document = (function () {
-        function Document(fileName, referencedFiles, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree) {
-            this.fileName = fileName;
-            this.referencedFiles = referencedFiles;
-            this.compilationSettings = compilationSettings;
-            this.scriptSnapshot = scriptSnapshot;
-            this.byteOrderMark = byteOrderMark;
-            this.version = version;
-            this.isOpen = isOpen;
-            this._diagnostics = null;
-            this._syntaxTree = null;
-            this._bloomFilter = null;
-            if (isOpen) {
-                this._syntaxTree = syntaxTree;
-            } else {
-                var start = new Date().getTime();
-                this._diagnostics = syntaxTree.diagnostics();
-                TypeScript.syntaxDiagnosticsTime += new Date().getTime() - start;
-            }
-
-            this.lineMap = syntaxTree.lineMap();
-
-            var start = new Date().getTime();
-            this.script = TypeScript.SyntaxTreeToAstVisitor.visit(syntaxTree, fileName, compilationSettings, isOpen);
-            TypeScript.astTranslationTime += new Date().getTime() - start;
+    var EmitOutput = (function () {
+        function EmitOutput() {
+            this.outputFiles = [];
+            this.diagnostics = [];
         }
-        Document.prototype.diagnostics = function () {
-            if (this._diagnostics === null) {
-                this._diagnostics = this._syntaxTree.diagnostics();
-            }
-
-            return this._diagnostics;
-        };
-
-        Document.prototype.syntaxTree = function () {
-            if (this._syntaxTree) {
-                return this._syntaxTree;
-            }
-
-            return TypeScript.Parser.parse(this.fileName, TypeScript.SimpleText.fromScriptSnapshot(this.scriptSnapshot), TypeScript.isDTSFile(this.fileName), TypeScript.getParseOptions(this.compilationSettings));
-        };
-
-        Document.prototype.bloomFilter = function () {
-            if (!this._bloomFilter) {
-                var identifiers = new TypeScript.BlockIntrinsics();
-                var pre = function (cur, walker) {
-                    if (TypeScript.isValidAstNode(cur)) {
-                        if (cur.nodeType() === 29 /* Name */) {
-                            var nodeText = cur.text();
-
-                            identifiers[nodeText] = true;
-                        }
-                    }
-                };
-
-                TypeScript.getAstWalkerFactory().walk(this.script, pre, null, null, identifiers);
-
-                var identifierCount = 0;
-                for (var name in identifiers) {
-                    if (identifiers[name]) {
-                        identifierCount++;
-                    }
-                }
-
-                this._bloomFilter = new TypeScript.BloomFilter(identifierCount);
-                this._bloomFilter.addKeys(identifiers);
-            }
-            return this._bloomFilter;
-        };
-
-        Document.prototype.update = function (scriptSnapshot, version, isOpen, textChangeRange, settings) {
-            var oldScript = this.script;
-            var oldSyntaxTree = this._syntaxTree;
-
-            var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
-
-            var newSyntaxTree = textChangeRange === null || oldSyntaxTree === null ? TypeScript.Parser.parse(this.fileName, text, TypeScript.isDTSFile(this.fileName), TypeScript.getParseOptions(this.compilationSettings)) : TypeScript.Parser.incrementalParse(oldSyntaxTree, textChangeRange, text);
-
-            return new Document(this.fileName, this.referencedFiles, this.compilationSettings, scriptSnapshot, this.byteOrderMark, version, isOpen, newSyntaxTree);
-        };
-
-        Document.create = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, compilationSettings) {
-            var start = new Date().getTime();
-            var syntaxTree = TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot), TypeScript.isDTSFile(fileName), TypeScript.getParseOptions(compilationSettings));
-            TypeScript.syntaxTreeParseTime += new Date().getTime() - start;
-
-            var document = new Document(fileName, referencedFiles, compilationSettings, scriptSnapshot, byteOrderMark, version, isOpen, syntaxTree);
-
-            return document;
-        };
-        return Document;
+        return EmitOutput;
     })();
-    TypeScript.Document = Document;
+    TypeScript.EmitOutput = EmitOutput;
 
-    TypeScript.globalLogger = null;
-
-    TypeScript.useDirectTypeStorage = false;
+    var OutputFile = (function () {
+        function OutputFile(name, writeByteOrderMark, text) {
+            this.name = name;
+            this.writeByteOrderMark = writeByteOrderMark;
+            this.text = text;
+        }
+        return OutputFile;
+    })();
+    TypeScript.OutputFile = OutputFile;
 
     var TypeScriptCompiler = (function () {
         function TypeScriptCompiler(logger, settings) {
@@ -54335,45 +54309,45 @@ var TypeScript;
             this.fileNameToDocument = new TypeScript.StringHashTable();
             this.emitOptions = new TypeScript.EmitOptions(this.settings);
             this.semanticInfoChain = new TypeScript.SemanticInfoChain(logger);
-            TypeScript.globalLogger = logger;
         }
         TypeScriptCompiler.prototype.getDocument = function (fileName) {
-            return this.fileNameToDocument.lookup(TypeScript.switchToForwardSlashes(fileName));
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            return this.fileNameToDocument.lookup(fileName);
         };
 
-        TypeScriptCompiler.prototype.timeFunction = function (funcDescription, func) {
-            return TypeScript.timeFunction(this.logger, funcDescription, func);
-        };
-
-        TypeScriptCompiler.prototype.addSourceUnit = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles) {
+        TypeScriptCompiler.prototype.addFile = function (fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles) {
             if (typeof referencedFiles === "undefined") { referencedFiles = []; }
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
-            var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
+            var document = TypeScript.Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
             this.fileNameToDocument.addOrUpdate(fileName, document);
-
-            return document;
         };
 
-        TypeScriptCompiler.prototype.updateSourceUnit = function (fileName, scriptSnapshot, version, isOpen, textChangeRange) {
-            var _this = this;
+        TypeScriptCompiler.prototype.updateFile = function (fileName, scriptSnapshot, version, isOpen, textChangeRange) {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            return this.timeFunction("pullUpdateUnit(" + fileName + ")", function () {
-                var document = _this.getDocument(fileName);
-                var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, _this.settings);
 
-                _this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
+            var document = this.getDocument(fileName);
+            var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);
 
-                _this.pullUpdateScript(document, updatedDocument);
+            this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
-                return updatedDocument;
-            });
+            var updatedScript = updatedDocument.script;
+
+            this.semanticInfoChain.addScript(updatedScript);
+
+            this.resolver = new TypeScript.PullTypeResolver(this.settings, this.semanticInfoChain, fileName);
+        };
+
+        TypeScriptCompiler.prototype.removeFile = function (fileName) {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.fileNameToDocument.remove(fileName);
+            this.semanticInfoChain.removeScript(fileName);
         };
 
         TypeScriptCompiler.prototype.isDynamicModuleCompilation = function () {
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
@@ -54388,7 +54362,7 @@ var TypeScript;
             var commonComponents = [];
             var commonComponentsLength = -1;
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileNames[i]);
@@ -54430,9 +54404,7 @@ var TypeScript;
             return null;
         };
 
-        TypeScriptCompiler.prototype.setEmitOptions = function (ioHost) {
-            this.emitOptions.ioHost = ioHost;
-
+        TypeScriptCompiler.prototype.validateEmitOptions = function (resolvePath) {
             if (this.emitOptions.compilationSettings.moduleGenTarget === 0 /* Unspecified */ && this.isDynamicModuleCompilation()) {
                 return new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
             }
@@ -54459,14 +54431,14 @@ var TypeScript;
             }
 
             if (this.emitOptions.compilationSettings.outFileOption) {
-                this.emitOptions.compilationSettings.outFileOption = TypeScript.switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outFileOption));
+                this.emitOptions.compilationSettings.outFileOption = TypeScript.switchToForwardSlashes(resolvePath(this.emitOptions.compilationSettings.outFileOption));
                 this.emitOptions.outputMany = false;
             } else {
                 this.emitOptions.outputMany = true;
             }
 
             if (this.emitOptions.compilationSettings.outDirOption) {
-                this.emitOptions.compilationSettings.outDirOption = TypeScript.switchToForwardSlashes(this.emitOptions.ioHost.resolvePath(this.emitOptions.compilationSettings.outDirOption));
+                this.emitOptions.compilationSettings.outDirOption = TypeScript.switchToForwardSlashes(resolvePath(this.emitOptions.compilationSettings.outDirOption));
                 this.emitOptions.compilationSettings.outDirOption = TypeScript.convertToDirectoryPath(this.emitOptions.compilationSettings.outDirOption);
             }
 
@@ -54477,35 +54449,11 @@ var TypeScript;
             return null;
         };
 
-        TypeScriptCompiler.prototype.getScripts = function () {
-            var result = [];
-            var fileNames = this.fileNameToDocument.getAllKeys();
-
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var document = this.getDocument(fileNames[i]);
-                result.push(document.script);
-            }
-
-            return result;
-        };
-
-        TypeScriptCompiler.prototype.getDocuments = function () {
-            var result = [];
-            var fileNames = this.fileNameToDocument.getAllKeys();
-
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var document = this.getDocument(fileNames[i]);
-                result.push(document);
-            }
-
-            return result;
-        };
-
         TypeScriptCompiler.prototype.writeByteOrderMarkForDocument = function (document) {
             if (this.emitOptions.outputMany || document.script.isExternalModule) {
                 return document.byteOrderMark !== 0 /* None */;
             } else {
-                var fileNames = this.fileNameToDocument.getAllKeys();
+                var fileNames = this.fileNames();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     if (document.script.isExternalModule) {
@@ -54537,14 +54485,14 @@ var TypeScript;
             return true;
         };
 
-        TypeScriptCompiler.prototype.emitDeclarations = function (document, declarationEmitter) {
+        TypeScriptCompiler.prototype.emitDeclarationsWorker = function (resolvePath, document, declarationEmitter) {
             var script = document.script;
             if (this.shouldEmitDeclarations(script)) {
                 if (declarationEmitter) {
                     declarationEmitter.document = document;
                 } else {
                     var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new TypeScript.DeclarationEmitter(declareFileName, document, this);
+                    declarationEmitter = new TypeScript.DeclarationEmitter(declareFileName, document, this, resolvePath);
                 }
 
                 declarationEmitter.emitDeclarations(script);
@@ -54553,65 +54501,69 @@ var TypeScript;
             return declarationEmitter;
         };
 
-        TypeScriptCompiler.prototype.emitAllDeclarations = function () {
+        TypeScriptCompiler.prototype.emitAllDeclarations = function (resolvePath) {
             var start = new Date().getTime();
+            var emitOutput = new EmitOutput();
+
+            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            if (optionsDiagnostic) {
+                emitOutput.diagnostics.push(optionsDiagnostic);
+                return emitOutput;
+            }
 
             if (this.shouldEmitDeclarations()) {
                 var sharedEmitter = null;
-                var fileNames = this.fileNameToDocument.getAllKeys();
+                var fileNames = this.fileNames();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     var fileName = fileNames[i];
 
-                    try  {
-                        var document = this.getDocument(fileNames[i]);
+                    var document = this.getDocument(fileNames[i]);
 
-                        if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                            var singleEmitter = this.emitDeclarations(document);
-                            if (singleEmitter) {
-                                singleEmitter.close();
-                            }
-                        } else {
-                            sharedEmitter = this.emitDeclarations(document, sharedEmitter);
+                    if (this.emitOptions.outputMany || document.script.isExternalModule) {
+                        var singleEmitter = this.emitDeclarationsWorker(resolvePath, document);
+                        if (singleEmitter) {
+                            emitOutput.outputFiles.push(singleEmitter.getOutputFile());
                         }
-                    } catch (ex1) {
-                        return TypeScript.Emitter.handleEmitterError(fileName, ex1);
+                    } else {
+                        sharedEmitter = this.emitDeclarationsWorker(resolvePath, document, sharedEmitter);
                     }
                 }
 
                 if (sharedEmitter) {
-                    try  {
-                        sharedEmitter.close();
-                    } catch (ex2) {
-                        return TypeScript.Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
-                    }
+                    emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
                 }
             }
 
             TypeScript.declarationEmitTime += new Date().getTime() - start;
 
-            return [];
+            return emitOutput;
         };
 
-        TypeScriptCompiler.prototype.emitUnitDeclarations = function (fileName) {
+        TypeScriptCompiler.prototype.emitDeclarations = function (fileName, resolvePath) {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            var emitOutput = new EmitOutput();
+
+            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            if (optionsDiagnostic) {
+                emitOutput.diagnostics.push(optionsDiagnostic);
+                return emitOutput;
+            }
+
             var document = this.getDocument(fileName);
 
             if (this.shouldEmitDeclarations(document.script)) {
                 if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                    try  {
-                        var emitter = this.emitDeclarations(document);
-                        if (emitter) {
-                            emitter.close();
-                        }
-                    } catch (ex1) {
-                        return TypeScript.Emitter.handleEmitterError(fileName, ex1);
+                    var emitter = this.emitDeclarationsWorker(resolvePath, document);
+                    if (emitter) {
+                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFile());
                     }
                 } else {
-                    return this.emitAllDeclarations();
+                    return this.emitAllDeclarations(resolvePath);
                 }
             }
 
-            return [];
+            return emitOutput;
         };
 
         TypeScriptCompiler.mapToFileNameExtension = function (extension, fileName, wholeFileNameReplaced) {
@@ -54628,23 +54580,19 @@ var TypeScript;
             return TypeScriptCompiler.mapToFileNameExtension(".js", fileName, wholeFileNameReplaced);
         };
 
-        TypeScriptCompiler.prototype.emit = function (document, inputOutputMapper, emitter) {
+        TypeScriptCompiler.prototype.emitWorker = function (resolvePath, document, emitter) {
             var script = document.script;
             if (!script.isDeclareFile()) {
                 var typeScriptFileName = document.fileName;
                 if (!emitter) {
                     var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
-                    var outFile = this.createFile(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
+                    var outFile = new TypeScript.TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
 
                     emitter = new TypeScript.Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
                     if (this.settings.mapSourceFiles) {
-                        var sourceMapFile = this.createFile(javaScriptFileName + TypeScript.SourceMapper.MapFileExtension, false);
-                        emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile);
-                    }
-
-                    if (inputOutputMapper) {
-                        inputOutputMapper(typeScriptFileName, javaScriptFileName);
+                        var sourceMapFile = new TypeScript.TextWriter(javaScriptFileName + TypeScript.SourceMapper.MapFileExtension, false);
+                        emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, resolvePath);
                     }
                 } else if (this.settings.mapSourceFiles) {
                     emitter.setSourceMapperNewSourceFile(document);
@@ -54657,15 +54605,17 @@ var TypeScript;
             return emitter;
         };
 
-        TypeScriptCompiler.prototype.emitAll = function (ioHost, inputOutputMapper) {
+        TypeScriptCompiler.prototype.emitAll = function (resolvePath) {
             var start = new Date().getTime();
+            var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.setEmitOptions(ioHost);
+            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
-                return [optionsDiagnostic];
+                emitOutput.diagnostics.push(optionsDiagnostic);
+                return emitOutput;
             }
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             var sharedEmitter = null;
 
             for (var i = 0, n = fileNames.length; i < n; i++) {
@@ -54673,63 +54623,50 @@ var TypeScript;
 
                 var document = this.getDocument(fileName);
 
-                try  {
-                    if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                        var singleEmitter = this.emit(document, inputOutputMapper);
-
-                        if (singleEmitter) {
-                            singleEmitter.emitSourceMapsAndClose();
-                        }
-                    } else {
-                        sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
+                if (this.emitOptions.outputMany || document.script.isExternalModule) {
+                    var singleEmitter = this.emitWorker(resolvePath, document);
+                    if (singleEmitter) {
+                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, singleEmitter.getOutputFiles());
                     }
-                } catch (ex1) {
-                    return TypeScript.Emitter.handleEmitterError(fileName, ex1);
+                } else {
+                    sharedEmitter = this.emitWorker(resolvePath, document, sharedEmitter);
                 }
             }
 
             if (sharedEmitter) {
-                try  {
-                    sharedEmitter.emitSourceMapsAndClose();
-                } catch (ex2) {
-                    return TypeScript.Emitter.handleEmitterError(sharedEmitter.document.fileName, ex2);
-                }
+                emitOutput.outputFiles.push.apply(emitOutput.outputFiles, sharedEmitter.getOutputFiles());
             }
 
             TypeScript.emitTime += new Date().getTime() - start;
-            return [];
+            return emitOutput;
         };
 
-        TypeScriptCompiler.prototype.emitUnit = function (fileName, ioHost, inputOutputMapper) {
-            var optionsDiagnostic = this.setEmitOptions(ioHost);
+        TypeScriptCompiler.prototype.emit = function (fileName, resolvePath) {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            var emitOutput = new EmitOutput();
+
+            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
-                return [optionsDiagnostic];
+                emitOutput.diagnostics.push(optionsDiagnostic);
+                return emitOutput;
             }
 
             var document = this.getDocument(fileName);
 
             if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                try  {
-                    var emitter = this.emit(document, inputOutputMapper);
-
-                    if (emitter) {
-                        emitter.emitSourceMapsAndClose();
-                    }
-                } catch (ex1) {
-                    return TypeScript.Emitter.handleEmitterError(fileName, ex1);
+                var emitter = this.emitWorker(resolvePath, document);
+                if (emitter) {
+                    emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFiles());
                 }
 
-                return [];
+                return emitOutput;
             } else {
-                return this.emitAll(ioHost, inputOutputMapper);
+                return this.emitAll(resolvePath);
             }
         };
 
-        TypeScriptCompiler.prototype.createFile = function (fileName, writeByteOrderMark) {
-            return new TypeScript.TextWriter(this.emitOptions.ioHost, fileName, writeByteOrderMark);
-        };
-
         TypeScriptCompiler.prototype.getSyntacticDiagnostics = function (fileName) {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             return this.getDocument(fileName).diagnostics();
         };
 
@@ -54741,6 +54678,8 @@ var TypeScript;
         };
 
         TypeScriptCompiler.prototype.getSemanticDiagnostics = function (fileName) {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+
             var document = this.getDocument(fileName);
             var script = document.script;
 
@@ -54781,7 +54720,7 @@ var TypeScript;
         };
 
         TypeScriptCompiler.prototype.resolveAllFiles = function () {
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 this.getSemanticDiagnostics(fileNames[i]);
             }
@@ -54805,7 +54744,7 @@ var TypeScript;
 
             var createDeclsStartTime = new Date().getTime();
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileName);
@@ -54817,7 +54756,7 @@ var TypeScript;
             var bindStartTime = new Date().getTime();
 
             var topLevelDecls = this.semanticInfoChain.topLevelDecls();
-            for (var i = 1, n = topLevelDecls.length; i < n; i++) {
+            for (var i = 0, n = topLevelDecls.length; i < n; i++) {
                 var topLevelDecl = topLevelDecls[i];
 
                 var binder = this.semanticInfoChain.getBinder();
@@ -54831,22 +54770,6 @@ var TypeScript;
             this.logger.log("Number of symbols created: " + TypeScript.pullSymbolID);
             this.logger.log("Number of specialized types created: " + TypeScript.nSpecializationsCreated);
             this.logger.log("Number of specialized signatures created: " + TypeScript.nSpecializedSignaturesCreated);
-        };
-
-        TypeScriptCompiler.prototype.pullUpdateScript = function (oldDocument, newDocument) {
-            var _this = this;
-            this.timeFunction("pullUpdateScript: ", function () {
-                TypeScript.Debug.assert(oldDocument.fileName === newDocument.fileName);
-                var newScript = newDocument.script;
-
-                TypeScript.lastBoundPullDeclId = TypeScript.pullDeclID;
-
-                _this.semanticInfoChain.addScript(newScript);
-
-                _this.resolver = new TypeScript.PullTypeResolver(_this.settings, _this.semanticInfoChain, oldDocument.fileName);
-
-                TypeScript.PullTypeResolver.globalTypeCheckPhase++;
-            });
         };
 
         TypeScriptCompiler.prototype.getSymbolOfDeclaration = function (decl) {
@@ -54867,7 +54790,7 @@ var TypeScript;
             return this.resolver.resolveAST(ast, false, enlosingDecl, new TypeScript.PullTypeResolutionContext(this.resolver));
         };
 
-        TypeScriptCompiler.prototype.resolvePosition = function (pos, document) {
+        TypeScriptCompiler.prototype.getTypeInfoAtPosition = function (pos, document) {
             var _this = this;
             var declStack = [];
             var resultASTs = [];
@@ -55091,7 +55014,7 @@ var TypeScript;
 
                 if (funcDecl) {
                     if (symbol && symbol.kind !== 4096 /* Property */) {
-                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.semanticInfoChain);
+                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(this.getDeclForAST(funcDecl));
                         candidateSignature = signatureInfo.signature;
                         callSignatures = signatureInfo.allSignatures;
                     }
@@ -55122,6 +55045,7 @@ var TypeScript;
             var enclosingDecl = null;
             var enclosingDeclAST = null;
             var inContextuallyTypedAssignment = false;
+            var inWithBlock = false;
 
             var resolutionContext = new TypeScript.PullTypeResolutionContext(this.resolver);
 
@@ -55351,6 +55275,10 @@ var TypeScript;
                         }
 
                         break;
+
+                    case 109 /* WithStatement */:
+                        inWithBlock = true;
+                        break;
                 }
 
                 var decl = this.semanticInfoChain.getDeclForAST(current);
@@ -55376,7 +55304,8 @@ var TypeScript;
                 ast: ast,
                 enclosingDecl: enclosingDecl,
                 resolutionContext: resolutionContext,
-                inContextuallyTypedAssignment: inContextuallyTypedAssignment
+                inContextuallyTypedAssignment: inContextuallyTypedAssignment,
+                inWithBlock: inWithBlock
             };
         };
 
@@ -55393,7 +55322,7 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.pullGetSymbolInformationFromAST = function (ast, document) {
             var context = this.extractResolutionContextFromAST(ast, document, true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55418,7 +55347,7 @@ var TypeScript;
             }
 
             var context = this.extractResolutionContextFromAST(ast, document, true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55444,7 +55373,7 @@ var TypeScript;
             var isNew = ast.nodeType() === 46 /* ObjectCreationExpression */;
 
             var context = this.extractResolutionContextFromAST(ast, document, true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55468,7 +55397,7 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.pullGetVisibleMemberSymbolsFromAST = function (ast, document) {
             var context = this.extractResolutionContextFromAST(ast, document, true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55485,7 +55414,7 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.pullGetVisibleDeclsFromAST = function (ast, document) {
             var context = this.extractResolutionContextFromAST(ast, document, false);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55498,7 +55427,7 @@ var TypeScript;
             }
 
             var context = this.extractResolutionContextFromAST(ast, document, true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55512,7 +55441,7 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.pullGetDeclInformation = function (decl, ast, document) {
             var context = this.extractResolutionContextFromAST(ast, document, true);
-            if (!context) {
+            if (!context || context.inWithBlock) {
                 return null;
             }
 
@@ -55528,15 +55457,16 @@ var TypeScript;
             };
         };
 
-        TypeScriptCompiler.prototype.pullGetTypeInfoAtPosition = function (pos, document) {
-            var _this = this;
-            return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", function () {
-                return _this.resolvePosition(pos, document);
-            });
-        };
-
         TypeScriptCompiler.prototype.getTopLevelDeclaration = function (fileName) {
             return this.semanticInfoChain.topLevelDecl(fileName);
+        };
+
+        TypeScriptCompiler.prototype.getDeclForAST = function (ast) {
+            return this.semanticInfoChain.getDeclForAST(ast);
+        };
+
+        TypeScriptCompiler.prototype.fileNames = function () {
+            return this.fileNameToDocument.getAllKeys();
         };
         return TypeScriptCompiler;
     })();
@@ -55588,9 +55518,6 @@ var TypeScript;
             this.typeCheckPhase = -1;
             this.astIDString = astID.toString();
             this.astID = astID++;
-            this.symbol = null;
-            this.aliasSymbol = null;
-            this.decl = null;
             this._preComments = null;
             this._postComments = null;
             this._docComments = null;
@@ -57618,7 +57545,7 @@ var TypeScript;
         };
 
         TypeQuery.prototype.emit = function (emitter) {
-            TypeScript.Emitter.throwEmitterError(new Error(TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Should_not_emit_a_type_query, null)));
+            throw TypeScript.Errors.invalidOperation("Should not emit a type query.");
         };
 
         TypeQuery.prototype.structuralEquals = function (ast, includingPosition) {
@@ -57643,7 +57570,7 @@ var TypeScript;
         };
 
         TypeReference.prototype.emit = function (emitter) {
-            TypeScript.Emitter.throwEmitterError(new Error(TypeScript.getLocalizedText(TypeScript.DiagnosticCode.Should_not_emit_a_type_reference, null)));
+            throw TypeScript.Errors.invalidOperation("Should not emit a type reference.");
         };
 
         TypeReference.prototype.structuralEquals = function (ast, includingPosition) {
@@ -59030,35 +58957,6 @@ var Services;
         return DiagnosticCategory;
     })();
     Services.DiagnosticCategory = DiagnosticCategory;
-
-    var ScriptSyntaxASTState = (function () {
-        function ScriptSyntaxASTState() {
-            this.version = -1;
-            this.fileName = null;
-        }
-        return ScriptSyntaxASTState;
-    })();
-    Services.ScriptSyntaxASTState = ScriptSyntaxASTState;
-
-    var EmitOutputStatus = (function () {
-        function EmitOutputStatus() {
-        }
-        EmitOutputStatus.succeeeded = "succeeeded";
-        EmitOutputStatus.failedDueToEmitErrors = "failed-HasEmitErrors";
-        EmitOutputStatus.failedDueToSyntaxErrors = "failed-HasSyntaxErrors";
-        EmitOutputStatus.noDeclarationsDueToSemanticErrors = "NoDeclarations-HasSemnaticErrors";
-        return EmitOutputStatus;
-    })();
-    Services.EmitOutputStatus = EmitOutputStatus;
-
-    var EmitOutput = (function () {
-        function EmitOutput() {
-            this.outputFiles = [];
-            this.diagnostics = [];
-        }
-        return EmitOutput;
-    })();
-    Services.EmitOutput = EmitOutput;
 })(Services || (Services = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -61357,27 +61255,19 @@ var Services;
         };
 
         CompilerState.prototype.getFileNames = function () {
-            return this.compiler.fileNameToDocument.getAllKeys();
+            return this.compiler.fileNames();
         };
 
         CompilerState.prototype.getScript = function (fileName) {
             return this.compiler.getDocument(fileName).script;
         };
 
-        CompilerState.prototype.getScripts = function () {
-            return this.compiler.getScripts();
-        };
-
         CompilerState.prototype.getScriptVersion = function (fileName) {
             return this.hostCache.getVersion(fileName);
         };
 
-        CompilerState.prototype.getSemanticInfoChain = function () {
-            return this.compiler.semanticInfoChain;
-        };
-
-        CompilerState.prototype.addCompilerUnit = function (compiler, fileName) {
-            compiler.addSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName), this.hostCache.getByteOrderMark(fileName), this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName));
+        CompilerState.prototype.addFile = function (compiler, fileName) {
+            compiler.addFile(fileName, this.hostCache.getScriptSnapshot(fileName), this.hostCache.getByteOrderMark(fileName), this.hostCache.getVersion(fileName), this.hostCache.isOpen(fileName));
         };
 
         CompilerState.prototype.getHostCompilationSettings = function () {
@@ -61402,7 +61292,7 @@ var Services;
 
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
-                this.addCompilerUnit(this.compiler, fileNames[i]);
+                this.addFile(this.compiler, fileNames[i]);
             }
 
             this.compiler.pullTypeCheck();
@@ -61441,7 +61331,7 @@ var Services;
                 return true;
             }
 
-            var fileNames = this.compiler.fileNameToDocument.getAllKeys();
+            var fileNames = this.compiler.fileNames();
             for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
                 var fileName = fileNames[unitIndex];
 
@@ -61465,9 +61355,9 @@ var Services;
                 var fileName = fileNames[i];
 
                 if (this.compiler.getDocument(fileName)) {
-                    this.updateCompilerUnit(this.compiler, fileName);
+                    this.updateFile(this.compiler, fileName);
                 } else {
-                    this.addCompilerUnit(this.compiler, fileName);
+                    this.addFile(this.compiler, fileName);
                     fileAdded = true;
                 }
             }
@@ -61493,10 +61383,9 @@ var Services;
             var _this = this;
             var diagnostics = [];
 
-            this.compiler.fileNameToDocument.map(function (fileName, value, context) {
-                var fileDiagnostics = _this.compiler.getSyntacticDiagnostics(fileName);
-                diagnostics = diagnostics.concat(fileDiagnostics);
-            }, null);
+            this.compiler.fileNames().map(function (fileName) {
+                return diagnostics.push.apply(diagnostics, _this.compiler.getSyntacticDiagnostics(fileName));
+            });
 
             return diagnostics;
         };
@@ -61505,80 +61394,37 @@ var Services;
             var _this = this;
             var diagnostics = [];
 
-            this.compiler.fileNameToDocument.map(function (fileName, value, context) {
-                var fileDiagnostics = _this.compiler.getSemanticDiagnostics(fileName);
-                diagnostics = diagnostics.concat(fileDiagnostics);
-            }, null);
+            this.compiler.fileNames().map(function (fileName) {
+                return diagnostics.push.apply(diagnostics, _this.compiler.getSemanticDiagnostics(fileName));
+            });
 
             return diagnostics;
         };
 
         CompilerState.prototype.getEmitOutput = function (fileName) {
             var _this = this;
-            var result = new Services.EmitOutput();
-
-            var emitterIOHost = {
-                writeFile: function (fileName, contents, writeByteOrderMark) {
-                    result.outputFiles.push({
-                        name: fileName,
-                        text: contents,
-                        writeByteOrderMark: writeByteOrderMark
-                    });
-                },
-                directoryExists: function (fileName) {
-                    return _this.host.directoryExists(fileName);
-                },
-                fileExists: function (fileName) {
-                    return _this.host.fileExists(fileName);
-                },
-                resolvePath: function (fileName) {
-                    return _this.host.resolveRelativePath(fileName, null);
-                }
+            var resolvePath = function (fileName) {
+                return _this.host.resolveRelativePath(fileName, null);
             };
-
-            var diagnostics;
-
-            diagnostics = this.compiler.setEmitOptions(emitterIOHost) || [];
-            result.diagnostics = result.diagnostics.concat(diagnostics);
-            if (this.containErrors(diagnostics)) {
-                result.status = Services.EmitOutputStatus.failedDueToEmitErrors;
-                return result;
-            }
 
             var outputMany = this.compiler.emitOptions.outputMany;
 
             var syntacticDiagnostics = outputMany ? this.getSyntacticDiagnostics(fileName) : this.getAllSyntacticDiagnostics();
             if (this.containErrors(syntacticDiagnostics)) {
-                result.status = Services.EmitOutputStatus.failedDueToSyntaxErrors;
-                return result;
-            }
-
-            var semanticDiagnostics = outputMany ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
-
-            diagnostics = this.compiler.emitUnit(fileName, emitterIOHost) || [];
-            result.diagnostics = result.diagnostics.concat(diagnostics);
-            if (this.containErrors(diagnostics)) {
-                result.status = Services.EmitOutputStatus.failedDueToEmitErrors;
-                return result;
+                return new TypeScript.EmitOutput();
             }
 
             var document = this.getDocument(fileName);
-            if (this.compiler.shouldEmitDeclarations(document.script)) {
-                if (!this.containErrors(semanticDiagnostics)) {
-                    diagnostics = this.compiler.emitUnitDeclarations(fileName) || [];
-                    result.diagnostics = result.diagnostics.concat(diagnostics);
-                    if (this.containErrors(diagnostics)) {
-                        result.status = Services.EmitOutputStatus.failedDueToEmitErrors;
-                        return result;
-                    }
-                } else {
-                    result.status = Services.EmitOutputStatus.noDeclarationsDueToSemanticErrors;
-                    return result;
-                }
+            var semanticDiagnostics = outputMany ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
+
+            var emitResult = this.compiler.emit(fileName, resolvePath);
+            if (!this.containErrors(emitResult.diagnostics) && !this.containErrors(semanticDiagnostics)) {
+                var declarationEmitOutput = this.compiler.emitDeclarations(fileName, resolvePath);
+                emitResult.outputFiles.push.apply(emitResult.outputFiles, declarationEmitOutput.outputFiles);
+                emitResult.diagnostics.push.apply(emitResult.diagnostics, declarationEmitOutput.diagnostics);
             }
 
-            result.status = Services.EmitOutputStatus.succeeeded;
-            return result;
+            return emitResult;
         };
 
         CompilerState.prototype.containErrors = function (diagnostics) {
@@ -61644,7 +61490,7 @@ var Services;
             return this.compiler.semanticInfoChain.findMatchingValidDecl(decl);
         };
 
-        CompilerState.prototype.updateCompilerUnit = function (compiler, fileName) {
+        CompilerState.prototype.updateFile = function (compiler, fileName) {
             var document = this.compiler.getDocument(fileName);
 
             var version = this.hostCache.getVersion(fileName);
@@ -61654,7 +61500,7 @@ var Services;
             }
 
             var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, document.version);
-            compiler.updateSourceUnit(fileName, this.hostCache.getScriptSnapshot(fileName), version, isOpen, textChangeRange);
+            compiler.updateFile(fileName, this.hostCache.getScriptSnapshot(fileName), version, isOpen, textChangeRange);
         };
 
         CompilerState.prototype.getDocCommentsOfDecl = function (decl) {
@@ -61762,6 +61608,10 @@ var Services;
             }
 
             return symbol.docComments;
+        };
+
+        CompilerState.prototype.getDeclForAST = function (ast) {
+            return this.compiler.getDeclForAST(ast);
         };
         return CompilerState;
     })();
@@ -62388,7 +62238,7 @@ var Services;
             if (requireName) {
                 var actualNameAtPosition = topNode.text();
 
-                if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+                if ((symbol.isError() || symbol.isAny()) && actualNameAtPosition !== symbolName) {
                     this.logger.log("Unknown symbol found at the given position");
 
                     return { symbol: null, containingASTOpt: null };
@@ -62513,7 +62363,7 @@ var Services;
 
             var symbolName = symbol.getName();
 
-            if ((symbol.isError() || symbol === this.compilerState.getSemanticInfoChain().anyTypeSymbol) && actualNameAtPosition !== symbolName) {
+            if ((symbol.isError() || symbol.isAny()) && actualNameAtPosition !== symbolName) {
                 this.logger.log("Unknown symbol found at the given position");
                 return result;
             }
@@ -62647,7 +62497,7 @@ var Services;
                     if (symbolInfoAtPosition !== null) {
                         var searchSymbol = symbolInfoAtPosition.aliasSymbol || symbolInfoAtPosition.symbol;
 
-                        if (Services.FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol, _this.compilerState.getSemanticInfoChain())) {
+                        if (Services.FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol)) {
                             var isWriteAccess = _this.isWriteAccess(nameAST);
                             result.push(new Services.ReferenceEntry(_this.compilerState.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
                         }
@@ -63176,6 +63026,9 @@ var Services;
 
             if (node.isDeclaration()) {
                 var declarationInformation = this.compilerState.getDeclarationSymbolInformation(node, document);
+                if (!declarationInformation) {
+                    return null;
+                }
 
                 ast = declarationInformation.ast;
                 symbol = declarationInformation.symbol;
@@ -63184,7 +63037,7 @@ var Services;
                 if (node.nodeType() === 15 /* ConstructorDeclaration */ || node.nodeType() === 14 /* FunctionDeclaration */ || node.nodeType() === 89 /* ArrowFunctionExpression */) {
                     var funcDecl = node;
                     if (symbol && symbol.kind != 4096 /* Property */) {
-                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(funcDecl, this.compilerState.getSemanticInfoChain());
+                        var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(this.compilerState.getDeclForAST(funcDecl));
                         _isCallExpression = true;
                         candidateSignature = signatureInfo.signature;
                         resolvedSignatures = signatureInfo.allSignatures;
@@ -63197,7 +63050,7 @@ var Services;
 
                 var callExpressionInformation = this.compilerState.getCallInformationFromAST(node, document);
 
-                if (!callExpressionInformation.targetSymbol) {
+                if (!callExpressionInformation || !callExpressionInformation.targetSymbol) {
                     return null;
                 }
 
@@ -63223,7 +63076,7 @@ var Services;
             } else {
                 var symbolInformation = this.compilerState.getSymbolInformationFromAST(node, document);
 
-                if (!symbolInformation.symbol) {
+                if (!symbolInformation || !symbolInformation.symbol) {
                     return null;
                 }
 
@@ -63401,7 +63254,7 @@ var Services;
         };
 
         LanguageService.prototype.getCompletionEntriesFromDecls = function (decls, result) {
-            for (var i = 0, n = decls.length; i < n; i++) {
+            for (var i = 0, n = decls ? decls.length : 0; i < n; i++) {
                 var decl = decls[i];
 
                 var declDisplaylName = Services.CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
@@ -63984,7 +63837,7 @@ var Services;
     var FindReferenceHelpers = (function () {
         function FindReferenceHelpers() {
         }
-        FindReferenceHelpers.compareSymbolsForLexicalIdentity = function (firstSymbol, secondSymbol, semanticInfoChain) {
+        FindReferenceHelpers.compareSymbolsForLexicalIdentity = function (firstSymbol, secondSymbol) {
             if (!firstSymbol.isAlias() && firstSymbol.isContainer()) {
                 firstSymbol = firstSymbol.getInstanceSymbol();
             }
@@ -64012,7 +63865,7 @@ var Services;
                     var secondParentDecl = secondSymbolDecl.getParentDecl();
 
                     if (firstParentDecl.kind === 512 /* ObjectLiteral */ && secondParentDecl.kind === 512 /* ObjectLiteral */) {
-                        return semanticInfoChain.getASTForDecl(firstParentDecl) === semanticInfoChain.getASTForDecl(secondParentDecl);
+                        return firstParentDecl.ast() === secondParentDecl.ast();
                     }
                 }
 
