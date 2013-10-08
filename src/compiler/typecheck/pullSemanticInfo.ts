@@ -523,8 +523,6 @@ module TypeScript {
             indexParameterSymbol.addDeclaration(indexParamDecl);
             this.setASTForDecl(indexSigDecl, ast);
             this.setASTForDecl(indexParamDecl, ast);
-            indexSigDecl.setIsBound(true);
-            indexParamDecl.setIsBound(true);
         }
 
         public getDeclForAST(ast: AST): PullDecl {

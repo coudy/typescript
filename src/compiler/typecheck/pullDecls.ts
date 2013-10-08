@@ -19,7 +19,6 @@ module TypeScript {
         private span: TextSpan;
 
         // Properties that need to be cleaned after a change
-        private _isBound: boolean = false;
         private symbol: PullSymbol = null;
         // use this to store the signature symbol for a function declaration
         private signatureSymbol: PullSignatureSymbol = null;
@@ -77,7 +76,6 @@ module TypeScript {
 
         public clean() {
             // Clean this decl
-            this._isBound = false;
             this.symbol = null;
             this.signatureSymbol = null;
             this.specializingSignatureSymbol = null;
@@ -114,7 +112,7 @@ module TypeScript {
         public setSymbol(symbol: PullSymbol) { this.symbol = symbol; }
 
         public ensureSymbolIsBound(bindSignatureSymbol=false) {
-            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.kind != PullElementKind.Script) {
+            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && this.kind != PullElementKind.Script) {
                 var binder = this.semanticInfoChain().getBinder();
                 binder.bindDeclToPullSymbol(this);
             }
@@ -131,7 +129,7 @@ module TypeScript {
         }
 
         public hasSymbol() {
-            return this.symbol != null;
+            return !!this.symbol;
         }
 
         public setSignatureSymbol(signature: PullSignatureSymbol): void { this.signatureSymbol = signature; }
@@ -142,7 +140,7 @@ module TypeScript {
         }
 
         public hasSignature() {
-            return this.signatureSymbol != null;
+            return !!this.signatureSymbol;
         }
 
         public setSpecializingSignatureSymbol(signature: PullSignatureSymbol): void { this.specializingSignatureSymbol = signature; }
@@ -299,12 +297,8 @@ module TypeScript {
             return declGroups ? declGroups : sentinelEmptyPullDeclArray;
         }
 
-        public setIsBound(isBinding: boolean) {
-            this._isBound = isBinding;
-        }
-
-        public isBound() {
-            return this._isBound;
+        public hasBeenBound() {
+            return this.hasSymbol() || this.hasSignature();
         }
 
         public isSynthesized(): boolean {

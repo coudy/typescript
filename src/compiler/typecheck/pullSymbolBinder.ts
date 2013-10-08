@@ -19,6 +19,8 @@ module TypeScript {
             this.functionTypeParameterCache = new BlockIntrinsics();
         }
 
+        private declsBeingBound: PullDecl[] = [];
+
         constructor(private semanticInfoChain: SemanticInfoChain) {
         }
 
@@ -32,7 +34,7 @@ module TypeScript {
 
             var parent = parentDecl.getSymbol();
 
-            if (!parent && parentDecl && !parentDecl.isBound()) {
+            if (!parent && parentDecl && !parentDecl.hasBeenBound()) {
                 this.bindDeclToPullSymbol(parentDecl);
             }
 
@@ -2130,18 +2132,20 @@ module TypeScript {
 
         // binding
         public bindDeclToPullSymbol(decl: PullDecl) {
-            if (decl.isBound()) {
+            if (decl.hasBeenBound()) {
+                // The decl has a symbol attached to it
                 return;
             }
 
-            // if (globalLogger) {
-            //     globalLogger.log("Binding " + decl.getName());
-            // }
+            if (this.declsBeingBound.indexOf(decl) >= 0) {
+                // We are already binding it now
+                return;
+            }
 
-            decl.setIsBound(true);
+            // Add it to the list in case we revisit it during binding
+            this.declsBeingBound.push(decl);
 
             switch (decl.kind) {
-
                 case PullElementKind.Script:
                     var childDecls = decl.getChildDecls();
                     for (var i = 0; i < childDecls.length; i++) {
@@ -2245,6 +2249,8 @@ module TypeScript {
                 default:
                     CompilerDiagnostics.assert(false, "Unrecognized type declaration");
             }
+
+            this.declsBeingBound.pop();
         }
 
         //public bindTopLevelDecl() {
