@@ -122,7 +122,7 @@ module TypeScript {
             byteOrderMark: ByteOrderMark,
             version: number,
             isOpen: boolean,
-            referencedFiles: string[] = []): Document {
+            referencedFiles: string[] = []): void {
 
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
@@ -130,11 +130,9 @@ module TypeScript {
 
             var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
             this.fileNameToDocument.addOrUpdate(fileName, document);
-
-            return document;
         }
 
-        public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {
+        public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): void {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
                 var document = this.getDocument(fileName);
@@ -143,8 +141,6 @@ module TypeScript {
                 this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
                 this.pullUpdateScript(document, updatedDocument);
-
-                return updatedDocument;
             });
         }
 
