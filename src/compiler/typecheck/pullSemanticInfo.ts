@@ -158,10 +158,6 @@ module TypeScript {
         }
 
         public addScript(script: Script): void {
-            // A file has changed, increment the type check phase so that future type chech
-            // operations will proceed.
-            PullTypeResolver.globalTypeCheckPhase++;
-
             var fileName = script.fileName();
             var semanticInfo = new SemanticInfo(this, fileName, script);
 
@@ -179,6 +175,16 @@ module TypeScript {
             // We changed the scripts we're responsible for.  Invalidate all existing cached
             // semantic information.
             this.invalidate();
+        }
+
+        public removeScript(fileName: string): void {
+            Debug.assert(fileName !== "", "Can't remove the semantic info for the global decl.");
+            var index = ArrayUtilities.indexOf(this.units, u => u.fileName() === fileName);
+            if (index > 0) {
+                this.fileNameToSemanticInfo[fileName] = undefined;
+                this.units.splice(index, 1);
+                this.invalidate();
+            }
         }
 
         private getDeclPathCacheID(declPath: string[], declKind: PullElementKind) {
@@ -467,6 +473,10 @@ module TypeScript {
         }
 
         private invalidate() {
+            // A file has changed, increment the type check phase so that future type chech
+            // operations will proceed.
+            PullTypeResolver.globalTypeCheckPhase++;
+
             this.logger.log("Cleaning symbols...");
             var cleanStart = new Date().getTime();
 

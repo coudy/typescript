@@ -152,6 +152,12 @@ module TypeScript {
             });
         }
 
+        public removeFile(fileName: string): void {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            this.fileNameToDocument.remove(fileName);
+            this.semanticInfoChain.removeScript(fileName);
+        }
+
         private isDynamicModuleCompilation(): boolean {
             var fileNames = this.fileNameToDocument.getAllKeys();
             for (var i = 0, n = fileNames.length; i < n; i++) {

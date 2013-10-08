@@ -137,6 +137,13 @@ module TypeScript {
             var data = this.table[key];
             return data === undefined ? null : data;
         }
+
+        public remove(key: string): void {
+            if (this.table[key] !== undefined) {
+                this.table[key] = undefined;
+                this.itemCount--;
+            }
+        }
     }
 
 
