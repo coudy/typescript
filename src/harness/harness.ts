@@ -961,18 +961,14 @@ module Harness {
             public reset() {
                 this.ioHost.reset();
                 this.errorList = [];
-                var files = this.getAllFilesInCompiler();
-                
-                for (var i = 0; i < files.length; i++) {
-                    // TODO: need to handle paths correctly in the future (ex when projects tests become compiler baselines)
-                    var justName = getFileName(files[i]);
-                    var fname = files[i];
-                    if (justName !== 'lib.d.ts') {
-                        this.updateUnit('', fname);
+
+                var fileNames = this.compiler.fileNames();
+                for (var i = 0, n = fileNames.length; i < n; i++) {
+                    var fileName = fileNames[i];
+                    if (fileName.indexOf("lib.d.ts") < 0) {
+                        this.compiler.removeFile(fileNames[i]);
                     }
                 }
-
-                this.deleteAllUnits();
 
                 this.inputFiles = [];
                 this.resolvedFiles = [];
@@ -1023,24 +1019,6 @@ module Harness {
             /** Updates an existing unit in the compiler with new code. */
             public updateUnit(code: string, unitName: string) {
                 this.compiler.updateFile(unitName, TypeScript.ScriptSnapshot.fromString(code), /*version:*/ 0, /*isOpen:*/ true, null);
-            }
-
-            /** Removes all non-lib.d.ts units of code from the compiler's internal data structures */
-            private deleteAllUnits() {
-                // The compiler uses fileNameToDocument as a map of what currently exists in a compilation session
-                // deleting units just means replacing that table with a new one containing the units we want                
-                var newTable = new TypeScript.StringHashTable<TypeScript.Document>();
-                var document = this.compiler.getDocument('lib.d.ts');
-                newTable.add('lib.d.ts', document);
-                // TODO: Blocked by 712326
-                // This function was original deleteUnit(unitName:string) but the below doesn't work
-                // so we'll just delete all units. Would be nice to have more precision in what's deleted.
-                //this.compiler.fileNameToDocument.map((key: string, doc: TypeScript.Document, ctxt) => {
-                //    if (key !== unitName) {
-                //        newTable.add(key, doc);
-                //    }
-                //});
-                this.compiler.fileNameToDocument = newTable;
             }
 
             public emitAll(ioHost?: TypeScript.EmitterIOHost): TypeScript.Diagnostic[]{

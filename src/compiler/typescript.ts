@@ -1446,5 +1446,9 @@ module TypeScript {
         public getDeclForAST(ast: AST): PullDecl {
             return this.semanticInfoChain.getDeclForAST(ast);
         }
+
+        public fileNames(): string[] {
+            return this.fileNameToDocument.getAllKeys();
+        }
     }
 }
