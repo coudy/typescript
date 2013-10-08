@@ -397,9 +397,7 @@ module TypeScript {
                 for (var i = 0; i < typeArguments.length; i++) {
                     typeArgumentList[typeArgumentList.length] = instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
                 }
-
-                typeParameterArgumentMap = {};
-
+                
                 for (var i = 0; i < typeArguments.length; i++) {
                     typeParameterArgumentMap[typeArguments[i].pullSymbolIDString] = typeArgumentList[i];
                 }
@@ -821,7 +819,7 @@ module TypeScript {
             return type;
         }
 
-        if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
+        if (typeParameterArgumentMap[type.pullSymbolIDString]) {
             return typeParameterArgumentMap[type.pullSymbolIDString]
         }
 
