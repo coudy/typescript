@@ -122,7 +122,7 @@ module Services {
         }
 
         public getFileNames(): string[] {
-            return this.compiler.fileNameToDocument.getAllKeys();
+            return this.compiler.fileNames();
         }
 
         public getScript(fileName: string): TypeScript.Script {
@@ -227,7 +227,7 @@ module Services {
             // If any file was deleted, we need to create a new compiler, because we are not
             // even close to supporting removing symbols (unitindex will be all over the place
             // if we remove scripts from the list).
-            var fileNames = this.compiler.fileNameToDocument.getAllKeys();
+            var fileNames = this.compiler.fileNames();
             for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
                 var fileName = fileNames[unitIndex];
 
@@ -281,10 +281,8 @@ module Services {
         private getAllSyntacticDiagnostics(): TypeScript.Diagnostic[]{
             var diagnostics: TypeScript.Diagnostic[] = [];
 
-            this.compiler.fileNameToDocument.map((fileName, value, context) => {
-                var fileDiagnostics = this.compiler.getSyntacticDiagnostics(fileName);
-                diagnostics = diagnostics.concat(fileDiagnostics);
-            }, null);
+            this.compiler.fileNames().map(fileName =>
+                diagnostics.push.apply(diagnostics, this.compiler.getSyntacticDiagnostics(fileName)));
 
             return diagnostics;
         }
@@ -292,10 +290,8 @@ module Services {
         private getAllSemanticDiagnostics(): TypeScript.Diagnostic[]{
             var diagnostics: TypeScript.Diagnostic[] = [];
 
-            this.compiler.fileNameToDocument.map((fileName, value, context) => {
-                var fileDiagnostics = this.compiler.getSemanticDiagnostics(fileName);
-                diagnostics = diagnostics.concat(fileDiagnostics);
-            }, null);
+            this.compiler.fileNames().map(fileName =>
+                diagnostics.push.apply(diagnostics, this.compiler.getSemanticDiagnostics(fileName)));
 
             return diagnostics;
         }

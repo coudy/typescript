@@ -95,9 +95,8 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
             resolvePath: IO.resolvePath
         };
 
-        var files = compiler.fileNameToDocument.getAllKeys();
-        files.forEach(file => {
-            if (file.indexOf('lib.d.ts') == -1) {
+        compiler.fileNames().forEach(file => {
+            if (file.indexOf('lib.d.ts') < 0) {
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(file);
                 syntacticDiagnostics.forEach(d => this.addDiagnostic(d));
 

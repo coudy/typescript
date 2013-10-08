@@ -211,9 +211,8 @@ module TypeScript {
             }
 
             compiler.pullTypeCheck();
-            var fileNames = compiler.fileNameToDocument.getAllKeys();
-            var n = fileNames.length;
-            for (var i = 0; i < n; i++) {
+            var fileNames = compiler.fileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 var semanticDiagnostics = compiler.getSemanticDiagnostics(fileName);
                 if (semanticDiagnostics.length > 0) {

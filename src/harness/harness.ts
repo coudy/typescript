@@ -978,7 +978,7 @@ module Harness {
             public getAllFilesInCompiler() {
                 // returns what's actually in the compiler, not the contents of this.fileNameToSriptSnapshot because the latter
                 // really means what's 'on the filesystem' not in compiler
-                return this.compiler.fileNameToDocument.getAllKeys().filter(file => file.indexOf('lib.d.ts') === -1);
+                return this.compiler.fileNames().filter(file => file.indexOf('lib.d.ts') === -1);
             }
 
             public getDocumentFromCompiler(documentName: string) {

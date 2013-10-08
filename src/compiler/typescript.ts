@@ -100,7 +100,7 @@ module TypeScript {
 
         public emitOptions: EmitOptions;
 
-        public fileNameToDocument = new TypeScript.StringHashTable<Document>();
+        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings()) {
@@ -159,7 +159,7 @@ module TypeScript {
         }
 
         private isDynamicModuleCompilation(): boolean {
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
                 var script = document.script;
@@ -174,7 +174,7 @@ module TypeScript {
             var commonComponents: string[] = [];
             var commonComponentsLength = -1;
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileNames[i]);
@@ -272,7 +272,7 @@ module TypeScript {
 
         public getScripts(): Script[] {
             var result: TypeScript.Script[] = [];
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
 
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
@@ -284,7 +284,7 @@ module TypeScript {
 
         public getDocuments(): Document[] {
             var result: TypeScript.Document[] = [];
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
 
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
@@ -299,7 +299,7 @@ module TypeScript {
             if (this.emitOptions.outputMany || document.script.isExternalModule) {
                 return document.byteOrderMark !== ByteOrderMark.None;
             } else {
-                var fileNames = this.fileNameToDocument.getAllKeys();
+                var fileNames = this.fileNames();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     if (document.script.isExternalModule) {
@@ -356,7 +356,7 @@ module TypeScript {
 
             if (this.shouldEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
-                var fileNames = this.fileNameToDocument.getAllKeys();
+                var fileNames = this.fileNames();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
                     var fileName = fileNames[i];
@@ -486,7 +486,7 @@ module TypeScript {
                 return [optionsDiagnostic];
             }
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             var sharedEmitter: Emitter = null;
 
             // Iterate through the files, as long as we don't get an error.
@@ -629,7 +629,7 @@ module TypeScript {
         }
 
         public resolveAllFiles() {
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 this.getSemanticDiagnostics(fileNames[i]);
             }
@@ -653,7 +653,7 @@ module TypeScript {
 
             var createDeclsStartTime = new Date().getTime();
 
-            var fileNames = this.fileNameToDocument.getAllKeys();
+            var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileName);
