@@ -583,6 +583,8 @@ module TypeScript {
         }
 
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+
             var document = this.getDocument(fileName);
             var script = document.script;
 
