@@ -79,7 +79,6 @@ module TypeScript {
             this.symbol = null;
             this.signatureSymbol = null;
             this.specializingSignatureSymbol = null;
-            this.declGroups = null;
 
             // Clean child decls
             var children = this.childDecls;

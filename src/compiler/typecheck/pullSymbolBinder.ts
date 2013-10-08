@@ -922,10 +922,6 @@ module TypeScript {
             var isEnumValue = (declFlags & PullElementFlags.InitializedEnum) != 0;
             var isClassConstructorVariable = (declFlags & PullElementFlags.ClassConstructorVariable) != 0;
 
-            if (parentDecl && !isImplicit) {
-                parentDecl.addVariableDeclToGroup(variableDeclaration);
-            }
-
             variableSymbol = this.getExistingSymbol(variableDeclaration, PullElementKind.SomeValue, parent);
 
             if (variableSymbol && !variableSymbol.isType()) {
@@ -1331,10 +1327,6 @@ module TypeScript {
                         else {
                             parameterSymbol.addDeclaration(decl);
                             decl.setSymbol(parameterSymbol);
-                        }
-
-                        if (funcDecl) {
-                            funcDecl.addVariableDeclToGroup(decl);
                         }
                     }
 
