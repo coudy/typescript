@@ -122,7 +122,7 @@ module TypeScript {
             byteOrderMark: ByteOrderMark,
             version: number,
             isOpen: boolean,
-            referencedFiles: string[]= []): Document {
+            referencedFiles: string[] = []): Document {
 
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
@@ -675,8 +675,6 @@ module TypeScript {
             this.timeFunction("pullUpdateScript: ", () => {
                 Debug.assert(oldDocument.fileName === newDocument.fileName);
                 var newScript = newDocument.script;
-
-                lastBoundPullDeclId = pullDeclID;
 
                 // Note: the semantic info chain will recognize that this is a replacement of an
                 // existing script, and will handle it appropriately.

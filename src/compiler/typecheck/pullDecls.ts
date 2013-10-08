@@ -5,7 +5,6 @@
 
 module TypeScript {
     export var pullDeclID = 0;
-    export var lastBoundPullDeclId = 0;
     var sentinelEmptyPullDeclArray: any[] = [];
 
     export class PullDecl {
