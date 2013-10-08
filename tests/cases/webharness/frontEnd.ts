@@ -53,15 +53,11 @@ class BatchCompiler implements Services.ILanguageServiceHost {
 
         var emitterIOHost = {
             writeFile: (fileName: string, contents: string, writeByteOrderMark: boolean) => { },
-            directoryExists: (a: string) => false,
-            fileExists: (a: string) => true,
             resolvePath: (a: string) => a,
         };
 
-        var mapInputToOutput = (inputFile: string, outputFile: string): void => { };
-
         // TODO: if there are any emit diagnostics.  Don't proceed.
-        var emitDiagnostics = this.compiler.emitAll(emitterIOHost, mapInputToOutput);
+        var emitDiagnostics = this.compiler.emitAll(emitterIOHost);
 
         var emitDeclarationsDiagnostics = this.compiler.emitAllDeclarations();
     }

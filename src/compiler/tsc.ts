@@ -41,7 +41,6 @@ module TypeScript {
         private inputFiles: string[] = [];
         private compilationSettings: CompilationSettings;
         private resolvedFiles: IResolvedFile[] = [];
-        private inputFileNameToOutputFileName = new StringHashTable();
         private fileNameToSourceFile = new StringHashTable();
         private hasErrors: boolean = false;
         private logger: ILogger = null;
@@ -222,12 +221,8 @@ module TypeScript {
             }
 
             if (!this.tcOnly) {
-                var mapInputToOutput = (inputFile: string, outputFile: string): void => {
-                    this.inputFileNameToOutputFileName.addOrUpdate(inputFile, outputFile);
-                };
-
                 // TODO: if there are any emit diagnostics.  Don't proceed.
-                var emitDiagnostics = compiler.emitAll(this, mapInputToOutput);
+                var emitDiagnostics = compiler.emitAll(this);
                 this.reportDiagnostics(emitDiagnostics);
                 if (emitDiagnostics.length > 0) {
                     return true;

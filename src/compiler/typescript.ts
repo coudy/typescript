@@ -402,10 +402,7 @@ module TypeScript {
 
         // Caller is responsible for closing the returned emitter.
         // May throw exceptions.
-        private emit(document: Document,
-                     inputOutputMapper?: (inputName: string, outputName: string) => void ,
-                     emitter?: Emitter): Emitter {
-
+        private emit(document: Document, emitter?: Emitter): Emitter {
             var script = document.script;
             if (!script.isDeclareFile()) {
                 var typeScriptFileName = document.fileName;
@@ -419,11 +416,6 @@ module TypeScript {
                         // We always create map files next to the jsFiles
                         var sourceMapFile = this.createFile(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
                         emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile);
-                    }
-
-                    if (inputOutputMapper) {
-                        // Remember the name of the outfile for this source file
-                        inputOutputMapper(typeScriptFileName, javaScriptFileName);
                     }
                 }
                 else if (this.settings.mapSourceFiles) {
@@ -440,7 +432,7 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAll(ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): Diagnostic[] {
+        public emitAll(ioHost: EmitterIOHost): Diagnostic[] {
             var start = new Date().getTime();
 
             var optionsDiagnostic = this.setEmitOptions(ioHost);
@@ -461,7 +453,7 @@ module TypeScript {
                     // Emitting module or multiple files, always goes to single file
                     if (this.emitOptions.outputMany || document.script.isExternalModule) {
                         // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
-                        var singleEmitter = this.emit(document, inputOutputMapper);
+                        var singleEmitter = this.emit(document);
 
                         // Close the emitter after each emitted file.
                         if (singleEmitter) {
@@ -471,7 +463,7 @@ module TypeScript {
                     else {
                         // We're not outputting to multiple files.  Keep using the same emitter and don't
                         // close until below.
-                        sharedEmitter = this.emit(document, inputOutputMapper, sharedEmitter);
+                        sharedEmitter = this.emit(document, sharedEmitter);
                     }
                 }
                 catch (ex1) {
@@ -505,7 +497,7 @@ module TypeScript {
             if (this.emitOptions.outputMany || document.script.isExternalModule) {
                 // In outputMany mode, only emit the document specified and its sourceMap if needed
                 try {
-                    var emitter = this.emit(document, inputOutputMapper);
+                    var emitter = this.emit(document);
 
                     // Close the emitter
                     if (emitter) {
@@ -520,7 +512,7 @@ module TypeScript {
             }
             else {
                 // In output Single file mode, emit everything
-                return this.emitAll(ioHost, inputOutputMapper);
+                return this.emitAll(ioHost);
             }
         }
 
