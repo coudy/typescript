@@ -935,13 +935,14 @@ module TypeScript {
                 }
             } else {
                 // Collect from all the references and emit
-                var allDocuments = this.compiler.getDocuments();
-                for (var i = 0; i < allDocuments.length; i++) {
-                    if (!allDocuments[i].script.isDeclareFile() && !allDocuments[i].script.isExternalModule) {
+                var fileNames = this.compiler.fileNames();
+                for (var i = 0; i < fileNames.length; i++) {
+                    var doc = this.compiler.getDocument(fileNames[i]);
+                    if (!doc.script.isDeclareFile() && !doc.script.isExternalModule) {
                         // Check what references need to be added
-                        var scriptReferences = allDocuments[i].referencedFiles;
+                        var scriptReferences = doc.referencedFiles;
                         for (var j = 0; j < scriptReferences.length; j++) {
-                            var currentReference = this.resolveScriptReference(allDocuments[i], scriptReferences[j]);
+                            var currentReference = this.resolveScriptReference(doc, scriptReferences[j]);
                             var document = this.compiler.getDocument(currentReference);
                             // All the references that are not going to be part of same file
                             if (document &&

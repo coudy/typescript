@@ -270,18 +270,6 @@ module TypeScript {
             return null;
         }
 
-        public getDocuments(): Document[] {
-            var result: TypeScript.Document[] = [];
-            var fileNames = this.fileNames();
-
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var document = this.getDocument(fileNames[i]);
-                result.push(document);
-            }
-
-            return result;
-        }
-
         private writeByteOrderMarkForDocument(document: Document) {
             // If module its always emitted in its own file
             if (this.emitOptions.outputMany || document.script.isExternalModule) {
