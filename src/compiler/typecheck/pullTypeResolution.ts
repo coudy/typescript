@@ -8476,7 +8476,18 @@ module TypeScript {
             // type (if they were not, we never would have gotten to this point
             if (source.isTypeReference() && target.isTypeReference()) {
                 if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol == (<PullTypeReferenceSymbol>target).referencedTypeSymbol) {
-                    return false;
+                    var sourceTypeArguments = (<PullTypeReferenceSymbol>source).getTypeArguments();
+                    var targetTypeArguments = (<PullTypeReferenceSymbol>target).getTypeArguments();
+
+                    if (!(sourceTypeArguments && targetTypeArguments) || sourceTypeArguments.length != targetTypeArguments.length) {
+                        return false;
+                    }
+
+                    for (var i = 0; i < targetTypeArguments.length; i++) {
+                        if (!this.sourceExtendsTarget(sourceTypeArguments[i], targetTypeArguments[i], context)) {
+                            return false;
+                        }
+                    }
                 }
             }
 
