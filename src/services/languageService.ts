@@ -337,17 +337,6 @@ module Services {
         static message = "message";
     }
 
-    export class ScriptSyntaxASTState {
-        public version: number;
-        public syntaxTree: TypeScript.SyntaxTree;
-        public fileName: string;
-
-        constructor() {
-            this.version = -1;
-            this.fileName = null;
-        }
-    }
-
     export class EmitOutput {
         public outputFiles: IOutputFile[] = [];
         public diagnostics: TypeScript.Diagnostic[] = [];
