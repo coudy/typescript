@@ -39,12 +39,6 @@ module TypeScript {
             return this._topLevelDecl;
         }
 
-        public cleanDecls(): void {
-            if (this._topLevelDecl) {
-                this._topLevelDecl.clean();
-            }
-        }
-
         public fileName(): string {
             return this._fileName;
         }
@@ -417,19 +411,12 @@ module TypeScript {
             }
         }
 
-        private cleanAllDecls() {
-            // skip the first semantic info, which contains global primitive symbols
-            for (var i = 1, n = this.units.length; i < n; i++) {
-                this.units[i].cleanDecls();
-            }
-        }
-
         private invalidate() {
             // A file has changed, increment the type check phase so that future type chech
             // operations will proceed.
             PullTypeResolver.globalTypeCheckPhase++;
 
-            this.logger.log("Cleaning symbols...");
+            this.logger.log("Invalidating SemanticInfoChain...");
             var cleanStart = new Date().getTime();
 
             this.astSymbolMap = new DataMap<PullSymbol>();
@@ -448,10 +435,9 @@ module TypeScript {
             this.declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
 
             this.units[0] = new SemanticInfo(this, "", /*script:*/ null, this.getGlobalDecl());
-            this.cleanAllDecls();
 
             var cleanEnd = new Date().getTime();
-            this.logger.log("   time to clean: " + (cleanEnd - cleanStart));
+            this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {

@@ -69,27 +69,6 @@ module TypeScript {
             throw Errors.abstract();
         }
 
-        public clean() {
-            // Clean child decls
-            var children = this.childDecls;
-            if (children) {
-                for (var i = 0; i < children.length; i++) {
-                    children[i].clean();
-                }
-            }
-
-            var typeParameters = this.typeParameters;
-            if (typeParameters) {
-                for (var i = 0; i < typeParameters.length; i++) {
-                    typeParameters[i].clean();
-                }
-            }
-
-            if (this.synthesizedValDecl) {
-                this.synthesizedValDecl.clean();
-            }
-        }
-
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
