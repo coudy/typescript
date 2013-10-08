@@ -310,9 +310,8 @@ module Services {
 
             // Parse the emit options
             diagnostics = this.compiler.setEmitOptions(emitterIOHost) || [];
-            result.diagnostics = result.diagnostics.concat(diagnostics);
+            result.diagnostics.push.apply(result.diagnostics, diagnostics);
             if (this.containErrors(diagnostics)) {
-                result.status = EmitOutputStatus.failedDueToEmitErrors;
                 return result;
             }
 
@@ -322,7 +321,6 @@ module Services {
             var syntacticDiagnostics = outputMany ? this.getSyntacticDiagnostics(fileName) : this.getAllSyntacticDiagnostics();
             if (this.containErrors(syntacticDiagnostics)) {
                 // This file has at least one syntactic error, return and do not emit code.
-                result.status = EmitOutputStatus.failedDueToSyntaxErrors;
                 return result;
             }
 
@@ -333,7 +331,6 @@ module Services {
             diagnostics = this.compiler.emitUnit(fileName, emitterIOHost) || [];
             result.diagnostics = result.diagnostics.concat(diagnostics);
             if (this.containErrors(diagnostics)) {
-                result.status = EmitOutputStatus.failedDueToEmitErrors;
                 return result;
             }
 
@@ -344,17 +341,14 @@ module Services {
                     diagnostics = this.compiler.emitUnitDeclarations(fileName) || [];
                     result.diagnostics = result.diagnostics.concat(diagnostics);
                     if (this.containErrors(diagnostics)) {
-                        result.status = EmitOutputStatus.failedDueToEmitErrors;
                         return result;
                     }
                 }
                 else {
-                    result.status = EmitOutputStatus.noDeclarationsDueToSemanticErrors;
                     return result;
                 }
             }
 
-            result.status = EmitOutputStatus.succeeeded;
             return result;
         }
 
