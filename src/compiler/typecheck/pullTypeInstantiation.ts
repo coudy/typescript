@@ -388,28 +388,28 @@ module TypeScript {
             // check for an existing instantiation
             var rootType = <PullTypeSymbol>type.getRootSymbol();
 
-            var typeArgumentList: PullTypeSymbol[] = [];
+            var reconstructedTypeArgumentList: PullTypeSymbol[] = [];
             var typeArguments = type.getTypeArguments();
             var typeParameters = rootType.getTypeParameters();
 
             // if the type is already specialized, we need to create a new type argument map
             if (type.getIsSpecialized() && typeArguments && typeArguments.length) {
                 for (var i = 0; i < typeArguments.length; i++) {
-                    typeArgumentList[typeArgumentList.length] = instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
+                    reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
                 }
                 
                 for (var i = 0; i < typeArguments.length; i++) {
-                    typeParameterArgumentMap[typeArguments[i].pullSymbolIDString] = typeArgumentList[i];
+                    typeParameterArgumentMap[typeArguments[i].pullSymbolIDString] = reconstructedTypeArgumentList[i];
                 }
             }
             else {
                 for (var typeParameterID in typeParameterArgumentMap) {
-                    typeArgumentList[typeArgumentList.length] = typeParameterArgumentMap[typeParameterID];
+                    reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = typeParameterArgumentMap[typeParameterID];
                 }
             }
 
             if (!instantiateFunctionTypeParameters) {
-                var instantiation = <PullInstantiatedTypeReferenceSymbol>rootType.getSpecialization(typeArgumentList);
+                var instantiation = <PullInstantiatedTypeReferenceSymbol>rootType.getSpecialization(reconstructedTypeArgumentList);
 
                 if (instantiation) {
                     return instantiation;
@@ -422,10 +422,10 @@ module TypeScript {
             var isReferencedType = (type.kind & PullElementKind.SomeNamedType) != 0;
 
             if (isReferencedType) {
-                if (typeParameters && typeArgumentList) {
-                    if (typeParameters.length == typeArgumentList.length) {
+                if (typeParameters && reconstructedTypeArgumentList) {
+                    if (typeParameters.length == reconstructedTypeArgumentList.length) {
                         for (var i = 0; i < typeParameters.length; i++) {
-                            if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeArgumentList[i])) {
+                            if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], reconstructedTypeArgumentList[i])) {
                                 isReferencedType = false;
                                 break;
                             }
@@ -461,9 +461,11 @@ module TypeScript {
                 typeParameterArgumentMap = initializationMap;
             }
 
-            instantiation = new PullInstantiatedTypeReferenceSymbol(type, typeParameterArgumentMap);
+            instantiation = new PullInstantiatedTypeReferenceSymbol(isReferencedType ? rootType : type, typeParameterArgumentMap);
 
-            rootType.addSpecialization(instantiation, typeArgumentList);
+            if (!instantiateFunctionTypeParameters) {
+                rootType.addSpecialization(instantiation, reconstructedTypeArgumentList);
+            }
 
             if (isReferencedType) {
                 instantiation.isReferencedType = true;
