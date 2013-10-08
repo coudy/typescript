@@ -9827,7 +9827,10 @@ module TypeScript {
             var prevSpecializingToAny = context.specializingToAny;
             context.specializingToAny = true;
 
-            if (!this.sourceIsAssignableToTarget(expressionType, parameterType, context)) {
+            var anyExpressionType = this.instantiateTypeToAny(expressionType, enclosingDecl, context);
+            var anyParameterType = this.instantiateTypeToAny(parameterType, enclosingDecl, context);
+
+            if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
                 context.specializingToAny = prevSpecializingToAny;
                 return;
             }
