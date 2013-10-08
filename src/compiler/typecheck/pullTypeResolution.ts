@@ -8770,7 +8770,7 @@ module TypeScript {
 
             // This is an optimization that is a deviation from the spec. The spec sections 3.8.3 and 3.8.4 say to compare structurally,
             // but we know that if a type nominally extends another type, it is both a subtype and assignable.
-            if (this.sourceExtendsTarget(source, target, context)) {
+            if ((source.kind & PullElementKind.SomeNamedType) && (target.kind & PullElementKind.SomeNamedType) && this.sourceExtendsTarget(source, target, context)) {
                 return true;
             }
 
@@ -8909,7 +8909,7 @@ module TypeScript {
 
             // catch the mutually recursive or cached cases
             if (targetPropType && sourcePropType && (comparisonCache[sourcePropType.pullSymbolIDString + "#" + targetPropType.pullSymbolIDString] != undefined)) {
-                return true;
+                return true; // GTODO: should this be true?
             }
 
             var comparisonInfoPropertyTypeCheck: TypeComparisonInfo = null;
