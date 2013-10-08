@@ -301,7 +301,6 @@ module TypeScript {
         // Caller is responsible for closing emitter.
         private emitDeclarationsWorker(
             resolvePath: (path: string) => string,
-            emitOutput: EmitOutput,
             document: Document,
             declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
 
@@ -342,14 +341,14 @@ module TypeScript {
 
                     // Emitting module or multiple files, always goes to single file
                     if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                        var singleEmitter = this.emitDeclarationsWorker(resolvePath, emitOutput, document);
+                        var singleEmitter = this.emitDeclarationsWorker(resolvePath, document);
                         if (singleEmitter) {
                             emitOutput.outputFiles.push(singleEmitter.getOutputFile());
                         }
                     }
                     else {
                         // Create or reuse file
-                        sharedEmitter = this.emitDeclarationsWorker(resolvePath, emitOutput, document, sharedEmitter);
+                        sharedEmitter = this.emitDeclarationsWorker(resolvePath, document, sharedEmitter);
                     }
                 }
 
@@ -379,7 +378,7 @@ module TypeScript {
             if (this.shouldEmitDeclarations(document.script)) {
                 // Emitting module or multiple files, always goes to single file
                 if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                    var emitter = this.emitDeclarationsWorker(resolvePath, emitOutput, document);
+                    var emitter = this.emitDeclarationsWorker(resolvePath, document);
                     if (emitter) {
                         emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFile());
                     }

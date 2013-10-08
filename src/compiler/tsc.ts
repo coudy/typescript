@@ -44,7 +44,6 @@ module TypeScript {
         private fileNameToSourceFile = new StringHashTable();
         private hasErrors: boolean = false;
         private logger: ILogger = null;
-        private tcOnly = false;
 
         constructor(private ioHost: IIO) {
             this.compilationSettings = new CompilationSettings();
@@ -178,14 +177,8 @@ module TypeScript {
             TypeScript.fileResolutionTime = new Date().getTime() - start;
         }
 
-        private reportDiagnostics(errors: Diagnostic[]) {
-            for (var i = 0; i < errors.length; i++) {
-                this.addDiagnostic(errors[i]);
-            }
-        }
-
         // Returns true if compilation failed from some reason.
-        private compile(): boolean {
+        private compile(): void {
             var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings);
 
             var anySyntacticErrors = false;
@@ -197,7 +190,7 @@ module TypeScript {
                 compiler.addFile(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
-                this.reportDiagnostics(syntacticDiagnostics);
+                syntacticDiagnostics.forEach(d => this.addDiagnostic(d));
 
                 if (syntacticDiagnostics.length > 0) {
                     anySyntacticErrors = true;
@@ -205,7 +198,7 @@ module TypeScript {
             }
 
             if (anySyntacticErrors) {
-                return true;
+                return;
             }
 
             compiler.pullTypeCheck();
@@ -215,39 +208,32 @@ module TypeScript {
                 var semanticDiagnostics = compiler.getSemanticDiagnostics(fileName);
                 if (semanticDiagnostics.length > 0) {
                     anySemanticErrors = true;
-                    this.reportDiagnostics(semanticDiagnostics);
+                    semanticDiagnostics.forEach(d => this.addDiagnostic(d));
                 }
             }
 
-            if (!this.tcOnly) {
-                // TODO: if there are any emit diagnostics.  Don't proceed.
-                var emitOutput = compiler.emitAll((path: string) => this.resolvePath(path));
-                this.reportDiagnostics(emitOutput.diagnostics);
-                if (emitOutput.diagnostics.length > 0) {
-                    return true;
-                }
-
-                if (this.writeOutputFiles(emitOutput)) {
-                    return true;
-                }
-
-                // Don't emit declarations if we have any semantic diagnostics.
-                if (anySemanticErrors) {
-                    return true;
-                }
-
-                var emitDeclarationsOutput = compiler.emitAllDeclarations((path: string) => this.resolvePath(path));
-                this.reportDiagnostics(emitDeclarationsOutput.diagnostics);
-                if (emitDeclarationsOutput.diagnostics.length > 0) {
-                    return true;
-                }
-
-                if (this.writeOutputFiles(emitDeclarationsOutput)) {
-                    return true;
-                }
+            var emitOutput = compiler.emitAll((path: string) => this.resolvePath(path));
+            emitOutput.diagnostics.forEach(d => this.addDiagnostic(d));
+            if (emitOutput.diagnostics.length > 0) {
+                return;
             }
 
-            return false;
+            if (!this.tryWriteOutputFiles(emitOutput)) {
+                return;
+            }
+
+            // Don't emit declarations if we have any semantic diagnostics.
+            if (anySemanticErrors) {
+                return;
+            }
+
+            var emitDeclarationsOutput = compiler.emitAllDeclarations((path: string) => this.resolvePath(path));
+            emitDeclarationsOutput.diagnostics.forEach(d => this.addDiagnostic(d));
+            if (emitDeclarationsOutput.diagnostics.length > 0) {
+                return;
+            }
+
+            this.tryWriteOutputFiles(emitDeclarationsOutput);
         }
 
         public updateCompile(): boolean {
@@ -274,7 +260,7 @@ module TypeScript {
                 compiler.addFile(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ true, resolvedFile.referencedFiles);
 
                 var syntacticDiagnostics = compiler.getSyntacticDiagnostics(resolvedFile.path);
-                this.reportDiagnostics(syntacticDiagnostics);
+                syntacticDiagnostics.forEach(d => this.addDiagnostic(d));
 
                 if (syntacticDiagnostics.length > 0) {
                     anySyntacticErrors = true;
@@ -292,7 +278,7 @@ module TypeScript {
 
             for (var i = 0; i < iCode; i++) {
                 semanticDiagnostics = compiler.getSemanticDiagnostics(this.resolvedFiles[i].path);
-                this.reportDiagnostics(semanticDiagnostics);
+                semanticDiagnostics.forEach(d => this.addDiagnostic(d));
             }
 
             // Note: we continue even if there were type check warnings.
@@ -311,7 +297,7 @@ module TypeScript {
 
                     // resolve the file to simulate an IDE-driven pull
                     semanticDiagnostics = compiler.getSemanticDiagnostics(lastTypecheckedFileName);
-                    this.reportDiagnostics(semanticDiagnostics);
+                    semanticDiagnostics.forEach(d => this.addDiagnostic(d));
                 }
             }
 
@@ -803,7 +789,7 @@ module TypeScript {
             this.ioHost.stderr.WriteLine(diagnostic.message());
         }
 
-        private writeOutputFiles(emitOutput: EmitOutput): boolean {
+        private tryWriteOutputFiles(emitOutput: EmitOutput): boolean {
             for (var i = 0, n = emitOutput.outputFiles.length; i < n; i++) {
                 var outputFile = emitOutput.outputFiles[i];
 
@@ -813,11 +799,11 @@ module TypeScript {
                 catch (e) {
                     this.addDiagnostic(
                         new Diagnostic(outputFile.name, 0, 0, DiagnosticCode.Emit_Error_0, [e.message]));
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
         }
 
         writeFile(fileName: string, contents: string, writeByteOrderMark: boolean): void {
