@@ -312,7 +312,8 @@ module TypeScript {
         }
 
         public ast(): AST {
-            return this.semanticInfoChain().getASTForDecl(this);
+            var semanticInfoChain = this.semanticInfoChain();
+            return semanticInfoChain ? semanticInfoChain.getASTForDecl(this) : null;
         }
     }
 
@@ -401,8 +402,8 @@ module TypeScript {
         }
 
         public semanticInfoChain(): SemanticInfoChain {
-            Debug.assert(this.getParentDecl());
-            return this.getParentDecl().semanticInfoChain();
+            var parent = this.getParentDecl();
+            return parent ? parent.semanticInfoChain() : null;
         }
 
         public isExternalModule(): boolean {
