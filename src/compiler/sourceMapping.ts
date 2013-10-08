@@ -56,8 +56,8 @@ module TypeScript {
             this.setNewSourceFile(document, emitOptions);
         }
 
-        public addOutputFile(outputFiles: OutputFile[]): void {
-            outputFiles.push(this.sourceMapOut.getOutputFile());
+        public getOutputFile(): OutputFile {
+            return this.sourceMapOut.getOutputFile();
         }
 
         public setNewSourceFile(document: Document, emitOptions: EmitOptions) {

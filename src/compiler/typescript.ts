@@ -344,7 +344,7 @@ module TypeScript {
                     if (this.emitOptions.outputMany || document.script.isExternalModule) {
                         var singleEmitter = this.emitDeclarationsWorker(resolvePath, emitOutput, document);
                         if (singleEmitter) {
-                            singleEmitter.addOutputFiles(emitOutput.outputFiles);
+                            emitOutput.outputFiles.push(singleEmitter.getOutputFile());
                         }
                     }
                     else {
@@ -354,7 +354,7 @@ module TypeScript {
                 }
 
                 if (sharedEmitter) {
-                    sharedEmitter.addOutputFiles(emitOutput.outputFiles);
+                    emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
                 }
             }
 
@@ -380,7 +380,9 @@ module TypeScript {
                 // Emitting module or multiple files, always goes to single file
                 if (this.emitOptions.outputMany || document.script.isExternalModule) {
                     var emitter = this.emitDeclarationsWorker(resolvePath, emitOutput, document);
-                    emitter.addOutputFiles(emitOutput.outputFiles);
+                    if (emitter) {
+                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFile());
+                    }
                 }
                 else {
                     return this.emitAllDeclarations(resolvePath);
@@ -462,7 +464,7 @@ module TypeScript {
                     // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
                     var singleEmitter = this.emitWorker(resolvePath, document);
                     if (singleEmitter) {
-                        singleEmitter.addOutputFiles(emitOutput.outputFiles);
+                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, singleEmitter.getOutputFiles());
                     }
                 }
                 else {
@@ -473,7 +475,7 @@ module TypeScript {
             }
 
             if (sharedEmitter) {
-                sharedEmitter.addOutputFiles(emitOutput.outputFiles);
+                emitOutput.outputFiles.push.apply(emitOutput.outputFiles, sharedEmitter.getOutputFiles());
             }
 
             emitTime += new Date().getTime() - start;
@@ -498,7 +500,9 @@ module TypeScript {
                 // In outputMany mode, only emit the document specified and its sourceMap if needed
 
                 var emitter = this.emitWorker(resolvePath, document);
-                emitter.addOutputFiles(emitOutput.outputFiles);
+                if (emitter) {
+                    emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFiles());
+                }
 
                 return emitOutput;
             }

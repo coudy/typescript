@@ -254,9 +254,8 @@ module TypeScript {
             this.emitComments(importDeclAST, false);
         }
 
-        public createSourceMapper(
-            document: Document, jsFileName: string, jsFile: TextWriter, sourceMapOut: TextWriter, resolvePath: (path: string) => string) {
-                this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions, resolvePath);
+        public createSourceMapper(document: Document, jsFileName: string, jsFile: TextWriter, sourceMapOut: TextWriter, resolvePath: (path: string) => string) {
+            this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions, resolvePath);
         }
 
         public setSourceMapperNewSourceFile(document: Document) {
@@ -1614,14 +1613,16 @@ module TypeScript {
         }
 
         // Note: may throw exception.
-        public addOutputFiles(outputFiles: OutputFile[]): void {
+        public getOutputFiles(): OutputFile[] {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
+            var result: OutputFile[] = [];
             if (this.sourceMapper !== null) {
                 this.sourceMapper.emitSourceMapping(this.emitOptions.compilationSettings.sourceMapEmitterCallback);
-                this.sourceMapper.addOutputFile(outputFiles);
+                result.push(this.sourceMapper.getOutputFile());
             }
 
-            outputFiles.push(this.outfile.getOutputFile());
+            result.push(this.outfile.getOutputFile());
+            return result;
         }
 
         private emitParameterPropertyAndMemberVariableAssignments(): void {

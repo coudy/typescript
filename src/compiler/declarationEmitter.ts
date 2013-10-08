@@ -54,8 +54,8 @@ module TypeScript {
             this.declFile = new TextWriter(emittingFileName, this.document.byteOrderMark !== ByteOrderMark.None);
         }
 
-        public addOutputFiles(outputFiles: OutputFile[]): void {
-            outputFiles.push(this.declFile.getOutputFile());
+        public getOutputFile(): OutputFile {
+            return this.declFile.getOutputFile();
         }
 
         private widenType(type: PullTypeSymbol) {

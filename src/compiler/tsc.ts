@@ -184,8 +184,7 @@ module TypeScript {
             }
         }
 
-        /// Do the actual compilation reading from input files and
-        /// writing to output file(s).
+        // Returns true if compilation failed from some reason.
         private compile(): boolean {
             var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings);
 
