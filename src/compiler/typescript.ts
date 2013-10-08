@@ -85,8 +85,6 @@ module TypeScript {
         enclosingScopeSymbol: PullSymbol;
     }
 
-    export var globalLogger: ILogger = null;
-
     export class TypeScriptCompiler {
         public resolver: PullTypeResolver = null;
 
@@ -100,15 +98,10 @@ module TypeScript {
                     public settings: CompilationSettings = new CompilationSettings()) {
             this.emitOptions = new EmitOptions(this.settings);
             this.semanticInfoChain = new SemanticInfoChain(logger);
-            globalLogger = logger;
         }
 
         public getDocument(fileName: string): Document {
             return this.fileNameToDocument.lookup(TypeScript.switchToForwardSlashes(fileName));
-        }
-
-        public timeFunction(funcDescription: string, func: () => any): any {
-            return TypeScript.timeFunction(this.logger, funcDescription, func);
         }
 
         public addFile(fileName: string,
@@ -128,22 +121,21 @@ module TypeScript {
 
         public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): void {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            return this.timeFunction("pullUpdateUnit(" + fileName + ")", () => {
-                var document = this.getDocument(fileName);
-                var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);
 
-                this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
+            var document = this.getDocument(fileName);
+            var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);
 
-                var updatedScript = updatedDocument.script;
+            this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
-                // Note: the semantic info chain will recognize that this is a replacement of an
-                // existing script, and will handle it appropriately.
-                this.semanticInfoChain.addScript(updatedScript);
+            var updatedScript = updatedDocument.script;
 
-                // If we havne't yet created a new resolver, clean any cached symbols
-                this.resolver = new PullTypeResolver(
-                    this.settings, this.semanticInfoChain, fileName);
-            });
+            // Note: the semantic info chain will recognize that this is a replacement of an
+            // existing script, and will handle it appropriately.
+            this.semanticInfoChain.addScript(updatedScript);
+
+            // If we havne't yet created a new resolver, clean any cached symbols
+            this.resolver = new PullTypeResolver(
+                this.settings, this.semanticInfoChain, fileName);
         }
 
         public removeFile(fileName: string): void {
@@ -671,8 +663,7 @@ module TypeScript {
             return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, new PullTypeResolutionContext(this.resolver));
         }
 
-        public resolvePosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
-
+        public getTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
             // find the enclosing decl
             var declStack: PullDecl[] = [];
             var resultASTs: AST[] = [];
@@ -1403,12 +1394,6 @@ module TypeScript {
                 ast: ast,
                 enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
             };
-        }
-
-        public pullGetTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
-            return this.timeFunction("pullGetTypeInfoAtPosition for pos " + pos + ":", () => {
-                return this.resolvePosition(pos, document);
-            });
         }
 
         public getTopLevelDeclaration(fileName: string) : PullDecl {

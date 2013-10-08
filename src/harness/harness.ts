@@ -984,7 +984,7 @@ module Harness {
             }
 
             public getTypeInfoAtPosition(targetPosition: number, document: TypeScript.Document) {
-                return this.compiler.pullGetTypeInfoAtPosition(targetPosition, document);
+                return this.compiler.getTypeInfoAtPosition(targetPosition, document);
             }
 
             public getContentForFile(fileName: string) {
