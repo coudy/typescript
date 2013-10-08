@@ -967,7 +967,7 @@ module Harness {
                     // TODO: need to handle paths correctly in the future (ex when projects tests become compiler baselines)
                     var justName = getFileName(files[i]);
                     var fname = files[i];
-                    if (justName !== 'lib.d.ts' && justName !== 'fourslash.ts') {
+                    if (justName !== 'lib.d.ts') {
                         this.updateUnit('', fname);
                     }
                 }
