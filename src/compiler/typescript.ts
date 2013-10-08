@@ -486,7 +486,7 @@ module TypeScript {
 
         // Emit single file if outputMany is specified, else emit all
         // Will not throw exceptions.
-        public emitUnit(fileName: string, ioHost: EmitterIOHost, inputOutputMapper?: (inputFile: string, outputFile: string) => void ): Diagnostic[] {
+        public emitUnit(fileName: string, ioHost: EmitterIOHost): Diagnostic[] {
             var optionsDiagnostic = this.setEmitOptions(ioHost);
             if (optionsDiagnostic) {
                 return [optionsDiagnostic];
