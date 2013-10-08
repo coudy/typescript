@@ -312,8 +312,7 @@ module Services {
                 // Emit declarations, if there are no semantic errors
             var emitResult = this.compiler.emit(fileName, resolvePath);
             if (!this.containErrors(emitResult.diagnostics) &&
-                !this.containErrors(semanticDiagnostics) &&
-                this.compiler.shouldEmitDeclarations(document.script)) {
+                !this.containErrors(semanticDiagnostics)) {
 
                 // Merge the results
                 var declarationEmitOutput = this.compiler.emitDeclarations(fileName, resolvePath);

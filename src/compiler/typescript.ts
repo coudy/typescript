@@ -105,7 +105,8 @@ module TypeScript {
         }
 
         public getDocument(fileName: string): Document {
-            return this.fileNameToDocument.lookup(TypeScript.switchToForwardSlashes(fileName));
+            fileName = TypeScript.switchToForwardSlashes(fileName);
+            return this.fileNameToDocument.lookup(fileName);
         }
 
         public addFile(fileName: string,
@@ -284,7 +285,7 @@ module TypeScript {
             return getDeclareFilePath(fileName);
         }
 
-        public shouldEmitDeclarations(script?: Script) {
+        private shouldEmitDeclarations(script?: Script) {
             if (!this.settings.generateDeclarationFiles) {
                 return false;
             }
@@ -364,6 +365,7 @@ module TypeScript {
 
         // Will not throw exceptions.
         public emitDeclarations(fileName: string, resolvePath: (path: string) => string): EmitOutput {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
             var optionsDiagnostic = this.validateEmitOptions(resolvePath);
@@ -481,6 +483,7 @@ module TypeScript {
         // Emit single file if outputMany is specified, else emit all
         // Will not throw exceptions.
         public emit(fileName: string, resolvePath: (path: string) => string): EmitOutput {
+            fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
             var optionsDiagnostic = this.validateEmitOptions(resolvePath);
@@ -509,7 +512,8 @@ module TypeScript {
         // Pull typecheck infrastructure
         //
 
-        public getSyntacticDiagnostics(fileName: string): Diagnostic[]{
+        public getSyntacticDiagnostics(fileName: string): Diagnostic[] {
+            fileName = TypeScript.switchToForwardSlashes(fileName)
             return this.getDocument(fileName).diagnostics();
         }
 
