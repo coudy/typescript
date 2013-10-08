@@ -7240,7 +7240,6 @@ module TypeScript {
             var specializedSignature: PullSignatureSymbol;
             var typeParameters: PullTypeParameterSymbol[];
             var typeConstraint: PullTypeSymbol = null;
-            var prevSpecializingToAny = context.specializingToAny;
             var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
             var beforeResolutionSignatures = signatures;
 
@@ -7319,7 +7318,10 @@ module TypeScript {
                                 }
                             }
 
-                            context.specializingToAny = true;
+                            // specialize to any
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeReplacementMap[typeParameters[i].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                            }
                         }
 
                         if (couldNotAssignToConstraint) {
@@ -7330,7 +7332,6 @@ module TypeScript {
                         specializedSignature = instantiateSignature(signatures[i], typeReplacementMap, true);
 
                         context.isSpecializingSignatureTypeParameters = prevSpecializing;
-                        context.specializingToAny = prevSpecializingToAny;
 
                         if (specializedSignature) {
                             resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -7632,7 +7633,6 @@ module TypeScript {
                     var specializedSignature: PullSignatureSymbol;
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
-                    var prevSpecializingToAny = context.specializingToAny;
                     var prevIsSpecializing = context.isSpecializingSignatureTypeParameters = true;
                     var triedToInferTypeArgs: boolean;
 
@@ -7710,7 +7710,9 @@ module TypeScript {
                                             continue;
                                         }
                                     } else {
-                                        context.specializingToAny = true;
+                                        for (var j = 0; j < typeParameters.length; j++) {
+                                            typeReplacementMap[typeParameters[i].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                                        }
                                     }
                                 }
 
@@ -7721,7 +7723,6 @@ module TypeScript {
                                 context.isSpecializingSignatureTypeParameters = true;
                                 specializedSignature = instantiateSignature(constructSignatures[i], typeReplacementMap, true);
 
-                                context.specializingToAny = prevSpecializingToAny;
                                 context.isSpecializingSignatureTypeParameters = prevIsSpecializing;
 
                                 if (specializedSignature) {
