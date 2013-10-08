@@ -647,6 +647,10 @@ module TypeScript {
             for (var i = 0; i < allReferencedMembers.length; i++) {
                 referencedMember = allReferencedMembers[i];
 
+                if (!referencedMember.isResolved) {
+                    globalResolver.resolveDeclaredSymbol(referencedMember);
+                }
+
                 if (this._allInstantiatedMemberNameCache[referencedMember.name]) {
                     requestedMembers[requestedMembers.length] = this._allInstantiatedMemberNameCache[referencedMember.name];
                 }

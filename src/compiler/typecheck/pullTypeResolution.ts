@@ -8472,6 +8472,14 @@ module TypeScript {
                 return false;
             }
 
+            // if these are two type references referencing the same base type, then they must be two different instantiations of a generic
+            // type (if they were not, we never would have gotten to this point
+            if (source.isTypeReference() && target.isTypeReference()) {
+                if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol == (<PullTypeReferenceSymbol>target).referencedTypeSymbol) {
+                    return false;
+                }
+            }
+
             if (source.hasBase(target)) {
                 return true;
             }
