@@ -1107,9 +1107,6 @@ module TypeScript {
             // we just use the type parameters
             var typeParameters = type.getTypeArgumentsOrTypeParameters();
 
-            // GTODO: raise error if type parameter count != type argument count
-            Debug.assert(typeParameters.length == typeArguments.length, "type parameter/argument count mismatch");
-
             var typeParameterArgumentMap = {};
 
             for (var i = 0; i < typeParameters.length; i++) {
@@ -8486,7 +8483,7 @@ module TypeScript {
             // if these are two type references referencing the same base type, then they must be two different instantiations of a generic
             // type (if they were not, we never would have gotten to this point
             if (source.isTypeReference() && target.isTypeReference()) {
-                if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol == (<PullTypeReferenceSymbol>target).referencedTypeSymbol) {
+                if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol.hasBase((<PullTypeReferenceSymbol>target).referencedTypeSymbol)) {
                     var sourceTypeArguments = (<PullTypeReferenceSymbol>source).getTypeArguments();
                     var targetTypeArguments = (<PullTypeReferenceSymbol>target).getTypeArguments();
 

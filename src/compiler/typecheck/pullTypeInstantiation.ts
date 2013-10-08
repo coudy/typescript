@@ -403,8 +403,14 @@ module TypeScript {
                 }
             }
             else {
+                var tyArg: PullTypeSymbol = null;
+
                 for (var typeParameterID in typeParameterArgumentMap) {
-                    reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = typeParameterArgumentMap[typeParameterID];
+                    tyArg = typeParameterArgumentMap[typeParameterID];
+
+                    if (tyArg) {
+                        reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = tyArg;
+                    }
                 }
             }
 
@@ -507,9 +513,10 @@ module TypeScript {
                     for (var i = 0; i < typeParameters.length; i++) {
                         typeArgument = <PullTypeSymbol>this._typeParameterArgumentMap[typeParameters[i].pullSymbolIDString];
 
-                        if (!typeArgument) {
-                            Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument mismatch");
-                        }
+                        // the mismatch may legitimately occur in error conditions...
+                        //if (!typeArgument) {
+                        //    Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument mismatch");
+                        //}
 
                         typeArguments[typeArguments.length] = typeArgument;
                     }
@@ -845,6 +852,10 @@ module TypeScript {
     // The argument map prevents us from accidentally flagging method type parameters, or (if we
     // ever decide to go that route) allows for partial specialization
     function typeWrapsSomeTypeParameter(type: PullTypeSymbol, typeParameterArgumentMap: any): boolean {
+
+        if (!type) {
+            return false;
+        }
 
         var wrapsSomeTypeParameter = false;
 
