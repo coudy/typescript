@@ -324,6 +324,12 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
+            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            if (optionsDiagnostic) {
+                emitOutput.diagnostics.push(optionsDiagnostic);
+                return emitOutput;
+            }
+
             if (this.shouldEmitDeclarations()) {
                 var sharedEmitter: DeclarationEmitter = null;
                 var fileNames = this.fileNames();
@@ -359,6 +365,13 @@ module TypeScript {
         // Will not throw exceptions.
         public emitDeclarations(fileName: string, resolvePath: (path: string) => string): EmitOutput {
             var emitOutput = new EmitOutput();
+
+            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            if (optionsDiagnostic) {
+                emitOutput.diagnostics.push(optionsDiagnostic);
+                return emitOutput;
+            }
+
             var document = this.getDocument(fileName);
 
             if (this.shouldEmitDeclarations(document.script)) {
