@@ -1103,7 +1103,9 @@ module TypeScript {
                 return type;
             }
 
-            var typeParameters = type.getTypeParameters();
+            // if the type had previously been instantiated, we want to re-instantiate the type arguments.  Otherwise,
+            // we just use the type parameters
+            var typeParameters = type.getTypeArgumentsOrTypeParameters();
 
             // GTODO: raise error if type parameter count != type argument count
             Debug.assert(typeParameters.length == typeArguments.length, "type parameter/argument count mismatch");
@@ -5771,19 +5773,27 @@ module TypeScript {
             // Get the instantiated versions of the type parameters (in case their constraints were generic)
             typeParameters = specializedSymbol.getTypeParameters();
 
+            var typeConstraintArgumentMap: any = {};
+
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
                 typeConstraint = typeParameters[iArg].getConstraint();
+
+                typeConstraintArgumentMap[typeParameters[iArg].pullSymbolIDString] = typeArg;
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
 
                     if (typeConstraint.isTypeParameter()) {
+
                         for (var j = 0; j < typeParameters.length && j < typeArgs.length; j++) {
                             if (typeParameters[j] == typeConstraint) {
                                 typeConstraint = typeArgs[j];
                             }
                         }
+                    }
+                    else if (typeConstraint.isGeneric()) {
+                        typeConstraint = instantiateType(typeConstraint, typeConstraintArgumentMap);
                     }
 
                     if (typeArg.isTypeParameter()) {
@@ -5799,7 +5809,7 @@ module TypeScript {
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
                         context.postError(this.unitPath, genericTypeAST.minChar, genericTypeAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(null, true), typeConstraint.toString(null, true), typeParameters[iArg].toString(null, true)]);
-                    }
+                    }                   
                 }
             }
 

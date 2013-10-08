@@ -813,7 +813,7 @@ module TypeScript {
 
     //}
     
-    function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullTypeSymbol {
+    export function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullTypeSymbol {
 
         // if the type is a primitive type, nothing to do here
         if (type.isPrimitive()) {
