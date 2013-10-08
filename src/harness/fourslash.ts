@@ -1564,8 +1564,6 @@ module FourSlash {
 
         var emitterIOHost: TypeScript.EmitterIOHost = {
             writeFile: (path: string, contents: string, writeByteOrderMark: boolean) => fsOutput.Write(contents),
-            directoryExists: (s: string) => false,
-            fileExists: (s: string) => true,
             resolvePath: (s: string) => s
         }
 

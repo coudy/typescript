@@ -303,8 +303,6 @@ module Services {
                         writeByteOrderMark: writeByteOrderMark
                     });
                 },
-                directoryExists: (fileName: string) => this.host.directoryExists(fileName),
-                fileExists: (fileName: string) => this.host.fileExists(fileName),
                 resolvePath: (fileName: string) => this.host.resolveRelativePath(fileName, null)
             };
 

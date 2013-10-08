@@ -51,12 +51,6 @@ module TypeScript {
         // function that can even create a folder structure if needed
         writeFile(path: string, contents: string, writeByteOrderMark: boolean): void;
 
-        // function to check if file exists on the disk
-        fileExists(path: string): boolean;
-
-        // Function to check if the directory exists on the disk
-        directoryExists(path: string): boolean;
-
         // Resolves the path
         resolvePath(path: string): string;
     }

@@ -734,8 +734,6 @@ module Harness {
                 writer.Close();
             }
 
-            public directoryExists(s: string) { return false; }
-            public fileExists(s: string) { return typeof this.fileCollection[s] !== 'undefined'; }
             public resolvePath(s: string) { return s; }
 
             public reset() { this.fileCollection = {}; }
@@ -1217,6 +1215,7 @@ module Harness {
             directoryExists(path: string): boolean {
                 return IO.directoryExists(path);
             }
+
             getParentDirectory(path: string): string {
                 return IO.dirName(path);
             }
