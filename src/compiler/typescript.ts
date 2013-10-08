@@ -140,7 +140,15 @@ module TypeScript {
 
                 this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
-                this.pullUpdateScript(document, updatedDocument);
+                var updatedScript = updatedDocument.script;
+
+                // Note: the semantic info chain will recognize that this is a replacement of an
+                // existing script, and will handle it appropriately.
+                this.semanticInfoChain.addScript(updatedScript);
+
+                // If we havne't yet created a new resolver, clean any cached symbols
+                this.resolver = new PullTypeResolver(
+                    this.settings, this.semanticInfoChain, fileName);
             });
         }
 
@@ -665,25 +673,6 @@ module TypeScript {
             this.logger.log("Number of symbols created: " + pullSymbolID);
             this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
             this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
-        }
-
-        private pullUpdateScript(oldDocument: Document, newDocument: Document): void {
-            this.timeFunction("pullUpdateScript: ", () => {
-                Debug.assert(oldDocument.fileName === newDocument.fileName);
-                var newScript = newDocument.script;
-
-                // Note: the semantic info chain will recognize that this is a replacement of an
-                // existing script, and will handle it appropriately.
-                this.semanticInfoChain.addScript(newScript);
-
-                // If we havne't yet created a new resolver, clean any cached symbols
-                this.resolver = new PullTypeResolver(
-                    this.settings, this.semanticInfoChain, oldDocument.fileName);
-
-                // A file has changed, increment the type check phase so that future type chech
-                // operations will proceed.
-                PullTypeResolver.globalTypeCheckPhase++;
-            });
         }
 
         public getSymbolOfDeclaration(decl: PullDecl): PullSymbol {

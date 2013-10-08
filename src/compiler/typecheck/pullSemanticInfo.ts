@@ -158,6 +158,10 @@ module TypeScript {
         }
 
         public addScript(script: Script): void {
+            // A file has changed, increment the type check phase so that future type chech
+            // operations will proceed.
+            PullTypeResolver.globalTypeCheckPhase++;
+
             var fileName = script.fileName();
             var semanticInfo = new SemanticInfo(this, fileName, script);
 
