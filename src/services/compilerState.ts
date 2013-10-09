@@ -100,7 +100,7 @@ module Services {
         //
         // State related to compiler instance
         //
-        private compiler: TypeScript.TypeScriptCompiler = null;
+        public compiler: TypeScript.TypeScriptCompiler = null;
         private hostCache: HostCache = null;
         private _compilationSettings: TypeScript.CompilationSettings = null;
 
@@ -385,10 +385,6 @@ module Services {
             return this.compiler.getTopLevelDeclaration(fileName);
         }
 
-        public findMatchingValidDecl(decl: TypeScript.PullDecl): TypeScript.PullDecl[]{
-            return this.compiler.semanticInfoChain.findMatchingValidDecl(decl);
-        }
-
         private updateFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             var document: TypeScript.Document = this.compiler.getDocument(fileName);
 
@@ -408,7 +404,7 @@ module Services {
         }
 
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl): TypeScript.Comment[] {
-            var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
+            var ast = decl.ast();
 
             if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration ||
                         decl.kind != TypeScript.PullElementKind.Variable)) {

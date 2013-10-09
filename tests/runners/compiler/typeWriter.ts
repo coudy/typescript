@@ -23,8 +23,6 @@ class PositionalWalker extends TypeScript.SyntaxWalker {
 }
 
 class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
-    private resolver: TypeScript.PullTypeResolver;
-
     private document: TypeScript.Document;
     private syntaxTree: TypeScript.SyntaxTree;
     private currentPosition = 0;
@@ -37,7 +35,7 @@ class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
         this.document = compiler.getDocument(filename);
         this.syntaxTree = this.document.syntaxTree();
 
-        this.resolver = new TypeScript.PullTypeResolver(compiler.settings, compiler.semanticInfoChain, this.filename);
+        compiler.setUnit(filename);
     }
 
     public run() {
@@ -78,24 +76,6 @@ class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
         return super.visitSourceUnit(node);
     }
 
-    private getEnclosingDecl(element: TypeScript.ISyntaxElement) {
-        this.resolver.setUnitPath(this.filename);
-
-        var pos = this.position();
-        var node = TypeScript.getAstAtPosition(this.document.script, pos, false, false);
-        while (node) {
-            if (node.nodeType() !== TypeScript.NodeType.Comment) {
-                var decl = this.resolver.getDeclForAST(node);
-                if (decl) {
-                    return decl;
-                }
-            }
-
-            node = node.parent;
-        }
-        return null;
-    }
-
     private getAstForElement(element: TypeScript.ISyntaxElement) {
         var candidates: string[] = [];
 
@@ -120,10 +100,11 @@ class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
 
     private getTypeOfElement(element: TypeScript.ISyntaxElement) {
         var ast = this.getAstForElement(element);
-        var decl = this.getEnclosingDecl(element);
-        if (decl && ast) {
-            var result = this.resolver.resolveAST(ast, false, decl, new TypeScript.PullTypeResolutionContext(this.resolver, false));
-            return result.type.toString();
+        if (ast) {
+            var typeInfo = this.compiler.pullGetSymbolInformationFromAST(ast, this.document);
+            if (typeInfo.symbol && typeInfo.symbol.type) {
+                return typeInfo.symbol.type.toString();
+            }
         }
 
         return "<unknown>";

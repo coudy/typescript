@@ -160,7 +160,7 @@ module TypeScript {
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
             this.cachedFunctionArgumentsSymbol.setResolved();
 
-            var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0));
+            var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0), semanticInfoChain);
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
         }
@@ -751,7 +751,7 @@ module TypeScript {
             var prototypeStr = "prototype";
             var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
             var parentDecl = constructorTypeSymbol.getDeclarations()[0];
-            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan());
+            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan(), parentDecl.semanticInfoChain());
 
             prototypeSymbol.addDeclaration(prototypeDecl);
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
@@ -2247,7 +2247,8 @@ module TypeScript {
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
                 var decl = new PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText,
                     typeDeclSymbol.kind, null, enclosingDecl,
-                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()));
+                    new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()),
+                    enclosingDecl.semanticInfoChain());
                 typeDeclSymbol.addDeclaration(decl);
             }
             else if (term.nodeType() === NodeType.TypeQuery) {

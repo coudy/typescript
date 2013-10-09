@@ -1295,7 +1295,7 @@ module Services {
 
                 // If this decl has been invalidated becuase of a user edit, try to find the new decl that matches it
                 if (decl.fileName() === TypeScript.switchToForwardSlashes(fileName) && this.compilerState.getScriptVersion(fileName) !== this.activeCompletionSession.version) {
-                    decl = this.compilerState.findMatchingValidDecl(decl)[0];
+                    decl = this.tryFindDeclFromPreviousCompilerVersion(decl);
 
                     if (decl) {
                         var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
@@ -1344,6 +1344,60 @@ module Services {
                 fullSymbolName: entry.fullSymbolName,
                 docComment: entry.docComment
             };
+        }
+
+        // Given a declaration returned from a previous version of the compiler (i.e. prior to 
+        // any mutation operations), attempts to find the same decl in this version.  
+        private tryFindDeclFromPreviousCompilerVersion(invalidatedDecl: TypeScript.PullDecl): TypeScript.PullDecl {
+            var fileName = invalidatedDecl.fileName();
+
+            var declsInPath: TypeScript.PullDecl[] = [];
+            var current = invalidatedDecl;
+            while (current) {
+                if (current.kind !== TypeScript.PullElementKind.Script) {
+                    declsInPath.unshift(current);
+                }
+
+                current = current.getParentDecl();
+            }
+
+            // now search for that decl
+            var topLevelDecl = this.compilerState.compiler.topLevelDecl(fileName);
+            if (!topLevelDecl) {
+                return null;
+            }
+
+            var declsToSearch = [topLevelDecl];
+            var foundDecls: TypeScript.PullDecl[] = [];
+            var keepSearching = (invalidatedDecl.kind & TypeScript.PullElementKind.Container) ||
+                (invalidatedDecl.kind & TypeScript.PullElementKind.Interface) ||
+                (invalidatedDecl.kind & TypeScript.PullElementKind.Class) ||
+                (invalidatedDecl.kind & TypeScript.PullElementKind.Enum);
+
+            for (var i = 0; i < declsInPath.length; i++) {
+                var declInPath = declsInPath[i];
+                var decls: TypeScript.PullDecl[] = [];
+
+                for (var j = 0; j < declsToSearch.length; j++) {
+                    foundDecls = declsToSearch[j].searchChildDecls(declInPath.name, declInPath.kind);
+
+                    decls.push.apply(decls, foundDecls);
+
+                    // Unless we're searching for an interface or module, we've found the one true
+                    // decl, so don't bother searching the rest of the top-level decls
+                    if (foundDecls.length && !keepSearching) {
+                        break;
+                    }
+                }
+
+                declsToSearch = decls;
+
+                if (declsToSearch.length == 0) {
+                    break;
+                }
+            }
+
+            return declsToSearch.length === 0 ? null : declsToSearch[0];
         }
 
         private isLocal(symbol: TypeScript.PullSymbol) {

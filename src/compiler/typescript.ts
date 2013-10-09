@@ -92,7 +92,7 @@ module TypeScript {
     export class TypeScriptCompiler {
         public resolver: PullTypeResolver = null;
 
-        public semanticInfoChain: SemanticInfoChain = null;
+        private semanticInfoChain: SemanticInfoChain = null;
 
         public emitOptions: EmitOptions;
 
@@ -310,7 +310,7 @@ module TypeScript {
                     declarationEmitter.document = document;
                 } else {
                     var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new DeclarationEmitter(declareFileName, document, this, resolvePath);
+                    declarationEmitter = new DeclarationEmitter(declareFileName, document, this, this.semanticInfoChain, resolvePath);
                 }
 
                 declarationEmitter.emitDeclarations(script);
@@ -1396,6 +1396,10 @@ module TypeScript {
 
         public fileNames(): string[] {
             return this.fileNameToDocument.getAllKeys();
+        }
+
+        public topLevelDecl(fileName: string): PullDecl {
+            return this.semanticInfoChain.topLevelDecl(fileName);
         }
     }
 }
