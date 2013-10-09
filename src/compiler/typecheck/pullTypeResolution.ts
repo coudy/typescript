@@ -2392,7 +2392,7 @@ module TypeScript {
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.nodeType() === NodeType.EnumElement;
             var decl = this.getDeclForAST(varDeclOrParameter);
 
-            // if the enlosing decl is a lambda, we may not have bound the parent symbol
+            // if the enclosing decl is a lambda, we may not have bound the parent symbol
             if (enclosingDecl && decl.kind == PullElementKind.Parameter) {
                 enclosingDecl.ensureSymbolIsBound();
             }
@@ -5692,6 +5692,7 @@ module TypeScript {
         }
 
         private resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            enclosingDecl.ensureSymbolIsBound();
             var nameSymbol = this.getSymbolForAST(nameAST, context);
             var foundCached = nameSymbol != null;
 

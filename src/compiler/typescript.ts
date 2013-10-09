@@ -637,12 +637,12 @@ module TypeScript {
                 return null;
             }
 
-            var enlosingDecl = this.resolver.getEnclosingDecl(decl);
+            var enclosingDecl = this.resolver.getEnclosingDecl(decl);
             if (ast.nodeType() === NodeType.Member) {
-                return this.getSymbolOfDeclaration(enlosingDecl);
+                return this.getSymbolOfDeclaration(enclosingDecl);
             }
 
-            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, new PullTypeResolutionContext(this.resolver));
+            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(this.resolver));
         }
 
         public getTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
