@@ -1454,7 +1454,7 @@ module TypeScript {
             }
         }
 
-        private bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
+        public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
             var declKind = functionExpressionDeclaration.kind;
             var declFlags = functionExpressionDeclaration.flags;
             var funcExpAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(functionExpressionDeclaration);

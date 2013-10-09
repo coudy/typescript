@@ -6952,7 +6952,7 @@ module TypeScript {
                     Debug.assert(decl);
 
                     var binder = this.semanticInfoChain.getBinder();
-                    binder.bindDeclToPullSymbol(decl);
+                    binder.bindFunctionExpressionToPullSymbol(decl);
                 }
 
                 if (!isUsingExistingSymbol && !isAccessor) {
