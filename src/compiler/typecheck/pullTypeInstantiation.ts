@@ -519,7 +519,9 @@ module TypeScript {
                         //    Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument mismatch");
                         //}
 
-                        typeArguments[typeArguments.length] = typeArgument;
+                        if (typeArgument) {
+                            typeArguments[typeArguments.length] = typeArgument;
+                        }
                     }
 
                     this._typeArgumentReferences = typeArguments;
