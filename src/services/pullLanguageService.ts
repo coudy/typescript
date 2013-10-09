@@ -962,7 +962,7 @@ module Services {
             var candidateSignature: TypeScript.PullSignatureSymbol;
             var isConstructorCall: boolean;
 
-            if (isNameOfClass(node) || isNameOfInterface(node) || isNameOfFunction(node) || isNameOfVariable(node)) {
+            if (isNameOfClass(node) || isNameOfInterface(node) || isNameOfFunction(node) || isNameOfVariable(node) || isNameOfEnum(node) || isNameOfModule(node)) {
                 // Skip the name and get to the declaration
                 node = node.parent;
             }
@@ -1869,6 +1869,23 @@ module Services {
         return ast.nodeType() === TypeScript.NodeType.Name &&
             ast.parent.nodeType() === TypeScript.NodeType.ClassDeclaration &&
             (<TypeScript.ClassDeclaration>ast.parent).identifier === ast;
+    }
+
+    function isNameOfEnum(ast: TypeScript.AST): boolean {
+        if (ast === null || ast.parent === null)
+            return false;
+
+        return ast.nodeType() === TypeScript.NodeType.Name &&
+            ast.parent.nodeType() === TypeScript.NodeType.EnumDeclaration &&
+            (<TypeScript.EnumDeclaration>ast.parent).identifier === ast;
+    }
+
+    function isNameOfModule(ast: TypeScript.AST): boolean {
+        if (ast === null || ast.parent === null)
+            return false;
+
+        return ast.parent.nodeType() === TypeScript.NodeType.ModuleDeclaration &&
+            (<TypeScript.ModuleDeclaration>ast.parent).name === ast;
     }
 
     function isNameOfFunction(ast: TypeScript.AST): boolean {

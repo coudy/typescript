@@ -606,22 +606,7 @@ module TypeScript {
 
             var createDeclsEndTime = new Date().getTime();
 
-            // bind declaration symbols
-            var bindStartTime = new Date().getTime();
-
-            // start at '1', so as to skip binding for global primitives such as 'any'
-            var topLevelDecls = this.semanticInfoChain.topLevelDecls();
-            for (var i = 0, n = topLevelDecls.length; i < n; i++) {
-                var topLevelDecl = topLevelDecls[i];
-
-                var binder = this.semanticInfoChain.getBinder();
-                binder.bindDeclToPullSymbol(topLevelDecl);
-            }
-
-            var bindEndTime = new Date().getTime();
-
             this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
-            this.logger.log("Binding: " + (bindEndTime - bindStartTime));
             this.logger.log("Number of symbols created: " + pullSymbolID);
             this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
             this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
@@ -1265,7 +1250,8 @@ module TypeScript {
                 ast.nodeType() !== NodeType.ConstructorDeclaration &&
                 ast.nodeType() !== NodeType.FunctionDeclaration &&
                 ast.nodeType() !== NodeType.ArrowFunctionExpression &&
-                ast.nodeType() !== NodeType.VariableDeclarator) {
+                ast.nodeType() !== NodeType.VariableDeclarator &&
+                ast.nodeType() !== NodeType.EnumDeclaration) {
                 return null;
             }
 

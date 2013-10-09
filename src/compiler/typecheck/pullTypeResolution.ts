@@ -10395,7 +10395,7 @@ module TypeScript {
                 // If we are in a script context, we need to check more than just the current file. We need to check var type identity between files as well.
                 if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
                     var name = declGroups[i][0].name;
-                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl.fileName());
+                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl);
                     if (candidateSymbol && candidateSymbol.isResolved) {
                         if (!candidateSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
                             firstSymbol = candidateSymbol;
