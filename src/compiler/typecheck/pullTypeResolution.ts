@@ -7239,13 +7239,14 @@ module TypeScript {
             var typeConstraint: PullTypeSymbol = null;
             var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
             var beforeResolutionSignatures = signatures;
+            var sawGenericSignature = false;
 
             for (var i = 0; i < signatures.length; i++) {
                 typeParameters = signatures[i].getTypeParameters();
                 couldNotAssignToConstraint = false;
-                triedToInferTypeArgs = false;
 
                 if (signatures[i].isGeneric() && typeParameters.length) {
+
                     if (typeArgs) {
                         inferredTypeArgs = typeArgs;
                     }
