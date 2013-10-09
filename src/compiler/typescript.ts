@@ -90,13 +90,11 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public resolver: PullTypeResolver = null;
-
+        private resolver: PullTypeResolver = null;
         private semanticInfoChain: SemanticInfoChain = null;
+        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         public emitOptions: EmitOptions;
-
-        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings()) {
