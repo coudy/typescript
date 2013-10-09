@@ -1893,12 +1893,7 @@ module TypeScript {
             if (!functionDecl.hasSymbol()) {
                 var binder = this.semanticInfoChain.getBinder();
 
-                if (functionDecl.kind === PullElementKind.ConstructorType) {
-                    binder.bindConstructorTypeDeclarationToPullSymbol(functionDecl);
-                }
-                else {
-                    binder.bindFunctionTypeDeclarationToPullSymbol(functionDecl);
-                }
+                binder.bindDeclToPullSymbol(functionDecl);
             }
 
             funcDeclSymbol = <PullTypeSymbol>functionDecl.getSymbol();
@@ -6946,16 +6941,8 @@ module TypeScript {
                     var functionDeclaration = this.getDeclForAST(funcDeclAST);
                     Debug.assert(functionDeclaration);
 
-                    if (!isUsingExistingSymbol) {
-                        var binder = this.semanticInfoChain.getBinder();
-
-                        if (funcDeclAST.isGetAccessor()) {
-                            binder.bindGetAccessorDeclarationToPullSymbol(functionDeclaration);
-                        }
-                        else {
-                            binder.bindSetAccessorDeclarationToPullSymbol(functionDeclaration);
-                        }
-                    }
+                    var binder = this.semanticInfoChain.getBinder();
+                    binder.bindDeclToPullSymbol(functionDeclaration);
 
                     memberSymbol = objectLiteralTypeSymbol.findMember(assignmentText.memberName);
                 }
@@ -6964,7 +6951,7 @@ module TypeScript {
                     Debug.assert(decl);
 
                     var binder = this.semanticInfoChain.getBinder();
-                    binder.bindFunctionExpressionToPullSymbol(decl);
+                    binder.bindDeclToPullSymbol(decl);
                 }
 
                 if (!isUsingExistingSymbol && !isAccessor) {

@@ -810,7 +810,7 @@ module TypeScript {
             }
         }
 
-        public bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
+        private bindObjectTypeDeclarationToPullSymbol(objectDecl: PullDecl) {
             var objectSymbolAST: AST = this.semanticInfoChain.getASTForDecl(objectDecl);
 
             var objectSymbol = new PullTypeSymbol("", PullElementKind.ObjectType);
@@ -848,7 +848,7 @@ module TypeScript {
             }
         }
 
-        public bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
+        private bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
             var declKind = constructorTypeDeclaration.kind;
             var declFlags = constructorTypeDeclaration.flags;
             var constructorTypeAST = this.semanticInfoChain.getASTForDecl(constructorTypeDeclaration);
@@ -1460,7 +1460,7 @@ module TypeScript {
             }
         }
 
-        public bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
+        private bindFunctionExpressionToPullSymbol(functionExpressionDeclaration: PullDecl) {
             var declKind = functionExpressionDeclaration.kind;
             var declFlags = functionExpressionDeclaration.flags;
             var funcExpAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(functionExpressionDeclaration);
@@ -1524,7 +1524,7 @@ module TypeScript {
             functionTypeSymbol.addCallSignature(signature);
         }
 
-        public bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
+        private bindFunctionTypeDeclarationToPullSymbol(functionTypeDeclaration: PullDecl) {
             var declKind = functionTypeDeclaration.kind;
             var declFlags = functionTypeDeclaration.flags;
             var funcTypeAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(functionTypeDeclaration);
@@ -1925,8 +1925,7 @@ module TypeScript {
         }
 
         // getters and setters
-
-        public bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
+        private bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
             var declKind = getAccessorDeclaration.kind;
             var declFlags = getAccessorDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(getAccessorDeclaration);
@@ -2027,7 +2026,7 @@ module TypeScript {
             getterTypeSymbol.addCallSignature(signature);
         }
 
-        public bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
+        private bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
             var declKind = setAccessorDeclaration.kind;
             var declFlags = setAccessorDeclaration.flags;
             var funcDeclAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(setAccessorDeclaration);
