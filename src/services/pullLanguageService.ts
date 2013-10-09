@@ -240,7 +240,7 @@ module Services {
                 });
             }
 
-            if (typesToSearch !== undefined) {
+            if (typesToSearch) {
                 var fileNames = this.compilerState.getFileNames();
                 for (var i = 0, len = fileNames.length; i < len; i++) {
                     var tempFileName = fileNames[i];
