@@ -173,11 +173,7 @@ module Services {
             this.compiler.pullTypeCheck();
         }
 
-        public getResolver() {
-            if (this.compiler) {
-                return this.compiler.resolver;
-            }
-
+        public getResolver(): TypeScript.PullTypeResolver {
             return null;
         }
 
