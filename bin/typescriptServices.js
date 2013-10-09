@@ -189,6 +189,7 @@ var TypeScript;
         Octal_literals_are_not_available_when_targeting_ECMAScript_5_and_higher: "Octal literals are not available when targeting ECMAScript 5 and higher.",
         Accessors_are_not_allowed_in_ambient_contexts: "Accessors are not allowed in ambient contexts.",
         Index_member_declaration_can_only_have_the_static_modifier: "Index member declaration can only have the 'static' modifier.",
+        _0_modifier_cannot_appear_on_a_constructor_declaration: "'{0}' modifier cannot appear on a constructor declaration.",
         Duplicate_identifier_0: "Duplicate identifier '{0}'.",
         The_name_0_does_not_exist_in_the_current_scope: "The name '{0}' does not exist in the current scope.",
         The_name_0_does_not_refer_to_a_value: "The name '{0}' does not refer to a value.",
@@ -447,8 +448,6 @@ var TypeScript;
         Locale_must_be_of_the_form_language_or_language_territory_For_example_0_or_1: "Locale must be of the form <language> or <language>-<territory>. For example '{0}' or '{1}'.",
         Unsupported_locale_0: "Unsupported locale: '{0}'.",
         Execution_Failed_NL: "Execution Failed.{NL}",
-        Should_not_emit_a_type_query: "Should not emit a type query.",
-        Should_not_emit_a_type_reference: "Should not emit a type reference.",
         Invalid_call_to_up: "Invalid call to 'up'",
         Invalid_call_to_down: "Invalid call to 'down'",
         Base64_value_0_finished_with_a_continuation_bit: "Base64 value '{0}' finished with a continuation bit.",
@@ -2209,6 +2208,10 @@ var TypeScript;
             "code": 1088,
             "category": 1 /* Error */
         },
+        "'{0}' modifier cannot appear on a constructor declaration.": {
+            "code": 1089,
+            "category": 1 /* Error */
+        },
         "Duplicate identifier '{0}'.": {
             "code": 2000,
             "category": 1 /* Error */
@@ -3239,14 +3242,6 @@ var TypeScript;
         },
         "Execution Failed.{NL}": {
             "code": 5016,
-            "category": 1 /* Error */
-        },
-        "Should not emit a type query.": {
-            "code": 5017,
-            "category": 1 /* Error */
-        },
-        "Should not emit a type reference.": {
-            "code": 5018,
             "category": 1 /* Error */
         },
         "Invalid call to 'up'": {
@@ -8404,8 +8399,8 @@ var TypeScript;
             NormalModeFactory.prototype.expressionStatement = function (expression, semicolonToken) {
                 return new TypeScript.ExpressionStatementSyntax(expression, semicolonToken, false);
             };
-            NormalModeFactory.prototype.constructorDeclaration = function (constructorKeyword, parameterList, block, semicolonToken) {
-                return new TypeScript.ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, false);
+            NormalModeFactory.prototype.constructorDeclaration = function (modifiers, constructorKeyword, parameterList, block, semicolonToken) {
+                return new TypeScript.ConstructorDeclarationSyntax(modifiers, constructorKeyword, parameterList, block, semicolonToken, false);
             };
             NormalModeFactory.prototype.memberFunctionDeclaration = function (modifiers, propertyName, callSignature, block, semicolonToken) {
                 return new TypeScript.MemberFunctionDeclarationSyntax(modifiers, propertyName, callSignature, block, semicolonToken, false);
@@ -8672,8 +8667,8 @@ var TypeScript;
             StrictModeFactory.prototype.expressionStatement = function (expression, semicolonToken) {
                 return new TypeScript.ExpressionStatementSyntax(expression, semicolonToken, true);
             };
-            StrictModeFactory.prototype.constructorDeclaration = function (constructorKeyword, parameterList, block, semicolonToken) {
-                return new TypeScript.ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, true);
+            StrictModeFactory.prototype.constructorDeclaration = function (modifiers, constructorKeyword, parameterList, block, semicolonToken) {
+                return new TypeScript.ConstructorDeclarationSyntax(modifiers, constructorKeyword, parameterList, block, semicolonToken, true);
             };
             StrictModeFactory.prototype.memberFunctionDeclaration = function (modifiers, propertyName, callSignature, block, semicolonToken) {
                 return new TypeScript.MemberFunctionDeclarationSyntax(modifiers, propertyName, callSignature, block, semicolonToken, true);
@@ -13832,8 +13827,9 @@ var TypeScript;
 
     var ConstructorDeclarationSyntax = (function (_super) {
         __extends(ConstructorDeclarationSyntax, _super);
-        function ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, parsedInStrictMode) {
+        function ConstructorDeclarationSyntax(modifiers, constructorKeyword, parameterList, block, semicolonToken, parsedInStrictMode) {
             _super.call(this, parsedInStrictMode);
+            this.modifiers = modifiers;
             this.constructorKeyword = constructorKeyword;
             this.parameterList = parameterList;
             this.block = block;
@@ -13848,18 +13844,20 @@ var TypeScript;
         };
 
         ConstructorDeclarationSyntax.prototype.childCount = function () {
-            return 4;
+            return 5;
         };
 
         ConstructorDeclarationSyntax.prototype.childAt = function (slot) {
             switch (slot) {
                 case 0:
-                    return this.constructorKeyword;
+                    return this.modifiers;
                 case 1:
-                    return this.parameterList;
+                    return this.constructorKeyword;
                 case 2:
-                    return this.block;
+                    return this.parameterList;
                 case 3:
+                    return this.block;
+                case 4:
                     return this.semicolonToken;
                 default:
                     throw TypeScript.Errors.invalidOperation();
@@ -13870,20 +13868,20 @@ var TypeScript;
             return true;
         };
 
-        ConstructorDeclarationSyntax.prototype.update = function (constructorKeyword, parameterList, block, semicolonToken) {
-            if (this.constructorKeyword === constructorKeyword && this.parameterList === parameterList && this.block === block && this.semicolonToken === semicolonToken) {
+        ConstructorDeclarationSyntax.prototype.update = function (modifiers, constructorKeyword, parameterList, block, semicolonToken) {
+            if (this.modifiers === modifiers && this.constructorKeyword === constructorKeyword && this.parameterList === parameterList && this.block === block && this.semicolonToken === semicolonToken) {
                 return this;
             }
 
-            return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, block, semicolonToken, this.parsedInStrictMode());
+            return new ConstructorDeclarationSyntax(modifiers, constructorKeyword, parameterList, block, semicolonToken, this.parsedInStrictMode());
         };
 
         ConstructorDeclarationSyntax.create = function (constructorKeyword, parameterList) {
-            return new ConstructorDeclarationSyntax(constructorKeyword, parameterList, null, null, false);
+            return new ConstructorDeclarationSyntax(TypeScript.Syntax.emptyList, constructorKeyword, parameterList, null, null, false);
         };
 
         ConstructorDeclarationSyntax.create1 = function () {
-            return new ConstructorDeclarationSyntax(TypeScript.Syntax.token(62 /* ConstructorKeyword */), ParameterListSyntax.create1(), null, null, false);
+            return new ConstructorDeclarationSyntax(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(62 /* ConstructorKeyword */), ParameterListSyntax.create1(), null, null, false);
         };
 
         ConstructorDeclarationSyntax.prototype.withLeadingTrivia = function (trivia) {
@@ -13894,20 +13892,28 @@ var TypeScript;
             return _super.prototype.withTrailingTrivia.call(this, trivia);
         };
 
+        ConstructorDeclarationSyntax.prototype.withModifiers = function (modifiers) {
+            return this.update(modifiers, this.constructorKeyword, this.parameterList, this.block, this.semicolonToken);
+        };
+
+        ConstructorDeclarationSyntax.prototype.withModifier = function (modifier) {
+            return this.withModifiers(TypeScript.Syntax.list([modifier]));
+        };
+
         ConstructorDeclarationSyntax.prototype.withConstructorKeyword = function (constructorKeyword) {
-            return this.update(constructorKeyword, this.parameterList, this.block, this.semicolonToken);
+            return this.update(this.modifiers, constructorKeyword, this.parameterList, this.block, this.semicolonToken);
         };
 
         ConstructorDeclarationSyntax.prototype.withParameterList = function (parameterList) {
-            return this.update(this.constructorKeyword, parameterList, this.block, this.semicolonToken);
+            return this.update(this.modifiers, this.constructorKeyword, parameterList, this.block, this.semicolonToken);
         };
 
         ConstructorDeclarationSyntax.prototype.withBlock = function (block) {
-            return this.update(this.constructorKeyword, this.parameterList, block, this.semicolonToken);
+            return this.update(this.modifiers, this.constructorKeyword, this.parameterList, block, this.semicolonToken);
         };
 
         ConstructorDeclarationSyntax.prototype.withSemicolonToken = function (semicolonToken) {
-            return this.update(this.constructorKeyword, this.parameterList, this.block, semicolonToken);
+            return this.update(this.modifiers, this.constructorKeyword, this.parameterList, this.block, semicolonToken);
         };
 
         ConstructorDeclarationSyntax.prototype.isTypeScriptSpecific = function () {
@@ -17616,7 +17622,7 @@ var TypeScript;
         };
 
         SyntaxRewriter.prototype.visitConstructorDeclaration = function (node) {
-            return node.update(this.visitToken(node.constructorKeyword), this.visitNode(node.parameterList), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
+            return node.update(this.visitList(node.modifiers), this.visitToken(node.constructorKeyword), this.visitNode(node.parameterList), node.block === null ? null : this.visitNode(node.block), node.semicolonToken === null ? null : this.visitToken(node.semicolonToken));
         };
 
         SyntaxRewriter.prototype.visitMemberFunctionDeclaration = function (node) {
@@ -21243,6 +21249,7 @@ var TypeScript;
         };
 
         SyntaxWalker.prototype.visitConstructorDeclaration = function (node) {
+            this.visitList(node.modifiers);
             this.visitToken(node.constructorKeyword);
             this.visitNode(node.parameterList);
             this.visitOptionalNode(node.block);
@@ -23099,10 +23106,12 @@ var TypeScript;
             };
 
             ParserImpl.prototype.isConstructorDeclaration = function () {
-                return this.currentToken().tokenKind === 62 /* ConstructorKeyword */;
+                var index = this.modifierCount();
+                return this.peekToken(index).tokenKind === 62 /* ConstructorKeyword */ && this.peekToken(index + 1).tokenKind === 72 /* OpenParenToken */;
             };
 
             ParserImpl.prototype.parseConstructorDeclaration = function () {
+                var modifiers = this.parseModifiers();
                 var constructorKeyword = this.eatKeyword(62 /* ConstructorKeyword */);
                 var parameterList = this.parseParameterList();
 
@@ -23115,7 +23124,7 @@ var TypeScript;
                     semicolonToken = this.eatExplicitOrAutomaticSemicolon(false);
                 }
 
-                return this.factory.constructorDeclaration(constructorKeyword, parameterList, block, semicolonToken);
+                return this.factory.constructorDeclaration(modifiers, constructorKeyword, parameterList, block, semicolonToken);
             };
 
             ParserImpl.prototype.isMemberFunctionDeclaration = function (inErrorRecovery) {
@@ -27112,10 +27121,31 @@ var TypeScript;
         };
 
         GrammarCheckerWalker.prototype.visitConstructorDeclaration = function (node) {
+            if (this.checkClassElementModifiers(node.modifiers) || this.checkConstructorModifiers(node.modifiers)) {
+                this.skip(node);
+                return;
+            }
+
             var savedCurrentConstructor = this.currentConstructor;
             this.currentConstructor = node;
             _super.prototype.visitConstructorDeclaration.call(this, node);
             this.currentConstructor = savedCurrentConstructor;
+        };
+
+        GrammarCheckerWalker.prototype.checkConstructorModifiers = function (modifiers) {
+            var currentElementFullStart = this.position();
+
+            for (var i = 0, n = modifiers.childCount(); i < n; i++) {
+                var child = modifiers.childAt(i);
+                if (child.kind() !== 57 /* PublicKeyword */) {
+                    this.pushDiagnostic1(currentElementFullStart, child, TypeScript.DiagnosticCode._0_modifier_cannot_appear_on_a_constructor_declaration, [TypeScript.SyntaxFacts.getText(child.kind())]);
+                    return true;
+                }
+
+                currentElementFullStart += child.fullWidth();
+            }
+
+            return false;
         };
 
         GrammarCheckerWalker.prototype.visitSourceUnit = function (node) {
@@ -32065,10 +32095,11 @@ var TypeScript;
     TypeScript.TextWriter = TextWriter;
 
     var DeclarationEmitter = (function () {
-        function DeclarationEmitter(emittingFileName, document, compiler, resolvePath) {
+        function DeclarationEmitter(emittingFileName, document, compiler, semanticInfoChain, resolvePath) {
             this.emittingFileName = emittingFileName;
             this.document = document;
             this.compiler = compiler;
+            this.semanticInfoChain = semanticInfoChain;
             this.resolvePath = resolvePath;
             this.declFile = null;
             this.indenter = new TypeScript.Indenter();
@@ -32081,8 +32112,8 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.widenType = function (type) {
-            if (type === this.compiler.semanticInfoChain.undefinedTypeSymbol || type === this.compiler.semanticInfoChain.nullTypeSymbol) {
-                return this.compiler.semanticInfoChain.anyTypeSymbol;
+            if (type === this.semanticInfoChain.undefinedTypeSymbol || type === this.semanticInfoChain.nullTypeSymbol) {
+                return this.semanticInfoChain.anyTypeSymbol;
             }
 
             return type;
@@ -32141,11 +32172,11 @@ var TypeScript;
         DeclarationEmitter.prototype.canEmitDeclarations = function (declFlags, declAST) {
             var container = this.getAstDeclarationContainer();
 
-            var pullDecl = this.compiler.semanticInfoChain.getDeclForAST(declAST);
+            var pullDecl = this.semanticInfoChain.getDeclForAST(declAST);
             if (container.nodeType() === 20 /* ModuleDeclaration */) {
                 if (!TypeScript.hasFlag(pullDecl.flags, 1 /* Exported */)) {
                     var start = new Date().getTime();
-                    var declSymbol = this.compiler.semanticInfoChain.getSymbolForAST(declAST);
+                    var declSymbol = this.semanticInfoChain.getSymbolForAST(declAST);
                     var result = declSymbol && declSymbol.isExternallyVisible();
                     TypeScript.declarationEmitIsExternallyVisibleTime += new Date().getTime() - start;
 
@@ -32260,7 +32291,7 @@ var TypeScript;
             var declarationContainerAst = this.getAstDeclarationContainer();
 
             var start = new Date().getTime();
-            var declarationContainerDecl = this.compiler.semanticInfoChain.getDeclForAST(declarationContainerAst);
+            var declarationContainerDecl = this.semanticInfoChain.getDeclForAST(declarationContainerAst);
             var declarationPullSymbol = declarationContainerDecl.getSymbol();
             TypeScript.declarationEmitTypeSignatureTime += new Date().getTime() - start;
 
@@ -32323,7 +32354,7 @@ var TypeScript;
 
         DeclarationEmitter.prototype.emitTypeOfVariableDeclaratorOrParameter = function (boundDecl) {
             var start = new Date().getTime();
-            var decl = this.compiler.semanticInfoChain.getDeclForAST(boundDecl);
+            var decl = this.semanticInfoChain.getDeclForAST(boundDecl);
             var pullSymbol = decl.getSymbol();
             TypeScript.declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
 
@@ -32342,7 +32373,7 @@ var TypeScript;
                 this.emitDeclarationComments(varDecl);
                 if (!interfaceMember) {
                     if (isFirstVarInList) {
-                        this.emitDeclFlags(TypeScript.ToDeclFlags(varDecl.getVarFlags()), this.compiler.semanticInfoChain.getDeclForAST(varDecl), "var");
+                        this.emitDeclFlags(TypeScript.ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
                     }
 
                     this.declFile.Write(varDecl.id.actualText);
@@ -32395,7 +32426,7 @@ var TypeScript;
 
         DeclarationEmitter.prototype.isOverloadedCallSignature = function (funcDecl) {
             var start = new Date().getTime();
-            var functionDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSymbol = functionDecl.getSymbol();
             TypeScript.declarationEmitIsOverloadedCallSignatureTime += new Date().getTime() - start;
 
@@ -32408,7 +32439,7 @@ var TypeScript;
 
         DeclarationEmitter.prototype.emitDeclarationsForConstructorDeclaration = function (funcDecl) {
             var start = new Date().getTime();
-            var funcSymbol = this.compiler.semanticInfoChain.getSymbolForAST(funcDecl);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
             TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
@@ -32424,7 +32455,7 @@ var TypeScript;
                 return;
             }
 
-            var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
 
@@ -32471,7 +32502,7 @@ var TypeScript;
             var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === 17 /* InterfaceDeclaration */);
 
             var start = new Date().getTime();
-            var funcSymbol = this.compiler.semanticInfoChain.getSymbolForAST(funcDecl);
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
             TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
@@ -32488,7 +32519,7 @@ var TypeScript;
                 TypeScript.Debug.assert(callSignatures && callSignatures.length > 1);
                 var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
                 var firstSignatureDecl = firstSignature.getDeclarations()[0];
-                var firstFuncDecl = this.compiler.semanticInfoChain.getASTForDecl(firstSignatureDecl);
+                var firstFuncDecl = this.semanticInfoChain.getASTForDecl(firstSignatureDecl);
                 if (firstFuncDecl !== funcDecl) {
                     return;
                 }
@@ -32498,7 +32529,7 @@ var TypeScript;
                 return;
             }
 
-            var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
 
@@ -32579,7 +32610,7 @@ var TypeScript;
                     if (i > 0) {
                         this.declFile.Write(", ");
                     }
-                    var baseType = this.compiler.semanticInfoChain.getSymbolForAST(bases.members[i]);
+                    var baseType = this.semanticInfoChain.getSymbolForAST(bases.members[i]);
                     this.emitTypeSignature(baseType);
                 }
             }
@@ -32591,7 +32622,7 @@ var TypeScript;
             }
 
             var start = new Date().getTime();
-            var accessors = TypeScript.PullHelpers.getGetterAndSetterFunction(funcDecl, this.compiler.semanticInfoChain);
+            var accessors = TypeScript.PullHelpers.getGetterAndSetterFunction(funcDecl, this.semanticInfoChain);
             TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
             var comments = [];
@@ -32607,7 +32638,7 @@ var TypeScript;
 
         DeclarationEmitter.prototype.emitPropertyAccessorSignature = function (funcDecl) {
             var start = new Date().getTime();
-            var accessorSymbol = TypeScript.PullHelpers.getAccessorSymbol(funcDecl, this.compiler.semanticInfoChain);
+            var accessorSymbol = TypeScript.PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
             TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
             if (!TypeScript.hasFlag(funcDecl.getFunctionFlags(), 32 /* GetAccessor */) && accessorSymbol.getGetter()) {
@@ -32615,7 +32646,7 @@ var TypeScript;
             }
 
             this.emitAccessorDeclarationComments(funcDecl);
-            this.emitDeclFlags(TypeScript.ToDeclFlags(funcDecl.getFunctionFlags()), this.compiler.semanticInfoChain.getDeclForAST(funcDecl), "var");
+            this.emitDeclFlags(TypeScript.ToDeclFlags(funcDecl.getFunctionFlags()), this.semanticInfoChain.getDeclForAST(funcDecl), "var");
             this.declFile.Write(funcDecl.name.actualText);
             if (this.canEmitTypeAnnotationSignature(TypeScript.ToDeclFlags(funcDecl.getFunctionFlags()))) {
                 this.declFile.Write(" : ");
@@ -32634,9 +32665,9 @@ var TypeScript;
 
                 for (var i = 0; i < argsLen; i++) {
                     var parameter = funcDecl.parameterList.members[i];
-                    var parameterDecl = this.compiler.semanticInfoChain.getDeclForAST(parameter);
+                    var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
                     if (TypeScript.hasFlag(parameterDecl.flags, 8388608 /* PropertyParameter */)) {
-                        var funcPullDecl = this.compiler.semanticInfoChain.getDeclForAST(funcDecl);
+                        var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
                         this.emitDeclarationComments(parameter);
                         this.emitDeclFlags(TypeScript.ToDeclFlags(parameter.getVarFlags()), funcPullDecl, "var");
                         this.declFile.Write(parameter.id.actualText);
@@ -32657,7 +32688,7 @@ var TypeScript;
 
             var className = classDecl.identifier.actualText;
             this.emitDeclarationComments(classDecl);
-            var classPullDecl = this.compiler.semanticInfoChain.getDeclForAST(classDecl);
+            var classPullDecl = this.semanticInfoChain.getDeclForAST(classDecl);
             this.emitDeclFlags(TypeScript.ToDeclFlags(classDecl.getVarFlags()), classPullDecl, "class");
             this.declFile.Write(className);
             this.pushDeclarationContainer(classDecl);
@@ -32701,7 +32732,7 @@ var TypeScript;
             var containerAst = this.getAstDeclarationContainer();
 
             var start = new Date().getTime();
-            var containerDecl = this.compiler.semanticInfoChain.getDeclForAST(containerAst);
+            var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst);
             var containerSymbol = containerDecl.getSymbol();
             TypeScript.declarationEmitGetTypeParameterSymbolTime += new Date().getTime() - start;
 
@@ -32731,7 +32762,7 @@ var TypeScript;
 
             var interfaceName = interfaceDecl.identifier.actualText;
             this.emitDeclarationComments(interfaceDecl);
-            var interfacePullDecl = this.compiler.semanticInfoChain.getDeclForAST(interfaceDecl);
+            var interfacePullDecl = this.semanticInfoChain.getDeclForAST(interfaceDecl);
             this.emitDeclFlags(TypeScript.ToDeclFlags(interfaceDecl.getVarFlags()), interfacePullDecl, "interface");
             this.declFile.Write(interfaceName);
             this.pushDeclarationContainer(interfaceDecl);
@@ -32751,7 +32782,7 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.emitDeclarationsForImportDeclaration = function (importDeclAST) {
-            var importDecl = this.compiler.semanticInfoChain.getDeclForAST(importDeclAST);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var importSymbol = importDecl.getSymbol();
             var isExportedImportDecl = TypeScript.hasFlag(importDeclAST.getVarFlags(), 1 /* Exported */);
 
@@ -32777,7 +32808,7 @@ var TypeScript;
             }
 
             this.emitDeclarationComments(moduleDecl);
-            var modulePullDecl = this.compiler.semanticInfoChain.getDeclForAST(moduleDecl);
+            var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
             this.emitDeclFlags(TypeScript.ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "enum");
             this.declFile.WriteLine(moduleDecl.identifier.actualText + " {");
 
@@ -32808,7 +32839,7 @@ var TypeScript;
 
             var dottedModuleContainers = [];
             if (!isExternalModule) {
-                var modulePullDecl = this.compiler.semanticInfoChain.getDeclForAST(moduleDecl);
+                var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
                 var moduleName = this.getDeclFlagsString(TypeScript.ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "module");
 
                 if (!TypeScript.isQuoted(moduleDecl.name.text())) {
@@ -33166,10 +33197,6 @@ var TypeScript;
             this.declIDString = null;
             this.hashCode = -1;
             this.flags = 0 /* None */;
-            this._isBound = false;
-            this.symbol = null;
-            this.signatureSymbol = null;
-            this.specializingSignatureSymbol = null;
             this.declGroups = null;
             this.childDecls = null;
             this.typeParameters = null;
@@ -33210,43 +33237,17 @@ var TypeScript;
             throw TypeScript.Errors.abstract();
         };
 
-        PullDecl.prototype.clean = function () {
-            this._isBound = false;
-            this.symbol = null;
-            this.signatureSymbol = null;
-            this.specializingSignatureSymbol = null;
-            this.declGroups = null;
-
-            var children = this.childDecls;
-            if (children) {
-                for (var i = 0; i < children.length; i++) {
-                    children[i].clean();
-                }
-            }
-
-            var typeParameters = this.typeParameters;
-            if (typeParameters) {
-                for (var i = 0; i < typeParameters.length; i++) {
-                    typeParameters[i].clean();
-                }
-            }
-
-            if (this.synthesizedValDecl) {
-                this.synthesizedValDecl.clean();
-            }
-        };
-
         PullDecl.prototype.getDisplayName = function () {
             return this.declDisplayName === undefined ? this.name : this.declDisplayName;
         };
 
         PullDecl.prototype.setSymbol = function (symbol) {
-            this.symbol = symbol;
+            this.semanticInfoChain().setSymbolForDecl(this, symbol);
         };
 
         PullDecl.prototype.ensureSymbolIsBound = function (bindSignatureSymbol) {
             if (typeof bindSignatureSymbol === "undefined") { bindSignatureSymbol = false; }
-            if (!((bindSignatureSymbol && this.signatureSymbol) || this.symbol) && !this._isBound && this.kind != 1 /* Script */) {
+            if (!((bindSignatureSymbol && this.hasSignatureSymbol()) || this.hasSymbol()) && this.kind != 1 /* Script */) {
                 var binder = this.semanticInfoChain().getBinder();
                 binder.bindDeclToPullSymbol(this);
             }
@@ -33259,40 +33260,46 @@ var TypeScript;
 
             this.ensureSymbolIsBound();
 
-            return this.symbol;
+            return this.semanticInfoChain().getSymbolForDecl(this);
         };
 
         PullDecl.prototype.hasSymbol = function () {
-            return this.symbol != null;
+            var symbol = this.semanticInfoChain().getSymbolForDecl(this);
+            return !!symbol;
         };
 
-        PullDecl.prototype.setSignatureSymbol = function (signature) {
-            this.signatureSymbol = signature;
+        PullDecl.prototype.setSignatureSymbol = function (signatureSymbol) {
+            this.semanticInfoChain().setSignatureSymbolForDecl(this, signatureSymbol);
         };
+
         PullDecl.prototype.getSignatureSymbol = function () {
             this.ensureSymbolIsBound(true);
 
-            return this.signatureSymbol;
+            return this.semanticInfoChain().getSignatureSymbolForDecl(this);
         };
 
-        PullDecl.prototype.hasSignature = function () {
-            return this.signatureSymbol != null;
+        PullDecl.prototype.hasSignatureSymbol = function () {
+            var signatureSymbol = this.semanticInfoChain().getSignatureSymbolForDecl(this);
+            return !!signatureSymbol;
         };
 
-        PullDecl.prototype.setSpecializingSignatureSymbol = function (signature) {
-            this.specializingSignatureSymbol = signature;
+        PullDecl.prototype.setSpecializingSignatureSymbol = function (specializingSignatureSymbol) {
+            this.semanticInfoChain().setSpecializingSignatureSymbolForDecl(this, specializingSignatureSymbol);
         };
+
         PullDecl.prototype.getSpecializingSignatureSymbol = function () {
-            if (this.specializingSignatureSymbol) {
-                return this.specializingSignatureSymbol;
+            var specializingSignatureSymbol = this.semanticInfoChain().getSpecializingSignatureSymbolForDecl(this);
+            if (specializingSignatureSymbol) {
+                return specializingSignatureSymbol;
             }
 
-            return this.signatureSymbol;
+            return this.getSignatureSymbol();
         };
 
         PullDecl.prototype.setFlags = function (flags) {
             this.flags = flags;
         };
+
         PullDecl.prototype.setFlag = function (flags) {
             this.flags |= flags;
         };
@@ -33300,6 +33307,7 @@ var TypeScript;
         PullDecl.prototype.getSpan = function () {
             return this.span;
         };
+
         PullDecl.prototype.setSpan = function (span) {
             this.span = span;
         };
@@ -33307,6 +33315,7 @@ var TypeScript;
         PullDecl.prototype.setValueDecl = function (valDecl) {
             this.synthesizedValDecl = valDecl;
         };
+
         PullDecl.prototype.getValueDecl = function () {
             return this.synthesizedValDecl;
         };
@@ -33413,12 +33422,8 @@ var TypeScript;
             return declGroups ? declGroups : sentinelEmptyPullDeclArray;
         };
 
-        PullDecl.prototype.setIsBound = function (isBinding) {
-            this._isBound = isBinding;
-        };
-
-        PullDecl.prototype.isBound = function () {
-            return this._isBound;
+        PullDecl.prototype.hasBeenBound = function () {
+            return this.hasSymbol() || this.hasSignatureSymbol();
         };
 
         PullDecl.prototype.isSynthesized = function () {
@@ -33426,7 +33431,8 @@ var TypeScript;
         };
 
         PullDecl.prototype.ast = function () {
-            return this.semanticInfoChain().getASTForDecl(this);
+            var semanticInfoChain = this.semanticInfoChain();
+            return semanticInfoChain ? semanticInfoChain.getASTForDecl(this) : null;
         };
         return PullDecl;
     })();
@@ -33508,8 +33514,8 @@ var TypeScript;
         };
 
         NormalPullDecl.prototype.semanticInfoChain = function () {
-            TypeScript.Debug.assert(this.getParentDecl());
-            return this.getParentDecl().semanticInfoChain();
+            var parent = this.getParentDecl();
+            return parent ? parent.semanticInfoChain() : null;
         };
 
         NormalPullDecl.prototype.isExternalModule = function () {
@@ -33535,9 +33541,14 @@ var TypeScript;
 
     var PullSynthesizedDecl = (function (_super) {
         __extends(PullSynthesizedDecl, _super);
-        function PullSynthesizedDecl(declName, displayName, kind, declFlags, parentDecl, span) {
+        function PullSynthesizedDecl(declName, displayName, kind, declFlags, parentDecl, span, semanticInfoChain) {
             _super.call(this, declName, displayName, kind, declFlags, parentDecl, span, false);
+            this._semanticInfoChain = semanticInfoChain;
         }
+        PullSynthesizedDecl.prototype.semanticInfoChain = function () {
+            return this._semanticInfoChain;
+        };
+
         PullSynthesizedDecl.prototype.isSynthesized = function () {
             return true;
         };
@@ -37496,7 +37507,7 @@ var TypeScript;
             this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
             this.cachedFunctionArgumentsSymbol.setResolved();
 
-            var functionArgumentsDecl = new TypeScript.PullSynthesizedDecl("arguments", "arguments", 2048 /* Parameter */, 0 /* None */, null, new TypeScript.TextSpan(0, 0));
+            var functionArgumentsDecl = new TypeScript.PullSynthesizedDecl("arguments", "arguments", 2048 /* Parameter */, 0 /* None */, null, new TypeScript.TextSpan(0, 0), semanticInfoChain);
             functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
             this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
         }
@@ -38132,7 +38143,7 @@ var TypeScript;
             var prototypeStr = "prototype";
             var prototypeSymbol = new TypeScript.PullSymbol(prototypeStr, 4096 /* Property */);
             var parentDecl = constructorTypeSymbol.getDeclarations()[0];
-            var prototypeDecl = new TypeScript.PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan());
+            var prototypeDecl = new TypeScript.PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan(), parentDecl.semanticInfoChain());
 
             prototypeSymbol.addDeclaration(prototypeDecl);
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
@@ -39464,7 +39475,7 @@ var TypeScript;
             } else if (term.nodeType() === 5 /* StringLiteral */) {
                 var stringConstantAST = term;
                 typeDeclSymbol = new TypeScript.PullStringConstantTypeSymbol(stringConstantAST.actualText);
-                var decl = new TypeScript.PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText, typeDeclSymbol.kind, null, enclosingDecl, new TypeScript.TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()));
+                var decl = new TypeScript.PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText, typeDeclSymbol.kind, null, enclosingDecl, new TypeScript.TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()), enclosingDecl.semanticInfoChain());
                 typeDeclSymbol.addDeclaration(decl);
             } else if (term.nodeType() === 12 /* TypeQuery */) {
                 var typeQuery = term;
@@ -47634,12 +47645,6 @@ var TypeScript;
             return this._topLevelDecl;
         };
 
-        SemanticInfo.prototype.cleanDecls = function () {
-            if (this._topLevelDecl) {
-                this._topLevelDecl.clean();
-            }
-        };
-
         SemanticInfo.prototype.fileName = function () {
             return this._fileName;
         };
@@ -47681,6 +47686,9 @@ var TypeScript;
             this.astAliasSymbolMap = new TypeScript.DataMap();
             this.symbolASTMap = new TypeScript.DataMap();
             this.astCallResolutionDataMap = null;
+            this.declSymbolMap = new TypeScript.DataMap();
+            this.declSignatureSymbolMap = new TypeScript.DataMap();
+            this.declSpecializingSignatureSymbolMap = new TypeScript.DataMap();
             this.declCache = null;
             this.symbolCache = null;
             this.fileNameToDiagnostics = null;
@@ -47727,7 +47735,7 @@ var TypeScript;
             this.undefinedTypeSymbol = this.addPrimitiveType("undefined", null);
             this.addPrimitiveValue("undefined", this.undefinedTypeSymbol, globalDecl);
 
-            var emptyTypeDecl = new TypeScript.PullSynthesizedDecl("{}", "{}", 8388608 /* ObjectType */, 0 /* None */, null, span);
+            var emptyTypeDecl = new TypeScript.PullSynthesizedDecl("{}", "{}", 8388608 /* ObjectType */, 0 /* None */, null, span, this);
             var emptyTypeSymbol = new TypeScript.PullTypeSymbol("{}", 8388608 /* ObjectType */);
             emptyTypeDecl.setSymbol(emptyTypeSymbol);
             emptyTypeSymbol.addDeclaration(emptyTypeDecl);
@@ -47946,51 +47954,6 @@ var TypeScript;
             return this.findDecls(declString, declKind);
         };
 
-        SemanticInfoChain.prototype.findMatchingValidDecl = function (invalidatedDecl) {
-            var unitPath = invalidatedDecl.fileName();
-            var unit = this.getSemanticInfo(unitPath);
-            if (!unit) {
-                return null;
-            }
-
-            var declsInPath = [];
-            var current = invalidatedDecl;
-            while (current) {
-                if (current.kind !== 1 /* Script */) {
-                    declsInPath.unshift(current);
-                }
-
-                current = current.getParentDecl();
-            }
-
-            var declsToSearch = [unit.topLevelDecl()];
-            var foundDecls = [];
-            var keepSearching = (invalidatedDecl.kind & 4 /* Container */) || (invalidatedDecl.kind & 16 /* Interface */) || (invalidatedDecl.kind & 8 /* Class */) || (invalidatedDecl.kind & 64 /* Enum */);
-
-            for (var i = 0; i < declsInPath.length; i++) {
-                var declInPath = declsInPath[i];
-                var decls = [];
-
-                for (var j = 0; j < declsToSearch.length; j++) {
-                    foundDecls = declsToSearch[j].searchChildDecls(declInPath.name, declInPath.kind);
-
-                    decls.push.apply(decls, foundDecls);
-
-                    if (foundDecls.length && !keepSearching) {
-                        break;
-                    }
-                }
-
-                declsToSearch = decls;
-
-                if (declsToSearch.length == 0) {
-                    break;
-                }
-            }
-
-            return declsToSearch;
-        };
-
         SemanticInfoChain.prototype.findSymbol = function (declPath, declType) {
             var cacheID = this.getDeclPathCacheID(declPath, declType);
 
@@ -48032,16 +47995,10 @@ var TypeScript;
             }
         };
 
-        SemanticInfoChain.prototype.cleanAllDecls = function () {
-            for (var i = 1, n = this.units.length; i < n; i++) {
-                this.units[i].cleanDecls();
-            }
-        };
-
         SemanticInfoChain.prototype.invalidate = function () {
             TypeScript.PullTypeResolver.globalTypeCheckPhase++;
 
-            this.logger.log("Cleaning symbols...");
+            this.logger.log("Invalidating SemanticInfoChain...");
             var cleanStart = new Date().getTime();
 
             this.astSymbolMap = new TypeScript.DataMap();
@@ -48057,11 +48014,14 @@ var TypeScript;
             this.binder = null;
             this._topLevelDecls = null;
 
+            this.declSymbolMap = new TypeScript.DataMap();
+            this.declSignatureSymbolMap = new TypeScript.DataMap();
+            this.declSpecializingSignatureSymbolMap = new TypeScript.DataMap();
+
             this.units[0] = new SemanticInfo(this, "", null, this.getGlobalDecl());
-            this.cleanAllDecls();
 
             var cleanEnd = new Date().getTime();
-            this.logger.log("   time to clean: " + (cleanEnd - cleanStart));
+            this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
         };
 
         SemanticInfoChain.prototype.setSymbolForAST = function (ast, symbol) {
@@ -48093,6 +48053,30 @@ var TypeScript;
             if (callResolutionData) {
                 this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
             }
+        };
+
+        SemanticInfoChain.prototype.setSymbolForDecl = function (decl, symbol) {
+            this.declSymbolMap.link(decl.declIDString, symbol);
+        };
+
+        SemanticInfoChain.prototype.getSymbolForDecl = function (decl) {
+            return this.declSymbolMap.read(decl.declIDString);
+        };
+
+        SemanticInfoChain.prototype.setSignatureSymbolForDecl = function (decl, signatureSymbol) {
+            this.declSignatureSymbolMap.link(decl.declIDString, signatureSymbol);
+        };
+
+        SemanticInfoChain.prototype.getSignatureSymbolForDecl = function (decl) {
+            return this.declSignatureSymbolMap.read(decl.declIDString);
+        };
+
+        SemanticInfoChain.prototype.setSpecializingSignatureSymbolForDecl = function (decl, signatureSymbol) {
+            this.declSpecializingSignatureSymbolMap.link(decl.declIDString, signatureSymbol);
+        };
+
+        SemanticInfoChain.prototype.getSpecializingSignatureSymbolForDecl = function (decl) {
+            return this.declSpecializingSignatureSymbolMap.read(decl.declIDString);
         };
 
         SemanticInfoChain.prototype.addDiagnostic = function (diagnostic) {
@@ -48131,16 +48115,14 @@ var TypeScript;
             containingSymbol.addIndexSignature(indexSignature);
 
             var span = TypeScript.TextSpan.fromBounds(ast.minChar, ast.limChar);
-            var indexSigDecl = new TypeScript.PullSynthesizedDecl("", "", 4194304 /* IndexSignature */, 2048 /* Signature */, containingDecl, span);
-            var indexParamDecl = new TypeScript.PullSynthesizedDecl(indexParamName, indexParamName, 2048 /* Parameter */, 0 /* None */, indexSigDecl, span);
+            var indexSigDecl = new TypeScript.PullSynthesizedDecl("", "", 4194304 /* IndexSignature */, 2048 /* Signature */, containingDecl, span, containingDecl.semanticInfoChain());
+            var indexParamDecl = new TypeScript.PullSynthesizedDecl(indexParamName, indexParamName, 2048 /* Parameter */, 0 /* None */, indexSigDecl, span, containingDecl.semanticInfoChain());
             indexSigDecl.setSignatureSymbol(indexSignature);
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);
             indexParameterSymbol.addDeclaration(indexParamDecl);
             this.setASTForDecl(indexSigDecl, ast);
             this.setASTForDecl(indexParamDecl, ast);
-            indexSigDecl.setIsBound(true);
-            indexParamDecl.setIsBound(true);
         };
 
         SemanticInfoChain.prototype.getDeclForAST = function (ast) {
@@ -48171,7 +48153,12 @@ var TypeScript;
         };
 
         SemanticInfoChain.prototype.topLevelDecl = function (fileName) {
-            return this.getSemanticInfo(fileName).topLevelDecl();
+            var info = this.getSemanticInfo(fileName);
+            if (info) {
+                return info.topLevelDecl();
+            }
+
+            return null;
         };
 
         SemanticInfoChain.prototype.topLevelDecls = function () {
@@ -48442,6 +48429,8 @@ var TypeScript;
             context.semanticInfoChain.setASTForDecl(decl, argDecl);
             context.semanticInfoChain.setDeclForAST(argDecl, decl);
         }
+
+        parent.addVariableDeclToGroup(decl);
     }
 
     function preCollectTypeParameterDecl(typeParameterDecl, context) {
@@ -48521,6 +48510,10 @@ var TypeScript;
         var decl = new TypeScript.NormalPullDecl(varDecl.id.text(), varDecl.id.actualText, declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(varDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, varDecl);
+
+        if (parent) {
+            parent.addVariableDeclToGroup(decl);
+        }
     }
 
     function preCollectVarDecls(ast, context) {
@@ -49164,6 +49157,7 @@ var TypeScript;
     var PullSymbolBinder = (function () {
         function PullSymbolBinder(semanticInfoChain) {
             this.semanticInfoChain = semanticInfoChain;
+            this.declsBeingBound = new TypeScript.BlockIntrinsics();
         }
         PullSymbolBinder.findTypeParameterInCache = function (name) {
             return this.functionTypeParameterCache[name];
@@ -49187,7 +49181,7 @@ var TypeScript;
 
             var parent = parentDecl.getSymbol();
 
-            if (!parent && parentDecl && !parentDecl.isBound()) {
+            if (!parent && parentDecl && !parentDecl.hasBeenBound()) {
                 this.bindDeclToPullSymbol(parentDecl);
             }
 
@@ -49975,10 +49969,6 @@ var TypeScript;
             var isEnumValue = (declFlags & 131072 /* InitializedEnum */) != 0;
             var isClassConstructorVariable = (declFlags & 16384 /* ClassConstructorVariable */) != 0;
 
-            if (parentDecl && !isImplicit) {
-                parentDecl.addVariableDeclToGroup(variableDeclaration);
-            }
-
             variableSymbol = this.getExistingSymbol(variableDeclaration, 68148224 /* SomeValue */, parent);
 
             if (variableSymbol && !variableSymbol.isType()) {
@@ -50328,10 +50318,6 @@ var TypeScript;
                         } else {
                             parameterSymbol.addDeclaration(decl);
                             decl.setSymbol(parameterSymbol);
-                        }
-
-                        if (funcDecl) {
-                            funcDecl.addVariableDeclToGroup(decl);
                         }
                     }
 
@@ -51053,112 +51039,120 @@ var TypeScript;
         };
 
         PullSymbolBinder.prototype.bindDeclToPullSymbol = function (decl) {
-            if (decl.isBound()) {
+            if (decl.hasBeenBound()) {
                 return;
             }
 
-            decl.setIsBound(true);
+            if (this.declsBeingBound[decl.declIDString]) {
+                return;
+            }
 
-            switch (decl.kind) {
-                case 1 /* Script */:
-                    var childDecls = decl.getChildDecls();
-                    for (var i = 0; i < childDecls.length; i++) {
-                        this.bindDeclToPullSymbol(childDecls[i]);
-                    }
-                    break;
+            this.declsBeingBound[decl.declIDString] = true;
 
-                case 64 /* Enum */:
-                    this.bindEnumDeclarationToPullSymbol(decl);
-                    break;
+            try  {
+                switch (decl.kind) {
+                    case 1 /* Script */:
+                        var childDecls = decl.getChildDecls();
+                        for (var i = 0; i < childDecls.length; i++) {
+                            this.bindDeclToPullSymbol(childDecls[i]);
+                        }
+                        break;
 
-                case 32 /* DynamicModule */:
-                case 4 /* Container */:
-                    this.bindModuleDeclarationToPullSymbol(decl);
-                    break;
+                    case 64 /* Enum */:
+                        this.bindEnumDeclarationToPullSymbol(decl);
+                        break;
 
-                case 16 /* Interface */:
-                    this.bindInterfaceDeclarationToPullSymbol(decl);
-                    break;
+                    case 32 /* DynamicModule */:
+                    case 4 /* Container */:
+                        this.bindModuleDeclarationToPullSymbol(decl);
+                        break;
 
-                case 8 /* Class */:
-                    this.bindClassDeclarationToPullSymbol(decl);
-                    break;
+                    case 16 /* Interface */:
+                        this.bindInterfaceDeclarationToPullSymbol(decl);
+                        break;
 
-                case 16384 /* Function */:
-                    this.bindFunctionDeclarationToPullSymbol(decl);
-                    break;
+                    case 8 /* Class */:
+                        this.bindClassDeclarationToPullSymbol(decl);
+                        break;
 
-                case 1024 /* Variable */:
-                    this.bindVariableDeclarationToPullSymbol(decl);
-                    break;
+                    case 16384 /* Function */:
+                        this.bindFunctionDeclarationToPullSymbol(decl);
+                        break;
 
-                case 67108864 /* EnumMember */:
-                    this.bindEnumMemberDeclarationToPullSymbol(decl);
-                    break;
+                    case 1024 /* Variable */:
+                        this.bindVariableDeclarationToPullSymbol(decl);
+                        break;
 
-                case 4096 /* Property */:
-                    this.bindPropertyDeclarationToPullSymbol(decl);
-                    break;
+                    case 67108864 /* EnumMember */:
+                        this.bindEnumMemberDeclarationToPullSymbol(decl);
+                        break;
 
-                case 65536 /* Method */:
-                    this.bindMethodDeclarationToPullSymbol(decl);
-                    break;
+                    case 4096 /* Property */:
+                        this.bindPropertyDeclarationToPullSymbol(decl);
+                        break;
 
-                case 32768 /* ConstructorMethod */:
-                    this.bindConstructorDeclarationToPullSymbol(decl);
-                    break;
+                    case 65536 /* Method */:
+                        this.bindMethodDeclarationToPullSymbol(decl);
+                        break;
 
-                case 1048576 /* CallSignature */:
-                    this.bindCallSignatureDeclarationToPullSymbol(decl);
-                    break;
+                    case 32768 /* ConstructorMethod */:
+                        this.bindConstructorDeclarationToPullSymbol(decl);
+                        break;
 
-                case 2097152 /* ConstructSignature */:
-                    this.bindConstructSignatureDeclarationToPullSymbol(decl);
-                    break;
+                    case 1048576 /* CallSignature */:
+                        this.bindCallSignatureDeclarationToPullSymbol(decl);
+                        break;
 
-                case 4194304 /* IndexSignature */:
-                    this.bindIndexSignatureDeclarationToPullSymbol(decl);
-                    break;
+                    case 2097152 /* ConstructSignature */:
+                        this.bindConstructSignatureDeclarationToPullSymbol(decl);
+                        break;
 
-                case 262144 /* GetAccessor */:
-                    this.bindGetAccessorDeclarationToPullSymbol(decl);
-                    break;
+                    case 4194304 /* IndexSignature */:
+                        this.bindIndexSignatureDeclarationToPullSymbol(decl);
+                        break;
 
-                case 524288 /* SetAccessor */:
-                    this.bindSetAccessorDeclarationToPullSymbol(decl);
-                    break;
+                    case 262144 /* GetAccessor */:
+                        this.bindGetAccessorDeclarationToPullSymbol(decl);
+                        break;
 
-                case 8388608 /* ObjectType */:
-                    this.bindObjectTypeDeclarationToPullSymbol(decl);
-                    break;
+                    case 524288 /* SetAccessor */:
+                        this.bindSetAccessorDeclarationToPullSymbol(decl);
+                        break;
 
-                case 16777216 /* FunctionType */:
-                    this.bindFunctionTypeDeclarationToPullSymbol(decl);
-                    break;
+                    case 8388608 /* ObjectType */:
+                        this.bindObjectTypeDeclarationToPullSymbol(decl);
+                        break;
 
-                case 33554432 /* ConstructorType */:
-                    this.bindConstructorTypeDeclarationToPullSymbol(decl);
-                    break;
+                    case 16777216 /* FunctionType */:
+                        this.bindFunctionTypeDeclarationToPullSymbol(decl);
+                        break;
 
-                case 131072 /* FunctionExpression */:
-                    this.bindFunctionExpressionToPullSymbol(decl);
-                    break;
+                    case 33554432 /* ConstructorType */:
+                        this.bindConstructorTypeDeclarationToPullSymbol(decl);
+                        break;
 
-                case 256 /* TypeAlias */:
-                    this.bindImportDeclaration(decl);
-                    break;
+                    case 131072 /* FunctionExpression */:
+                        this.bindFunctionExpressionToPullSymbol(decl);
+                        break;
 
-                case 2048 /* Parameter */:
-                case 8192 /* TypeParameter */:
-                    decl.getParentDecl().getSymbol();
-                    break;
+                    case 256 /* TypeAlias */:
+                        this.bindImportDeclaration(decl);
+                        break;
 
-                case 268435456 /* CatchBlock */:
-                case 134217728 /* WithBlock */:
-                    break;
+                    case 2048 /* Parameter */:
+                    case 8192 /* TypeParameter */:
+                        decl.getParentDecl().getSymbol();
+                        break;
 
-                default:
-                    TypeScript.CompilerDiagnostics.assert(false, "Unrecognized type declaration");
+                    case 268435456 /* CatchBlock */:
+                    case 134217728 /* WithBlock */:
+                        break;
+
+                    default:
+                        TypeScript.CompilerDiagnostics.assert(false, "Unrecognized type declaration");
+                }
+            } finally {
+                delete this.declsBeingBound[decl.declIDString];
             }
         };
         PullSymbolBinder.functionTypeParameterCache = new TypeScript.BlockIntrinsics();
@@ -54492,7 +54486,7 @@ var TypeScript;
                     declarationEmitter.document = document;
                 } else {
                     var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new TypeScript.DeclarationEmitter(declareFileName, document, this, resolvePath);
+                    declarationEmitter = new TypeScript.DeclarationEmitter(declareFileName, document, this, this.semanticInfoChain, resolvePath);
                 }
 
                 declarationEmitter.emitDeclarations(script);
@@ -55467,6 +55461,10 @@ var TypeScript;
 
         TypeScriptCompiler.prototype.fileNames = function () {
             return this.fileNameToDocument.getAllKeys();
+        };
+
+        TypeScriptCompiler.prototype.topLevelDecl = function (fileName) {
+            return this.semanticInfoChain.topLevelDecl(fileName);
         };
         return TypeScriptCompiler;
     })();
@@ -61486,10 +61484,6 @@ var Services;
             return this.compiler.getTopLevelDeclaration(fileName);
         };
 
-        CompilerState.prototype.findMatchingValidDecl = function (decl) {
-            return this.compiler.semanticInfoChain.findMatchingValidDecl(decl);
-        };
-
         CompilerState.prototype.updateFile = function (compiler, fileName) {
             var document = this.compiler.getDocument(fileName);
 
@@ -61504,7 +61498,7 @@ var Services;
         };
 
         CompilerState.prototype.getDocCommentsOfDecl = function (decl) {
-            var ast = this.compiler.semanticInfoChain.getASTForDecl(decl);
+            var ast = decl.ast();
 
             if (ast && (ast.nodeType() != 20 /* ModuleDeclaration */ || decl.kind != 1024 /* Variable */)) {
                 return ast.docComments();
@@ -63302,7 +63296,7 @@ var Services;
                 var decl = entry.decl;
 
                 if (decl.fileName() === TypeScript.switchToForwardSlashes(fileName) && this.compilerState.getScriptVersion(fileName) !== this.activeCompletionSession.version) {
-                    decl = this.compilerState.findMatchingValidDecl(decl)[0];
+                    decl = this.tryFindDeclFromPreviousCompilerVersion(decl);
 
                     if (decl) {
                         var declDisplaylName = Services.CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
@@ -63348,6 +63342,52 @@ var Services;
                 fullSymbolName: entry.fullSymbolName,
                 docComment: entry.docComment
             };
+        };
+
+        LanguageService.prototype.tryFindDeclFromPreviousCompilerVersion = function (invalidatedDecl) {
+            var fileName = invalidatedDecl.fileName();
+
+            var declsInPath = [];
+            var current = invalidatedDecl;
+            while (current) {
+                if (current.kind !== 1 /* Script */) {
+                    declsInPath.unshift(current);
+                }
+
+                current = current.getParentDecl();
+            }
+
+            var topLevelDecl = this.compilerState.compiler.topLevelDecl(fileName);
+            if (!topLevelDecl) {
+                return null;
+            }
+
+            var declsToSearch = [topLevelDecl];
+            var foundDecls = [];
+            var keepSearching = (invalidatedDecl.kind & 4 /* Container */) || (invalidatedDecl.kind & 16 /* Interface */) || (invalidatedDecl.kind & 8 /* Class */) || (invalidatedDecl.kind & 64 /* Enum */);
+
+            for (var i = 0; i < declsInPath.length; i++) {
+                var declInPath = declsInPath[i];
+                var decls = [];
+
+                for (var j = 0; j < declsToSearch.length; j++) {
+                    foundDecls = declsToSearch[j].searchChildDecls(declInPath.name, declInPath.kind);
+
+                    decls.push.apply(decls, foundDecls);
+
+                    if (foundDecls.length && !keepSearching) {
+                        break;
+                    }
+                }
+
+                declsToSearch = decls;
+
+                if (declsToSearch.length == 0) {
+                    break;
+                }
+            }
+
+            return declsToSearch.length === 0 ? null : declsToSearch[0];
         };
 
         LanguageService.prototype.isLocal = function (symbol) {
