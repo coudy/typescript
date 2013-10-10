@@ -39,6 +39,10 @@ module Services {
             });
         }
 
+        public refresh(): void {
+            // No-op.  Only kept around for compatability with the interface we shipped.
+        }
+
         private getSymbolInfoAtPosition(fileName: string, pos: number, requireName: boolean): { symbol: TypeScript.PullSymbol; containingASTOpt: TypeScript.AST } {
             var document = this.compilerState.getDocument(fileName);
             var script = document.script();

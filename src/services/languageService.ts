@@ -38,6 +38,9 @@ module Services {
     // with a language service host instance
     //
     export interface ILanguageService {
+        // Note: refresh is a no-op now.  It is only around for back compat purposes.
+        refresh(): void;
+
         getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[];
         getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[];
 

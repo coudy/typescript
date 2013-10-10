@@ -60,6 +60,10 @@ module Services {
             this.diagnostics.log(content);
         }
 
+        public refresh(): void {
+            this.internal.refresh();
+        }
+
         public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
 
             var args = "fileName: " + this.stringify(fileName);
