@@ -119,7 +119,6 @@ module TypeScript {
     export class TypeScriptCompiler {
         private resolver: PullTypeResolver = null;
         private semanticInfoChain: SemanticInfoChain = null;
-        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         public emitOptions: EmitOptions;
 
@@ -131,7 +130,7 @@ module TypeScript {
 
         public getDocument(fileName: string): Document {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            return this.fileNameToDocument.lookup(fileName);
+            return this.semanticInfoChain.getDocument(fileName);
         }
 
         public addFile(fileName: string,
@@ -146,9 +145,8 @@ module TypeScript {
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
             var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
-            this.fileNameToDocument.addOrUpdate(fileName, document);
 
-            this.semanticInfoChain.addScript(document.script);
+            this.semanticInfoChain.addDocument(document);
 
             // TODO: we should not have to create a resolver here.
             this.resolver = new PullTypeResolver(
@@ -161,11 +159,9 @@ module TypeScript {
             var document = this.getDocument(fileName);
             var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);
 
-            this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
-
             // Note: the semantic info chain will recognize that this is a replacement of an
             // existing script, and will handle it appropriately.
-            this.semanticInfoChain.addScript(updatedDocument.script);
+            this.semanticInfoChain.addDocument(updatedDocument);
             
             // TODO: we should not have to create a resolver here.
             this.resolver = new PullTypeResolver(
@@ -174,15 +170,14 @@ module TypeScript {
 
         public removeFile(fileName: string): void {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.fileNameToDocument.remove(fileName);
-            this.semanticInfoChain.removeScript(fileName);
+            this.semanticInfoChain.removeDocument(fileName);
         }
 
         private isDynamicModuleCompilation(): boolean {
             var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
-                var script = document.script;
+                var script = document.script();
                 if (!script.isDeclareFile() && script.isExternalModule) {
                     return true;
                 }
@@ -198,7 +193,7 @@ module TypeScript {
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileNames[i]);
-                var script = document.script;
+                var script = document.script();
 
                 if (!script.isDeclareFile()) {
                     var fileComponents = filePathComponents(fileName);
@@ -296,7 +291,7 @@ module TypeScript {
                 var fileNames = this.fileNames();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
-                    if (document.script.isExternalModule) {
+                    if (document.script().isExternalModule) {
                         // Dynamic module never contributes to the single file
                         continue;
                     }
@@ -332,7 +327,7 @@ module TypeScript {
         }
 
         public _mustEmitDocumentToSingleFile(document: Document): boolean {
-            return this.emitOptions.outputMany || document.script.isExternalModule;
+            return this.emitOptions.outputMany || document.script().isExternalModule;
         }
 
         // Does the actual work of emittin the declarations from the provided document into the
@@ -342,7 +337,7 @@ module TypeScript {
             document: Document,
             declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
 
-            var script = document.script;
+            var script = document.script();
             Debug.assert(this._shouldEmitDeclarations(script));
 
             if (declarationEmitter) {
@@ -362,7 +357,7 @@ module TypeScript {
             onSingleFileEmitComplete: (files: OutputFile) => void,
             sharedEmitter: DeclarationEmitter): DeclarationEmitter {
 
-            if (this._shouldEmitDeclarations(document.script)) {
+            if (this._shouldEmitDeclarations(document.script())) {
                 if (this._mustEmitDocumentToSingleFile(document)) {
                     var singleEmitter = this.emitDocumentDeclarationsWorker(resolvePath, document);
                     if (singleEmitter) {
@@ -455,7 +450,7 @@ module TypeScript {
         private emitDocumentWorker(resolvePath: (path: string) => string,
                                   document: Document,
                                   emitter?: Emitter): Emitter {
-            var script = document.script;
+            var script = document.script();
             Debug.assert(this._shouldEmit(script));
 
             var typeScriptFileName = document.fileName;
@@ -490,7 +485,7 @@ module TypeScript {
             sharedEmitter: Emitter): Emitter {
 
             // Emitting module or multiple files, always goes to single file
-            if (this._shouldEmit(document.script)) {
+            if (this._shouldEmit(document.script())) {
                 if (this._mustEmitDocumentToSingleFile(document)) {
                     // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
                     var singleEmitter = this.emitDocumentWorker(resolvePath, document);
@@ -592,18 +587,18 @@ module TypeScript {
             return this.getDocument(fileName).syntaxTree();
         }
         private getScript(fileName: string): Script {
-            return this.getDocument(fileName).script;
+            return this.getDocument(fileName).script();
         }
 
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
             var document = this.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             var startTime = (new Date()).getTime();
             PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
-                    var endTime = (new Date()).getTime();
+            var endTime = (new Date()).getTime();
 
             typeCheckTime += endTime - startTime;
 
@@ -678,7 +673,7 @@ module TypeScript {
             // find the enclosing decl
             var declStack: PullDecl[] = [];
             var resultASTs: AST[] = [];
-            var script = document.script;
+            var script = document.script();
             var scriptName = document.fileName;
 
             var lastDeclAST: AST = null;
@@ -1423,7 +1418,7 @@ module TypeScript {
         }
 
         public fileNames(): string[] {
-            return this.fileNameToDocument.getAllKeys();
+            return this.semanticInfoChain.fileNames();
         }
 
         public topLevelDecl(fileName: string): PullDecl {

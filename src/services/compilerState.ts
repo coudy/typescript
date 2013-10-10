@@ -126,7 +126,7 @@ module Services {
         }
 
         public getScript(fileName: string): TypeScript.Script {
-            return this.compiler.getDocument(fileName).script;
+            return this.compiler.getDocument(fileName).script();
         }
 
         public getScriptVersion(fileName: string) {
