@@ -98,11 +98,21 @@ module TypeScript {
 
     // Represents the results of the last "pull" on the compiler when using the streaming
     // 'compile' method.  The compile result for a single pull can have diagnostics (if 
-    // something went wrong), or possibly OutputFiles that need to get written.  It will 
-    // never have both.
+    // something went wrong), and/or OutputFiles that need to get written.
     export class CompileResult {
-        constructor(public diagnostics: TypeScript.Diagnostic[],
-                    public outputFiles: OutputFile[]) {
+        public diagnostics: Diagnostic[] = [];
+        public outputFiles: OutputFile[] = [];
+
+        public static fromDiagnostics(diagnostics: Diagnostic[]): CompileResult {
+            var result = new CompileResult();
+            result.diagnostics = diagnostics;
+            return result;
+        }
+
+        public static fromOutputFiles(outputFiles: OutputFile[]): CompileResult {
+            var result = new CompileResult();
+            result.outputFiles = outputFiles;
+            return result;
         }
     }
 
@@ -1527,7 +1537,7 @@ module TypeScript {
                     this.hadSyntacticDiagnostics = true;
                 }
 
-                this._current = new CompileResult(diagnostics, null);
+                this._current = CompileResult.fromDiagnostics(diagnostics);
             }
 
             return true;
@@ -1547,7 +1557,7 @@ module TypeScript {
                     this.hadSemanticDiagnostics = true;
                 }
 
-                this._current = new CompileResult(diagnostics, null);
+                this._current = CompileResult.fromDiagnostics(diagnostics);
             }
 
             return true;
@@ -1562,7 +1572,7 @@ module TypeScript {
                     this.hadEmitDiagnostics = true;
                 }
 
-                this._current = new CompileResult([diagnostic], null);
+                this._current = CompileResult.fromDiagnostics([diagnostic]);
             }
 
             return true;
@@ -1584,7 +1594,7 @@ module TypeScript {
                 // shared emitter (and we'll take care of it after all the files are done.
                 this._sharedEmitter = this.compiler._emitDocument(
                     this.resolvePath, document,
-                    outputFiles => { this._current = new CompileResult(null, outputFiles) },
+                    outputFiles => { this._current = CompileResult.fromOutputFiles(outputFiles) },
                     this._sharedEmitter);
                 return true;
             }
@@ -1593,7 +1603,7 @@ module TypeScript {
             // emitter set up.  Then add the outputs of that emitter to the results.
             if (this.index === this.fileNames.length && this._sharedEmitter) {
                 // Collect shared emit result.
-                this._current = new CompileResult(null, this._sharedEmitter.getOutputFiles());
+                this._current = CompileResult.fromOutputFiles(this._sharedEmitter.getOutputFiles());
             }
 
             return true;
@@ -1617,16 +1627,15 @@ module TypeScript {
 
                 this._sharedDeclarationEmitter = this.compiler._emitDocumentDeclarations(
                     this.resolvePath, document,
-                    file => {
-                        this._current = new CompileResult(null, [file]);
-                    }, this._sharedDeclarationEmitter);
+                    file => { this._current = CompileResult.fromOutputFiles([file]); },
+                    this._sharedDeclarationEmitter);
                 return true;
             }
 
             // If we've moved past all the files, and we have a multi-input->single-output
             // emitter set up.  Then add the outputs of that emitter to the results.
             if (this.index === this.fileNames.length && this._sharedDeclarationEmitter) {
-                this._current = new CompileResult(null, [this._sharedDeclarationEmitter.getOutputFile()]);
+                this._current = CompileResult.fromOutputFiles([this._sharedDeclarationEmitter.getOutputFile()]);
             }
 
             return true;

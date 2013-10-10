@@ -87,24 +87,14 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
             }
         }
 
-        for (var i = compiler.compile((path: string) => IO.resolvePath(path)); i.moveNext(); ) {
+        for (var i = compiler.compile((path: string) => IO.resolvePath(path)); i.moveNext();) {
             var result = i.current();
 
-            if (result.diagnostics) {
-                TypeScript.Debug.assert(result.diagnostics.length > 0);
-                result.diagnostics.forEach(d => this.addDiagnostic(d));
-            }
-            else {
-                TypeScript.Debug.assert(result.outputFiles);
-                result.outputFiles.forEach(o => {
-                    if (o.fileType === TypeScript.OutputFileType.Declaration) {
-                        writeDeclareFile(o.name, o.text, o.writeByteOrderMark);
-                    }
-                    else {
-                        writeEmitFile(o.name, o.text, o.writeByteOrderMark);
-                    }
-                });
-            }
+            result.diagnostics.forEach(d => this.addDiagnostic(d));
+            result.outputFiles.forEach(o => {
+                var write = o.fileType === TypeScript.OutputFileType.Declaration ? writeDeclareFile : writeEmitFile;
+                write(o.name, o.text, o.writeByteOrderMark);
+            });
         }
 
         if (this.errout) {

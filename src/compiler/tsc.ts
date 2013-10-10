@@ -188,15 +188,9 @@ module TypeScript {
             for (var it = compiler.compile((path: string) => this.resolvePath(path)); it.moveNext();) {
                 var result = it.current();
 
-                if (result.diagnostics) {
-                    Debug.assert(result.diagnostics.length > 0);
-                    result.diagnostics.forEach(d => this.addDiagnostic(d));
-                }
-                else {
-                    Debug.assert(result.outputFiles && result.outputFiles.length > 0);
-                    if (!this.tryWriteOutputFiles(result.outputFiles)) {
-                        return;
-                    }
+                result.diagnostics.forEach(d => this.addDiagnostic(d));
+                if (!this.tryWriteOutputFiles(result.outputFiles)) {
+                    return;
                 }
             }
         }
