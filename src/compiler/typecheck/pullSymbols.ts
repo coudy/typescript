@@ -727,47 +727,6 @@ module TypeScript {
         }
 
         // GTODO
-        public mimicSignature(signature: PullSignatureSymbol, resolver: PullTypeResolver) {
-            // mimic type parameters
-            var typeParameters = signature.getTypeParameters();
-            var typeParameter: PullTypeParameterSymbol;
-
-            if (typeParameters) {
-                for (var i = 0; i < typeParameters.length; i++) {
-                    //typeParameter = new PullTypeParameterSymbol(typeParameters[i].getName());
-                    //typeParameter.addDeclaration(typeParameters[i].getDeclarations()[0]);
-                    this.addTypeParameter(typeParameters[i]);
-                }
-            }
-
-            // mimic paremeteres (optionality, varargs)
-            var parameters = signature.parameters;
-            var parameter: PullSymbol;
-
-            if (parameters) {
-                for (var j = 0; j < parameters.length; j++) {
-                    parameter = new PullSymbol(parameters[j].name, PullElementKind.Parameter);
-                    parameter.setRootSymbol(parameters[j]);
-                    //parameter.addDeclaration(parameters[j].getDeclarations()[0]);
-                    if (parameters[j].isOptional) {
-                        parameter.isOptional = true;
-                    }
-                    if (parameters[j].isVarArg) {
-                        parameter.isVarArg = true;
-                        this.hasVarArgs = true;
-                    }
-                    this.addParameter(parameter);
-                }
-            }
-
-            // Don't set the return type, since that will just lead to redundant
-            // calls to setReturnType when we re-resolve the signature for
-            // specialization
-
-            var returnType = signature.returnType;
-        }
-
-        // GTODO
         public isFixed(): boolean {
 
             if (!this.isGeneric()) {
@@ -1382,42 +1341,6 @@ module TypeScript {
 
         // GTODO
         public isFixed(): boolean {
-
-            if (!this.isGeneric()) {
-                return true;
-            }
-
-            if (this._typeParameters && this._typeArguments) {
-                if (!this._typeArguments.length || this._typeArguments.length < this._typeParameters.length) {
-                    return false;
-                }
-
-                for (var i = 0; i < this._typeArguments.length; i++) {
-                    if (!this._typeArguments[i].isFixed()) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-            else if (this._hasGenericMember) {
-                var members = this.getMembers();
-                var memberType: PullTypeSymbol = null;
-
-                for (var i = 0; i < members.length; i++) {
-                    memberType = members[i].type;
-
-                    if (memberType && !memberType.isFixed()) {
-                        return false;
-                    }
-                }
-
-                var signatureIsFixed = (sig: PullSignatureSymbol) => sig.isFixed();
-
-                return ArrayUtilities.all(this.getCallSignatures(/*collectBaseSignatures*/ false), signatureIsFixed)
-                    && ArrayUtilities.all(this.getConstructSignatures(/*collectBaseSignatures*/ false), signatureIsFixed)
-                    && ArrayUtilities.all(this.getIndexSignatures(/*collectBaseSignatures*/ false), signatureIsFixed);
-            }
 
             return false;
         }
