@@ -1058,7 +1058,9 @@ module Services {
                 ? TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, resolver, enclosingScopeSymbol)
                 : symbol.getTypeNameEx(resolver, enclosingScopeSymbol, /*useConstraintInName*/ true);
             var kind = this.mapPullElementKind(symbol.kind, symbol, !_isCallExpression, _isCallExpression, isConstructorCall);
-            var docComment = this.compilerState.getDocComments(candidateSignature || symbol, !_isCallExpression);
+
+            var docCommentSymbol = candidateSignature || symbol;
+            var docComment = docCommentSymbol.docComments(!_isCallExpression);
             var symbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
             var minChar = ast ? ast.minChar : -1;
             var limChar = ast ? ast.limChar : -1;
@@ -1227,7 +1229,7 @@ module Services {
                         symbolForDocComments = type.getCallSignatures()[0];
                     }
 
-                    var docComments = this.compilerState.getDocComments(symbolForDocComments, true);
+                    var docComments = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
 
                     entry = new ResolvedCompletionEntry(symbolDisplayName, kindName, kindModifiersName, typeName, fullSymbolName, docComments);
                 }
@@ -1327,7 +1329,7 @@ module Services {
                         symbolForDocComments = type.getCallSignatures()[0];
                     }
 
-                    var docComment = this.compilerState.getDocComments(symbolForDocComments, true);
+                    var docComment = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
 
                     // Store the information for next lookup
                     (<DeclReferenceCompletionEntry>entry).resolve(typeName, fullSymbolName, docComment);
