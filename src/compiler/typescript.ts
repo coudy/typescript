@@ -350,7 +350,7 @@ module TypeScript {
             resolvePath: (path: string) => string,
             document: Document,
             onSingleFileEmitComplete: (files: OutputFile) => void,
-            sharedEmitter?: DeclarationEmitter): DeclarationEmitter {
+            sharedEmitter: DeclarationEmitter): DeclarationEmitter {
 
             if (this._shouldEmitDeclarations(document.script)) {
                 if (this._mustEmitDocumentToSingleFile(document)) {
@@ -416,7 +416,7 @@ module TypeScript {
             // Emitting module or multiple files, always goes to single file
             if (this._mustEmitDocumentToSingleFile(document)) {
                 this._emitDocumentDeclarations(resolvePath, document,
-                    file => emitOutput.outputFiles.push(file));
+                    file => emitOutput.outputFiles.push(file), /*sharedEmitter:*/ null);
                 return emitOutput;
             }
             else {
@@ -477,7 +477,7 @@ module TypeScript {
         public _emitDocument(resolvePath: (path: string) => string,
             document: Document,
             onSingleFileEmitComplete: (files: OutputFile[]) => void,
-            sharedEmitter?: Emitter): Emitter {
+            sharedEmitter: Emitter): Emitter {
 
             // Emitting module or multiple files, always goes to single file
             if (this._shouldEmit(document.script)) {
@@ -547,7 +547,7 @@ module TypeScript {
             // Emitting module or multiple files, always goes to single file
             if (this._mustEmitDocumentToSingleFile(document)) {
                 this._emitDocument(resolvePath, document,
-                    files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files));
+                    files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files), /*sharedEmitter:*/ null);
                 return emitOutput;
             }
             else {
