@@ -10407,6 +10407,8 @@ module TypeScript {
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
 
             if (resolver.canTypeCheckAST(script, context)) {
+                PullTypeResolver.typeCheckCallBacks.length = 0;
+
                 resolver.resolveAST(script, /*inContextuallyTypedAssignment:*/ false, scriptDecl, context);
                 resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
