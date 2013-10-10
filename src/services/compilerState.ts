@@ -111,22 +111,6 @@ module Services {
             return this._compilationSettings;
         }
 
-        public getHostFileName(fileName: string) {
-            return this.hostCache.getHostFileName(fileName);
-        }
-
-        public getFileNames(): string[] {
-            return this.compiler.fileNames();
-        }
-
-        public getScript(fileName: string): TypeScript.Script {
-            return this.compiler.getDocument(fileName).script();
-        }
-
-        public getScriptVersion(fileName: string) {
-            return this.hostCache.getVersion(fileName);
-        }
-
         private addFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             compiler.addFile(fileName,
                 this.hostCache.getScriptSnapshot(fileName),
@@ -234,22 +218,28 @@ module Services {
             }
         }
 
-        public getDocument(fileName: string): TypeScript.Document {
-            return this.compiler.getDocument(fileName);
-        }
+        private updateFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
+            var document: TypeScript.Document = this.compiler.getDocument(fileName);
 
-        public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
-            return this.compiler.getSyntacticDiagnostics(TypeScript.switchToForwardSlashes(fileName));
-        }
+            //
+            // If the document is the same, assume no update
+            //
+            var version = this.hostCache.getVersion(fileName);
+            var isOpen = this.hostCache.isOpen(fileName);
+            if (document.version === version && document.isOpen === isOpen) {
+                return;
+            }
 
-        public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[]{
-            return this.compiler.getSemanticDiagnostics(TypeScript.switchToForwardSlashes(fileName));
+            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, document.version);
+            compiler.updateFile(fileName,
+                this.hostCache.getScriptSnapshot(fileName),
+                version, isOpen, textChangeRange);
         }
 
         private getAllSyntacticDiagnostics(): TypeScript.Diagnostic[]{
             var diagnostics: TypeScript.Diagnostic[] = [];
 
-            this.compiler.fileNames().map(fileName =>
+            this.compiler.fileNames().forEach(fileName =>
                 diagnostics.push.apply(diagnostics, this.compiler.getSyntacticDiagnostics(fileName)));
 
             return diagnostics;
@@ -270,7 +260,9 @@ module Services {
             var outputMany = this.compiler.emitOptions.outputMany;
 
             // Check for syntactic errors
-            var syntacticDiagnostics = outputMany ? this.getSyntacticDiagnostics(fileName) : this.getAllSyntacticDiagnostics();
+            var syntacticDiagnostics = outputMany
+                ? this.getSyntacticDiagnostics(fileName)
+                : this.getAllSyntacticDiagnostics();
             if (this.containErrors(syntacticDiagnostics)) {
                 // This file has at least one syntactic error, return and do not emit code.
                 return new TypeScript.EmitOutput();
@@ -318,13 +310,38 @@ module Services {
             return scriptSnapshot.getTextChangeRangeSinceVersion(lastKnownVersion);
         }
 
+        // Methods that defer to the host cache to get the result.
+
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
             return this.hostCache.getScriptSnapshot(fileName);
         }
 
-        //
-        // New Pull stuff
-        //
+        public getHostFileName(fileName: string) {
+            return this.hostCache.getHostFileName(fileName);
+        }
+
+        public getScriptVersion(fileName: string) {
+            return this.hostCache.getVersion(fileName);
+        }
+
+        // Methods that defer to the compiler to get the result.
+
+        public getFileNames(): string[] {
+            return this.compiler.fileNames();
+        }
+
+        public getDocument(fileName: string): TypeScript.Document {
+            return this.compiler.getDocument(fileName);
+        }
+
+        public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
+            return this.compiler.getSyntacticDiagnostics(fileName);
+        }
+
+        public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
+            return this.compiler.getSemanticDiagnostics(fileName);
+        }
+
         public getDeclarationSymbolInformation(ast: TypeScript.AST, document: TypeScript.Document) {
             return this.compiler.pullGetDeclarationSymbolInformation(ast, document);
         }
@@ -355,24 +372,6 @@ module Services {
 
         public getTopLevelDeclaration(fileName: string) {
             return this.compiler.getTopLevelDeclaration(fileName);
-        }
-
-        private updateFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            var document: TypeScript.Document = this.compiler.getDocument(fileName);
-
-            //
-            // If the document is the same, assume no update
-            //
-            var version = this.hostCache.getVersion(fileName);
-            var isOpen = this.hostCache.isOpen(fileName);
-            if (document.version === version && document.isOpen === isOpen) {
-                return;
-            }
-
-            var textChangeRange = this.getScriptTextChangeRangeSinceVersion(fileName, document.version);
-            compiler.updateFile(fileName,
-                this.hostCache.getScriptSnapshot(fileName),
-                version, isOpen, textChangeRange);
         }
 
         public getDeclForAST(ast: TypeScript.AST): TypeScript.PullDecl {

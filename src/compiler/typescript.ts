@@ -577,6 +577,7 @@ module TypeScript {
         private getSyntaxTree(fileName: string): SyntaxTree {
             return this.getDocument(fileName).syntaxTree();
         }
+
         private getScript(fileName: string): Script {
             return this.getDocument(fileName).script();
         }
