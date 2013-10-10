@@ -174,11 +174,6 @@ module Services {
             return null;
         }
 
-        //public minimalRefresh(): void {
-        //    // Reset the cache at start of every refresh
-        //    this.hostCache = new HostCache(this.host);
-        //}
-
         public synchronizeHostData(updateCompiler: boolean): void {
             // Reset the cache at start of every refresh
             this.hostCache = new HostCache(this.host);

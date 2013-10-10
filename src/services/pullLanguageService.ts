@@ -33,12 +33,6 @@ module Services {
             });
         }
 
-        private minimalRefresh(): void {
-            TypeScript.timeFunction(this.logger, "minimalRefresh()", () => {
-                this.compilerState.synchronizeHostData(/*updateCompiler:*/ false);
-            });
-        }
-
         public refresh(): void {
             // No-op.  Only kept around for compatability with the interface we shipped.
         }
@@ -1614,7 +1608,7 @@ module Services {
 
         public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxtree = this.getSyntaxTreeInternal(fileName);
             return Services.Breakpoints.getBreakpointLocation(syntaxtree, pos);
@@ -1622,7 +1616,7 @@ module Services {
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1631,7 +1625,7 @@ module Services {
 
         public getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1640,7 +1634,7 @@ module Services {
 
         public getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1649,7 +1643,7 @@ module Services {
 
         public getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1689,7 +1683,7 @@ module Services {
 
         public getOutliningRegions(fileName: string): TypeScript.TextSpan[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTree(fileName);
 
@@ -1701,7 +1695,7 @@ module Services {
         // Return "null" in case the smart indent cannot be determined.
         public getIndentationAtPosition(fileName: string, position: number, editorOptions: EditorOptions): number {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTree(fileName);
 
@@ -1718,7 +1712,7 @@ module Services {
         // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
 
@@ -1727,7 +1721,7 @@ module Services {
 
         public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
             var items: NavigateToItem[] = [];
@@ -1738,7 +1732,7 @@ module Services {
 
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             return this.getSyntaxTreeInternal(fileName);
         }
