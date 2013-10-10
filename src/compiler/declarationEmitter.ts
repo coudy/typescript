@@ -19,7 +19,7 @@ module TypeScript {
     export class TextWriter {
         private contents = "";
         public onNewLine = true;
-        constructor(private name: string, private writeByteOrderMark: boolean) {
+        constructor(private name: string, private writeByteOrderMark: boolean, private outputFileType: OutputFileType) {
         }
 
         public Write(s: string) {
@@ -37,7 +37,7 @@ module TypeScript {
         }
 
         public getOutputFile(): OutputFile {
-            return new OutputFile(this.name, this.writeByteOrderMark, this.contents);
+            return new OutputFile(this.name, this.writeByteOrderMark, this.contents, this.outputFileType);
         }
     }
 
@@ -52,7 +52,7 @@ module TypeScript {
                     private compiler: TypeScriptCompiler,
                     private semanticInfoChain: SemanticInfoChain,
                     private resolvePath: (path: string) => string) {
-            this.declFile = new TextWriter(emittingFileName, this.document.byteOrderMark !== ByteOrderMark.None);
+            this.declFile = new TextWriter(emittingFileName, this.document.byteOrderMark !== ByteOrderMark.None, OutputFileType.Declaration);
         }
 
         public getOutputFile(): OutputFile {

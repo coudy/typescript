@@ -82,10 +82,17 @@ module TypeScript {
         public diagnostics: TypeScript.Diagnostic[] = [];
     }
 
+    export enum OutputFileType {
+        JavaScript,
+        SourceMap,
+        Declaration
+    }
+
     export class OutputFile {
         constructor(public name: string,
             public writeByteOrderMark: boolean,
-            public text: string) {
+            public text: string,
+            public fileType: OutputFileType) {
         }
     }
 
@@ -444,13 +451,13 @@ module TypeScript {
             var typeScriptFileName = document.fileName;
             if (!emitter) {
                 var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
-                var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
+                var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document), OutputFileType.JavaScript);
 
                 emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
 
                 if (this.settings.mapSourceFiles) {
                     // We always create map files next to the jsFiles
-                    var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
+                    var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false, OutputFileType.SourceMap); 
                     emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, resolvePath);
                 }
             }
