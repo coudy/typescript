@@ -960,6 +960,7 @@ module TypeScript {
 
             var typeArgs = symbol.isType() ? (<PullTypeSymbol>symbol).getTypeArguments() : null;
 
+            // GTODO: Is this code still relevant?
             if (typeArgs && typeArgs.length) {
                 var typeParameters = (<PullTypeSymbol>symbol).getTypeParameters();
                 var typeCache: any = {};
@@ -971,7 +972,7 @@ module TypeScript {
                 context.pushTypeSpecializationCache(typeCache);
                 var rootType = getRootType(symbol.type);
 
-                var specializedSymbol = specializeType(rootType, typeArgs, this, context);
+                var specializedSymbol = this.createInstantiatedType(rootType, typeArgs);
 
                 context.popTypeSpecializationCache();
 
