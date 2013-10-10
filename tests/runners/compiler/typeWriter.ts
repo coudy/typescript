@@ -34,8 +34,6 @@ class TypeWriterWalker extends TypeScript.PositionTrackingWalker {
 
         this.document = compiler.getDocument(filename);
         this.syntaxTree = this.document.syntaxTree();
-
-        compiler.setUnit(filename);
     }
 
     public run() {

@@ -117,7 +117,6 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        private resolver: PullTypeResolver = null;
         private semanticInfoChain: SemanticInfoChain = null;
 
         public emitOptions: EmitOptions;
@@ -147,10 +146,6 @@ module TypeScript {
             var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
 
             this.semanticInfoChain.addDocument(document);
-
-            // TODO: we should not have to create a resolver here.
-            this.resolver = new PullTypeResolver(
-                this.settings, this.semanticInfoChain, fileName);
         }
 
         public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): void {
@@ -162,10 +157,6 @@ module TypeScript {
             // Note: the semantic info chain will recognize that this is a replacement of an
             // existing script, and will handle it appropriately.
             this.semanticInfoChain.addDocument(updatedDocument);
-            
-            // TODO: we should not have to create a resolver here.
-            this.resolver = new PullTypeResolver(
-                this.settings, this.semanticInfoChain, fileName);
         }
 
         public removeFile(fileName: string): void {
@@ -643,30 +634,23 @@ module TypeScript {
             }
         }
 
-        public setUnit(unitPath: string) {
-            if (!this.resolver) {
-                this.resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, unitPath);
-            }
-
-            this.resolver.setUnitPath(unitPath);
-        }
-
         public getSymbolOfDeclaration(decl: PullDecl): PullSymbol {
             if (!decl) {
                 return null;
             }
 
-            var ast = this.resolver.getASTForDecl(decl);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, decl.fileName());
+            var ast = this.semanticInfoChain.getASTForDecl(decl);
             if (!ast) {
                 return null;
             }
 
-            var enclosingDecl = this.resolver.getEnclosingDecl(decl);
+            var enclosingDecl = resolver.getEnclosingDecl(decl);
             if (ast.nodeType() === NodeType.Member) {
                 return this.getSymbolOfDeclaration(enclosingDecl);
             }
 
-            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(this.resolver));
+            return resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(resolver));
         }
 
         public getTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
@@ -688,7 +672,9 @@ module TypeScript {
             var objectLitAST: ObjectLiteralExpression = null;
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: CastExpression[] = [];
-            var resolutionContext = new PullTypeResolutionContext(this.resolver);
+
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolutionContext = new PullTypeResolutionContext(resolver);
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
@@ -740,8 +726,6 @@ module TypeScript {
 
             if (resultASTs.length) {
 
-                this.setUnit(scriptName);
-
                 foundAST = resultASTs[resultASTs.length - 1];
 
                 // Check if is a name of a container
@@ -782,7 +766,7 @@ module TypeScript {
                 var funcDecl: FunctionDeclaration = null;
                 if (lastDeclAST === foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
-                    this.resolver.resolveDeclaredSymbol(symbol, resolutionContext);
+                    resolver.resolveDeclaredSymbol(symbol, resolutionContext);
                     symbol.setUnresolved();
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
                     if (foundAST.nodeType() === NodeType.FunctionDeclaration ||
@@ -850,7 +834,7 @@ module TypeScript {
                             assigningAST = declarationInitASTs[i];
                             inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
-                            this.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
+                            resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
                             var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                             if (varSymbol && inContextuallyTypedAssignment) {
@@ -859,31 +843,31 @@ module TypeScript {
                             }
 
                             if (assigningAST.init) {
-                                this.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                         }
                     }
 
                     if (typeAssertionASTs.length) {
                         for (var i = 0; i < typeAssertionASTs.length; i++) {
-                            this.resolver.resolveAST(typeAssertionASTs[i], inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                            resolver.resolveAST(typeAssertionASTs[i], inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         }
                     }
 
                     if (asgAST) {
-                        this.resolver.resolveAST(asgAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(asgAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
 
                     if (objectLitAST) {
-                        this.resolver.resolveAST(objectLitAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(objectLitAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
 
                     if (lambdaAST) {
-                        this.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
                         enclosingDecl = this.semanticInfoChain.getDeclForAST(lambdaAST);
                     }
 
-                    symbol = this.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                    symbol = resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
                         var isPropertyOrVar = symbol.kind === PullElementKind.Property || symbol.kind === PullElementKind.Variable;
                         var typeSymbol = symbol.type;
@@ -904,9 +888,9 @@ module TypeScript {
 
                             var callResolutionResults = new PullAdditionalCallResolutionData();
                             if (callExpression.nodeType() === NodeType.InvocationExpression) {
-                                this.resolver.resolveInvocationExpression(<InvocationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                resolver.resolveInvocationExpression(<InvocationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                             } else {
-                                this.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                resolver.resolveObjectCreationExpression(<ObjectCreationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                             }
 
                             if (callResolutionResults.candidateSignature) {
@@ -947,7 +931,7 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromAST(ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; inWithBlock: boolean; } {
+        private extractResolutionContextFromAST(resolver: PullTypeResolver, ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; inWithBlock: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 
@@ -956,13 +940,11 @@ module TypeScript {
             var inContextuallyTypedAssignment = false;
             var inWithBlock = false;
 
-            var resolutionContext = new PullTypeResolutionContext(this.resolver);
+            var resolutionContext = new PullTypeResolutionContext(resolver);
 
             if (!ast) {
                 return null;
             }
-
-            this.setUnit(scriptName);
 
             var path = this.getASTPath(ast);
 
@@ -974,13 +956,13 @@ module TypeScript {
                     case NodeType.FunctionDeclaration:
                         // A function expression does not have a decl, so we need to resolve it first to get the decl created.
                         if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                            this.resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
+                            resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         }
 
                         break;
 
                     case NodeType.ArrowFunctionExpression:
-                        this.resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         break;
 
                     case NodeType.VariableDeclarator:
@@ -989,7 +971,7 @@ module TypeScript {
 
                         if (inContextuallyTypedAssignment) {
                             if (propagateContextualTypes) {
-                                this.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
+                                resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
                                 var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                                 var contextualType: PullTypeSymbol = null;
@@ -1000,7 +982,7 @@ module TypeScript {
                                 resolutionContext.pushContextualType(contextualType, false, null);
 
                                 if (assigningAST.init) {
-                                    this.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                    resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                                 }
                             }
                         }
@@ -1018,10 +1000,10 @@ module TypeScript {
                             if ((i + 1 < n) && callExpression.arguments === path[i + 1]) {
                                 var callResolutionResults = new PullAdditionalCallResolutionData();
                                 if (isNew) {
-                                    this.resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                    resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                                 }
                                 else {
-                                    this.resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                    resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                                 }
 
                                 // Find the index in the arguments list
@@ -1043,10 +1025,10 @@ module TypeScript {
                             else {
                                 // Just resolve the call expression
                                 if (isNew) {
-                                    this.resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext);
+                                    resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext);
                                 }
                                 else {
-                                    this.resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext);
+                                    resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext);
                                 }
                             }
 
@@ -1073,7 +1055,7 @@ module TypeScript {
                         if (propagateContextualTypes) {
                             var objectLiteralExpression = <ObjectLiteralExpression>current;
                             var objectLiteralResolutionContext = new PullAdditionalObjectLiteralResolutionData();
-                            this.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
+                            resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
 
                             // find the member in the path
                             var memeberAST = (path[i + 1] && path[i + 1].nodeType() === NodeType.List) ? path[i + 2] : path[i + 1];
@@ -1106,7 +1088,7 @@ module TypeScript {
 
                             if (path[i + 1] && path[i + 1] === assignmentExpression.operand2) {
                                 // propagate the left hand side type as a contextual type
-                                var leftType = this.resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
+                                var leftType = resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
                                 if (leftType) {
                                     inContextuallyTypedAssignment = true;
                                     contextualType = leftType;
@@ -1129,7 +1111,7 @@ module TypeScript {
                                     // The containing function has a type annotation, propagate it as the contextual type
                                     var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
                                     resolutionContext.resolvingTypeReference = true;
-                                    var returnTypeSymbol = this.resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
+                                    var returnTypeSymbol = resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
                                     resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
                                     if (returnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;
@@ -1165,7 +1147,7 @@ module TypeScript {
                         // ObjectType are just like Object Literals are bound when needed, ensure we have a decl, by forcing it to be 
                         // resolved before descending into it.
                         if (typeExpressionNode && typeExpressionNode.nodeType() === NodeType.ObjectType) {
-                            this.resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
+                            resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
                         }
 
                         // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
@@ -1262,13 +1244,14 @@ module TypeScript {
         }
 
         public pullGetSymbolInformationFromAST(ast: AST, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
             ast = context.ast;
-            var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
+            var symbol = resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
             var aliasSymbol = this.semanticInfoChain.getAliasSymbolForAST(ast);
 
             return {
@@ -1294,14 +1277,16 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
             var decl = this.semanticInfoChain.getDeclForAST(ast);
             var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
-            this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
+
+            resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
 
             // we set the symbol as unresolved so as not to interfere with typecheck
             symbol.setUnresolved();
@@ -1322,7 +1307,8 @@ module TypeScript {
 
             var isNew = ast.nodeType() === NodeType.ObjectCreationExpression;
 
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
@@ -1330,10 +1316,10 @@ module TypeScript {
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                this.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.resolver.resolveInvocationExpression(<InvocationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                resolver.resolveInvocationExpression(<InvocationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {
@@ -1347,12 +1333,13 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
-            var symbols = this.resolver.getVisibleMembersFromExpression(ast, context.enclosingDecl, context.resolutionContext);
+            var symbols = resolver.getVisibleMembersFromExpression(ast, context.enclosingDecl, context.resolutionContext);
             if (!symbols) {
                 return null;
             }
@@ -1363,13 +1350,14 @@ module TypeScript {
             };
         }
 
-        public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[] {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ false);
+        public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[]{
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ false);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
-            return this.resolver.getVisibleDecls(context.enclosingDecl);
+            return resolver.getVisibleDecls(context.enclosingDecl);
         }
 
         public pullGetContextualMembersFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
@@ -1378,12 +1366,13 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
-            var members = this.resolver.getVisibleContextSymbols(context.enclosingDecl, context.resolutionContext);
+            var members = resolver.getVisibleContextSymbols(context.enclosingDecl, context.resolutionContext);
 
             return {
                 symbols: members,
@@ -1392,13 +1381,14 @@ module TypeScript {
         }
 
         public pullGetDeclInformation(decl: PullDecl, ast: AST, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
             var symbol = decl.getSymbol();
-            this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
+            resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
             symbol.setUnresolved();
 
             return {
