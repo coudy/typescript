@@ -803,6 +803,10 @@ module TypeScript {
             prototypeDecl.setParentDecl(parentDecl);
             prototypeSymbol.addDeclaration(prototypeDecl);
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
+
+            if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
+                prototypeSymbol.type = this.instantiateTypeToAny(prototypeSymbol.type, new PullTypeResolutionContext(this));
+            }
             prototypeSymbol.isResolved = true;
 
             return prototypeSymbol;
@@ -2317,7 +2321,7 @@ module TypeScript {
 
             if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, typeRef, context)) {
                 context.postError(this.unitPath, typeRef.minChar, typeRef.getLength(), DiagnosticCode.Generic_type_references_must_include_all_type_arguments, null);
-                typeDeclSymbol = this.instantiateTypeToAny(typeDeclSymbol, enclosingDecl, context);
+                typeDeclSymbol = this.instantiateTypeToAny(typeDeclSymbol, context);
             }
 
             // an array of any of the above
@@ -5503,7 +5507,7 @@ module TypeScript {
                     this.checkForStaticMemberAccess(dottedNameAST, lhsType, lhsType, enclosingDecl, context);
 
                     if (lhsType.isGeneric()) {
-                        return this.instantiateTypeToAny(lhsType, enclosingDecl, context);
+                        return this.instantiateTypeToAny(lhsType, context);
                     }
 
                     return lhsType;
@@ -5514,7 +5518,7 @@ module TypeScript {
 
                     if (instanceType) {
                         if (instanceType.isGeneric()) {
-                            instanceType = this.instantiateTypeToAny(instanceType, enclosingDecl, context);
+                            instanceType = this.instantiateTypeToAny(instanceType, context);
                         }
                     }
                     else {
@@ -7798,7 +7802,7 @@ module TypeScript {
                         returnType = this.createInstantiatedType(returnType, typeArgs);
                     }
                     else {
-                        returnType = this.instantiateTypeToAny(returnType, enclosingDecl, context);
+                        returnType = this.instantiateTypeToAny(returnType, context);
                     }
                 }
 
@@ -9151,8 +9155,8 @@ module TypeScript {
 
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
 
-            sourceSig = this.instantiateSignatureToObject(sourceSig, sourceSig.getDeclarations()[0].getParentDecl(), context);
-            targetSig = this.instantiateSignatureToObject(targetSig, targetSig.getDeclarations()[0].getParentDecl(), context);
+            sourceSig = this.instantiateSignatureToObject(sourceSig);
+            targetSig = this.instantiateSignatureToObject(targetSig);
 
             var sourceParameters = sourceSig.parameters;
             var targetParameters = targetSig.parameters;
@@ -9784,19 +9788,21 @@ module TypeScript {
 
             if (parameterType.isTypeParameter()) {
                 if (expressionType.isGeneric() && !expressionType.isFixed() && !expressionType.isTypeParameter()) {
-                    expressionType = this.instantiateTypeToAny(expressionType, enclosingDecl, context);
+                    expressionType = this.instantiateTypeToAny(expressionType, context);
                 }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
             }
             var parameterDeclarations = parameterType.getDeclarations();
             var expressionDeclarations = expressionType.getDeclarations();
+            var anyExpressionType = this.instantiateTypeToAny(expressionType, context);
+            var anyParameterType = this.instantiateTypeToAny(parameterType, context);
             if (!parameterType.isArray() &&
                 parameterDeclarations.length &&
                 expressionDeclarations.length &&
                 !(parameterType.isTypeParameter() || expressionType.isTypeParameter()) &&
                 (parameterDeclarations[0].isEqual(expressionDeclarations[0]) ||
-                (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(expressionType, parameterType, context, null))) &&
+                (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(anyExpressionType, anyParameterType, context, null))) &&
                 expressionType.isGeneric()) {
                 var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
@@ -9827,9 +9833,6 @@ module TypeScript {
             //}
             var prevSpecializingToAny = context.specializingToAny;
             context.specializingToAny = true;
-
-            var anyExpressionType = this.instantiateTypeToAny(expressionType, enclosingDecl, context);
-            var anyParameterType = this.instantiateTypeToAny(parameterType, enclosingDecl, context);
 
             if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
                 context.specializingToAny = prevSpecializingToAny;
@@ -9952,12 +9955,12 @@ module TypeScript {
             this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
         }
 
-        public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
             var prevSpecialize = context.specializingToAny;
 
             context.specializingToAny = true;
 
-            var typeParameters = rootType.getTypeParameters();
+            var typeParameters = typeToSpecialize.getTypeParameters();
 
             if (!typeParameters.length) {
                 return typeToSpecialize;
@@ -9984,7 +9987,7 @@ module TypeScript {
             return type;
         }
 
-        public instantiateSignatureToObject(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
+        public instantiateSignatureToObject(signatureToSpecialize: PullSignatureSymbol): PullSignatureSymbol {
             if (!signatureToSpecialize.cachedObjectSpecialization) {
                 var typeParameters = signatureToSpecialize.getTypeParameters();
 

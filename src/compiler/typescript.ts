@@ -1494,7 +1494,7 @@ module TypeScript {
             var ast = path.ast();
             var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
 
-            if (symbol.isTypeReference()) {
+            if (symbol.isTypeReference() && !(<PullTypeReferenceSymbol>symbol).isGeneric()) {
                 symbol = (<PullTypeReferenceSymbol>symbol).referencedTypeSymbol;
             }
 

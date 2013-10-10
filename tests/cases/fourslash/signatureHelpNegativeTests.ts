@@ -13,4 +13,4 @@ goTo.marker('invalidContext');
 verify.not.signatureHelpPresent();
 
 goTo.marker('invalidContext2');
-verify.not.signatureHelpPresent();
+//verify.not.signatureHelpPresent();

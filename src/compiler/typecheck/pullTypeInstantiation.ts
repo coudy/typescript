@@ -349,6 +349,7 @@ module TypeScript {
         private _instantiatedIndexSignatures: PullSignatureSymbol[] = null;
         private _typeArgumentReferences: PullTypeSymbol[] = null;
         private _instantiatedConstructorMethod: PullSymbol = null;
+        private _instantiatedAssociatedContainerType: PullTypeSymbol = null;
         private _isArray:boolean = undefined;
 
         public isReferencedType: boolean = false;
@@ -698,16 +699,31 @@ module TypeScript {
                 return this.referencedTypeSymbol.getConstructorMethod();
             }
 
-            if (this._instantiatedConstructorMethod) {
-                return this._instantiatedConstructorMethod;
+            if (!this._instantiatedConstructorMethod) {
+                var referencedConstructorMethod = this.referencedTypeSymbol.getConstructorMethod();
+                this._instantiatedConstructorMethod = new PullSymbol(referencedConstructorMethod.name, referencedConstructorMethod.kind);
+                this._instantiatedConstructorMethod.type = PullInstantiatedTypeReferenceSymbol.create(referencedConstructorMethod.type, this._typeParameterArgumentMap);
             }
-
-            var referencedConstructorMethod = this.referencedTypeSymbol.getConstructorMethod();
-            this._instantiatedConstructorMethod = new PullSymbol(referencedConstructorMethod.name, referencedConstructorMethod.kind);
-            this._instantiatedConstructorMethod.type = PullInstantiatedTypeReferenceSymbol.create(referencedConstructorMethod.type, this._typeParameterArgumentMap);
 
 
             return this._instantiatedConstructorMethod;
+        }
+
+        public getAssociatedContainerType(): PullTypeSymbol {
+
+            if (!this.isReferencedType) {
+                return this.referencedTypeSymbol.getAssociatedContainerType();
+            }
+
+            if (!this._instantiatedAssociatedContainerType) {
+                var referencedAssociatedContainerType = this.referencedTypeSymbol.getAssociatedContainerType();
+
+                if (referencedAssociatedContainerType) {
+                    this._instantiatedAssociatedContainerType = PullInstantiatedTypeReferenceSymbol.create(referencedAssociatedContainerType, this._typeParameterArgumentMap);
+                }
+            }
+
+            return this._instantiatedAssociatedContainerType;
         }
 
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
