@@ -911,13 +911,11 @@ module TypeScript {
             }
 
             if (symbol.inResolution) {
-                if (!symbol.currentlyBeingSpecialized()) {
-                    if (!symbol.type && !symbol.isType()) {
-                        symbol.type = this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    return symbol;
+                if (!symbol.type && !symbol.isType()) {
+                    symbol.type = this.semanticInfoChain.anyTypeSymbol;
                 }
+
+                return symbol;
             }
 
             var thisUnit = this.unitPath;

@@ -36,9 +36,6 @@ module TypeScript {
 
         public isVarArg = false;
 
-        // GTODO
-        public isBeingSpecialized = false;
-
         private rootSymbol: PullSymbol = null;
 
         private _parentAccessorSymbol: PullSymbol = null;
@@ -61,7 +58,7 @@ module TypeScript {
             return (this.kind & PullElementKind.SomeSignature) != 0;
         }
 
-        // GTODO
+        // REVIEW: We need to remove this array special-case code
         public isArray() {
             return (this.kind & PullElementKind.Array) != 0;
         }
@@ -187,11 +184,7 @@ module TypeScript {
             return decls.length ? this.getDeclarations()[0].getDisplayName() : this.name;
         }
 
-        // GTODO
         public getIsSpecialized() { return false; }
-        public currentlyBeingSpecialized() { return this.isBeingSpecialized; }
-        public setIsBeingSpecialized() { this.isBeingSpecialized = true; }
-        public setValueIsBeingSpecialized(val: boolean) { this.isBeingSpecialized = val; }
 
         public getRootSymbol() {
             if (!this.rootSymbol) {
@@ -1485,7 +1478,7 @@ module TypeScript {
         public setTypeArguments(typeArgs: PullTypeSymbol[]): void { this._typeArguments = typeArgs; }
 
         public getTypeArgumentsOrTypeParameters(): PullTypeSymbol[] {
-            return this.getIsSpecialized() ? this.getTypeArguments() : this.getTypeParameters();
+            return this.getTypeParameters();
         }
 
         public addCallSignature(callSignature: PullSignatureSymbol): void {
