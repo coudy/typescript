@@ -46,26 +46,26 @@ module Services {
     // set of scripts handled by the host changes.
     //
     export class HostCache {
-        private map: TypeScript.StringHashTable<HostCacheEntry>;
+        private fileNameToEntry: TypeScript.StringHashTable<HostCacheEntry>;
 
         constructor(public host: ILanguageServiceHost) {
             // script id => script index
-            this.map = new TypeScript.StringHashTable<HostCacheEntry>();
+            this.fileNameToEntry = new TypeScript.StringHashTable<HostCacheEntry>();
 
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
-                this.map.add(TypeScript.switchToForwardSlashes(fileName), new HostCacheEntry(
+                this.fileNameToEntry.add(TypeScript.switchToForwardSlashes(fileName), new HostCacheEntry(
                     fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName), this.host.getScriptByteOrderMark(fileName)));
             }
         }
 
         public contains(fileName: string): boolean {
-            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)) !== null;
+            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)) !== null;
         }
 
         public getHostFileName(fileName: string) {
-            var hostCacheEntry = this.map.lookup(TypeScript.switchToForwardSlashes(fileName));
+            var hostCacheEntry = this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName));
             if (hostCacheEntry) {
                 return hostCacheEntry.fileName;
             }
@@ -73,23 +73,23 @@ module Services {
         }
 
         public getFileNames(): string[]{
-            return this.map.getAllKeys();
+            return this.fileNameToEntry.getAllKeys();
         }
 
         public getVersion(fileName: string): number {
-            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).version;
+            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).version;
         }
 
         public isOpen(fileName: string): boolean {
-            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).isOpen;
+            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).isOpen;
         }
 
         public getByteOrderMark(fileName: string): ByteOrderMark {
-            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).byteOrderMark;
+            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).byteOrderMark;
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-            return this.map.lookup(TypeScript.switchToForwardSlashes(fileName)).getScriptSnapshot();
+            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).getScriptSnapshot();
         }
     }
 
