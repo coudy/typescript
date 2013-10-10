@@ -86,8 +86,6 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
             }
         }
 
-        compiler.pullTypeCheck();
-
         var emitterIOHost = {
             writeFile: writeEmitFile,
             directoryExists: IO.directoryExists,

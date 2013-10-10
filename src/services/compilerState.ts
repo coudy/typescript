@@ -168,9 +168,6 @@ module Services {
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 this.addFile(this.compiler, fileNames[i]);
             }
-
-            // Initial typecheck
-            this.compiler.pullTypeCheck();
         }
 
         public getResolver(): TypeScript.PullTypeResolver {
@@ -249,12 +246,7 @@ module Services {
                 }
                 else {
                     this.addFile(this.compiler, fileName);
-                    fileAdded = true;
                 }
-            }
-
-            if (fileAdded) {
-                this.compiler.pullTypeCheck();
             }
         }
 
