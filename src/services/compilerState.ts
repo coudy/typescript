@@ -174,23 +174,20 @@ module Services {
             return null;
         }
 
-        public minimalRefresh(): void {
-            //if (this.compiler === null) {
-            //    this.refresh();
-            //    return;
-            //}
+        //public minimalRefresh(): void {
+        //    // Reset the cache at start of every refresh
+        //    this.hostCache = new HostCache(this.host);
+        //}
 
-            // Reset the cache at start of every refresh
-            this.hostCache = new HostCache(this.host);
-        }
-
-        public refresh(): void {
+        public synchronizeHostData(updateCompiler: boolean): void {
             // Reset the cache at start of every refresh
             this.hostCache = new HostCache(this.host);
 
-            // If full refresh not needed, attempt partial refresh
-            if (!this.fullRefresh()) {
-                this.partialRefresh();
+            if (updateCompiler) {
+                // If full refresh not needed, attempt partial refresh
+                if (!this.fullRefresh()) {
+                    this.partialRefresh();
+                }
             }
         }
 
