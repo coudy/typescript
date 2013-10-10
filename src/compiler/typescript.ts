@@ -559,8 +559,13 @@ module TypeScript {
         // Returns an iterator that will stream compilation results from this compiler.  Syntactic
         // diagnostics will be returned first, then semantic diagnostics, then emit results, then
         // declaration emit results.
-        public compile(resolvePath: (path: string) => string): Iterator<CompileResult> {
-            return new CompilerIterator(this, resolvePath);
+        //
+        // The continueOnDiagnostics flag governs whether or not iteration follows the batch compiler
+        // logic and doesn't perform further analysis once diagnostics are produced.  For example,
+        // in batch compilation nothing is done if there are any syntactic diagnostics.  Clients
+        // can override this if they still want to procede in those cases.
+        public compile(resolvePath: (path: string) => string, continueOnDiagnostics = false): Iterator<CompileResult> {
+            return new CompilerIterator(this, resolvePath, continueOnDiagnostics);
         }
 
         //
@@ -1437,6 +1442,7 @@ module TypeScript {
 
         constructor(private compiler: TypeScriptCompiler,
                     private resolvePath: (path: string) => string,
+                    private continueOnDiagnostics: boolean,
                     startingPhase = CompilerPhase.Syntax) {
             this.fileNames = compiler.fileNames();
             this.compilerPhase = startingPhase;
@@ -1517,7 +1523,10 @@ module TypeScript {
 
             var diagnostics = this.compiler.getSyntacticDiagnostics(fileName);
             if (diagnostics.length) {
-                this.hadSyntacticDiagnostics = true;
+                if (!this.continueOnDiagnostics) {
+                    this.hadSyntacticDiagnostics = true;
+                }
+
                 this._current = new CompileResult(diagnostics, null);
             }
 
@@ -1534,7 +1543,10 @@ module TypeScript {
             var fileName = this.fileNames[this.index];
             var diagnostics = this.compiler.getSemanticDiagnostics(fileName);
             if (diagnostics.length) {
-                this.hadSemanticDiagnostics = true;
+                if (!this.continueOnDiagnostics) {
+                    this.hadSemanticDiagnostics = true;
+                }
+
                 this._current = new CompileResult(diagnostics, null);
             }
 
@@ -1546,7 +1558,10 @@ module TypeScript {
 
             var diagnostic = this.compiler._validateEmitOptions(this.resolvePath);
             if (diagnostic) {
-                this.hadEmitDiagnostics = true;
+                if (!this.continueOnDiagnostics) {
+                    this.hadEmitDiagnostics = true;
+                }
+
                 this._current = new CompileResult([diagnostic], null);
             }
 
