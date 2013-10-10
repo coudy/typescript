@@ -6922,7 +6922,7 @@ module TypeScript {
                 }
 
                 var isAccessor = propertyAssignmentIsAccessor(propertyAssignment);
-                if (!isAccessor) {
+                if (propertyAssignment.nodeType() == NodeType.SimplePropertyAssignment) {
                     var decl = this.getDeclForAST(propertyAssignment);
                     Debug.assert(decl);
 
@@ -6934,8 +6934,16 @@ module TypeScript {
                         memberSymbol = decl.getSymbol();
                     }
                 }
+                else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
+                    var decl = this.getDeclForAST(propertyAssignment);
+                    Debug.assert(decl);
 
-                if (isAccessor) {
+                    var binder = this.semanticInfoChain.getBinder();
+                    binder.bindDeclToPullSymbol(decl);
+                    memberSymbol = decl.getSymbol();
+                }
+                else {
+                    Debug.assert(isAccessor);
                     // Pre-bind the getter and setter so that they are both bound before we resolve accessor declaration.
                     // This happens for the class member case, and we need to mimic that for the object literal case.
                     var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
@@ -6946,13 +6954,6 @@ module TypeScript {
                     binder.bindDeclToPullSymbol(functionDeclaration);
 
                     memberSymbol = objectLiteralTypeSymbol.findMember(assignmentText.memberName);
-                }
-                else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
-                    var decl = this.getDeclForAST(propertyAssignment);
-                    Debug.assert(decl);
-
-                    var binder = this.semanticInfoChain.getBinder();
-                    binder.bindFunctionExpressionToPullSymbol(decl);
                 }
 
                 if (!isUsingExistingSymbol && !isAccessor) {
