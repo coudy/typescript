@@ -575,6 +575,7 @@ module TypeScript {
                             instantiatedMember = new PullSymbol(referencedMember.name, referencedMember.kind);
                             instantiatedMember.setRootSymbol(referencedMember);
                             instantiatedMember.type = instantiateType(referencedMember.type, this._typeParameterArgumentMap);
+                            instantiatedMember.isOptional = referencedMember.isOptional;
                         }
 
                         this._instantiatedMemberNameCache[instantiatedMember.name] = instantiatedMember;
@@ -615,6 +616,8 @@ module TypeScript {
                     }
 
                     memberSymbol.type = instantiateType(referencedMemberSymbol.type, this._typeParameterArgumentMap);
+
+                    memberSymbol.isOptional = referencedMemberSymbol.isOptional;
 
                     this._instantiatedMemberNameCache[memberSymbol.name] = memberSymbol;
                 }
@@ -678,6 +681,7 @@ module TypeScript {
                         //}
 
                         requestedMember.type = instantiateType(referencedMember.type, this._typeParameterArgumentMap);
+                        requestedMember.isOptional = referencedMember.isOptional;
 
                         this._allInstantiatedMemberNameCache[requestedMember.name] = requestedMember;
                         requestedMembers[requestedMembers.length] = requestedMember;

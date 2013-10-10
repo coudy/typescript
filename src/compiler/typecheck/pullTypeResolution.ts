@@ -7709,7 +7709,7 @@ module TypeScript {
                                         }
                                     } else {
                                         for (var j = 0; j < typeParameters.length; j++) {
-                                            typeReplacementMap[typeParameters[i].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                                            typeReplacementMap[typeParameters[j].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
                                         }
                                     }
                                 }
@@ -9957,9 +9957,6 @@ module TypeScript {
 
             context.specializingToAny = true;
 
-            // get the "root" unspecialized type, since even generic types may already be partially specialize
-            var rootType = getRootType(typeToSpecialize);
-
             var typeParameters = rootType.getTypeParameters();
 
             if (!typeParameters.length) {
@@ -9980,7 +9977,7 @@ module TypeScript {
                 }
             }
 
-            var type = this.createInstantiatedType(rootType, typeArguments);
+            var type = this.createInstantiatedType(typeToSpecialize, typeArguments);
 
             context.specializingToAny = prevSpecialize;
 

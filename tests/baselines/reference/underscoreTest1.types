@@ -71,21 +71,21 @@ Line 13 col 11 ArrayLiteralExpression "[[0, 1], [2, 3], [4, 5]]" = number[][]
 Line 13 col 12 ArrayLiteralExpression "[0, 1]" = number[]
 Line 13 col 20 ArrayLiteralExpression "[2, 3]" = number[]
 Line 13 col 28 ArrayLiteralExpression "[4, 5]" = number[]
-Line 14 col 4 IdentifierName "flat" = any[]
-Line 14 col 11 InvocationExpression "_.reduceRight(list, (a, b) => a.concat(b), [])" = any[]
+Line 14 col 4 IdentifierName "flat" = number[]
+Line 14 col 11 InvocationExpression "_.reduceRight(list, (a, b) => a.concat(b), [])" = number[]
 Line 14 col 11 MemberAccessExpression "_.reduceRight" = { <T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T; <T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U; <T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T; <T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U; }
 Line 14 col 11 IdentifierName "_" = Underscore.Static
 Line 14 col 13 IdentifierName "reduceRight" = { <T>(list: T[], iterator: Reducer<T, T>, initialValue?: T, context?: any): T; <T, U>(list: T[], iterator: Reducer<T, U>, initialValue: U, context?: any): U; <T>(list: Dictionary<T>, iterator: Reducer<T, T>, initialValue?: T, context?: any): T; <T, U>(list: Dictionary<T>, iterator: Reducer<T, U>, initialValue: U, context?: any): U; }
 Line 14 col 25 IdentifierName "list" = number[][]
-Line 14 col 31 ParenthesizedArrowFunctionExpression "(a, b) => a.concat(b)" = (a: any[], b: any[]) => any[]
-Line 14 col 32 IdentifierName "a" = any[]
-Line 14 col 35 IdentifierName "b" = any[]
-Line 14 col 41 InvocationExpression "a.concat(b)" = any[]
-Line 14 col 41 MemberAccessExpression "a.concat" = { <U extends T[]>(...items: U[]): any[]; (...items: any[]): any[]; }
-Line 14 col 41 IdentifierName "a" = any[]
-Line 14 col 43 IdentifierName "concat" = { <U extends T[]>(...items: U[]): any[]; (...items: any[]): any[]; }
-Line 14 col 50 IdentifierName "b" = any[]
-Line 14 col 54 ArrayLiteralExpression "[]" = any[]
+Line 14 col 31 ParenthesizedArrowFunctionExpression "(a, b) => a.concat(b)" = (a: number[], b: number[]) => number[]
+Line 14 col 32 IdentifierName "a" = number[]
+Line 14 col 35 IdentifierName "b" = number[]
+Line 14 col 41 InvocationExpression "a.concat(b)" = number[]
+Line 14 col 41 MemberAccessExpression "a.concat" = { <U extends T[]>(...items: U[]): number[]; (...items: number[]): number[]; }
+Line 14 col 41 IdentifierName "a" = number[]
+Line 14 col 43 IdentifierName "concat" = { <U extends T[]>(...items: U[]): number[]; (...items: number[]): number[]; }
+Line 14 col 50 IdentifierName "b" = number[]
+Line 14 col 54 ArrayLiteralExpression "[]" = number[]
 Line 16 col 4 IdentifierName "even" = number
 Line 16 col 11 InvocationExpression "_.find([1, 2, 3, 4, 5, 6], (num) => num % 2 == 0)" = number
 Line 16 col 11 MemberAccessExpression "_.find" = { <T>(list: T[], iterator: Iterator<T, boolean>, context?: any): T; <T>(list: Dictionary<T>, iterator: Iterator<T, boolean>, context?: any): T; }
