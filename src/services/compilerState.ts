@@ -235,8 +235,6 @@ module Services {
         private partialRefresh(): void {
             this.logger.log("Updating files...");
 
-            var fileAdded: boolean = false;
-
             var fileNames = this.host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
