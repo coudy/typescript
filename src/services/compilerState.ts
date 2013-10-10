@@ -95,7 +95,6 @@ module Services {
 
     export class CompilerState {
         private logger: TypeScript.ILogger;
-        private diagnostics: ICompilerDiagnostics;
 
         //
         // State related to compiler instance
@@ -106,11 +105,6 @@ module Services {
 
         constructor(private host: ILanguageServiceHost) {
             this.logger = this.host;
-
-            //
-            // Object for logging user edits into Documents/Diagnostics.txt
-            //
-            this.diagnostics = new CompilerDiagnostics(host);
         }
 
         public compilationSettings() {
