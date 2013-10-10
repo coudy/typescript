@@ -603,8 +603,6 @@ module TypeScript {
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);
             indexParameterSymbol.addDeclaration(indexParamDecl);
-            this.setASTForDecl(indexSigDecl, ast);
-            this.setASTForDecl(indexParamDecl, ast);
         }
 
         public getDeclForAST(ast: AST): PullDecl {
