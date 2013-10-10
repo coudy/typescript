@@ -235,10 +235,9 @@ module TypeScript {
             var symbol = this.symbolCache[cacheID];
 
             if (!symbol) {
-                var topLevelDecls = this.topLevelDecls();
 
-                for (var i = 0; i < topLevelDecls.length; i++) {
-                    var topLevelDecl = topLevelDecls[i]; 
+                for (var i = 0, n = this.units.length; i < n; i++) {
+                    var topLevelDecl = this.units[i].topLevelDecl();
 
                     var symbol = this.findTopLevelSymbolInDecl(topLevelDecl, name, kind, doNotGoPastThisDecl);
                     if (symbol) {
