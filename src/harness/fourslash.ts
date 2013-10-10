@@ -117,7 +117,7 @@ module FourSlash {
         private languageService: Services.ILanguageService = null;
 
         // A reference to the language service's compiler state's compiler instance
-        private compiler: { getSyntaxTree(fileName: string): TypeScript.SyntaxTree; getScript(fileName: string): TypeScript.Script; };
+        private compiler: () => { getSyntaxTree(fileName: string): TypeScript.SyntaxTree; getScript(fileName: string): TypeScript.Script; };
 
         // The current caret position in the active file
         public currentCaretPosition = 0;
@@ -180,7 +180,7 @@ module FourSlash {
             // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
             var compilerState = (<any>this.languageService).compilerState;
-            this.compiler = (<any>compilerState).compiler;
+            this.compiler = () => (<any>compilerState).compiler;
 
             this.formatCodeOptions = new Services.FormatCodeOptions();
 
@@ -934,11 +934,11 @@ module FourSlash {
             var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
             var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
 
-            if (!refSyntaxTree.structuralEquals(this.compiler.getSyntaxTree(this.activeFile.fileName))) {
+            if (!refSyntaxTree.structuralEquals(this.compiler().getSyntaxTree(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');
             }
 
-            if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler.getScript(this.activeFile.fileName))) {
+            if (!TypeScript.structuralEqualsIncludingPosition(refAST, this.compiler().getScript(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed ASTs were not equal');
             }
 
@@ -1228,7 +1228,6 @@ module FourSlash {
                 var content = snapshot.getText(0, snapshot.getLength());
                 referenceLanguageServiceShimHost.addScript(this.testData.files[i].fileName, content);
             }
-            referenceLanguageServiceShim.refresh(true);
 
             for (i = 0; i < positions.length; i++) {
                 var nameOf = (type: Services.TypeInfo) => type ? type.fullSymbolName : '(none)';
