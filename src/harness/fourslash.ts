@@ -465,6 +465,29 @@ module FourSlash {
             }
         }
 
+        public verifyImplementorsCountIs(count: number, localFilesOnly: boolean = true) {
+            var implementors = this.getImplementorsAtCaret();
+            var implementorsCount = 0;
+
+            if (localFilesOnly) {
+                var localFiles = this.testData.files.map<string>(file => file.fileName);
+                // Count only the references in local files. Filter the ones in lib and other files.
+                implementors.forEach((entry) => {
+                    if (localFiles.some((filename) => filename === entry.fileName)) {
+                        ++implementorsCount;
+                    }
+                });
+            }
+            else {
+                implementorsCount = implementors.length;
+            }
+
+            if (implementorsCount !== count) {
+                var condition = localFilesOnly ? "excluding libs" : "including libs";
+                throw new Error("Expected implementors count (" + condition + ") to be " + count + ", but is actually " + implementors.length);
+            }
+        }
+
         private getMemberListAtCaret() {
             return this.languageService.getCompletionsAtPosition(this.activeFile.fileName, this.currentCaretPosition, true);
         }
@@ -479,6 +502,10 @@ module FourSlash {
 
         private getReferencesAtCaret() {
             return this.languageService.getReferencesAtPosition(this.activeFile.fileName, this.currentCaretPosition);
+        }
+
+        private getImplementorsAtCaret() {
+            return this.languageService.getImplementorsAtPosition(this.activeFile.fileName, this.currentCaretPosition);
         }
 
         public verifyQuickInfo(negative: boolean, expectedTypeName?: string, docComment?: string, symbolName?: string, kind?: string) {
