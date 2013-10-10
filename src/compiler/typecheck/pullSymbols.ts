@@ -901,14 +901,10 @@ module TypeScript {
         private _enclosedMemberContainers: PullTypeSymbol[] = null;
         private _typeParameters: PullTypeParameterSymbol[] = null;
 
-        // GTODO
-        private _typeArguments: PullTypeSymbol[] = null;
-
         private _containedNonMembers: PullSymbol[] = null;
         private _containedNonMemberTypes: PullTypeSymbol[] = null;
         private _containedNonMemberContainers: PullTypeSymbol[] = null;
 
-        // GTODO
         private _specializedVersionsOfThisType: PullTypeSymbol[] = null;
         private _arrayVersionOfThisType: PullTypeSymbol = null;
 
@@ -1308,7 +1304,6 @@ module TypeScript {
             return (this._typeParameters && this._typeParameters.length != 0) ||
                 this._hasGenericSignature ||
                 this._hasGenericMember ||
-                (this._typeArguments && this._typeArguments.length) ||
                 this.isArray();
         }
 
@@ -1362,10 +1357,8 @@ module TypeScript {
 
         // GTODO
         public getTypeArguments(): PullTypeSymbol[] {
-            return this._typeArguments;
+            return null;
         }
-
-        public setTypeArguments(typeArgs: PullTypeSymbol[]): void { this._typeArguments = typeArgs; }
 
         public getTypeArgumentsOrTypeParameters(): PullTypeSymbol[] {
             return this.getTypeParameters();
@@ -2322,20 +2315,6 @@ module TypeScript {
         }
     }
 
-    // transient type variables...
-    // GTODO
-    export class PullTypeVariableSymbol extends PullTypeParameterSymbol {
-
-        constructor(name: string, isFunctionTypeParameter: boolean) {
-            super(name, isFunctionTypeParameter);
-        }
-
-        private tyvarID = globalTyvarID++;
-
-        public isTypeParameter() { return true; }
-        public isTypeVariable() { return true; }
-    }
-
     export class PullAccessorSymbol extends PullSymbol {
 
         private _getterSymbol: PullSymbol = null;
@@ -2386,112 +2365,6 @@ module TypeScript {
 
             super.invalidate();
         }
-    }
-
-    // GTODO
-    export function typeWrapsTypeParameter(type: PullTypeSymbol, typeParameter: PullTypeParameterSymbol) {
-
-        if (type.isTypeParameter()) {
-            return type == typeParameter;
-        }
-
-        if (type.inWrapCheck) {
-            return false;
-        }
-
-        type.inWrapCheck = true;
-
-        var wrapsType = false;
-
-        var typeArguments = type.getTypeArguments();
-
-        if (typeArguments) {
-            for (var i = 0; i < typeArguments.length; i++) {
-                if (typeWrapsTypeParameter(typeArguments[i], typeParameter)) {
-                    wrapsType = true;
-                    break;
-                }
-            }
-        }
-
-        if (!wrapsType) {
-            var callSignatures = type.getCallSignatures();
-            var constructSignatures = type.getConstructSignatures();
-            var indexSignatures = type.getIndexSignatures();
-
-            for (var i = 0; i < callSignatures.length; i++) {
-                if (signatureWrapsTypeParameter(callSignatures[i], typeParameter)) {
-                    wrapsType = true;
-                    break;
-                }
-            }
-
-            if (!wrapsType) {
-                for (var i = 0; i < constructSignatures.length; i++) {
-                    if (signatureWrapsTypeParameter(constructSignatures[i], typeParameter)) {
-                        wrapsType = true;
-                        break;
-                    }
-                }
-
-                if (!wrapsType) {
-                    for (var i = 0; i < indexSignatures.length; i++) {
-                        if (signatureWrapsTypeParameter(indexSignatures[i], typeParameter)) {
-                            wrapsType = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!wrapsType && (type.kind & (PullElementKind.ObjectType | PullElementKind.ObjectLiteral))) {
-            var members = type.getMembers();
-
-            for (var i = 0; i < members.length; i++) {
-                if (members[i].type && typeWrapsTypeParameter(members[i].type, typeParameter)) {
-                    wrapsType = true;
-                    break;
-                }
-            }
-        }
-
-        type.inWrapCheck = false;
-
-        return wrapsType;
-    }
-
-    // GTODO
-    export function signatureWrapsTypeParameter(signature: PullSignatureSymbol, typeParameter: PullTypeParameterSymbol) {
-
-        if (signature.inWrapCheck) {
-            return false;
-        }
-
-        var wrapsType = false;
-
-        // parameters
-        if (signature.parameters) {
-            for (var i = 0; i < signature.parameters.length; i++) {
-                if (signature.parameters[i].type) {
-                    if (typeWrapsTypeParameter(signature.parameters[i].type, typeParameter)) {
-
-                        wrapsType = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!wrapsType) {
-            if (signature.returnType) {
-                wrapsType = typeWrapsTypeParameter(signature.returnType, typeParameter);
-            }
-        }
-
-        signature.inWrapCheck = false;
-
-        return wrapsType;
     }
 
     export function getRootType(typeToSpecialize: PullTypeSymbol) {

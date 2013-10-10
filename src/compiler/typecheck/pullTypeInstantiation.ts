@@ -180,9 +180,6 @@ module TypeScript {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypeArguments();
         }
-        public setTypeArguments(typeArgs: PullTypeSymbol[]): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": setTypeArguments");
-        }
         public getTypeArgumentsOrTypeParameters(): PullTypeSymbol[] {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypeArgumentsOrTypeParameters();
@@ -521,9 +518,6 @@ module TypeScript {
             }
 
             return this._typeArgumentReferences;
-        }
-        public setTypeArguments(typeArgs: PullTypeSymbol[]): void {
-            Debug.fail("setTypeArguments");
         }
         
         public getTypeArgumentsOrTypeParameters() {
