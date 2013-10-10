@@ -941,8 +941,6 @@ module TypeScript {
 
         private _knownBaseTypeCount = 0;
 
-        private _invalidatedSpecializations = false;
-
         private _associatedContainerTypeSymbol: PullTypeSymbol = null;
 
         private _constructorMethod: PullSymbol = null;
@@ -951,10 +949,6 @@ module TypeScript {
         // TODO: Really only used to track doc comments...
         private _functionSymbol: PullSymbol = null;
         private _inMemberTypeNameEx = false;
-
-
-        // GTODO
-        public memberWrapsOwnTypeParameter = false;
 
         public inSymbolPrivacyCheck = false;
         public inWrapCheck = false;
@@ -993,18 +987,6 @@ module TypeScript {
             return this._hasBaseTypeConflict;
         }
 
-        public setUnresolved(): void {
-            super.setUnresolved();
-
-            this._invalidatedSpecializations = false;
-
-            var specializations = this.getKnownSpecializations();
-
-            for (var i = 0; i < specializations.length; i++) {
-                specializations[i].setUnresolved();
-            }
-        }
-
         public hasMembers(): boolean {
 
             if (this._members != sentinelEmptyArray) {
@@ -1038,7 +1020,7 @@ module TypeScript {
             return this._associatedContainerTypeSymbol;
         }
 
-        // GTODO
+        // REVIEW
         public getArrayType(): PullTypeSymbol { return this._arrayVersionOfThisType; }
 
         public getElementType(): PullTypeSymbol {
