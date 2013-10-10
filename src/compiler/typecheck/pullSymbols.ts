@@ -726,33 +726,6 @@ module TypeScript {
             return memberSymbol;
         }
 
-        // GTODO
-        public isFixed(): boolean {
-
-            if (!this.isGeneric()) {
-                return true;
-            }
-
-            if (this.parameters) {
-                var paramType: PullTypeSymbol;
-                for (var i = 0; i < this.parameters.length; i++) {
-                    paramType = this.parameters[i].type;
-
-                    if (paramType && !paramType.isFixed()) {
-                        return false;
-                    }
-                }
-            }
-
-            if (this.returnType) {
-                if (!this.returnType.isFixed()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public invalidate() {
 
             this.nonOptionalParamCount = 0;
@@ -1337,12 +1310,6 @@ module TypeScript {
                 this._hasGenericMember ||
                 (this._typeArguments && this._typeArguments.length) ||
                 this.isArray();
-        }
-
-        // GTODO
-        public isFixed(): boolean {
-
-            return false;
         }
 
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
@@ -1990,10 +1957,6 @@ module TypeScript {
 
         public isStringConstant() { return false; }
 
-        public isFixed() {
-            return true;
-        }
-
         public invalidate() {
             // do nothing...
         }
@@ -2294,8 +2257,6 @@ module TypeScript {
 
         public isTypeParameter() { return true; }
         public isFunctionTypeParameter() { return this._isFunctionTypeParameter; }
-
-        public isFixed() { return false; }
 
         public setConstraint(constraintType: PullTypeSymbol) {
             this._constraint = constraintType;

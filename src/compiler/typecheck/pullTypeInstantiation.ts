@@ -162,10 +162,6 @@ module TypeScript {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.isGeneric();
         }
-        public isFixed(): boolean {
-            this.ensureReferencedTypeIsResolved();
-            return this.referencedTypeSymbol.isFixed();
-        }
 
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
             //Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addSpecialization");
@@ -493,11 +489,6 @@ module TypeScript {
         }
 
         public generativeTypeKind: GenerativeTypeKind = GenerativeTypeKind.Unknown;
-
-        public isFixed(): boolean {
-            // GTODO: necessary?
-            return this.referencedTypeSymbol.isFixed();
-        }
 
         public getTypeArguments(): PullTypeSymbol[]{
 
@@ -884,11 +875,7 @@ module TypeScript {
         return type;
     }
 
-    // GTODO: walk the type's members' types looking for wrapped type parameters
-    // If one is found, we'll need to create a specialized version of the object type
-    // If none are found, there's no need to specialize.
-    // GTODO: I think this can replace 'isFixed' checks
-    // GTODO: Should cache these checks
+    // REVIEW: Should cache these checks
 
     // The argument map prevents us from accidentally flagging method type parameters, or (if we
     // ever decide to go that route) allows for partial specialization

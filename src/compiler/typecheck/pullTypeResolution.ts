@@ -7310,13 +7310,7 @@ module TypeScript {
 
                             // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
                             if (triedToInferTypeArgs) {
-
-                                if (signatures[i].isFixed()) {
-                                        resolvedSignatures[resolvedSignatures.length] = signatures[i];
-                                }
-                                else {
                                     continue;
-                                }
                             }
 
                             // specialize to any
@@ -7703,13 +7697,7 @@ module TypeScript {
                                 else {
 
                                     if (triedToInferTypeArgs) {
-
-                                        if (constructSignatures[i].isFixed()) {
-                                            resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
-                                        }
-                                        else {
                                             continue;
-                                        }
                                     } else {
                                         for (var j = 0; j < typeParameters.length; j++) {
                                             typeReplacementMap[typeParameters[j].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
@@ -9786,7 +9774,7 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
-                if (expressionType.isGeneric() && !expressionType.isFixed() && !expressionType.isTypeParameter()) {
+                if (expressionType.isGeneric() && !expressionType.isTypeParameter()) {
                     expressionType = this.instantiateTypeToAny(expressionType, context);
                 }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
