@@ -37,7 +37,7 @@ module TypeScript {
         static typeCheckCallBacks: { (context: PullTypeResolutionContext): void; }[] = [];
         private static postTypeCheckWorkitems: { ast: AST; enclosingDecl: PullDecl; }[] = [];
 
-        private cachedFunctionArgumentsSymbol: PullSymbol = null;
+        private _cachedFunctionArgumentsSymbol: PullSymbol = null;
 
         private assignableCache: any[] = <any>{};
         private subtypeCache: any[] = <any>{};
@@ -153,16 +153,21 @@ module TypeScript {
             return this._cachedRegExpInterfaceType;
         }
 
+        private cachedFunctionArgumentsSymbol(): PullSymbol {
+            if (!this._cachedFunctionArgumentsSymbol) {
+                this._cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
+                this._cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
+                this._cachedFunctionArgumentsSymbol.setResolved();
+
+                var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0), this.semanticInfoChain);
+                functionArgumentsDecl.setSymbol(this._cachedFunctionArgumentsSymbol);
+                this._cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
+            }
+
+            return this._cachedFunctionArgumentsSymbol;
+        }
+
         constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, inTypeCheck: boolean = false) {
-
-            // Note: why is this here, and not on the global unit?
-            this.cachedFunctionArgumentsSymbol = new PullSymbol("arguments", PullElementKind.Variable);
-            this.cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
-            this.cachedFunctionArgumentsSymbol.setResolved();
-
-            var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0), semanticInfoChain);
-            functionArgumentsDecl.setSymbol(this.cachedFunctionArgumentsSymbol);
-            this.cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
         }
 
         public getUnitPath() { return this.unitPath; }
@@ -5776,7 +5781,7 @@ module TypeScript {
             var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
 
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction)) {
-                nameSymbol = this.cachedFunctionArgumentsSymbol;
+                nameSymbol = this.cachedFunctionArgumentsSymbol();
 
                 this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), context);
             }

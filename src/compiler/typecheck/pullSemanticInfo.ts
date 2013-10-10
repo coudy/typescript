@@ -44,6 +44,9 @@ module TypeScript {
         }
 
         public _getDeclForAST(ast: AST): PullDecl {
+            // Ensure we actually have created all our decls before we try to find a mathcing decl
+            // for this ast.
+            this.topLevelDecl();
             return this.astDeclMap.read(ast.astIDString);
         }
 
