@@ -90,13 +90,11 @@ module TypeScript {
     }
 
     export class TypeScriptCompiler {
-        public resolver: PullTypeResolver = null;
-
+        private resolver: PullTypeResolver = null;
         private semanticInfoChain: SemanticInfoChain = null;
+        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         public emitOptions: EmitOptions;
-
-        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         constructor(public logger: ILogger = new NullLogger(),
                     public settings: CompilationSettings = new CompilationSettings()) {
@@ -122,6 +120,12 @@ module TypeScript {
 
             var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
             this.fileNameToDocument.addOrUpdate(fileName, document);
+
+            this.semanticInfoChain.addScript(document.script);
+
+            // TODO: we should not have to create a resolver here.
+            this.resolver = new PullTypeResolver(
+                this.settings, this.semanticInfoChain, fileName);
         }
 
         public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): void {
@@ -132,13 +136,11 @@ module TypeScript {
 
             this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
 
-            var updatedScript = updatedDocument.script;
-
             // Note: the semantic info chain will recognize that this is a replacement of an
             // existing script, and will handle it appropriately.
-            this.semanticInfoChain.addScript(updatedScript);
-
-            // If we havne't yet created a new resolver, clean any cached symbols
+            this.semanticInfoChain.addScript(updatedDocument.script);
+            
+            // TODO: we should not have to create a resolver here.
             this.resolver = new PullTypeResolver(
                 this.settings, this.semanticInfoChain, fileName);
         }
@@ -589,46 +591,6 @@ module TypeScript {
             this.resolver.setUnitPath(unitPath);
         }
 
-        public pullTypeCheck() {
-            var start = new Date().getTime();
-
-            this.semanticInfoChain = new SemanticInfoChain(this.logger);
-            if (this.resolver) {
-                this.resolver.semanticInfoChain = this.semanticInfoChain;
-            }
-
-            var createDeclsStartTime = new Date().getTime();
-
-            var fileNames = this.fileNames();
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
-                var document = this.getDocument(fileName);
-                this.semanticInfoChain.addScript(document.script);
-            }
-
-            var createDeclsEndTime = new Date().getTime();
-
-            // bind declaration symbols
-            var bindStartTime = new Date().getTime();
-
-            // start at '1', so as to skip binding for global primitives such as 'any'
-            var topLevelDecls = this.semanticInfoChain.topLevelDecls();
-            for (var i = 0, n = topLevelDecls.length; i < n; i++) {
-                var topLevelDecl = topLevelDecls[i];
-
-                var binder = this.semanticInfoChain.getBinder();
-                binder.bindDeclToPullSymbol(topLevelDecl);
-            }
-
-            var bindEndTime = new Date().getTime();
-
-            this.logger.log("Decl creation: " + (createDeclsEndTime - createDeclsStartTime));
-            this.logger.log("Binding: " + (bindEndTime - bindStartTime));
-            this.logger.log("Number of symbols created: " + pullSymbolID);
-            this.logger.log("Number of specialized types created: " + nSpecializationsCreated);
-            this.logger.log("Number of specialized signatures created: " + nSpecializedSignaturesCreated);
-        }
-
         public getSymbolOfDeclaration(decl: PullDecl): PullSymbol {
             if (!decl) {
                 return null;
@@ -639,12 +601,12 @@ module TypeScript {
                 return null;
             }
 
-            var enlosingDecl = this.resolver.getEnclosingDecl(decl);
+            var enclosingDecl = this.resolver.getEnclosingDecl(decl);
             if (ast.nodeType() === NodeType.Member) {
-                return this.getSymbolOfDeclaration(enlosingDecl);
+                return this.getSymbolOfDeclaration(enclosingDecl);
             }
 
-            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enlosingDecl, new PullTypeResolutionContext(this.resolver));
+            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(this.resolver));
         }
 
         public getTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
@@ -1267,7 +1229,8 @@ module TypeScript {
                 ast.nodeType() !== NodeType.ConstructorDeclaration &&
                 ast.nodeType() !== NodeType.FunctionDeclaration &&
                 ast.nodeType() !== NodeType.ArrowFunctionExpression &&
-                ast.nodeType() !== NodeType.VariableDeclarator) {
+                ast.nodeType() !== NodeType.VariableDeclarator &&
+                ast.nodeType() !== NodeType.EnumDeclaration) {
                 return null;
             }
 

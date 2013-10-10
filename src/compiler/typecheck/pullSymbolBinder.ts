@@ -142,7 +142,7 @@ module TypeScript {
             else {
                 var parentDecl = decl.getParentDecl();
                 if (parentDecl && parentDecl.kind === PullElementKind.Script) {
-                    return this.semanticInfoChain.findTopLevelSymbol(name, searchKind, decl.fileName());
+                    return this.semanticInfoChain.findTopLevelSymbol(name, searchKind, decl);
                 }
                 else {
                     // The decl is in a control block (catch/with) that has no parent symbol. Luckily this type of parent can only have one decl.
@@ -992,7 +992,7 @@ module TypeScript {
             if ((declFlags & PullElementFlags.ImplicitVariable) === 0) {
                 if (!variableSymbol) {
                     variableSymbol = new PullSymbol(declName, declKind);
-                    if (!parent) {
+                    if (!parent && parentDecl.kind === PullElementKind.Script) {
                         this.semanticInfoChain.cacheGlobalSymbol(variableSymbol, declKind);
                     }
                 }
@@ -1041,7 +1041,7 @@ module TypeScript {
                         }
 
                         if (!classTypeSymbol) {
-                            classTypeSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeType, variableDeclaration.fileName());
+                            classTypeSymbol = <PullTypeSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeType, variableDeclaration);
                         }
                     }
 
@@ -1116,10 +1116,10 @@ module TypeScript {
                             }
                         }
                         if (!moduleContainerTypeSymbol) {
-                            moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, variableDeclaration.fileName());
+                            moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.SomeContainer, variableDeclaration);
 
                             if (!moduleContainerTypeSymbol) {
-                                moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, variableDeclaration.fileName());
+                                moduleContainerTypeSymbol = <PullContainerSymbol>this.semanticInfoChain.findTopLevelSymbol(declName, PullElementKind.Enum, variableDeclaration);
                             }
                         }
                     }

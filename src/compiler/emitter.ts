@@ -493,9 +493,6 @@ module TypeScript {
         }
 
         public tryEmitConstant(dotExpr: MemberAccessExpression) {
-            if (!this.emitOptions.compilationSettings.propagateEnumConstants) {
-                return false;
-            }
             var propertyName = dotExpr.name;
             var boundDecl = this.getConstantDecl(dotExpr);
             if (boundDecl) {

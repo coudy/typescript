@@ -2092,6 +2092,39 @@ module TypeScript {
                 PullTypeResolver.postTypeCheckWorkitems.push({ ast: astWithName, enclosingDecl: enclosingDecl });
             } else if (nameText == "_super") {
                 this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, enclosingDecl, context);
+            } else if (isDeclaration && nameText == "_i") {
+                this.checkIndexOfRestArgumentInitializationCollides(astWithName, enclosingDecl, context);
+            }
+        }
+
+        private checkIndexOfRestArgumentInitializationCollides(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            if (ast.nodeType() == NodeType.Parameter
+                && (enclosingDecl.kind == PullElementKind.Function // Function
+                || enclosingDecl.kind == PullElementKind.FunctionExpression // Function expression
+                || enclosingDecl.kind == PullElementKind.ConstructorMethod // constructor of a class
+                || (enclosingDecl.kind == PullElementKind.Method && enclosingDecl.getParentDecl().kind == PullElementKind.Class))) { // Method of a class
+                var enclosingAST = this.getASTForDecl(enclosingDecl);
+                var nodeType = enclosingAST.nodeType();
+                var hasRestParameterCodeGen = false;
+                if (nodeType == NodeType.FunctionDeclaration) {
+                    var functionDeclaration = <FunctionDeclaration>enclosingAST;
+                    hasRestParameterCodeGen = !hasFlag(enclosingDecl.kind == PullElementKind.Method ? enclosingDecl.getParentDecl().flags : enclosingDecl.flags, PullElementFlags.Ambient)
+                        && functionDeclaration.block
+                        && lastParameterIsRest(functionDeclaration.parameterList);
+                } else if (nodeType == NodeType.ConstructorDeclaration) {
+                    var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
+                    hasRestParameterCodeGen = !hasFlag(enclosingDecl.getParentDecl().flags, PullElementFlags.Ambient)
+                        && constructorDeclaration.block
+                        && lastParameterIsRest(constructorDeclaration.parameterList);
+                } else if (nodeType == NodeType.ArrowFunctionExpression) {
+                    var arrowFunctionExpression = <ArrowFunctionExpression>enclosingAST;
+                    hasRestParameterCodeGen = lastParameterIsRest((<ArrowFunctionExpression>enclosingAST).parameterList);
+                }
+
+                if (hasRestParameterCodeGen) {
+                    // It is error to use the _i varible name
+                    context.postDiagnostic(diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_i_Compiler_uses_i_to_initialize_rest_parameter));
+                }
             }
         }
 
@@ -2392,7 +2425,7 @@ module TypeScript {
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.nodeType() === NodeType.EnumElement;
             var decl = this.getDeclForAST(varDeclOrParameter);
 
-            // if the enlosing decl is a lambda, we may not have bound the parent symbol
+            // if the enclosing decl is a lambda, we may not have bound the parent symbol
             if (enclosingDecl && decl.kind == PullElementKind.Parameter) {
                 enclosingDecl.ensureSymbolIsBound();
             }
@@ -2789,7 +2822,7 @@ module TypeScript {
                     this.variablePrivacyErrorReporter(declSymbol, symbol, context));
             }
 
-            if (declSymbol.kind != PullElementKind.Property) {
+            if (declSymbol.kind != PullElementKind.Property || declSymbol.hasFlag(PullElementFlags.PropertyParameter)) {
                 // Non property variable with _this name, we need to verify if this would be ok
                 this.checkNameForCompilerGeneratedDeclarationCollision(varDeclOrParameter, /*isDeclaration*/ true, name, enclosingDecl, context);
             }
@@ -2800,7 +2833,15 @@ module TypeScript {
 
             var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
 
-            if (classSymbol) {
+            if (classSymbol && !classSymbol.hasFlag(PullElementFlags.Ambient)) {
+                if (superAST.nodeType() == NodeType.Parameter) {
+                    var enclosingAST = this.getASTForDecl(enclosingDecl);
+                    var block = enclosingDecl.kind == PullElementKind.Method ? (<FunctionDeclaration>enclosingAST).block : (<ConstructorDeclaration>enclosingAST).block;
+                    if (!block) {
+                        return; // just a overload signature - no code gen
+                    }
+                }
+
                 this.resolveDeclaredSymbol(classSymbol, context);
 
                 var parents = classSymbol.getExtendedTypes();
@@ -2813,6 +2854,13 @@ module TypeScript {
         }
 
         private checkThisCaptureVariableCollides(_thisAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            if (isDeclaration) {
+                var decl = this.getDeclForAST(_thisAST);
+                if (hasFlag(decl.flags, PullElementFlags.Ambient)) { // ambient declarations do not generate the code
+                    return;
+                }
+            }
+
             // Verify if this variable name conflicts with the _this that would be emitted to capture this in any of the enclosing context
             var declPath = enclosingDecl.getParentPath();
 
@@ -5692,6 +5740,7 @@ module TypeScript {
         }
 
         private resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            enclosingDecl.ensureSymbolIsBound();
             var nameSymbol = this.getSymbolForAST(nameAST, context);
             var foundCached = nameSymbol != null;
 
@@ -10395,7 +10444,7 @@ module TypeScript {
                 // If we are in a script context, we need to check more than just the current file. We need to check var type identity between files as well.
                 if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
                     var name = declGroups[i][0].name;
-                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl.fileName());
+                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl);
                     if (candidateSymbol && candidateSymbol.isResolved) {
                         if (!candidateSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
                             firstSymbol = candidateSymbol;

@@ -201,7 +201,6 @@ module TypeScript {
                 return;
             }
 
-            compiler.pullTypeCheck();
             var fileNames = compiler.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
@@ -272,7 +271,6 @@ module TypeScript {
             //}
 
             this.ioHost.stdout.WriteLine("**** Initial type check errors:");
-            compiler.pullTypeCheck();
 
             var semanticDiagnostics: TypeScript.Diagnostic[];
 
