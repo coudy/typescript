@@ -89,6 +89,16 @@ module TypeScript {
         }
     }
 
+    // Represents the results of the last "pull" on the compiler when using the streaming
+    // 'compile' method.  The compile result for a single pull can have diagnostics (if 
+    // something went wrong), or possibly OutputFiles that need to get written.  It will 
+    // never have both.
+    export class CompileResult {
+        constructor(public diagnostics: TypeScript.Diagnostic[],
+                    public outputFiles: OutputFile[]) {
+        }
+    }
+
     export class TypeScriptCompiler {
         private resolver: PullTypeResolver = null;
         private semanticInfoChain: SemanticInfoChain = null;
@@ -214,7 +224,7 @@ module TypeScript {
             return null;
         }
 
-        private validateEmitOptions(resolvePath: (path: string) => string): Diagnostic {
+        public _validateEmitOptions(resolvePath: (path: string) => string): Diagnostic {
             if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Unspecified && this.isDynamicModuleCompilation()) {
                 return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
             }
@@ -263,7 +273,7 @@ module TypeScript {
 
         private writeByteOrderMarkForDocument(document: Document) {
             // If module its always emitted in its own file
-            if (this.emitOptions.outputMany || document.script.isExternalModule) {
+            if (this._mustEmitDocumentToSingleFile(document)) {
                 return document.byteOrderMark !== ByteOrderMark.None;
             } else {
                 var fileNames = this.fileNames();
@@ -287,11 +297,7 @@ module TypeScript {
             return getDeclareFilePath(fileName);
         }
 
-        private shouldEmitDeclarations(script?: Script) {
-            if (!this.settings.generateDeclarationFiles) {
-                return false;
-            }
-
+        public _shouldEmit(script: Script) {
             // If its already a declare file or is resident or does not contain body 
             if (!!script && (script.isDeclareFile() || script.moduleElements === null)) {
                 return false;
@@ -300,25 +306,59 @@ module TypeScript {
             return true;
         }
 
-        // Caller is responsible for closing emitter.
-        private emitDeclarationsWorker(
+        public _shouldEmitDeclarations(script?: Script) {
+            if (!this.settings.generateDeclarationFiles) {
+                return false;
+            }
+
+            return this._shouldEmit(script);
+        }
+
+        public _mustEmitDocumentToSingleFile(document: Document): boolean {
+            return this.emitOptions.outputMany || document.script.isExternalModule;
+        }
+
+        // Does the actual work of emittin the declarations from the provided document into the
+        // provided emitter.  If no emitter is provided a new one is created.  
+        private emitDocumentDeclarationsWorker(
             resolvePath: (path: string) => string,
             document: Document,
             declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
 
             var script = document.script;
-            if (this.shouldEmitDeclarations(script)) {
-                if (declarationEmitter) {
-                    declarationEmitter.document = document;
-                } else {
-                    var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new DeclarationEmitter(declareFileName, document, this, this.semanticInfoChain, resolvePath);
-                }
+            Debug.assert(this._shouldEmitDeclarations(script));
 
-                declarationEmitter.emitDeclarations(script);
+            if (declarationEmitter) {
+                declarationEmitter.document = document;
+            } else {
+                var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
+                declarationEmitter = new DeclarationEmitter(declareFileName, document, this, this.semanticInfoChain, resolvePath);
             }
 
+            declarationEmitter.emitDeclarations(script);
             return declarationEmitter;
+        }
+
+        public _emitDocumentDeclarations(
+            resolvePath: (path: string) => string,
+            document: Document,
+            onSingleFileEmitComplete: (files: OutputFile) => void,
+            sharedEmitter?: DeclarationEmitter): DeclarationEmitter {
+
+            if (this._shouldEmitDeclarations(document.script)) {
+                if (this._mustEmitDocumentToSingleFile(document)) {
+                    var singleEmitter = this.emitDocumentDeclarationsWorker(resolvePath, document);
+                    if (singleEmitter) {
+                        onSingleFileEmitComplete(singleEmitter.getOutputFile());
+                    }
+                }
+                else {
+                    // Create or reuse file
+                    sharedEmitter = this.emitDocumentDeclarationsWorker(resolvePath, document, sharedEmitter);
+                }
+            }
+
+            return sharedEmitter;
         }
 
         // Will not throw exceptions.
@@ -326,37 +366,26 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
             }
 
-            if (this.shouldEmitDeclarations()) {
-                var sharedEmitter: DeclarationEmitter = null;
-                var fileNames = this.fileNames();
+            var sharedEmitter: DeclarationEmitter = null;
+            var fileNames = this.fileNames();
 
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    var fileName = fileNames[i];
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
-                    var document = this.getDocument(fileNames[i]);
+                var document = this.getDocument(fileNames[i]);
 
-                    // Emitting module or multiple files, always goes to single file
-                    if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                        var singleEmitter = this.emitDeclarationsWorker(resolvePath, document);
-                        if (singleEmitter) {
-                            emitOutput.outputFiles.push(singleEmitter.getOutputFile());
-                        }
-                    }
-                    else {
-                        // Create or reuse file
-                        sharedEmitter = this.emitDeclarationsWorker(resolvePath, document, sharedEmitter);
-                    }
-                }
+                sharedEmitter = this._emitDocumentDeclarations(resolvePath, document,
+                    file => emitOutput.outputFiles.push(file), sharedEmitter);
+            }
 
-                if (sharedEmitter) {
-                    emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
-                }
+            if (sharedEmitter) {
+                emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
             }
 
             declarationEmitTime += new Date().getTime() - start;
@@ -369,7 +398,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
@@ -377,20 +406,15 @@ module TypeScript {
 
             var document = this.getDocument(fileName);
 
-            if (this.shouldEmitDeclarations(document.script)) {
-                // Emitting module or multiple files, always goes to single file
-                if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                    var emitter = this.emitDeclarationsWorker(resolvePath, document);
-                    if (emitter) {
-                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFile());
-                    }
-                }
-                else {
-                    return this.emitAllDeclarations(resolvePath);
-                }
+            // Emitting module or multiple files, always goes to single file
+            if (this._mustEmitDocumentToSingleFile(document)) {
+                this._emitDocumentDeclarations(resolvePath, document,
+                    file => emitOutput.outputFiles.push(file));
+                return emitOutput;
             }
-
-            return emitOutput;
+            else {
+                return this.emitAllDeclarations(resolvePath);
+            }
         }
 
         static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: boolean) {
@@ -411,33 +435,60 @@ module TypeScript {
 
         // Caller is responsible for closing the returned emitter.
         // May throw exceptions.
-        private emitWorker(resolvePath: (path: string) => string, document: Document, emitter?: Emitter): Emitter {
+        private emitDocumentWorker(resolvePath: (path: string) => string,
+                                  document: Document,
+                                  emitter?: Emitter): Emitter {
             var script = document.script;
-            if (!script.isDeclareFile()) {
-                var typeScriptFileName = document.fileName;
-                if (!emitter) {
-                    var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
-                    var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
+            Debug.assert(this._shouldEmit(script));
 
-                    emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
+            var typeScriptFileName = document.fileName;
+            if (!emitter) {
+                var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
+                var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
 
-                    if (this.settings.mapSourceFiles) {
-                        // We always create map files next to the jsFiles
-                        var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
-                        emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, resolvePath);
-                    }
+                emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
+
+                if (this.settings.mapSourceFiles) {
+                    // We always create map files next to the jsFiles
+                    var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
+                    emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, resolvePath);
                 }
-                else if (this.settings.mapSourceFiles) {
-                    // Already emitting into js file, update the mapper for new source info
-                    emitter.setSourceMapperNewSourceFile(document);
-                }
-
-                // Set location info
-                emitter.setDocument(document);
-                emitter.emitJavascript(script, /*startLine:*/false);
+            }
+            else if (this.settings.mapSourceFiles) {
+                // Already emitting into js file, update the mapper for new source info
+                emitter.setSourceMapperNewSourceFile(document);
             }
 
+            // Set location info
+            emitter.setDocument(document);
+            emitter.emitJavascript(script, /*startLine:*/false);
+
             return emitter;
+        }
+
+        // Private.  only for use by compiler or CompilerIterator
+        public _emitDocument(resolvePath: (path: string) => string,
+            document: Document,
+            onSingleFileEmitComplete: (files: OutputFile[]) => void,
+            sharedEmitter?: Emitter): Emitter {
+
+            // Emitting module or multiple files, always goes to single file
+            if (this._shouldEmit(document.script)) {
+                if (this._mustEmitDocumentToSingleFile(document)) {
+                    // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
+                    var singleEmitter = this.emitDocumentWorker(resolvePath, document);
+                    if (singleEmitter) {
+                        onSingleFileEmitComplete(singleEmitter.getOutputFiles());
+                    }
+                }
+                else {
+                    // We're not outputting to multiple files.  Keep using the same emitter and don't
+                    // close until below.
+                    sharedEmitter = this.emitDocumentWorker(resolvePath, document, sharedEmitter);
+                }
+            }
+
+            return sharedEmitter;
         }
 
         // Will not throw exceptions.
@@ -445,7 +496,7 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
@@ -460,19 +511,9 @@ module TypeScript {
 
                 var document = this.getDocument(fileName);
 
-                // Emitting module or multiple files, always goes to single file
-                if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                    // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
-                    var singleEmitter = this.emitWorker(resolvePath, document);
-                    if (singleEmitter) {
-                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, singleEmitter.getOutputFiles());
-                    }
-                }
-                else {
-                    // We're not outputting to multiple files.  Keep using the same emitter and don't
-                    // close until below.
-                    sharedEmitter = this.emitWorker(resolvePath, document, sharedEmitter);
-                }
+                sharedEmitter = this._emitDocument(resolvePath, document,
+                    files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files),
+                    sharedEmitter);
             }
 
             if (sharedEmitter) {
@@ -489,7 +530,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
@@ -497,20 +538,22 @@ module TypeScript {
 
             var document = this.getDocument(fileName);
             // Emitting module or multiple files, always goes to single file
-            if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                // In outputMany mode, only emit the document specified and its sourceMap if needed
-
-                var emitter = this.emitWorker(resolvePath, document);
-                if (emitter) {
-                    emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFiles());
-                }
-
+            if (this._mustEmitDocumentToSingleFile(document)) {
+                this._emitDocument(resolvePath, document,
+                    files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files));
                 return emitOutput;
             }
             else {
                 // In output Single file mode, emit everything
                 return this.emitAll(resolvePath);
             }
+        }
+
+        // Returns an iterator that will stream compilation results from this compiler.  Syntactic
+        // diagnostics will be returned first, then semantic diagnostics, then emit results, then
+        // declaration emit results.
+        public compile(resolvePath: (path: string) => string): Iterator<CompileResult> {
+            return new CompilerIterator(this, resolvePath);
         }
 
         //
@@ -1363,6 +1406,208 @@ module TypeScript {
 
         public topLevelDecl(fileName: string): PullDecl {
             return this.semanticInfoChain.topLevelDecl(fileName);
+        }
+    }
+
+    enum CompilerPhase {
+        Syntax,
+        Semantics,
+        EmitOptionsValidation,
+        Emit,
+        DeclarationEmit,
+    }
+
+    class CompilerIterator implements Iterator<CompileResult> {
+        private compilerPhase: CompilerPhase;
+        private index: number = -1;
+        private fileNames: string[] = null;
+        private _current: CompileResult = null;
+        private _sharedEmitter: Emitter = null;
+        private _sharedDeclarationEmitter: DeclarationEmitter = null;
+        private hadSyntacticDiagnostics: boolean = false;
+        private hadSemanticDiagnostics: boolean = false;
+        private hadEmitDiagnostics: boolean = false;
+
+        constructor(private compiler: TypeScriptCompiler,
+                    private resolvePath: (path: string) => string,
+                    startingPhase = CompilerPhase.Syntax) {
+            this.fileNames = compiler.fileNames();
+            this.compilerPhase = startingPhase;
+        }
+
+        public current(): CompileResult {
+            return this._current;
+        }
+
+        public moveNext(): boolean {
+            this._current = null;
+
+            // Attempt to move the iterator 'one step' forward.  Note: this may produce no result
+            // (for example, if we're emitting everything to a single file).  So only return once
+            // we actually have a result, or we're done enumerating.
+            while (this.moveNextInternal()) {
+                if (this._current) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private moveNextInternal(): boolean {
+            this.index++;
+
+            // If we're at the end of hte set of files the compiler knows about, then move to the
+            // next phase of compilation.
+            while (this.shouldMoveToNextPhase()) {
+                this.index = 0;
+                this.compilerPhase++;
+            }
+
+            if (this.compilerPhase > CompilerPhase.DeclarationEmit) {
+                // We're totally done.
+                return false;
+            }
+
+            switch (this.compilerPhase) {
+                case CompilerPhase.Syntax:
+                    return this.moveNextSyntaxPhase();
+                case CompilerPhase.Semantics:
+                    return this.moveNextSemanticsPhase();
+                case CompilerPhase.EmitOptionsValidation:
+                    return this.moveNextEmitOptionsValidationPhase();
+                case CompilerPhase.Emit:
+                    return this.moveNextEmitPhase();
+                case CompilerPhase.DeclarationEmit:
+                    return this.moveNextDeclarationEmitPhase();
+            }
+        }
+
+        private shouldMoveToNextPhase(): boolean {
+            switch (this.compilerPhase) {
+                case CompilerPhase.EmitOptionsValidation:
+                    // Only one step in emit validation.  We're done once we do that step.
+                    return this.index === 1;
+
+                case CompilerPhase.Syntax:
+                case CompilerPhase.Semantics:
+                    // Each of these phases are done when we've processed the last file.
+                    return this.index == this.fileNames.length;
+
+                case CompilerPhase.Emit:
+                case CompilerPhase.DeclarationEmit:
+                    // Emitting is done when we get 'one' past the end of hte file list.  This is
+                    // because we use that step to collect the results from the shared emitter.
+                    return this.index == (this.fileNames.length + 1);
+            }
+
+            return false;
+        }
+
+        private moveNextSyntaxPhase(): boolean {
+            Debug.assert(this.index >= 0 && this.index < this.fileNames.length);
+            var fileName = this.fileNames[this.index];
+
+            var diagnostics = this.compiler.getSyntacticDiagnostics(fileName);
+            if (diagnostics.length) {
+                this.hadSyntacticDiagnostics = true;
+                this._current = new CompileResult(diagnostics, null);
+            }
+
+            return true;
+        }
+
+        private moveNextSemanticsPhase(): boolean {
+            // Don't move forward if there were syntax diagnostics.
+            if (this.hadSyntacticDiagnostics) {
+                return false;
+            }
+
+            Debug.assert(this.index >= 0 && this.index < this.fileNames.length);
+            var fileName = this.fileNames[this.index];
+            var diagnostics = this.compiler.getSemanticDiagnostics(fileName);
+            if (diagnostics.length) {
+                this.hadSemanticDiagnostics = true;
+                this._current = new CompileResult(diagnostics, null);
+            }
+
+            return true;
+        }
+
+        private moveNextEmitOptionsValidationPhase(): boolean {
+            Debug.assert(!this.hadSyntacticDiagnostics);
+
+            var diagnostic = this.compiler._validateEmitOptions(this.resolvePath);
+            if (diagnostic) {
+                this.hadEmitDiagnostics = true;
+                this._current = new CompileResult([diagnostic], null);
+            }
+
+            return true;
+        }
+
+        private moveNextEmitPhase(): boolean {
+            Debug.assert(!this.hadSyntacticDiagnostics);
+            if (this.hadEmitDiagnostics) {
+                return false;
+            }
+
+            Debug.assert(this.index >= 0 && this.index <= this.fileNames.length);
+            if (this.index < this.fileNames.length) {
+                var fileName = this.fileNames[this.index];
+                var document = this.compiler.getDocument(fileName);
+
+                // Try to emit this single document.  It will either get emitted to its own file
+                // (in which case we'll have our call back triggered), or it will get added to the
+                // shared emitter (and we'll take care of it after all the files are done.
+                this._sharedEmitter = this.compiler._emitDocument(
+                    this.resolvePath, document,
+                    outputFiles => { this._current = new CompileResult(null, outputFiles) },
+                    this._sharedEmitter);
+                return true;
+            }
+
+            // If we've moved past all the files, and we have a multi-input->single-output
+            // emitter set up.  Then add the outputs of that emitter to the results.
+            if (this.index === this.fileNames.length && this._sharedEmitter) {
+                // Collect shared emit result.
+                this._current = new CompileResult(null, this._sharedEmitter.getOutputFiles());
+            }
+
+            return true;
+        }
+
+        private moveNextDeclarationEmitPhase(): boolean {
+            Debug.assert(!this.hadSyntacticDiagnostics);
+            Debug.assert(!this.hadEmitDiagnostics);
+            if (this.hadSemanticDiagnostics) {
+                return false;
+            }
+
+            if (!this.compiler._shouldEmitDeclarations()) {
+                return false;
+            }
+
+            Debug.assert(this.index >= 0 && this.index <= this.fileNames.length);
+            if (this.index < this.fileNames.length) {
+                var fileName = this.fileNames[this.index];
+                var document = this.compiler.getDocument(fileName);
+
+                this._sharedDeclarationEmitter = this.compiler._emitDocumentDeclarations(
+                    this.resolvePath, document,
+                    file => {
+                        this._current = new CompileResult(null, [file]);
+                    }, this._sharedDeclarationEmitter);
+                return true;
+            }
+
+            // If we've moved past all the files, and we have a multi-input->single-output
+            // emitter set up.  Then add the outputs of that emitter to the results.
+            if (this.index === this.fileNames.length && this._sharedDeclarationEmitter) {
+                this._current = new CompileResult(null, [this._sharedDeclarationEmitter.getOutputFile()]);
+            }
+
+            return true;
         }
     }
 }
