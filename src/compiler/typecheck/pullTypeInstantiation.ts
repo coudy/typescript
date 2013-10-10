@@ -200,7 +200,6 @@ module TypeScript {
             return this.referencedTypeSymbol.hasOwnCallSignatures();
         }
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            // GTODO: currently need to resolve to build the 'all' signature list
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getCallSignatures(collectBaseSignatures);
         }
@@ -209,7 +208,6 @@ module TypeScript {
             return this.referencedTypeSymbol.hasOwnConstructSignatures();
         }
         public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            // GTODO: currently need to resolve to build the 'all' signature list
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getConstructSignatures(collectBaseSignatures);
         }
@@ -218,7 +216,6 @@ module TypeScript {
             return this.referencedTypeSymbol.hasOwnIndexSignatures();
         }
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
-            // GTODO: currently need to resolve to build the 'all' signature list
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getIndexSignatures(collectBaseSignatures);
         }
@@ -226,43 +223,37 @@ module TypeScript {
         public addImplementedType(implementedType: PullTypeSymbol): void {
             this.referencedTypeSymbol.addImplementedType(implementedType);
         }
-        public getImplementedTypes(): PullTypeSymbol[]{
-            // GTODO: account for generic specialization?
+        public getImplementedTypes(): PullTypeSymbol[] {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getImplementedTypes();
         }
         public addExtendedType(extendedType: PullTypeSymbol): void {
             this.referencedTypeSymbol.addExtendedType(extendedType);
         }
-        public getExtendedTypes(): PullTypeSymbol[]{
-            // GTODO: account for generic specialization?
+        public getExtendedTypes(): PullTypeSymbol[] {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getExtendedTypes();
         }
         public addTypeThatExtendsThisType(type: PullTypeSymbol): void {
             this.referencedTypeSymbol.addTypeThatExtendsThisType(type);
         }
-        public getTypesThatExtendThisType(): PullTypeSymbol[]{
-            // GTODO: account for generic specialization?
+        public getTypesThatExtendThisType(): PullTypeSymbol[] {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypesThatExtendThisType();
         }
         public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol): void {
             this.referencedTypeSymbol.addTypeThatExplicitlyImplementsThisType(type);
         }
-        public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[]{
-            // GTODO: account for generic specialization?
+        public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[] {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.getTypesThatExplicitlyImplementThisType();
         }
 
         public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
-            // GTODO: account for generic specialization?
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.hasBase(potentialBase, visited);
         }
         public isValidBaseKind(baseType: PullTypeSymbol, isExtendedType: boolean): boolean {
-            // GTODO: account for generic specialization?
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.isValidBaseKind(baseType, isExtendedType);
         }
@@ -376,8 +367,6 @@ module TypeScript {
             return this;
         }
 
-        // GTODO: Rather than pass in the map, pass in a list that we can construct from?
-        // Or, just introduce a helper function to create the map for us
         public static create(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
 
             // check for an existing instantiation
@@ -789,62 +778,10 @@ module TypeScript {
             return this._instantiatedIndexSignatures;
         }
 
-
-        //
-        // Base type checking
-        //
-        /*
-        public addImplementedType(implementedType: PullTypeSymbol): void {
-            Debug.fail("addImplementedType");
-        }
-        public getImplementedTypes(): PullTypeSymbol[] {
-            // GTODO: account for generic specialization?
-            // GTODO: resolve first?
-            return this.referencedTypeSymbol.getImplementedTypes();
-        }
-        public addExtendedType(extendedType: PullTypeSymbol): void {
-            Debug.fail("addExtendedType");
-        }
-        public getExtendedTypes(): PullTypeSymbol[] {
-            // GTODO: account for generic specialization?
-            // GTODO: resolve first?
-            return this.referencedTypeSymbol.getExtendedTypes();
-        }
-        public addTypeThatExtendsThisType(type: PullTypeSymbol): void {
-            Debug.fail("addTypeThatExtendsThisType");
-        }
-        public getTypesThatExtendThisType(): PullTypeSymbol[] {
-            // GTODO: account for generic specialization?
-            // GTODO: resolve first?
-            return this.referencedTypeSymbol.getTypesThatExtendThisType();
-        }
-        public addTypeThatExplicitlyImplementsThisType(type: PullTypeSymbol): void {
-            Debug.fail("addTypeThatExplicitlyImplementsThisType");
-        }
-        public getTypesThatExplicitlyImplementThisType(): PullTypeSymbol[] {
-            // GTODO: account for generic specialization?
-            // GTODO: resolve first?
-            return this.referencedTypeSymbol.getTypesThatExplicitlyImplementThisType();
-        }
-        */
-
         public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
-            // GTODO: account for generic specialization?
-            // GTODO: resolve first?
             return this.referencedTypeSymbol.hasBase(potentialBase, visited);
         }
     }
-
-    // Instantiated signature symbols
-    //export class PullInstantiatedSignatureSymbol extends PullSignatureSymbol {
-
-    //    constructor(signature: PullSignatureSymbol) {
-    //        super(signature.kind);
-
-    //        this.setRootSymbol(signature);
-    //    }
-
-    //}
     
     export function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullTypeSymbol {
 

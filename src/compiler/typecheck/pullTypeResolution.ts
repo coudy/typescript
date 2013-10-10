@@ -2364,7 +2364,7 @@ module TypeScript {
             return typeSymbol.isNamedTypeSymbol() &&
                 typeSymbol.isGeneric() &&
                 !typeSymbol.isTypeParameter() &&
-                (typeSymbol.isResolved || (typeSymbol.inResolution && !context.inSpecialization)) &&
+                (typeSymbol.isResolved || typeSymbol.inResolution) &&
                 !typeSymbol.getIsSpecialized() &&
                 typeSymbol.getTypeParameters().length &&
                 typeSymbol.getTypeArguments() == null &&
@@ -2423,11 +2423,9 @@ module TypeScript {
             else {
                 if (declSymbol.inResolution) {
                     // PULLTODO: Error or warning?
-                    if (!context.inSpecialization) {
-                        declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
-                        declSymbol.setResolved();
-                        return declSymbol;
-                    }
+                    declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                    declSymbol.setResolved();
+                    return declSymbol;
                 }
 
                 if (declSymbol.type && declSymbol.type.isError()) {
@@ -8614,9 +8612,6 @@ module TypeScript {
             if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
                 return true;
             }
-
-            //source = this.substituteUpperBoundForType(source);
-            //target = this.substituteUpperBoundForType(target);
 
             var sourceSubstitution: PullTypeSymbol = source;
 
