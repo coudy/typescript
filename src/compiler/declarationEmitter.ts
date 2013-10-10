@@ -448,22 +448,21 @@ module TypeScript {
 
             this.declFile.Write("(");
 
-            if (funcDecl.parameterList) {
-                var argsLen = funcDecl.parameterList.members.length;
-                if (lastParameterIsRest(funcDecl.parameterList)) {
-                    argsLen--;
-                }
+            var hasLastParameterRestParameter = lastParameterIsRest(funcDecl.parameterList);
+            var argsLen = funcDecl.parameterList.members.length;
+            if (hasLastParameterRestParameter) {
+                argsLen--;
+            }
 
-                for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <Parameter>funcDecl.parameterList.members[i];
-                    this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
-                    if (i < (argsLen - 1)) {
-                        this.declFile.Write(", ");
-                    }
+            for (var i = 0; i < argsLen; i++) {
+                var argDecl = <Parameter>funcDecl.parameterList.members[i];
+                this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
+                if (i < (argsLen - 1)) {
+                    this.declFile.Write(", ");
                 }
             }
 
-            if (lastParameterIsRest(funcDecl.parameterList)) {
+            if (hasLastParameterRestParameter) {
                 var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
                 if (funcDecl.parameterList.members.length > 1) {
                     this.declFile.Write(", ...");
@@ -539,7 +538,7 @@ module TypeScript {
                     this.declFile.Write("new");
                 }
                 else if (funcPullDecl.kind !== PullElementKind.CallSignature &&
-                            funcPullDecl.kind !== PullElementKind.IndexSignature) {
+                    funcPullDecl.kind !== PullElementKind.IndexSignature) {
                     this.declFile.Write(id);
                     if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
                         this.declFile.Write("? ");
@@ -555,22 +554,21 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
-            if (funcDecl.parameterList) {
-                var argsLen = funcDecl.parameterList.members.length;
-                if (lastParameterIsRest(funcDecl.parameterList)) {
-                    argsLen--;
-                }
+            var hasLastParameterRestParameter = lastParameterIsRest(funcDecl.parameterList);
+            var argsLen = funcDecl.parameterList.members.length;
+            if (hasLastParameterRestParameter) {
+                argsLen--;
+            }
 
-                for (var i = 0; i < argsLen; i++) {
-                    var argDecl = <Parameter>funcDecl.parameterList.members[i];
-                    this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
-                    if (i < (argsLen - 1)) {
-                        this.declFile.Write(", ");
-                    }
+            for (var i = 0; i < argsLen; i++) {
+                var argDecl = <Parameter>funcDecl.parameterList.members[i];
+                this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
+                if (i < (argsLen - 1)) {
+                    this.declFile.Write(", ");
                 }
             }
 
-            if (lastParameterIsRest(funcDecl.parameterList)) {
+            if (hasLastParameterRestParameter) {
                 var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
                 if (funcDecl.parameterList.members.length > 1) {
                     this.declFile.Write(", ...");
