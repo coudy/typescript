@@ -197,9 +197,7 @@ module TypeScript {
         public canUseTypeSymbol = false;
 
         public specializingToAny = false;
-        public isResolvingClassExtendedType = false; 
-        public isSpecializingSignatureTypeParameters = false;
-        public isSpecializingConstructorMethod = false;
+        public isResolvingClassExtendedType = false;
         public isComparingSpecializedSignatures = false;
         public isResolvingSuperConstructorCallArgument = false;
         public inConstructorArguments = false;

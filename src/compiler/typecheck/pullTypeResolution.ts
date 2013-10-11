@@ -5723,14 +5723,7 @@ module TypeScript {
 
                 if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                     for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                        var typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
-
-                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {
-                            typeArgs[i] = context.findSpecializationForType(typeArg);
-                        }
-                        else {
-                            typeArgs[i] = typeArg;
-                        }
+                        typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
                         if (typeArgs[i].isError()) {
                             typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
@@ -5772,6 +5765,7 @@ module TypeScript {
             typeParameters = specializedSymbol.getTypeParameters();
 
             var typeConstraintArgumentMap: any = {};
+            var typeArg: PullTypeSymbol = null;
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
@@ -7238,7 +7232,6 @@ module TypeScript {
             var specializedSignature: PullSignatureSymbol;
             var typeParameters: PullTypeParameterSymbol[];
             var typeConstraint: PullTypeSymbol = null;
-            var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
             var beforeResolutionSignatures = signatures;
             var sawGenericSignature = false;
 
@@ -7321,10 +7314,7 @@ module TypeScript {
                             continue;
                         }
 
-                        context.isSpecializingSignatureTypeParameters = true;
                         specializedSignature = instantiateSignature(signatures[i], typeReplacementMap, true);
-
-                        context.isSpecializingSignatureTypeParameters = prevSpecializing;
 
                         if (specializedSignature) {
                             resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -7626,7 +7616,6 @@ module TypeScript {
                     var specializedSignature: PullSignatureSymbol;
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
-                    var prevIsSpecializing = context.isSpecializingSignatureTypeParameters = true;
                     var triedToInferTypeArgs: boolean;
 
                     for (var i = 0; i < constructSignatures.length; i++) {
@@ -7707,10 +7696,7 @@ module TypeScript {
                                     continue;
                                 }
 
-                                context.isSpecializingSignatureTypeParameters = true;
                                 specializedSignature = instantiateSignature(constructSignatures[i], typeReplacementMap, true);
-
-                                context.isSpecializingSignatureTypeParameters = prevIsSpecializing;
 
                                 if (specializedSignature) {
                                     resolvedSignatures[resolvedSignatures.length] = specializedSignature;
