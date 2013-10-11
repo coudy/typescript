@@ -321,8 +321,8 @@ module Services {
             return this.compiler.pullGetDeclInformation(decl, ast, document);
         }
 
-        public getTopLevelDeclaration(fileName: string) {
-            return this.compiler.getTopLevelDeclaration(fileName);
+        public topLevelDeclaration(fileName: string) {
+            return this.compiler.topLevelDeclaration(fileName);
         }
 
         public getDeclForAST(ast: TypeScript.AST): TypeScript.PullDecl {

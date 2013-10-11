@@ -1288,7 +1288,7 @@ module TypeScript {
             };
         }
 
-        public getTopLevelDeclaration(fileName: string) : PullDecl {
+        public topLevelDeclaration(fileName: string) : PullDecl {
             return this.semanticInfoChain.topLevelDecl(fileName);
         }
 

@@ -692,7 +692,7 @@ module Services {
             var fileNames = this.compilerState.getFileNames();
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = this.compilerState.getHostFileName(fileNames[i]);
-                var declaration = this.compilerState.getTopLevelDeclaration(TypeScript.switchToForwardSlashes(fileName));
+                var declaration = this.compilerState.topLevelDeclaration(TypeScript.switchToForwardSlashes(fileName));
                 this.findSearchValueInPullDecl(fileName, [declaration], items, terms, regExpTerms);
             }
             return items;
