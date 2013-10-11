@@ -186,10 +186,6 @@ module TypeScript {
             return ast.typeCheckPhase !== PullTypeResolver.globalTypeCheckPhase && context && context.typeCheck() && this.unitPath == context.typeCheckUnitPath;
         }
 
-        public getDeclForAST(ast: AST): PullDecl {
-            return this.semanticInfoChain.getDeclForAST(ast);
-        }
-
         private setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext): void {
             if (context && context.inProvisionalResolution()) {
                 // Cache provisionally
@@ -961,7 +957,7 @@ module TypeScript {
         }
 
         private resolveOtherDeclarations(ast: AST, context: PullTypeResolutionContext) {
-            var resolvedDecl = this.getDeclForAST(ast);
+            var resolvedDecl = this.semanticInfoChain.getDeclForAST(ast);
             var symbol = resolvedDecl.getSymbol();
 
             var allDecls = symbol.getDeclarations();
@@ -994,7 +990,7 @@ module TypeScript {
         }
 
         private resolveEnumDeclaration(ast: EnumDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var containerDecl = this.getDeclForAST(ast);
+            var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             var containerSymbol = <PullContainerSymbol>containerDecl.getSymbol();
 
             if (containerSymbol.isResolved || containerSymbol.inResolution) {
@@ -1029,7 +1025,7 @@ module TypeScript {
         private typeCheckEnumDeclaration(ast: EnumDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            var containerDecl = this.getDeclForAST(ast);
+            var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.resolveAST(ast.enumElements, false, containerDecl, context);
             this.validateVariableDeclarationGroups(containerDecl, context);
         }
@@ -1038,7 +1034,7 @@ module TypeScript {
         // Resolve a module declaration
         //
         private resolveModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var containerDecl = this.getDeclForAST(ast);
+            var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             var containerSymbol = <PullContainerSymbol>containerDecl.getSymbol();
 
             if (containerSymbol.isResolved || containerSymbol.inResolution) {
@@ -1088,7 +1084,7 @@ module TypeScript {
         private typeCheckModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            var containerDecl = this.getDeclForAST(ast);
+            var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.resolveAST(ast.members, false, containerDecl, context);
             this.validateVariableDeclarationGroups(containerDecl, context);
 
@@ -1122,7 +1118,7 @@ module TypeScript {
             heritageClauses: ASTList,
             context: PullTypeResolutionContext): PullSymbol {
 
-            var typeDecl = this.getDeclForAST(classOrInterface);
+            var typeDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
             var enclosingDecl = this.getEnclosingDecl(typeDecl);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclIsClass = classOrInterface.nodeType() === NodeType.ClassDeclaration;
@@ -1275,7 +1271,7 @@ module TypeScript {
         // Once bound, we can add the parent type's members to the class
         //
         private resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
+            var classDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
             if (!classDeclSymbol.isResolved) {
                 this.resolveReferenceTypeDeclaration(classDeclAST, classDeclAST.identifier, classDeclAST.heritageClauses, context);
@@ -1390,7 +1386,7 @@ module TypeScript {
         }
 
         private typeCheckTypeParametersOfTypeDeclaration(classOrInterface: AST, context: PullTypeResolutionContext) {
-            var typeDecl: PullDecl = this.getDeclForAST(classOrInterface);
+            var typeDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
             for (var i = 0; i < typeDeclTypeParameters.length; i++) {
@@ -1402,7 +1398,7 @@ module TypeScript {
         private typeCheckClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(classDeclAST, context);
 
-            var classDecl: PullDecl = this.getDeclForAST(classDeclAST);
+            var classDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
 
             // Add for post typeChecking if we want to verify name collision with _this
@@ -1452,7 +1448,7 @@ module TypeScript {
         private resolveInterfaceDeclaration(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             this.resolveReferenceTypeDeclaration(interfaceDeclAST, interfaceDeclAST.identifier, interfaceDeclAST.heritageClauses, context);
 
-            var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+            var interfaceDecl = this.semanticInfoChain.getDeclForAST(interfaceDeclAST);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
             this.resolveTypeSymbolSignatures(interfaceDeclSymbol, context);
@@ -1471,7 +1467,7 @@ module TypeScript {
         private typeCheckInterfaceDeclaration(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(interfaceDeclAST, context);
 
-            var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+            var interfaceDecl = this.semanticInfoChain.getDeclForAST(interfaceDeclAST);
             var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
 
             this.resolveAST(interfaceDeclAST.members, false, interfaceDecl, context);
@@ -1615,7 +1611,7 @@ module TypeScript {
 
         private resolveInternalModuleReference(importStatementAST: ImportDeclaration, context: PullTypeResolutionContext) {
             // ModuleName or ModuleName.Identifier or ModuleName.ModuleName....Identifier
-            var importDecl = this.getDeclForAST(importStatementAST);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
             var aliasExpr = importStatementAST.moduleReference.nodeType() == NodeType.TypeRef ? (<TypeReference>importStatementAST.moduleReference).term : importStatementAST.moduleReference;
@@ -1663,7 +1659,7 @@ module TypeScript {
 
         private resolveImportDeclaration(importStatementAST: ImportDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             // internal or external? (Does it matter?)
-            var importDecl = this.getDeclForAST(importStatementAST);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
@@ -1728,7 +1724,7 @@ module TypeScript {
         private typeCheckImportDeclaration(importStatementAST: ImportDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(importStatementAST, context);
 
-            var importDecl = this.getDeclForAST(importStatementAST);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
@@ -1892,7 +1888,7 @@ module TypeScript {
 
             var funcDeclSymbol: PullTypeSymbol = null;
 
-            var functionDecl = this.getDeclForAST(funcDeclAST);
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             Debug.assert(functionDecl);
 
             if (!functionDecl.hasSymbol()) {
@@ -1954,7 +1950,7 @@ module TypeScript {
         }
 
         private resolveFunctionTypeSignatureParameter(argDeclAST: Parameter, signature: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var paramDecl = this.getDeclForAST(argDeclAST);
+            var paramDecl = this.semanticInfoChain.getDeclForAST(argDeclAST);
             var paramSymbol = paramDecl.getSymbol();
 
             if (argDeclAST.typeExpr) {
@@ -1996,7 +1992,7 @@ module TypeScript {
         }
 
         private resolveFunctionExpressionParameter(argDeclAST: Parameter, contextParam: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var paramDecl = this.getDeclForAST(argDeclAST);
+            var paramDecl = this.semanticInfoChain.getDeclForAST(argDeclAST);
             var paramSymbol = paramDecl.getSymbol();
             var contextualType = contextParam && contextParam.type;
             var isImplicitAny = false;
@@ -2136,7 +2132,7 @@ module TypeScript {
         private resolveObjectTypeTypeReference(objectType: ObjectType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var interfaceSymbol: PullTypeSymbol = null;
 
-            var interfaceDecl = this.getDeclForAST(objectType);
+            var interfaceDecl = this.semanticInfoChain.getDeclForAST(objectType);
             Debug.assert(interfaceDecl);
 
             interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
@@ -2149,7 +2145,7 @@ module TypeScript {
                 var typeMembers = objectType.typeMembers;
 
                 for (var i = 0; i < typeMembers.members.length; i++) {
-                    memberDecl = this.getDeclForAST(typeMembers.members[i]);
+                    memberDecl = this.semanticInfoChain.getDeclForAST(typeMembers.members[i]);
                     memberSymbol = (memberDecl.kind & PullElementKind.SomeSignature) ? memberDecl.getSignatureSymbol() : memberDecl.getSymbol();
 
                     this.resolveAST(typeMembers.members[i], false, enclosingDecl, context);
@@ -2173,7 +2169,7 @@ module TypeScript {
 
         private typeCheckInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(interfaceDeclAST, context);
-            var interfaceDecl = this.getDeclForAST(interfaceDeclAST);
+            var interfaceDecl = this.semanticInfoChain.getDeclForAST(interfaceDeclAST);
             var interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
             if (!interfaceSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
@@ -2182,7 +2178,7 @@ module TypeScript {
 
         private typeCheckObjectTypeTypeReference(objectType: ObjectType, context: PullTypeResolutionContext) {
             this.setTypeChecked(objectType, context);
-            var objectTypeDecl = this.getDeclForAST(objectType);
+            var objectTypeDecl = this.semanticInfoChain.getDeclForAST(objectType);
             var objectTypeSymbol = <PullTypeSymbol>objectTypeDecl.getSymbol();
 
             this.typeCheckMembersAgainstIndexer(objectTypeSymbol, objectTypeDecl, context);
@@ -2402,7 +2398,7 @@ module TypeScript {
 
         private getEnumTypeSymbol(enumElement: EnumElement, context: PullTypeResolutionContext): PullTypeSymbol {
             var enumDeclaration = <EnumDeclaration>enumElement.parent.parent;
-            var decl = this.getDeclForAST(enumDeclaration);
+            var decl = this.semanticInfoChain.getDeclForAST(enumDeclaration);
             var symbol = decl.getSymbol();
             this.resolveDeclaredSymbol(symbol, context);
 
@@ -2428,7 +2424,7 @@ module TypeScript {
             context: PullTypeResolutionContext): PullSymbol {
 
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.nodeType() === NodeType.EnumElement;
-            var decl = this.getDeclForAST(varDeclOrParameter);
+            var decl = this.semanticInfoChain.getDeclForAST(varDeclOrParameter);
 
             // if the enclosing decl is a lambda, we may not have bound the parent symbol
             if (enclosingDecl && decl.kind == PullElementKind.Parameter) {
@@ -2513,7 +2509,7 @@ module TypeScript {
             context: PullTypeResolutionContext,
             enclosingDecl: PullDecl) {
 
-            var decl = this.getDeclForAST(varDeclOrParameter);
+            var decl = this.semanticInfoChain.getDeclForAST(varDeclOrParameter);
             var declSymbol = decl.getSymbol();
             var declParameterSymbol: PullSymbol = decl.getValueDecl() ? decl.getValueDecl().getSymbol() : null;
 
@@ -2628,7 +2624,7 @@ module TypeScript {
                 context.pushContextualType(typeExprSymbol, context.inProvisionalResolution(), null);
             }
 
-            var decl = this.getDeclForAST(varDeclOrParameter);
+            var decl = this.semanticInfoChain.getDeclForAST(varDeclOrParameter);
             var declSymbol = decl.getSymbol();
             var declParameterSymbol: PullSymbol = decl.getValueDecl() ? decl.getValueDecl().getSymbol() : null;
 
@@ -2709,7 +2705,7 @@ module TypeScript {
             this.setTypeChecked(varDeclOrParameter, context);
 
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.nodeType() === NodeType.EnumElement;
-            var decl = this.getDeclForAST(varDeclOrParameter);
+            var decl = this.semanticInfoChain.getDeclForAST(varDeclOrParameter);
             var declSymbol = decl.getSymbol();
 
             var typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(
@@ -2860,7 +2856,7 @@ module TypeScript {
 
         private checkThisCaptureVariableCollides(_thisAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             if (isDeclaration) {
-                var decl = this.getDeclForAST(_thisAST);
+                var decl = this.semanticInfoChain.getDeclForAST(_thisAST);
                 if (hasFlag(decl.flags, PullElementFlags.Ambient)) { // ambient declarations do not generate the code
                     return;
                 }
@@ -2901,7 +2897,7 @@ module TypeScript {
         }
 
         private resolveTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext): PullTypeSymbol {
-            var typeParameterDecl = this.getDeclForAST(typeParameterAST);
+            var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
             var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
 
             // REVIEW: We shouldn't bail if we're specializing
@@ -2935,7 +2931,7 @@ module TypeScript {
         private typeCheckTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext) {
             this.setTypeChecked(typeParameterAST, context);
 
-            var typeParameterDecl = this.getDeclForAST(typeParameterAST);
+            var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
             var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
             this.resolveTypeReference(typeParameterAST.constraint, enclosingDecl, context);
         }
@@ -2974,7 +2970,7 @@ module TypeScript {
 
                     case NodeType.CatchClause:
                     case NodeType.WithStatement:
-                        enclosingDeclStack[enclosingDeclStack.length] = this.getDeclForAST(ast);
+                        enclosingDeclStack[enclosingDeclStack.length] = this.semanticInfoChain.getDeclForAST(ast);
                         break;
 
                     default:
@@ -3053,7 +3049,7 @@ module TypeScript {
                         }
                     }
 
-                    var functionDecl = this.getDeclForAST(funcDeclAST);
+                    var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
                     var functionSymbol = functionDecl.getSymbol();
 
                     if (returnType) {
@@ -3103,7 +3099,7 @@ module TypeScript {
         private typeCheckConstructorDeclaration(funcDeclAST: ConstructorDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(funcDeclAST, context);
 
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             // resolve parameter type annotations as necessary
             if (funcDeclAST.parameterList) {
@@ -3210,7 +3206,7 @@ module TypeScript {
             context: PullTypeResolutionContext) {
             this.setTypeChecked(funcDeclAST, context);
 
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             if (typeParameters) {
                 for (var i = 0; i < typeParameters.members.length; i++) {
@@ -3344,7 +3340,7 @@ module TypeScript {
 
             // resolve the return type annotation
             if (returnTypeAnnotation) {
-                var funcDecl = this.getDeclForAST(funcDeclAST);
+                var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
                 // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                 // on the function when resolving the return type
@@ -3409,7 +3405,7 @@ module TypeScript {
         }
 
         private resolveConstructorDeclaration(funcDeclAST: ConstructorDeclaration, context: PullTypeResolutionContext): PullSymbol {
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
 
@@ -3429,7 +3425,7 @@ module TypeScript {
                     var classAST = this.getEnclosingClassDeclaration(funcDeclAST);
 
                     if (classAST) {
-                        var classDecl = this.getDeclForAST(classAST);
+                        var classDecl = this.semanticInfoChain.getDeclForAST(classAST);
                         var classSymbol = classDecl.getSymbol();
 
                         if (!classSymbol.isResolved && !classSymbol.inResolution) {
@@ -3510,7 +3506,7 @@ module TypeScript {
         }
 
         private resolveFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
 
@@ -3535,7 +3531,7 @@ module TypeScript {
                     var classAST = this.getEnclosingClassDeclaration(funcDeclAST);
 
                     if (classAST) {
-                        var classDecl = this.getDeclForAST(classAST);
+                        var classDecl = this.semanticInfoChain.getDeclForAST(classAST);
                         var classSymbol = classDecl.getSymbol();
 
                         if (!classSymbol.isResolved && !classSymbol.inResolution) {
@@ -3746,7 +3742,7 @@ module TypeScript {
 
         private resolveAccessorDeclaration(funcDeclAst: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
-            var functionDeclaration = this.getDeclForAST(funcDeclAst);
+            var functionDeclaration = this.semanticInfoChain.getDeclForAST(funcDeclAst);
             var accessorSymbol = <PullAccessorSymbol> functionDeclaration.getSymbol();
 
             if (accessorSymbol.isResolved) {
@@ -3898,7 +3894,7 @@ module TypeScript {
             setterAnnotatedType: PullTypeSymbol,
             context: PullTypeResolutionContext): PullSymbol {
 
-            var funcDecl: PullDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl: PullDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             var getterSymbol = accessorSymbol.getGetter();
@@ -3987,7 +3983,7 @@ module TypeScript {
 
             this.setTypeChecked(funcDeclAST, context);
 
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             this.resolveReturnTypeAnnotationOfFunctionDeclaration(
@@ -4036,7 +4032,7 @@ module TypeScript {
 
         private resolveSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             var setterSymbol = accessorSymbol.getSetter();
@@ -4088,7 +4084,7 @@ module TypeScript {
         private typeCheckSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(funcDeclAST, context);
 
-            var funcDecl = this.getDeclForAST(funcDeclAST);
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             if (funcDeclAST.parameterList) {
@@ -4663,7 +4659,7 @@ module TypeScript {
 
         private typeCheckCatchClause(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
-            var catchDecl = this.getDeclForAST(ast);
+            var catchDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.resolveAST((<CatchClause>ast).body, false, catchDecl, context);
             this.validateVariableDeclarationGroups(catchDecl, context);
         }
@@ -5745,7 +5741,6 @@ module TypeScript {
         }
 
         private resolveNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            enclosingDecl.ensureSymbolIsBound();
             var nameSymbol = this.getSymbolForAST(nameAST, context);
             var foundCached = nameSymbol != null;
 
@@ -5773,12 +5768,20 @@ module TypeScript {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
-            var id = nameAST.text();
+            var nameSymbol: PullSymbol = null;
 
+            // First check if this is the name child of a declaration. If it is, no need to search for a name in scope since this is not a reference.
+            if (isNameOfSomeDeclaration(nameAST)) {
+                Debug.assert(enclosingDecl == this.semanticInfoChain.getDeclForAST(nameAST.parent));
+                nameSymbol = enclosingDecl.getSymbol();
+            }
+
+            var id = nameAST.text();
             var declPath = enclosingDecl.getParentPath();
 
-            var aliasSymbol: PullTypeAliasSymbol = null;
-            var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+            if (!nameSymbol) {
+                var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+            }
 
             if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction)) {
                 nameSymbol = this.cachedFunctionArgumentsSymbol();
@@ -5835,6 +5838,8 @@ module TypeScript {
                     }
                 }
             }
+
+            var aliasSymbol: PullTypeAliasSymbol = null;
 
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
@@ -6456,7 +6461,7 @@ module TypeScript {
             context: PullTypeResolutionContext): PullSymbol {
 
             var funcDeclSymbol: PullSymbol = null;
-            var functionDecl = this.getDeclForAST(funcDeclAST);
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             Debug.assert(functionDecl);
 
             if (functionDecl && functionDecl.hasSymbol()) {
@@ -6609,7 +6614,7 @@ module TypeScript {
 
             this.setTypeChecked(funcDeclAST, context);
 
-            var functionDecl = this.getDeclForAST(funcDeclAST);
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             var funcDeclSymbol = <PullTypeSymbol>functionDecl.getSymbol();
             var funcDeclType = funcDeclSymbol.type;
@@ -6977,7 +6982,7 @@ module TypeScript {
 
                 var isAccessor = propertyAssignmentIsAccessor(propertyAssignment);
                 if (propertyAssignment.nodeType() == NodeType.SimplePropertyAssignment) {
-                    var decl = this.getDeclForAST(propertyAssignment);
+                    var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
                     Debug.assert(decl);
 
                     if (!isUsingExistingSymbol) {
@@ -6989,7 +6994,7 @@ module TypeScript {
                     }
                 }
                 else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
-                    var decl = this.getDeclForAST(propertyAssignment);
+                    var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
                     Debug.assert(decl);
 
                     var binder = this.semanticInfoChain.getBinder();
@@ -7001,7 +7006,7 @@ module TypeScript {
                     // Pre-bind the getter and setter so that they are both bound before we resolve accessor declaration.
                     // This happens for the class member case, and we need to mimic that for the object literal case.
                     var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
-                    var functionDeclaration = this.getDeclForAST(funcDeclAST);
+                    var functionDeclaration = this.semanticInfoChain.getDeclForAST(funcDeclAST);
                     Debug.assert(functionDeclaration);
 
                     var binder = this.semanticInfoChain.getBinder();
@@ -7124,7 +7129,7 @@ module TypeScript {
             // walk the members of the object literal,
             // create fields for each based on the value assigned in
 
-            var objectLitDecl = this.getDeclForAST(objectLitAST);
+            var objectLitDecl = this.semanticInfoChain.getDeclForAST(objectLitAST);
             Debug.assert(objectLitDecl);
 
             var typeSymbol = <PullTypeSymbol>this.getSymbolForAST(objectLitAST, context);
@@ -10504,11 +10509,11 @@ module TypeScript {
             allSignatures?: PullSignatureSymbol[]) {
 
             if (!signature) {
-                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(this.getDeclForAST(funcDecl));
+                var functionSignatureInfo = PullHelpers.getSignatureForFuncDecl(this.semanticInfoChain.getDeclForAST(funcDecl));
                 signature = functionSignatureInfo.signature;
                 allSignatures = functionSignatureInfo.allSignatures;
             }
-            var functionDeclaration = this.getDeclForAST(funcDecl);
+            var functionDeclaration = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSymbol = functionDeclaration.getSymbol();
 
             // Find the definition signature for this signature group
@@ -10744,7 +10749,7 @@ module TypeScript {
         }
 
         private typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface: AST, indexOfTypeParameter: number, typeParameter: PullTypeParameterSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
-            var decl = this.getDeclForAST(classOrInterface);
+            var decl = this.semanticInfoChain.getDeclForAST(classOrInterface);
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
             var messageCode: string;
@@ -10783,7 +10788,7 @@ module TypeScript {
         }
 
         private baseListPrivacyErrorReporter(classOrInterface: AST, declSymbol: PullTypeSymbol, baseAst: AST, isExtendedType: boolean, symbol: PullSymbol, context: PullTypeResolutionContext) {
-            var decl = this.getDeclForAST(classOrInterface);
+            var decl = this.semanticInfoChain.getDeclForAST(classOrInterface);
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
             var messageCode: string;
@@ -10887,7 +10892,7 @@ module TypeScript {
                 return;
             }
 
-            var functionDecl = this.getDeclForAST(funcDeclAST);
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var functionSymbol = functionDecl.getSymbol();;
             var functionSignature: PullSignatureSymbol;
 
@@ -10953,7 +10958,7 @@ module TypeScript {
             symbol: PullSymbol,
             context: PullTypeResolutionContext) {
 
-            var decl = this.getDeclForAST(declAST);
+            var decl = this.semanticInfoChain.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
@@ -11023,7 +11028,7 @@ module TypeScript {
             symbol: PullSymbol,
             context: PullTypeResolutionContext) {
 
-            var decl = this.getDeclForAST(declAST);
+            var decl = this.semanticInfoChain.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
@@ -11119,7 +11124,7 @@ module TypeScript {
             symbol: PullSymbol,
             context: PullTypeResolutionContext) {
 
-            var decl = this.getDeclForAST(declAST);
+            var decl = this.semanticInfoChain.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
 
             var isGetter = hasFlag(flags, FunctionFlags.GetAccessor);
@@ -11659,7 +11664,7 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext) {
 
-            var typeDecl = this.getDeclForAST(classOrInterface);
+            var typeDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
 
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = true;

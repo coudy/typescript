@@ -4,7 +4,7 @@
 ////var b/*2*/ = undefined;              // var b: any
 ////var c/*3*/ = { x: 0, y: null };	// var c: { x: number, y: any }
 ////var d/*4*/ = [null, undefined];      // var d: any[]
-
+debugger;
 goTo.marker('1');
 verify.quickInfoIs('any');
 

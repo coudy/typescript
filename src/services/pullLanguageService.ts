@@ -960,12 +960,7 @@ module Services {
             var candidateSignature: TypeScript.PullSignatureSymbol;
             var isConstructorCall: boolean;
 
-            if (isNameOfClass(node) || isNameOfInterface(node) || isNameOfFunction(node) || isNameOfVariable(node) || isNameOfEnum(node) || isNameOfModule(node)) {
-                // Skip the name and get to the declaration
-                node = node.parent;
-            }
-
-            if (node.isDeclaration()) {
+            if (TypeScript.isNameOfSomeDeclaration(node) || node.isDeclaration()) {
                 var declarationInformation = this.compilerState.getDeclarationSymbolInformation(node, document);
                 if (!declarationInformation) {
                     return null;
@@ -987,10 +982,10 @@ module Services {
                     }
                 }
             }
-            else if (isCallExpression(node) || isCallExpressionTarget(node)) {
+            else if (TypeScript.isCallExpression(node) || TypeScript.isCallExpressionTarget(node)) {
                 // If this is a call we need to get the call singuatures as well
                 // Move the cursor to point to the call expression
-                while (!isCallExpression(node)) {
+                while (!TypeScript.isCallExpression(node)) {
                     node = node.parent;
                 }
 
@@ -1596,8 +1591,8 @@ module Services {
             }
 
             while (node) {
-                if (isNameOfMemberAccessExpression(node) ||
-                    isRightSideOfQualifiedName(node)) {
+                if (TypeScript.isNameOfMemberAccessExpression(node) ||
+                    TypeScript.isRightSideOfQualifiedName(node)) {
                     node = node.parent;
                 } else {
                     break;
@@ -1829,114 +1824,6 @@ module Services {
             var actualSnapshotText = newScriptSnapshot.getText(0, newScriptSnapshot.getLength());
             TypeScript.Debug.assert(incrementalTreeText === actualSnapshotText);
         }
-    }
-
-    function isCallExpression(ast: TypeScript.AST): boolean {
-        return (ast && ast.nodeType() === TypeScript.NodeType.InvocationExpression) ||
-            (ast && ast.nodeType() === TypeScript.NodeType.ObjectCreationExpression);
-    }
-
-    function isCallExpressionTarget(ast: TypeScript.AST): boolean {
-        if (!ast) {
-            return false;
-        }
-
-        var current = ast;
-
-        while (current && current.parent) {
-            if (current.parent.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-                (<TypeScript.MemberAccessExpression>current.parent).name === current) {
-                current = current.parent;
-                continue;
-            }
-
-            break;
-        }
-
-        if (current && current.parent) {
-            if (current.parent.nodeType() === TypeScript.NodeType.InvocationExpression || current.parent.nodeType() === TypeScript.NodeType.ObjectCreationExpression) {
-                return current === (<TypeScript.InvocationExpression>current.parent).target;
-            }
-        }
-
-        return false;
-    }
-
-    function isNameOfClass(ast: TypeScript.AST): boolean {
-        if (ast === null || ast.parent === null)
-            return false;
-
-        return ast.nodeType() === TypeScript.NodeType.Name &&
-            ast.parent.nodeType() === TypeScript.NodeType.ClassDeclaration &&
-            (<TypeScript.ClassDeclaration>ast.parent).identifier === ast;
-    }
-
-    function isNameOfEnum(ast: TypeScript.AST): boolean {
-        if (ast === null || ast.parent === null)
-            return false;
-
-        return ast.nodeType() === TypeScript.NodeType.Name &&
-            ast.parent.nodeType() === TypeScript.NodeType.EnumDeclaration &&
-            (<TypeScript.EnumDeclaration>ast.parent).identifier === ast;
-    }
-
-    function isNameOfModule(ast: TypeScript.AST): boolean {
-        if (ast === null || ast.parent === null)
-            return false;
-
-        return ast.parent.nodeType() === TypeScript.NodeType.ModuleDeclaration &&
-            (<TypeScript.ModuleDeclaration>ast.parent).name === ast;
-    }
-
-    function isNameOfFunction(ast: TypeScript.AST): boolean {
-        if (ast === null || ast.parent === null)
-            return false;
-
-        return ast.nodeType() === TypeScript.NodeType.Name &&
-            ast.parent.nodeType() === TypeScript.NodeType.FunctionDeclaration &&
-            (<TypeScript.FunctionDeclaration>ast.parent).name === ast;
-    }
-
-    function isNameOfInterface(ast: TypeScript.AST): boolean {
-        if (ast === null || ast.parent === null)
-            return false;
-
-        return ast.nodeType() === TypeScript.NodeType.Name &&
-            ast.parent.nodeType() === TypeScript.NodeType.InterfaceDeclaration &&
-            (<TypeScript.InterfaceDeclaration>ast.parent).identifier === ast;
-    }
-
-    function isNameOfVariable(ast: TypeScript.AST): boolean {
-        if (ast === null || ast.parent === null)
-            return false;
-
-        return ast.nodeType() === TypeScript.NodeType.Name &&
-            ast.parent.nodeType() === TypeScript.NodeType.VariableDeclarator &&
-            (<TypeScript.VariableDeclarator>ast.parent).id === ast;
-    }
-
-    function isNameOfMemberAccessExpression(ast: TypeScript.AST) {
-        if (ast &&
-            ast.parent &&
-            ast.parent.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-            (<TypeScript.MemberAccessExpression>ast.parent).name === ast) {
-
-            return true;
-        }
-
-        return false;
-    }
-
-    function isRightSideOfQualifiedName(ast: TypeScript.AST) {
-        if (ast &&
-            ast.parent &&
-            ast.parent.nodeType() === TypeScript.NodeType.QualifiedName &&
-            (<TypeScript.QualifiedName>ast.parent).right === ast) {
-
-            return true;
-        }
-
-        return false;
     }
 
     function isSignatureHelpBlocker(ast: TypeScript.AST): boolean {

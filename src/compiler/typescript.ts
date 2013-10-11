@@ -1128,7 +1128,7 @@ module TypeScript {
 
                 // Record enclosing Decl
                 var decl = this.semanticInfoChain.getDeclForAST(current);
-                if (decl && !(decl.kind & (PullElementKind.Variable | PullElementKind.Parameter | PullElementKind.TypeParameter))) {
+                if (decl) {
                     enclosingDecl = decl;
                     enclosingDeclAST = current;
                 }
