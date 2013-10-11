@@ -52,7 +52,8 @@ module TypeScript {
             var document = this.fileNameToDocument[fileName];
             return document ? document : null;
         }
-
+        
+        // Returns the names of the files we own, in the same order that they were added to us.
         public fileNames(): string[] {
             if (this._fileNames === null) {
                 // Skip the first semantic info (the synthesized one for the global decls).
