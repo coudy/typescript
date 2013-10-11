@@ -61,8 +61,6 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
 
         compiler = new TypeScript.TypeScriptCompiler();
         compiler.settings = this.compilationSettings;
-        compiler.settings.sourceMapEmitterCallback = sourceMapEmitterCallback;
-        compiler.emitOptions.compilationSettings = this.compilationSettings;
 
         for (var iCode = 0; iCode < this.resolvedFiles.length; iCode++) {
             var code = this.resolvedFiles[iCode];
@@ -87,7 +85,7 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
             }
         }
 
-        for (var i = compiler.compile((path: string) => IO.resolvePath(path)); i.moveNext();) {
+        for (var i = compiler.compile((path: string) => IO.resolvePath(path), sourceMapEmitterCallback); i.moveNext();) {
             var result = i.current();
 
             result.diagnostics.forEach(d => this.addDiagnostic(d));

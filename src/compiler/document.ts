@@ -126,10 +126,13 @@ module TypeScript {
             return this._bloomFilter;
         }
 
-        public emitToSingleFile(): boolean {
+        // Returns true if this file should get emitted into its own unique output file.  
+        // Otherwise, it should be written into a single output file along with the rest of hte
+        // documents in the compilation.
+        public emitToOwnOutputFile(): boolean {
             // If we haven't specified an output file in our settings, then we're definitely 
-            // emitting to a single file.  Also, if we're an external module, then we're 
-            // definitely emitting to a single file.
+            // emitting to our own file.  Also, if we're an external module, then we're 
+            // definitely emitting to our own file.
             return !this.compilationSettings.outFileOption || this.script().isExternalModule;
         }
 

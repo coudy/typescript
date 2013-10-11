@@ -43,8 +43,6 @@ module TypeScript {
         public useCaseSensitiveFileResolution = false;
         public gatherDiagnostics = false;
 
-        public sourceMapEmitterCallback: SourceMapEmitterCallback;
-
         public codepage: number = null;
     }
 

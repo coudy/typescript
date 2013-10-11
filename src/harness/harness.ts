@@ -794,9 +794,12 @@ module Harness {
             
             constructor(private useMinimalDefaultLib = true, noImplicitAny = false) {
                 this.compiler = new TypeScript.TypeScriptCompiler();
-                this.compiler.settings = makeDefaultCompilerSettings(this.useMinimalDefaultLib, noImplicitAny);
-                this.compiler.emitOptions.compilationSettings.moduleGenTarget = TypeScript.ModuleGenTarget.Unspecified;
-                this.compiler.emitOptions.compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+
+                var settings = makeDefaultCompilerSettings(this.useMinimalDefaultLib, noImplicitAny);
+                //settings.moduleGenTarget = TypeScript.ModuleGenTarget.Unspecified;
+                settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+                this.compiler.setCompilationSettings(settings);
+
                 var libCode = this.useMinimalDefaultLib ? Compiler.libTextMinimal : Compiler.libText;
                 this.compiler.addFile("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
             }
@@ -908,11 +911,12 @@ module Harness {
                 this.addInputFiles(inputFiles);
                 otherFiles.forEach(file => this.registerFile(file.unitName, file.content));
 
-                this.compiler.emitOptions.compilationSettings.moduleGenTarget = moduleTarget;
                 if (settingsCallback) {
                     settingsCallback(this.compiler.settings);
-                    this.compiler.emitOptions = new TypeScript.EmitOptions(this.compiler.settings);
-                }                
+                }
+                else {
+                    this.compiler.settings.moduleGenTarget = moduleTarget;
+                }
 
                 try {
                     this.compile(/*resolve?*/ !noResolve);
@@ -1028,7 +1032,7 @@ module Harness {
 
                 this.sourcemapRecorder.reset();
                 var prevSourceFile = "";
-                this.compiler.settings.sourceMapEmitterCallback = (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void => {
+                var sourceMapEmitterCallback = (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void => {
                     if (prevSourceFile != sourceFile) {
                         this.sourcemapRecorder.WriteLine("");
                         this.sourcemapRecorder.WriteLine("EmittedFile: (" + emittedFile + ") sourceFile: (" + sourceFile + ")");
@@ -1042,7 +1046,7 @@ module Harness {
                     this.sourcemapRecorder.WriteLine("");
                 };
 
-                var output = this.compiler.emitAll((path: string) => host.resolvePath(path));
+                var output = this.compiler.emitAll((path: string) => host.resolvePath(path), sourceMapEmitterCallback);
                 output.outputFiles.forEach(o => host.writeFile(o.name, o.text, o.writeByteOrderMark));
 
                 return output.diagnostics;
@@ -1109,12 +1113,6 @@ module Harness {
                     }
                     idx[0].setFlag(this.compiler.settings, item.value);
                 });
-                this.compiler.emitOptions = new TypeScript.EmitOptions(this.compiler.settings);
-            }
-
-            /** sets the callback for the source map emitter information */
-            public setCompilerSourceMapEmitterCallBack(sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback) {
-                this.compiler.settings.sourceMapEmitterCallback = sourceMapEmitterCallback;
             }
 
             /** The compiler flags which tests are allowed to change and functions that can change them appropriately.
@@ -1138,7 +1136,7 @@ module Harness {
                     }
                 },
                 { flag: 'nolib', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.noLib = value.toLowerCase() === 'true' ? false : true; } },
-                { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; x.sourceMapEmitterCallback = undefined; } },
+                { flag: 'sourcemap', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.mapSourceFiles = value.toLowerCase() === 'true' ? true : false; } },
                 { flag: 'target', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.codeGenTarget = value.toLowerCase() === 'es3' ? TypeScript.LanguageVersion.EcmaScript3 : TypeScript.LanguageVersion.EcmaScript5; } },
                 { flag: 'out', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outFileOption = value; } },
                 { flag: 'outDir', setFlag: (x: TypeScript.CompilationSettings, value: string) => { x.outDirOption = value; } },
@@ -1159,12 +1157,9 @@ module Harness {
 
                 var oldCompilerSettings = new TypeScript.CompilationSettings();
                 clone(this.compiler.settings, oldCompilerSettings);
-                var oldEmitSettings = new TypeScript.EmitOptions(this.compiler.settings);
-                clone(this.compiler.emitOptions, oldEmitSettings);
 
                 return () => {
                     this.compiler.settings = oldCompilerSettings;
-                    this.compiler.emitOptions = oldEmitSettings;
                 };
             }
 

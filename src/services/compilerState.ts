@@ -215,7 +215,7 @@ module Services {
             var resolvePath = (fileName: string) => this.host.resolveRelativePath(fileName, null);
 
             var document = this.getDocument(fileName);
-            var emitToSingleFile = document.emitToSingleFile();
+            var emitToSingleFile = document.emitToOwnOutputFile();
 
             // Check for syntactic errors
             var syntacticDiagnostics = emitToSingleFile
