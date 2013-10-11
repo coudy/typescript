@@ -180,7 +180,6 @@ module TypeScript {
 
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
-        private typeSpecializationStack: any[] = [];
         private genericASTResolutionStack: AST[] = [];
         private enclosingFunctionParameterIndexStack: IParameterIndexContext[] = [];
 
@@ -196,9 +195,9 @@ module TypeScript {
 
         public canUseTypeSymbol = false;
 
-        public specializingToAny = false;
+        public instantiatingTypesToAny = false;
         public isResolvingClassExtendedType = false;
-        public isComparingSpecializedSignatures = false;
+        public isComparingInstantiatedSignatures = false;
         public isResolvingSuperConstructorCallArgument = false;
         public inConstructorArguments = false;
         public isInStaticInitializer = false;
@@ -299,38 +298,6 @@ module TypeScript {
             if (this.contextStack.length && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length - 1].recordProvisionallyTypedSymbol(symbol);
             }
-        }
-
-        public getTypeSpecializationStack() {
-            return this.typeSpecializationStack;
-        }
-
-        public setTypeSpecializationStack(newStack: any[]) {
-            this.typeSpecializationStack = newStack;
-        }
-
-        public pushTypeSpecializationCache(cache: any) {
-            this.typeSpecializationStack[this.typeSpecializationStack.length] = cache;
-        }
-
-        public popTypeSpecializationCache() {
-            if (this.typeSpecializationStack.length) {
-                this.typeSpecializationStack.length--;
-            }
-        }
-
-        public findSpecializationForType(type: PullTypeSymbol) {
-            var specialization: PullTypeSymbol = null;
-
-            for (var i = this.typeSpecializationStack.length - 1; i >= 0; i--) {
-                specialization = (this.typeSpecializationStack[i])[type.pullSymbolIDString];
-
-                if (specialization) {
-                    return specialization;
-                }
-            }
-
-            return type;
         }
 
         public postError(fileName: string, offset: number, length: number, diagnosticKey: string, arguments: any[] = null): void {

@@ -886,16 +886,12 @@ module TypeScript {
             var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = false;
 
-            var savedTypeSpecializationStack = context.getTypeSpecializationStack();
-            context.setTypeSpecializationStack([]);
-
             var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.resolvingNamespaceMemberAccess = false;
 
             var result = this.resolveDeclaredSymbolWorker(symbol, context);
 
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
-            context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
             context.inConstructorArguments = savedInConstructorArguments;
             context.isResolvingSuperConstructorCallArgument = savedIsResolvingSuperConstructorCallArgument;
@@ -960,19 +956,9 @@ module TypeScript {
 
             // GTODO: Is this code still relevant?
             if (typeArgs && typeArgs.length) {
-                var typeParameters = (<PullTypeSymbol>symbol).getTypeParameters();
-                var typeCache: any = {};
-
-                for (var i = 0; i < typeParameters.length; i++) {
-                    typeCache[typeParameters[i].pullSymbolIDString] = typeArgs[i];
-                }
-
-                context.pushTypeSpecializationCache(typeCache);
+                
                 var rootType = getRootType(symbol.type);
-
                 var specializedSymbol = this.createInstantiatedType(rootType, typeArgs);
-
-                context.popTypeSpecializationCache();
 
                 symbol = specializedSymbol;
             }
@@ -7212,8 +7198,7 @@ module TypeScript {
 
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
                     for (var i = 0; i < callEx.typeArguments.members.length; i++) {
-                        var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
-                        typeArgs[i] = context.findSpecializationForType(typeArg);
+                        typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
                     }
                 }
             }
@@ -7284,12 +7269,12 @@ module TypeScript {
                                     //    typeConstraint = specializeType(typeConstraint, null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
                                     //    context.popTypeSpecializationCache();
                                     //}
-                                    context.isComparingSpecializedSignatures = true;
+                                    context.isComparingInstantiatedSignatures = true;
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                         constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
                                         couldNotAssignToConstraint = true;
                                     }
-                                    context.isComparingSpecializedSignatures = false;
+                                    context.isComparingInstantiatedSignatures = false;
 
                                     if (couldNotAssignToConstraint) {
                                         break;
@@ -7437,13 +7422,7 @@ module TypeScript {
                     // account for varargs
                     if (params.length) {
                         if (i < params.length - 1 || (i < params.length && !signature.hasVarArgs)) {
-                            if (typeReplacementMap) {
-                                context.pushTypeSpecializationCache(typeReplacementMap);
-                            }
                             this.resolveDeclaredSymbol(params[i], context);
-                            if (typeReplacementMap) {
-                                context.popTypeSpecializationCache();
-                            }
                             contextualType = params[i].type;
                         }
                         else if (signature.hasVarArgs) {
@@ -7601,8 +7580,7 @@ module TypeScript {
 
                     if (callEx.typeArguments && callEx.typeArguments.members.length) {
                         for (var i = 0; i < callEx.typeArguments.members.length; i++) {
-                            var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
-                            typeArgs[i] = context.findSpecializationForType(typeArg);
+                            typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
                         }
                     }
                 }
@@ -7667,12 +7645,12 @@ module TypeScript {
                                             //    context.popTypeSpecializationCache();
                                             //}
 
-                                            context.isComparingSpecializedSignatures = true;
+                                            context.isComparingInstantiatedSignatures = true;
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                                 constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
                                                 couldNotAssignToConstraint = true;
                                             }
-                                            context.isComparingSpecializedSignatures = false;
+                                            context.isComparingInstantiatedSignatures = false;
 
                                             if (couldNotAssignToConstraint) {
                                                 break;
@@ -7808,13 +7786,7 @@ module TypeScript {
 
                         if (params.length) {
                             if (i < params.length - 1 || (i < params.length && !signature.hasVarArgs)) {
-                                if (typeReplacementMap) {
-                                    context.pushTypeSpecializationCache(typeReplacementMap);
-                                }
                                 this.resolveDeclaredSymbol(params[i], context);
-                                if (typeReplacementMap) {
-                                    context.popTypeSpecializationCache();
-                                }
                                 contextualType = params[i].type;
                             }
                             else if (signature.hasVarArgs) {
@@ -8595,7 +8567,7 @@ module TypeScript {
                 return true;
             }
 
-            if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
+            if (context.instantiatingTypesToAny && (target.isTypeParameter() || source.isTypeParameter())) {
                 return true;
             }
 
@@ -8757,7 +8729,7 @@ module TypeScript {
                 else {
                     // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
                     // target to be a subtype of its constraint
-                    if (context.isComparingSpecializedSignatures) {
+                    if (context.isComparingInstantiatedSignatures) {
                         target = this.substituteUpperBoundForType(target);
                     }
                     else {
@@ -9912,9 +9884,9 @@ module TypeScript {
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            var prevSpecialize = context.specializingToAny;
+            var prevSpecialize = context.instantiatingTypesToAny;
 
-            context.specializingToAny = true;
+            context.instantiatingTypesToAny = true;
 
             var typeParameters = typeToSpecialize.getTypeParameters();
 
@@ -9938,7 +9910,7 @@ module TypeScript {
 
             var type = this.createInstantiatedType(typeToSpecialize, typeArguments);
 
-            context.specializingToAny = prevSpecialize;
+            context.instantiatingTypesToAny = prevSpecialize;
 
             return type;
         }
