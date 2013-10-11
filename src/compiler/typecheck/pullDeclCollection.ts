@@ -89,14 +89,14 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(enumDecl.minChar, enumDecl.limChar);
 
-        var decl = new NormalPullDecl(enumName, enumDecl.identifier.actualText, kind, declFlags, context.getParent(), span);
-        context.semanticInfoChain.setDeclForAST(enumDecl, decl);
-        context.semanticInfoChain.setASTForDecl(decl, enumDecl);
+        var enumDeclaration = new NormalPullDecl(enumName, enumDecl.identifier.actualText, kind, declFlags, context.getParent(), span);
+        context.semanticInfoChain.setDeclForAST(enumDecl, enumDeclaration);
+        context.semanticInfoChain.setASTForDecl(enumDeclaration, enumDecl);
 
-        var syntheticIndexerDecl = new NormalPullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, decl, span);
-        var syntheticIndexerParameter = new NormalPullDecl("x", "x", PullElementKind.Parameter, PullElementFlags.None, syntheticIndexerDecl, span);
+        var enumIndexerDecl = new NormalPullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, enumDeclaration, span);
+        var enumIndexerParameter = new NormalPullDecl("x", "x", PullElementKind.Parameter, PullElementFlags.None, enumIndexerDecl, span);
 
-        context.pushParent(decl);
+        context.pushParent(enumDeclaration);
     }
 
     function createEnumElementDecls(propertyDecl: EnumElement, context: DeclCollectionContext): void {

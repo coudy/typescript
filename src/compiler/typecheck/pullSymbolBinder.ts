@@ -345,6 +345,25 @@ module TypeScript {
                 }
             }
 
+            this.bindEnumIndexerDeclsToPullSymbols(enumContainerDecl, enumContainerSymbol);
+
+            var valueDecl = enumContainerDecl.getValueDecl();
+
+            if (valueDecl) {
+                valueDecl.ensureSymbolIsBound();
+            }
+
+            var otherDecls = this.findDeclsInContext(enumContainerDecl, enumContainerDecl.kind, true);
+
+            if (otherDecls && otherDecls.length) {
+                for (var i = 0; i < otherDecls.length; i++) {
+                    otherDecls[i].ensureSymbolIsBound();
+                }
+            }
+        }
+
+        private bindEnumIndexerDeclsToPullSymbols(enumContainerDecl: PullDecl, enumContainerSymbol: PullContainerSymbol): void
+        {
             var indexSigDecl = enumContainerDecl.getChildDecls().filter(decl => decl.kind == PullElementKind.IndexSignature)[0];
             var indexParamDecl = indexSigDecl.getChildDecls()[0];
 
@@ -366,20 +385,6 @@ module TypeScript {
 
             syntheticIndexerSignatureSymbol.addDeclaration(indexSigDecl);
             syntheticIndexerParameterSymbol.addDeclaration(indexParamDecl);
-
-            var valueDecl = enumContainerDecl.getValueDecl();
-
-            if (valueDecl) {
-                valueDecl.ensureSymbolIsBound();
-            }
-
-            var otherDecls = this.findDeclsInContext(enumContainerDecl, enumContainerDecl.kind, true);
-
-            if (otherDecls && otherDecls.length) {
-                for (var i = 0; i < otherDecls.length; i++) {
-                    otherDecls[i].ensureSymbolIsBound();
-                }
-            }
         }
 
         private bindModuleDeclarationToPullSymbol(moduleContainerDecl: PullDecl) {
