@@ -7248,12 +7248,6 @@ module TypeScript {
                                             }
                                         }
                                     }
-                                    // GTODO
-                                    //if (typeConstraint.isTypeParameter()) {
-                                    //    context.pushTypeSpecializationCache(typeReplacementMap);
-                                    //    typeConstraint = specializeType(typeConstraint, null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
-                                    //    context.popTypeSpecializationCache();
-                                    //}
                                     context.isComparingInstantiatedSignatures = true;
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                         constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
@@ -7623,12 +7617,6 @@ module TypeScript {
                                                     }
                                                 }
                                             }
-                                            // GTODO
-                                            //if (typeConstraint.isTypeParameter()) {
-                                            //    context.pushTypeSpecializationCache(typeReplacementMap);
-                                            //    typeConstraint = specializeType(typeConstraint, null, this, context);
-                                            //    context.popTypeSpecializationCache();
-                                            //}
 
                                             context.isComparingInstantiatedSignatures = true;
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
