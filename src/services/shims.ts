@@ -82,6 +82,8 @@ module Services {
 
         dispose(dummy: any): void;
 
+        refresh(throwOnError: boolean): void;
+
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
@@ -320,6 +322,17 @@ module Services {
             this.logger = null;
 
             super.dispose(dummy);
+        }
+
+        // REFRESH
+        // Update the list of scripts known to the compiler
+        public refresh(throwOnError: boolean): void {
+            this.forwardJSONCall(
+                "refresh(" + throwOnError + ")",
+                () => {
+                    this.languageService.refresh();
+                    return <any>null;
+                });
         }
 
         /// SQUIGGLES
