@@ -53,7 +53,7 @@ module TypeScript {
 
         public diagnostic(): Diagnostic { return this._diagnostic; }
 
-        public commonDirectorPath() { return this._commonDirectoryPath; }
+        public commonDirectoryPath() { return this._commonDirectoryPath; }
         public sharedOutputFile() { return this._sharedOutputFile; }
         public sourceRootDirectory() { return this._sourceRootDirectory; }
         public sourceMapRootDirectory() { return this._sourceMapRootDirectory; }

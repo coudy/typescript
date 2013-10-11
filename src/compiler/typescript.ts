@@ -189,7 +189,7 @@ module TypeScript {
                 var updatedFileName = document.fileName;
                 if (emitOptions.outputDirectory() !== "") {
                     // Replace the common directory path with the option specified
-                    updatedFileName = document.fileName.replace(emitOptions.commonDirectorPath(), "");
+                    updatedFileName = document.fileName.replace(emitOptions.commonDirectoryPath(), "");
                     updatedFileName = emitOptions.outputDirectory() + updatedFileName;
                 }
                 return extensionChanger(updatedFileName, false);

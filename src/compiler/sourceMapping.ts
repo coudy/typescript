@@ -91,12 +91,12 @@ module TypeScript {
                 if (document.emitToOwnOutputFile()) {
                     // For modules or multiple emit files the mapRoot will have directory structure like the sources
                     // So if src\a.ts and src\lib\b.ts are compiled together user would be moving the maps into mapRoot\a.js.map and mapRoot\lib\b.js.map
-                    this.sourceMapDirectory = this.sourceMapDirectory + switchToForwardSlashes(getRootFilePath((document.fileName)).replace(emitOptions.commonDirectorPath(), ""));
+                    this.sourceMapDirectory = this.sourceMapDirectory + switchToForwardSlashes(getRootFilePath((document.fileName)).replace(emitOptions.commonDirectoryPath(), ""));
                 }
 
                 if (isRelative(this.sourceMapDirectory)) {
                     // The relative paths are relative to the common directory
-                    this.sourceMapDirectory = emitOptions.commonDirectorPath() + this.sourceMapDirectory;
+                    this.sourceMapDirectory = emitOptions.commonDirectoryPath() + this.sourceMapDirectory;
                     this.sourceMapDirectory = convertToDirectoryPath(switchToForwardSlashes(resolvePath(this.sourceMapDirectory)));
                     this.sourceMapPath = getRelativePathToFixedPath(getRootFilePath(jsFilePath), this.sourceMapDirectory + prettyMapFileName);
                 } else {
@@ -113,7 +113,7 @@ module TypeScript {
             var tsFilePath = switchToForwardSlashes(document.fileName);
             if (emitOptions.sourceRootDirectory()) {
                 // Use the relative path corresponding to the common directory path
-                tsFilePath = getRelativePathToFixedPath(emitOptions.commonDirectorPath(), tsFilePath);
+                tsFilePath = getRelativePathToFixedPath(emitOptions.commonDirectoryPath(), tsFilePath);
             } else {
                 // Source locations relative to map file location
                 tsFilePath = getRelativePathToFixedPath(this.sourceMapDirectory, tsFilePath);
