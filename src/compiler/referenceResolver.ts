@@ -44,13 +44,11 @@ module TypeScript {
     export class ReferenceResolver {
         private inputFileNames: string[];
         private host: IReferenceResolverHost;
-        private settings: TypeScript.ImmutableCompilationSettings;
         private visited: { [s: string]: string };
 
-        constructor(inputFileNames: string[], host: IReferenceResolverHost, settings: TypeScript.ImmutableCompilationSettings) {
+        constructor(inputFileNames: string[], host: IReferenceResolverHost, private settings: TypeScript.ImmutableCompilationSettings) {
             this.inputFileNames = inputFileNames;
             this.host = host;
-            this.settings = settings;
             this.visited = {};
         }
 
@@ -168,7 +166,7 @@ module TypeScript {
                 this.recordVisitedFile(normalizedPath);
 
                 // Preprocess the file
-                var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, this.host.getScriptSnapshot(normalizedPath), this.settings);
+                var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, this.host.getScriptSnapshot(normalizedPath));
                 resolutionResult.diagnostics.push.apply(resolutionResult.diagnostics, preprocessedFileInformation.diagnostics);
 
                 // If this file has a "no-default-lib = 'true'" tag
