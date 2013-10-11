@@ -126,6 +126,13 @@ module TypeScript {
             return this._bloomFilter;
         }
 
+        public emitToSingleFile(): boolean {
+            // If we haven't specified an output file in our settings, then we're definitely 
+            // emitting to a single file.  Also, if we're an external module, then we're 
+            // definitely emitting to a single file.
+            return !this.compilationSettings.outFileOption || this.script().isExternalModule;
+        }
+
         public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange, settings: CompilationSettings): Document {
             // See if we are currently holding onto a syntax tree.  We may not be because we're 
             // either a closed file, or we've just been lazy and haven't had to create the syntax

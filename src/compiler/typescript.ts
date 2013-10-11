@@ -260,16 +260,13 @@ module TypeScript {
             this.emitOptions.compilationSettings.sourceRoot = convertToDirectoryPath(switchToForwardSlashes(this.emitOptions.compilationSettings.sourceRoot));
 
             if (!this.emitOptions.compilationSettings.outFileOption && !this.emitOptions.compilationSettings.outDirOption && !this.emitOptions.compilationSettings.mapRoot && !this.emitOptions.compilationSettings.sourceRoot) {
-                this.emitOptions.outputMany = true;
                 this.emitOptions.commonDirectoryPath = "";
                 return null;
             }
 
             if (this.emitOptions.compilationSettings.outFileOption) {
                 this.emitOptions.compilationSettings.outFileOption = switchToForwardSlashes(resolvePath(this.emitOptions.compilationSettings.outFileOption));
-                this.emitOptions.outputMany = false;
             } else {
-                this.emitOptions.outputMany = true;
             } 
 
             if (this.emitOptions.compilationSettings.outDirOption) {
@@ -287,7 +284,7 @@ module TypeScript {
 
         private writeByteOrderMarkForDocument(document: Document) {
             // If module its always emitted in its own file
-            if (this._mustEmitDocumentToSingleFile(document)) {
+            if (document.emitToSingleFile()) {
                 return document.byteOrderMark !== ByteOrderMark.None;
             } else {
                 var fileNames = this.fileNames();
@@ -328,10 +325,6 @@ module TypeScript {
             return this._shouldEmit(script);
         }
 
-        public _mustEmitDocumentToSingleFile(document: Document): boolean {
-            return this.emitOptions.outputMany || document.script().isExternalModule;
-        }
-
         // Does the actual work of emittin the declarations from the provided document into the
         // provided emitter.  If no emitter is provided a new one is created.  
         private emitDocumentDeclarationsWorker(
@@ -360,7 +353,7 @@ module TypeScript {
             sharedEmitter: DeclarationEmitter): DeclarationEmitter {
 
             if (this._shouldEmitDeclarations(document.script())) {
-                if (this._mustEmitDocumentToSingleFile(document)) {
+                if (document.emitToSingleFile()) {
                     var singleEmitter = this.emitDocumentDeclarationsWorker(resolvePath, document);
                     if (singleEmitter) {
                         onSingleFileEmitComplete(singleEmitter.getOutputFile());
@@ -421,7 +414,7 @@ module TypeScript {
             var document = this.getDocument(fileName);
 
             // Emitting module or multiple files, always goes to single file
-            if (this._mustEmitDocumentToSingleFile(document)) {
+            if (document.emitToSingleFile()) {
                 this._emitDocumentDeclarations(resolvePath, document,
                     file => emitOutput.outputFiles.push(file), /*sharedEmitter:*/ null);
                 return emitOutput;
@@ -460,7 +453,7 @@ module TypeScript {
                 var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
                 var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document), OutputFileType.JavaScript);
 
-                emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
+                emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.settings, this.semanticInfoChain);
 
                 if (this.settings.mapSourceFiles) {
                     // We always create map files next to the jsFiles
@@ -488,7 +481,7 @@ module TypeScript {
 
             // Emitting module or multiple files, always goes to single file
             if (this._shouldEmit(document.script())) {
-                if (this._mustEmitDocumentToSingleFile(document)) {
+                if (document.emitToSingleFile()) {
                     // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
                     var singleEmitter = this.emitDocumentWorker(resolvePath, document);
                     if (singleEmitter) {
@@ -552,7 +545,7 @@ module TypeScript {
 
             var document = this.getDocument(fileName);
             // Emitting module or multiple files, always goes to single file
-            if (this._mustEmitDocumentToSingleFile(document)) {
+            if (document.emitToSingleFile()) {
                 this._emitDocument(resolvePath, document,
                     files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files), /*sharedEmitter:*/ null);
                 return emitOutput;

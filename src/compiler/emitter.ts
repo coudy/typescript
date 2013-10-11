@@ -40,14 +40,13 @@ module TypeScript {
     }
 
     export class EmitOptions {
-        public outputMany: boolean = true;
         public commonDirectoryPath = "";
 
         constructor(public compilationSettings: CompilationSettings) {
         }
 
         public mapOutputFileName(document: Document, extensionChanger: (fname: string, wholeFileNameReplaced: boolean) => string) {
-            if (this.outputMany || document.script().isExternalModule) {
+            if (document.emitToSingleFile()) {
                 var updatedFileName = document.fileName;
                 if (this.compilationSettings.outDirOption !== "") {
                     // Replace the common directory path with the option specified
@@ -114,6 +113,7 @@ module TypeScript {
         constructor(public emittingFileName: string,
                     public outfile: TextWriter,
                     public emitOptions: EmitOptions,
+                    private settings: CompilationSettings,
                     private semanticInfoChain: SemanticInfoChain) {
         }
 
@@ -256,7 +256,7 @@ module TypeScript {
         }
 
         public createSourceMapper(document: Document, jsFileName: string, jsFile: TextWriter, sourceMapOut: TextWriter, resolvePath: (path: string) => string) {
-            this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions, resolvePath);
+            this.sourceMapper = new SourceMapper(jsFile, sourceMapOut, document, jsFileName, this.emitOptions, this.settings, resolvePath);
         }
 
         public setSourceMapperNewSourceFile(document: Document) {

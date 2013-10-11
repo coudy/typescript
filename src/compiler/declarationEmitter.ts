@@ -910,7 +910,7 @@ module TypeScript {
 
             // Collect all the documents that need to be emitted as reference
             var documents: Document[] = [];
-            if (this.compiler.emitOptions.outputMany || script.isExternalModule) {
+            if (this.document.emitToSingleFile()) {
                 // Emit only from this file
                 var scriptReferences = this.document.referencedFiles;
                 var addedGlobalDocument = false;
@@ -920,7 +920,7 @@ module TypeScript {
                     // All the references that are not going to be part of same file
 
                     if (document &&
-                        (this.compiler.emitOptions.outputMany || document.script().isDeclareFile() || document.script().isExternalModule || !addedGlobalDocument)) {
+                        (document.emitToSingleFile() || document.script().isDeclareFile() || !addedGlobalDocument)) {
 
                         documents = documents.concat(document);
 

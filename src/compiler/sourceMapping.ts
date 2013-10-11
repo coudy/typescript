@@ -51,7 +51,13 @@ module TypeScript {
         public currentMappings: SourceMapping[][];
         public currentNameIndex: number[];
 
-        constructor(private jsFile: TextWriter, private sourceMapOut: TextWriter, document: Document, jsFilePath: string, emitOptions: EmitOptions, resolvePath: (path: string) => string) {
+        constructor(private jsFile: TextWriter,
+                    private sourceMapOut: TextWriter,
+                    document: Document,
+                    jsFilePath: string,
+                    emitOptions: EmitOptions,
+                    private settings: CompilationSettings,
+                    resolvePath: (path: string) => string) {
             this.setSourceMapOptions(document, jsFilePath, emitOptions, resolvePath);
             this.setNewSourceFile(document, emitOptions);
         }
@@ -83,7 +89,7 @@ module TypeScript {
             if (emitOptions.compilationSettings.mapRoot) {
                 // Get the sourceMap Directory
                 this.sourceMapDirectory = emitOptions.compilationSettings.mapRoot;
-                if (emitOptions.outputMany || document.script().isExternalModule) {
+                if (document.emitToSingleFile()) {
                     // For modules or multiple emit files the mapRoot will have directory structure like the sources
                     // So if src\a.ts and src\lib\b.ts are compiled together user would be moving the maps into mapRoot\a.js.map and mapRoot\lib\b.js.map
                     this.sourceMapDirectory = this.sourceMapDirectory + switchToForwardSlashes(getRootFilePath((document.fileName)).replace(emitOptions.commonDirectoryPath, ""));

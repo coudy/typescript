@@ -214,10 +214,11 @@ module Services {
         public getEmitOutput(fileName: string): TypeScript.EmitOutput {
             var resolvePath = (fileName: string) => this.host.resolveRelativePath(fileName, null);
 
-            var outputMany = this.compiler.emitOptions.outputMany;
+            var document = this.getDocument(fileName);
+            var emitToSingleFile = document.emitToSingleFile();
 
             // Check for syntactic errors
-            var syntacticDiagnostics = outputMany
+            var syntacticDiagnostics = emitToSingleFile
                 ? this.getSyntacticDiagnostics(fileName)
                 : this.getAllSyntacticDiagnostics();
             if (this.containErrors(syntacticDiagnostics)) {
@@ -227,7 +228,7 @@ module Services {
 
             // Force a type check before emit to ensure that all symbols have been resolved
             var document = this.getDocument(fileName);
-            var semanticDiagnostics = outputMany ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
+            var semanticDiagnostics = emitToSingleFile ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
 
             // Emit output files and source maps
                 // Emit declarations, if there are no semantic errors
