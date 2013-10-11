@@ -1188,34 +1188,6 @@ module TypeScript {
             };
         }
 
-        public pullGetDeclarationSymbolInformation(ast: AST, document: Document): PullSymbolInfo {
-            var script = document.script;
-            var scriptName = document.fileName;
-
-            Debug.assert(isDeclarationASTOrDeclarationNameAST(ast));
-
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
-            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
-            if (!context || context.inWithBlock) {
-                return null;
-            }
-
-            var decl = this.semanticInfoChain.getDeclForAST(ast);
-            var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
-
-            resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
-
-            // we set the symbol as unresolved so as not to interfere with typecheck
-            symbol.setUnresolved();
-
-            return {
-                symbol: symbol,
-                aliasSymbol: null,
-                ast: ast,
-                enclosingScopeSymbol: this.getSymbolOfDeclaration(context.enclosingDecl)
-            };
-        }
-
         public pullGetCallInformationFromAST(ast: AST, document: Document): PullCallSymbolInfo {
             // AST has to be a call expression
             if (ast.nodeType() !== NodeType.InvocationExpression && ast.nodeType() !== NodeType.ObjectCreationExpression) {

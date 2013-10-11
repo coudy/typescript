@@ -2014,7 +2014,12 @@ module TypeScript {
             accessorSymbol.addDeclaration(getAccessorDeclaration);
             getterSymbol.addDeclaration(getAccessorDeclaration);
 
-            this.semanticInfoChain.setSymbolForAST(funcDeclAST.name, getterSymbol);
+            // Note that the name AST binds to the full accessor symbol, whereas the declaration AST
+            // binds to just the getter symbol. This is because when the resolver resolves an
+            // accessor declaration AST, it just expects the getter/setter symbol. But when
+            // the language service looks up the name of an accessor, it should treat it as a
+            // property and display it to the user as such.
+            this.semanticInfoChain.setSymbolForAST(funcDeclAST.name, accessorSymbol);
             this.semanticInfoChain.setSymbolForAST(funcDeclAST, getterSymbol);
 
             if (!parentHadSymbol) {
@@ -2115,7 +2120,12 @@ module TypeScript {
             accessorSymbol.addDeclaration(setAccessorDeclaration);
             setterSymbol.addDeclaration(setAccessorDeclaration);
 
-            this.semanticInfoChain.setSymbolForAST(funcDeclAST.name, setterSymbol);
+            // Note that the name AST binds to the full accessor symbol, whereas the declaration AST
+            // binds to just the setter symbol. This is because when the resolver resolves an
+            // accessor declaration AST, it just expects the getter/setter symbol. But when
+            // the language service looks up the name of an accessor, it should treat it as a
+            // property and display it to the user as such.
+            this.semanticInfoChain.setSymbolForAST(funcDeclAST.name, accessorSymbol);
             this.semanticInfoChain.setSymbolForAST(funcDeclAST, setterSymbol);
 
             if (!parentHadSymbol) {

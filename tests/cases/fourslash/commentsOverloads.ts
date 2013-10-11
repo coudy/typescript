@@ -228,7 +228,6 @@
 goTo.marker('1');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 1", "f1", "function");
 goTo.marker('2');
-debugger;
 verify.quickInfoIs("(b: string): number (+ 1 overload(s))", "", "f1", "function");
 goTo.marker('3');
 verify.quickInfoIs("(a: number): number (+ 1 overload(s))", "this is signature 1", "f1", "function");

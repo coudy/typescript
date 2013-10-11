@@ -2580,6 +2580,14 @@ module TypeScript {
         return isNameOfSomeDeclaration(ast) || ast._isDeclaration();
     }
 
+    export function isNameOfFunction(ast: AST) {
+        return ast
+            && ast.parent
+            && ast.nodeType() === NodeType.Name
+            && ast.parent.nodeType() === NodeType.FunctionDeclaration
+            && (<FunctionDeclaration>ast.parent).name === ast;
+    }
+
     export function isNameOfMemberAccessExpression(ast: AST) {
         if (ast &&
             ast.parent &&

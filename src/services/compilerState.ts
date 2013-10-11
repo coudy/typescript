@@ -297,10 +297,6 @@ module Services {
             return this.compiler.getSemanticDiagnostics(fileName);
         }
 
-        public getDeclarationSymbolInformation(ast: TypeScript.AST, document: TypeScript.Document) {
-            return this.compiler.pullGetDeclarationSymbolInformation(ast, document);
-        }
-
         public getSymbolInformationFromAST(ast: TypeScript.AST, document: TypeScript.Document) {
             return this.compiler.pullGetSymbolInformationFromAST(ast, document);
         }
