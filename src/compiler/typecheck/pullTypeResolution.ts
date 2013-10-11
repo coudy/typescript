@@ -167,7 +167,7 @@ module TypeScript {
             return this._cachedFunctionArgumentsSymbol;
         }
 
-        constructor(private compilationSettings: CompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, inTypeCheck: boolean = false) {
+        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, inTypeCheck: boolean = false) {
         }
 
         public getUnitPath() { return this.unitPath; }
@@ -1733,7 +1733,7 @@ module TypeScript {
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
             if (importStatementAST.isExternalImportDeclaration()) {
-                if (this.compilationSettings.noResolve) {
+                if (this.compilationSettings.noResolve()) {
                     context.postDiagnostic(diagnosticFromAST(importStatementAST,
                         DiagnosticCode.Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set, null));
                 }
@@ -1985,7 +1985,7 @@ module TypeScript {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
 
                     // if the noImplicitAny flag is set to be true, report an error 
-                    if (this.compilationSettings.noImplicitAny) {
+                    if (this.compilationSettings.noImplicitAny()) {
                         context.postDiagnostic(diagnosticFromAST(argDeclAST, DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
                             [argDeclAST.id.actualText]));
                     }
@@ -2070,7 +2070,7 @@ module TypeScript {
             }
 
             // if the noImplicitAny flag is set to be true, report an error
-            if (isImplicitAny && this.compilationSettings.noImplicitAny) {
+            if (isImplicitAny && this.compilationSettings.noImplicitAny()) {
 
                 // there is a name for function expression then use the function expression name otherwise use "lambda"
                 var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
@@ -2667,7 +2667,7 @@ module TypeScript {
                     }
 
                     // if the noImplicitAny flag is set to be true, report an error
-                    if (this.compilationSettings.noImplicitAny) {
+                    if (this.compilationSettings.noImplicitAny()) {
                         // initializer is resolved to any type from widening variable declaration (i.e var x = null)
                         if ((widenedInitTypeSymbol != initTypeSymbol) && (widenedInitTypeSymbol == this.semanticInfoChain.anyTypeSymbol)) {
                             context.postDiagnostic(diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Variable_0_implicitly_has_an_any_type,
@@ -2762,7 +2762,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (varDeclOrParameter.nodeType() !== NodeType.EnumElement && this.compilationSettings.noImplicitAny && !TypeScript.hasFlag((<any>varDeclOrParameter).getVarFlags(), VariableFlags.ForInVariable)) {
+            else if (varDeclOrParameter.nodeType() !== NodeType.EnumElement && this.compilationSettings.noImplicitAny() && !TypeScript.hasFlag((<any>varDeclOrParameter).getVarFlags(), VariableFlags.ForInVariable)) {
                 // if we're lacking both a type annotation and an initialization expression, the type is 'any'
                 // if the noImplicitAny flag is set to be true, report an error
                 // Do not report an error if the variable declaration is declared in ForIn statement
@@ -3067,7 +3067,7 @@ module TypeScript {
                         }
 
                         // if noImplicitAny flag is set to be true and return statements are not cast expressions, report an error
-                        if (this.compilationSettings.noImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny()) {
                             // if the returnType got widen to Any
                             if (previousReturnType !== newReturnType && newReturnType === this.semanticInfoChain.anyTypeSymbol) {
                                 var functionName = enclosingDecl.name;
@@ -3664,7 +3664,7 @@ module TypeScript {
                         }
 
                         // if the noImplicitAny flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny &&
+                        if (this.compilationSettings.noImplicitAny() &&
                             (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
                             (TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) && !TypeScript.hasFlag(funcDecl.flags, PullElementFlags.Private)))) {
                             var funcDeclASTName = funcDeclAST.name;
@@ -3687,7 +3687,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if the noImplicitAny flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny()) {
                             context.postDiagnostic(diagnosticFromAST(funcDeclAST, DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type));
                         }
                     }
@@ -3847,7 +3847,7 @@ module TypeScript {
 
                 // Only report noImplicitAny error message on setter if there is no getter
                 // if the noImplicitAny flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny) {
+                if (this.compilationSettings.noImplicitAny()) {
                     // if setter has an any type, it must be implicit any
                     if (!setterHasTypeAnnotation && accessorSymbol.type == this.semanticInfoChain.anyTypeSymbol) {
                         context.postDiagnostic(diagnosticFromAST(setterFunctionDeclarationAst,
@@ -6556,7 +6556,7 @@ module TypeScript {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
                         // if noimplictiany flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny) {
+                        if (this.compilationSettings.noImplicitAny()) {
                             var functionExpressionName = (<PullFunctionExpressionDecl>functionDecl).getFunctionExpressionName();
 
                             // If there is a function name for the funciton expression, report an error with that name
@@ -8144,7 +8144,7 @@ module TypeScript {
                 usedCallSignaturesInstead = true;
 
                 // if noImplicitAny flag is set to be true, report an error
-                if (this.compilationSettings.noImplicitAny) {
+                if (this.compilationSettings.noImplicitAny()) {
                     context.postDiagnostic(diagnosticFromAST(callEx,
                         DiagnosticCode.new_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type));
                 }
@@ -8602,7 +8602,7 @@ module TypeScript {
             if (type.isArrayNamedTypeReference()) {
                 var elementType = this.widenType(null, type.getElementType(), enclosingDecl, context);
 
-                if (this.compilationSettings.noImplicitAny && ast && ast.nodeType() === NodeType.ArrayLiteralExpression) {
+                if (this.compilationSettings.noImplicitAny() && ast && ast.nodeType() === NodeType.ArrayLiteralExpression) {
                     // If we widened from non-'any' type to 'any', then report error.
                     if (elementType === this.semanticInfoChain.anyTypeSymbol && type.getElementType() !== this.semanticInfoChain.anyTypeSymbol) {
                         context.postDiagnostic(diagnosticFromAST(ast, DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening));
@@ -10406,7 +10406,7 @@ module TypeScript {
         public static globalTypeCheckPhase = 0;
 
         // type check infrastructure
-        public static typeCheck(compilationSettings: CompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
+        public static typeCheck(compilationSettings: ImmutableCompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
             var scriptDecl = semanticInfoChain.topLevelDecl(scriptName);
 
             var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);

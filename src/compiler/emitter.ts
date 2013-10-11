@@ -40,16 +40,14 @@ module TypeScript {
     }
 
     export class EmitOptions {
-        public _diagnostic: Diagnostic = null;
+        private _diagnostic: Diagnostic = null;
 
+        private _settings: ImmutableCompilationSettings = null;
         private _commonDirectoryPath = "";
         private _sharedOutputFile = "";
         private _sourceRootDirectory = "";
         private _sourceMapRootDirectory = "";
         private _outputDirectory = "";
-        private _moduleGenTarget: ModuleGenTarget;
-        private _removeComments: boolean;
-        private _noResolve: boolean;
 
         public diagnostic(): Diagnostic { return this._diagnostic; }
 
@@ -58,27 +56,25 @@ module TypeScript {
         public sourceRootDirectory() { return this._sourceRootDirectory; }
         public sourceMapRootDirectory() { return this._sourceMapRootDirectory; }
         public outputDirectory() { return this._outputDirectory; }
-        public moduleGenTarget() { return this._moduleGenTarget; }
-        public removeComments() { return this._removeComments; }
-        public noResolve() { return this._noResolve; }
+
+        public compilationSettings() { return this._settings; }
 
         constructor(compiler: TypeScriptCompiler,
-                    settings: CompilationSettings,
-                    public resolvePath: (path: string) => string,
-                    public sourceMapEmitterCallback: SourceMapEmitterCallback) {
-            this._moduleGenTarget = settings.moduleGenTarget;
-            this._removeComments = settings.removeComments;
-            this._noResolve = settings.noResolve;
+            public resolvePath: (path: string) => string,
+            public sourceMapEmitterCallback: SourceMapEmitterCallback) {
 
-            if (settings.moduleGenTarget === ModuleGenTarget.Unspecified && compiler._isDynamicModuleCompilation()) {
+            var settings = compiler.compilationSettings();
+            this._settings = settings;
+
+            if (settings.moduleGenTarget() === ModuleGenTarget.Unspecified && compiler._isDynamicModuleCompilation()) {
                 this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
                 return;
             }
 
-            if (!settings.mapSourceFiles) {
+            if (!settings.mapSourceFiles()) {
                 // Error to specify --mapRoot or --sourceRoot without mapSourceFiles
-                if (settings.mapRoot) {
-                    if (settings.sourceRoot) {
+                if (settings.mapRoot()) {
+                    if (settings.sourceRoot()) {
                         this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
                         return;
                     } else {
@@ -86,26 +82,26 @@ module TypeScript {
                         return;
                     }
                 }
-                else if (settings.sourceRoot) {
+                else if (settings.sourceRoot()) {
                     this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
                     return;
                 }
             }
 
-            this._sourceMapRootDirectory = convertToDirectoryPath(switchToForwardSlashes(settings.mapRoot));
-            this._sourceRootDirectory = convertToDirectoryPath(switchToForwardSlashes(settings.sourceRoot));
+            this._sourceMapRootDirectory = convertToDirectoryPath(switchToForwardSlashes(settings.mapRoot()));
+            this._sourceRootDirectory = convertToDirectoryPath(switchToForwardSlashes(settings.sourceRoot()));
 
-            if (settings.outFileOption ||
-                settings.outDirOption ||
-                settings.mapRoot ||
-                settings.sourceRoot) {
+            if (settings.outFileOption() ||
+                settings.outDirOption() ||
+                settings.mapRoot() ||
+                settings.sourceRoot()) {
 
-                if (settings.outFileOption) {
-                    this._sharedOutputFile = switchToForwardSlashes(resolvePath(settings.outFileOption));
+                if (settings.outFileOption()) {
+                    this._sharedOutputFile = switchToForwardSlashes(resolvePath(settings.outFileOption()));
                 }
 
-                if (settings.outDirOption) {
-                    this._outputDirectory = convertToDirectoryPath(switchToForwardSlashes(resolvePath(settings.outDirOption)));
+                if (settings.outDirOption()) {
+                    this._outputDirectory = convertToDirectoryPath(switchToForwardSlashes(resolvePath(settings.outDirOption())));
                 }
 
                 // Parse the directory structure
@@ -256,7 +252,7 @@ module TypeScript {
             var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
-            var isAmdCodeGen = this.emitOptions.moduleGenTarget() == ModuleGenTarget.Asynchronous;
+            var isAmdCodeGen = this.emitOptions.compilationSettings().moduleGenTarget() == ModuleGenTarget.Asynchronous;
 
             if (!isExternalModuleReference || // Any internal reference needs to check if the emit can happen
                 isExported || // External module reference with export modifier always needs to be emitted
@@ -282,7 +278,7 @@ module TypeScript {
             var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
-            var isAmdCodeGen = this.emitOptions.moduleGenTarget() == ModuleGenTarget.Asynchronous;
+            var isAmdCodeGen = this.emitOptions.compilationSettings().moduleGenTarget() == ModuleGenTarget.Asynchronous;
 
             this.emitComments(importDeclAST, true);
 
@@ -424,7 +420,7 @@ module TypeScript {
         }
 
         public emitComment(comment: Comment, trailing: boolean, first: boolean) {
-            if (this.emitOptions.removeComments()) {
+            if (this.emitOptions.compilationSettings().removeComments()) {
                 return;
             }
 
@@ -496,7 +492,7 @@ module TypeScript {
         }
 
         public emitCommentsArray(comments: Comment[], trailing: boolean): void {
-            if (!this.emitOptions.removeComments() && comments) {
+            if (!this.emitOptions.compilationSettings().removeComments() && comments) {
                 for (var i = 0, n = comments.length; i < n; i++) {
                     this.emitComment(comments[i], trailing, /*first:*/ i === 0);
                 }
@@ -1029,7 +1025,7 @@ module TypeScript {
             }
 
             // body - don't indent for Node
-            if (!isExternalModule || this.emitOptions.moduleGenTarget() === ModuleGenTarget.Asynchronous) {
+            if (!isExternalModule || this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                 this.indenter.increaseIndent();
             }
 
@@ -1038,7 +1034,7 @@ module TypeScript {
             }
 
             this.emitList(moduleDecl.members);
-            if (!isExternalModule || this.emitOptions.moduleGenTarget() === ModuleGenTarget.Asynchronous) {
+            if (!isExternalModule || this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }
             this.emitIndent();
@@ -1048,7 +1044,7 @@ module TypeScript {
                 var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
                 var exportAssignmentValueSymbol = (<PullContainerSymbol>pullDecl.getSymbol()).getExportAssignedValueSymbol();
 
-                if (this.emitOptions.moduleGenTarget() === ModuleGenTarget.Asynchronous) { // AMD
+                if (this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) { // AMD
                     if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
                         // indent was decreased for AMD above
                         this.indenter.increaseIndent();
@@ -1922,7 +1918,7 @@ module TypeScript {
             if (isNonElidedExternalModule) {
                 this.recordSourceMappingStart(script);
 
-                if (this.emitOptions.moduleGenTarget() === ModuleGenTarget.Asynchronous) { // AMD
+                if (this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) { // AMD
                     var dependencyList = "[\"require\", \"exports\"";
                     var importList = "require, exports";
 

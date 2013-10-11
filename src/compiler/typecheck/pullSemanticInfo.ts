@@ -27,11 +27,11 @@ module TypeScript {
                     private _topLevelDecl: PullDecl = null) {
         }
 
-        public invalidate(newSettings: CompilationSettings): void {
+        public invalidate(): void {
             this.declASTMap = new DataMap<AST>();
             this.astDeclMap = new DataMap<PullDecl>();
             this._topLevelDecl = null;
-            this.document.invalidate(newSettings);
+            this.document.invalidate();
         }
 
         private script(): Script {
@@ -103,7 +103,7 @@ module TypeScript {
         private _topLevelDecls: PullDecl[] = null;
         private _fileNames: string[] = null;
 
-        constructor(private logger: ILogger) {
+        constructor(private compiler: TypeScriptCompiler, private logger: ILogger) {
             this.invalidate();
         }
 
@@ -480,7 +480,7 @@ module TypeScript {
             }
         }
 
-        public invalidate(oldSettings: CompilationSettings = null, newSettings: CompilationSettings = null) {
+        public invalidate(oldSettings: ImmutableCompilationSettings = null, newSettings: ImmutableCompilationSettings = null) {
             // A file has changed, increment the type check phase so that future type chech
             // operations will proceed.
             PullTypeResolver.globalTypeCheckPhase++;
@@ -509,19 +509,19 @@ module TypeScript {
                 // anymore.
                 if (this.settingsChangeAffectsSyntax(oldSettings, newSettings)) {
                     for (var i = 0, n = this.units.length; i < n; i++) {
-                        this.units[i].invalidate(newSettings);
+                        this.units[i].invalidate();
                     }
                 }
             }
 
-            var globalDocument = new Document(/*fileName:*/ "", /*referencedFiles:*/[], /*settings:*/null, /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null);
+            var globalDocument = new Document(this.compiler, /*fileName:*/ "", /*referencedFiles:*/[], /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null);
             this.units[0] = new SemanticInfo(this, globalDocument, this.getGlobalDecl());
 
             var cleanEnd = new Date().getTime();
             this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
         }
 
-        private settingsChangeAffectsSyntax(before: CompilationSettings, after: CompilationSettings): boolean {
+        private settingsChangeAffectsSyntax(before: ImmutableCompilationSettings, after: ImmutableCompilationSettings): boolean {
             // If the automatic semicolon insertion option has changed, then we have to dump all
             // syntax trees in order to reparse them with the new option.
             //
@@ -530,9 +530,9 @@ module TypeScript {
             //
             // If propagateEnumConstants changes, then that affects the constant value data we've 
             // stored in the AST.
-            return before.allowAutomaticSemicolonInsertion !== after.allowAutomaticSemicolonInsertion ||
-                before.codeGenTarget !== after.codeGenTarget ||
-                before.propagateEnumConstants != after.propagateEnumConstants;
+            return before.allowAutomaticSemicolonInsertion() !== after.allowAutomaticSemicolonInsertion() ||
+                before.codeGenTarget() !== after.codeGenTarget() ||
+                before.propagateEnumConstants() != after.propagateEnumConstants();
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {

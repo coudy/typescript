@@ -45,24 +45,24 @@ module TypeScript {
         private _gatherDiagnostics: boolean;
         private _codepage: number;
 
-        public propagateEnumConstants1() { return this._propagateEnumConstants; }
-        public removeComments1() { return this._removeComments; }
-        public watch1() { return this._watch; }
-        public noResolve1() { return this._noResolve; }
-        public allowAutomaticSemicolonInsertion1() { return this._allowAutomaticSemicolonInsertion; }
-        public noImplicitAny1() { return this._noImplicitAny; }
-        public noLib1() { return this._noLib; }
-        public codeGenTarget1() { return this._codeGenTarget; }
-        public moduleGenTarget1() { return this._moduleGenTarget; }
-        public outFileOption1() { return this._outFileOption; }
-        public outDirOption1() { return this._outDirOption; }
-        public mapSourceFiles1() { return this._mapSourceFiles; }
-        public mapRoot1() { return this._mapRoot; }
-        public sourceRoot1() { return this._sourceRoot; }
-        public generateDeclarationFiles1() { return this._generateDeclarationFiles; }
-        public useCaseSensitiveFileResolution1() { return this._useCaseSensitiveFileResolution; }
-        public gatherDiagnostics1() { return this._gatherDiagnostics; }
-        public codepage1() { return this._codepage; }
+        public propagateEnumConstants() { return this._propagateEnumConstants; }
+        public removeComments() { return this._removeComments; }
+        public watch() { return this._watch; }
+        public noResolve() { return this._noResolve; }
+        public allowAutomaticSemicolonInsertion() { return this._allowAutomaticSemicolonInsertion; }
+        public noImplicitAny() { return this._noImplicitAny; }
+        public noLib() { return this._noLib; }
+        public codeGenTarget() { return this._codeGenTarget; }
+        public moduleGenTarget() { return this._moduleGenTarget; }
+        public outFileOption() { return this._outFileOption; }
+        public outDirOption() { return this._outDirOption; }
+        public mapSourceFiles() { return this._mapSourceFiles; }
+        public mapRoot() { return this._mapRoot; }
+        public sourceRoot() { return this._sourceRoot; }
+        public generateDeclarationFiles() { return this._generateDeclarationFiles; }
+        public useCaseSensitiveFileResolution() { return this._useCaseSensitiveFileResolution; }
+        public gatherDiagnostics() { return this._gatherDiagnostics; }
+        public codepage() { return this._codepage; }
 
         constructor(
             propagateEnumConstants: boolean,
@@ -134,8 +134,8 @@ module TypeScript {
                 settings.codepage);
         }
 
-        public toJSON(): any {
-            var result = {};
+        public toCompilationSettings(): any {
+            var result = new CompilationSettings();
 
             for (var name in this) {
                 if (this.hasOwnProperty(name) && StringUtilities.startsWith(name, "_")) {

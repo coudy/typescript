@@ -120,13 +120,17 @@ module TypeScript {
         private semanticInfoChain: SemanticInfoChain = null;
 
         constructor(public logger: ILogger = new NullLogger(),
-                    public settings: CompilationSettings = new CompilationSettings()) {
-            this.semanticInfoChain = new SemanticInfoChain(logger);
+                    private _settings: ImmutableCompilationSettings = ImmutableCompilationSettings.defaultSettings()) {
+            this.semanticInfoChain = new SemanticInfoChain(this, logger);
         }
 
-        public setCompilationSettings(newSettings: CompilationSettings) {
-            var oldSettings = this.settings;
-            this.settings = newSettings;
+        public compilationSettings(): ImmutableCompilationSettings {
+            return this._settings;
+        }
+
+        public setCompilationSettings(newSettings: ImmutableCompilationSettings) {
+            var oldSettings = this._settings;
+            this._settings = newSettings;
 
             if (!compareDataObjects(oldSettings, newSettings)) {
                 // If our options have changed at all, we have to consider any cached semantic 
@@ -151,7 +155,7 @@ module TypeScript {
 
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
-            var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.settings);
+            var document = Document.create(this, fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles);
 
             this.semanticInfoChain.addDocument(document);
         }
@@ -160,7 +164,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
             var document = this.getDocument(fileName);
-            var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);
+            var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange);
 
             // Note: the semantic info chain will recognize that this is a replacement of an
             // existing script, and will handle it appropriately.
@@ -234,7 +238,7 @@ module TypeScript {
         }
 
         public _shouldEmitDeclarations(script?: Script) {
-            if (!this.settings.generateDeclarationFiles) {
+            if (!this.compilationSettings().generateDeclarationFiles()) {
                 return false;
             }
 
@@ -289,7 +293,7 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, this.settings,  resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -321,7 +325,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, this.settings, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -371,13 +375,13 @@ module TypeScript {
 
                 emitter = new Emitter(javaScriptFileName, outFile, emitOptions, this.semanticInfoChain);
 
-                if (this.settings.mapSourceFiles) {
+                if (this.compilationSettings().mapSourceFiles()) {
                     // We always create map files next to the jsFiles
                     var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false, OutputFileType.SourceMap); 
                     emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, emitOptions.resolvePath);
                 }
             }
-            else if (this.settings.mapSourceFiles) {
+            else if (this.compilationSettings().mapSourceFiles()) {
                 // Already emitting into js file, update the mapper for new source info
                 emitter.setSourceMapperNewSourceFile(document);
             }
@@ -420,7 +424,7 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, this.settings, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -454,7 +458,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, this.settings, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -482,7 +486,7 @@ module TypeScript {
         // in batch compilation nothing is done if there are any syntactic diagnostics.  Clients
         // can override this if they still want to procede in those cases.
         public compile(resolvePath: (path: string) => string, sourceMapEmitterCallback: SourceMapEmitterCallback = null, continueOnDiagnostics = false): Iterator<CompileResult> {
-            return new CompilerIterator(this, this.settings, resolvePath, sourceMapEmitterCallback, continueOnDiagnostics);
+            return new CompilerIterator(this, resolvePath, sourceMapEmitterCallback, continueOnDiagnostics);
         }
 
         //
@@ -510,7 +514,7 @@ module TypeScript {
             var script = document.script();
 
             var startTime = (new Date()).getTime();
-            PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
+            PullTypeResolver.typeCheck(this.compilationSettings(), this.semanticInfoChain, fileName, script)
             var endTime = (new Date()).getTime();
 
             typeCheckTime += endTime - startTime;
@@ -561,7 +565,7 @@ module TypeScript {
                 return null;
             }
 
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, decl.fileName());
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, decl.fileName());
             var ast = this.semanticInfoChain.getASTForDecl(decl);
             if (!ast) {
                 return null;
@@ -595,7 +599,7 @@ module TypeScript {
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: CastExpression[] = [];
 
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var resolutionContext = new PullTypeResolutionContext(resolver);
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
@@ -1166,7 +1170,7 @@ module TypeScript {
         }
 
         public pullGetSymbolInformationFromAST(ast: AST, document: Document): PullSymbolInfo {
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1199,7 +1203,7 @@ module TypeScript {
                 return null;
             }
 
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1229,7 +1233,7 @@ module TypeScript {
 
             var isNew = ast.nodeType() === NodeType.ObjectCreationExpression;
 
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1255,7 +1259,7 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1273,7 +1277,7 @@ module TypeScript {
         }
 
         public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[]{
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ false);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1288,7 +1292,7 @@ module TypeScript {
                 return null;
             }
 
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1303,7 +1307,7 @@ module TypeScript {
         }
 
         public pullGetDeclInformation(decl: PullDecl, ast: AST, document: Document): PullSymbolInfo {
-            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1359,14 +1363,13 @@ module TypeScript {
         private hadEmitDiagnostics: boolean = false;
 
         constructor(private compiler: TypeScriptCompiler,
-                    settings: CompilationSettings,
                     resolvePath: (path: string) => string,
                     sourceMapEmitterCallback: SourceMapEmitterCallback,
                     private continueOnDiagnostics: boolean,
                     startingPhase = CompilerPhase.Syntax) {
             this.fileNames = compiler.fileNames();
             this.compilerPhase = startingPhase;
-            this._emitOptions = new EmitOptions(compiler, settings, resolvePath, sourceMapEmitterCallback);
+            this._emitOptions = new EmitOptions(compiler, resolvePath, sourceMapEmitterCallback);
         }
 
         public current(): CompileResult {

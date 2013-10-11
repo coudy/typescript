@@ -16,36 +16,6 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
-
-    /// Compiler settings
-    export class CompilationSettings {
-        public propagateEnumConstants = false;
-        public removeComments = false;
-        public watch = false;
-        public noResolve = false;
-        public allowAutomaticSemicolonInsertion = true;
-        public noImplicitAny = false;
-
-        public noLib = false;
-
-        public codeGenTarget = LanguageVersion.EcmaScript3;
-        public moduleGenTarget = ModuleGenTarget.Unspecified;
-
-        // --out option passed. 
-        // Default is the "" which leads to multiple files generated next to the.ts files
-        public outFileOption: string = "";
-        public outDirOption: string = "";
-        public mapSourceFiles = false;
-        public mapRoot: string = ""; 
-        public sourceRoot: string = "";
-        public generateDeclarationFiles = false;
-
-        public useCaseSensitiveFileResolution = false;
-        public gatherDiagnostics = false;
-
-        public codepage: number = null;
-    }
-
     ///
     /// Preprocessing
     ///
@@ -173,7 +143,7 @@ module TypeScript {
         }
     }
 
-    function processTripleSlashDirectives(fileName: string, lineMap: LineMap, firstToken: ISyntaxToken, settings: CompilationSettings): ITripleSlashDirectiveProperties {
+    function processTripleSlashDirectives(fileName: string, lineMap: LineMap, firstToken: ISyntaxToken, settings: ImmutableCompilationSettings): ITripleSlashDirectiveProperties {
         var leadingTrivia = firstToken.leadingTrivia();
 
         var position = 0;
@@ -214,11 +184,11 @@ module TypeScript {
         return { noDefaultLib: noDefaultLib, diagnostics: diagnostics, referencedFiles: referencedFiles };
     }
 
-    export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings?: CompilationSettings, readImportFiles = true): IPreProcessedFileInfo {
-        settings = settings || new CompilationSettings();
-        
+    export function preProcessFile(fileName: string, sourceText: IScriptSnapshot, settings?: ImmutableCompilationSettings, readImportFiles = true): IPreProcessedFileInfo {
+        settings = settings || ImmutableCompilationSettings.defaultSettings();
+
         var text = SimpleText.fromScriptSnapshot(sourceText);
-        var scanner = new Scanner(fileName, text, settings.codeGenTarget, scannerWindow);
+        var scanner = new Scanner(fileName, text, settings.codeGenTarget(), scannerWindow);
 
         var firstToken = scanner.scan(scannerDiagnostics, /*allowRegularExpression:*/ false);
 
@@ -234,11 +204,11 @@ module TypeScript {
         var properties = processTripleSlashDirectives(fileName, text.lineMap(), firstToken, settings);
 
         scannerDiagnostics.length = 0;
-        return { settings:settings, referencedFiles: properties.referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib, diagnostics: properties.diagnostics };
+        return { settings:settings.toCompilationSettings(), referencedFiles: properties.referencedFiles, importedFiles: importedFiles, isLibFile: properties.noDefaultLib, diagnostics: properties.diagnostics };
     }
 
-    export function getParseOptions(settings: CompilationSettings): ParseOptions {
-        return new ParseOptions(settings.codeGenTarget, settings.allowAutomaticSemicolonInsertion);
+    export function getParseOptions(settings: ImmutableCompilationSettings): ParseOptions {
+        return new ParseOptions(settings.codeGenTarget(), settings.allowAutomaticSemicolonInsertion());
     }
 
     export function getReferencedFiles(fileName: string, sourceText: IScriptSnapshot): IFileReference[] {

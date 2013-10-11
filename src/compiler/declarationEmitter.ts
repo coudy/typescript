@@ -286,7 +286,7 @@ module TypeScript {
 
         private emitDeclarationComments(ast: AST, endLine?: boolean): void;
         private emitDeclarationComments(astOrSymbol: any, endLine = true) {
-            if (this.emitOptions.removeComments()) {
+            if (this.emitOptions.compilationSettings().removeComments()) {
                 return;
             }
 
@@ -612,7 +612,7 @@ module TypeScript {
         }
 
         private emitAccessorDeclarationComments(funcDecl: FunctionDeclaration) {
-            if (this.emitOptions.removeComments()) {
+            if (this.emitOptions.compilationSettings().removeComments()) {
                 return;
             }
 
@@ -893,7 +893,7 @@ module TypeScript {
         }
 
         private resolveScriptReference(document: Document, reference: string) {
-            if (!this.emitOptions.noResolve() || isRooted(reference)) {
+            if (!this.emitOptions.compilationSettings().noResolve() || isRooted(reference)) {
                 return reference;
             }
 

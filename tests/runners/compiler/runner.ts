@@ -145,8 +145,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     },
                     function (settings) {
                         harnessCompiler.setCompilerSettings(tcSettings);
-                    }
-                    );
+                    });
 
                 if (declErrors && declErrors.length) {
                     throw new Error('.d.ts file output of ' + fileName + ' did not compile. Errors: ' + declErrors.map(err => JSON.stringify(err)).join('\r\n'));
@@ -183,7 +182,7 @@ class CompilerBaselineRunner extends RunnerBase {
             if (result.errors.length === 0) {
                 Harness.Baseline.runBaseline('Correct expression types for ' + fileName, justName.replace(/\.ts/, '.types'), () => {
                     var compiler = new TypeScript.TypeScriptCompiler(
-                        new TypeScript.NullLogger(), new TypeScript.CompilationSettings());
+                        new TypeScript.NullLogger(), TypeScript.ImmutableCompilationSettings.defaultSettings());
 
                     compiler.addFile('lib.d.ts', TypeScript.ScriptSnapshot.fromString(Harness.Compiler.libTextMinimal),
                         ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true);

@@ -1200,7 +1200,7 @@ module Services {
             for (var i = 0, n = symbolInfo.symbols.length; i < n; i++) {
                 var symbol = symbolInfo.symbols[i];
 
-                var symbolDisplayName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
+                var symbolDisplayName = CompletionHelpers.getValidCompletionEntryDisplayName(symbol.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget());
                 if (!symbolDisplayName) {
                     continue;
                 }
@@ -1245,7 +1245,7 @@ module Services {
             for (var i = 0, n = decls ? decls.length : 0; i < n; i++) {
                 var decl = decls[i];
 
-                var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
+                var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget());
                 if (!declDisplaylName) {
                     continue;
                 }
@@ -1298,7 +1298,7 @@ module Services {
                     decl = this.tryFindDeclFromPreviousCompilerVersion(decl);
 
                     if (decl) {
-                        var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget);
+                        var declDisplaylName = CompletionHelpers.getValidCompletionEntryDisplayName(decl.getDisplayName(), this.compilerState.compilationSettings().codeGenTarget());
                         var declKind = decl.kind;
                         var kindName = this.mapPullElementKind(declKind, /*symbol*/ null, true);
                         var kindModifiersName = this.getScriptElementKindModifiersFromFlags(decl.flags);
@@ -1769,7 +1769,7 @@ module Services {
             var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
             var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName),
-                TypeScript.getParseOptions(this.compilerState.getHostCompilationSettings()));
+                TypeScript.getParseOptions(TypeScript.ImmutableCompilationSettings.fromCompilationSettings(this.compilerState.getHostCompilationSettings())));
 
             return syntaxTree;
         }

@@ -926,13 +926,14 @@ module FourSlash {
             // Check syntactic structure
             var compilationSettings = new TypeScript.CompilationSettings();
             compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+            var immutableSettings = TypeScript.ImmutableCompilationSettings.fromCompilationSettings(compilationSettings);
 
-            var parseOptions = TypeScript.getParseOptions(compilationSettings);
+            var parseOptions = TypeScript.getParseOptions(immutableSettings);
             var snapshot = this.languageServiceShimHost.getScriptSnapshot(this.activeFile.fileName);
             var content = snapshot.getText(0, snapshot.getLength());
             var refSyntaxTree = TypeScript.Parser.parse(this.activeFile.fileName, TypeScript.SimpleText.fromString(content), TypeScript.isDTSFile(this.activeFile.fileName), parseOptions);
             var fullSyntaxErrs = JSON.stringify(refSyntaxTree.diagnostics());
-            var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, compilationSettings, /*incrementalAST:*/ true);
+            var refAST = TypeScript.SyntaxTreeToAstVisitor.visit(refSyntaxTree, this.activeFile.fileName, immutableSettings, /*incrementalAST:*/ true);
 
             if (!refSyntaxTree.structuralEquals(this.compiler().getSyntaxTree(this.activeFile.fileName))) {
                 throw new Error('Incrementally-parsed and full-parsed syntax trees were not equal');

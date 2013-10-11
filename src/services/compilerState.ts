@@ -101,14 +101,9 @@ module Services {
         //
         public compiler: TypeScript.TypeScriptCompiler = null;
         private hostCache: HostCache = null;
-        private _compilationSettings: TypeScript.CompilationSettings = null;
 
         constructor(private host: ILanguageServiceHost) {
             this.logger = this.host;
-        }
-
-        public compilationSettings() {
-            return this._compilationSettings;
         }
 
         public getHostCompilationSettings(): TypeScript.CompilationSettings {
@@ -134,17 +129,15 @@ module Services {
 
             if (updateCompiler) {
                 var hostCompilationSettings = this.getHostCompilationSettings();
-                this._compilationSettings = new TypeScript.CompilationSettings();
-
-                Services.copyDataObject(this.compilationSettings(), hostCompilationSettings);
+                var compilationSettings = TypeScript.ImmutableCompilationSettings.fromCompilationSettings(hostCompilationSettings);
 
                     // If we don't have a compiler, then create a new one.
                 if (this.compiler === null) {
-                    this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
+                    this.compiler = new TypeScript.TypeScriptCompiler(this.logger, compilationSettings);
                 }
 
                 // let the compiler know about the current compilation settings.  
-                this.compiler.setCompilationSettings(this.compilationSettings());
+                this.compiler.setCompilationSettings(compilationSettings);
 
                 // Now, remove any files from the compiler that are no longer in hte host.
                 var compilerFileNames = this.compiler.fileNames();
@@ -283,6 +276,10 @@ module Services {
         }
 
         // Methods that defer to the compiler to get the result.
+
+        public compilationSettings(): TypeScript.ImmutableCompilationSettings {
+            return this.compiler.compilationSettings();
+        }
 
         public getFileNames(): string[] {
             return this.compiler.fileNames();

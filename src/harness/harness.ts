@@ -798,7 +798,8 @@ module Harness {
                 var settings = makeDefaultCompilerSettings(this.useMinimalDefaultLib, noImplicitAny);
                 //settings.moduleGenTarget = TypeScript.ModuleGenTarget.Unspecified;
                 settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
-                this.compiler.setCompilationSettings(settings);
+                this.compiler.setCompilationSettings(
+                    TypeScript.ImmutableCompilationSettings.fromCompilationSettings(settings));
 
                 var libCode = this.useMinimalDefaultLib ? Compiler.libTextMinimal : Compiler.libText;
                 this.compiler.addFile("lib.d.ts", TypeScript.ScriptSnapshot.fromString(libCode), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ false);
@@ -808,9 +809,9 @@ module Harness {
                 var resolvedFiles: TypeScript.IResolvedFile[] = [];
 
                 // This is the branch that we want to use to ensure proper testing of file resolution, though there is an alternative
-                if (!this.compiler.settings.noResolve) {
+                if (!this.compiler.compilationSettings().noResolve()) {
                     // Resolve references
-                    var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compiler.settings);
+                    var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compiler.compilationSettings());
                     resolvedFiles = resolutionResults.resolvedFiles;
 
                     resolutionResults.diagnostics.forEach(diag => this.addError(ErrorType.Resolution, diag));
@@ -822,7 +823,7 @@ module Harness {
                         var importedFiles: string[] = [];
 
                         // If declaration files are going to be emitted, preprocess the file contents and add in referenced files as well
-                        if (this.compiler.settings.generateDeclarationFiles) {
+                        if (this.compiler.compilationSettings().generateDeclarationFiles()) {
                             var references = TypeScript.getReferencedFiles(inputFile, this.getScriptSnapshot(inputFile));
                             references.forEach(reference => { referencedFiles.push(reference.path); });
                         }
@@ -901,9 +902,9 @@ module Harness {
                 inputFiles: { unitName: string; content?: string }[],
                 otherFiles: { unitName: string; content?: string }[],
                 onComplete: (result: CompilerResult) => void,
-                settingsCallback?: (settings: TypeScript.CompilationSettings) => void,
-                noResolve = false
-                ) {
+                settingsCallback?: (settings: TypeScript.ImmutableCompilationSettings) => void,
+                noResolve = false) {
+
                 var restoreSavedCompilerSettings = this.saveCompilerSettings();
                 this.reset();
 
@@ -911,7 +912,7 @@ module Harness {
                 otherFiles.forEach(file => this.registerFile(file.unitName, file.content));
 
                 if (settingsCallback) {
-                    settingsCallback(this.compiler.settings);
+                    settingsCallback(this.compiler.compilationSettings());
                 }
 
                 try {
@@ -1057,8 +1058,11 @@ module Harness {
 
             /** If the compiler already contains the contents of interest, this will re-emit for AMD without re-adding or recompiling the current compiler units */
             private emitCurrentCompilerContentsAsAMD() {
-                var oldModuleType = this.compiler.settings.moduleGenTarget;
-                this.compiler.settings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                var oldSettings = this.compiler.compilationSettings();
+
+                var settings = this.compiler.compilationSettings().toCompilationSettings();
+                settings.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                this.compiler.setCompilationSettings(TypeScript.ImmutableCompilationSettings.fromCompilationSettings(settings));
 
                 this.ioHost.reset();
                 this.errorList = [];
@@ -1066,7 +1070,7 @@ module Harness {
                 this.emitAllDeclarations(this.ioHost);
                 var result = new CompilerResult(this.ioHost.toArray(), this.errorList, this.sourcemapRecorder.lines);
 
-                this.compiler.settings.moduleGenTarget = oldModuleType;
+                this.compiler.setCompilationSettings(oldSettings);
                 return result;
             }
 
@@ -1102,13 +1106,18 @@ module Harness {
              *  The caller of this function is responsible for saving the existing settings if they want to restore them to the original settings later.
              */
             public setCompilerSettings(tcSettings: Harness.TestCaseParser.CompilerSetting[]) {
+                var settings: TypeScript.CompilationSettings = this.compiler.compilationSettings().toCompilationSettings();
+
                 tcSettings.forEach((item) => {
                     var idx = this.supportedFlags.filter((x) => x.flag === item.flag.toLowerCase());
                     if (idx && idx.length != 1) {
                         throw new Error('Unsupported flag \'' + item.flag + '\'');
                     }
-                    idx[0].setFlag(this.compiler.settings, item.value);
+
+                    idx[0].setFlag(settings, item.value);
                 });
+
+                this.compiler.setCompilationSettings(TypeScript.ImmutableCompilationSettings.fromCompilationSettings(settings));
             }
 
             /** The compiler flags which tests are allowed to change and functions that can change them appropriately.
@@ -1144,18 +1153,10 @@ module Harness {
             /** Does a deep copy of the given compiler's settings and emit options and returns
               * a function which will restore the old settings when executed */
             public saveCompilerSettings() {
-                // not recursive
-                function clone<T>(source: T, target: T) {
-                    for (var prop in source) {
-                        target[prop] = source[prop];
-                    }
-                }
-
-                var oldCompilerSettings = new TypeScript.CompilationSettings();
-                clone(this.compiler.settings, oldCompilerSettings);
+                var oldCompilerSettings = this.compiler.compilationSettings();
 
                 return () => {
-                    this.compiler.settings = oldCompilerSettings;
+                    this.compiler.setCompilationSettings(oldCompilerSettings);
                 };
             }
 
@@ -1925,10 +1926,11 @@ module Harness {
             var compilationSettings = new TypeScript.CompilationSettings();
             compilationSettings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
 
-            var parseOptions = TypeScript.getParseOptions(compilationSettings);
+            var settings = TypeScript.ImmutableCompilationSettings.fromCompilationSettings(compilationSettings);
+            var parseOptions = TypeScript.getParseOptions(settings);
             return TypeScript.SyntaxTreeToAstVisitor.visit(
                 TypeScript.Parser.parse(fileName, TypeScript.SimpleText.fromScriptSnapshot(sourceText), TypeScript.isDTSFile(fileName), parseOptions),
-                fileName, compilationSettings, /*incrementalAST: */ true);
+                fileName, settings, /*incrementalAST: */ true);
         }
 
         /** Parse a file on disk given its fileName */
