@@ -900,7 +900,6 @@ module Harness {
             public compileFiles(
                 inputFiles: { unitName: string; content?: string }[],
                 otherFiles: { unitName: string; content?: string }[],
-                moduleTarget: TypeScript.ModuleGenTarget,
                 onComplete: (result: CompilerResult) => void,
                 settingsCallback?: (settings: TypeScript.CompilationSettings) => void,
                 noResolve = false

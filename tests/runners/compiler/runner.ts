@@ -60,7 +60,6 @@ class CompilerBaselineRunner extends RunnerBase {
 
             var createNewInstance = false;
             var emittingSourceMap = false;
-            var moduleTarget = TypeScript.ModuleGenTarget.Unspecified;
 
             var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
             for (var i = 0; i < tcSettings.length; ++i) {
@@ -75,14 +74,6 @@ class CompilerBaselineRunner extends RunnerBase {
 
                 if (tcSettings[i].flag == "sourcemap" && tcSettings[i].value.toLowerCase() === 'true') {
                     emittingSourceMap = true;
-                } else if (tcSettings[i].flag === "module") {
-                    if (tcSettings[i].value.toLowerCase() === "amd") {
-                        moduleTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                    } else if (tcSettings[i].value.toLowerCase() === "commonjs") {
-                        moduleTarget = TypeScript.ModuleGenTarget.Synchronous;
-                    } else {
-                        throw new Error('Invalid module target ' + tcSettings[i].value + '; suported values are "amd" and "commonjs"');
-                    }
                 }
             }
 
@@ -105,7 +96,7 @@ class CompilerBaselineRunner extends RunnerBase {
             }
 
             var result: Harness.Compiler.CompilerResult;
-            harnessCompiler.compileFiles(toBeCompiled, otherFiles, moduleTarget, function (compileResult) {
+            harnessCompiler.compileFiles(toBeCompiled, otherFiles, function (compileResult) {
                 result = compileResult;
             }, function (settings) {
                 harnessCompiler.setCompilerSettings(tcSettings);
@@ -155,7 +146,6 @@ class CompilerBaselineRunner extends RunnerBase {
                 harnessCompiler.compileFiles(
                     [declFile],
                     declOtherFiles,
-                    moduleTarget,
                     function (result) {
                         declErrors = result.errors.map(err => Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message + '\r\n');
                     },
