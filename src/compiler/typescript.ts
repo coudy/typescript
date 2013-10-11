@@ -82,17 +82,42 @@ module TypeScript {
         public diagnostics: TypeScript.Diagnostic[] = [];
     }
 
+    export enum OutputFileType {
+        JavaScript,
+        SourceMap,
+        Declaration
+    }
+
     export class OutputFile {
         constructor(public name: string,
             public writeByteOrderMark: boolean,
-            public text: string) {
+            public text: string,
+            public fileType: OutputFileType) {
+        }
+    }
+
+    // Represents the results of the last "pull" on the compiler when using the streaming
+    // 'compile' method.  The compile result for a single pull can have diagnostics (if 
+    // something went wrong), and/or OutputFiles that need to get written.
+    export class CompileResult {
+        public diagnostics: Diagnostic[] = [];
+        public outputFiles: OutputFile[] = [];
+
+        public static fromDiagnostics(diagnostics: Diagnostic[]): CompileResult {
+            var result = new CompileResult();
+            result.diagnostics = diagnostics;
+            return result;
+        }
+
+        public static fromOutputFiles(outputFiles: OutputFile[]): CompileResult {
+            var result = new CompileResult();
+            result.outputFiles = outputFiles;
+            return result;
         }
     }
 
     export class TypeScriptCompiler {
-        private resolver: PullTypeResolver = null;
         private semanticInfoChain: SemanticInfoChain = null;
-        private fileNameToDocument = new TypeScript.StringHashTable<Document>();
 
         public emitOptions: EmitOptions;
 
@@ -102,9 +127,20 @@ module TypeScript {
             this.semanticInfoChain = new SemanticInfoChain(logger);
         }
 
+        public setCompilationSettings(newSettings: CompilationSettings) {
+            var oldSettings = this.settings;
+            this.settings = newSettings;
+
+            if (!compareDataObjects(oldSettings, newSettings)) {
+                // If our options have changed at all, we have to consider any cached semantic 
+                // data we have invalid.
+                this.semanticInfoChain.invalidate(oldSettings, newSettings);
+            }
+        }
+
         public getDocument(fileName: string): Document {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            return this.fileNameToDocument.lookup(fileName);
+            return this.semanticInfoChain.getDocument(fileName);
         }
 
         public addFile(fileName: string,
@@ -119,13 +155,8 @@ module TypeScript {
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
             var document = Document.create(fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles, this.emitOptions.compilationSettings);
-            this.fileNameToDocument.addOrUpdate(fileName, document);
 
-            this.semanticInfoChain.addScript(document.script);
-
-            // TODO: we should not have to create a resolver here.
-            this.resolver = new PullTypeResolver(
-                this.settings, this.semanticInfoChain, fileName);
+            this.semanticInfoChain.addDocument(document);
         }
 
         public updateFile(fileName: string, scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): void {
@@ -134,28 +165,21 @@ module TypeScript {
             var document = this.getDocument(fileName);
             var updatedDocument = document.update(scriptSnapshot, version, isOpen, textChangeRange, this.settings);
 
-            this.fileNameToDocument.addOrUpdate(fileName, updatedDocument);
-
             // Note: the semantic info chain will recognize that this is a replacement of an
             // existing script, and will handle it appropriately.
-            this.semanticInfoChain.addScript(updatedDocument.script);
-            
-            // TODO: we should not have to create a resolver here.
-            this.resolver = new PullTypeResolver(
-                this.settings, this.semanticInfoChain, fileName);
+            this.semanticInfoChain.addDocument(updatedDocument);
         }
 
         public removeFile(fileName: string): void {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.fileNameToDocument.remove(fileName);
-            this.semanticInfoChain.removeScript(fileName);
+            this.semanticInfoChain.removeDocument(fileName);
         }
 
         private isDynamicModuleCompilation(): boolean {
             var fileNames = this.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var document = this.getDocument(fileNames[i]);
-                var script = document.script;
+                var script = document.script();
                 if (!script.isDeclareFile() && script.isExternalModule) {
                     return true;
                 }
@@ -171,7 +195,7 @@ module TypeScript {
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = fileNames[i];
                 var document = this.getDocument(fileNames[i]);
-                var script = document.script;
+                var script = document.script();
 
                 if (!script.isDeclareFile()) {
                     var fileComponents = filePathComponents(fileName);
@@ -214,7 +238,7 @@ module TypeScript {
             return null;
         }
 
-        private validateEmitOptions(resolvePath: (path: string) => string): Diagnostic {
+        public _validateEmitOptions(resolvePath: (path: string) => string): Diagnostic {
             if (this.emitOptions.compilationSettings.moduleGenTarget === ModuleGenTarget.Unspecified && this.isDynamicModuleCompilation()) {
                 return new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
             }
@@ -263,13 +287,13 @@ module TypeScript {
 
         private writeByteOrderMarkForDocument(document: Document) {
             // If module its always emitted in its own file
-            if (this.emitOptions.outputMany || document.script.isExternalModule) {
+            if (this._mustEmitDocumentToSingleFile(document)) {
                 return document.byteOrderMark !== ByteOrderMark.None;
             } else {
                 var fileNames = this.fileNames();
 
                 for (var i = 0, n = fileNames.length; i < n; i++) {
-                    if (document.script.isExternalModule) {
+                    if (document.script().isExternalModule) {
                         // Dynamic module never contributes to the single file
                         continue;
                     }
@@ -287,11 +311,7 @@ module TypeScript {
             return getDeclareFilePath(fileName);
         }
 
-        private shouldEmitDeclarations(script?: Script) {
-            if (!this.settings.generateDeclarationFiles) {
-                return false;
-            }
-
+        public _shouldEmit(script: Script) {
             // If its already a declare file or is resident or does not contain body 
             if (!!script && (script.isDeclareFile() || script.moduleElements === null)) {
                 return false;
@@ -300,25 +320,59 @@ module TypeScript {
             return true;
         }
 
-        // Caller is responsible for closing emitter.
-        private emitDeclarationsWorker(
+        public _shouldEmitDeclarations(script?: Script) {
+            if (!this.settings.generateDeclarationFiles) {
+                return false;
+            }
+
+            return this._shouldEmit(script);
+        }
+
+        public _mustEmitDocumentToSingleFile(document: Document): boolean {
+            return this.emitOptions.outputMany || document.script().isExternalModule;
+        }
+
+        // Does the actual work of emittin the declarations from the provided document into the
+        // provided emitter.  If no emitter is provided a new one is created.  
+        private emitDocumentDeclarationsWorker(
             resolvePath: (path: string) => string,
             document: Document,
             declarationEmitter?: DeclarationEmitter): DeclarationEmitter {
 
-            var script = document.script;
-            if (this.shouldEmitDeclarations(script)) {
-                if (declarationEmitter) {
-                    declarationEmitter.document = document;
-                } else {
-                    var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
-                    declarationEmitter = new DeclarationEmitter(declareFileName, document, this, this.semanticInfoChain, resolvePath);
-                }
+            var script = document.script();
+            Debug.assert(this._shouldEmitDeclarations(script));
 
-                declarationEmitter.emitDeclarations(script);
+            if (declarationEmitter) {
+                declarationEmitter.document = document;
+            } else {
+                var declareFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToDTSFileName);
+                declarationEmitter = new DeclarationEmitter(declareFileName, document, this, this.semanticInfoChain, resolvePath);
             }
 
+            declarationEmitter.emitDeclarations(script);
             return declarationEmitter;
+        }
+
+        public _emitDocumentDeclarations(
+            resolvePath: (path: string) => string,
+            document: Document,
+            onSingleFileEmitComplete: (files: OutputFile) => void,
+            sharedEmitter: DeclarationEmitter): DeclarationEmitter {
+
+            if (this._shouldEmitDeclarations(document.script())) {
+                if (this._mustEmitDocumentToSingleFile(document)) {
+                    var singleEmitter = this.emitDocumentDeclarationsWorker(resolvePath, document);
+                    if (singleEmitter) {
+                        onSingleFileEmitComplete(singleEmitter.getOutputFile());
+                    }
+                }
+                else {
+                    // Create or reuse file
+                    sharedEmitter = this.emitDocumentDeclarationsWorker(resolvePath, document, sharedEmitter);
+                }
+            }
+
+            return sharedEmitter;
         }
 
         // Will not throw exceptions.
@@ -326,37 +380,26 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
             }
 
-            if (this.shouldEmitDeclarations()) {
-                var sharedEmitter: DeclarationEmitter = null;
-                var fileNames = this.fileNames();
+            var sharedEmitter: DeclarationEmitter = null;
+            var fileNames = this.fileNames();
 
-                for (var i = 0, n = fileNames.length; i < n; i++) {
-                    var fileName = fileNames[i];
+            for (var i = 0, n = fileNames.length; i < n; i++) {
+                var fileName = fileNames[i];
 
-                    var document = this.getDocument(fileNames[i]);
+                var document = this.getDocument(fileNames[i]);
 
-                    // Emitting module or multiple files, always goes to single file
-                    if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                        var singleEmitter = this.emitDeclarationsWorker(resolvePath, document);
-                        if (singleEmitter) {
-                            emitOutput.outputFiles.push(singleEmitter.getOutputFile());
-                        }
-                    }
-                    else {
-                        // Create or reuse file
-                        sharedEmitter = this.emitDeclarationsWorker(resolvePath, document, sharedEmitter);
-                    }
-                }
+                sharedEmitter = this._emitDocumentDeclarations(resolvePath, document,
+                    file => emitOutput.outputFiles.push(file), sharedEmitter);
+            }
 
-                if (sharedEmitter) {
-                    emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
-                }
+            if (sharedEmitter) {
+                emitOutput.outputFiles.push(sharedEmitter.getOutputFile());
             }
 
             declarationEmitTime += new Date().getTime() - start;
@@ -369,7 +412,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
@@ -377,20 +420,15 @@ module TypeScript {
 
             var document = this.getDocument(fileName);
 
-            if (this.shouldEmitDeclarations(document.script)) {
-                // Emitting module or multiple files, always goes to single file
-                if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                    var emitter = this.emitDeclarationsWorker(resolvePath, document);
-                    if (emitter) {
-                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFile());
-                    }
-                }
-                else {
-                    return this.emitAllDeclarations(resolvePath);
-                }
+            // Emitting module or multiple files, always goes to single file
+            if (this._mustEmitDocumentToSingleFile(document)) {
+                this._emitDocumentDeclarations(resolvePath, document,
+                    file => emitOutput.outputFiles.push(file), /*sharedEmitter:*/ null);
+                return emitOutput;
             }
-
-            return emitOutput;
+            else {
+                return this.emitAllDeclarations(resolvePath);
+            }
         }
 
         static mapToFileNameExtension(extension: string, fileName: string, wholeFileNameReplaced: boolean) {
@@ -411,33 +449,60 @@ module TypeScript {
 
         // Caller is responsible for closing the returned emitter.
         // May throw exceptions.
-        private emitWorker(resolvePath: (path: string) => string, document: Document, emitter?: Emitter): Emitter {
-            var script = document.script;
-            if (!script.isDeclareFile()) {
-                var typeScriptFileName = document.fileName;
-                if (!emitter) {
-                    var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
-                    var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document));
+        private emitDocumentWorker(resolvePath: (path: string) => string,
+                                  document: Document,
+                                  emitter?: Emitter): Emitter {
+            var script = document.script();
+            Debug.assert(this._shouldEmit(script));
 
-                    emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
+            var typeScriptFileName = document.fileName;
+            if (!emitter) {
+                var javaScriptFileName = this.emitOptions.mapOutputFileName(document, TypeScriptCompiler.mapToJSFileName);
+                var outFile = new TextWriter(javaScriptFileName, this.writeByteOrderMarkForDocument(document), OutputFileType.JavaScript);
 
-                    if (this.settings.mapSourceFiles) {
-                        // We always create map files next to the jsFiles
-                        var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false); 
-                        emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, resolvePath);
-                    }
+                emitter = new Emitter(javaScriptFileName, outFile, this.emitOptions, this.semanticInfoChain);
+
+                if (this.settings.mapSourceFiles) {
+                    // We always create map files next to the jsFiles
+                    var sourceMapFile = new TextWriter(javaScriptFileName + SourceMapper.MapFileExtension, /*writeByteOrderMark:*/ false, OutputFileType.SourceMap); 
+                    emitter.createSourceMapper(document, javaScriptFileName, outFile, sourceMapFile, resolvePath);
                 }
-                else if (this.settings.mapSourceFiles) {
-                    // Already emitting into js file, update the mapper for new source info
-                    emitter.setSourceMapperNewSourceFile(document);
-                }
-
-                // Set location info
-                emitter.setDocument(document);
-                emitter.emitJavascript(script, /*startLine:*/false);
+            }
+            else if (this.settings.mapSourceFiles) {
+                // Already emitting into js file, update the mapper for new source info
+                emitter.setSourceMapperNewSourceFile(document);
             }
 
+            // Set location info
+            emitter.setDocument(document);
+            emitter.emitJavascript(script, /*startLine:*/false);
+
             return emitter;
+        }
+
+        // Private.  only for use by compiler or CompilerIterator
+        public _emitDocument(resolvePath: (path: string) => string,
+            document: Document,
+            onSingleFileEmitComplete: (files: OutputFile[]) => void,
+            sharedEmitter: Emitter): Emitter {
+
+            // Emitting module or multiple files, always goes to single file
+            if (this._shouldEmit(document.script())) {
+                if (this._mustEmitDocumentToSingleFile(document)) {
+                    // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
+                    var singleEmitter = this.emitDocumentWorker(resolvePath, document);
+                    if (singleEmitter) {
+                        onSingleFileEmitComplete(singleEmitter.getOutputFiles());
+                    }
+                }
+                else {
+                    // We're not outputting to multiple files.  Keep using the same emitter and don't
+                    // close until below.
+                    sharedEmitter = this.emitDocumentWorker(resolvePath, document, sharedEmitter);
+                }
+            }
+
+            return sharedEmitter;
         }
 
         // Will not throw exceptions.
@@ -445,7 +510,7 @@ module TypeScript {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
@@ -460,19 +525,9 @@ module TypeScript {
 
                 var document = this.getDocument(fileName);
 
-                // Emitting module or multiple files, always goes to single file
-                if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                    // We're outputting to mulitple files.  We don't want to reuse an emitter in that case.
-                    var singleEmitter = this.emitWorker(resolvePath, document);
-                    if (singleEmitter) {
-                        emitOutput.outputFiles.push.apply(emitOutput.outputFiles, singleEmitter.getOutputFiles());
-                    }
-                }
-                else {
-                    // We're not outputting to multiple files.  Keep using the same emitter and don't
-                    // close until below.
-                    sharedEmitter = this.emitWorker(resolvePath, document, sharedEmitter);
-                }
+                sharedEmitter = this._emitDocument(resolvePath, document,
+                    files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files),
+                    sharedEmitter);
             }
 
             if (sharedEmitter) {
@@ -489,7 +544,7 @@ module TypeScript {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var optionsDiagnostic = this.validateEmitOptions(resolvePath);
+            var optionsDiagnostic = this._validateEmitOptions(resolvePath);
             if (optionsDiagnostic) {
                 emitOutput.diagnostics.push(optionsDiagnostic);
                 return emitOutput;
@@ -497,20 +552,27 @@ module TypeScript {
 
             var document = this.getDocument(fileName);
             // Emitting module or multiple files, always goes to single file
-            if (this.emitOptions.outputMany || document.script.isExternalModule) {
-                // In outputMany mode, only emit the document specified and its sourceMap if needed
-
-                var emitter = this.emitWorker(resolvePath, document);
-                if (emitter) {
-                    emitOutput.outputFiles.push.apply(emitOutput.outputFiles, emitter.getOutputFiles());
-                }
-
+            if (this._mustEmitDocumentToSingleFile(document)) {
+                this._emitDocument(resolvePath, document,
+                    files => emitOutput.outputFiles.push.apply(emitOutput.outputFiles, files), /*sharedEmitter:*/ null);
                 return emitOutput;
             }
             else {
                 // In output Single file mode, emit everything
                 return this.emitAll(resolvePath);
             }
+        }
+
+        // Returns an iterator that will stream compilation results from this compiler.  Syntactic
+        // diagnostics will be returned first, then semantic diagnostics, then emit results, then
+        // declaration emit results.
+        //
+        // The continueOnDiagnostics flag governs whether or not iteration follows the batch compiler
+        // logic and doesn't perform further analysis once diagnostics are produced.  For example,
+        // in batch compilation nothing is done if there are any syntactic diagnostics.  Clients
+        // can override this if they still want to procede in those cases.
+        public compile(resolvePath: (path: string) => string, continueOnDiagnostics = false): Iterator<CompileResult> {
+            return new CompilerIterator(this, resolvePath, continueOnDiagnostics);
         }
 
         //
@@ -526,19 +588,20 @@ module TypeScript {
         private getSyntaxTree(fileName: string): SyntaxTree {
             return this.getDocument(fileName).syntaxTree();
         }
+
         private getScript(fileName: string): Script {
-            return this.getDocument(fileName).script;
+            return this.getDocument(fileName).script();
         }
 
         public getSemanticDiagnostics(fileName: string): Diagnostic[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
             var document = this.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             var startTime = (new Date()).getTime();
             PullTypeResolver.typeCheck(this.settings, this.semanticInfoChain, fileName, script)
-                    var endTime = (new Date()).getTime();
+            var endTime = (new Date()).getTime();
 
             typeCheckTime += endTime - startTime;
 
@@ -583,37 +646,30 @@ module TypeScript {
             }
         }
 
-        public setUnit(unitPath: string) {
-            if (!this.resolver) {
-                this.resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, unitPath);
-            }
-
-            this.resolver.setUnitPath(unitPath);
-        }
-
         public getSymbolOfDeclaration(decl: PullDecl): PullSymbol {
             if (!decl) {
                 return null;
             }
 
-            var ast = this.resolver.getASTForDecl(decl);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, decl.fileName());
+            var ast = this.semanticInfoChain.getASTForDecl(decl);
             if (!ast) {
                 return null;
             }
 
-            var enclosingDecl = this.resolver.getEnclosingDecl(decl);
+            var enclosingDecl = resolver.getEnclosingDecl(decl);
             if (ast.nodeType() === NodeType.Member) {
                 return this.getSymbolOfDeclaration(enclosingDecl);
             }
 
-            return this.resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(this.resolver));
+            return resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(resolver));
         }
 
         public getTypeInfoAtPosition(pos: number, document: Document): PullTypeInfoAtPositionInfo {
             // find the enclosing decl
             var declStack: PullDecl[] = [];
             var resultASTs: AST[] = [];
-            var script = document.script;
+            var script = document.script();
             var scriptName = document.fileName;
 
             var lastDeclAST: AST = null;
@@ -628,7 +684,9 @@ module TypeScript {
             var objectLitAST: ObjectLiteralExpression = null;
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: CastExpression[] = [];
-            var resolutionContext = new PullTypeResolutionContext(this.resolver);
+
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var resolutionContext = new PullTypeResolutionContext(resolver);
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
@@ -680,8 +738,6 @@ module TypeScript {
 
             if (resultASTs.length) {
 
-                this.setUnit(scriptName);
-
                 foundAST = resultASTs[resultASTs.length - 1];
 
                 // Check if is a name of a container
@@ -722,7 +778,7 @@ module TypeScript {
                 var funcDecl: FunctionDeclaration = null;
                 if (lastDeclAST === foundAST) {
                     symbol = declStack[declStack.length - 1].getSymbol();
-                    this.resolver.resolveDeclaredSymbol(symbol, resolutionContext);
+                    resolver.resolveDeclaredSymbol(symbol, resolutionContext);
                     symbol.setUnresolved();
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
                     if (foundAST.nodeType() === NodeType.FunctionDeclaration ||
@@ -790,7 +846,7 @@ module TypeScript {
                             assigningAST = declarationInitASTs[i];
                             inContextuallyTypedAssignment = (assigningAST !== null) && (assigningAST.typeExpr !== null);
 
-                            this.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
+                            resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment:*/false, null, resolutionContext);
                             var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                             if (varSymbol && inContextuallyTypedAssignment) {
@@ -799,31 +855,31 @@ module TypeScript {
                             }
 
                             if (assigningAST.init) {
-                                this.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                             }
                         }
                     }
 
                     if (typeAssertionASTs.length) {
                         for (var i = 0; i < typeAssertionASTs.length; i++) {
-                            this.resolver.resolveAST(typeAssertionASTs[i], inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                            resolver.resolveAST(typeAssertionASTs[i], inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                         }
                     }
 
                     if (asgAST) {
-                        this.resolver.resolveAST(asgAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(asgAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
 
                     if (objectLitAST) {
-                        this.resolver.resolveAST(objectLitAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(objectLitAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
 
                     if (lambdaAST) {
-                        this.resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(lambdaAST, true, enclosingDecl, resolutionContext);
                         enclosingDecl = this.semanticInfoChain.getDeclForAST(lambdaAST);
                     }
 
-                    symbol = this.resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                    symbol = resolver.resolveAST(foundAST, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     if (callExpression) {
                         var isPropertyOrVar = symbol.kind === PullElementKind.Property || symbol.kind === PullElementKind.Variable;
                         var typeSymbol = symbol.type;
@@ -844,9 +900,9 @@ module TypeScript {
 
                             var callResolutionResults = new PullAdditionalCallResolutionData();
                             if (callExpression.nodeType() === NodeType.InvocationExpression) {
-                                this.resolver.resolveInvocationExpression(<InvocationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                resolver.resolveInvocationExpression(<InvocationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                             } else {
-                                this.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                resolver.resolveObjectCreationExpression(<ObjectCreationExpression>callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                             }
 
                             if (callResolutionResults.candidateSignature) {
@@ -887,7 +943,7 @@ module TypeScript {
             };
         }
 
-        private extractResolutionContextFromAST(ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; inWithBlock: boolean; } {
+        private extractResolutionContextFromAST(resolver: PullTypeResolver, ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; inWithBlock: boolean; } {
             var script = document.script;
             var scriptName = document.fileName;
 
@@ -896,13 +952,11 @@ module TypeScript {
             var inContextuallyTypedAssignment = false;
             var inWithBlock = false;
 
-            var resolutionContext = new PullTypeResolutionContext(this.resolver);
+            var resolutionContext = new PullTypeResolutionContext(resolver);
 
             if (!ast) {
                 return null;
             }
-
-            this.setUnit(scriptName);
 
             var path = this.getASTPath(ast);
 
@@ -914,13 +968,13 @@ module TypeScript {
                     case NodeType.FunctionDeclaration:
                         // A function expression does not have a decl, so we need to resolve it first to get the decl created.
                         if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                            this.resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
+                            resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         }
 
                         break;
 
                     case NodeType.ArrowFunctionExpression:
-                        this.resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
+                        resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         break;
 
                     case NodeType.VariableDeclarator:
@@ -929,7 +983,7 @@ module TypeScript {
 
                         if (inContextuallyTypedAssignment) {
                             if (propagateContextualTypes) {
-                                this.resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
+                                resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
                                 var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                                 var contextualType: PullTypeSymbol = null;
@@ -940,7 +994,7 @@ module TypeScript {
                                 resolutionContext.pushContextualType(contextualType, false, null);
 
                                 if (assigningAST.init) {
-                                    this.resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                                    resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                                 }
                             }
                         }
@@ -958,10 +1012,10 @@ module TypeScript {
                             if ((i + 1 < n) && callExpression.arguments === path[i + 1]) {
                                 var callResolutionResults = new PullAdditionalCallResolutionData();
                                 if (isNew) {
-                                    this.resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                    resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                                 }
                                 else {
-                                    this.resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
+                                    resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                                 }
 
                                 // Find the index in the arguments list
@@ -983,10 +1037,10 @@ module TypeScript {
                             else {
                                 // Just resolve the call expression
                                 if (isNew) {
-                                    this.resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext);
+                                    resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext);
                                 }
                                 else {
-                                    this.resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext);
+                                    resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext);
                                 }
                             }
 
@@ -1013,7 +1067,7 @@ module TypeScript {
                         if (propagateContextualTypes) {
                             var objectLiteralExpression = <ObjectLiteralExpression>current;
                             var objectLiteralResolutionContext = new PullAdditionalObjectLiteralResolutionData();
-                            this.resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
+                            resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
 
                             // find the member in the path
                             var memeberAST = (path[i + 1] && path[i + 1].nodeType() === NodeType.List) ? path[i + 2] : path[i + 1];
@@ -1046,7 +1100,7 @@ module TypeScript {
 
                             if (path[i + 1] && path[i + 1] === assignmentExpression.operand2) {
                                 // propagate the left hand side type as a contextual type
-                                var leftType = this.resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
+                                var leftType = resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
                                 if (leftType) {
                                     inContextuallyTypedAssignment = true;
                                     contextualType = leftType;
@@ -1069,7 +1123,7 @@ module TypeScript {
                                     // The containing function has a type annotation, propagate it as the contextual type
                                     var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
                                     resolutionContext.resolvingTypeReference = true;
-                                    var returnTypeSymbol = this.resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
+                                    var returnTypeSymbol = resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
                                     resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
                                     if (returnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;
@@ -1105,7 +1159,7 @@ module TypeScript {
                         // ObjectType are just like Object Literals are bound when needed, ensure we have a decl, by forcing it to be 
                         // resolved before descending into it.
                         if (typeExpressionNode && typeExpressionNode.nodeType() === NodeType.ObjectType) {
-                            this.resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
+                            resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
                         }
 
                         // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
@@ -1202,13 +1256,14 @@ module TypeScript {
         }
 
         public pullGetSymbolInformationFromAST(ast: AST, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
             ast = context.ast;
-            var symbol = this.resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
+            var symbol = resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
             var aliasSymbol = this.semanticInfoChain.getAliasSymbolForAST(ast);
 
             return {
@@ -1234,14 +1289,16 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
             var decl = this.semanticInfoChain.getDeclForAST(ast);
             var symbol = (decl.kind & PullElementKind.SomeSignature) ? decl.getSignatureSymbol() : decl.getSymbol();
-            this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
+
+            resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
 
             // we set the symbol as unresolved so as not to interfere with typecheck
             symbol.setUnresolved();
@@ -1262,7 +1319,8 @@ module TypeScript {
 
             var isNew = ast.nodeType() === NodeType.ObjectCreationExpression;
 
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
@@ -1270,10 +1328,10 @@ module TypeScript {
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                this.resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                this.resolver.resolveInvocationExpression(<InvocationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
+                resolver.resolveInvocationExpression(<InvocationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {
@@ -1287,12 +1345,13 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
-            var symbols = this.resolver.getVisibleMembersFromExpression(ast, context.enclosingDecl, context.resolutionContext);
+            var symbols = resolver.getVisibleMembersFromExpression(ast, context.enclosingDecl, context.resolutionContext);
             if (!symbols) {
                 return null;
             }
@@ -1303,13 +1362,14 @@ module TypeScript {
             };
         }
 
-        public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[] {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ false);
+        public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[]{
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ false);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
-            return this.resolver.getVisibleDecls(context.enclosingDecl);
+            return resolver.getVisibleDecls(context.enclosingDecl);
         }
 
         public pullGetContextualMembersFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
@@ -1318,12 +1378,13 @@ module TypeScript {
                 return null;
             }
 
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
-            var members = this.resolver.getVisibleContextSymbols(context.enclosingDecl, context.resolutionContext);
+            var members = resolver.getVisibleContextSymbols(context.enclosingDecl, context.resolutionContext);
 
             return {
                 symbols: members,
@@ -1332,13 +1393,14 @@ module TypeScript {
         }
 
         public pullGetDeclInformation(decl: PullDecl, ast: AST, document: Document): PullSymbolInfo {
-            var context = this.extractResolutionContextFromAST(ast, document, /*propagateContextualTypes*/ true);
+            var resolver = new PullTypeResolver(this.settings, this.semanticInfoChain, document.fileName);
+            var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
             }
 
             var symbol = decl.getSymbol();
-            this.resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
+            resolver.resolveDeclaredSymbol(symbol, context.resolutionContext);
             symbol.setUnresolved();
 
             return {
@@ -1358,11 +1420,236 @@ module TypeScript {
         }
 
         public fileNames(): string[] {
-            return this.fileNameToDocument.getAllKeys();
+            return this.semanticInfoChain.fileNames();
         }
 
         public topLevelDecl(fileName: string): PullDecl {
             return this.semanticInfoChain.topLevelDecl(fileName);
         }
+    }
+
+    enum CompilerPhase {
+        Syntax,
+        Semantics,
+        EmitOptionsValidation,
+        Emit,
+        DeclarationEmit,
+    }
+
+    class CompilerIterator implements Iterator<CompileResult> {
+        private compilerPhase: CompilerPhase;
+        private index: number = -1;
+        private fileNames: string[] = null;
+        private _current: CompileResult = null;
+        private _sharedEmitter: Emitter = null;
+        private _sharedDeclarationEmitter: DeclarationEmitter = null;
+        private hadSyntacticDiagnostics: boolean = false;
+        private hadSemanticDiagnostics: boolean = false;
+        private hadEmitDiagnostics: boolean = false;
+
+        constructor(private compiler: TypeScriptCompiler,
+                    private resolvePath: (path: string) => string,
+                    private continueOnDiagnostics: boolean,
+                    startingPhase = CompilerPhase.Syntax) {
+            this.fileNames = compiler.fileNames();
+            this.compilerPhase = startingPhase;
+        }
+
+        public current(): CompileResult {
+            return this._current;
+        }
+
+        public moveNext(): boolean {
+            this._current = null;
+
+            // Attempt to move the iterator 'one step' forward.  Note: this may produce no result
+            // (for example, if we're emitting everything to a single file).  So only return once
+            // we actually have a result, or we're done enumerating.
+            while (this.moveNextInternal()) {
+                if (this._current) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private moveNextInternal(): boolean {
+            this.index++;
+
+            // If we're at the end of hte set of files the compiler knows about, then move to the
+            // next phase of compilation.
+            while (this.shouldMoveToNextPhase()) {
+                this.index = 0;
+                this.compilerPhase++;
+            }
+
+            if (this.compilerPhase > CompilerPhase.DeclarationEmit) {
+                // We're totally done.
+                return false;
+            }
+
+            switch (this.compilerPhase) {
+                case CompilerPhase.Syntax:
+                    return this.moveNextSyntaxPhase();
+                case CompilerPhase.Semantics:
+                    return this.moveNextSemanticsPhase();
+                case CompilerPhase.EmitOptionsValidation:
+                    return this.moveNextEmitOptionsValidationPhase();
+                case CompilerPhase.Emit:
+                    return this.moveNextEmitPhase();
+                case CompilerPhase.DeclarationEmit:
+                    return this.moveNextDeclarationEmitPhase();
+            }
+        }
+
+        private shouldMoveToNextPhase(): boolean {
+            switch (this.compilerPhase) {
+                case CompilerPhase.EmitOptionsValidation:
+                    // Only one step in emit validation.  We're done once we do that step.
+                    return this.index === 1;
+
+                case CompilerPhase.Syntax:
+                case CompilerPhase.Semantics:
+                    // Each of these phases are done when we've processed the last file.
+                    return this.index == this.fileNames.length;
+
+                case CompilerPhase.Emit:
+                case CompilerPhase.DeclarationEmit:
+                    // Emitting is done when we get 'one' past the end of hte file list.  This is
+                    // because we use that step to collect the results from the shared emitter.
+                    return this.index == (this.fileNames.length + 1);
+            }
+
+            return false;
+        }
+
+        private moveNextSyntaxPhase(): boolean {
+            Debug.assert(this.index >= 0 && this.index < this.fileNames.length);
+            var fileName = this.fileNames[this.index];
+
+            var diagnostics = this.compiler.getSyntacticDiagnostics(fileName);
+            if (diagnostics.length) {
+                if (!this.continueOnDiagnostics) {
+                    this.hadSyntacticDiagnostics = true;
+                }
+
+                this._current = CompileResult.fromDiagnostics(diagnostics);
+            }
+
+            return true;
+        }
+
+        private moveNextSemanticsPhase(): boolean {
+            // Don't move forward if there were syntax diagnostics.
+            if (this.hadSyntacticDiagnostics) {
+                return false;
+            }
+
+            Debug.assert(this.index >= 0 && this.index < this.fileNames.length);
+            var fileName = this.fileNames[this.index];
+            var diagnostics = this.compiler.getSemanticDiagnostics(fileName);
+            if (diagnostics.length) {
+                if (!this.continueOnDiagnostics) {
+                    this.hadSemanticDiagnostics = true;
+                }
+
+                this._current = CompileResult.fromDiagnostics(diagnostics);
+            }
+
+            return true;
+        }
+
+        private moveNextEmitOptionsValidationPhase(): boolean {
+            Debug.assert(!this.hadSyntacticDiagnostics);
+
+            var diagnostic = this.compiler._validateEmitOptions(this.resolvePath);
+            if (diagnostic) {
+                if (!this.continueOnDiagnostics) {
+                    this.hadEmitDiagnostics = true;
+                }
+
+                this._current = CompileResult.fromDiagnostics([diagnostic]);
+            }
+
+            return true;
+        }
+
+        private moveNextEmitPhase(): boolean {
+            Debug.assert(!this.hadSyntacticDiagnostics);
+            if (this.hadEmitDiagnostics) {
+                return false;
+            }
+
+            Debug.assert(this.index >= 0 && this.index <= this.fileNames.length);
+            if (this.index < this.fileNames.length) {
+                var fileName = this.fileNames[this.index];
+                var document = this.compiler.getDocument(fileName);
+
+                // Try to emit this single document.  It will either get emitted to its own file
+                // (in which case we'll have our call back triggered), or it will get added to the
+                // shared emitter (and we'll take care of it after all the files are done.
+                this._sharedEmitter = this.compiler._emitDocument(
+                    this.resolvePath, document,
+                    outputFiles => { this._current = CompileResult.fromOutputFiles(outputFiles) },
+                    this._sharedEmitter);
+                return true;
+            }
+
+            // If we've moved past all the files, and we have a multi-input->single-output
+            // emitter set up.  Then add the outputs of that emitter to the results.
+            if (this.index === this.fileNames.length && this._sharedEmitter) {
+                // Collect shared emit result.
+                this._current = CompileResult.fromOutputFiles(this._sharedEmitter.getOutputFiles());
+            }
+
+            return true;
+        }
+
+        private moveNextDeclarationEmitPhase(): boolean {
+            Debug.assert(!this.hadSyntacticDiagnostics);
+            Debug.assert(!this.hadEmitDiagnostics);
+            if (this.hadSemanticDiagnostics) {
+                return false;
+            }
+
+            if (!this.compiler._shouldEmitDeclarations()) {
+                return false;
+            }
+
+            Debug.assert(this.index >= 0 && this.index <= this.fileNames.length);
+            if (this.index < this.fileNames.length) {
+                var fileName = this.fileNames[this.index];
+                var document = this.compiler.getDocument(fileName);
+
+                this._sharedDeclarationEmitter = this.compiler._emitDocumentDeclarations(
+                    this.resolvePath, document,
+                    file => { this._current = CompileResult.fromOutputFiles([file]); },
+                    this._sharedDeclarationEmitter);
+                return true;
+            }
+
+            // If we've moved past all the files, and we have a multi-input->single-output
+            // emitter set up.  Then add the outputs of that emitter to the results.
+            if (this.index === this.fileNames.length && this._sharedDeclarationEmitter) {
+                this._current = CompileResult.fromOutputFiles([this._sharedDeclarationEmitter.getOutputFile()]);
+            }
+
+            return true;
+        }
+    }
+
+    export function compareDataObjects(dst: any, src: any): boolean {
+        for (var e in dst) {
+            if (typeof dst[e] == "object") {
+                if (!compareDataObjects(dst[e], src[e]))
+                    return false;
+            }
+            else if (typeof dst[e] != "function") {
+                if (dst[e] !== src[e])
+                    return false;
+            }
+        }
+        return true;
     }
 }

@@ -1925,7 +1925,6 @@ module Harness {
          */
         public getLanguageService(): Services.ILanguageServiceShim {
             var ls = new Services.TypeScriptServicesFactory().createLanguageServiceShim(this);
-            ls.refresh(true);
             this.ls = ls;
             return ls;
         }

@@ -27,21 +27,19 @@ module Services {
             }
         }
 
-        public refresh(): void {
+        public synchronizeHostData(updateCompiler: boolean): void {
             TypeScript.timeFunction(this.logger, "refresh()", () => {
-                this.compilerState.refresh();
+                this.compilerState.synchronizeHostData(updateCompiler);
             });
         }
 
-        private minimalRefresh(): void {
-            TypeScript.timeFunction(this.logger, "minimalRefresh()", () => {
-                this.compilerState.minimalRefresh();
-            });
+        public refresh(): void {
+            // No-op.  Only kept around for compatability with the interface we shipped.
         }
 
         private getSymbolInfoAtPosition(fileName: string, pos: number, requireName: boolean): { symbol: TypeScript.PullSymbol; containingASTOpt: TypeScript.AST } {
             var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             /// TODO: this does not allow getting references on "constructor"
 
@@ -81,7 +79,7 @@ module Services {
 
         public getReferencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos, /*requireName:*/ true);
             if (symbolAndContainingAST === null) {
@@ -142,7 +140,7 @@ module Services {
 
         public getOccurrencesAtPosition(fileName: string, pos: number): ReferenceEntry[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var symbolAndContainingAST = this.getSymbolInfoAtPosition(fileName, pos, /*requireName:*/ true);
             if (symbolAndContainingAST === null) {
@@ -163,7 +161,7 @@ module Services {
 
         private getSingleNodeReferenceAtPosition(fileName: string, position: number): ReferenceEntry[] {
             var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             var node = TypeScript.getAstAtPosition(script, position);
             if (node === null || node.nodeType() !== TypeScript.NodeType.Name) {
@@ -178,12 +176,12 @@ module Services {
 
         public getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var result: ReferenceEntry[] = [];
 
             var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             var ast = TypeScript.getAstAtPosition(script, pos);
             if (ast === null || ast.nodeType() !== TypeScript.NodeType.Name) {
@@ -290,7 +288,7 @@ module Services {
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbolName);
             if (possiblePositions && possiblePositions.length > 0) {
                 var document = this.compilerState.getDocument(fileName);
-                var script = document.script;
+                var script = document.script();
 
                 possiblePositions.forEach(p => {
                     var nameAST = TypeScript.getAstAtPosition(script, p);
@@ -329,7 +327,7 @@ module Services {
             var possiblePositions = this.getPossibleSymbolReferencePositions(fileName, symbolName);
             if (possiblePositions && possiblePositions.length > 0) {
                 var document = this.compilerState.getDocument(fileName);
-                var script = document.script;
+                var script = document.script();
 
                 possiblePositions.forEach(p => {
                     // If it's not in the bounds of the AST we're asking for, then this can't possibly be a hit.
@@ -454,7 +452,7 @@ module Services {
 
         public getSignatureAtPosition(fileName: string, position: number): SignatureInfo {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var document = this.compilerState.getDocument(fileName);
 
@@ -478,7 +476,7 @@ module Services {
             }
 
             // Third set the path to find ask the type system about the call expression
-            var script = document.script;
+            var script = document.script();
             var node = TypeScript.getAstAtPosition(script, position);
             if (!node) {
                 return null;
@@ -536,7 +534,7 @@ module Services {
         }
 
         private getTypeParameterSignatureFromPartiallyWrittenExpression(document: TypeScript.Document, position: number, genericTypeArgumentListInfo: IPartiallyWrittenTypeArgumentListInformation): SignatureInfo {
-            var script = document.script;
+            var script = document.script();
 
             // Get the identifier information
             var ast = TypeScript.getAstAtPosition(script, genericTypeArgumentListInfo.genericIdentifer.start());
@@ -593,7 +591,7 @@ module Services {
 
         public getDefinitionAtPosition(fileName: string, position: number): DefinitionInfo[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var symbolInfo = this.getSymbolInfoAtPosition(fileName, position, /*requireName:*/ false);
             if (symbolInfo === null || symbolInfo.symbol === null) {
@@ -679,7 +677,7 @@ module Services {
         // Return array of NavigateToItems in which each item has matched name with searchValue. If none is found, return an empty array.
         // The function will search all files (both close and open) in the solutions. SearchValue can be either one search term or multiple terms separated by comma.
         public getNavigateToItems(searchValue: string): NavigateToItem[] {
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             // Split search value in terms array
             var terms = searchValue.split(" ");
@@ -853,21 +851,21 @@ module Services {
 
         public getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             return this.compilerState.getSyntacticDiagnostics(fileName);
         }
 
         public getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             return this.compilerState.getSemanticDiagnostics(fileName);
         }
 
         public getEmitOutput(fileName: string): TypeScript.EmitOutput {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             return this.compilerState.getEmitOutput(fileName);
         }
@@ -907,10 +905,10 @@ module Services {
         //
 
         private getTypeInfoEligiblePath(fileName: string, position: number, isConstructorValidPosition: boolean) {
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             var ast = TypeScript.getAstAtPosition(script, position, /*useTrailingTriviaAsLimChar*/ false, /*forceInclusive*/ true);
             if (ast === null) {
@@ -945,7 +943,7 @@ module Services {
 
         public getTypeAtPosition(fileName: string, position: number): TypeInfo {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var node = this.getTypeInfoEligiblePath(fileName, position, true);
             if (!node) {
@@ -1060,7 +1058,9 @@ module Services {
                 ? TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, resolver, enclosingScopeSymbol)
                 : symbol.getTypeNameEx(resolver, enclosingScopeSymbol, /*useConstraintInName*/ true);
             var kind = this.mapPullElementKind(symbol.kind, symbol, !_isCallExpression, _isCallExpression, isConstructorCall);
-            var docComment = this.compilerState.getDocComments(candidateSignature || symbol, !_isCallExpression);
+
+            var docCommentSymbol = candidateSignature || symbol;
+            var docComment = docCommentSymbol.docComments(!_isCallExpression);
             var symbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
             var minChar = ast ? ast.minChar : -1;
             var limChar = ast ? ast.limChar : -1;
@@ -1070,10 +1070,10 @@ module Services {
 
         public getCompletionsAtPosition(fileName: string, position: number, isMemberCompletion: boolean): CompletionInfo {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var document = this.compilerState.getDocument(fileName);
-            var script = document.script;
+            var script = document.script();
 
             if (CompletionHelpers.isCompletionListBlocker(document.syntaxTree().sourceUnit(), position)) {
                 this.logger.log("Returning an empty list because completion was blocked.");
@@ -1229,7 +1229,7 @@ module Services {
                         symbolForDocComments = type.getCallSignatures()[0];
                     }
 
-                    var docComments = this.compilerState.getDocComments(symbolForDocComments, true);
+                    var docComments = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
 
                     entry = new ResolvedCompletionEntry(symbolDisplayName, kindName, kindModifiersName, typeName, fullSymbolName, docComments);
                 }
@@ -1312,7 +1312,7 @@ module Services {
                 // This entry has not been resolved yet. Resolve it.
                 if (decl) {
                     var document = this.compilerState.getDocument(fileName);
-                    var node = TypeScript.getAstAtPosition(document.script, position);
+                    var node = TypeScript.getAstAtPosition(document.script(), position);
                     var symbolInfo = this.compilerState.pullGetDeclInformation(decl, node, document);
 
                     if (!symbolInfo) {
@@ -1329,7 +1329,7 @@ module Services {
                         symbolForDocComments = type.getCallSignatures()[0];
                     }
 
-                    var docComment = this.compilerState.getDocComments(symbolForDocComments, true);
+                    var docComment = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
 
                     // Store the information for next lookup
                     (<DeclReferenceCompletionEntry>entry).resolve(typeName, fullSymbolName, docComment);
@@ -1587,7 +1587,7 @@ module Services {
 
         public getNameOrDottedNameSpan(fileName: string, startPos: number, endPos: number): SpanInfo {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.refresh();
+            this.synchronizeHostData(/*updateCompiler:*/ true);
 
             var node = this.getTypeInfoEligiblePath(fileName, startPos, false);
 
@@ -1610,7 +1610,7 @@ module Services {
 
         public getBreakpointStatementAtPosition(fileName: string, pos: number): SpanInfo {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxtree = this.getSyntaxTreeInternal(fileName);
             return Services.Breakpoints.getBreakpointLocation(syntaxtree, pos);
@@ -1618,7 +1618,7 @@ module Services {
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1627,7 +1627,7 @@ module Services {
 
         public getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1636,7 +1636,7 @@ module Services {
 
         public getFormattingEditsOnPaste(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1645,7 +1645,7 @@ module Services {
 
         public getFormattingEditsAfterKeystroke(fileName: string, position: number, key: string, options: FormatCodeOptions): TextEdit[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var manager = this.getFormattingManager(fileName, options);
 
@@ -1685,7 +1685,7 @@ module Services {
 
         public getOutliningRegions(fileName: string): TypeScript.TextSpan[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTree(fileName);
 
@@ -1697,7 +1697,7 @@ module Services {
         // Return "null" in case the smart indent cannot be determined.
         public getIndentationAtPosition(fileName: string, position: number, editorOptions: EditorOptions): number {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTree(fileName);
 
@@ -1714,7 +1714,7 @@ module Services {
         // If the position is not on any range, return "null".
         public getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
 
@@ -1723,7 +1723,7 @@ module Services {
 
         public getScriptLexicalStructure(fileName: string): NavigateToItem[] {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             var syntaxTree = this.getSyntaxTreeInternal(fileName);
             var items: NavigateToItem[] = [];
@@ -1734,7 +1734,7 @@ module Services {
 
         public getSyntaxTree(fileName: string): TypeScript.SyntaxTree {
             fileName = TypeScript.switchToForwardSlashes(fileName);
-            this.minimalRefresh();
+            this.synchronizeHostData(/*updateCompiler:*/ false);
 
             return this.getSyntaxTreeInternal(fileName);
         }

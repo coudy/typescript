@@ -23,32 +23,42 @@ module TypeScript {
         private astDeclMap = new DataMap<PullDecl>();
 
         constructor(private _semanticInfoChain: SemanticInfoChain,
-                    private _fileName: string,
-                    private _script: Script,
+                    public document: Document,
                     private _topLevelDecl: PullDecl = null) {
+        }
+
+        public invalidate(newSettings: CompilationSettings): void {
+            this.declASTMap = new DataMap<AST>();
+            this.astDeclMap = new DataMap<PullDecl>();
+            this._topLevelDecl = null;
+            this.document.invalidate(newSettings);
+        }
+
+        private script(): Script {
+            return this.document.script();
         }
 
         public topLevelDecl(): PullDecl {
             if (this._topLevelDecl === null) {
-                this._topLevelDecl = PullDeclWalker.create(this._script, this._semanticInfoChain);
-
-                // Now that we've computed the decls, there's no need to hold onto the script.
-                this._script = null;
+                this._topLevelDecl = PullDeclWalker.create(this.script(), this._semanticInfoChain);
             }
 
             return this._topLevelDecl;
         }
 
         public fileName(): string {
-            return this._fileName;
+            return this.document.fileName;
         }
 
         public _getDeclForAST(ast: AST): PullDecl {
+            // Ensure we actually have created all our decls before we try to find a mathcing decl
+            // for this ast.
+            this.topLevelDecl();
             return this.astDeclMap.read(ast.astIDString);
         }
 
         public _setDeclForAST(ast: AST, decl: PullDecl): void {
-            Debug.assert(decl.fileName() === this._fileName);
+            Debug.assert(decl.fileName() === this.fileName());
             this.astDeclMap.link(ast.astIDString, decl);
         }
 
@@ -57,7 +67,7 @@ module TypeScript {
         }
 
         public _setASTForDecl(decl: PullDecl, ast: AST): void {
-            Debug.assert(decl.fileName() === this._fileName);
+            Debug.assert(decl.fileName() === this.fileName());
             this.declASTMap.link(decl.declIDString, ast);
         }
     }
@@ -91,6 +101,25 @@ module TypeScript {
         private binder: PullSymbolBinder = null;
 
         private _topLevelDecls: PullDecl[] = null;
+        private _fileNames: string[] = null;
+
+        constructor(private logger: ILogger) {
+            this.invalidate();
+        }
+
+        public getDocument(fileName: string): Document {
+            var info = this.getSemanticInfo(fileName);
+            return info ? info.document : null;
+        }
+
+        public fileNames(): string[] {
+            if (this._fileNames === null) {
+                // Skip the first semantic info (the synthesized one for the global decls).
+                this._fileNames = this.units.slice(1).map(s => s.fileName());
+            }
+
+            return this._fileNames;
+        }
 
         private addPrimitiveType(name: string, globalDecl: PullDecl) {
             var span = new TextSpan(0, 0);
@@ -147,17 +176,13 @@ module TypeScript {
             return globalDecl;
         }
 
-        constructor(private logger: ILogger) {
-            this.invalidate();
-        }
-
         private getSemanticInfo(fileName: string): SemanticInfo {
             return this.fileNameToSemanticInfo[fileName];
         }
 
-        public addScript(script: Script): void {
-            var fileName = script.fileName();
-            var semanticInfo = new SemanticInfo(this, fileName, script);
+        public addDocument(document: Document): void {
+            var fileName = document.fileName;
+            var semanticInfo = new SemanticInfo(this, document);
 
             var existingIndex = ArrayUtilities.indexOf(this.units, u => u.fileName() === fileName);
             if (existingIndex < 0) {
@@ -175,7 +200,7 @@ module TypeScript {
             this.invalidate();
         }
 
-        public removeScript(fileName: string): void {
+        public removeDocument(fileName: string): void {
             Debug.assert(fileName !== "", "Can't remove the semantic info for the global decl.");
             var index = ArrayUtilities.indexOf(this.units, u => u.fileName() === fileName);
             if (index > 0) {
@@ -217,10 +242,9 @@ module TypeScript {
             var symbol = this.symbolCache[cacheID];
 
             if (!symbol) {
-                var topLevelDecls = this.topLevelDecls();
 
-                for (var i = 0; i < topLevelDecls.length; i++) {
-                    var topLevelDecl = topLevelDecls[i]; 
+                for (var i = 0, n = this.units.length; i < n; i++) {
+                    var topLevelDecl = this.units[i].topLevelDecl();
 
                     var symbol = this.findTopLevelSymbolInDecl(topLevelDecl, name, kind, doNotGoPastThisDecl);
                     if (symbol) {
@@ -456,7 +480,7 @@ module TypeScript {
             }
         }
 
-        private invalidate() {
+        public invalidate(oldSettings: CompilationSettings = null, newSettings: CompilationSettings = null) {
             // A file has changed, increment the type check phase so that future type chech
             // operations will proceed.
             PullTypeResolver.globalTypeCheckPhase++;
@@ -474,15 +498,41 @@ module TypeScript {
             this.fileNameToDiagnostics = new BlockIntrinsics();
             this.binder = null;
             this._topLevelDecls = null;
+            this._fileNames = null;
 
             this.declSymbolMap = new DataMap<PullSymbol>();
             this.declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
             this.declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
 
-            this.units[0] = new SemanticInfo(this, "", /*script:*/ null, this.getGlobalDecl());
+            if (oldSettings && newSettings) {
+                // Depending on which options changed, our cached syntactic data may not be valid
+                // anymore.
+                if (this.settingsChangeAffectsSyntax(oldSettings, newSettings)) {
+                    for (var i = 0, n = this.units.length; i < n; i++) {
+                        this.units[i].invalidate(newSettings);
+                    }
+                }
+            }
+
+            var globalDocument = new Document(/*fileName:*/ "", /*referencedFiles:*/[], /*settings:*/null, /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null);
+            this.units[0] = new SemanticInfo(this, globalDocument, this.getGlobalDecl());
 
             var cleanEnd = new Date().getTime();
             this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
+        }
+
+        private settingsChangeAffectsSyntax(before: CompilationSettings, after: CompilationSettings): boolean {
+            // If the automatic semicolon insertion option has changed, then we have to dump all
+            // syntax trees in order to reparse them with the new option.
+            //
+            // If the language version changed, then that affects what types of things we parse. So
+            // we have to dump all syntax trees.
+            //
+            // If propagateEnumConstants changes, then that affects the constant value data we've 
+            // stored in the AST.
+            return before.allowAutomaticSemicolonInsertion !== after.allowAutomaticSemicolonInsertion ||
+                before.codeGenTarget !== after.codeGenTarget ||
+                before.propagateEnumConstants != after.propagateEnumConstants;
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
@@ -584,8 +634,6 @@ module TypeScript {
             indexParamDecl.setSymbol(indexParameterSymbol);
             indexSignature.addDeclaration(indexSigDecl);
             indexParameterSymbol.addDeclaration(indexParamDecl);
-            this.setASTForDecl(indexSigDecl, ast);
-            this.setASTForDecl(indexParamDecl, ast);
         }
 
         public getDeclForAST(ast: AST): PullDecl {
