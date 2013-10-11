@@ -59,7 +59,6 @@ class CompilerBaselineRunner extends RunnerBase {
             var errorDescription = '';
 
             var createNewInstance = false;
-            var emittingSourceMap = false;
 
             var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.RunTime);
             for (var i = 0; i < tcSettings.length; ++i) {
@@ -70,10 +69,6 @@ class CompilerBaselineRunner extends RunnerBase {
                     Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, true /*minimalDefaultLife */, tcSettings[i].flag == "noimplicitany" /*noImplicitAny*/);
                     harnessCompiler.setCompilerSettings(tcSettings);
                     createNewInstance = true;
-                }
-
-                if (tcSettings[i].flag == "sourcemap" && tcSettings[i].value.toLowerCase() === 'true') {
-                    emittingSourceMap = true;
                 }
             }
 
@@ -100,7 +95,6 @@ class CompilerBaselineRunner extends RunnerBase {
                 result = compileResult;
             }, function (settings) {
                 harnessCompiler.setCompilerSettings(tcSettings);
-                settings.mapSourceFiles = emittingSourceMap;
             });
 
             // check errors
@@ -151,7 +145,6 @@ class CompilerBaselineRunner extends RunnerBase {
                     },
                     function (settings) {
                         harnessCompiler.setCompilerSettings(tcSettings);
-                        settings.mapSourceFiles = emittingSourceMap;
                     }
                     );
 
@@ -184,27 +177,6 @@ class CompilerBaselineRunner extends RunnerBase {
                         }
                         return code;
                     });
-
-                    // Check sourcemap output
-                    if (emittingSourceMap) {
-                        if (result.sourceMaps.length === 0 ) {
-                            throw new Error('Expected at least 1 .js.map file to be emitted, but got none');
-                        }
-
-                        Harness.Baseline.runBaseline('Correct SourceMap for ' + fileName, justName.replace(/\.ts/, '.map'), () => {
-                            return result.sourceMaps[0].code;
-                        });
-
-                        for (var i = 1; i < result.sourceMaps.length; i++) {
-                            Harness.Baseline.runBaseline('Correct SourceMap for ' + fileName + ' (#' + i + ')', justName.replace(/\.ts/, '.' + i + '.map'), () => {
-                                return result.sourceMaps[i].code;
-                            });
-                        }
-
-                        Harness.Baseline.runBaseline('Correct SourceMap Record for ' + fileName, justName.replace(/\.ts/, '.maprecord'), () => {
-                            return result.sourceMapRecord;
-                        });
-                    }
                 }
             }
 
