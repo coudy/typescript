@@ -914,9 +914,6 @@ module Harness {
                 if (settingsCallback) {
                     settingsCallback(this.compiler.settings);
                 }
-                else {
-                    this.compiler.settings.moduleGenTarget = moduleTarget;
-                }
 
                 try {
                     this.compile(/*resolve?*/ !noResolve);
