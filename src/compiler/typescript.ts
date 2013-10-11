@@ -127,6 +127,17 @@ module TypeScript {
             this.semanticInfoChain = new SemanticInfoChain(logger);
         }
 
+        public setCompilationSettings(newSettings: CompilationSettings) {
+            var oldSettings = this.settings;
+            this.settings = newSettings;
+
+            if (!compareDataObjects(oldSettings, newSettings)) {
+                // If our options have changed at all, we have to consider any cached semantic 
+                // data we have invalid.
+                this.semanticInfoChain.invalidate(oldSettings, newSettings);
+            }
+        }
+
         public getDocument(fileName: string): Document {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             return this.semanticInfoChain.getDocument(fileName);
@@ -1626,5 +1637,19 @@ module TypeScript {
 
             return true;
         }
+    }
+
+    export function compareDataObjects(dst: any, src: any): boolean {
+        for (var e in dst) {
+            if (typeof dst[e] == "object") {
+                if (!compareDataObjects(dst[e], src[e]))
+                    return false;
+            }
+            else if (typeof dst[e] != "function") {
+                if (dst[e] !== src[e])
+                    return false;
+            }
+        }
+        return true;
     }
 }

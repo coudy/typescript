@@ -111,14 +111,6 @@ module Services {
             return this._compilationSettings;
         }
 
-        private addFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
-            compiler.addFile(fileName,
-                this.hostCache.getScriptSnapshot(fileName),
-                this.hostCache.getByteOrderMark(fileName),
-                this.hostCache.getVersion(fileName),
-                this.hostCache.isOpen(fileName));
-        }
-
         public getHostCompilationSettings(): TypeScript.CompilationSettings {
             var settings = this.host.getCompilationSettings();
             if (settings !== null) {
@@ -132,22 +124,6 @@ module Services {
             return settings;
         }
 
-        private createCompiler(): void {
-            // Create and initialize compiler
-            this.logger.log("Initializing compiler");
-
-            this._compilationSettings = new TypeScript.CompilationSettings();
-
-            Services.copyDataObject(this.compilationSettings(), this.getHostCompilationSettings());
-            this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
-
-            // Add unit for all source files
-            var fileNames = this.host.getScriptFileNames();
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                this.addFile(this.compiler, fileNames[i]);
-            }
-        }
-
         public getResolver(): TypeScript.PullTypeResolver {
             return null;
         }
@@ -157,68 +133,49 @@ module Services {
             this.hostCache = new HostCache(this.host);
 
             if (updateCompiler) {
-                // If full refresh not needed, attempt partial refresh
-                if (!this.fullRefresh()) {
-                    this.partialRefresh();
+                var hostCompilationSettings = this.getHostCompilationSettings();
+                this._compilationSettings = new TypeScript.CompilationSettings();
+
+                Services.copyDataObject(this.compilationSettings(), hostCompilationSettings);
+
+                    // If we don't have a compiler, then create a new one.
+                if (this.compiler === null) {
+                    this.compiler = new TypeScript.TypeScriptCompiler(this.logger, this.compilationSettings());
+                }
+
+                // let the compiler know about the current compilation settings.  
+                this.compiler.setCompilationSettings(this.compilationSettings());
+
+                // Now, remove any files from the compiler that are no longer in hte host.
+                var compilerFileNames = this.compiler.fileNames();
+                for (var i = 0, n = compilerFileNames.length; i < n; i++) {
+                    var fileName = compilerFileNames[i];
+
+                    if (!this.hostCache.contains(fileName)) {
+                        this.compiler.removeFile(fileName);
+                    }
+                }
+
+                // Now, for every file the host knows about, either add the file (if the compiler
+                // doesn't know about it.).  Or notify the compiler about any changes (if it does
+                // know about it.)
+                var cache = this.hostCache;
+                var hostFileNames = cache.getFileNames();
+                for (var i = 0, n = hostFileNames.length; i < n; i++) {
+                    var fileName = hostFileNames[i];
+
+                    if (this.compiler.getDocument(fileName)) {
+                        this.tryUpdateFile(this.compiler, fileName);
+                    }
+                    else {
+                        this.compiler.addFile(fileName,
+                            cache.getScriptSnapshot(fileName), cache.getByteOrderMark(fileName), cache.getVersion(fileName), cache.isOpen(fileName));
+                    }
                 }
             }
         }
 
-        //
-        // Re-create a fresh compiler instance if needed. 
-        // Return "true" if a fresh compiler instance was created. 
-        //
-        private fullRefresh(): boolean {
-            // Initial state: no compiler yet
-            if (this.compiler == null) {
-                this.logger.log("Creating new compiler instance because there is no currently active instance");
-                this.createCompiler();
-                return true;
-            }
-
-            // If any compilation settings changes, a new compiler instance is needed
-            if (!Services.compareDataObjects(this.compilationSettings(), this.getHostCompilationSettings())) {
-                this.logger.log("Creating new compiler instance because compilation settings have changed.");
-                this.createCompiler();
-                return true;
-            }
-
-            // If any file was deleted, we need to create a new compiler, because we are not
-            // even close to supporting removing symbols (unitindex will be all over the place
-            // if we remove scripts from the list).
-            var fileNames = this.compiler.fileNames();
-            for (var unitIndex = 0, len = fileNames.length; unitIndex < len; unitIndex++) {
-                var fileName = fileNames[unitIndex];
-
-                if (!this.hostCache.contains(fileName)) {
-                    this.logger.log("Creating new compiler instance because of unit is not part of program anymore: " + unitIndex + "-" + fileName);
-                    this.createCompiler();
-                    return true;
-                }
-            }
-
-            // We can attempt a partial refresh
-            return false;
-        }
-
-        // Attempt an incremental refresh of the compiler state.
-        private partialRefresh(): void {
-            this.logger.log("Updating files...");
-
-            var fileNames = this.host.getScriptFileNames();
-            for (var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = fileNames[i];
-
-                if (this.compiler.getDocument(fileName)) {
-                    this.updateFile(this.compiler, fileName);
-                }
-                else {
-                    this.addFile(this.compiler, fileName);
-                }
-            }
-        }
-
-        private updateFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
+        private tryUpdateFile(compiler: TypeScript.TypeScriptCompiler, fileName: string): void {
             var document: TypeScript.Document = this.compiler.getDocument(fileName);
 
             //

@@ -5,7 +5,7 @@ module TypeScript {
         private _diagnostics: Diagnostic[] = null;
         private _bloomFilter: BloomFilter = null;
         private _script: Script = null;
-        private _lineMap: LineMap;
+        private _lineMap: LineMap = null;
 
         constructor(public fileName: string,
                     public referencedFiles: string[],
@@ -15,6 +15,16 @@ module TypeScript {
                     public version: number,
                     public isOpen: boolean,
                     private _syntaxTree: SyntaxTree) {
+        }
+
+        // Only for use by the semantic info chain.
+        public invalidate(newSettings: CompilationSettings): void {
+            // Dump all information related to syntax.  We'll have to recompute it when asked.
+            this.compilationSettings = newSettings;
+            this._syntaxTree = null;
+            this._script = null;
+            this._diagnostics = null;
+            this._bloomFilter = null;
         }
 
         private cacheSyntaxTreeInfo(syntaxTree: SyntaxTree): void {

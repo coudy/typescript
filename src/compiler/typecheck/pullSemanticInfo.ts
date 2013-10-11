@@ -27,6 +27,13 @@ module TypeScript {
                     private _topLevelDecl: PullDecl = null) {
         }
 
+        public invalidate(newSettings: CompilationSettings): void {
+            this.declASTMap = new DataMap<AST>();
+            this.astDeclMap = new DataMap<PullDecl>();
+            this._topLevelDecl = null;
+            this.document.invalidate(newSettings);
+        }
+
         private script(): Script {
             return this.document.script();
         }
@@ -473,7 +480,7 @@ module TypeScript {
             }
         }
 
-        private invalidate() {
+        public invalidate(oldSettings: CompilationSettings = null, newSettings: CompilationSettings = null) {
             // A file has changed, increment the type check phase so that future type chech
             // operations will proceed.
             PullTypeResolver.globalTypeCheckPhase++;
@@ -497,11 +504,35 @@ module TypeScript {
             this.declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
             this.declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
 
+            if (oldSettings && newSettings) {
+                // Depending on which options changed, our cached syntactic data may not be valid
+                // anymore.
+                if (this.settingsChangeAffectsSyntax(oldSettings, newSettings)) {
+                    for (var i = 0, n = this.units.length; i < n; i++) {
+                        this.units[i].invalidate(newSettings);
+                    }
+                }
+            }
+
             var globalDocument = new Document(/*fileName:*/ "", /*referencedFiles:*/[], /*settings:*/null, /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null);
             this.units[0] = new SemanticInfo(this, globalDocument, this.getGlobalDecl());
 
             var cleanEnd = new Date().getTime();
             this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
+        }
+
+        private settingsChangeAffectsSyntax(before: CompilationSettings, after: CompilationSettings): boolean {
+            // If the automatic semicolon insertion option has changed, then we have to dump all
+            // syntax trees in order to reparse them with the new option.
+            //
+            // If the language version changed, then that affects what types of things we parse. So
+            // we have to dump all syntax trees.
+            //
+            // If propagateEnumConstants changes, then that affects the constant value data we've 
+            // stored in the AST.
+            return before.allowAutomaticSemicolonInsertion !== after.allowAutomaticSemicolonInsertion ||
+                before.codeGenTarget !== after.codeGenTarget ||
+                before.propagateEnumConstants != after.propagateEnumConstants;
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
