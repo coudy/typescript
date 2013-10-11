@@ -5771,7 +5771,7 @@ module TypeScript {
             var nameSymbol: PullSymbol = null;
 
             // First check if this is the name child of a declaration. If it is, no need to search for a name in scope since this is not a reference.
-            if (isNameOfSomeDeclaration(nameAST)) {
+            if (isDeclarationASTOrDeclarationNameAST(nameAST)) {
                 Debug.assert(enclosingDecl == this.semanticInfoChain.getDeclForAST(nameAST.parent));
                 nameSymbol = enclosingDecl.getSymbol();
             }

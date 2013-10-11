@@ -960,8 +960,8 @@ module Services {
             var candidateSignature: TypeScript.PullSignatureSymbol;
             var isConstructorCall: boolean;
 
-            if (TypeScript.isNameOfSomeDeclaration(node) || node.isDeclaration()) {
-                var declarationInformation = this.compilerState.getDeclarationSymbolInformation(node, document);
+            if (TypeScript.isDeclarationASTOrDeclarationNameAST(node)) {
+                var declarationInformation = this.compilerState.getSymbolInformationFromAST(node, document);
                 if (!declarationInformation) {
                     return null;
                 }

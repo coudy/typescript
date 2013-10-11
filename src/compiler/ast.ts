@@ -135,7 +135,7 @@ module TypeScript {
             return this.limChar - this.minChar;
         }
 
-        public isDeclaration() { return false; }
+        public _isDeclaration() { return false; }
 
         public emit(emitter: Emitter) {
             emitter.emitComments(this, true);
@@ -148,7 +148,7 @@ module TypeScript {
         }
 
         public docComments(): Comment[] {
-            if (!this.isDeclaration() || !this.preComments() || this.preComments().length === 0) {
+            if (!this._isDeclaration() || !this.preComments() || this.preComments().length === 0) {
                 return [];
             }
 
@@ -259,7 +259,7 @@ module TypeScript {
             return NodeType.ImportDeclaration;
         }
 
-        public isDeclaration() { return true; }
+        public _isDeclaration() { return true; }
 
         public getVarFlags(): VariableFlags {
             return this._varFlags;
@@ -343,7 +343,7 @@ module TypeScript {
                 classElements && (classElements.parent = this);
         }
 
-        public isDeclaration() {
+        public _isDeclaration() {
             return true;
         }
 
@@ -396,7 +396,7 @@ module TypeScript {
             return NodeType.InterfaceDeclaration;
         }
 
-        public isDeclaration() {
+        public _isDeclaration() {
             return true;
         }
 
@@ -607,6 +607,10 @@ module TypeScript {
             return NodeType.SimplePropertyAssignment;
         }
 
+        public _isDeclaration() {
+            return true;
+        }
+
         public emitWorker(emitter: Emitter): void {
             emitter.emitSimplePropertyAssignment(this);
         }
@@ -628,6 +632,10 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.FunctionPropertyAssignment;
+        }
+
+        public _isDeclaration() {
+            return true;
         }
 
         public emitWorker(emitter: Emitter): void {
@@ -1134,7 +1142,7 @@ module TypeScript {
             emitter.emitVariableDeclarator(this);
         }
 
-        public isDeclaration() { return true; }
+        public _isDeclaration() { return true; }
 
         public getVarFlags(): VariableFlags {
             return this._varFlags;
@@ -1166,7 +1174,7 @@ module TypeScript {
             init && (init.parent = this);
         }
 
-        public isDeclaration() { return true; }
+        public _isDeclaration() { return true; }
 
         public getVarFlags(): VariableFlags {
             return this._varFlags;
@@ -1208,7 +1216,7 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public isDeclaration() { return true; }
+        public _isDeclaration() { return true; }
 
         public nodeType(): NodeType {
             return NodeType.ArrowFunctionExpression;
@@ -1240,7 +1248,7 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public isDeclaration() { return true; }
+        public _isDeclaration() { return true; }
 
         public getFunctionFlags(): FunctionFlags {
             return this._functionFlags;
@@ -1281,7 +1289,7 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public isDeclaration() { return true; }
+        public _isDeclaration() { return true; }
 
         public nodeType(): NodeType {
             return NodeType.FunctionDeclaration;
@@ -1344,7 +1352,7 @@ module TypeScript {
             members && (members.parent = this);
         }
 
-        public isDeclaration() {
+        public _isDeclaration() {
             return true;
         }
 
@@ -1387,7 +1395,7 @@ module TypeScript {
             return NodeType.ArrayType;
         }
 
-        public isDeclaration() {
+        public _isDeclaration() {
             return true;
         }
 
@@ -1411,7 +1419,7 @@ module TypeScript {
             return NodeType.ObjectType;
         }
 
-        public isDeclaration() {
+        public _isDeclaration() {
             return true;
         }
 
@@ -1807,7 +1815,7 @@ module TypeScript {
             this._moduleFlags = flags;
         }
 
-        public isDeclaration(): boolean {
+        public _isDeclaration(): boolean {
             return true;
         }
 
@@ -1833,7 +1841,7 @@ module TypeScript {
             return NodeType.EnumElement;
         }
 
-        public isDeclaration(): boolean {
+        public _isDeclaration(): boolean {
             return true;
         }
 
@@ -1919,6 +1927,10 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.TypeParameter;
+        }
+
+        public _isDeclaration() {
+            return true;
         }
 
         public structuralEquals(ast: TypeParameter, includingPosition: boolean): boolean {
@@ -2526,7 +2538,7 @@ module TypeScript {
         return false;
     }
 
-    export function isNameOfSomeDeclaration(ast: AST) {
+    function isNameOfSomeDeclaration(ast: AST) {
         if (ast === null || ast.parent === null) {
             return false;
         }
@@ -2562,6 +2574,10 @@ module TypeScript {
         }
 
         return false;
+    }
+
+    export function isDeclarationASTOrDeclarationNameAST(ast: AST) {
+        return isNameOfSomeDeclaration(ast) || ast._isDeclaration();
     }
 
     export function isNameOfMemberAccessExpression(ast: AST) {

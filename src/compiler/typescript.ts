@@ -1192,16 +1192,7 @@ module TypeScript {
             var script = document.script;
             var scriptName = document.fileName;
 
-            if (ast.nodeType() !== NodeType.ClassDeclaration &&
-                ast.nodeType() !== NodeType.InterfaceDeclaration &&
-                ast.nodeType() !== NodeType.ModuleDeclaration &&
-                ast.nodeType() !== NodeType.ConstructorDeclaration &&
-                ast.nodeType() !== NodeType.FunctionDeclaration &&
-                ast.nodeType() !== NodeType.ArrowFunctionExpression &&
-                ast.nodeType() !== NodeType.VariableDeclarator &&
-                ast.nodeType() !== NodeType.EnumDeclaration) {
-                return null;
-            }
+            Debug.assert(isDeclarationASTOrDeclarationNameAST(ast));
 
             var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
