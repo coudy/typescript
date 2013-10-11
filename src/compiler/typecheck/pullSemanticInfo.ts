@@ -684,7 +684,6 @@ module TypeScript {
         private cleanDecl(decl: PullDecl) {
             decl.setSymbol(null);
             decl.setSignatureSymbol(null);
-            decl.setSpecializingSignatureSymbol(null);
             decl.setIsBound(false);
 
             var children = decl.getChildDecls();

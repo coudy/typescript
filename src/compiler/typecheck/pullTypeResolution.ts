@@ -952,17 +952,6 @@ module TypeScript {
                 }
             }
 
-            var typeArgs = symbol.isType() ? (<PullTypeSymbol>symbol).getTypeArguments() : null;
-
-            // GTODO: Is this code still relevant?
-            if (typeArgs && typeArgs.length) {
-                
-                var rootType = getRootType(symbol.type);
-                var specializedSymbol = this.createInstantiatedType(rootType, typeArgs);
-
-                symbol = specializedSymbol;
-            }
-
             this.setUnitPath(thisUnit);
 
             return symbol;
@@ -3099,7 +3088,7 @@ module TypeScript {
             this.checkFunctionTypePrivacy(
                 funcDeclAST, flags, typeParameters, parameters, returnTypeAnnotation, block, context);
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
             if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
                 // It is a constructor or function
                 var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
@@ -3262,7 +3251,7 @@ module TypeScript {
 
             var funcSymbol = funcDecl.getSymbol();
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
             var hadError = false;
 
@@ -3643,7 +3632,7 @@ module TypeScript {
             var setterSymbol = accessorSymbol.getSetter();
             var setterTypeSymbol = <PullTypeSymbol>setterSymbol.type;
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
             var hadError = false;
 
@@ -4639,7 +4628,7 @@ module TypeScript {
 
         // Expression resolution
 
-        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, specializingSignature= false): PullSymbol {
+        public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             globalSemanticInfoChain = this.semanticInfoChain;
 
             if (globalBinder) {
@@ -4650,7 +4639,7 @@ module TypeScript {
                 return;
             }
 
-            var symbol = specializingSignature ? null : this.getSymbolForAST(ast, context);
+            var symbol = this.getSymbolForAST(ast, context);
             if (symbol && symbol.isResolved) {
                 this.typeCheckAST(ast, inContextuallyTypedAssignment, enclosingDecl, context);
                 return symbol;
@@ -5702,23 +5691,19 @@ module TypeScript {
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
 
-            if (!context.isResolvingTypeArguments(genericTypeAST)) {
-                context.startResolvingTypeArguments(genericTypeAST);
-                var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
-                context.isResolvingClassExtendedType = false;
+            var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
+            context.isResolvingClassExtendedType = false;
 
-                if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
-                    for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                        typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
+            if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
+                for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
+                    typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
-                        if (typeArgs[i].isError()) {
-                            typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
-                        }
+                    if (typeArgs[i].isError()) {
+                        typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
-                context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
-                context.doneResolvingTypeArguments();
             }
+            context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
 
             var typeParameters = genericTypeSymbol.getTypeParameters()
 

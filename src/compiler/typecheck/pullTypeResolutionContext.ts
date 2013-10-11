@@ -165,10 +165,6 @@ module TypeScript {
         }
     }
 
-    export var maxRecursiveMemberSpecializationDepth = 32;
-    export var maxRecursiveSignatureSpecializationDepth = 8;
-    export var maxRecursiveConstraintSpecializationDepth = 32;
-
     export class JumpRecord {
         constructor(
             public breakableLabels: string[]= [],
@@ -180,7 +176,6 @@ module TypeScript {
 
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
-        private genericASTResolutionStack: AST[] = [];
         private enclosingFunctionParameterIndexStack: IParameterIndexContext[] = [];
 
         // Each entry in the stack contains the labels that are currently in scope.  Each time we 
@@ -202,9 +197,6 @@ module TypeScript {
         public inConstructorArguments = false;
         public isInStaticInitializer = false;
         public resolvingTypeNameAsNameExpression = false;
-        public recursiveMemberSpecializationDepth = 0;
-        public recursiveSignatureSpecializationDepth = 0;
-        public recursiveConstraintSpecializationDepth = 0;
 
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public typeCheckUnitPath?: string) { }
 
@@ -318,24 +310,6 @@ module TypeScript {
 
         public typeCheck() {
             return this.inTypeCheck && !this.inProvisionalResolution();
-        }
-
-        public startResolvingTypeArguments(ast: AST) {
-            this.genericASTResolutionStack[this.genericASTResolutionStack.length] = ast;
-        }
-
-        public isResolvingTypeArguments(ast: AST): boolean {
-            for (var i = 0; i < this.genericASTResolutionStack.length; i++) {
-                if (this.genericASTResolutionStack[i].astID === ast.astID) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public doneResolvingTypeArguments() {
-            this.genericASTResolutionStack.length--;
         }
 
         public pushParameterIndexContext(enclosingFunction: AST) {
