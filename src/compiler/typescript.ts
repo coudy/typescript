@@ -155,7 +155,7 @@ module TypeScript {
 
             TypeScript.sourceCharactersCompiled += scriptSnapshot.getLength();
 
-            var document = Document.create(this, fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles);
+            var document = Document.create(this, this.semanticInfoChain, fileName, scriptSnapshot, byteOrderMark, version, isOpen, referencedFiles);
 
             this.semanticInfoChain.addDocument(document);
         }

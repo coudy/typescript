@@ -18,63 +18,9 @@ module TypeScript {
 
     var sentinalEmptyArray: any[] = [];
 
-    class SemanticInfo {
-        private declASTMap = new DataMap<AST>();
-        private astDeclMap = new DataMap<PullDecl>();
-
-        constructor(private _semanticInfoChain: SemanticInfoChain,
-                    public document: Document,
-                    private _topLevelDecl: PullDecl = null) {
-        }
-
-        public invalidate(): void {
-            this.declASTMap = new DataMap<AST>();
-            this.astDeclMap = new DataMap<PullDecl>();
-            this._topLevelDecl = null;
-            this.document.invalidate();
-        }
-
-        private script(): Script {
-            return this.document.script();
-        }
-
-        public topLevelDecl(): PullDecl {
-            if (this._topLevelDecl === null) {
-                this._topLevelDecl = PullDeclWalker.create(this.script(), this._semanticInfoChain);
-            }
-
-            return this._topLevelDecl;
-        }
-
-        public fileName(): string {
-            return this.document.fileName;
-        }
-
-        public _getDeclForAST(ast: AST): PullDecl {
-            // Ensure we actually have created all our decls before we try to find a mathcing decl
-            // for this ast.
-            this.topLevelDecl();
-            return this.astDeclMap.read(ast.astIDString);
-        }
-
-        public _setDeclForAST(ast: AST, decl: PullDecl): void {
-            Debug.assert(decl.fileName() === this.fileName());
-            this.astDeclMap.link(ast.astIDString, decl);
-        }
-
-        public _getASTForDecl(decl: PullDecl): AST {
-            return this.declASTMap.read(decl.declIDString);
-        }
-
-        public _setASTForDecl(decl: PullDecl, ast: AST): void {
-            Debug.assert(decl.fileName() === this.fileName());
-            this.declASTMap.link(decl.declIDString, ast);
-        }
-    }
-
     export class SemanticInfoChain {
-        private units: SemanticInfo[] = [];
-        private fileNameToSemanticInfo = new BlockIntrinsics<SemanticInfo>();
+        private units: Document[] = [];
+        private fileNameToDocument = new BlockIntrinsics<Document>();
 
         public anyTypeSymbol: PullTypeSymbol = null;
         public booleanTypeSymbol: PullTypeSymbol = null;
@@ -108,14 +54,14 @@ module TypeScript {
         }
 
         public getDocument(fileName: string): Document {
-            var info = this.getSemanticInfo(fileName);
-            return info ? info.document : null;
+            var document = this.fileNameToDocument[fileName];
+            return document ? document : null;
         }
 
         public fileNames(): string[] {
             if (this._fileNames === null) {
                 // Skip the first semantic info (the synthesized one for the global decls).
-                this._fileNames = this.units.slice(1).map(s => s.fileName());
+                this._fileNames = this.units.slice(1).map(s => s.fileName);
             }
 
             return this._fileNames;
@@ -176,24 +122,19 @@ module TypeScript {
             return globalDecl;
         }
 
-        private getSemanticInfo(fileName: string): SemanticInfo {
-            return this.fileNameToSemanticInfo[fileName];
-        }
-
         public addDocument(document: Document): void {
             var fileName = document.fileName;
-            var semanticInfo = new SemanticInfo(this, document);
 
-            var existingIndex = ArrayUtilities.indexOf(this.units, u => u.fileName() === fileName);
+            var existingIndex = ArrayUtilities.indexOf(this.units, u => u.fileName === fileName);
             if (existingIndex < 0) {
                 // Adding the script for the first time.
-                this.units.push(semanticInfo);
+                this.units.push(document);
             }
             else {
-                this.units[existingIndex] = semanticInfo;
+                this.units[existingIndex] = document;
             }
 
-            this.fileNameToSemanticInfo[fileName] = semanticInfo;
+            this.fileNameToDocument[fileName] = document;
 
             // We changed the scripts we're responsible for.  Invalidate all existing cached
             // semantic information.
@@ -202,9 +143,9 @@ module TypeScript {
 
         public removeDocument(fileName: string): void {
             Debug.assert(fileName !== "", "Can't remove the semantic info for the global decl.");
-            var index = ArrayUtilities.indexOf(this.units, u => u.fileName() === fileName);
+            var index = ArrayUtilities.indexOf(this.units, u => u.fileName === fileName);
             if (index > 0) {
-                this.fileNameToSemanticInfo[fileName] = undefined;
+                this.fileNameToDocument[fileName] = undefined;
                 this.units.splice(index, 1);
                 this.invalidate();
             }
@@ -319,7 +260,7 @@ module TypeScript {
                 var topLevelDecl = unit.topLevelDecl(); // Script
 
                 if (topLevelDecl.isExternalModule()) {
-                    var unitPath = unit.fileName();
+                    var unitPath = unit.fileName;
                     var isDtsFile = unitPath == dtsFile;
                     if (isDtsFile || unitPath == tsFile) {
                         var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
@@ -514,8 +455,8 @@ module TypeScript {
                 }
             }
 
-            var globalDocument = new Document(this.compiler, /*fileName:*/ "", /*referencedFiles:*/[], /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null);
-            this.units[0] = new SemanticInfo(this, globalDocument, this.getGlobalDecl());
+            var globalDocument = new Document(this.compiler, this, /*fileName:*/ "", /*referencedFiles:*/[], /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null, this.getGlobalDecl());
+            this.units[0] = globalDocument;
 
             var cleanEnd = new Date().getTime();
             this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
@@ -637,7 +578,7 @@ module TypeScript {
         }
 
         public getDeclForAST(ast: AST): PullDecl {
-            var unit = this.getSemanticInfo(ast.fileName());
+            var unit = this.getDocument(ast.fileName());
 
             if (unit) {
                 return unit._getDeclForAST(ast);
@@ -647,11 +588,11 @@ module TypeScript {
         }
 
         public setDeclForAST(ast: AST, decl: PullDecl): void {
-            this.getSemanticInfo(decl.fileName())._setDeclForAST(ast, decl);
+            this.getDocument(decl.fileName())._setDeclForAST(ast, decl);
         }
 
         public getASTForDecl(decl: PullDecl): AST {
-            var unit = this.getSemanticInfo(decl.fileName());
+            var unit = this.getDocument(decl.fileName());
             if (unit) {
                 return unit._getASTForDecl(decl);
             }
@@ -660,11 +601,11 @@ module TypeScript {
         }
 
         public setASTForDecl(decl: PullDecl, ast: AST): void {
-            this.getSemanticInfo(decl.fileName())._setASTForDecl(decl, ast);
+            this.getDocument(decl.fileName())._setASTForDecl(decl, ast);
         }
 
         public topLevelDecl(fileName: string): PullDecl {
-            var info = this.getSemanticInfo(fileName);
+            var info = this.getDocument(fileName);
             if (info) {
                 return info.topLevelDecl();
             }
