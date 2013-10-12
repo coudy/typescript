@@ -120,7 +120,7 @@ module TypeScript {
 
             if (!this.compilationSettings.noResolve()) {
                 // Resolve references
-                var resolutionResults = ReferenceResolver.resolve(this.inputFiles, this, this.compilationSettings);
+                var resolutionResults = ReferenceResolver.resolve(this.inputFiles, this, this.compilationSettings.useCaseSensitiveFileResolution());
                 resolvedFiles = resolutionResults.resolvedFiles;
 
                 // Only include the library if useDefaultLib is set to true and did not see any 'no-default-lib' comments

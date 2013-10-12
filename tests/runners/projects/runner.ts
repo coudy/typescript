@@ -43,7 +43,8 @@ class HarnessBatch implements TypeScript.IReferenceResolverHost {
         var resolvedFiles: TypeScript.IResolvedFile[];
 
         // Resolve references
-        var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compilationSettings);
+        var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this,
+            this.compilationSettings.useCaseSensitiveFileResolution());
         resolvedFiles = resolutionResults.resolvedFiles;
 
         // Populate any diagnostic messages generated during resolution

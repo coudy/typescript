@@ -46,14 +46,14 @@ module TypeScript {
         private host: IReferenceResolverHost;
         private visited: { [s: string]: string };
 
-        constructor(inputFileNames: string[], host: IReferenceResolverHost, private settings: TypeScript.ImmutableCompilationSettings) {
+        constructor(inputFileNames: string[], host: IReferenceResolverHost, private useCaseSensitiveFileResolution: boolean) {
             this.inputFileNames = inputFileNames;
             this.host = host;
             this.visited = {};
         }
 
-        public static resolve(inputFileNames: string[], host: IReferenceResolverHost, settings: TypeScript.ImmutableCompilationSettings): ReferenceResolutionResult {
-            var resolver = new ReferenceResolver(inputFileNames, host, settings);
+        public static resolve(inputFileNames: string[], host: IReferenceResolverHost, useCaseSensitiveFileResolution: boolean): ReferenceResolutionResult {
+            var resolver = new ReferenceResolver(inputFileNames, host, useCaseSensitiveFileResolution);
             return resolver.resolveInputFiles();
         }
 
@@ -216,7 +216,7 @@ module TypeScript {
         }
 
         private getUniqueFileId(filePath: string): string {
-            return this.settings.useCaseSensitiveFileResolution() ? filePath : filePath.toLocaleUpperCase();
+            return this.useCaseSensitiveFileResolution ? filePath : filePath.toLocaleUpperCase();
         }
 
         private recordVisitedFile(filePath: string): void {
@@ -232,7 +232,7 @@ module TypeScript {
                 return false;
             }
 
-            if (this.settings.useCaseSensitiveFileResolution()) {
+            if (this.useCaseSensitiveFileResolution) {
                 return filePath1 === filePath2;
             }
             else {

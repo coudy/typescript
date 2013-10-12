@@ -811,7 +811,8 @@ module Harness {
                 // This is the branch that we want to use to ensure proper testing of file resolution, though there is an alternative
                 if (!this.compiler.compilationSettings().noResolve()) {
                     // Resolve references
-                    var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this, this.compiler.compilationSettings());
+                    var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this,
+                        this.compiler.compilationSettings().useCaseSensitiveFileResolution());
                     resolvedFiles = resolutionResults.resolvedFiles;
 
                     resolutionResults.diagnostics.forEach(diag => this.addError(ErrorType.Resolution, diag));
