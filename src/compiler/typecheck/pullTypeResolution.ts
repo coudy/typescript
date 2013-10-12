@@ -6954,10 +6954,10 @@ module TypeScript {
                 }
 
                 var isAccessor = propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment || propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment;
-                if (propertyAssignment.nodeType() == NodeType.SimplePropertyAssignment) {
-                    var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
-                    Debug.assert(decl);
+                var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
+                Debug.assert(decl);
 
+                if (propertyAssignment.nodeType() == NodeType.SimplePropertyAssignment) {
                     if (!isUsingExistingSymbol) {
                         memberSymbol = new PullSymbol(assignmentText.memberName, PullElementKind.Property);
                         memberSymbol.addDeclaration(decl);
@@ -6967,24 +6967,11 @@ module TypeScript {
                     }
                 }
                 else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
-                    var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
-                    Debug.assert(decl);
-
-                    var binder = this.semanticInfoChain.getBinder();
-                    binder.bindDeclToPullSymbol(decl);
                     memberSymbol = decl.getSymbol();
                 }
                 else {
                     Debug.assert(isAccessor);
-                    // Pre-bind the getter and setter so that they are both bound before we resolve accessor declaration.
-                    // This happens for the class member case, and we need to mimic that for the object literal case.
-                    var functionDeclaration = this.semanticInfoChain.getDeclForAST(propertyAssignment);
-                    Debug.assert(functionDeclaration);
-
-                    var binder = this.semanticInfoChain.getBinder();
-                    binder.bindDeclToPullSymbol(functionDeclaration);
-
-                    memberSymbol = objectLiteralTypeSymbol.findMember(assignmentText.memberName);
+                    memberSymbol = decl.getSymbol();
                 }
 
                 if (!isUsingExistingSymbol && !isAccessor) {
