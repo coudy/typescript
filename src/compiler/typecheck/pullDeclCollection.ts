@@ -1080,8 +1080,8 @@ module TypeScript {
         }
     }
 
-    export class PullDeclWalker {
-        public static create(script: Script, semanticInfoChain: SemanticInfoChain): PullDecl {
+    export module DeclarationCreator {
+        export function create(script: Script, semanticInfoChain: SemanticInfoChain): PullDecl {
             var declCollectionContext = new DeclCollectionContext(semanticInfoChain);
 
             // create decls

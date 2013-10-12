@@ -175,9 +175,6 @@ module TypeScript {
         private compile(): void {
             var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings);
 
-            var anySyntacticErrors = false;
-            var anySemanticErrors = false;
-
             for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
                 var resolvedFile = this.resolvedFiles[i];
                 var sourceFile = this.getSourceFile(resolvedFile.path);

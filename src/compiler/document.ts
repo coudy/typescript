@@ -168,7 +168,7 @@ module TypeScript {
 
         public topLevelDecl(): PullDecl {
             if (this._topLevelDecl === null) {
-                this._topLevelDecl = PullDeclWalker.create(this.script(), this._semanticInfoChain);
+                this._topLevelDecl = DeclarationCreator.create(this.script(), this._semanticInfoChain);
             }
 
             return this._topLevelDecl;
