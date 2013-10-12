@@ -3946,9 +3946,6 @@ module TypeScript {
 
             var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-            var isGetter = hasFlag(flags, FunctionFlags.GetAccessor);
-            var isSetter = !isGetter;
-
             var getter = accessorSymbol.getGetter();
             var setter = accessorSymbol.getSetter();
 
