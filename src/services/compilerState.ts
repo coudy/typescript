@@ -102,7 +102,7 @@ module Services {
         }
     }
 
-    export class CompilerState {
+    export class LanguageServiceCompiler {
         private logger: TypeScript.ILogger;
 
         //
