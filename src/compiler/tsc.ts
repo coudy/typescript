@@ -127,9 +127,7 @@ module TypeScript {
                 includeDefaultLibrary = !this.compilationSettings.noLib() && !resolutionResults.seenNoDefaultLibTag;
 
                 // Populate any diagnostic messages generated during resolution
-                for (var i = 0, n = resolutionResults.diagnostics.length; i < n; i++) {
-                    this.addDiagnostic(resolutionResults.diagnostics[i]);
-                }
+                resolutionResults.diagnostics.forEach(d => this.addDiagnostic(d));
             }
             else {
                 for (var i = 0, n = this.inputFiles.length; i < n; i++) {
@@ -175,11 +173,10 @@ module TypeScript {
         private compile(): void {
             var compiler = new TypeScriptCompiler(this.logger, this.compilationSettings);
 
-            for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
-                var resolvedFile = this.resolvedFiles[i];
+            this.resolvedFiles.forEach(resolvedFile => {
                 var sourceFile = this.getSourceFile(resolvedFile.path);
                 compiler.addFile(resolvedFile.path, sourceFile.scriptSnapshot, sourceFile.byteOrderMark, /*version:*/ 0, /*isOpen:*/ false, resolvedFile.referencedFiles);
-            }
+            });
 
             for (var it = compiler.compile((path: string) => this.resolvePath(path)); it.moveNext();) {
                 var result = it.current();
@@ -429,9 +426,7 @@ module TypeScript {
                 }
             }
 
-            for (var i = 0, n = opts.unnamed.length; i < n; i++) {
-                this.inputFiles.push(opts.unnamed[i]);
-            }
+            this.inputFiles.push.apply(this.inputFiles, opts.unnamed);
 
             // If no source files provided to compiler - print usage information
             if (this.inputFiles.length === 0 || needsHelp) {

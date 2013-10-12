@@ -67,9 +67,8 @@ module TypeScript {
 
             // Loop over the files and extract references
             var referenceLocation = new ReferenceLocation(null, null, 0, 0, false);
-            for (var i = 0, n = this.inputFileNames.length; i < n; i++) {
-                this.resolveIncludedFile(this.inputFileNames[i], referenceLocation, result);
-            }
+            this.inputFileNames.forEach(fileName =>
+                this.resolveIncludedFile(fileName, referenceLocation, result));
 
             return result;
         }
@@ -180,12 +179,11 @@ module TypeScript {
 
                 // Resolve explicit references
                 var normalizedReferencePaths: string[] = [];
-                for (var i = 0, n = preprocessedFileInformation.referencedFiles.length; i < n; i++) {
-                    var fileReference = preprocessedFileInformation.referencedFiles[i];
+                preprocessedFileInformation.referencedFiles.forEach(fileReference => {
                     var currentReferenceLocation = new ReferenceLocation(normalizedPath, lineMap, fileReference.position, fileReference.length, /* isImported */ false);
                     var normalizedReferencePath = this.resolveIncludedFile(fileReference.path, currentReferenceLocation, resolutionResult);
                     normalizedReferencePaths.push(normalizedReferencePath);
-                }
+                });
 
                 // Resolve imports
                 var normalizedImportPaths: string[] = [];
