@@ -121,9 +121,9 @@ module TypeScript {
         return largest;
     }
 
-    export function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
+    function getDiagnosticInfoFromKey(diagnosticKey: string): DiagnosticInfo {
         var result: DiagnosticInfo = diagnosticInformationMap[diagnosticKey];
-        //Debug.assert(result !== undefined && result !== null);
+        Debug.assert(result);
         return result;
     }
 

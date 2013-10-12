@@ -236,7 +236,7 @@ module Services {
         private containErrors(diagnostics: TypeScript.Diagnostic[]): boolean {
             if (diagnostics && diagnostics.length > 0) {
                 for (var i = 0; i < diagnostics.length; i++) {
-                    var diagnosticInfo = TypeScript.getDiagnosticInfoFromKey(diagnostics[i].diagnosticKey());
+                    var diagnosticInfo = diagnostics[i].info();
                     if (diagnosticInfo.category === TypeScript.DiagnosticCategory.Error) {
                         return true;
                     }
