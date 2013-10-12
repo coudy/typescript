@@ -15,11 +15,8 @@
 ///<reference path='typescriptServices.ts' />
 
 module Services {
-
-    //
-    // An cache entry in HostCache 
-    //
-    export class HostCacheEntry {
+    // Information about a specific host file.
+    class HostFileInformation {
         private _sourceText: TypeScript.IScriptSnapshot;
 
         constructor(
@@ -40,23 +37,21 @@ module Services {
         }
     }
 
-    //
     // Cache host information about scripts. Should be refreshed 
     // at each language service public entry point, since we don't know when 
     // set of scripts handled by the host changes.
-    //
-    export class HostCache {
-        private fileNameToEntry: TypeScript.StringHashTable<HostCacheEntry>;
+    class HostCache {
+        private fileNameToEntry: TypeScript.StringHashTable<HostFileInformation>;
         private _compilationSettings: TypeScript.ImmutableCompilationSettings;
 
         constructor(host: ILanguageServiceHost) {
             // script id => script index
-            this.fileNameToEntry = new TypeScript.StringHashTable<HostCacheEntry>();
+            this.fileNameToEntry = new TypeScript.StringHashTable<HostFileInformation>();
 
             var fileNames = host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
-                this.fileNameToEntry.add(TypeScript.switchToForwardSlashes(fileName), new HostCacheEntry(
+                this.fileNameToEntry.add(TypeScript.switchToForwardSlashes(fileName), new HostFileInformation(
                     fileName, host, host.getScriptVersion(fileName), host.getScriptIsOpen(fileName), host.getScriptByteOrderMark(fileName)));
             }
 
