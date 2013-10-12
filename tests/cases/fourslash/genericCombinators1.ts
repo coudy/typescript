@@ -96,6 +96,6 @@ verify.quickInfoIs('Collection<A>');
 goTo.marker('22');
 verify.quickInfoIs('Collection<A>');
 goTo.marker('23');
-verify.quickInfoIs('any');
+verify.quickInfoIs('Collection<string>');
 
 verify.errorExistsBetweenMarkers('error1', 'error2');

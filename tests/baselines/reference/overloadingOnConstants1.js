@@ -41,10 +41,8 @@ var Derived3 = (function (_super) {
 
 var d2;
 
-// this is ok
+// these will all return Base since the most general overload is first
 var htmlElement = d2.createElement("yo");
-
-// these are errors (we pick the first overload even though it is not a string constant)
 var htmlCanvasElement = d2.createElement("canvas");
 var htmlDivElement = d2.createElement("div");
 var htmlSpanElement = d2.createElement("span");

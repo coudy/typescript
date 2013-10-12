@@ -12,10 +12,8 @@ interface Document2 {
 
 var d2: Document2;
 
-// this is ok
+// these will all return Base since the most general overload is first
 var htmlElement: Base = d2.createElement("yo")
-
-// these are errors (we pick the first overload even though it is not a string constant)
 var htmlCanvasElement: Derived1 = d2.createElement("canvas");
 var htmlDivElement: Derived2 = d2.createElement("div");
 var htmlSpanElement: Derived3 = d2.createElement("span");

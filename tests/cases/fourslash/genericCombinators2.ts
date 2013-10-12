@@ -107,7 +107,7 @@ verify.quickInfoIs('Collection<any, any>');
 goTo.marker('14');
 verify.quickInfoIs('Collection<any, any>');
 goTo.marker('15');
-verify.quickInfoIs('any');
+verify.quickInfoIs('Collection<any, any>');
 
 goTo.marker('17');
 verify.quickInfoIs('any');
@@ -128,6 +128,6 @@ goTo.marker('22');
 verify.quickInfoIs('Collection<number, string>');
 
 goTo.marker('23');
-verify.quickInfoIs('any');
+verify.quickInfoIs('Collection<number, string>');
 
 verify.errorExistsBetweenMarkers('error1', 'error2');

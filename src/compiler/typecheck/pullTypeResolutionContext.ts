@@ -200,6 +200,10 @@ module TypeScript {
             return tc;
         }
 
+        public hasProvisionalErrors() {
+            return this.contextStack.length ? this.contextStack[this.contextStack.length - 1].hasProvisionalErrors : false;
+        }
+
         public findSubstitution(type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = null;
 
@@ -245,11 +249,6 @@ module TypeScript {
             return (!this.contextStack.length ? false : this.contextStack[this.contextStack.length - 1].provisional);
         }
 
-        public hasProvisionalErrors() {
-            return (!this.contextStack.length ? false : this.contextStack[this.contextStack.length - 1].hasProvisionalErrors);
-        }
-
-        public inSpecialization = false;
         private inBaseTypeResolution = false;
 
         public isInBaseTypeResolution() { return this.inBaseTypeResolution; }
@@ -276,13 +275,11 @@ module TypeScript {
 
         public postDiagnostic(diagnostic: Diagnostic): void {
             if (diagnostic) {
-                if (!this.inSpecialization) { // Do not report errors if in specialization resolutions, its not a typeCheckMode
-                    if (this.inProvisionalResolution()) {
-                        (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
-                    }
-                    else if (this.inTypeCheck && this.resolver) {
-                        this.resolver.semanticInfoChain.addDiagnostic(diagnostic);
-                    }
+                if (this.inProvisionalResolution()) {
+                    (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
+                }
+                else if (this.inTypeCheck && this.resolver) {
+                    this.resolver.semanticInfoChain.addDiagnostic(diagnostic);
                 }
             }
         }
