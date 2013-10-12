@@ -3095,18 +3095,8 @@ module TypeScript {
 
             // resolve parameter type annotations as necessary
             if (funcDeclAST.parameterList) {
-                var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
-                if (hasDefaultArgs) {
-                    context.pushParameterIndexContext(funcDeclAST);
-                }
                 for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
-                    this.resolveAST(funcDeclAST.parameterList.members[i], false, funcDecl, context);
-                    if (hasDefaultArgs) {
-                        context.incrementParameterIndex();
-                    }
-                }
-                if (hasDefaultArgs) {
-                    context.popParameterIndexContext();
+                    this.resolveAST(funcDeclAST.parameterList.members[i], /*inContextuallyTypedAssignment:*/ false, funcDecl, context);
                 }
             }
 
@@ -3208,19 +3198,8 @@ module TypeScript {
 
             // resolve parameter type annotations as necessary
             if (parameters) {
-                var isConstructor = hasFlag(flags, FunctionFlags.ConstructMember);
-                var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
-                if (hasDefaultArgs) {
-                    context.pushParameterIndexContext(funcDeclAST);
-                }
                 for (var i = 0; i < parameters.members.length; i++) {
-                    this.resolveAST(parameters.members[i], false, funcDecl, context);
-                    if (hasDefaultArgs) {
-                        context.incrementParameterIndex();
-                    }
-                }
-                if (hasDefaultArgs) {
-                    context.popParameterIndexContext();
+                    this.resolveAST(parameters.members[i], /*isContextuallyTypedAssignment:*/ false, funcDecl, context);
                 }
             }
 
@@ -3451,20 +3430,15 @@ module TypeScript {
 
                 if (funcDeclAST.parameterList) {
                     var prevInTypeCheck = context.inTypeCheck;
+
+                    // TODO: why are we getting ourselves out of typecheck here?
                     context.inTypeCheck = false;
-                    var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
-                    if (hasDefaultArgs) {
-                        context.pushParameterIndexContext(funcDeclAST);
-                    }
+
                     for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
+                        // TODO: why are we calling resolveParameter instead of resolveAST.
                         this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context, funcDecl);
-                        if (hasDefaultArgs) {
-                            context.incrementParameterIndex();
-                        }
                     }
-                    if (hasDefaultArgs) {
-                        context.popParameterIndexContext();
-                    }
+
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
@@ -3587,20 +3561,15 @@ module TypeScript {
 
                 if (funcDeclAST.parameterList) {
                     var prevInTypeCheck = context.inTypeCheck;
+
+                    // TODO: why are we setting inTypeCheck false here?
                     context.inTypeCheck = false;
-                    var hasDefaultArgs = (funcDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
-                    if (hasDefaultArgs) {
-                        context.pushParameterIndexContext(funcDeclAST);
-                    }
+
                     for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
+                        // TODO: why are are calling resolveParameter directly here?
                         this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context, funcDecl);
-                        if (hasDefaultArgs) {
-                            context.incrementParameterIndex();
-                        }
                     }
-                    if (hasDefaultArgs) {
-                        context.popParameterIndexContext();
-                    }
+
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
@@ -5800,14 +5769,23 @@ module TypeScript {
                 }
             }
 
-            // Make sure that if we found the symbol in a function's scope, it is a parameter to the left of us
-            var nameParentDecl = nameSymbol.getDeclarations()[0].getParentDecl();
+            // October 11, 2013:
+            // Initializer expressions are evaluated in the scope of the function body but are not 
+            // permitted to reference local variables and are only permitted to access parameters 
+            // that are declared to the left of the parameter they initialize.
+
+            // If we've referenced a parameter of a function, make sure that we're either inside 
+            // the function, or if we're in a parameter initializer, that the parameter 
+            // initializer is to the left of this reference.
+
+            var nameDeclaration = nameSymbol.getDeclarations()[0];
+            var nameParentDecl = nameDeclaration.getParentDecl();
             if (nameParentDecl &&
                 (nameParentDecl.kind & PullElementKind.SomeFunction) &&
                 (nameParentDecl.flags & PullElementFlags.HasDefaultArgs)) {
                 // Get the AST and look it up in the parameter index context to find which parameter we are in
                 var enclosingFunctionAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(nameParentDecl);
-                var currentParameterIndex = context.getCurrentParameterIndexForFunction(enclosingFunctionAST);
+                var currentParameterIndex = this.getCurrentParameterIndexForFunction(nameAST, enclosingFunctionAST);
 
                 // Short circuit if we are located in the function body, since all child decls of the function are accessible there
                 if (currentParameterIndex >= 0) {
@@ -5859,6 +5837,27 @@ module TypeScript {
             }
 
             return nameSymbol;
+        }
+
+        // Returns the parameter index in the specified function declaration where ast is contained
+        // within.  Returns -1 if ast is not contained within a parameter initializer in the 
+        // provided function declaration.
+        private getCurrentParameterIndexForFunction(ast: AST, funcDecl: FunctionDeclaration): number {
+            var parameterList = funcDecl.parameterList;
+            if (parameterList) {
+                while (ast) {
+                    if (ast.parent === parameterList) {
+                        // We were contained in the parameter list.  Return which parameter index 
+                        // we were at.
+                        return parameterList.members.indexOf(ast);
+                    }
+
+                    ast = ast.parent;
+                }
+            }
+
+            // ast was not found within the parameter list of this function.
+            return -1;
         }
 
         private resolveMemberAccessExpression(dottedNameAST: MemberAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -6492,11 +6491,6 @@ module TypeScript {
                 }
 
                 // Push the function onto the parameter index stack
-                var hasDefaultArgs = (functionDecl.flags & PullElementFlags.HasDefaultArgs) !== 0;
-                if (hasDefaultArgs) {
-                    context.pushParameterIndexContext(funcDeclAST);
-                }
-
                 var contextualParametersCount = contextParams.length;
                 for (var i = 0, n = parameters.members.length; i < n; i++) {
                     var actualParameter = <Parameter>parameters.members[i];
@@ -6525,13 +6519,6 @@ module TypeScript {
 
                     // use the function decl as the enclosing decl, so as to properly resolve type parameters
                     this.resolveFunctionExpressionParameter(actualParameter, contextualParameterType, functionDecl, context);
-                    if (hasDefaultArgs) {
-                        context.incrementParameterIndex();
-                    }
-                }
-
-                if (hasDefaultArgs) {
-                    context.popParameterIndexContext();
                 }
             }
 
