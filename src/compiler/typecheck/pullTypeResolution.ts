@@ -3838,7 +3838,12 @@ module TypeScript {
             if (hasSetter &&
                 this.canTypeCheckAST(setterFunctionDeclarationAst, context)) {
 
-                this.typeCheckSetAccessorDeclaration(setterFunctionDeclarationAst, context);
+                this.typeCheckSetAccessorDeclaration(
+                    setterFunctionDeclarationAst,
+                    setterFunctionDeclarationAst.getFunctionFlags(),
+                    setterFunctionDeclarationAst.name,
+                    setterFunctionDeclarationAst.parameterList,
+                    setterFunctionDeclarationAst.block, context);
             }
 
             return accessorSymbol;
@@ -4034,31 +4039,28 @@ module TypeScript {
             return setterSymbol;
         }
 
-        private typeCheckSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext) {
+        private typeCheckSetAccessorDeclaration(funcDeclAST: AST, flags: FunctionFlags, name: Identifier, parameterList: ASTList, block: Block, context: PullTypeResolutionContext) {
             this.setTypeChecked(funcDeclAST, context);
 
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
-            if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
-                    this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context, funcDecl);
+            if (parameterList) {
+                for (var i = 0; i < parameterList.members.length; i++) {
+                    this.resolveParameter(<Parameter>parameterList.members[i], context, funcDecl);
                 }
             }
 
-            this.resolveAST(funcDeclAST.block, false, funcDecl, context);
+            this.resolveAST(block, false, funcDecl, context);
 
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-            var isGetter = hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.GetAccessor);
-            var isSetter = !isGetter;
-
             var getter = accessorSymbol.getGetter();
             var setter = accessorSymbol.getSetter();
 
-            var funcNameAST = funcDeclAST.name;
+            var funcNameAST = name;
 
             // Setter with return value is checked in typeCheckReturnExpression
 
@@ -4075,9 +4077,7 @@ module TypeScript {
             }
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, funcDeclAST.getFunctionFlags(),
-                funcDeclAST.typeParameters, funcDeclAST.parameterList,
-                funcDeclAST.returnTypeAnnotation, funcDeclAST.block, context);
+                funcDeclAST, flags, null, parameterList, null, block, context);
         }
 
         private resolveList(list: ASTList, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -5411,7 +5411,9 @@ module TypeScript {
                                 funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
                         else if (funcDecl.isSetAccessor()) {
-                            this.typeCheckSetAccessorDeclaration(funcDecl, context);
+                            this.typeCheckSetAccessorDeclaration(
+                                funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.parameterList,
+                                funcDecl.block, context);
                         }
                         else if (inContextuallyTypedAssignment ||
                             (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
