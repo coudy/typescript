@@ -3740,7 +3740,6 @@ module TypeScript {
                 getterSymbol =
                     this.resolveGetAccessorDeclaration(
                         getterFunctionDeclarationAst,
-                        getterFunctionDeclarationAst.getFunctionFlags(),
                         getterFunctionDeclarationAst.name,
                         getterFunctionDeclarationAst.parameterList,
                         getterFunctionDeclarationAst.returnTypeAnnotation,
@@ -3750,7 +3749,7 @@ module TypeScript {
             }
 
             if (hasSetter) {
-                setterSymbol = this.resolveSetAccessorDeclaration(setterFunctionDeclarationAst, context);
+                setterSymbol = this.resolveSetAccessorDeclaration(setterFunctionDeclarationAst, setterFunctionDeclarationAst.parameterList, context);
             }
 
             // enforce spec resolution rules
@@ -3847,7 +3846,6 @@ module TypeScript {
 
         private resolveGetAccessorDeclaration(
             funcDeclAST: AST,
-            flags: FunctionFlags,
             name: Identifier,
             parameters: ASTList,
             returnTypeAnnotation: TypeReference,
@@ -3866,7 +3864,6 @@ module TypeScript {
             var hadError = false;
 
             if (signature) {
-
                 if (signature.isResolved) {
                     return getterSymbol;
                 }
@@ -3882,13 +3879,13 @@ module TypeScript {
                 signature.startResolving();
 
                 if (signature.hasAGenericParameter) {
-                        getterTypeSymbol.setHasGenericSignature();
-                    }
+                    getterTypeSymbol.setHasGenericSignature();
+                }
 
                 // resolve the return type annotation
                 if (returnTypeAnnotation) {
                     var returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                        funcDeclAST, flags, returnTypeAnnotation, context);
+                        funcDeclAST, FunctionFlags.None, returnTypeAnnotation, context);
 
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
@@ -3896,7 +3893,6 @@ module TypeScript {
                         hadError = true;
                     }
                     else {
-
                         if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
                             signature.hasAGenericParameter = true;
                                 getterTypeSymbol.setHasGenericSignature();
@@ -3914,10 +3910,7 @@ module TypeScript {
                     // • If only one accessor includes a type annotation, the other behaves as if it had the same type annotation.
                     // -- Use setterAnnotatedType if available
                     // • If neither accessor includes a type annotation, the inferred return type of the get accessor becomes the parameter type of the set accessor.
-                    if (hasFlag(flags, FunctionFlags.Signature)) {
-                        signature.returnType = setterAnnotatedType || this.semanticInfoChain.anyTypeSymbol;
-                    }
-                    else if (!setterAnnotatedType) {
+                    if (!setterAnnotatedType) {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, block, signature, false, funcDecl, context);
                     }
                     else {
@@ -3991,8 +3984,7 @@ module TypeScript {
                 parameters, returnTypeAnnotation, block, context);
         }
 
-        private resolveSetAccessorDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-
+        private resolveSetAccessorDeclaration(funcDeclAST: AST, parameterList: ASTList, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
@@ -4019,9 +4011,9 @@ module TypeScript {
                 signature.startResolving();
 
                 // resolve parameter type annotations as necessary
-                if (funcDeclAST.parameterList) {
-                    for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
-                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context, funcDecl);
+                if (parameterList) {
+                    for (var i = 0; i < parameterList.members.length; i++) {
+                        this.resolveParameter(<Parameter>parameterList.members[i], context, funcDecl);
                     }
                 }
 
