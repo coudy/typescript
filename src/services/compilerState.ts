@@ -181,71 +181,6 @@ module Services {
                 version, isOpen, textChangeRange);
         }
 
-        private getAllSyntacticDiagnostics(): TypeScript.Diagnostic[]{
-            var diagnostics: TypeScript.Diagnostic[] = [];
-
-            this.compiler.fileNames().forEach(fileName =>
-                diagnostics.push.apply(diagnostics, this.compiler.getSyntacticDiagnostics(fileName)));
-
-            return diagnostics;
-        }
-
-        private getAllSemanticDiagnostics(): TypeScript.Diagnostic[]{
-            var diagnostics: TypeScript.Diagnostic[] = [];
-
-            this.compiler.fileNames().map(fileName =>
-                diagnostics.push.apply(diagnostics, this.compiler.getSemanticDiagnostics(fileName)));
-
-            return diagnostics;
-        }
-
-        public getEmitOutput(fileName: string): TypeScript.EmitOutput {
-            var resolvePath = (fileName: string) => this.host.resolveRelativePath(fileName, null);
-
-            var document = this.getDocument(fileName);
-            var emitToSingleFile = document.emitToOwnOutputFile();
-
-            // Check for syntactic errors
-            var syntacticDiagnostics = emitToSingleFile
-                ? this.getSyntacticDiagnostics(fileName)
-                : this.getAllSyntacticDiagnostics();
-            if (this.containErrors(syntacticDiagnostics)) {
-                // This file has at least one syntactic error, return and do not emit code.
-                return new TypeScript.EmitOutput();
-            }
-
-            // Force a type check before emit to ensure that all symbols have been resolved
-            var document = this.getDocument(fileName);
-            var semanticDiagnostics = emitToSingleFile ? this.getSemanticDiagnostics(fileName) : this.getAllSemanticDiagnostics();
-
-            // Emit output files and source maps
-                // Emit declarations, if there are no semantic errors
-            var emitResult = this.compiler.emit(fileName, resolvePath);
-            if (!this.containErrors(emitResult.diagnostics) &&
-                !this.containErrors(semanticDiagnostics)) {
-
-                // Merge the results
-                var declarationEmitOutput = this.compiler.emitDeclarations(fileName, resolvePath);
-                emitResult.outputFiles.push.apply(emitResult.outputFiles, declarationEmitOutput.outputFiles);
-                emitResult.diagnostics.push.apply(emitResult.diagnostics, declarationEmitOutput.diagnostics);
-            }
-
-            return emitResult;
-        }
-
-        private containErrors(diagnostics: TypeScript.Diagnostic[]): boolean {
-            if (diagnostics && diagnostics.length > 0) {
-                for (var i = 0; i < diagnostics.length; i++) {
-                    var diagnosticInfo = diagnostics[i].info();
-                    if (diagnosticInfo.category === TypeScript.DiagnosticCategory.Error) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         public getScriptTextChangeRangeSinceVersion(fileName: string, lastKnownVersion: number): TypeScript.TextChangeRange {
             var currentVersion = this.hostCache.getVersion(fileName);
             if (lastKnownVersion === currentVersion) {
@@ -276,7 +211,7 @@ module Services {
             return this.compiler.compilationSettings();
         }
 
-        public getFileNames(): string[] {
+        public fileNames(): string[] {
             return this.compiler.fileNames();
         }
 
@@ -322,6 +257,14 @@ module Services {
 
         public getDeclForAST(ast: TypeScript.AST): TypeScript.PullDecl {
             return this.compiler.getDeclForAST(ast);
+        }
+
+        public emit(fileName: string, resolvePath: (path: string) => string, sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback = null): TypeScript.EmitOutput {
+            return this.compiler.emit(fileName, resolvePath, sourceMapEmitterCallback);
+        }
+
+        public emitDeclarations(fileName: string, resolvePath: (path: string) => string, sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback = null): TypeScript.EmitOutput {
+            return this.compiler.emitDeclarations(fileName, resolvePath, sourceMapEmitterCallback);
         }
     }
 }

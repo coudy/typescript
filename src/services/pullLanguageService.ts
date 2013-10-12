@@ -97,8 +97,8 @@ module Services {
             var symbolName = symbol.getName();
             var containingASTOpt = symbolAndContainingAST.containingASTOpt;
 
-            var fileNames = this.compilerState.getFileNames();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
+            var fileNames = this.compilerState.fileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
                 var tempFileName = fileNames[i];
 
                 if (containingASTOpt && fileName != tempFileName) {
@@ -239,8 +239,8 @@ module Services {
             }
 
             if (typesToSearch) {
-                var fileNames = this.compilerState.getFileNames();
-                for (var i = 0, len = fileNames.length; i < len; i++) {
+                var fileNames = this.compilerState.fileNames();
+                for (var i = 0, n = fileNames.length; i < n; i++) {
                     var tempFileName = fileNames[i];
 
                     var tempDocument = this.compilerState.getDocument(tempFileName);
@@ -689,8 +689,8 @@ module Services {
 
             var items: NavigateToItem[] = [];
 
-            var fileNames = this.compilerState.getFileNames();
-            for (var i = 0, len = fileNames.length; i < len; i++) {
+            var fileNames = this.compilerState.fileNames();
+            for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = this.compilerState.getHostFileName(fileNames[i]);
                 var declaration = this.compilerState.topLevelDeclaration(TypeScript.switchToForwardSlashes(fileName));
                 this.findSearchValueInPullDecl(fileName, [declaration], items, terms, regExpTerms);
@@ -867,7 +867,69 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             this.synchronizeHostData(/*updateCompiler:*/ true);
 
-            return this.compilerState.getEmitOutput(fileName);
+            var resolvePath = (fileName: string) => this.host.resolveRelativePath(fileName, null);
+
+            var document = this.compilerState.getDocument(fileName);
+            var emitToSingleFile = document.emitToOwnOutputFile();
+
+            // Check for syntactic errors
+            var syntacticDiagnostics = emitToSingleFile
+                ? this.getSyntacticDiagnostics(fileName)
+                : this.getAllSyntacticDiagnostics();
+            if (this.containErrors(syntacticDiagnostics)) {
+                // This file has at least one syntactic error, return and do not emit code.
+                return new TypeScript.EmitOutput();
+            }
+
+            // Force a type check before emit to ensure that all symbols have been resolved
+            var semanticDiagnostics = emitToSingleFile
+                ? this.getSemanticDiagnostics(fileName)
+                : this.getAllSemanticDiagnostics();
+
+            // Emit output files and source maps
+            // Emit declarations, if there are no semantic errors
+            var emitResult = this.compilerState.emit(fileName, resolvePath);
+            if (!this.containErrors(emitResult.diagnostics) &&
+                !this.containErrors(semanticDiagnostics)) {
+
+                // Merge the results
+                var declarationEmitOutput = this.compilerState.emitDeclarations(fileName, resolvePath);
+                emitResult.outputFiles.push.apply(emitResult.outputFiles, declarationEmitOutput.outputFiles);
+                emitResult.diagnostics.push.apply(emitResult.diagnostics, declarationEmitOutput.diagnostics);
+            }
+
+            return emitResult;
+        }
+
+        private getAllSyntacticDiagnostics(): TypeScript.Diagnostic[] {
+            var diagnostics: TypeScript.Diagnostic[] = [];
+
+            this.compilerState.fileNames().forEach(fileName =>
+                diagnostics.push.apply(diagnostics, this.compilerState.getSyntacticDiagnostics(fileName)));
+
+            return diagnostics;
+        }
+
+        private getAllSemanticDiagnostics(): TypeScript.Diagnostic[] {
+            var diagnostics: TypeScript.Diagnostic[] = [];
+
+            this.compilerState.fileNames().map(fileName =>
+                diagnostics.push.apply(diagnostics, this.compilerState.getSemanticDiagnostics(fileName)));
+
+            return diagnostics;
+        }
+
+        private containErrors(diagnostics: TypeScript.Diagnostic[]): boolean {
+            if (diagnostics && diagnostics.length > 0) {
+                for (var i = 0; i < diagnostics.length; i++) {
+                    var diagnosticInfo = diagnostics[i].info();
+                    if (diagnosticInfo.category === TypeScript.DiagnosticCategory.Error) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private getFullNameOfSymbol(symbol: TypeScript.PullSymbol, enclosingScopeSymbol: TypeScript.PullSymbol) {
