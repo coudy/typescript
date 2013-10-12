@@ -1395,7 +1395,7 @@ module Services {
             }
 
             // now search for that decl
-            var topLevelDecl = this.compilerState.compiler.topLevelDecl(fileName);
+            var topLevelDecl = this.compilerState.topLevelDeclaration(fileName);
             if (!topLevelDecl) {
                 return null;
             }

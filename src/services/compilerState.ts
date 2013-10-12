@@ -41,17 +41,17 @@ module Services {
     // at each language service public entry point, since we don't know when 
     // set of scripts handled by the host changes.
     class HostCache {
-        private fileNameToEntry: TypeScript.StringHashTable<HostFileInformation>;
+        private _fileNameToEntry: TypeScript.StringHashTable<HostFileInformation>;
         private _compilationSettings: TypeScript.ImmutableCompilationSettings;
 
         constructor(host: ILanguageServiceHost) {
             // script id => script index
-            this.fileNameToEntry = new TypeScript.StringHashTable<HostFileInformation>();
+            this._fileNameToEntry = new TypeScript.StringHashTable<HostFileInformation>();
 
             var fileNames = host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
-                this.fileNameToEntry.add(TypeScript.switchToForwardSlashes(fileName), new HostFileInformation(
+                this._fileNameToEntry.add(TypeScript.switchToForwardSlashes(fileName), new HostFileInformation(
                     fileName, host, host.getScriptVersion(fileName), host.getScriptIsOpen(fileName), host.getScriptByteOrderMark(fileName)));
             }
 
@@ -70,11 +70,11 @@ module Services {
         }
 
         public contains(fileName: string): boolean {
-            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)) !== null;
+            return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)) !== null;
         }
 
         public getHostFileName(fileName: string) {
-            var hostCacheEntry = this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName));
+            var hostCacheEntry = this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName));
             if (hostCacheEntry) {
                 return hostCacheEntry.fileName;
             }
@@ -82,23 +82,23 @@ module Services {
         }
 
         public getFileNames(): string[]{
-            return this.fileNameToEntry.getAllKeys();
+            return this._fileNameToEntry.getAllKeys();
         }
 
         public getVersion(fileName: string): number {
-            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).version;
+            return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).version;
         }
 
         public isOpen(fileName: string): boolean {
-            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).isOpen;
+            return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).isOpen;
         }
 
         public getByteOrderMark(fileName: string): ByteOrderMark {
-            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).byteOrderMark;
+            return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).byteOrderMark;
         }
 
         public getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot {
-            return this.fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).getScriptSnapshot();
+            return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).getScriptSnapshot();
         }
     }
 
@@ -108,7 +108,7 @@ module Services {
         //
         // State related to compiler instance
         //
-        public compiler: TypeScript.TypeScriptCompiler = null;
+        private compiler: TypeScript.TypeScriptCompiler = null;
         private hostCache: HostCache = null;
 
         constructor(private host: ILanguageServiceHost) {
