@@ -106,11 +106,11 @@ module TypeScript {
 
 
         export function typeSymbolsAreIdentical(a: PullTypeSymbol, b: PullTypeSymbol): boolean {
-            if (a.isTypeReference()) {
+            if (a.isTypeReference() && !a.getIsSpecialized()) {
                 a = (<PullTypeReferenceSymbol>a).referencedTypeSymbol;
             }
 
-            if (b.isTypeReference()) {
+            if (b.isTypeReference() && !b.getIsSpecialized()) {
                 b = (<PullTypeReferenceSymbol>b).referencedTypeSymbol;
             }
 

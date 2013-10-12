@@ -1088,7 +1088,7 @@ module TypeScript {
             var typeParameterArgumentMap = {};
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
+                typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i] ? typeArguments[i] : new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
             }
 
             return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap);
@@ -8523,11 +8523,11 @@ module TypeScript {
             //    return true;
             //}
 
-            if (source && source.isTypeReference()) {
+            if (source && source.isTypeReference() && !source.getIsSpecialized()) {
                 source = (<PullTypeReferenceSymbol>source).getReferencedTypeSymbol();
             }
 
-            if (target && target.isTypeReference()) {
+            if (target && target.isTypeReference() && !target.getIsSpecialized()) {
                 target = (<PullTypeReferenceSymbol>target).getReferencedTypeSymbol();
             }
 

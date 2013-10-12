@@ -336,9 +336,9 @@ module TypeScript {
         private _instantiatedAssociatedContainerType: PullTypeSymbol = null;
         private _isArray:boolean = undefined;
 
-        public isReferencedType: boolean = false;
+        public isInstanceReferenceType: boolean = false;
 
-        public getIsSpecialized() { return !this.isReferencedType; }
+        public getIsSpecialized() { return !this.isInstanceReferenceType; }
 
         public isArray(): boolean {
             if (this._isArray === undefined) {
@@ -367,6 +367,7 @@ module TypeScript {
             return this;
         }
 
+        // The typeParameterArgumentMap represents a mapping of PUll
         public static create(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
 
             // check for an existing instantiation
@@ -458,7 +459,7 @@ module TypeScript {
             }
 
             if (isReferencedType) {
-                instantiation.isReferencedType = true;
+                instantiation.isInstanceReferenceType = true;
             }
 
             return instantiation;
@@ -478,7 +479,7 @@ module TypeScript {
 
         public getTypeArguments(): PullTypeSymbol[]{
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.getTypeParameters();
             }
 
@@ -493,9 +494,9 @@ module TypeScript {
                         typeArgument = <PullTypeSymbol>this._typeParameterArgumentMap[typeParameters[i].pullSymbolIDString];
 
                         // the mismatch may legitimately occur in error conditions...
-                        //if (!typeArgument) {
-                        //    Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument mismatch");
-                        //}
+                        if (!typeArgument) {
+                            Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument mismatch");
+                        }
 
                         if (typeArgument) {
                             typeArguments[typeArguments.length] = typeArgument;
@@ -520,7 +521,7 @@ module TypeScript {
             // need to resolve the referenced types to get the members
             this.ensureReferencedTypeIsResolved();
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getMembers();
             }
 
@@ -570,7 +571,7 @@ module TypeScript {
             // ensure that the type is resolved before looking for members
             this.ensureReferencedTypeIsResolved();
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.findMember(name, lookInParent);
             }
 
@@ -610,7 +611,7 @@ module TypeScript {
             // ensure that the type is resolved before trying to collect all members
             this.ensureReferencedTypeIsResolved();
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getAllMembers(searchDeclKind, memberVisiblity);
             }
 
@@ -669,7 +670,7 @@ module TypeScript {
 
         public getConstructorMethod(): PullSymbol {
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getConstructorMethod();
             }
 
@@ -685,7 +686,7 @@ module TypeScript {
 
         public getAssociatedContainerType(): PullTypeSymbol {
 
-            if (!this.isReferencedType) {
+            if (!this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getAssociatedContainerType();
             }
 
@@ -703,7 +704,7 @@ module TypeScript {
         public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
             this.ensureReferencedTypeIsResolved();
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getCallSignatures(collectBaseSignatures);
             }
 
@@ -729,7 +730,7 @@ module TypeScript {
         public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
             this.ensureReferencedTypeIsResolved();
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getConstructSignatures(collectBaseSignatures);
             }
 
@@ -755,7 +756,7 @@ module TypeScript {
         public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[]{
             this.ensureReferencedTypeIsResolved();
 
-            if (this.isReferencedType) {
+            if (this.isInstanceReferenceType) {
                 return this.referencedTypeSymbol.getIndexSignatures(collectBaseSignatures);
             }
 
