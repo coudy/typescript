@@ -742,20 +742,6 @@ module TypeScript {
             // If it's a property assignment, then we don't do anything at this level.  When we
             // recurse down the right side of the AST we'll generate the member.
         }
-        else {
-            var assignmentText = getPropertyAssignmentNameTextFromIdentifier(propertyAssignment.operand1);
-            var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
-
-            var decl = new NormalPullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, context.getParent(), span);
-
-            context.semanticInfoChain.setDeclForAST(propertyAssignment, decl);
-            context.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
-
-            // Note: it is intentional that a property assignment does not get added to hte context 
-            // stack.  A prop assignment does not introduce a new name scope, so it shouldn't be in
-            // the context decl stack.
-            // context.pushParent(decl);
-        }
     }
 
     function preCollectSimplePropertyAssignmentDecls(propertyAssignment: SimplePropertyAssignment, context: DeclCollectionContext): void {
