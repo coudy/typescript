@@ -480,7 +480,8 @@ module TypeScript {
 
 
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {
-            if (funcDecl.isAccessor()) {
+            var functionFlags = funcDecl.getFunctionFlags();
+            if (functionFlags & FunctionFlags.AnyAccessor) {
                 return this.emitPropertyAccessorSignature(funcDecl);
             }
 
@@ -502,7 +503,7 @@ module TypeScript {
                     return;
                 }
             }
-            else if (!isInterfaceMember && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
+            else if (!isInterfaceMember && hasFlag(functionFlags, FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
                 // Print only first overload of private function
                 var callSignatures = funcTypeSymbol.getCallSignatures();
                 Debug.assert(callSignatures && callSignatures.length > 1);
@@ -514,7 +515,7 @@ module TypeScript {
                 }
             }
 
-            if (!this.canEmitDeclarations(ToDeclFlags(funcDecl.getFunctionFlags()), funcDecl)) {
+            if (!this.canEmitDeclarations(ToDeclFlags(functionFlags), funcDecl)) {
                 return;
             }
 
@@ -524,7 +525,7 @@ module TypeScript {
 
             var id = funcDecl.getNameText();
             if (!isInterfaceMember) {
-                this.emitDeclFlags(ToDeclFlags(funcDecl.getFunctionFlags()), funcPullDecl, "function");
+                this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
                 if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
                     this.declFile.Write(id);
                 }
@@ -577,7 +578,7 @@ module TypeScript {
                     this.declFile.Write("...");
                 }
 
-                this.emitArgDecl(lastArg, funcDecl.getFunctionFlags());
+                this.emitArgDecl(lastArg, functionFlags);
             }
 
             if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
@@ -587,7 +588,7 @@ module TypeScript {
                 this.declFile.Write("]");
             }
 
-            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(funcDecl.getFunctionFlags()))) {
+            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
                 var returnType = funcSignature.returnType;
                 this.declFile.Write(": ");
                 this.emitTypeSignature(returnType);

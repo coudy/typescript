@@ -3340,11 +3340,12 @@ module TypeScript {
 
             var result: PullSymbol;
 
-            if (funcDecl.isAccessor()) {
+            var functionFlags = funcDecl.getFunctionFlags();
+            if (functionFlags & FunctionFlags.AnyAccessor) {
                 result = this.resolveAccessorDeclaration(funcDecl, context);
             }
             else if (inContextuallyTypedAssignment ||
-                (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
+                (functionFlags & FunctionFlags.IsFunctionExpression)) {
 
                 result = this.resolveAnyFunctionExpression(
                     funcDecl, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block,
@@ -5405,23 +5406,24 @@ module TypeScript {
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
-                        if (funcDecl.isGetAccessor()) {
+                        var functionFlags = funcDecl.getFunctionFlags();
+                        if (hasFlag(functionFlags, FunctionFlags.GetAccessor)) {
                             this.typeCheckGetAccessorDeclaration(
-                                funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.parameterList,
+                                funcDecl, functionFlags, funcDecl.name, funcDecl.parameterList,
                                 funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
-                        else if (funcDecl.isSetAccessor()) {
+                        else if (hasFlag(functionFlags, FunctionFlags.SetAccessor)) {
                             this.typeCheckSetAccessorDeclaration(
-                                funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.parameterList,
+                                funcDecl, functionFlags, funcDecl.name, funcDecl.parameterList,
                                 funcDecl.block, context);
                         }
                         else if (inContextuallyTypedAssignment ||
-                            (funcDecl.getFunctionFlags() & FunctionFlags.IsFunctionExpression)) {
+                            (functionFlags & FunctionFlags.IsFunctionExpression)) {
                             this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
                         else {
                             this.typeCheckFunctionDeclaration(
-                                funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
+                                funcDecl, functionFlags, funcDecl.name,
                                 funcDecl.typeParameters, funcDecl.parameterList,
                                 funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
@@ -11931,7 +11933,7 @@ module TypeScript {
     export function propertyAssignmentIsAccessor(propertyAssignment: AST): boolean {
         if (propertyAssignment.nodeType() === NodeType.Member) {
             var binex = <BinaryExpression>propertyAssignment;
-            return binex.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>binex.operand2).isAccessor();
+            return binex.operand2.nodeType() === NodeType.FunctionDeclaration && (((<FunctionDeclaration>binex.operand2).getFunctionFlags() & FunctionFlags.AnyAccessor) !== 0); 
         }
 
         return false;

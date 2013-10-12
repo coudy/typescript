@@ -699,28 +699,22 @@ module TypeScript {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             this.pushDecl(pullDecl);
 
-            // We have no way of knowing if the current function is used as an expression or a statement, so as to enusre that the emitted
-            // JavaScript is always valid, add an extra parentheses for unparenthesized function expressions
-            var shouldParenthesize = false;// hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IsFunctionExpression) && !funcDecl.isAccessor() && (hasFlag(funcDecl.getFlags(), ASTFlags.ExplicitSemicolon) || hasFlag(funcDecl.getFlags(), ASTFlags.AutomaticSemicolon));
-
             if (includePreComments) {
                 this.emitComments(funcDecl, true);
             }
 
-            if (shouldParenthesize) {
-                this.writeToOutput("(");
-            }
             this.recordSourceMappingStart(funcDecl);
-            var accessorSymbol = funcDecl.isAccessor() ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain) : null;
+            var isAccessor = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.SetAccessor);
+            var accessorSymbol = isAccessor ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain) : null;
             var container = accessorSymbol ? accessorSymbol.getContainer() : null;
             var containerKind = container ? container.kind : PullElementKind.None;
-            if (!(funcDecl.isAccessor() && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
+            if (!(isAccessor && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
                 this.writeToOutput("function ");
             }
 
             if (printName) {
                 var id = funcDecl.getNameText();
-                if (id && !funcDecl.isAccessor()) {
+                if (id && !isAccessor) {
                     if (funcDecl.name) {
                         this.recordSourceMappingStart(funcDecl.name);
                     }
@@ -735,9 +729,9 @@ module TypeScript {
             this.emitFunctionParameters(funcDecl.parameterList);
             this.writeLineToOutput(") {");
 
-            if (funcDecl.isGetAccessor()) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                 this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
-            } else if (funcDecl.isSetAccessor()) {
+            } else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.SetAccessor)) {
                 this.recordSourceMappingNameStart("set_" + funcDecl.getNameText());
             } else {
                 this.recordSourceMappingNameStart(funcDecl.getNameText());
@@ -761,10 +755,6 @@ module TypeScript {
 
             this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl);
-
-            if (shouldParenthesize) {
-                this.writeToOutput(")");
-            }
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
             this.recordSourceMappingEnd(funcDecl);
@@ -1274,12 +1264,13 @@ module TypeScript {
             this.setContainer(temp);
             this.inArrowFunction = savedInArrowFunction;
 
-            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature)) {
+            var functionFlags = funcDecl.getFunctionFlags();
+            if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
                 var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-                if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Static)) {
+                if (hasFlag(functionFlags, FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");
-                        if (funcDecl.isAccessor()) {
+                        if (functionFlags & FunctionFlags.AnyAccessor) {
                             this.emitPropertyAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
                         }
                         else {
@@ -2046,7 +2037,7 @@ module TypeScript {
         }
 
         public emitPrototypeMember(funcDecl: FunctionDeclaration, className: string) {
-            if (funcDecl.isAccessor()) {
+            if (funcDecl.getFunctionFlags() & FunctionFlags.AnyAccessor) {
                 this.emitPropertyAccessor(funcDecl, className, true);
             }
             else {
@@ -2178,16 +2169,17 @@ module TypeScript {
                 if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
                     var functionDeclaration = <FunctionDeclaration>memberDecl;
 
-                    if (hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Method) &&
-                        !hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Signature)) {
+                    var functionFlags = functionDeclaration.getFunctionFlags();
+                    if (hasFlag(functionFlags, FunctionFlags.Method) &&
+                        !hasFlag(functionFlags, FunctionFlags.Signature)) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, functionDeclaration);
 
-                        if (!hasFlag(functionDeclaration.getFunctionFlags(), FunctionFlags.Static)) {
+                        if (!hasFlag(functionFlags, FunctionFlags.Static)) {
                             this.emitPrototypeMember(functionDeclaration, classDecl.identifier.actualText);
                         }
                         else {
                             // static functions
-                            if (functionDeclaration.isAccessor()) {
+                            if (functionFlags & FunctionFlags.AnyAccessor) {
                                 this.emitPropertyAccessor(functionDeclaration, this.thisClassNode.identifier.actualText, false);
                             }
                             else {
@@ -2467,7 +2459,7 @@ module TypeScript {
             this.recordSourceMappingStart(expression);
             switch (expression.nodeType()) {
                 case NodeType.Member:
-                    if (expression.operand2.nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>expression.operand2).isAccessor()) {
+                    if (propertyAssignmentIsAccessor(expression)) {
                         var funcDecl = <FunctionDeclaration>expression.operand2;
                         if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
                             this.writeToOutput("get ");

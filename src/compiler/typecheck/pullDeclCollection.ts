@@ -811,14 +811,14 @@ module TypeScript {
                 break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
-
-                if (funcDecl.isGetAccessor()) {
+                var functionFlags = funcDecl.getFunctionFlags();
+                if (hasFlag(functionFlags, FunctionFlags.GetAccessor)) {
                     createGetAccessorDeclaration(funcDecl, context);
                 }
-                else if (funcDecl.isSetAccessor()) {
+                else if (hasFlag(functionFlags, FunctionFlags.SetAccessor)) {
                     createSetAccessorDeclaration(funcDecl, context);
                 }
-                else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.ConstructMember)) {
+                else if (hasFlag(functionFlags, FunctionFlags.ConstructMember)) {
                     if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
                         createConstructorTypeDeclaration(funcDecl, context);
                     }
@@ -826,19 +826,19 @@ module TypeScript {
                         createConstructSignatureDeclaration(funcDecl, context);
                     }
                 }
-                else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.CallSignature)) {
+                else if (hasFlag(functionFlags, FunctionFlags.CallSignature)) {
                     createCallSignatureDeclaration(funcDecl, context);
                 }
-                else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.IndexerMember)) {
+                else if (hasFlag(functionFlags, FunctionFlags.IndexerMember)) {
                     createIndexSignatureDeclaration(funcDecl, context);
                 }
                 else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
                     createFunctionTypeDeclaration(funcDecl, context);
                 }
-                else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Method)) {
+                else if (hasFlag(functionFlags, FunctionFlags.Method)) {
                     createMemberFunctionDeclaration(funcDecl, context);
                 }
-                else if (hasFlag(funcDecl.getFunctionFlags(), (FunctionFlags.IsFunctionExpression))) {
+                else if (hasFlag(functionFlags, (FunctionFlags.IsFunctionExpression))) {
                     createAnyFunctionExpressionDeclaration(funcDecl, funcDecl.name, funcDecl.returnTypeAnnotation, context);
                 }
                 else {

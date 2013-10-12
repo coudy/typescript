@@ -80,6 +80,8 @@ module TypeScript {
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,
         IsClassMethod = 1 << 15,
+
+        AnyAccessor = GetAccessor | SetAccessor
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
