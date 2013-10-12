@@ -1764,8 +1764,11 @@ module Services {
         private createSyntaxTree(fileName: string, scriptSnapshot: TypeScript.IScriptSnapshot): TypeScript.SyntaxTree {
             var text = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
 
+            // For the purposes of features that use this syntax tree, we can just use the default
+            // compilation settings.  The features only use the syntax (and not the diagnostics),
+            // and the syntax isn't affected by the compilation settings.
             var syntaxTree = TypeScript.Parser.parse(fileName, text, TypeScript.isDTSFile(fileName),
-                TypeScript.getParseOptions(TypeScript.ImmutableCompilationSettings.fromCompilationSettings(this.compilerState.getHostCompilationSettings())));
+                TypeScript.getParseOptions(TypeScript.ImmutableCompilationSettings.defaultSettings()));
 
             return syntaxTree;
         }

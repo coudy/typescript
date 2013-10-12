@@ -47,17 +47,31 @@ module Services {
     //
     export class HostCache {
         private fileNameToEntry: TypeScript.StringHashTable<HostCacheEntry>;
+        private _compilationSettings: TypeScript.ImmutableCompilationSettings;
 
-        constructor(public host: ILanguageServiceHost) {
+        constructor(host: ILanguageServiceHost) {
             // script id => script index
             this.fileNameToEntry = new TypeScript.StringHashTable<HostCacheEntry>();
 
-            var fileNames = this.host.getScriptFileNames();
+            var fileNames = host.getScriptFileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
                 var fileName = fileNames[i];
                 this.fileNameToEntry.add(TypeScript.switchToForwardSlashes(fileName), new HostCacheEntry(
-                    fileName, this.host, this.host.getScriptVersion(fileName), this.host.getScriptIsOpen(fileName), this.host.getScriptByteOrderMark(fileName)));
+                    fileName, host, host.getScriptVersion(fileName), host.getScriptIsOpen(fileName), host.getScriptByteOrderMark(fileName)));
             }
+
+            var settings = host.getCompilationSettings();
+            if (!settings) {
+                // Set "ES5" target by default for language service
+                settings = new TypeScript.CompilationSettings();
+                settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
+            }
+
+            this._compilationSettings = TypeScript.ImmutableCompilationSettings.fromCompilationSettings(settings);
+        }
+
+        public compilationSettings() {
+            return this._compilationSettings;
         }
 
         public contains(fileName: string): boolean {
@@ -106,19 +120,6 @@ module Services {
             this.logger = this.host;
         }
 
-        public getHostCompilationSettings(): TypeScript.CompilationSettings {
-            var settings = this.host.getCompilationSettings();
-            if (settings !== null) {
-                return settings;
-            }
-
-            // Set "ES5" target by default for language service
-            settings = new TypeScript.CompilationSettings();
-            settings.codeGenTarget = TypeScript.LanguageVersion.EcmaScript5;
-
-            return settings;
-        }
-
         public getResolver(): TypeScript.PullTypeResolver {
             return null;
         }
@@ -128,8 +129,7 @@ module Services {
             this.hostCache = new HostCache(this.host);
 
             if (updateCompiler) {
-                var hostCompilationSettings = this.getHostCompilationSettings();
-                var compilationSettings = TypeScript.ImmutableCompilationSettings.fromCompilationSettings(hostCompilationSettings);
+                var compilationSettings = this.hostCache.compilationSettings();
 
                     // If we don't have a compiler, then create a new one.
                 if (this.compiler === null) {
