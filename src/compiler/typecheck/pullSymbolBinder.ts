@@ -1923,7 +1923,7 @@ module TypeScript {
         private bindGetAccessorDeclarationToPullSymbol(getAccessorDeclaration: PullDecl) {
             var declKind = getAccessorDeclaration.kind;
             var declFlags = getAccessorDeclaration.flags;
-            var funcDeclAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(getAccessorDeclaration);
+            var funcDeclAST = this.semanticInfoChain.getASTForDecl(getAccessorDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) !== 0;
 
@@ -1997,7 +1997,8 @@ module TypeScript {
             // accessor declaration AST, it just expects the getter/setter symbol. But when
             // the language service looks up the name of an accessor, it should treat it as a
             // property and display it to the user as such.
-            this.semanticInfoChain.setSymbolForAST(funcDeclAST.name, accessorSymbol);
+            var nameAST = this.getNameOfAccessor(funcDeclAST);
+            this.semanticInfoChain.setSymbolForAST(nameAST, accessorSymbol);
             this.semanticInfoChain.setSymbolForAST(funcDeclAST, getterSymbol);
 
             if (!parentHadSymbol) {
@@ -2025,7 +2026,7 @@ module TypeScript {
         private bindSetAccessorDeclarationToPullSymbol(setAccessorDeclaration: PullDecl) {
             var declKind = setAccessorDeclaration.kind;
             var declFlags = setAccessorDeclaration.flags;
-            var funcDeclAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(setAccessorDeclaration);
+            var funcDeclAST = this.semanticInfoChain.getASTForDecl(setAccessorDeclaration);
 
             var isExported = (declFlags & PullElementFlags.Exported) !== 0;
 
@@ -2099,7 +2100,9 @@ module TypeScript {
             // accessor declaration AST, it just expects the getter/setter symbol. But when
             // the language service looks up the name of an accessor, it should treat it as a
             // property and display it to the user as such.
-            this.semanticInfoChain.setSymbolForAST(funcDeclAST.name, accessorSymbol);
+
+            var nameAST = this.getNameOfAccessor(funcDeclAST);
+            this.semanticInfoChain.setSymbolForAST(nameAST, accessorSymbol);
             this.semanticInfoChain.setSymbolForAST(funcDeclAST, setterSymbol);
 
             if (!parentHadSymbol) {
@@ -2123,6 +2126,14 @@ module TypeScript {
 
             // add the implicit call member for this function type
             setterTypeSymbol.addCallSignature(signature);
+        }
+
+        private getNameOfAccessor(ast: AST): Identifier {
+            return ast.nodeType() === NodeType.FunctionDeclaration
+                ? (<FunctionDeclaration>ast).name
+                : ast.nodeType() === NodeType.GetAccessorPropertyAssignment
+                    ? (<GetAccessorPropertyAssignment>ast).propertyName
+                    : (<SetAccessorPropertyAssignment>ast).propertyName;
         }
 
         // binding

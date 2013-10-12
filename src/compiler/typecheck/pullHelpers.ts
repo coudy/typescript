@@ -48,7 +48,7 @@ module TypeScript {
             };
         }
 
-        export function getAccessorSymbol(getterOrSetter: FunctionDeclaration, semanticInfoChain: SemanticInfoChain): PullAccessorSymbol {
+        export function getAccessorSymbol(getterOrSetter: AST, semanticInfoChain: SemanticInfoChain): PullAccessorSymbol {
             var functionDecl = semanticInfoChain.getDeclForAST(getterOrSetter);
             var getterOrSetterSymbol = functionDecl.getSymbol();
             

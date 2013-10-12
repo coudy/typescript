@@ -114,6 +114,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.ObjectLiteralExpression] = ChildrenWalkers.walkObjectLiteralExpressionChildren;
             this.childrenWalkers[NodeType.SimplePropertyAssignment] = ChildrenWalkers.walkSimplePropertyAssignmentChildren;
             this.childrenWalkers[NodeType.FunctionPropertyAssignment] = ChildrenWalkers.walkFunctionPropertyAssignmentChildren;
+            this.childrenWalkers[NodeType.GetAccessorPropertyAssignment] = ChildrenWalkers.walkGetAccessorPropertyAssignmentChildren;
+            this.childrenWalkers[NodeType.SetAccessorPropertyAssignment] = ChildrenWalkers.walkSetAccessorPropertyAssignmentChildren;
             this.childrenWalkers[NodeType.VoidExpression] = ChildrenWalkers.walkVoidExpressionChildren;
             this.childrenWalkers[NodeType.CommaExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.PlusExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
@@ -178,7 +180,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.ArrowFunctionExpression] = ChildrenWalkers.walkArrowFunctionExpressionChildren;
             this.childrenWalkers[NodeType.FunctionDeclaration] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[NodeType.ConstructorDeclaration] = ChildrenWalkers.walkConstructorDeclarationChildren;
-            this.childrenWalkers[NodeType.Member] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.VariableDeclarator] = ChildrenWalkers.walkVariableDeclaratorChildren;
             this.childrenWalkers[NodeType.VariableDeclaration] = ChildrenWalkers.walkVariableDeclarationChildren;
             this.childrenWalkers[NodeType.Parameter] = ChildrenWalkers.walkParameterChildren;
@@ -287,6 +288,19 @@ module TypeScript {
             walker.walk(preAst.typeParameters);
             walker.walk(preAst.parameterList);
             walker.walk(preAst.returnTypeAnnotation);
+            walker.walk(preAst.block);
+        }
+
+        export function walkGetAccessorPropertyAssignmentChildren(preAst: GetAccessorPropertyAssignment, walker: IAstWalker): void {
+            walker.walk(preAst.propertyName);
+            walker.walk(preAst.parameterList);
+            walker.walk(preAst.returnTypeAnnotation);
+            walker.walk(preAst.block);
+        }
+
+        export function walkSetAccessorPropertyAssignmentChildren(preAst: SetAccessorPropertyAssignment, walker: IAstWalker): void {
+            walker.walk(preAst.propertyName);
+            walker.walk(preAst.parameterList);
             walker.walk(preAst.block);
         }
 

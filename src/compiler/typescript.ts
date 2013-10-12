@@ -572,7 +572,7 @@ module TypeScript {
             }
 
             var enclosingDecl = resolver.getEnclosingDecl(decl);
-            if (ast.nodeType() === NodeType.Member) {
+            if (ast.nodeType() === NodeType.GetAccessorPropertyAssignment || ast.nodeType() === NodeType.SetAccessorPropertyAssignment) {
                 return this.getSymbolOfDeclaration(enclosingDecl);
             }
 

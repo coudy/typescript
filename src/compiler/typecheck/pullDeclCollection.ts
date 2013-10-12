@@ -737,11 +737,42 @@ module TypeScript {
         context.pushParent(decl);
     }
 
-    function preCollectPropertyAssignmentDecls(propertyAssignment: BinaryExpression, context: DeclCollectionContext): void {
-        if (propertyAssignmentIsAccessor(propertyAssignment)) {
-            // If it's a property assignment, then we don't do anything at this level.  When we
-            // recurse down the right side of the AST we'll generate the member.
+    function preCollectGetAccessorPropertyAssignmentDecls(propertyAssignment: GetAccessorPropertyAssignment, context: DeclCollectionContext): void {
+        var declFlags = PullElementFlags.Public;
+        var declType = PullElementKind.GetAccessor;
+
+        var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
+
+        var parent = context.getParent();
+
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
+
+        var decl = new NormalPullDecl(propertyAssignment.propertyName.text(), propertyAssignment.propertyName.actualText, declType, declFlags, parent, span);
+        context.semanticInfoChain.setDeclForAST(propertyAssignment, decl);
+        context.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
+
+        context.pushParent(decl);
+    }
+
+    function preCollectSetAccessorPropertyAssignmentDecls(propertyAssignment: SetAccessorPropertyAssignment, context: DeclCollectionContext): void {
+        var declFlags = PullElementFlags.Public;
+        var declType = PullElementKind.SetAccessor;
+
+        var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
+
+        var parent = context.getParent();
+
+        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
+        var decl = new NormalPullDecl(propertyAssignment.propertyName.text(), propertyAssignment.propertyName.actualText, declType, declFlags, parent, span);
+        context.semanticInfoChain.setDeclForAST(propertyAssignment, decl);
+        context.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
+
+        context.pushParent(decl);
     }
 
     function preCollectSimplePropertyAssignmentDecls(propertyAssignment: SimplePropertyAssignment, context: DeclCollectionContext): void {
@@ -803,9 +834,6 @@ module TypeScript {
             case NodeType.VariableDeclarator:
                 preCollectVarDecls(ast, context);
                 break;
-            case NodeType.FunctionPropertyAssignment:
-                preCollectFunctionPropertyAssignmentDecls(<FunctionPropertyAssignment>ast, context);
-                break;
             case NodeType.ConstructorDeclaration:
                 createClassConstructorDeclaration(<ConstructorDeclaration>ast, context);
                 break;
@@ -864,11 +892,17 @@ module TypeScript {
             case NodeType.ObjectLiteralExpression:
                 preCollectObjectLiteralDecls(ast, context);
                 break;
-            case NodeType.Member:
-                preCollectPropertyAssignmentDecls(<BinaryExpression>ast, context);
-                break;
             case NodeType.SimplePropertyAssignment:
                 preCollectSimplePropertyAssignmentDecls(<SimplePropertyAssignment>ast, context);
+                break;
+            case NodeType.FunctionPropertyAssignment:
+                preCollectFunctionPropertyAssignmentDecls(<FunctionPropertyAssignment>ast, context);
+                break;
+            case NodeType.GetAccessorPropertyAssignment:
+                preCollectGetAccessorPropertyAssignmentDecls(<GetAccessorPropertyAssignment>ast, context);
+                break;
+            case NodeType.SetAccessorPropertyAssignment:
+                preCollectSetAccessorPropertyAssignmentDecls(<SetAccessorPropertyAssignment>ast, context);
                 break;
         }
 
@@ -1053,10 +1087,9 @@ module TypeScript {
             case NodeType.ObjectLiteralExpression:
                 context.popParent();
                 break;
-            case NodeType.Member:
-                // Note: a property assignment does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
+            case NodeType.GetAccessorPropertyAssignment:
+            case NodeType.SetAccessorPropertyAssignment:
+                context.popParent();
                 break;
             case NodeType.SimplePropertyAssignment:
                 // Note: a property assignment does not introduce a new decl scope.  So there is no

@@ -1997,7 +1997,7 @@ module TypeScript {
             return result;
         }
 
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
+        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): GetAccessorPropertyAssignment {
             var start = this.position;
 
             var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
@@ -2015,14 +2015,14 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var funcDecl = new FunctionDeclaration(functionName, null, new ASTList([]), returnType, block);
-            this.setSpan(funcDecl, start, node);
-
-            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor | FunctionFlags.IsFunctionExpression);
-            funcDecl.hint = "get" + node.propertyName.valueText();
-
-            var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            var result = new GetAccessorPropertyAssignment(functionName, new ASTList([]), returnType, block);
             this.setSpan(result, start, node);
+
+            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor | FunctionFlags.IsFunctionExpression);
+            //funcDecl.hint = "get" + node.propertyName.valueText();
+
+            //var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            //this.setSpan(result, start, node);
 
             result.setPreComments(preComments);
             result.setPostComments(postComments);
@@ -2030,7 +2030,7 @@ module TypeScript {
             return result;
         }
 
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
+        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): SetAccessorPropertyAssignment {
             var start = this.position;
 
             var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
@@ -2048,14 +2048,14 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var funcDecl = new FunctionDeclaration(functionName, null, parameters, null, block);
-            this.setSpan(funcDecl, start, node);
-
-            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor | FunctionFlags.IsFunctionExpression);
-            funcDecl.hint = "set" + node.propertyName.valueText();
-
-            var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            var result = new SetAccessorPropertyAssignment(functionName, parameters, block);
             this.setSpan(result, start, node);
+
+            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor | FunctionFlags.IsFunctionExpression);
+            //funcDecl.hint = "set" + node.propertyName.valueText();
+
+            //var result = new BinaryExpression(NodeType.Member, name, funcDecl);
+            //this.setSpan(result, start, node);
 
             result.setPreComments(preComments);
             result.setPostComments(postComments);
@@ -2921,8 +2921,8 @@ module TypeScript {
             return result;
         }
 
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): BinaryExpression {
-            var result: BinaryExpression = this.getAndMovePastAST(node);
+        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): GetAccessorPropertyAssignment {
+            var result: GetAccessorPropertyAssignment = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitGetAccessorPropertyAssignment(node);
                 this.setAST(node, result);
@@ -2931,8 +2931,8 @@ module TypeScript {
             return result;
         }
 
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): BinaryExpression {
-            var result: BinaryExpression = this.getAndMovePastAST(node);
+        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): SetAccessorPropertyAssignment {
+            var result: SetAccessorPropertyAssignment = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitSetAccessorPropertyAssignment(node);
                 this.setAST(node, result);

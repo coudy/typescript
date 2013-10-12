@@ -906,7 +906,7 @@ module TypeScript {
 
                 // if it's an object literal member, just return the symbol and wait for
                 // the object lit to be resolved
-                if (!ast || ast.nodeType() === NodeType.Member) {
+                if (!ast || ast.nodeType() === NodeType.GetAccessorPropertyAssignment || ast.nodeType() === NodeType.SetAccessorPropertyAssignment) {
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
                     this.setUnitPath(thisUnit);
                     return symbol;
@@ -3682,7 +3682,7 @@ module TypeScript {
             context: PullTypeResolutionContext): PullTypeSymbol {
 
             if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
-                return this.resolveTypeReference(<TypeReference>getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
+                return this.resolveTypeReference(getterFunctionDeclarationAst.returnTypeAnnotation, enclosingDecl, context);
             }
 
             return null;
@@ -3702,8 +3702,7 @@ module TypeScript {
             return null;
         }
 
-        private resolveAccessorDeclaration(funcDeclAst: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-
+        private resolveAccessorDeclaration(funcDeclAst: AST, context: PullTypeResolutionContext): PullSymbol {
             var functionDeclaration = this.semanticInfoChain.getDeclForAST(funcDeclAst);
             var accessorSymbol = <PullAccessorSymbol> functionDeclaration.getSymbol();
 
@@ -4907,6 +4906,8 @@ module TypeScript {
                 case NodeType.FunctionDeclaration:
                 case NodeType.FunctionPropertyAssignment:
                 case NodeType.ConstructorDeclaration:
+                case NodeType.GetAccessorPropertyAssignment:
+                case NodeType.SetAccessorPropertyAssignment:
                     return true;
             }
 
@@ -5104,8 +5105,11 @@ module TypeScript {
                 case NodeType.FunctionPropertyAssignment:
                     return this.resolveFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
-                case NodeType.Member:
-                    return this.resolveMemberPropertyAssignment(<BinaryExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                case NodeType.GetAccessorPropertyAssignment:
+                    return this.resolveGetAccessorPropertyAssignment(<GetAccessorPropertyAssignment>ast, context);
+
+                case NodeType.SetAccessorPropertyAssignment:
+                    return this.resolveSetAccessorPropertyAssignment(<SetAccessorPropertyAssignment>ast, context);
 
                 case NodeType.GenericType:
                     return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
@@ -6918,8 +6922,12 @@ module TypeScript {
                 inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
-        private resolveMemberPropertyAssignment(propertyAssignment: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveAST(propertyAssignment.operand2, inContextuallyTypedAssignment, enclosingDecl, context);
+        private resolveGetAccessorPropertyAssignment(propertyAssignment: GetAccessorPropertyAssignment, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveAccessorDeclaration(propertyAssignment, context);
+        }
+
+        private resolveSetAccessorPropertyAssignment(propertyAssignment: SetAccessorPropertyAssignment, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveAccessorDeclaration(propertyAssignment, context);
         }
 
         public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
@@ -6955,7 +6963,7 @@ module TypeScript {
                     return false;
                 }
 
-                var isAccessor = propertyAssignmentIsAccessor(propertyAssignment);
+                var isAccessor = propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment || propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment;
                 if (propertyAssignment.nodeType() == NodeType.SimplePropertyAssignment) {
                     var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
                     Debug.assert(decl);
@@ -6980,8 +6988,7 @@ module TypeScript {
                     Debug.assert(isAccessor);
                     // Pre-bind the getter and setter so that they are both bound before we resolve accessor declaration.
                     // This happens for the class member case, and we need to mimic that for the object literal case.
-                    var funcDeclAST = <FunctionDeclaration>(<BinaryExpression>propertyAssignment).operand2;
-                    var functionDeclaration = this.semanticInfoChain.getDeclForAST(funcDeclAST);
+                    var functionDeclaration = this.semanticInfoChain.getDeclForAST(propertyAssignment);
                     Debug.assert(functionDeclaration);
 
                     var binder = this.semanticInfoChain.getBinder();
@@ -7077,7 +7084,7 @@ module TypeScript {
                     pullTypeContext.popContextualType();
                 }
 
-                var isAccessor = propertyAssignmentIsAccessor(propertyAssignment);
+                var isAccessor = propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment || propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment;
                 if (!isUsingExistingSymbol) {
                     if (isAccessor) {
                         this.setSymbolForAST(id, memberExpr, pullTypeContext);
@@ -7199,9 +7206,14 @@ module TypeScript {
             else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
                 return (<FunctionPropertyAssignment>propertyAssignment).propertyName;
             }
+            else if (propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment) {
+                return (<GetAccessorPropertyAssignment>propertyAssignment).propertyName;
+            }
+            else if (propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment) {
+                return (<SetAccessorPropertyAssignment>propertyAssignment).propertyName;
+            }
             else {
-                var binaryExpression = <BinaryExpression>propertyAssignment;
-                return binaryExpression.operand1;
+                Debug.assert(false);
             }
         }
 
@@ -11930,14 +11942,8 @@ module TypeScript {
         }
     }
 
-    export function propertyAssignmentIsAccessor(propertyAssignment: AST): boolean {
-        if (propertyAssignment.nodeType() === NodeType.Member) {
-            var binex = <BinaryExpression>propertyAssignment;
-            return binex.operand2.nodeType() === NodeType.FunctionDeclaration && (((<FunctionDeclaration>binex.operand2).getFunctionFlags() & FunctionFlags.AnyAccessor) !== 0); 
-        }
-
-        return false;
-    }
+    //    return false;
+    //}
 
     export function getPropertyAssignmentNameTextFromIdentifier(identifier: AST): { actualText: string; memberName: string } {
         var actualText: string;

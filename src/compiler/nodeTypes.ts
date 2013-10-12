@@ -51,6 +51,8 @@ module TypeScript {
         Parameter,
         SimplePropertyAssignment,
         FunctionPropertyAssignment,
+        GetAccessorPropertyAssignment,
+        SetAccessorPropertyAssignment,
         EnumDeclaration,
         EnumElement,
 
@@ -116,7 +118,6 @@ module TypeScript {
         CastExpression,
         ParenthesizedExpression,
         ArrowFunctionExpression,
-        Member,
 
         // Statements
         Block,
