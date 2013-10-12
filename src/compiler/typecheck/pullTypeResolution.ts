@@ -1877,21 +1877,13 @@ module TypeScript {
         }
 
         private resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-
-            var funcDeclSymbol: PullTypeSymbol = null;
-
             var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             Debug.assert(functionDecl);
 
-            if (!functionDecl.hasSymbol()) {
-                var binder = this.semanticInfoChain.getBinder();
+            var funcDeclSymbol = <PullTypeSymbol>functionDecl.getSymbol();
 
-                binder.bindDeclToPullSymbol(functionDecl);
-            }
-
-            funcDeclSymbol = <PullTypeSymbol>functionDecl.getSymbol();
-
-            var signature = funcDeclSymbol.kind === PullElementKind.ConstructorType ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
+            var signature = funcDeclSymbol.kind === PullElementKind.ConstructorType
+                ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
 
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
@@ -2122,12 +2114,10 @@ module TypeScript {
         }
 
         private resolveObjectTypeTypeReference(objectType: ObjectType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var interfaceSymbol: PullTypeSymbol = null;
-
             var interfaceDecl = this.semanticInfoChain.getDeclForAST(objectType);
             Debug.assert(interfaceDecl);
 
-            interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
+            var interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
             Debug.assert(interfaceSymbol);
 
             if (objectType.typeMembers) {
