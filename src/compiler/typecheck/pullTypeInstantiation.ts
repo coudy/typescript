@@ -367,7 +367,9 @@ module TypeScript {
             return this;
         }
 
-        // The typeParameterArgumentMap represents a mapping of PUll
+        // The typeParameterArgumentMap parameter represents a mapping of PUllSymbolID strings of type parameters to type argument symbols
+        // The instantiateFunctionTypeParameters parameter is set to true when a signature is being specialized at a call site, or if its
+        // type parameters need to otherwise be specialized (say, during a type relationship check)
         public static create(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
 
             // check for an existing instantiation
@@ -377,7 +379,8 @@ module TypeScript {
             var typeArguments = type.getTypeArguments();
             var typeParameters = rootType.getTypeParameters();
 
-            // if the type is already specialized, we need to create a new type argument map
+            // if the type is already specialized, we need to create a new type argument map that represents the mapping of type arguments we've just received
+            // to type arguments as previously passed through
             if (type.getIsSpecialized() && typeArguments && typeArguments.length) {
                 for (var i = 0; i < typeArguments.length; i++) {
                     reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
@@ -433,7 +436,8 @@ module TypeScript {
             }
 
             // if we're re-specializing a generic type (say, if a signature parameter gets specialized
-            // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map
+            // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map.  This helps
+            // us get the type argument list right when it's requested via getTypeArguments
             if (type.isTypeReference() && type.isGeneric()) {
                 var initializationMap = {};
 
@@ -493,9 +497,8 @@ module TypeScript {
                     for (var i = 0; i < typeParameters.length; i++) {
                         typeArgument = <PullTypeSymbol>this._typeParameterArgumentMap[typeParameters[i].pullSymbolIDString];
 
-                        // the mismatch may legitimately occur in error conditions...
                         if (!typeArgument) {
-                            Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument mismatch");
+                            Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument count mismatch");
                         }
 
                         if (typeArgument) {

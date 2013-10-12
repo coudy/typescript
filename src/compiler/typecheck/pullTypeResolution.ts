@@ -1082,7 +1082,12 @@ module TypeScript {
             }
 
             // if the type had previously been instantiated, we want to re-instantiate the type arguments.  Otherwise,
-            // we just use the type parameters
+            // we just use the type parameters.  E.g., for
+            //      class Foo<T> {
+            //          public <U>(p: Foo<U>): void
+            //      }
+            // For parameter 'p', we'd need to specialize from 'T' to 'U' to 'any', so we'd need to request p's type arguments
+            // and not its type parameters
             var typeParameters = type.getTypeArgumentsOrTypeParameters();
 
             var typeParameterArgumentMap = {};
