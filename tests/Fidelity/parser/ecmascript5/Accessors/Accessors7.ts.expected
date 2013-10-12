@@ -4,18 +4,25 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 10,
+            "length": 3,
+            "diagnosticCode": "'get' accessor cannot have parameters."
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 26,
+        "fullWidth": 35,
         "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 26,
+                "fullWidth": 35,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
-                    "fullWidth": 25,
+                    "fullWidth": 34,
                     "varKeyword": {
                         "kind": "VarKeyword",
                         "width": 3,
@@ -34,7 +41,7 @@
                     "variableDeclarators": [
                         {
                             "kind": "VariableDeclarator",
-                            "fullWidth": 21,
+                            "fullWidth": 30,
                             "identifier": {
                                 "kind": "IdentifierName",
                                 "width": 1,
@@ -52,7 +59,7 @@
                             },
                             "equalsValueClause": {
                                 "kind": "EqualsValueClause",
-                                "fullWidth": 19,
+                                "fullWidth": 28,
                                 "equalsToken": {
                                     "kind": "EqualsToken",
                                     "width": 1,
@@ -70,7 +77,7 @@
                                 },
                                 "value": {
                                     "kind": "ObjectLiteralExpression",
-                                    "fullWidth": 17,
+                                    "fullWidth": 26,
                                     "openBraceToken": {
                                         "kind": "OpenBraceToken",
                                         "width": 1,
@@ -89,7 +96,7 @@
                                     "propertyAssignments": [
                                         {
                                             "kind": "GetAccessorPropertyAssignment",
-                                            "fullWidth": 14,
+                                            "fullWidth": 23,
                                             "getKeyword": {
                                                 "kind": "GetKeyword",
                                                 "width": 3,
@@ -108,13 +115,13 @@
                                             "propertyName": {
                                                 "kind": "IdentifierName",
                                                 "width": 3,
-                                                "text": "Foo",
-                                                "value": "Foo",
-                                                "valueText": "Foo"
+                                                "text": "foo",
+                                                "value": "foo",
+                                                "valueText": "foo"
                                             },
                                             "parameterList": {
                                                 "kind": "ParameterList",
-                                                "fullWidth": 3,
+                                                "fullWidth": 12,
                                                 "openParenToken": {
                                                     "kind": "OpenParenToken",
                                                     "width": 1,
@@ -122,7 +129,45 @@
                                                     "value": "(",
                                                     "valueText": "("
                                                 },
-                                                "parameters": [],
+                                                "parameters": [
+                                                    {
+                                                        "kind": "Parameter",
+                                                        "fullWidth": 9,
+                                                        "identifier": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 1,
+                                                            "text": "v",
+                                                            "value": "v",
+                                                            "valueText": "v"
+                                                        },
+                                                        "typeAnnotation": {
+                                                            "kind": "TypeAnnotation",
+                                                            "fullWidth": 8,
+                                                            "colonToken": {
+                                                                "kind": "ColonToken",
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": ":",
+                                                                "value": ":",
+                                                                "valueText": ":",
+                                                                "hasTrailingTrivia": true,
+                                                                "trailingTrivia": [
+                                                                    {
+                                                                        "kind": "WhitespaceTrivia",
+                                                                        "text": " "
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "type": {
+                                                                "kind": "NumberKeyword",
+                                                                "width": 6,
+                                                                "text": "number",
+                                                                "value": "number",
+                                                                "valueText": "number"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
                                                 "closeParenToken": {
                                                     "kind": "CloseParenToken",
                                                     "width": 1,
@@ -207,6 +252,6 @@
         "lineStarts": [
             0
         ],
-        "length": 26
+        "length": 35
     }
 }

@@ -910,8 +910,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'getKeyword', isToken: true },
             <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
-            <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'closeParenToken', isToken: true },
+            <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'typeAnnotation', type: 'TypeAnnotationSyntax', isOptional: true },
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },
@@ -921,9 +920,7 @@ var definitions:ITypeDefinition[] = [
         children: [
             <any>{ name: 'setKeyword', isToken: true },
             <any>{ name: 'propertyName', isToken: true, tokenKinds: ['IdentifierName'] },
-            <any>{ name: 'openParenToken', isToken: true },
-            <any>{ name: 'parameter', type: 'ParameterSyntax' },
-            <any>{ name: 'closeParenToken', isToken: true },
+            <any>{ name: 'parameterList', type: 'ParameterListSyntax' },
             <any>{ name: 'block', type: 'BlockSyntax' }]
     },
     <any>{

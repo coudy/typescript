@@ -168,7 +168,7 @@ module TypeScript {
 
                 // Preprocess the file
                 var scriptSnapshot = this.host.getScriptSnapshot(normalizedPath);
-                var lineMap = LineMap.fromScriptSnapshot(scriptSnapshot);
+                var lineMap = LineMap1.fromScriptSnapshot(scriptSnapshot);
                 var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, scriptSnapshot);
                 resolutionResult.diagnostics.push.apply(resolutionResult.diagnostics, preprocessedFileInformation.diagnostics);
 

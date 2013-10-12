@@ -253,27 +253,32 @@
                                                             "value": "foo",
                                                             "valueText": "foo"
                                                         },
-                                                        "openParenToken": {
-                                                            "kind": "OpenParenToken",
-                                                            "width": 1,
-                                                            "text": "(",
-                                                            "value": "(",
-                                                            "valueText": "("
-                                                        },
-                                                        "closeParenToken": {
-                                                            "kind": "CloseParenToken",
-                                                            "width": 1,
-                                                            "fullWidth": 2,
-                                                            "text": ")",
-                                                            "value": ")",
-                                                            "valueText": ")",
-                                                            "hasTrailingTrivia": true,
-                                                            "trailingTrivia": [
-                                                                {
-                                                                    "kind": "WhitespaceTrivia",
-                                                                    "text": " "
-                                                                }
-                                                            ]
+                                                        "parameterList": {
+                                                            "kind": "ParameterList",
+                                                            "fullWidth": 3,
+                                                            "openParenToken": {
+                                                                "kind": "OpenParenToken",
+                                                                "width": 1,
+                                                                "text": "(",
+                                                                "value": "(",
+                                                                "valueText": "("
+                                                            },
+                                                            "parameters": [],
+                                                            "closeParenToken": {
+                                                                "kind": "CloseParenToken",
+                                                                "width": 1,
+                                                                "fullWidth": 2,
+                                                                "text": ")",
+                                                                "value": ")",
+                                                                "valueText": ")",
+                                                                "hasTrailingTrivia": true,
+                                                                "trailingTrivia": [
+                                                                    {
+                                                                        "kind": "WhitespaceTrivia",
+                                                                        "text": " "
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                         "block": {
                                                             "kind": "Block",

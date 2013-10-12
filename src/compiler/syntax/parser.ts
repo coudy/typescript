@@ -4511,12 +4511,11 @@ module TypeScript.Parser {
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
             var propertyName = this.eatPropertyName();
-            var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+            var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
             var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
 
-            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block);
+            return this.factory.getAccessorPropertyAssignment(getKeyword, propertyName, parameterList, typeAnnotation, block);
         }
 
         private isSetAccessorPropertyAssignment(inErrorRecovery: boolean): boolean {
@@ -4529,12 +4528,10 @@ module TypeScript.Parser {
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var propertyName = this.eatPropertyName();
-            var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var parameter = this.parseParameter();
-            var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
+            var parameterList = this.parseParameterList();
             var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ true);
 
-            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block);
+            return this.factory.setAccessorPropertyAssignment(setKeyword, propertyName, parameterList, block);
         }
 
         private eatPropertyName(): ISyntaxToken {

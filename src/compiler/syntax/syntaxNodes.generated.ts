@@ -6479,8 +6479,7 @@ module TypeScript {
 
     export class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
         constructor(propertyName: ISyntaxToken,
-                    public openParenToken: ISyntaxToken,
-                    public closeParenToken: ISyntaxToken,
+                    public parameterList: ParameterListSyntax,
                     public block: BlockSyntax,
                     parsedInStrictMode: boolean) {
             super(propertyName, parsedInStrictMode); 
@@ -6503,12 +6502,11 @@ module TypeScript {
 
         constructor(public getKeyword: ISyntaxToken,
                     propertyName: ISyntaxToken,
-                    openParenToken: ISyntaxToken,
-                    closeParenToken: ISyntaxToken,
+                    parameterList: ParameterListSyntax,
                     public typeAnnotation: TypeAnnotationSyntax,
                     block: BlockSyntax,
                     parsedInStrictMode: boolean) {
-            super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
+            super(propertyName, parameterList, block, parsedInStrictMode); 
 
         }
 
@@ -6521,44 +6519,41 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 6;
+        return 5;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.getKeyword;
             case 1: return this.propertyName;
-            case 2: return this.openParenToken;
-            case 3: return this.closeParenToken;
-            case 4: return this.typeAnnotation;
-            case 5: return this.block;
+            case 2: return this.parameterList;
+            case 3: return this.typeAnnotation;
+            case 4: return this.block;
             default: throw Errors.invalidOperation();
         }
     }
 
     public update(getKeyword: ISyntaxToken,
                   propertyName: ISyntaxToken,
-                  openParenToken: ISyntaxToken,
-                  closeParenToken: ISyntaxToken,
+                  parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax,
                   block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        if (this.getKeyword === getKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.closeParenToken === closeParenToken && this.typeAnnotation === typeAnnotation && this.block === block) {
+        if (this.getKeyword === getKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation && this.block === block) {
             return this;
         }
 
-        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(getKeyword: ISyntaxToken,
                          propertyName: ISyntaxToken,
-                         openParenToken: ISyntaxToken,
-                         closeParenToken: ISyntaxToken,
+                         parameterList: ParameterListSyntax,
                          block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, openParenToken, closeParenToken, null, block, /*parsedInStrictMode:*/ false);
+        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, parameterList, null, block, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.GetKeyword), propertyName, Syntax.token(SyntaxKind.OpenParenToken), Syntax.token(SyntaxKind.CloseParenToken), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.GetKeyword), propertyName, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
@@ -6570,30 +6565,27 @@ module TypeScript {
     }
 
     public withGetKeyword(getKeyword: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, this.block);
+        return this.update(getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
     public withPropertyName(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, this.block);
+        return this.update(this.getKeyword, propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
-    public withOpenParenToken(openParenToken: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, openParenToken, this.closeParenToken, this.typeAnnotation, this.block);
-    }
-
-    public withCloseParenToken(closeParenToken: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, this.openParenToken, closeParenToken, this.typeAnnotation, this.block);
+    public withParameterList(parameterList: ParameterListSyntax): GetAccessorPropertyAssignmentSyntax {
+        return this.update(this.getKeyword, this.propertyName, parameterList, this.typeAnnotation, this.block);
     }
 
     public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, typeAnnotation, this.block);
+        return this.update(this.getKeyword, this.propertyName, this.parameterList, typeAnnotation, this.block);
     }
 
     public withBlock(block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, this.openParenToken, this.closeParenToken, this.typeAnnotation, block);
+        return this.update(this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, block);
     }
 
     public isTypeScriptSpecific(): boolean {
+        if (this.parameterList.isTypeScriptSpecific()) { return true; }
         if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
@@ -6604,12 +6596,10 @@ module TypeScript {
 
         constructor(public setKeyword: ISyntaxToken,
                     propertyName: ISyntaxToken,
-                    openParenToken: ISyntaxToken,
-                    public parameter: ParameterSyntax,
-                    closeParenToken: ISyntaxToken,
+                    parameterList: ParameterListSyntax,
                     block: BlockSyntax,
                     parsedInStrictMode: boolean) {
-            super(propertyName, openParenToken, closeParenToken, block, parsedInStrictMode); 
+            super(propertyName, parameterList, block, parsedInStrictMode); 
 
         }
 
@@ -6622,37 +6612,32 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 6;
+        return 4;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
             case 0: return this.setKeyword;
             case 1: return this.propertyName;
-            case 2: return this.openParenToken;
-            case 3: return this.parameter;
-            case 4: return this.closeParenToken;
-            case 5: return this.block;
+            case 2: return this.parameterList;
+            case 3: return this.block;
             default: throw Errors.invalidOperation();
         }
     }
 
     public update(setKeyword: ISyntaxToken,
                   propertyName: ISyntaxToken,
-                  openParenToken: ISyntaxToken,
-                  parameter: ParameterSyntax,
-                  closeParenToken: ISyntaxToken,
+                  parameterList: ParameterListSyntax,
                   block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
-        if (this.setKeyword === setKeyword && this.propertyName === propertyName && this.openParenToken === openParenToken && this.parameter === parameter && this.closeParenToken === closeParenToken && this.block === block) {
+        if (this.setKeyword === setKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.block === block) {
             return this;
         }
 
-        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, openParenToken, parameter, closeParenToken, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
-    public static create1(propertyName: ISyntaxToken,
-                          parameter: ParameterSyntax): SetAccessorPropertyAssignmentSyntax {
-        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.SetKeyword), propertyName, Syntax.token(SyntaxKind.OpenParenToken), parameter, Syntax.token(SyntaxKind.CloseParenToken), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
+        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.SetKeyword), propertyName, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
@@ -6664,31 +6649,23 @@ module TypeScript {
     }
 
     public withSetKeyword(setKeyword: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(setKeyword, this.propertyName, this.openParenToken, this.parameter, this.closeParenToken, this.block);
+        return this.update(setKeyword, this.propertyName, this.parameterList, this.block);
     }
 
     public withPropertyName(propertyName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, propertyName, this.openParenToken, this.parameter, this.closeParenToken, this.block);
+        return this.update(this.setKeyword, propertyName, this.parameterList, this.block);
     }
 
-    public withOpenParenToken(openParenToken: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, this.propertyName, openParenToken, this.parameter, this.closeParenToken, this.block);
-    }
-
-    public withParameter(parameter: ParameterSyntax): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, this.propertyName, this.openParenToken, parameter, this.closeParenToken, this.block);
-    }
-
-    public withCloseParenToken(closeParenToken: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameter, closeParenToken, this.block);
+    public withParameterList(parameterList: ParameterListSyntax): SetAccessorPropertyAssignmentSyntax {
+        return this.update(this.setKeyword, this.propertyName, parameterList, this.block);
     }
 
     public withBlock(block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, this.propertyName, this.openParenToken, this.parameter, this.closeParenToken, block);
+        return this.update(this.setKeyword, this.propertyName, this.parameterList, block);
     }
 
     public isTypeScriptSpecific(): boolean {
-        if (this.parameter.isTypeScriptSpecific()) { return true; }
+        if (this.parameterList.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }

@@ -1716,7 +1716,7 @@ module Harness {
 
         private setContent(content: string): void {
             this.content = content;
-            this.lineMap = TypeScript.LineMap.fromString(content);
+            this.lineMap = TypeScript.LineMap1.fromString(content);
         }
 
         public updateContent(content: string): void {
@@ -1777,7 +1777,7 @@ module Harness {
 
         public getLineStartPositions(): string {
             if (this.lineMap === null) {
-                this.lineMap = TypeScript.LineMap.fromString(this.textSnapshot);
+                this.lineMap = TypeScript.LineMap1.fromString(this.textSnapshot);
             }
 
             return JSON.stringify(this.lineMap.lineStarts());

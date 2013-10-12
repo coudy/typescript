@@ -112,38 +112,44 @@
                                                 "value": "Foo",
                                                 "valueText": "Foo"
                                             },
-                                            "openParenToken": {
-                                                "kind": "OpenParenToken",
-                                                "width": 1,
-                                                "text": "(",
-                                                "value": "(",
-                                                "valueText": "("
-                                            },
-                                            "parameter": {
-                                                "kind": "Parameter",
-                                                "fullWidth": 1,
-                                                "identifier": {
-                                                    "kind": "IdentifierName",
+                                            "parameterList": {
+                                                "kind": "ParameterList",
+                                                "fullWidth": 4,
+                                                "openParenToken": {
+                                                    "kind": "OpenParenToken",
                                                     "width": 1,
-                                                    "text": "a",
-                                                    "value": "a",
-                                                    "valueText": "a"
-                                                }
-                                            },
-                                            "closeParenToken": {
-                                                "kind": "CloseParenToken",
-                                                "width": 1,
-                                                "fullWidth": 2,
-                                                "text": ")",
-                                                "value": ")",
-                                                "valueText": ")",
-                                                "hasTrailingTrivia": true,
-                                                "trailingTrivia": [
+                                                    "text": "(",
+                                                    "value": "(",
+                                                    "valueText": "("
+                                                },
+                                                "parameters": [
                                                     {
-                                                        "kind": "WhitespaceTrivia",
-                                                        "text": " "
+                                                        "kind": "Parameter",
+                                                        "fullWidth": 1,
+                                                        "identifier": {
+                                                            "kind": "IdentifierName",
+                                                            "width": 1,
+                                                            "text": "a",
+                                                            "value": "a",
+                                                            "valueText": "a"
+                                                        }
                                                     }
-                                                ]
+                                                ],
+                                                "closeParenToken": {
+                                                    "kind": "CloseParenToken",
+                                                    "width": 1,
+                                                    "fullWidth": 2,
+                                                    "text": ")",
+                                                    "value": ")",
+                                                    "valueText": ")",
+                                                    "hasTrailingTrivia": true,
+                                                    "trailingTrivia": [
+                                                        {
+                                                            "kind": "WhitespaceTrivia",
+                                                            "text": " "
+                                                        }
+                                                    ]
+                                                }
                                             },
                                             "block": {
                                                 "kind": "Block",

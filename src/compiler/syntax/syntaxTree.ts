@@ -769,10 +769,10 @@ module TypeScript {
             super.visitMemberFunctionDeclaration(node);
         }
 
-        private checkGetMemberAccessorParameter(node: GetMemberAccessorDeclarationSyntax): boolean {
-            var getKeywordFullStart = this.childFullStart(node, node.getKeyword);
-            if (node.parameterList.parameters.childCount() !== 0) {
-                this.pushDiagnostic1(getKeywordFullStart, node.getKeyword,
+        private checkGetAccessorParameter(node: SyntaxNode, getKeyword: ISyntaxToken, parameterList: ParameterListSyntax): boolean {
+            var getKeywordFullStart = this.childFullStart(node, getKeyword);
+            if (parameterList.parameters.childCount() !== 0) {
+                this.pushDiagnostic1(getKeywordFullStart, getKeyword,
                     DiagnosticCode.get_accessor_cannot_have_parameters);
                 return true;
             }
@@ -820,7 +820,7 @@ module TypeScript {
             if (this.checkForAccessorDeclarationInAmbientContext(node) ||
                 this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
                 this.checkClassElementModifiers(node.modifiers) ||
-                this.checkGetMemberAccessorParameter(node)) {
+                this.checkGetAccessorParameter(node, node.getKeyword, node.parameterList)) {
                 this.skip(node);
                 return;
             }
@@ -837,18 +837,17 @@ module TypeScript {
             return false;
         }
 
-
-        private checkSetMemberAccessorParameter(node: SetMemberAccessorDeclarationSyntax): boolean {
-            var setKeywordFullStart = this.childFullStart(node, node.setKeyword);
-            if (node.parameterList.parameters.childCount() !== 1) {
-                this.pushDiagnostic1(setKeywordFullStart, node.setKeyword,
+        private checkSetAccessorParameter(node: SyntaxNode, setKeyword: ISyntaxToken, parameterList: ParameterListSyntax): boolean {
+            var setKeywordFullStart = this.childFullStart(node, setKeyword);
+            if (parameterList.parameters.childCount() !== 1) {
+                this.pushDiagnostic1(setKeywordFullStart, setKeyword,
                     DiagnosticCode.set_accessor_must_have_one_and_only_one_parameter);
                 return true;
             }
 
-            var parameterListFullStart = this.childFullStart(node, node.parameterList);
-            var parameterFullStart = parameterListFullStart + Syntax.childOffset(node.parameterList, node.parameterList.openParenToken);
-            var parameter = <ParameterSyntax>node.parameterList.parameters.childAt(0);
+            var parameterListFullStart = this.childFullStart(node, parameterList);
+            var parameterFullStart = parameterListFullStart + Syntax.childOffset(parameterList, parameterList.openParenToken);
+            var parameter = <ParameterSyntax>parameterList.parameters.childAt(0);
 
             if (parameter.publicOrPrivateKeyword) {
                 this.pushDiagnostic1(parameterFullStart, parameter,
@@ -881,7 +880,7 @@ module TypeScript {
             if (this.checkForAccessorDeclarationInAmbientContext(node) ||
                 this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
                 this.checkClassElementModifiers(node.modifiers) ||
-                this.checkSetMemberAccessorParameter(node)) {
+                this.checkSetAccessorParameter(node, node.setKeyword, node.parameterList)) {
                 this.skip(node);
                 return;
             }
@@ -890,7 +889,8 @@ module TypeScript {
         }
 
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher)) {
+            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
+                this.checkGetAccessorParameter(node, node.getKeyword, node.parameterList)) {
                 this.skip(node);
                 return;
             }
@@ -899,7 +899,8 @@ module TypeScript {
         }
 
         public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher)) {
+            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
+                this.checkSetAccessorParameter(node, node.setKeyword, node.parameterList)) {
                 this.skip(node);
                 return;
             }

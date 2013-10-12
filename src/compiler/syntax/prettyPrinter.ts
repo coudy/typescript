@@ -909,8 +909,7 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.getKeyword);
             this.ensureSpace();
             this.appendToken(node.propertyName);
-            this.appendToken(node.openParenToken);
-            this.appendToken(node.closeParenToken);
+            node.parameterList.accept(this);
             this.appendNode(node.typeAnnotation);
             this.ensureSpace();
             node.block.accept(this);
@@ -920,9 +919,7 @@ module TypeScript.PrettyPrinter {
             this.appendToken(node.setKeyword);
             this.ensureSpace();
             this.appendToken(node.propertyName);
-            this.appendToken(node.openParenToken);
-            node.parameter.accept(this);
-            this.appendToken(node.closeParenToken);
+            node.parameterList.accept(this);
             this.ensureSpace();
             node.block.accept(this);
         }

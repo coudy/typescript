@@ -4,14 +4,22 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 10,
+            "length": 3,
+            "diagnosticCode": "'set' accessor must have one and only one parameter."
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 26,
+        "fullWidth": 25,
         "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 26,
+                "fullWidth": 25,
+                "isIncrementallyUnusable": true,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
@@ -88,15 +96,15 @@
                                     },
                                     "propertyAssignments": [
                                         {
-                                            "kind": "GetAccessorPropertyAssignment",
+                                            "kind": "SetAccessorPropertyAssignment",
                                             "fullWidth": 14,
-                                            "getKeyword": {
-                                                "kind": "GetKeyword",
+                                            "setKeyword": {
+                                                "kind": "SetKeyword",
                                                 "width": 3,
                                                 "fullWidth": 4,
-                                                "text": "get",
-                                                "value": "get",
-                                                "valueText": "get",
+                                                "text": "set",
+                                                "value": "set",
+                                                "valueText": "set",
                                                 "hasTrailingTrivia": true,
                                                 "trailingTrivia": [
                                                     {
@@ -108,9 +116,9 @@
                                             "propertyName": {
                                                 "kind": "IdentifierName",
                                                 "width": 3,
-                                                "text": "Foo",
-                                                "value": "Foo",
-                                                "valueText": "Foo"
+                                                "text": "foo",
+                                                "value": "foo",
+                                                "valueText": "foo"
                                             },
                                             "parameterList": {
                                                 "kind": "ParameterList",
@@ -190,10 +198,8 @@
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
-                    "width": 1,
-                    "text": ";",
-                    "value": ";",
-                    "valueText": ";"
+                    "width": 0,
+                    "text": ""
                 }
             }
         ],
@@ -207,6 +213,6 @@
         "lineStarts": [
             0
         ],
-        "length": 26
+        "length": 25
     }
 }

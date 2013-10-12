@@ -632,8 +632,7 @@ module TypeScript {
             return node.update(
                 this.visitToken(node.getKeyword),
                 this.visitToken(node.propertyName),
-                this.visitToken(node.openParenToken),
-                this.visitToken(node.closeParenToken),
+                <ParameterListSyntax>this.visitNode(node.parameterList),
                 node.typeAnnotation === null ? null : <TypeAnnotationSyntax>this.visitNode(node.typeAnnotation),
                 <BlockSyntax>this.visitNode(node.block));
         }
@@ -642,9 +641,7 @@ module TypeScript {
             return node.update(
                 this.visitToken(node.setKeyword),
                 this.visitToken(node.propertyName),
-                this.visitToken(node.openParenToken),
-                <ParameterSyntax>this.visitNode(node.parameter),
-                this.visitToken(node.closeParenToken),
+                <ParameterListSyntax>this.visitNode(node.parameterList),
                 <BlockSyntax>this.visitNode(node.block));
         }
 

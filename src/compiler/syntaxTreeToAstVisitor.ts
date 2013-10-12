@@ -2007,15 +2007,14 @@ module TypeScript {
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             this.movePast(node.propertyName);
-            this.movePast(node.openParenToken);
-            this.movePast(node.closeParenToken);
+            var parameterList = node.parameterList.accept(this);
             var returnType = node.typeAnnotation
                 ? node.typeAnnotation.accept(this)
                 : null;
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var result = new GetAccessorPropertyAssignment(functionName, new ASTList([]), returnType, block);
+            var result = new GetAccessorPropertyAssignment(functionName, parameterList, returnType, block);
             this.setSpan(result, start, node);
 
             //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor | FunctionFlags.IsFunctionExpression);
@@ -2040,15 +2039,11 @@ module TypeScript {
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             this.movePast(node.propertyName);
-            this.movePast(node.openParenToken);
-            var parameter = node.parameter.accept(this);
-            this.movePast(node.closeParenToken);
-
-            var parameters = new ASTList([parameter]);
+            var parameterList = node.parameterList.accept(this);
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var result = new SetAccessorPropertyAssignment(functionName, parameters, block);
+            var result = new SetAccessorPropertyAssignment(functionName, parameterList, block);
             this.setSpan(result, start, node);
 
             //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor | FunctionFlags.IsFunctionExpression);

@@ -549,8 +549,7 @@ module TypeScript {
         public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
             this.visitToken(node.getKeyword);
             this.visitToken(node.propertyName);
-            this.visitToken(node.openParenToken);
-            this.visitToken(node.closeParenToken);
+            this.visitNode(node.parameterList);
             this.visitOptionalNode(node.typeAnnotation);
             this.visitNode(node.block);
         }
@@ -558,9 +557,7 @@ module TypeScript {
         public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): void {
             this.visitToken(node.setKeyword);
             this.visitToken(node.propertyName);
-            this.visitToken(node.openParenToken);
-            this.visitNode(node.parameter);
-            this.visitToken(node.closeParenToken);
+            this.visitNode(node.parameterList);
             this.visitNode(node.block);
         }
 

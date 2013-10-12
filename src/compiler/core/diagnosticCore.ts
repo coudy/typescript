@@ -3,13 +3,6 @@
 module TypeScript {
     export var LocalizedDiagnosticMessages: any = null;
 
-    export function newLine(): string {
-        // TODO: We need to expose an extensibility point on our hosts to have them tell us what 
-        // they want the newline string to be.  That way we can get the correct result regardless
-        // of which host we use
-        return Environment ? Environment.newLine : "\r\n";
-    }
-
     export class Diagnostic {
         private _fileName: string;
         private _lineMap: LineMap;
@@ -18,7 +11,7 @@ module TypeScript {
         private _diagnosticKey: string;
         private _arguments: any[];
 
-        constructor(fileName: string, lineMap: LineMap, start: number, length: number, diagnosticKey: string, arguments: any[] = null) {
+        constructor(fileName: string, lineMap: LineMap, start: number, length: number, diagnosticKey: string, arguments: any[]= null) {
             this._diagnosticKey = diagnosticKey;
             this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;
@@ -104,6 +97,13 @@ module TypeScript {
         public info(): DiagnosticInfo {
             return getDiagnosticInfoFromKey(this.diagnosticKey());
         }
+    }
+
+    export function newLine(): string {
+        // TODO: We need to expose an extensibility point on our hosts to have them tell us what 
+        // they want the newline string to be.  That way we can get the correct result regardless
+        // of which host we use
+        return Environment ? Environment.newLine : "\r\n";
     }
 
     function getLargestIndex(diagnostic: string): number {

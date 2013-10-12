@@ -1422,38 +1422,6 @@ module TypeScript {
     "code": 5025,
     "category": DiagnosticCategory.Error
   },
-  "Invalid argument: {0}. {1}": {
-    "code": 5026,
-    "category": DiagnosticCategory.Error
-  },
-  "Invalid argument: {0}.": {
-    "code": 5027,
-    "category": DiagnosticCategory.Error
-  },
-  "Argument out of range: {0}.": {
-    "code": 5028,
-    "category": DiagnosticCategory.Error
-  },
-  "Argument null: {0}.": {
-    "code": 5029,
-    "category": DiagnosticCategory.Error
-  },
-  "Operation not implemented properly by subclass.": {
-    "code": 5030,
-    "category": DiagnosticCategory.Error
-  },
-  "Not yet implemented.": {
-    "code": 5031,
-    "category": DiagnosticCategory.Error
-  },
-  "Invalid operation: {0}": {
-    "code": 5032,
-    "category": DiagnosticCategory.Error
-  },
-  "Invalid operation.": {
-    "code": 5033,
-    "category": DiagnosticCategory.Error
-  },
   "Could not delete file '{0}'": {
     "code": 5034,
     "category": DiagnosticCategory.Error
