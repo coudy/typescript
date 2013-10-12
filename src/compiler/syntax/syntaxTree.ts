@@ -107,12 +107,12 @@ module TypeScript {
 
         private pushDiagnostic(start: number, length: number, diagnosticKey: string, args: any[] = null): void {
             this.diagnostics.push(new Diagnostic(
-                this.syntaxTree.fileName(), start, length, diagnosticKey, args));
+                this.syntaxTree.fileName(), this.syntaxTree.lineMap(), start, length, diagnosticKey, args));
         }
 
         private pushDiagnostic1(elementFullStart: number, element: ISyntaxElement, diagnosticKey: string, args: any[] = null): void {
             this.diagnostics.push(new Diagnostic(
-                this.syntaxTree.fileName(), elementFullStart + element.leadingTriviaWidth(), element.width(), diagnosticKey, args));
+                this.syntaxTree.fileName(), this.syntaxTree.lineMap(), elementFullStart + element.leadingTriviaWidth(), element.width(), diagnosticKey, args));
         }
 
         public visitCatchClause(node: CatchClauseSyntax): void {

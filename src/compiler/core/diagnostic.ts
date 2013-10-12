@@ -12,15 +12,17 @@ module TypeScript {
 
     export class Diagnostic {
         private _fileName: string;
+        private _lineMap: LineMap;
         private _start: number;
         private _length: number;
         private _diagnosticKey: string;
         private _arguments: any[];
 
-        constructor(fileName: string, start: number, length: number, diagnosticKey: string, arguments: any[] = null) {
+        constructor(fileName: string, lineMap: LineMap, start: number, length: number, diagnosticKey: string, arguments: any[] = null) {
             this._diagnosticKey = diagnosticKey;
             this._arguments = (arguments && arguments.length > 0) ? arguments : null;
             this._fileName = fileName;
+            this._lineMap = lineMap;
             this._start = start;
             this._length = length;
         }
@@ -42,6 +44,14 @@ module TypeScript {
 
         public fileName(): string {
             return this._fileName;
+        }
+
+        public line(): number {
+            return this._lineMap ? this._lineMap.getLineNumberFromPosition(this.start()) : 0;
+        }
+
+        public character(): number {
+            return this._lineMap ? this._lineMap.getLineAndCharacterFromPosition(this.start()).character() : 0;
         }
 
         public start(): number {
@@ -89,6 +99,10 @@ module TypeScript {
                 diagnostic1._length === diagnostic2._length &&
                 diagnostic1._diagnosticKey === diagnostic2._diagnosticKey &&
                 ArrayUtilities.sequenceEquals(diagnostic1._arguments, diagnostic2._arguments, (v1, v2) => v1 === v2);
+        }
+
+        public info(): DiagnosticInfo {
+            return getDiagnosticInfoFromKey(this.diagnosticKey());
         }
     }
 

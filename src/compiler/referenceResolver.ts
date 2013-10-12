@@ -37,7 +37,7 @@ module TypeScript {
     }
 
     class ReferenceLocation {
-        constructor(public filePath: string, public position: number, public length: number, public isImported: boolean) {
+        constructor(public filePath: string, public lineMap: LineMap, public position: number, public length: number, public isImported: boolean) {
         }
     }
 
@@ -66,7 +66,7 @@ module TypeScript {
             }
 
             // Loop over the files and extract references
-            var referenceLocation = new ReferenceLocation(null, 0, 0, false);
+            var referenceLocation = new ReferenceLocation(null, null, 0, 0, false);
             for (var i = 0, n = this.inputFileNames.length; i < n; i++) {
                 this.resolveIncludedFile(this.inputFileNames[i], referenceLocation, result);
             }
@@ -81,7 +81,8 @@ module TypeScript {
                 // Cannot reference self
                 if (!referenceLocation.isImported) {
                     resolutionResult.diagnostics.push(
-                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.A_file_cannot_have_a_reference_to_itself, null));
+                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.lineMap,
+                            referenceLocation.position, referenceLocation.length, DiagnosticCode.A_file_cannot_have_a_reference_to_itself, null));
                 }
 
                 return normalizedPath;
@@ -102,7 +103,8 @@ module TypeScript {
             if (!this.host.fileExists(normalizedPath)) {
                 if (!referenceLocation.isImported) {
                     resolutionResult.diagnostics.push(
-                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.position, referenceLocation.length, DiagnosticCode.Cannot_resolve_referenced_file_0, [path]));
+                        new TypeScript.Diagnostic(referenceLocation.filePath, referenceLocation.lineMap,
+                            referenceLocation.position, referenceLocation.length, DiagnosticCode.Cannot_resolve_referenced_file_0, [path]));
                 }
 
                 return normalizedPath;
@@ -166,7 +168,9 @@ module TypeScript {
                 this.recordVisitedFile(normalizedPath);
 
                 // Preprocess the file
-                var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, this.host.getScriptSnapshot(normalizedPath));
+                var scriptSnapshot = this.host.getScriptSnapshot(normalizedPath);
+                var lineMap = LineMap.fromScriptSnapshot(scriptSnapshot);
+                var preprocessedFileInformation = TypeScript.preProcessFile(normalizedPath, scriptSnapshot);
                 resolutionResult.diagnostics.push.apply(resolutionResult.diagnostics, preprocessedFileInformation.diagnostics);
 
                 // If this file has a "no-default-lib = 'true'" tag
@@ -178,7 +182,7 @@ module TypeScript {
                 var normalizedReferencePaths: string[] = [];
                 for (var i = 0, n = preprocessedFileInformation.referencedFiles.length; i < n; i++) {
                     var fileReference = preprocessedFileInformation.referencedFiles[i];
-                    var currentReferenceLocation = new ReferenceLocation(normalizedPath, fileReference.position, fileReference.length, /* isImported */ false);
+                    var currentReferenceLocation = new ReferenceLocation(normalizedPath, lineMap, fileReference.position, fileReference.length, /* isImported */ false);
                     var normalizedReferencePath = this.resolveIncludedFile(fileReference.path, currentReferenceLocation, resolutionResult);
                     normalizedReferencePaths.push(normalizedReferencePath);
                 }
@@ -187,7 +191,7 @@ module TypeScript {
                 var normalizedImportPaths: string[] = [];
                 for (var i = 0; i < preprocessedFileInformation.importedFiles.length; i++) {
                     var fileImport = preprocessedFileInformation.importedFiles[i];
-                    var currentReferenceLocation = new ReferenceLocation(normalizedPath, fileImport.position, fileImport.length, /* isImported */ true);
+                    var currentReferenceLocation = new ReferenceLocation(normalizedPath, lineMap, fileImport.position, fileImport.length, /* isImported */ true);
                     var normalizedImportPath = this.resolveImportedFile(fileImport.path, currentReferenceLocation, resolutionResult);
                     normalizedImportPaths.push(normalizedImportPath);
                 }

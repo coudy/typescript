@@ -2397,13 +2397,9 @@ module TypeScript {
         }
     }
 
-    export function diagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[] = null): Diagnostic {
-        return new Diagnostic(ast.fileName(), ast.minChar, ast.getLength(), diagnosticKey, arguments);
-    }
-
     export function diagnosticFromDecl(decl: PullDecl, diagnosticKey: string, arguments: any[]= null): Diagnostic {
         var span = decl.getSpan();
-        return new Diagnostic(decl.fileName(), span.start(), span.length(), diagnosticKey, arguments);
+        return new Diagnostic(decl.fileName(), decl.semanticInfoChain().lineMap(decl.fileName()), span.start(), span.length(), diagnosticKey, arguments);
     }
 
     function min(a: number, b: number): number {

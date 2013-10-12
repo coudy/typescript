@@ -67,7 +67,7 @@ module TypeScript {
             this._settings = settings;
 
             if (settings.moduleGenTarget() === ModuleGenTarget.Unspecified && compiler._isDynamicModuleCompilation()) {
-                this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
+                this._diagnostic = new Diagnostic(null, null, 0, 0, DiagnosticCode.Cannot_compile_external_modules_unless_the_module_flag_is_provided, null);
                 return;
             }
 
@@ -75,15 +75,15 @@ module TypeScript {
                 // Error to specify --mapRoot or --sourceRoot without mapSourceFiles
                 if (settings.mapRoot()) {
                     if (settings.sourceRoot()) {
-                        this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                        this._diagnostic = new Diagnostic(null, null, 0, 0, DiagnosticCode.Options_mapRoot_and_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
                         return;
                     } else {
-                        this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Option_mapRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                        this._diagnostic = new Diagnostic(null, null, 0, 0, DiagnosticCode.Option_mapRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
                         return;
                     }
                 }
                 else if (settings.sourceRoot()) {
-                    this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
+                    this._diagnostic = new Diagnostic(null, null, 0, 0, DiagnosticCode.Option_sourceRoot_cannot_be_specified_without_specifying_sourcemap_option, null);
                     return;
                 }
             }
@@ -139,7 +139,7 @@ module TypeScript {
                                 if (j === 0) {
                                     if (this._outputDirectory || this._sourceMapRootDirectory) {
                                         // Its error to not have common path
-                                        this._diagnostic = new Diagnostic(null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
+                                        this._diagnostic = new Diagnostic(null, null, 0, 0, DiagnosticCode.Cannot_find_the_common_subdirectory_path_for_the_input_files, null);
                                         return;
                                     }
 

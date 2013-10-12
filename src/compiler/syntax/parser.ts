@@ -1346,7 +1346,7 @@ module TypeScript.Parser {
                     // Report the missing semicolon at the end of the *previous* token.
 
                     this.addDiagnostic(
-                        new Diagnostic(this.fileName, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
+                        new Diagnostic(this.fileName, this.lineMap, this.previousTokenEnd(), 0, DiagnosticCode.Automatic_semicolon_insertion_not_allowed, null));
                 }
 
                 return semicolonToken;
@@ -1385,18 +1385,18 @@ module TypeScript.Parser {
 
             // They wanted something specific, just report that that token was missing.
             if (SyntaxFacts.isAnyKeyword(expectedKind) || SyntaxFacts.isAnyPunctuation(expectedKind)) {
-                return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
+                return new Diagnostic(this.fileName, this.lineMap, this.currentTokenStart(), token.width(), DiagnosticCode._0_expected, [SyntaxFacts.getText(expectedKind)]);
             }
             else {
                 // They wanted an identifier.
 
                 // If the user supplied a keyword, give them a specialized message.
                 if (actual !== null && SyntaxFacts.isAnyKeyword(actual.tokenKind)) {
-                    return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected_0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
+                    return new Diagnostic(this.fileName, this.lineMap, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected_0_is_a_keyword, [SyntaxFacts.getText(actual.tokenKind)]);
                 }
                 else {
                     // Otherwise just report that an identifier was expected.
-                    return new Diagnostic(this.fileName, this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
+                    return new Diagnostic(this.fileName, this.lineMap,this.currentTokenStart(), token.width(), DiagnosticCode.Identifier_expected, null);
                 }
             }
 
@@ -2366,7 +2366,7 @@ module TypeScript.Parser {
                     // "function f() { return expr; }.
                     // 
                     // Detect if the user is typing this and attempt recovery.
-                    var diagnostic = new Diagnostic(this.fileName,
+                    var diagnostic = new Diagnostic(this.fileName, this.lineMap,
                         this.currentTokenStart(), token0.width(), DiagnosticCode.Unexpected_token_0_expected, [SyntaxFacts.getText(SyntaxKind.OpenBraceToken)]);
                     this.addDiagnostic(diagnostic);
 
@@ -3905,7 +3905,7 @@ module TypeScript.Parser {
                     // as an arithmetic expression.
                     if (isDot) {
                         // A parameter list must follow a generic type argument list.
-                        var diagnostic = new Diagnostic(this.fileName, this.currentTokenStart(), token0.width(),
+                        var diagnostic = new Diagnostic(this.fileName, this.lineMap, this.currentTokenStart(), token0.width(),
                             DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected, null);
                         this.addDiagnostic(diagnostic);
 
@@ -3953,7 +3953,7 @@ module TypeScript.Parser {
                 inObjectCreation) {
 
                 var end = this.currentTokenStart() + this.currentToken().width();
-                var diagnostic = new Diagnostic(this.fileName, start, end - start,
+                var diagnostic = new Diagnostic(this.fileName, this.lineMap,start, end - start,
                     DiagnosticCode.new_T_cannot_be_used_to_create_an_array_Use_new_Array_T_instead, null);
                 this.addDiagnostic(diagnostic);
 
@@ -5231,7 +5231,7 @@ module TypeScript.Parser {
         private reportUnexpectedTokenDiagnostic(listType: ListParsingState): void {
             var token = this.currentToken();
 
-            var diagnostic = new Diagnostic(this.fileName,
+            var diagnostic = new Diagnostic(this.fileName, this.lineMap,
                 this.currentTokenStart(), token.width(), DiagnosticCode.Unexpected_token_0_expected, [this.getExpectedListElementType(listType)]);
             this.addDiagnostic(diagnostic);
         }

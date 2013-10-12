@@ -52,7 +52,11 @@ module TypeScript {
             var document = this.fileNameToDocument[fileName];
             return document ? document : null;
         }
-        
+
+        public lineMap(fileName: string): LineMap {
+            return this.getDocument(fileName).lineMap();
+        }
+
         // Returns the names of the files we own, in the same order that they were added to us.
         public fileNames(): string[] {
             if (this._fileNames === null) {
@@ -614,6 +618,14 @@ module TypeScript {
             }
 
             return this._topLevelDecls;
+        }
+
+        public addDiagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[]= null): void {
+            this.addDiagnostic(this.diagnosticFromAST(ast, diagnosticKey, arguments));
+        }
+
+        public diagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[]= null): Diagnostic {
+            return new Diagnostic(ast.fileName(), this.lineMap(ast.fileName()), ast.minChar, ast.getLength(), diagnosticKey, arguments);
         }
     }
 }

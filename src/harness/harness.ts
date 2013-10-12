@@ -1172,7 +1172,7 @@ module Harness {
                 var fixedPath = this.fixFilename(filename);
                 var snapshot = this.fileNameToScriptSnapshot.lookup(fixedPath);
                 if (!snapshot) {
-                    this.addError(ErrorType.Resolution, new TypeScript.Diagnostic(null, 0, 0, TypeScript.DiagnosticCode.Cannot_read_file_0_1, [filename, '']));
+                    this.addError(ErrorType.Resolution, new TypeScript.Diagnostic(null, null, 0, 0, TypeScript.DiagnosticCode.Cannot_read_file_0_1, [filename, '']));
                 }
 
                 return snapshot;
@@ -1226,15 +1226,9 @@ module Harness {
                 var line = -1, col = -1, length = -1;
 
                 if (diagnostic.fileName()) {
-                    var scriptSnapshot = this.getScriptSnapshot(diagnostic.fileName());
-                    if (scriptSnapshot) {
-                        var lineMap = new TypeScript.LineMap(scriptSnapshot.getLineStartPositions(), scriptSnapshot.getLength());
-                        var lineCol = { line: -1, character: -1 };
-                        lineMap.fillLineAndCharacterFromPosition(diagnostic.start(), lineCol);
-                        line = lineCol.line + 1; // We use 1-based numbers in tests, but these are 0-based
-                        col = lineCol.character + 1; // Same as above
-                        length = diagnostic.length();
-                    }
+                    line = diagnostic.line() + 1; // We use 1-based numbers in tests, but these are 0-based
+                    col = diagnostic.character() + 1; // Same as above
+                    length = diagnostic.length();
                 }
 
                 this.errorList.push({
