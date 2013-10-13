@@ -270,15 +270,13 @@ module TypeScript {
             }
         }
 
-        }
-
         public postDiagnostic(diagnostic: Diagnostic): void {
             if (diagnostic) {
                 if (this.inProvisionalResolution()) {
                     (this.contextStack[this.contextStack.length - 1]).hasProvisionalErrors = true;
                 }
                 else if (this.inTypeCheck && this.resolver) {
-                    this.resolver.currentUnit.addDiagnostic(diagnostic);
+                    this.resolver.semanticInfoChain.addDiagnostic(diagnostic);
                 }
             }
         }

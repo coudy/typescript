@@ -2018,9 +2018,9 @@ module TypeScript {
             if (this.isArrayNamedTypeReference()) {
                 var elementType = this.getElementType();
                 var elementMemberName = elementType ?
-                    (elementType.isArray() || elementType.isNamedTypeSymbol() ?
-                    elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
-                    elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
+                    (elementType.isArrayNamedTypeReference() || elementType.isNamedTypeSymbol() ?
+                    elementType.getScopedNameEx(resolver, scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
+                    elementType.getMemberTypeNameEx(false, resolver, scopeSymbol, getPrettyTypeName)) :
                     MemberName.create("any");
                 return MemberName.create(elementMemberName, "", "[]");
             }

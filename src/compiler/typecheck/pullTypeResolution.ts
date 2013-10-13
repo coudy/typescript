@@ -2284,7 +2284,7 @@ module TypeScript {
 
             if (this.genericTypeIsUsedWithoutRequiredTypeArguments(typeDeclSymbol, term, context)) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(term, DiagnosticCode.Generic_type_references_must_include_all_type_arguments));
-                typeDeclSymbol = this.specializeTypeToAny(typeDeclSymbol, enclosingDecl, context);
+                typeDeclSymbol = this.instantiateTypeToAny(typeDeclSymbol, context);
             }
 
             return typeDeclSymbol;
@@ -3055,7 +3055,7 @@ module TypeScript {
             this.checkFunctionTypePrivacy(
                 funcDeclAST, funcDeclAST.getFunctionFlags(), null, funcDeclAST.parameterList, null, funcDeclAST.block, context);
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
             // It is a constructor or function
             var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
@@ -3306,7 +3306,7 @@ module TypeScript {
 
             var funcSymbol = funcDecl.getSymbol();
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
             var hadError = false;
 
@@ -6091,9 +6091,6 @@ module TypeScript {
 
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
-            var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
-            
-            context.isResolvingClassExtendedType = false;
 
             if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
                 for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
@@ -6104,7 +6101,6 @@ module TypeScript {
                     }
                 }
             }
-            context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
 
             var typeParameters = genericTypeSymbol.getTypeParameters()
 
@@ -7720,7 +7716,7 @@ module TypeScript {
                                     }
                                     context.isComparingInstantiatedSignatures = true;
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                        constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
+                                        constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeConstraint.toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeParameters[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true)]);
                                         couldNotAssignToConstraint = true;
                                     }
                                     context.isComparingInstantiatedSignatures = false;

@@ -345,7 +345,7 @@ module TypeScript {
 
         public isArrayNamedTypeReference(): boolean {
             if (this._isArray === undefined) {
-                this._isArray = this.getRootSymbol().isArrayNamedTypeReference() || (this.getRootSymbol() == globalResolver.getCachedArrayType());
+                this._isArray = this.getRootSymbol().isArrayNamedTypeReference() || (this.getRootSymbol() == globalResolver.getArrayNamedType());
             }
             return this._isArray;
         }
