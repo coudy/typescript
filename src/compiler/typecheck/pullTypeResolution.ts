@@ -765,10 +765,6 @@ module TypeScript {
             return (type === this.semanticInfoChain.anyTypeSymbol) || type.isError();
         }
 
-        private isNumberOrEquivalent(type: PullTypeSymbol) {
-            return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType() && type === this.cachedNumberInterfaceType());
-        }
-
         public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
             if (!type) {
                 return false;
@@ -927,26 +923,6 @@ module TypeScript {
                     symbol.type = resolvedSymbol.type;
                     symbol.setResolved();
                 }
-            }
-
-            var typeArgs = symbol.isType() ? (<PullTypeSymbol>symbol).getTypeArguments() : null;
-
-            if (typeArgs && typeArgs.length) {
-                var typeParameters = (<PullTypeSymbol>symbol).getTypeParameters();
-                var typeCache: any = {};
-
-                for (var i = 0; i < typeParameters.length; i++) {
-                    typeCache[typeParameters[i].pullSymbolIDString] = typeArgs[i];
-                }
-
-                context.pushTypeSpecializationCache(typeCache);
-                var rootType = getRootType(symbol.type);
-
-                var specializedSymbol = specializeType(rootType, typeArgs, this, context);
-
-                context.popTypeSpecializationCache();
-
-                symbol = specializedSymbol;
             }
 
             this.setUnitPath(thisUnit);
