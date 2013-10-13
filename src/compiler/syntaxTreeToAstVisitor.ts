@@ -1638,7 +1638,7 @@ module TypeScript {
             return result;
         }
 
-        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): GetMemberAccessorDeclaration {
+        public visitGetAccessor(node: GetAccessorSyntax): GetAccessor {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
@@ -1648,7 +1648,7 @@ module TypeScript {
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new GetMemberAccessorDeclaration(name, parameters, returnType, block);
+            var result = new GetAccessor(name, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
@@ -1665,7 +1665,7 @@ module TypeScript {
             return result;
         }
 
-        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): SetMemberAccessorDeclaration {
+        public visitSetAccessor(node: SetAccessorSyntax): SetAccessor {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
@@ -1674,7 +1674,7 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new SetMemberAccessorDeclaration(name, parameters, block);
+            var result = new SetAccessor(name, parameters, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
@@ -2004,55 +2004,6 @@ module TypeScript {
                 propertyName, typeParameters, parameters, returnType, block);
 
             this.setCommentsAndSpan(result, start, node);
-
-            return result;
-        }
-
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): GetAccessorPropertyAssignment {
-            var start = this.position;
-
-            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
-            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
-
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            this.movePast(node.propertyName);
-            var parameterList = node.parameterList.accept(this);
-            var returnType = node.typeAnnotation
-                ? node.typeAnnotation.accept(this)
-                : null;
-
-            var block = node.block ? node.block.accept(this) : null;
-
-            var result = new GetAccessorPropertyAssignment(functionName, parameterList, returnType, block);
-            this.setSpan(result, start, node);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
-
-            return result;
-        }
-
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): SetAccessorPropertyAssignment {
-            var start = this.position;
-
-            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
-            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
-
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            this.movePast(node.propertyName);
-            var parameterList = node.parameterList.accept(this);
-
-            var block = node.block ? node.block.accept(this) : null;
-
-            var result = new SetAccessorPropertyAssignment(functionName, parameterList, block);
-            this.setSpan(result, start, node);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
 
             return result;
         }
@@ -2733,20 +2684,20 @@ module TypeScript {
             return result;
         }
 
-        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): GetMemberAccessorDeclaration {
-            var result: GetMemberAccessorDeclaration = this.getAndMovePastAST(node);
+        public visitGetAccessor(node: GetAccessorSyntax): GetAccessor {
+            var result: GetAccessor = this.getAndMovePastAST(node);
             if (!result) {
-                result = super.visitGetMemberAccessorDeclaration(node);
+                result = super.visitGetAccessor(node);
                 this.setAST(node, result);
             }
 
             return result;
         }
 
-        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): SetMemberAccessorDeclaration {
-            var result: SetMemberAccessorDeclaration = this.getAndMovePastAST(node);
+        public visitSetAccessor(node: SetAccessorSyntax): SetAccessor {
+            var result: SetAccessor = this.getAndMovePastAST(node);
             if (!result) {
-                result = super.visitSetMemberAccessorDeclaration(node);
+                result = super.visitSetAccessor(node);
                 this.setAST(node, result);
             }
 
@@ -2917,26 +2868,6 @@ module TypeScript {
             var result: FunctionPropertyAssignment = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitFunctionPropertyAssignment(node);
-                this.setAST(node, result);
-            }
-
-            return result;
-        }
-
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): GetAccessorPropertyAssignment {
-            var result: GetAccessorPropertyAssignment = this.getAndMovePastAST(node);
-            if (!result) {
-                result = super.visitGetAccessorPropertyAssignment(node);
-                this.setAST(node, result);
-            }
-
-            return result;
-        }
-
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): SetAccessorPropertyAssignment {
-            var result: SetAccessorPropertyAssignment = this.getAndMovePastAST(node);
-            if (!result) {
-                result = super.visitSetAccessorPropertyAssignment(node);
                 this.setAST(node, result);
             }
 

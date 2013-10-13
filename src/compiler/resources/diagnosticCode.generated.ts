@@ -352,7 +352,6 @@ module TypeScript {
         Invalid_call_to_up: "Invalid call to 'up'",
         Invalid_call_to_down: "Invalid call to 'down'",
         Base64_value_0_finished_with_a_continuation_bit: "Base64 value '{0}' finished with a continuation bit.",
-        Key_was_already_in_table: "Key was already in table.",
         Unknown_option_0: "Unknown option '{0}'",
         Expected_0_arguments_to_message_got_1_instead: "Expected {0} arguments to message, got {1} instead.",
         Expected_the_message_0_to_have_1_arguments_but_it_had_2: "Expected the message '{0}' to have {1} arguments, but it had {2}",

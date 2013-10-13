@@ -1233,24 +1233,42 @@ module TypeScript {
             this.setContainer(temp);
         }
 
-        public emitGetMemberAccessorDeclaration(funcDecl: GetMemberAccessorDeclaration): void {
+        public emitGetAccessor(accessor: GetAccessor): void {
+            if (accessor.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) {
+                this.emitGetAccessorPropertyAssignment(accessor);
+            }
+            else {
+                this.emitGetMemberAccessorDeclaration(accessor);
+            }
+        }
+
+        public emitSetAccessor(accessor: SetAccessor): void {
+            if (accessor.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) {
+                this.emitSetAccessorPropertyAssignment(accessor);
+            }
+            else {
+                this.emitSetMemberAccessorDeclaration(accessor);
+            }
+        }
+
+        public emitGetMemberAccessorDeclaration(funcDecl: GetAccessor): void {
             var functionFlags = funcDecl.getFunctionFlags();
             if (hasFlag(functionFlags, FunctionFlags.Static)) {
                 if (this.thisClassNode) {
                     this.writeLineToOutput("");
 
-                    this.emitGetAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
+                    this.emitGetAccessorWorker(funcDecl, this.thisClassNode.identifier.actualText, false);
                 }
             }
         }
 
-        public emitSetMemberAccessorDeclaration(funcDecl: SetMemberAccessorDeclaration): void {
+        public emitSetMemberAccessorDeclaration(funcDecl: SetAccessor): void {
             var functionFlags = funcDecl.getFunctionFlags();
             if (hasFlag(functionFlags, FunctionFlags.Static)) {
                 if (this.thisClassNode) {
                     this.writeLineToOutput("");
 
-                    this.emitSetAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
+                    this.emitSetAccessorWorker(funcDecl, this.thisClassNode.identifier.actualText, false);
                 }
             }
         }
@@ -2042,16 +2060,16 @@ module TypeScript {
             ast.emit(this);
         }
 
-        private emitGetAccessor(funcDecl: GetMemberAccessorDeclaration, className: string, isProto: boolean) {
-            this.emitPropertyAccessor(funcDecl, funcDecl.propertyName, className, isProto);
+        private emitGetAccessorWorker(funcDecl: GetAccessor, className: string, isProto: boolean) {
+            this.emitAccessorMemberDeclaration(funcDecl, funcDecl.propertyName, className, isProto);
         }
 
-        private emitSetAccessor(funcDecl: SetMemberAccessorDeclaration, className: string, isProto: boolean) {
-            this.emitPropertyAccessor(funcDecl, funcDecl.propertyName, className, isProto);
+        private emitSetAccessorWorker(funcDecl: SetAccessor, className: string, isProto: boolean) {
+            this.emitAccessorMemberDeclaration(funcDecl, funcDecl.propertyName, className, isProto);
         }
 
-        public emitPropertyAccessor(funcDecl: AST, name: Identifier, className: string, isProto: boolean) {
-            if (funcDecl.nodeType() !== NodeType.GetMemberAccessorDeclaration) {
+        public emitAccessorMemberDeclaration(funcDecl: AST, name: Identifier, className: string, isProto: boolean) {
+            if (funcDecl.nodeType() !== NodeType.GetAccessor) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
                 if (accessorSymbol.getGetter()) {
                     return;
@@ -2268,17 +2286,17 @@ module TypeScript {
             for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
                 var memberDecl = classDecl.classElements.members[i];
 
-                if (memberDecl.nodeType() === NodeType.GetMemberAccessorDeclaration) {
+                if (memberDecl.nodeType() === NodeType.GetAccessor) {
                     this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
-                    var getter = <GetMemberAccessorDeclaration>memberDecl;
-                    this.emitPropertyAccessor(getter, getter.propertyName, classDecl.identifier.actualText,
+                    var getter = <GetAccessor>memberDecl;
+                    this.emitAccessorMemberDeclaration(getter, getter.propertyName, classDecl.identifier.actualText,
                         !hasFlag(getter.getFunctionFlags(), FunctionFlags.Static));
                     lastEmittedMember = memberDecl;
                 }
-                else if (memberDecl.nodeType() === NodeType.SetMemberAccessorDeclaration) {
+                else if (memberDecl.nodeType() === NodeType.SetAccessor) {
                     this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
-                    var setter = <SetMemberAccessorDeclaration>memberDecl;
-                    this.emitPropertyAccessor(setter, setter.propertyName, classDecl.identifier.actualText,
+                    var setter = <SetAccessor>memberDecl;
+                    this.emitAccessorMemberDeclaration(setter, setter.propertyName, classDecl.identifier.actualText,
                         !hasFlag(setter.getFunctionFlags(), FunctionFlags.Static));
                     lastEmittedMember = memberDecl;
                 }
@@ -2662,7 +2680,7 @@ module TypeScript {
             this.recordSourceMappingEnd(funcProp);
         }
 
-        public emitGetAccessorPropertyAssignment(property: GetAccessorPropertyAssignment): void {
+        public emitGetAccessorPropertyAssignment(property: GetAccessor): void {
             this.recordSourceMappingStart(property);
             this.writeToOutput("get ");
 
@@ -2709,7 +2727,7 @@ module TypeScript {
             this.recordSourceMappingEnd(property);
         }
 
-        public emitSetAccessorPropertyAssignment(property: SetAccessorPropertyAssignment): void {
+        public emitSetAccessorPropertyAssignment(property: SetAccessor): void {
             this.recordSourceMappingStart(property);
             this.writeToOutput("set ");
 

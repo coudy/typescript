@@ -1406,10 +1406,6 @@ module TypeScript {
     "code": 5021,
     "category": DiagnosticCategory.Error
   },
-  "Key was already in table.": {
-    "code": 5022,
-    "category": DiagnosticCategory.Error
-  },
   "Unknown option '{0}'": {
     "code": 5023,
     "category": DiagnosticCategory.Error

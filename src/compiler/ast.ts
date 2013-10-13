@@ -643,63 +643,7 @@ module TypeScript {
         }
     }
 
-    export class GetAccessorPropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.GetAccessorPropertyAssignment;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return FunctionFlags.Public;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitGetAccessorPropertyAssignment(this);
-        }
-    }
-
-    export class SetAccessorPropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-                    public parameterList: ASTList,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            parameterList && (parameterList.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.SetAccessorPropertyAssignment;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return FunctionFlags.Public;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitSetAccessorPropertyAssignment(this);
-        }
-    }
-
-    export class GetMemberAccessorDeclaration extends AST {
+    export class GetAccessor extends AST {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
         constructor(public propertyName: Identifier,
@@ -714,7 +658,7 @@ module TypeScript {
         }
 
         public nodeType(): NodeType {
-            return NodeType.GetMemberAccessorDeclaration;
+            return NodeType.GetAccessor;
         }
 
         public setFunctionFlags(flags: FunctionFlags): void {
@@ -730,11 +674,11 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter): void {
-            emitter.emitGetMemberAccessorDeclaration(this);
+            emitter.emitGetAccessor(this);
         }
     }
 
-    export class SetMemberAccessorDeclaration extends AST {
+    export class SetAccessor extends AST {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
         constructor(public propertyName: Identifier,
@@ -747,7 +691,7 @@ module TypeScript {
         }
 
         public nodeType(): NodeType {
-            return NodeType.SetMemberAccessorDeclaration;
+            return NodeType.SetAccessor;
         }
 
         public setFunctionFlags(flags: FunctionFlags): void {
@@ -763,7 +707,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter): void {
-            emitter.emitSetMemberAccessorDeclaration(this);
+            emitter.emitSetAccessor(this);
         }
     }
 

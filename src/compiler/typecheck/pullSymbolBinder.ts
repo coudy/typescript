@@ -2131,9 +2131,9 @@ module TypeScript {
         private getNameOfAccessor(ast: AST): Identifier {
             return ast.nodeType() === NodeType.FunctionDeclaration
                 ? (<FunctionDeclaration>ast).name
-                : ast.nodeType() === NodeType.GetAccessorPropertyAssignment
-                    ? (<GetAccessorPropertyAssignment>ast).propertyName
-                    : (<SetAccessorPropertyAssignment>ast).propertyName;
+                : ast.nodeType() === NodeType.GetAccessor
+                    ? (<GetAccessor>ast).propertyName
+                    : (<SetAccessor>ast).propertyName;
         }
 
         // binding

@@ -902,7 +902,9 @@ module TypeScript {
 
                 // if it's an object literal member, just return the symbol and wait for
                 // the object lit to be resolved
-                if (!ast || ast.nodeType() === NodeType.GetAccessorPropertyAssignment || ast.nodeType() === NodeType.SetAccessorPropertyAssignment) {
+                if (!ast ||
+                    (ast.nodeType() === NodeType.GetAccessor && ast.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) ||
+                    (ast.nodeType() === NodeType.SetAccessor && ast.parent.parent.nodeType() === NodeType.ObjectLiteralExpression)) {
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
                     this.setUnitPath(thisUnit);
                     return symbol;
@@ -3672,7 +3674,7 @@ module TypeScript {
         }
 
         private resolveGetterReturnTypeAnnotation(
-            getterFunctionDeclarationAst: GetMemberAccessorDeclaration,
+            getterFunctionDeclarationAst: GetAccessor,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
@@ -3684,7 +3686,7 @@ module TypeScript {
         }
 
         private resolveSetterArgumentTypeAnnotation(
-            setterFunctionDeclarationAst: SetMemberAccessorDeclaration,
+            setterFunctionDeclarationAst: SetAccessor,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
@@ -3716,11 +3718,11 @@ module TypeScript {
             }
 
             var getterSymbol = accessorSymbol.getGetter();
-            var getterFunctionDeclarationAst = <GetMemberAccessorDeclaration>this.getASTForSymbol(getterSymbol, context);
+            var getterFunctionDeclarationAst = <GetAccessor>this.getASTForSymbol(getterSymbol, context);
             var hasGetter = getterSymbol !== null;
 
             var setterSymbol = accessorSymbol.getSetter();
-            var setterFunctionDeclarationAst = <SetMemberAccessorDeclaration>this.getASTForSymbol(setterSymbol, context);
+            var setterFunctionDeclarationAst = <SetAccessor>this.getASTForSymbol(setterSymbol, context);
             var hasSetter = setterSymbol !== null;
 
             var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(
@@ -4900,8 +4902,8 @@ module TypeScript {
                 case NodeType.FunctionDeclaration:
                 case NodeType.FunctionPropertyAssignment:
                 case NodeType.ConstructorDeclaration:
-                case NodeType.GetAccessorPropertyAssignment:
-                case NodeType.SetAccessorPropertyAssignment:
+                case NodeType.GetAccessor:
+                case NodeType.SetAccessor:
                     return true;
             }
 
@@ -5099,12 +5101,6 @@ module TypeScript {
                 case NodeType.FunctionPropertyAssignment:
                     return this.resolveFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
-                case NodeType.GetAccessorPropertyAssignment:
-                    return this.resolveGetAccessorPropertyAssignment(<GetAccessorPropertyAssignment>ast, context);
-
-                case NodeType.SetAccessorPropertyAssignment:
-                    return this.resolveSetAccessorPropertyAssignment(<SetAccessorPropertyAssignment>ast, context);
-
                 case NodeType.GenericType:
                     return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
 
@@ -5125,8 +5121,8 @@ module TypeScript {
                 case NodeType.ConstructorDeclaration:
                     return this.resolveConstructorDeclaration(<ConstructorDeclaration>ast, context);
 
-                case NodeType.GetMemberAccessorDeclaration:
-                case NodeType.SetMemberAccessorDeclaration:
+                case NodeType.GetAccessor:
+                case NodeType.SetAccessor:
                     return this.resolveAccessorDeclaration(ast, context);
 
                 case NodeType.FunctionDeclaration:
@@ -5408,18 +5404,22 @@ module TypeScript {
                     this.typeCheckConstructorDeclaration(<ConstructorDeclaration>ast, context);
                     return;
 
-                case NodeType.GetMemberAccessorDeclaration:
-                    var getAccessor = <GetMemberAccessorDeclaration>ast;
-                    this.typeCheckGetAccessorDeclaration(
-                        getAccessor, getAccessor.getFunctionFlags(), getAccessor.propertyName, getAccessor.parameterList,
-                        getAccessor.returnTypeAnnotation, getAccessor.block, context);
+                case NodeType.GetAccessor:
+                    var getAccessor = <GetAccessor>ast;
+                    if (getAccessor.parent.nodeType() !== NodeType.ObjectLiteralExpression) {
+                        this.typeCheckGetAccessorDeclaration(
+                            getAccessor, getAccessor.getFunctionFlags(), getAccessor.propertyName, getAccessor.parameterList,
+                            getAccessor.returnTypeAnnotation, getAccessor.block, context);
+                    }
                     break;
 
-                case NodeType.SetMemberAccessorDeclaration:
-                    var setAccessor = <SetMemberAccessorDeclaration>ast;
-                    this.typeCheckSetAccessorDeclaration(
-                        setAccessor, setAccessor.getFunctionFlags(), setAccessor.propertyName, setAccessor.parameterList,
-                        setAccessor.block, context);
+                case NodeType.SetAccessor:
+                    var setAccessor = <SetAccessor>ast;
+                    if (setAccessor.parent.nodeType() !== NodeType.ObjectLiteralExpression) {
+                        this.typeCheckSetAccessorDeclaration(
+                            setAccessor, setAccessor.getFunctionFlags(), setAccessor.propertyName, setAccessor.parameterList,
+                            setAccessor.block, context);
+                    }
                     break;
 
                 case NodeType.FunctionExpression:
@@ -6941,14 +6941,6 @@ module TypeScript {
                 inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
-        private resolveGetAccessorPropertyAssignment(propertyAssignment: GetAccessorPropertyAssignment, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveAccessorDeclaration(propertyAssignment, context);
-        }
-
-        private resolveSetAccessorPropertyAssignment(propertyAssignment: SetAccessorPropertyAssignment, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveAccessorDeclaration(propertyAssignment, context);
-        }
-
         public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             var symbol = this.getSymbolForAST(expressionAST, context);
 
@@ -6982,7 +6974,7 @@ module TypeScript {
                     return false;
                 }
 
-                var isAccessor = propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment || propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment;
+                var isAccessor = propertyAssignment.nodeType() === NodeType.GetAccessor || propertyAssignment.nodeType() === NodeType.SetAccessor;
                 var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
                 Debug.assert(decl);
 
@@ -7090,7 +7082,7 @@ module TypeScript {
                     pullTypeContext.popContextualType();
                 }
 
-                var isAccessor = propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment || propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment;
+                var isAccessor = propertyAssignment.nodeType() === NodeType.SetAccessor || propertyAssignment.nodeType() === NodeType.GetAccessor;
                 if (!isUsingExistingSymbol) {
                     if (isAccessor) {
                         this.setSymbolForAST(id, memberExpr, pullTypeContext);
@@ -7212,11 +7204,11 @@ module TypeScript {
             else if (propertyAssignment.nodeType() === NodeType.FunctionPropertyAssignment) {
                 return (<FunctionPropertyAssignment>propertyAssignment).propertyName;
             }
-            else if (propertyAssignment.nodeType() === NodeType.GetAccessorPropertyAssignment) {
-                return (<GetAccessorPropertyAssignment>propertyAssignment).propertyName;
+            else if (propertyAssignment.nodeType() === NodeType.GetAccessor) {
+                return (<GetAccessor>propertyAssignment).propertyName;
             }
-            else if (propertyAssignment.nodeType() === NodeType.SetAccessorPropertyAssignment) {
-                return (<SetAccessorPropertyAssignment>propertyAssignment).propertyName;
+            else if (propertyAssignment.nodeType() === NodeType.SetAccessor) {
+                return (<SetAccessor>propertyAssignment).propertyName;
             }
             else {
                 Debug.assert(false);
@@ -10888,8 +10880,8 @@ module TypeScript {
 
             if (funcDeclAST.nodeType() === NodeType.FunctionExpression ||
                 funcDeclAST.nodeType() === NodeType.FunctionPropertyAssignment ||
-                funcDeclAST.nodeType() === NodeType.GetAccessorPropertyAssignment ||
-                funcDeclAST.nodeType() === NodeType.SetAccessorPropertyAssignment) {
+                (funcDeclAST.nodeType() === NodeType.GetAccessor && funcDeclAST.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) ||
+                (funcDeclAST.nodeType() === NodeType.SetAccessor && funcDeclAST.parent.parent.nodeType() === NodeType.ObjectLiteralExpression)) {
                 return;
             }
 
@@ -10897,8 +10889,8 @@ module TypeScript {
             var functionSymbol = functionDecl.getSymbol();;
             var functionSignature: PullSignatureSymbol;
 
-            var isGetter = funcDeclAST.nodeType() === NodeType.GetMemberAccessorDeclaration;
-            var isSetter = funcDeclAST.nodeType() === NodeType.SetMemberAccessorDeclaration;
+            var isGetter = funcDeclAST.nodeType() === NodeType.GetAccessor;
+            var isSetter = funcDeclAST.nodeType() === NodeType.SetAccessor;
             var isIndexSignature = functionDecl.kind === PullElementKind.IndexSignature;
 
             if (isGetter || isSetter) {
@@ -11033,8 +11025,8 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
-            var isGetter = declAST.nodeType() === NodeType.GetMemberAccessorDeclaration || declAST.nodeType() === NodeType.GetAccessorPropertyAssignment;
-            var isSetter = declAST.nodeType() === NodeType.SetMemberAccessorDeclaration || declAST.nodeType() === NodeType.SetAccessorPropertyAssignment;
+            var isGetter = declAST.nodeType() === NodeType.GetAccessor;
+            var isSetter = declAST.nodeType() === NodeType.SetAccessor;
             var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
@@ -11128,8 +11120,8 @@ module TypeScript {
             var decl = this.semanticInfoChain.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
 
-            var isGetter = declAST.nodeType() === NodeType.GetMemberAccessorDeclaration || declAST.nodeType() === NodeType.GetAccessorPropertyAssignment;
-            var isSetter = declAST.nodeType() === NodeType.SetMemberAccessorDeclaration || declAST.nodeType() === NodeType.SetAccessorPropertyAssignment;
+            var isGetter = declAST.nodeType() === NodeType.GetAccessor;
+            var isSetter = declAST.nodeType() === NodeType.SetAccessor;
             var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;

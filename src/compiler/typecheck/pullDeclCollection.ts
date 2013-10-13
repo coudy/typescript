@@ -622,7 +622,7 @@ module TypeScript {
         context.pushParent(decl);
     }
 
-    function createGetAccessorDeclaration(getAccessorDeclAST: GetMemberAccessorDeclaration, context: DeclCollectionContext): void {
+    function createGetAccessorDeclaration(getAccessorDeclAST: GetAccessor, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.GetAccessor;
 
@@ -656,7 +656,7 @@ module TypeScript {
         createAnyFunctionExpressionDeclaration(expression, expression.name, context);
     }
 
-    function createSetAccessorDeclaration(setAccessorDeclAST: SetMemberAccessorDeclaration, context: DeclCollectionContext): void {
+    function createSetAccessorDeclaration(setAccessorDeclAST: SetAccessor, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
 
@@ -731,44 +731,6 @@ module TypeScript {
         context.pushParent(decl);
     }
 
-    function preCollectGetAccessorPropertyAssignmentDecls(propertyAssignment: GetAccessorPropertyAssignment, context: DeclCollectionContext): void {
-        var declFlags = PullElementFlags.Public;
-        var declType = PullElementKind.GetAccessor;
-
-        var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
-
-        var parent = context.getParent();
-
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
-            declFlags |= PullElementFlags.DeclaredInAWithBlock;
-        }
-
-        var decl = new NormalPullDecl(propertyAssignment.propertyName.text(), propertyAssignment.propertyName.actualText, declType, declFlags, parent, span);
-        context.semanticInfoChain.setDeclForAST(propertyAssignment, decl);
-        context.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
-
-        context.pushParent(decl);
-    }
-
-    function preCollectSetAccessorPropertyAssignmentDecls(propertyAssignment: SetAccessorPropertyAssignment, context: DeclCollectionContext): void {
-        var declFlags = PullElementFlags.Public;
-        var declType = PullElementKind.SetAccessor;
-
-        var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
-
-        var parent = context.getParent();
-
-        if (parent && (parent.kind === PullElementKind.WithBlock || (parent.flags & PullElementFlags.DeclaredInAWithBlock))) {
-            declFlags |= PullElementFlags.DeclaredInAWithBlock;
-        }
-
-        var decl = new NormalPullDecl(propertyAssignment.propertyName.text(), propertyAssignment.propertyName.actualText, declType, declFlags, parent, span);
-        context.semanticInfoChain.setDeclForAST(propertyAssignment, decl);
-        context.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
-
-        context.pushParent(decl);
-    }
-
     function preCollectSimplePropertyAssignmentDecls(propertyAssignment: SimplePropertyAssignment, context: DeclCollectionContext): void {
         var assignmentText = getPropertyAssignmentNameTextFromIdentifier(propertyAssignment.propertyName);
         var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
@@ -831,11 +793,11 @@ module TypeScript {
             case NodeType.ConstructorDeclaration:
                 createClassConstructorDeclaration(<ConstructorDeclaration>ast, context);
                 break;
-            case NodeType.GetMemberAccessorDeclaration:
-                createGetAccessorDeclaration(<GetMemberAccessorDeclaration>ast, context);
+            case NodeType.GetAccessor:
+                createGetAccessorDeclaration(<GetAccessor>ast, context);
                 break;
-            case NodeType.SetMemberAccessorDeclaration:
-                createSetAccessorDeclaration(<SetMemberAccessorDeclaration>ast, context);
+            case NodeType.SetAccessor:
+                createSetAccessorDeclaration(<SetAccessor>ast, context);
                 break;
             case NodeType.FunctionExpression:
                 createFunctionExpressionDeclaration(<FunctionExpression>ast, context);
@@ -891,12 +853,6 @@ module TypeScript {
                 break;
             case NodeType.FunctionPropertyAssignment:
                 preCollectFunctionPropertyAssignmentDecls(<FunctionPropertyAssignment>ast, context);
-                break;
-            case NodeType.GetAccessorPropertyAssignment:
-                preCollectGetAccessorPropertyAssignmentDecls(<GetAccessorPropertyAssignment>ast, context);
-                break;
-            case NodeType.SetAccessorPropertyAssignment:
-                preCollectSetAccessorPropertyAssignmentDecls(<SetAccessorPropertyAssignment>ast, context);
                 break;
         }
 
@@ -1039,8 +995,8 @@ module TypeScript {
             case NodeType.FunctionPropertyAssignment:
             case NodeType.FunctionDeclaration:
             case NodeType.FunctionExpression:
-            case NodeType.GetMemberAccessorDeclaration:
-            case NodeType.SetMemberAccessorDeclaration:
+            case NodeType.GetAccessor:
+            case NodeType.SetAccessor:
             case NodeType.ArrowFunctionExpression:
                 context.popParent();
 
@@ -1082,10 +1038,6 @@ module TypeScript {
                 context.popParent();
                 break;
             case NodeType.ObjectLiteralExpression:
-                context.popParent();
-                break;
-            case NodeType.GetAccessorPropertyAssignment:
-            case NodeType.SetAccessorPropertyAssignment:
                 context.popParent();
                 break;
             case NodeType.SimplePropertyAssignment:

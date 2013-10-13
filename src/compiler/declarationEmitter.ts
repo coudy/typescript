@@ -88,10 +88,10 @@ module TypeScript {
                     return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
                 case NodeType.ConstructorDeclaration:
                     return this.emitDeclarationsForConstructorDeclaration(<ConstructorDeclaration>ast);
-                case NodeType.GetMemberAccessorDeclaration:
-                    return this.emitDeclarationsForGetMemberAccessorDeclaration(<GetMemberAccessorDeclaration>ast);
-                case NodeType.SetMemberAccessorDeclaration:
-                    return this.emitDeclarationsForSetMemberAccessorDeclaration(<SetMemberAccessorDeclaration>ast);
+                case NodeType.GetAccessor:
+                    return this.emitDeclarationsForGetAccessor(<GetAccessor>ast);
+                case NodeType.SetAccessor:
+                    return this.emitDeclarationsForSetAccessor(<SetAccessor>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.ClassDeclaration:
@@ -632,20 +632,20 @@ module TypeScript {
             this.writeDeclarationComments(comments);
         }
 
-        private emitDeclarationsForGetMemberAccessorDeclaration(funcDecl: GetMemberAccessorDeclaration): void {
-            this.emitPropertyAccessorSignature(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
+        private emitDeclarationsForGetAccessor(funcDecl: GetAccessor): void {
+            this.emitMemberAccessorDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
         }
 
-        private emitDeclarationsForSetMemberAccessorDeclaration(funcDecl: SetMemberAccessorDeclaration): void {
-            this.emitPropertyAccessorSignature(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
+        private emitDeclarationsForSetAccessor(funcDecl: SetAccessor): void {
+            this.emitMemberAccessorDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
         }
 
-        private emitPropertyAccessorSignature(funcDecl: AST, flags: FunctionFlags, name: Identifier) {
+        private emitMemberAccessorDeclaration(funcDecl: AST, flags: FunctionFlags, name: Identifier) {
             var start = new Date().getTime();
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
             TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
-            if (funcDecl.nodeType() === NodeType.SetMemberAccessorDeclaration && accessorSymbol.getGetter()) {
+            if (funcDecl.nodeType() === NodeType.SetAccessor && accessorSymbol.getGetter()) {
                 // Setter is being used to emit the type info. 
                 return;
             }
