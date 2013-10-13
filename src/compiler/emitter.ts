@@ -682,20 +682,6 @@ module TypeScript {
         }
 
         public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, includePreComments = true) {
-
-            /// REVIEW: The code below causes functions to get pushed to a newline in cases where they shouldn't
-            /// such as: 
-            ///     Foo.prototype.bar = 
-            ///         function() {
-            ///         };
-            /// Once we start emitting comments, we should pull this code out to place on the outer context where the function
-            /// is used.
-            //if (funcDecl.preComments!=null && funcDecl.preComments.length>0) {
-            //    this.writeLineToOutput("");
-            //    this.increaseIndent();
-            //    emitIndent();
-            //}
-
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             this.pushDecl(pullDecl);
 
@@ -721,27 +707,10 @@ module TypeScript {
 
             this.writeToOutput("(");
             this.emitFunctionParameters(funcDecl.parameterList);
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.recordSourceMappingNameStart(funcDecl.getNameText());
-            this.indenter.increaseIndent();
+            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, funcDecl.parameterList, funcDecl.block);
 
-            this.emitDefaultValueAssignments(funcDecl.parameterList);
-            this.emitRestParameterInitializer(funcDecl.parameterList);
-
-            if (this.shouldCaptureThis(funcDecl)) {
-                this.writeCaptureThisStatement(funcDecl);
-            }
-
-            this.emitList(funcDecl.block.statements);
-
-            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
@@ -750,6 +719,36 @@ module TypeScript {
             this.emitComments(funcDecl, false);
 
             this.popDecl(pullDecl);
+        }
+
+        private emitFunctionBodyStatements(name: string, funcDecl: AST, parameterList: ASTList, block: Block): void {
+            this.writeLineToOutput(" {");
+            if (name) {
+                this.recordSourceMappingNameStart(name);
+            }
+
+            this.indenter.increaseIndent();
+
+            if (parameterList) {
+                this.emitDefaultValueAssignments(parameterList);
+                this.emitRestParameterInitializer(parameterList);
+            }
+
+            if (this.shouldCaptureThis(funcDecl)) {
+                this.writeCaptureThisStatement(funcDecl);
+            }
+
+            this.emitList(block.statements);
+
+            this.emitCommentsArray(block.closeBraceLeadingComments, /*trailing:*/ false);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", block.closeBraceSpan);
+
+            if (name) {
+                this.recordSourceMappingNameEnd();
+            }
         }
 
         private emitDefaultValueAssignments(parameters: ASTList): void {
@@ -1149,28 +1148,10 @@ module TypeScript {
             this.writeToOutput("function ");
             this.writeToOutput("(");
             this.emitFunctionParameters(arrowFunction.parameterList);
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.recordSourceMappingNameStart(arrowFunction.getNameText());
+            this.emitFunctionBodyStatements(arrowFunction.getNameText(), arrowFunction, arrowFunction.parameterList, arrowFunction.block);
 
-            this.indenter.increaseIndent();
-
-            this.emitDefaultValueAssignments(arrowFunction.parameterList);
-            this.emitRestParameterInitializer(arrowFunction.parameterList);
-
-            if (this.shouldCaptureThis(arrowFunction)) {
-                this.writeCaptureThisStatement(arrowFunction);
-            }
-
-            this.emitList(arrowFunction.block.statements);
-
-            this.emitCommentsArray(arrowFunction.block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", arrowFunction.block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(arrowFunction);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
@@ -1194,7 +1175,7 @@ module TypeScript {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             this.pushDecl(pullDecl);
 
-                this.emitComments(funcDecl, true);
+            this.emitComments(funcDecl, true);
 
             this.recordSourceMappingStart(funcDecl);
             this.writeToOutput("function ");
@@ -1212,7 +1193,6 @@ module TypeScript {
             if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
             }
-
 
             this.emitConstructorStatements(funcDecl);
             this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments, /*trailing:*/ false);
@@ -1298,27 +1278,10 @@ module TypeScript {
 
             this.writeToOutput("(");
             this.emitFunctionParameters(funcDecl.parameterList);
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.recordSourceMappingNameStart(funcDecl.getNameText());
-            this.indenter.increaseIndent();
+            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, funcDecl.parameterList, funcDecl.block);
 
-            this.emitDefaultValueAssignments(funcDecl.parameterList);
-            this.emitRestParameterInitializer(funcDecl.parameterList);
-
-            if (this.shouldCaptureThis(funcDecl)) {
-                this.writeCaptureThisStatement(funcDecl);
-            }
-
-            this.emitList(funcDecl.block.statements);
-
-            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
@@ -2137,23 +2100,10 @@ module TypeScript {
 
             this.writeToOutput("(");
             this.emitFunctionParameters(parameterList);
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.indenter.increaseIndent();
+            this.emitFunctionBodyStatements(null, funcDecl, parameterList, block);
 
-            if (this.shouldCaptureThis(funcDecl)) {
-                this.writeCaptureThisStatement(funcDecl);
-            }
-
-            this.emitList(block.statements);
-
-            this.emitCommentsArray(block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
@@ -2645,26 +2595,10 @@ module TypeScript {
 
             this.writeToOutput("(");
             this.emitFunctionParameters(funcProp.parameterList);
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.recordSourceMappingNameStart(funcProp.propertyName.actualText);
-            this.indenter.increaseIndent();
+            this.emitFunctionBodyStatements(funcProp.propertyName.actualText, funcProp, funcProp.parameterList, funcProp.block);
 
-            this.emitDefaultValueAssignments(funcProp.parameterList);
-            this.emitRestParameterInitializer(funcProp.parameterList);
-
-            if (this.shouldCaptureThis(funcProp)) {
-                this.writeCaptureThisStatement(funcProp);
-            }
-
-            this.emitList(funcProp.block.statements);
-            this.emitCommentsArray(funcProp.block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", funcProp.block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcProp);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
@@ -2700,23 +2634,10 @@ module TypeScript {
             this.recordSourceMappingNameStart(property.propertyName.actualText);
             this.writeToOutput(property.propertyName.actualText);
             this.writeToOutput("(");
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.indenter.increaseIndent();
+            this.emitFunctionBodyStatements(null, property, property.parameterList, property.block);
 
-            if (this.shouldCaptureThis(property)) {
-                this.writeCaptureThisStatement(property);
-            }
-
-            this.emitList(property.block.statements);
-
-            this.emitCommentsArray(property.block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", property.block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(property);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
@@ -2748,26 +2669,10 @@ module TypeScript {
             this.writeToOutput(property.propertyName.actualText);
             this.writeToOutput("(");
             this.emitFunctionParameters(property.parameterList);
-            this.writeLineToOutput(") {");
+            this.writeToOutput(")");
 
-            this.indenter.increaseIndent();
+            this.emitFunctionBodyStatements(null, property, property.parameterList, property.block);
 
-            this.emitDefaultValueAssignments(property.parameterList);
-            this.emitRestParameterInitializer(property.parameterList);
-
-            if (this.shouldCaptureThis(property)) {
-                this.writeCaptureThisStatement(property);
-            }
-
-            this.emitList(property.block.statements);
-
-            this.emitCommentsArray(property.block.closeBraceLeadingComments, /*trailing:*/ false);
-
-            this.indenter.decreaseIndent();
-            this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", property.block.closeBraceSpan);
-
-            this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(property);
 
             // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
