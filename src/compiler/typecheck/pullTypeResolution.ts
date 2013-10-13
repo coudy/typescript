@@ -854,9 +854,6 @@ module TypeScript {
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = false;
 
-            var savedIsInStaticInitializer = context.isInStaticInitializer
-            context.isInStaticInitializer = false;
-
             var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = false;
 
@@ -871,7 +868,6 @@ module TypeScript {
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
-            context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
 
             return result;
@@ -2620,9 +2616,7 @@ module TypeScript {
             var wrapperDecl = this.getEnclosingDecl(decl);
             wrapperDecl = wrapperDecl ? wrapperDecl : enclosingDecl;
 
-            context.isInStaticInitializer = (decl.flags & PullElementFlags.Static) != 0;
             var initExprSymbol = this.resolveAST(init, typeExprSymbol != null, wrapperDecl, context);
-            context.isInStaticInitializer = false;
 
             if (typeExprSymbol) {
                 context.popContextualType();
@@ -2821,7 +2815,7 @@ module TypeScript {
         private checkSuperCaptureVariableCollides(superAST: AST, isDeclaration: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var declPath = enclosingDecl.getParentPath();
 
-            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
+            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(superAST, enclosingDecl, context);
 
             if (classSymbol && !classSymbol.hasFlag(PullElementFlags.Ambient)) {
                 if (superAST.nodeType() == NodeType.Parameter) {
@@ -6648,7 +6642,7 @@ module TypeScript {
         }
 
         private resolveThisExpression(thisExpression: ThisExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var thisTypeSymbol = this.computeThisTypeSymbol(enclosingDecl, context);
+            var thisTypeSymbol = this.computeThisTypeSymbol(thisExpression, enclosingDecl, context);
             if (this.canTypeCheckAST(thisExpression, context)) {
                 this.typeCheckThisExpression(thisExpression, enclosingDecl, context);
             }
@@ -6656,8 +6650,8 @@ module TypeScript {
             return thisTypeSymbol;
         }
 
-        private computeThisTypeSymbol(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            return this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context) || this.semanticInfoChain.anyTypeSymbol;
+        private computeThisTypeSymbol(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+            return this.getContextualClassSymbolForEnclosingDecl(ast, enclosingDecl, context) || this.semanticInfoChain.anyTypeSymbol;
         }
 
         private inTypeArgumentList(ast: AST): boolean {
@@ -6780,7 +6774,7 @@ module TypeScript {
         private typeCheckThisExpression(thisExpression: ThisExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
 
-            var thisTypeSymbol = this.computeThisTypeSymbol(enclosingDecl, context);
+            var thisTypeSymbol = this.computeThisTypeSymbol(thisExpression, enclosingDecl, context);
             var decls = thisTypeSymbol.getDeclarations();
             var classDecl = decls && decls[0] ? decls[0] : null;
 
@@ -6790,7 +6784,7 @@ module TypeScript {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_current_location));
             }
             else if (enclosingNonLambdaDecl) {
-                if (enclosingNonLambdaDecl.kind === PullElementKind.Class && context.isInStaticInitializer) {
+                if (enclosingNonLambdaDecl.kind === PullElementKind.Class && this.inStaticMemberVariableDeclaration(thisExpression)) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body));
                 }
                 else if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
@@ -6804,7 +6798,7 @@ module TypeScript {
             this.checkForThisCaptureInArrowFunction(thisExpression, enclosingDecl);
         }
 
-        private getContextualClassSymbolForEnclosingDecl(enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
+        private getContextualClassSymbolForEnclosingDecl(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var declPath = enclosingDecl.getParentPath();
 
             // work back up the decl path, until you can find a class
@@ -6826,7 +6820,7 @@ module TypeScript {
                         return null;
                     }
                     else if (declKind === PullElementKind.Class) {
-                        if (context.isInStaticInitializer) {
+                        if (this.inStaticMemberVariableDeclaration(ast)) {
                             return this.getNewErrorTypeSymbol();
                         }
                         else {
@@ -6844,6 +6838,18 @@ module TypeScript {
             }
 
             return null;
+        }
+
+        private inStaticMemberVariableDeclaration(ast: AST): boolean {
+            while (ast) {
+                if (ast.nodeType() === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>ast).getVarFlags(), VariableFlags.Static)) {
+                    return true;
+                }
+
+                ast = ast.parent;
+            }
+
+            return false;
         }
 
         private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
@@ -6866,7 +6872,7 @@ module TypeScript {
                 var declPath = enclosingDecl.getParentPath();
                 var superType = this.semanticInfoChain.anyTypeSymbol;
 
-                var classSymbol = this.getContextualClassSymbolForEnclosingDecl(enclosingDecl, context);
+                var classSymbol = this.getContextualClassSymbolForEnclosingDecl(ast, enclosingDecl, context);
 
                 if (classSymbol) {
                     this.resolveDeclaredSymbol(classSymbol, context);
@@ -6911,7 +6917,7 @@ module TypeScript {
                 }
                 // A super property access is permitted only in a constructor, instance member function, or instance member accessor
                 else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Class && nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
-                    context.isInStaticInitializer) {
+                    this.inStaticMemberVariableDeclaration(ast)) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class));
                 }
                 // A super is permitted only in a derived class 
