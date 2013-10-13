@@ -1691,7 +1691,7 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): MemberVariableDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.variableDeclarator);
@@ -1703,7 +1703,7 @@ module TypeScript {
             var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new VariableDeclarator(name, typeExpr, init);
+            var result = new MemberVariableDeclaration(name, typeExpr, init);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
@@ -1716,8 +1716,6 @@ module TypeScript {
             else {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Public);
             }
-
-            result.setVarFlags(result.getVarFlags() | VariableFlags.ClassProperty);
 
             return result;
         }
@@ -2704,8 +2702,8 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
-            var result: VariableDeclarator = this.getAndMovePastAST(node);
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): MemberVariableDeclaration {
+            var result: MemberVariableDeclaration = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitMemberVariableDeclaration(node);
                 this.setAST(node, result);

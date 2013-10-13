@@ -59,7 +59,6 @@ module TypeScript {
         Ambient = 1 << 3,
         Static = 1 << 4,
         Property = 1 << 8,
-        ClassProperty = 1 << 11,
         EnumElement = 1 << 13,
         ForInVariable = 1 << 14,
     }

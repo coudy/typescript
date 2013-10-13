@@ -213,9 +213,9 @@ module TypeScript {
         private copyrightElement: AST = null;
 
         constructor(public emittingFileName: string,
-                    public outfile: TextWriter,
-                    public emitOptions: EmitOptions,
-                    private semanticInfoChain: SemanticInfoChain) {
+            public outfile: TextWriter,
+            public emitOptions: EmitOptions,
+            private semanticInfoChain: SemanticInfoChain) {
         }
 
         private pushDecl(decl: PullDecl) {
@@ -1397,6 +1397,67 @@ module TypeScript {
             this.emitComments(declaration, false);
         }
 
+        public emitMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
+            var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
+            this.pushDecl(pullDecl);
+
+            this.emitComments(varDecl, true);
+            this.recordSourceMappingStart(varDecl);
+
+            var varDeclName = varDecl.id.actualText;
+            var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isNumber;
+
+            var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
+            var parentSymbol = symbol ? symbol.getContainer() : null;
+            var parentDecl = pullDecl && pullDecl.getParentDecl();
+
+            if (this.emitState.container !== EmitContainer.Args) {
+                if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static)) {
+                    if (quotedOrNumber) {
+                        this.writeToOutput(parentSymbol.getName() + "[");
+                    }
+                    else {
+                        this.writeToOutput(parentSymbol.getName() + ".");
+                    }
+                }
+                else {
+                    if (quotedOrNumber) {
+                        this.writeToOutput("this[");
+                    }
+                    else {
+                        this.writeToOutput("this.");
+                    }
+                }
+            }
+
+            this.writeToOutputWithSourceMapRecord(varDecl.id.actualText, varDecl.id);
+
+            if (quotedOrNumber) {
+                this.writeToOutput("]");
+            }
+
+            if (varDecl.init) {
+                this.writeToOutput(" = ");
+
+                // Ensure we have a fresh var list count when recursing into the variable 
+                // initializer.  We don't want our current list of variables to affect how we
+                // emit nested variable lists.
+                var prevVariableDeclaration = this.currentVariableDeclaration;
+                varDecl.init.emit(this);
+                this.currentVariableDeclaration = prevVariableDeclaration;
+            }
+
+            // class
+            if (this.emitState.container !== EmitContainer.Args) {
+                this.writeToOutput(";");
+            }
+
+            this.recordSourceMappingEnd(varDecl);
+            this.emitComments(varDecl, false);
+
+            this.popDecl(pullDecl);
+        }
+
         public emitVariableDeclarator(varDecl: VariableDeclarator) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             this.pushDecl(pullDecl);
@@ -1414,30 +1475,9 @@ module TypeScript {
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
                 var parentDecl = pullDecl && pullDecl.getParentDecl();
-                var parentIsClass = parentDecl && parentDecl.kind === PullElementKind.Class;
                 var parentIsModule = parentDecl && (parentDecl.flags & PullElementFlags.SomeInitializedModule);
-                if (parentIsClass) {
-                    // class
-                    if (this.emitState.container !== EmitContainer.Args) {
-                        if (varDecl.isStatic()) {
-                            if (quotedOrNumber) {
-                                this.writeToOutput(parentSymbol.getName() + "[");
-                            }
-                            else {
-                                this.writeToOutput(parentSymbol.getName() + ".");
-                            }
-                        }
-                        else {
-                            if (quotedOrNumber) {
-                                this.writeToOutput("this[");
-                            }
-                            else {
-                                this.writeToOutput("this.");
-                            }
-                        }
-                    }
-                }
-                else if (parentIsModule) {
+
+                if (parentIsModule) {
                     // module
                     if (!hasFlag(pullDecl.flags, PullElementFlags.Exported) && !varDecl.isProperty()) {
                         this.emitVarDeclVar();
@@ -1480,13 +1520,6 @@ module TypeScript {
                     var prevVariableDeclaration = this.currentVariableDeclaration;
                     varDecl.init.emit(this);
                     this.currentVariableDeclaration = prevVariableDeclaration;
-                }
-
-                if (parentIsClass) {
-                    // class
-                    if (this.emitState.container !== EmitContainer.Args) {
-                        this.writeToOutput(";");
-                    }
                 }
 
                 this.recordSourceMappingEnd(varDecl);
@@ -1781,11 +1814,11 @@ module TypeScript {
             }
 
             for (var i = 0, n = this.thisClassNode.classElements.members.length; i < n; i++) {
-                if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.VariableDeclarator) {
-                    var varDecl = <VariableDeclarator>this.thisClassNode.classElements.members[i];
+                if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.MemberVariableDeclaration) {
+                    var varDecl = <MemberVariableDeclaration>this.thisClassNode.classElements.members[i];
                     if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitIndent();
-                        this.emitVariableDeclarator(varDecl);
+                        this.emitMemberVariableDeclaration(varDecl);
                         this.writeLineToOutput("");
                     }
                 }
@@ -2288,8 +2321,8 @@ module TypeScript {
             for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
                 var memberDecl = classDecl.classElements.members[i];
 
-                if (memberDecl.nodeType() === NodeType.VariableDeclarator) {
-                    var varDecl = <VariableDeclarator>memberDecl;
+                if (memberDecl.nodeType() === NodeType.MemberVariableDeclaration) {
+                    var varDecl = <MemberVariableDeclaration>memberDecl;
 
                     if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, varDecl);

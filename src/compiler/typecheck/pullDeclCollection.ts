@@ -319,7 +319,7 @@ module TypeScript {
     }
 
     // class member variables
-    function createMemberVariableDeclaration(memberDecl: VariableDeclarator, context: DeclCollectionContext): void {
+    function createMemberVariableDeclaration(memberDecl: MemberVariableDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
@@ -383,10 +383,7 @@ module TypeScript {
     function preCollectVarDecls(ast: AST, context: DeclCollectionContext): void {
         var varDecl = <VariableDeclarator>ast;
 
-        if (hasFlag(varDecl.getVarFlags(), VariableFlags.ClassProperty)) {
-            createMemberVariableDeclaration(varDecl, context);
-        }
-        else if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property)) {
+        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property)) {
             createPropertySignature(varDecl, context);
         }
         else {
@@ -787,6 +784,9 @@ module TypeScript {
             case NodeType.Parameter:
                 preCollectParameterDecl(<Parameter>ast, context);
                 break;
+            case NodeType.MemberVariableDeclaration:
+                createMemberVariableDeclaration(<MemberVariableDeclaration>ast, context);
+                break;
             case NodeType.VariableDeclarator:
                 preCollectVarDecls(ast, context);
                 break;
@@ -968,6 +968,18 @@ module TypeScript {
                 // context.popParent();
                 break;
             case NodeType.VariableDeclarator:
+                // Note: a variable declarator does not introduce a new decl scope.  So there is no
+                // need to pop a decl here.
+                // context.popParent();
+
+                parentDecl = context.getParent();
+
+                if (parentDecl && isContainer(parentDecl)) {
+                    initFlag = getInitializationFlag(parentDecl);
+                    parentDecl.setFlags(parentDecl.flags | initFlag);
+                }
+                break;
+            case NodeType.MemberVariableDeclaration:
                 // Note: a variable declarator does not introduce a new decl scope.  So there is no
                 // need to pop a decl here.
                 // context.popParent();

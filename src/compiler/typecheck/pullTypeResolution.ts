@@ -2365,10 +2365,19 @@ module TypeScript {
                 this.isTypeRefWithoutTypeArgs(term);
         }
 
+        private resolveMemberVariableDeclaration(
+            varDecl: MemberVariableDeclaration,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): PullSymbol {
+
+            return this.resolveVariableDeclaratorOrParameterOrEnumElement(
+                varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, enclosingDecl, context);
+        }
+
         private resolveVariableDeclarator(
             varDecl: VariableDeclarator,
-            context: PullTypeResolutionContext,
-            enclosingDecl?: PullDecl): PullSymbol {
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): PullSymbol {
 
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
                 varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, enclosingDecl, context);
@@ -2659,6 +2668,15 @@ module TypeScript {
             }
 
             return widenedInitTypeSymbol;
+        }
+
+        private typeCheckMemberVariableDeclaration(
+            varDecl: MemberVariableDeclaration,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext) {
+
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
+                varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, enclosingDecl, context);
         }
 
         private typeCheckVariableDeclarator(
@@ -5077,8 +5095,11 @@ module TypeScript {
                 case NodeType.VariableDeclaration:
                     return this.resolveVariableDeclarationList(ast, enclosingDecl, context);
 
+                case NodeType.MemberVariableDeclaration:
+                    return this.resolveMemberVariableDeclaration(<MemberVariableDeclaration>ast, enclosingDecl, context);
+
                 case NodeType.VariableDeclarator:
-                    return this.resolveVariableDeclarator(<VariableDeclarator>ast, context, enclosingDecl);
+                    return this.resolveVariableDeclarator(<VariableDeclarator>ast, enclosingDecl, context);
 
                 case NodeType.Parameter:
                     return this.resolveParameter(<Parameter>ast, context, enclosingDecl);
@@ -5352,6 +5373,10 @@ module TypeScript {
 
                 case NodeType.EnumElement:
                     this.typeCheckEnumElement(<EnumElement>ast, enclosingDecl, context);
+                    return;
+
+                case NodeType.MemberVariableDeclaration:
+                    this.typeCheckMemberVariableDeclaration(<MemberVariableDeclaration>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.VariableDeclarator:
@@ -6842,7 +6867,7 @@ module TypeScript {
 
         private inStaticMemberVariableDeclaration(ast: AST): boolean {
             while (ast) {
-                if (ast.nodeType() === NodeType.VariableDeclarator && hasFlag((<VariableDeclarator>ast).getVarFlags(), VariableFlags.Static)) {
+                if (ast.nodeType() === NodeType.MemberVariableDeclaration && hasFlag((<MemberVariableDeclaration>ast).getVarFlags(), VariableFlags.Static)) {
                     return true;
                 }
 
@@ -11329,8 +11354,8 @@ module TypeScript {
                                 return true;
                             }
 
-                            if (ast.nodeType() === NodeType.VariableDeclarator) {
-                                var variableDeclarator = <VariableDeclarator>ast;
+                            if (ast.nodeType() === NodeType.MemberVariableDeclaration) {
+                                var variableDeclarator = <MemberVariableDeclaration>ast;
                                 if (variableDeclarator.init) {
                                     return true;
                                 }

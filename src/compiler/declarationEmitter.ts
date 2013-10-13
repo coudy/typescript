@@ -86,6 +86,8 @@ module TypeScript {
                     return this.emitDeclarationsForVariableDeclaration(<VariableDeclaration>ast);
                 case NodeType.VariableDeclarator:
                     return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
+                case NodeType.MemberVariableDeclaration:
+                    return this.emitDeclarationsForMemberVariableDeclaration(<MemberVariableDeclaration>ast);
                 case NodeType.ConstructorDeclaration:
                     return this.emitDeclarationsForConstructorDeclaration(<ConstructorDeclaration>ast);
                 case NodeType.GetAccessor:
@@ -365,6 +367,20 @@ module TypeScript {
                 else {
                     this.declFile.Write(", ");
                 }
+            }
+        }
+
+        private emitDeclarationsForMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
+            if (this.canEmitDeclarations(ToDeclFlags(varDecl.getVarFlags()), varDecl)) {
+                this.emitDeclarationComments(varDecl);
+                this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
+                this.declFile.Write(varDecl.id.actualText);
+
+                if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
+                    this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
+                }
+
+                this.declFile.WriteLine(";");
             }
         }
 

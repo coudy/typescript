@@ -182,6 +182,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.FunctionDeclaration] = ChildrenWalkers.walkFuncDeclChildren;
             this.childrenWalkers[NodeType.ConstructorDeclaration] = ChildrenWalkers.walkConstructorDeclarationChildren;
             this.childrenWalkers[NodeType.VariableDeclarator] = ChildrenWalkers.walkVariableDeclaratorChildren;
+            this.childrenWalkers[NodeType.MemberVariableDeclaration] = ChildrenWalkers.walkMemberVariableDeclarationChildren;
             this.childrenWalkers[NodeType.VariableDeclaration] = ChildrenWalkers.walkVariableDeclarationChildren;
             this.childrenWalkers[NodeType.Parameter] = ChildrenWalkers.walkParameterChildren;
             this.childrenWalkers[NodeType.ReturnStatement] = ChildrenWalkers.walkReturnStatementChildren;
@@ -410,6 +411,12 @@ module TypeScript {
         }
 
         export function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: IAstWalker): void {
+            walker.walk(preAst.id);
+            walker.walk(preAst.typeExpr);
+            walker.walk(preAst.init);
+        }
+
+        export function walkMemberVariableDeclarationChildren(preAst: MemberVariableDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.id);
             walker.walk(preAst.typeExpr);
             walker.walk(preAst.init);

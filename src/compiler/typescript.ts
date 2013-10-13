@@ -881,28 +881,25 @@ module TypeScript {
                         resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         break;
 
+                    //case NodeType.Parameter:
+                    //    var parameter = <Parameter> current;
+                    //    inContextuallyTypedAssignment = parameter.typeExpr !== null;
+
+                    //    this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, parameter, parameter.init);
+                    //    break;
+
+                    case NodeType.MemberVariableDeclaration:
+                        var memberVariable = <MemberVariableDeclaration> current;
+                        inContextuallyTypedAssignment = memberVariable.typeExpr !== null;
+
+                        this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, memberVariable, memberVariable.init);
+                        break;
+
                     case NodeType.VariableDeclarator:
-                        var assigningAST = <VariableDeclarator> current;
-                        inContextuallyTypedAssignment = (assigningAST.typeExpr !== null);
+                        var variableDeclarator = <VariableDeclarator> current;
+                        inContextuallyTypedAssignment = variableDeclarator.typeExpr !== null;
 
-                        if (inContextuallyTypedAssignment) {
-                            if (propagateContextualTypes) {
-                                resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
-                                var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
-
-                                var contextualType: PullTypeSymbol = null;
-                                if (varSymbol && inContextuallyTypedAssignment) {
-                                    contextualType = varSymbol.type;
-                                }
-
-                                resolutionContext.pushContextualType(contextualType, false, null);
-
-                                if (assigningAST.init) {
-                                    resolver.resolveAST(assigningAST.init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
-                                }
-                            }
-                        }
-
+                        this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, variableDeclarator, variableDeclarator.init);
                         break;
 
                     case NodeType.InvocationExpression:
@@ -1146,6 +1143,33 @@ module TypeScript {
                 inContextuallyTypedAssignment: inContextuallyTypedAssignment,
                 inWithBlock: inWithBlock
             };
+        }
+
+        private extractResolutionContextForVariable(
+            inContextuallyTypedAssignment: boolean,
+            propagateContextualTypes: boolean,
+            resolver: PullTypeResolver,
+            resolutionContext: PullTypeResolutionContext,
+            enclosingDecl: PullDecl,
+            assigningAST: AST,
+            init: AST): void {
+            if (inContextuallyTypedAssignment) {
+                if (propagateContextualTypes) {
+                    resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
+                    var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
+
+                    var contextualType: PullTypeSymbol = null;
+                    if (varSymbol && inContextuallyTypedAssignment) {
+                        contextualType = varSymbol.type;
+                    }
+
+                    resolutionContext.pushContextualType(contextualType, false, null);
+
+                    if (init) {
+                        resolver.resolveAST(init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
+                    }
+                }
+            }
         }
 
         private getASTPath(ast: AST): AST[] {

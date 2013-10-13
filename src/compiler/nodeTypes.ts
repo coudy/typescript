@@ -55,6 +55,7 @@ module TypeScript {
         FunctionPropertyAssignment,
         EnumDeclaration,
         EnumElement,
+        MemberVariableDeclaration,
 
         // Expressions
         Name,
