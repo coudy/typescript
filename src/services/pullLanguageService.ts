@@ -116,7 +116,7 @@ module Services {
                 // scope our search down to the method ast so we don't find other hits elsewhere.
                 while (ast) {
                     if (ast.nodeType() === TypeScript.NodeType.FunctionDeclaration &&
-                        TypeScript.hasFlag((<TypeScript.FunctionDeclaration>ast).getFunctionFlags(), TypeScript.FunctionFlags.IsClassMethod)) {
+                        TypeScript.hasFlag((<TypeScript.FunctionDeclaration>ast).getFunctionFlags(), TypeScript.FunctionFlags.Method)) {
                         return ast;
                     }
 
