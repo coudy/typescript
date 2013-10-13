@@ -105,5 +105,7 @@ module TypeScript {
         SomeSignature = CallSignature | ConstructSignature | IndexSignature,
 
         SomeTypeReference = Interface | ObjectType | FunctionType | ConstructorType,
+
+        SomeNamedType = Class | Interface | Enum | TypeParameter | Array,
     }
 }

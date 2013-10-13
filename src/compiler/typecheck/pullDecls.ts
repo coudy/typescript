@@ -12,6 +12,7 @@ module TypeScript {
         public kind: PullElementKind;
         public name: string;
         private declDisplayName: string;
+
         public declID = pullDeclID++;
         public declIDString: string = null;
         public hashCode = -1;
@@ -120,15 +121,6 @@ module TypeScript {
 
         public setSpecializingSignatureSymbol(specializingSignatureSymbol: PullSignatureSymbol): void {
             this.semanticInfoChain().setSpecializingSignatureSymbolForDecl(this, specializingSignatureSymbol);
-        }
-
-        public getSpecializingSignatureSymbol() {
-            var specializingSignatureSymbol = this.semanticInfoChain().getSpecializingSignatureSymbolForDecl(this);
-            if (specializingSignatureSymbol) {
-                return specializingSignatureSymbol;
-            }
-
-            return this.getSignatureSymbol();
         }
 
         public setFlags(flags: PullElementFlags) { this.flags = flags; }

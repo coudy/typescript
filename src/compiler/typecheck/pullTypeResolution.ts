@@ -33,6 +33,7 @@ module TypeScript {
         private _cachedFunctionInterfaceType: PullTypeSymbol = null;
         private _cachedIArgumentsInterfaceType: PullTypeSymbol = null;
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
+        private _cachedAnyTypeArgs: PullTypeSymbol[][] = null;
 
         static typeCheckCallBacks: { (context: PullTypeResolutionContext): void; }[] = [];
         private static postTypeCheckWorkitems: { ast: AST; enclosingDecl: PullDecl; }[] = [];
@@ -167,7 +168,17 @@ module TypeScript {
             return this._cachedFunctionArgumentsSymbol;
         }
 
+
         constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, inTypeCheck: boolean = false) {
+            this._cachedAnyTypeArgs = [
+                [this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol]
+            ];
+
+            TypeScript.globalResolver = this;
         }
 
         public getUnitPath() { return this.unitPath; }
@@ -756,6 +767,10 @@ module TypeScript {
 
             prototypeSymbol.addDeclaration(prototypeDecl);
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
+
+            if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
+                prototypeSymbol.type = this.instantiateTypeToAny(prototypeSymbol.type, new PullTypeResolutionContext(this));
+            }
             prototypeSymbol.setResolved();
 
             return prototypeSymbol;
@@ -767,41 +782,6 @@ module TypeScript {
 
         private isNumberOrEquivalent(type: PullTypeSymbol) {
             return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType() && type === this.cachedNumberInterfaceType());
-        }
-
-        public isTypeArgumentOrWrapper(type: PullTypeSymbol) {
-            if (!type) {
-                return false;
-            }
-
-            if (!type.isGeneric()) {
-                return false;
-            }
-
-            if (type.isTypeParameter()) {
-                return true;
-            }
-
-            var typeArguments = type.getTypeArguments();
-
-            if (typeArguments) {
-                for (var i = 0; i < typeArguments.length; i++) {
-                    if (this.isTypeArgumentOrWrapper(typeArguments[i])) {
-                        return true;
-                    }
-                }
-            }
-            else {
-                // if there are no type arguments, but the type is generic, we're just returning
-                // the unspecialized version of the type (e.g., via a recursive call)
-                return true;
-            }
-
-            if (type.kind & (PullElementKind.ObjectLiteral | PullElementKind.ObjectType)) {
-                return type.getHasGenericMember();
-            }
-
-            return false;
         }
 
         private resolveExternalModuleReference(idText: string, currentFileName: string): PullContainerSymbol {
@@ -844,9 +824,13 @@ module TypeScript {
         // PULLTODO: VERY IMPORTANT
         // Right now, the assumption is that the declaration's parse tree is still in memory
         // we need to add a cache-in/cache-out mechanism so that we can break the dependency on in-memory ASTs
-        public resolveDeclaredSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): PullSymbol {
-            if (!symbol || symbol.isResolved) {
+        public resolveDeclaredSymbol(symbol: PullSymbol, context?: PullTypeResolutionContext): PullSymbol {
+            if (!symbol || symbol.isResolved || symbol.isTypeReference()) {
                 return symbol;
+            }
+
+            if (!context) {
+                context = new PullTypeResolutionContext(globalResolver);
             }
 
             // This is called while we're resolving type references.  Make sure we're no longer
@@ -860,16 +844,12 @@ module TypeScript {
             var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
             context.resolvingTypeNameAsNameExpression = false;
 
-            var savedTypeSpecializationStack = context.getTypeSpecializationStack();
-            context.setTypeSpecializationStack([]);
-
             var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.resolvingNamespaceMemberAccess = false;
 
             var result = this.resolveDeclaredSymbolWorker(symbol, context);
 
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
-            context.setTypeSpecializationStack(savedTypeSpecializationStack);
             context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
             context.isInStaticInitializer = savedIsInStaticInitializer;
             context.resolvingTypeReference = savedResolvingTypeReference;
@@ -883,13 +863,11 @@ module TypeScript {
             }
 
             if (symbol.inResolution) {
-                if (!symbol.currentlyBeingSpecialized()) {
-                    if (!symbol.type && !symbol.isType()) {
-                        symbol.type = this.semanticInfoChain.anyTypeSymbol;
-                    }
-
-                    return symbol;
+                if (!symbol.type && !symbol.isType()) {
+                    symbol.type = this.semanticInfoChain.anyTypeSymbol;
                 }
+
+                return symbol;
             }
 
             var thisUnit = this.unitPath;
@@ -929,26 +907,6 @@ module TypeScript {
                     symbol.type = resolvedSymbol.type;
                     symbol.setResolved();
                 }
-            }
-
-            var typeArgs = symbol.isType() ? (<PullTypeSymbol>symbol).getTypeArguments() : null;
-
-            if (typeArgs && typeArgs.length) {
-                var typeParameters = (<PullTypeSymbol>symbol).getTypeParameters();
-                var typeCache: any = {};
-
-                for (var i = 0; i < typeParameters.length; i++) {
-                    typeCache[typeParameters[i].pullSymbolIDString] = typeArgs[i];
-                }
-
-                context.pushTypeSpecializationCache(typeCache);
-                var rootType = getRootType(symbol.type);
-
-                var specializedSymbol = specializeType(rootType, typeArgs, this, context);
-
-                context.popTypeSpecializationCache();
-
-                symbol = specializedSymbol;
             }
 
             this.setUnitPath(thisUnit);
@@ -1109,6 +1067,30 @@ module TypeScript {
             return false;
         }
 
+        public createInstantiatedType(type: PullTypeSymbol, typeArguments: PullTypeSymbol[]): PullTypeSymbol {
+
+            if (!type.isGeneric()) {
+                return type;
+            }
+
+            // if the type had previously been instantiated, we want to re-instantiate the type arguments.  Otherwise,
+            // we just use the type parameters.  E.g., for
+            //      class Foo<T> {
+            //          public <U>(p: Foo<U>): void
+            //      }
+            // For parameter 'p', we'd need to specialize from 'T' to 'U' to 'any', so we'd need to request p's type arguments
+            // and not its type parameters
+            var typeParameters = type.getTypeArgumentsOrTypeParameters();
+
+            var typeParameterArgumentMap = {};
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i] ? typeArguments[i] : new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
+            }
+
+            return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap);
+        }
+
         //
         // Resolve a reference type (class or interface) type parameters, implements and extends clause, members, call, construct and index signatures
         //
@@ -1235,7 +1217,6 @@ module TypeScript {
             }
 
             if (!typeDeclSymbol.isResolved) {
-                PullSymbolBinder.resetTypeParameterCache();
 
                 if (!typeDeclIsClass) {
                     // Resolve call, construct and index signatures
@@ -1888,14 +1869,6 @@ module TypeScript {
             // resolve the return type annotation
             if (funcDeclAST.returnTypeAnnotation) {
                 signature.returnType = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, functionDecl, context);
-
-                if (this.isTypeArgumentOrWrapper(signature.returnType)) {
-                    signature.hasAGenericParameter = true;
-
-                    if (funcDeclSymbol) {
-                        funcDeclSymbol.type.setHasGenericSignature();
-                    }
-                }
             }
 
             if (funcDeclAST.typeParameters) {
@@ -1908,18 +1881,6 @@ module TypeScript {
             if (funcDeclAST.parameterList) {
                 for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
                     this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.parameterList.members[i], signature, functionDecl, context);
-                }
-            }
-
-            // Flag if one of the arguments has a generic parameter
-            if (funcDeclSymbol && signature.hasAGenericParameter) {
-                funcDeclSymbol.type.setHasGenericSignature();
-            }
-
-            if (signature.hasAGenericParameter) {
-                // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                if (funcDeclSymbol) {
-                    funcDeclSymbol.type.setHasGenericSignature();
                 }
             }
 
@@ -1946,16 +1907,11 @@ module TypeScript {
                 }
 
                 context.setTypeInContext(paramSymbol, typeRef);
-
-                // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
-                if (this.isTypeArgumentOrWrapper(typeRef)) {
-                    signature.hasAGenericParameter = true;
-                }
             }
             else {
                 if (paramSymbol.isVarArg && paramSymbol.type) {
                     if (this.cachedArrayInterfaceType()) {
-                        context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [paramSymbol.type], this, context));
+                        context.setTypeInContext(paramSymbol, this.createInstantiatedType(this.cachedArrayInterfaceType(), [paramSymbol.type]));
                     }
                     else {
                         context.setTypeInContext(paramSymbol, paramSymbol.type);
@@ -1996,7 +1952,7 @@ module TypeScript {
                 context.setTypeInContext(paramSymbol, contextualType);
             }
             else if (paramSymbol.isVarArg && this.cachedArrayInterfaceType()) {
-                context.setTypeInContext(paramSymbol, specializeType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol], this, context));
+                context.setTypeInContext(paramSymbol, this.createInstantiatedType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol]));
                 isImplicitAny = true;
             }
 
@@ -2301,13 +2257,13 @@ module TypeScript {
             else if (term.nodeType() === NodeType.ArrayType) {
                 var arrayType = <ArrayType>term;
                 var underlying = this.computeTypeReferenceSymbolWorker(arrayType.type, enclosingDecl, context);
-
                 var arraySymbol: PullTypeSymbol = underlying.getArrayType();
 
                 // otherwise, create a new array symbol
                 if (!arraySymbol) {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [underlying], this, context);
+
+                    arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [underlying]);
 
                     if (!arraySymbol) {
                         arraySymbol = this.semanticInfoChain.anyTypeSymbol;
@@ -2353,7 +2309,7 @@ module TypeScript {
             return typeSymbol.isNamedTypeSymbol() &&
                 typeSymbol.isGeneric() &&
                 !typeSymbol.isTypeParameter() &&
-                (typeSymbol.isResolved || (typeSymbol.inResolution && !context.inSpecialization)) &&
+                (typeSymbol.isResolved || typeSymbol.inResolution) &&
                 !typeSymbol.getIsSpecialized() &&
                 typeSymbol.getTypeParameters().length &&
                 typeSymbol.getTypeArguments() == null &&
@@ -2432,11 +2388,9 @@ module TypeScript {
             else {
                 if (declSymbol.inResolution) {
                     // PULLTODO: Error or warning?
-                    if (!context.inSpecialization) {
-                        declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
-                        declSymbol.setResolved();
-                        return declSymbol;
-                    }
+                    declSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+                    declSymbol.setResolved();
+                    return declSymbol;
                 }
 
                 if (declSymbol.type && declSymbol.type.isError()) {
@@ -2460,7 +2414,7 @@ module TypeScript {
                     var defaultType = this.semanticInfoChain.anyTypeSymbol;
 
                     if (declSymbol.isVarArg) {
-                        defaultType = specializeType(this.cachedArrayInterfaceType(), [defaultType], this, context);
+                        defaultType = this.createInstantiatedType(this.cachedArrayInterfaceType(), [defaultType]);
                     }
 
                     context.setTypeInContext(declSymbol, defaultType);
@@ -2572,17 +2526,6 @@ module TypeScript {
                 if (typeExprSymbol.kind == PullElementKind.FunctionType) {
                     typeExprSymbol.setFunctionSymbol(declSymbol);
                 }
-
-                // if the typeExprSymbol is generic, set the "hasGenericParameter" field on the enclosing signature
-                // we filter out arrays, since for those we just want to know if their element type is a type parameter...
-                if (varDeclOrParameter.nodeType() === NodeType.Parameter && enclosingDecl && ((typeExprSymbol.isGeneric() && !typeExprSymbol.isArrayNamedTypeReference()) || this.isTypeArgumentOrWrapper(typeExprSymbol))) {
-                    var signature = enclosingDecl.getSpecializingSignatureSymbol();
-
-                    if (signature) {
-                        signature.hasAGenericParameter = true;
-                    }
-                }
-
             }
 
             return typeExprSymbol;
@@ -3070,10 +3013,6 @@ module TypeScript {
                     if (!functionSymbol.type && functionSymbol.isAccessor()) {
                         functionSymbol.type = signature.returnType;
                     }
-
-                    if (this.isTypeArgumentOrWrapper(returnType) && functionSymbol) {
-                        functionSymbol.type.setHasGenericSignature();
-                    }
                 }
             }
         }
@@ -3204,7 +3143,7 @@ module TypeScript {
             this.checkFunctionTypePrivacy(
                 funcDeclAST, flags, typeParameters, parameters, returnTypeAnnotation, block, context);
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
             if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
                 // It is a constructor or function
                 var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
@@ -3305,8 +3244,7 @@ module TypeScript {
 
                 // use the funcDecl for the enclosing decl, since we want to pick up any type parameters 
                 // on the function when resolving the return type
-                returnTypeSymbol = this.resolveTypeReference(
-                    returnTypeAnnotation, funcDecl, context);
+                returnTypeSymbol = this.resolveTypeReference(returnTypeAnnotation, funcDecl, context);
 
                 if (!returnTypeSymbol) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Cannot_resolve_return_type_reference));
@@ -3464,7 +3402,7 @@ module TypeScript {
 
             var funcSymbol = funcDecl.getSymbol();
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
             var hadError = false;
 
@@ -3507,12 +3445,6 @@ module TypeScript {
                             signature.returnType = this.getNewErrorTypeSymbol();
                             hadError = true;
                         } else {
-                            if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
-                                signature.hasAGenericParameter = true;
-                                if (funcSymbol) {
-                                    funcSymbol.type.setHasGenericSignature();
-                                }
-                            }
                             signature.returnType = returnTypeSymbol;
 
                             if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
@@ -3561,19 +3493,9 @@ module TypeScript {
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
-                if (signature.isGeneric()) {
-                    // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
-                    if (funcSymbol) {
-                        funcSymbol.type.setHasGenericSignature();
-                    }
-                }
 
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
-
-                    // We may have a return type from a previous resolution - if the function's generic,
-                    // we can reuse it
-                    var prevReturnTypeSymbol = signature.returnType;
 
                     returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
                         funcDeclAST, funcDeclAST.getFunctionFlags(), funcDeclAST.returnTypeAnnotation, context);
@@ -3582,15 +3504,7 @@ module TypeScript {
                         signature.returnType = this.getNewErrorTypeSymbol();
                         hadError = true;
                     }
-                    else if (!(this.isTypeArgumentOrWrapper(returnTypeSymbol) && prevReturnTypeSymbol && !this.isTypeArgumentOrWrapper(prevReturnTypeSymbol))) {
-                        if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
-                            signature.hasAGenericParameter = true;
-
-                            if (funcSymbol) {
-                                funcSymbol.type.setHasGenericSignature();
-                            }
-                        }
-
+                    else {
                         signature.returnType = returnTypeSymbol;
                     }
                 }
@@ -3871,10 +3785,6 @@ module TypeScript {
 
                 signature.startResolving();
 
-                if (signature.hasAGenericParameter) {
-                    getterTypeSymbol.setHasGenericSignature();
-                }
-
                 // resolve the return type annotation
                 if (returnTypeAnnotation) {
                     var returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
@@ -3886,11 +3796,6 @@ module TypeScript {
                         hadError = true;
                     }
                     else {
-                        if (this.isTypeArgumentOrWrapper(returnTypeSymbol)) {
-                            signature.hasAGenericParameter = true;
-                                getterTypeSymbol.setHasGenericSignature();
-                            }
-
                         signature.returnType = returnTypeSymbol;
                     }
                 }
@@ -3981,7 +3886,7 @@ module TypeScript {
             var setterSymbol = accessorSymbol.getSetter();
             var setterTypeSymbol = <PullTypeSymbol>setterSymbol.type;
 
-            var signature: PullSignatureSymbol = funcDecl.getSpecializingSignatureSymbol();
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
             var hadError = false;
 
@@ -5032,11 +4937,12 @@ module TypeScript {
         // Expression resolution
 
         public resolveAST(ast: AST, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext, specializingSignature= false): PullSymbol {
+
             if (!ast) {
                 return;
             }
 
-            var symbol = specializingSignature ? null : this.getSymbolForAST(ast, context);
+            var symbol = this.getSymbolForAST(ast, context);
             if (symbol && symbol.isResolved) {
                 this.typeCheckAST(ast, inContextuallyTypedAssignment, enclosingDecl, context);
                 return symbol;
@@ -5978,7 +5884,7 @@ module TypeScript {
                     this.checkForStaticMemberAccess(expression, name, lhsType, lhsType, enclosingDecl, context);
 
                     if (lhsType.isGeneric()) {
-                        return this.specializeTypeToAny(lhsType, enclosingDecl, context);
+                        return this.instantiateTypeToAny(lhsType, context);
                     }
 
                     return lhsType;
@@ -5989,7 +5895,7 @@ module TypeScript {
 
                     if (instanceType) {
                         if (instanceType.isGeneric()) {
-                            instanceType = this.specializeTypeToAny(instanceType, enclosingDecl, context);
+                            instanceType = this.instantiateTypeToAny(instanceType, context);
                         }
                     }
                     else {
@@ -6087,16 +5993,6 @@ module TypeScript {
 
             this.resolveDeclaredSymbol(typeNameSymbol, context);
 
-            if (typeNameSymbol && !(typeNameSymbol.isTypeParameter() && (<PullTypeParameterSymbol>typeNameSymbol).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {
-                var substitution = context.findSpecializationForType(typeNameSymbol);
-
-                if (typeNameSymbol.isTypeParameter() && (substitution != typeNameSymbol)) {
-                    if (shouldSpecializeTypeParameterForTypeParameter(<PullTypeParameterSymbol>substitution, <PullTypeParameterSymbol>typeNameSymbol)) {
-                        typeNameSymbol = substitution;
-                    }
-                }
-            }
-
             return typeNameSymbol;
         }
 
@@ -6163,6 +6059,10 @@ module TypeScript {
                         }
                     }
                 }
+
+                if (!typeNameSymbol.isGeneric() && (typeNameSymbol.isClass() || typeNameSymbol.isInterface())) {
+                    typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(typeNameSymbol);
+                }
             }
 
             return typeNameSymbol;
@@ -6191,29 +6091,20 @@ module TypeScript {
 
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
+            var savedIsResolvingClassExtendedType = context.isResolvingClassExtendedType;
+            
+            context.isResolvingClassExtendedType = false;
 
-            if (!context.isResolvingTypeArguments(genericTypeAST)) {
-                context.startResolvingTypeArguments(genericTypeAST);
+            if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
+                for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
+                    typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
 
-                if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
-                    for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                        var typeArg = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], enclosingDecl, context);
-
-                        if (!(typeArg.isTypeParameter() && (<PullTypeParameterSymbol>typeArg).isFunctionTypeParameter() && context.isSpecializingSignatureTypeParameters && !context.isSpecializingConstructorMethod)) {
-                            typeArgs[i] = context.findSpecializationForType(typeArg);
-                        }
-                        else {
-                            typeArgs[i] = typeArg;
-                        }
-
-                        if (typeArgs[i].isError()) {
-                            typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
-                        }
+                    if (typeArgs[i].isError()) {
+                        typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
                     }
                 }
-
-                context.doneResolvingTypeArguments();
             }
+            context.isResolvingClassExtendedType = savedIsResolvingClassExtendedType;
 
             var typeParameters = genericTypeSymbol.getTypeParameters()
 
@@ -6236,7 +6127,7 @@ module TypeScript {
                 }
             }
 
-            var specializedSymbol = specializeType(genericTypeSymbol, typeArgs, this, context);
+            var specializedSymbol = this.createInstantiatedType(genericTypeSymbol, typeArgs);
 
             // check constraints, if appropriate
             var typeConstraint: PullTypeSymbol = null;
@@ -6245,19 +6136,28 @@ module TypeScript {
             // Get the instantiated versions of the type parameters (in case their constraints were generic)
             typeParameters = specializedSymbol.getTypeParameters();
 
+            var typeConstraintArgumentMap: any = {};
+            var typeArg: PullTypeSymbol = null;
+
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
                 typeConstraint = typeParameters[iArg].getConstraint();
+
+                typeConstraintArgumentMap[typeParameters[iArg].pullSymbolIDString] = typeArg;
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
 
                     if (typeConstraint.isTypeParameter()) {
+
                         for (var j = 0; j < typeParameters.length && j < typeArgs.length; j++) {
                             if (typeParameters[j] == typeConstraint) {
                                 typeConstraint = typeArgs[j];
                             }
                         }
+                    }
+                    else if (typeConstraint.isGeneric()) {
+                        typeConstraint = instantiateType(typeConstraint, typeConstraintArgumentMap);
                     }
 
                     if (typeArg.isTypeParameter()) {
@@ -6268,7 +6168,7 @@ module TypeScript {
                         }
                     }
 
-                    if (typeArg.inResolution) {
+                    if (typeArg.inResolution || (typeArg.isTypeReference() && (<PullTypeReferenceSymbol>typeArg).referencedTypeSymbol.inResolution)) {
                         return specializedSymbol;
                     }
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, context)) {
@@ -7300,11 +7200,14 @@ module TypeScript {
 
             // ...But in case we haven't...
             if (!arraySymbol) {
-                arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, context);
+
+                arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
 
                 if (!arraySymbol) {
                     arraySymbol = this.semanticInfoChain.anyTypeSymbol;
                 }
+
+                elementType.setArrayType(arraySymbol);
             }
 
             return arraySymbol;
@@ -7750,8 +7653,7 @@ module TypeScript {
 
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
                     for (var i = 0; i < callEx.typeArguments.members.length; i++) {
-                        var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
-                        typeArgs[i] = context.findSpecializationForType(typeArg);
+                        typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
                     }
                 }
             }
@@ -7764,134 +7666,107 @@ module TypeScript {
             // next, walk the available signatures
             // if any are generic, and we don't have type arguments, try to infer
             // otherwise, try to specialize to the type arguments above
-            if (targetTypeSymbol.isGeneric()) {
 
-                var resolvedSignatures: PullSignatureSymbol[] = [];
-                var inferredTypeArgs: PullTypeSymbol[];
-                var specializedSignature: PullSignatureSymbol;
-                var typeParameters: PullTypeParameterSymbol[];
-                var typeConstraint: PullTypeSymbol = null;
-                var prevSpecializingToAny = context.specializingToAny;
-                var prevSpecializing: boolean = context.isSpecializingSignatureTypeParameters;
-                var beforeResolutionSignatures = signatures;
+            var resolvedSignatures: PullSignatureSymbol[] = [];
+            var inferredTypeArgs: PullTypeSymbol[];
+            var specializedSignature: PullSignatureSymbol;
+            var typeParameters: PullTypeParameterSymbol[];
+            var typeConstraint: PullTypeSymbol = null;
+            var beforeResolutionSignatures = signatures;
+            var sawGenericSignature = false;
 
-                for (var i = 0; i < signatures.length; i++) {
-                    typeParameters = signatures[i].getTypeParameters();
-                    couldNotAssignToConstraint = false;
-                    triedToInferTypeArgs = false;
+            for (var i = 0; i < signatures.length; i++) {
+                typeParameters = signatures[i].getTypeParameters();
+                couldNotAssignToConstraint = false;
 
-                    if (signatures[i].isGeneric() && typeParameters.length && (!signatures[i].isFixed() || typeArgs)) {
-                        if (typeArgs) {
-                            inferredTypeArgs = typeArgs;
-                        }
-                        else if (callEx.arguments) {
-                            inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
-                            triedToInferTypeArgs = true;
-                        }
-                        else {
-                            inferredTypeArgs = [];
-                        }
+                if (signatures[i].isGeneric() && typeParameters.length) {
 
-                        // if we could infer Args, or we have type arguments, then attempt to specialize the signature
-                        if (inferredTypeArgs) {
+                    if (typeArgs) {
+                        inferredTypeArgs = typeArgs;
+                    }
+                    else if (callEx.arguments) {
+                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), enclosingDecl, context);
+                        triedToInferTypeArgs = true;
+                    }
+                    else {
+                        inferredTypeArgs = [];
+                    }
 
-                            typeReplacementMap = {};
+                    // if we could infer Args, or we have type arguments, then attempt to specialize the signature
+                    if (inferredTypeArgs) {
 
-                            if (inferredTypeArgs.length) {
+                        typeReplacementMap = {};
 
-                                if (inferredTypeArgs.length != typeParameters.length) {
-                                    continue;
-                                }
+                        if (inferredTypeArgs.length) {
 
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
-                                }
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    typeConstraint = typeParameters[j].getConstraint();
-
-                                    // test specialization type for assignment compatibility with the constraint
-                                    if (typeConstraint) {
-                                        if (typeConstraint.isTypeParameter()) {
-                                            for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
-                                                if (typeParameters[k] == typeConstraint) {
-                                                    typeConstraint = inferredTypeArgs[k];
-                                                }
-                                            }
-                                        }
-                                        if (typeConstraint.isTypeParameter()) {
-                                            context.pushTypeSpecializationCache(typeReplacementMap);
-                                            typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);  //<PullTypeSymbol>this.resolveDeclaredSymbol(typeConstraint, enclosingDecl, context);
-                                            context.popTypeSpecializationCache();
-                                        }
-                                        else if (typeConstraint.isGeneric()) {
-                                            context.pushTypeSpecializationCache(typeReplacementMap);
-                                            typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);
-                                            context.popTypeSpecializationCache();
-                                        }
-
-                                        context.isComparingSpecializedSignatures = true;
-                                        if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
-                                            constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeConstraint.toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeParameters[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true)]);
-                                            couldNotAssignToConstraint = true;
-                                        }
-                                        context.isComparingSpecializedSignatures = false;
-
-                                        if (couldNotAssignToConstraint) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else {
-
-                                // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
-                                if (triedToInferTypeArgs) {
-
-                                    if (signatures[i].isFixed()) {
-                                        if (signatures[i].hasAGenericParameter) {
-                                            context.specializingToAny = true;
-                                        }
-                                        else {
-                                            resolvedSignatures[resolvedSignatures.length] = signatures[i];
-                                        }
-                                    }
-                                    else {
-                                        continue;
-                                    }
-                                }
-
-                                context.specializingToAny = true;
-                            }
-
-                            if (couldNotAssignToConstraint) {
+                            if (inferredTypeArgs.length != typeParameters.length) {
                                 continue;
                             }
 
-                            context.isSpecializingSignatureTypeParameters = true;
-                            specializedSignature = specializeSignature(signatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
+                            }
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeConstraint = typeParameters[j].getConstraint();
 
-                            context.isSpecializingSignatureTypeParameters = prevSpecializing;
-                            context.specializingToAny = prevSpecializingToAny;
+                                // test specialization type for assignment compatibility with the constraint
+                                if (typeConstraint) {
+                                    if (typeConstraint.isTypeParameter()) {
+                                        for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
+                                            if (typeParameters[k] == typeConstraint) {
+                                                typeConstraint = inferredTypeArgs[k];
+                                            }
+                                        }
+                                    }
+                                    context.isComparingInstantiatedSignatures = true;
+                                    if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
+                                        constraintDiagnostic = new Diagnostic(this.unitPath, targetAST.minChar, targetAST.getLength(), DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(null, true), typeConstraint.toString(null, true), typeParameters[j].toString(null, true)]);
+                                        couldNotAssignToConstraint = true;
+                                    }
+                                    context.isComparingInstantiatedSignatures = false;
 
-                            if (specializedSignature) {
-                                resolvedSignatures[resolvedSignatures.length] = specializedSignature;
+                                    if (couldNotAssignToConstraint) {
+                                        break;
+                                    }
+                                }
                             }
                         }
-                    }
-                    else {
-                        if (!(callEx.typeArguments && callEx.typeArguments.members.length)) {
-                            resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                        else {
+
+                            // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
+                            if (triedToInferTypeArgs) {
+                                    continue;
+                            }
+
+                            // specialize to any
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeReplacementMap[typeParameters[i].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                            }
+                        }
+
+                        if (couldNotAssignToConstraint) {
+                            continue;
+                        }
+
+                        specializedSignature = instantiateSignature(signatures[i], typeReplacementMap, true);
+
+                        if (specializedSignature) {
+                            resolvedSignatures[resolvedSignatures.length] = specializedSignature;
                         }
                     }
                 }
-                // PULLTODO: Try to avoid copying here...
-
-                if (signatures.length && !resolvedSignatures.length) {
-                    couldNotFindGenericOverload = true;
+                else {
+                    if (!(callEx.typeArguments && callEx.typeArguments.members.length)) {
+                        resolvedSignatures[resolvedSignatures.length] = signatures[i];
+                    }
                 }
-
-                signatures = resolvedSignatures;
             }
+
+            if (signatures.length && !resolvedSignatures.length) {
+                couldNotFindGenericOverload = true;
+            }
+
+            signatures = resolvedSignatures;
 
             // the target should be a function
             //if (!targetTypeSymbol.isType()) {
@@ -7977,13 +7852,7 @@ module TypeScript {
                     // account for varargs
                     if (params.length) {
                         if (i < params.length - 1 || (i < params.length && !signature.hasVarArgs)) {
-                            if (typeReplacementMap) {
-                                context.pushTypeSpecializationCache(typeReplacementMap);
-                            }
                             this.resolveDeclaredSymbol(params[i], context);
-                            if (typeReplacementMap) {
-                                context.popTypeSpecializationCache();
-                            }
                             contextualType = params[i].type;
                         }
                         else if (signature.hasVarArgs) {
@@ -8130,8 +7999,7 @@ module TypeScript {
 
                     if (callEx.typeArguments && callEx.typeArguments.members.length) {
                         for (var i = 0; i < callEx.typeArguments.members.length; i++) {
-                            var typeArg = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
-                            typeArgs[i] = context.findSpecializationForType(typeArg);
+                            typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.typeArguments.members[i], enclosingDecl, context);
                         }
                     }
                 }
@@ -8145,14 +8013,12 @@ module TypeScript {
                     var specializedSignature: PullSignatureSymbol;
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
-                    var prevSpecializingToAny = context.specializingToAny;
-                    var prevIsSpecializing = context.isSpecializingSignatureTypeParameters = true;
                     var triedToInferTypeArgs: boolean;
 
                     for (var i = 0; i < constructSignatures.length; i++) {
                         couldNotAssignToConstraint = false;
 
-                        if (constructSignatures[i].isGeneric() && (!constructSignatures[i].isFixed() || typeArgs)) {
+                        if (constructSignatures[i].isGeneric()) {
                             if (typeArgs) {
                                 inferredTypeArgs = typeArgs;
                             }
@@ -8191,23 +8057,13 @@ module TypeScript {
                                                     }
                                                 }
                                             }
-                                            if (typeConstraint.isTypeParameter()) {
-                                                context.pushTypeSpecializationCache(typeReplacementMap);
-                                                typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);
-                                                context.popTypeSpecializationCache();
-                                            }
-                                            else if (typeConstraint.isGeneric()) {
-                                                context.pushTypeSpecializationCache(typeReplacementMap);
-                                                typeConstraint = specializeType(typeConstraint, /*typeArguments*/ null, this, context);
-                                                context.popTypeSpecializationCache();
-                                            }
 
-                                            context.isComparingSpecializedSignatures = true;
+                                            context.isComparingInstantiatedSignatures = true;
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                                 constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeConstraint.toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeParameters[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true)]);
                                                 couldNotAssignToConstraint = true;
                                             }
-                                            context.isComparingSpecializedSignatures = false;
+                                            context.isComparingInstantiatedSignatures = false;
 
                                             if (couldNotAssignToConstraint) {
                                                 break;
@@ -8219,17 +8075,11 @@ module TypeScript {
                                 else {
 
                                     if (triedToInferTypeArgs) {
-
-                                        if (constructSignatures[i].isFixed()) {
-                                            if (!constructSignatures[i].hasAGenericParameter) {
-                                                resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
-                                            }
-                                        }
-                                        else {
                                             continue;
-                                        }
                                     } else {
-                                        context.specializingToAny = true;
+                                        for (var j = 0; j < typeParameters.length; j++) {
+                                            typeReplacementMap[typeParameters[j].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                                        }
                                     }
                                 }
 
@@ -8237,11 +8087,7 @@ module TypeScript {
                                     continue;
                                 }
 
-                                context.isSpecializingSignatureTypeParameters = true;
-                                specializedSignature = specializeSignature(constructSignatures[i], false, typeReplacementMap, inferredTypeArgs, this, enclosingDecl, context);
-
-                                context.specializingToAny = prevSpecializingToAny;
-                                context.isSpecializingSignatureTypeParameters = prevIsSpecializing;
+                                specializedSignature = instantiateSignature(constructSignatures[i], typeReplacementMap, true);
 
                                 if (specializedSignature) {
                                     resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -8314,10 +8160,10 @@ module TypeScript {
                 // if it's a default constructor, and we have a type argument, we need to specialize
                 if (returnType && !signature.isGeneric() && returnType.isGeneric() && !returnType.getIsSpecialized()) {
                     if (typeArgs && typeArgs.length) {
-                        returnType = specializeType(returnType, typeArgs, this, context);
+                        returnType = this.createInstantiatedType(returnType, typeArgs);
                     }
                     else {
-                        returnType = this.specializeTypeToAny(returnType, enclosingDecl, context);
+                        returnType = this.instantiateTypeToAny(returnType, context);
                     }
                 }
 
@@ -8352,13 +8198,7 @@ module TypeScript {
 
                         if (params.length) {
                             if (i < params.length - 1 || (i < params.length && !signature.hasVarArgs)) {
-                                if (typeReplacementMap) {
-                                    context.pushTypeSpecializationCache(typeReplacementMap);
-                                }
                                 this.resolveDeclaredSymbol(params[i], context);
-                                if (typeReplacementMap) {
-                                    context.popTypeSpecializationCache();
-                                }
                                 contextualType = params[i].type;
                             }
                             else if (signature.hasVarArgs) {
@@ -8588,7 +8428,7 @@ module TypeScript {
                 if (!arraySymbol) {
                     // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
 
-                    arraySymbol = specializeType(this.cachedArrayInterfaceType(), [elementType], this, context);
+                    arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
 
                     if (!arraySymbol) {
                         arraySymbol = this.semanticInfoChain.anyTypeSymbol;
@@ -8655,6 +8495,14 @@ module TypeScript {
         // Type Identity
 
         public typesAreIdentical(t1: PullTypeSymbol, t2: PullTypeSymbol, val?: AST) {
+
+            if (t1 && t1.isTypeReference()) {
+                t1 = (<PullTypeReferenceSymbol>t1).getReferencedTypeSymbol();
+            }
+
+            if (t2 && t2.isTypeReference()) {
+                t2 = (<PullTypeReferenceSymbol>t2).getReferencedTypeSymbol();
+            }
 
             // This clause will cover both primitive types (since the type objects are shared),
             // as well as shared brands
@@ -8923,6 +8771,25 @@ module TypeScript {
                 return false;
             }
 
+            // if these are two type references referencing the same base type, then they must be two different instantiations of a generic
+            // type (if they were not, we never would have gotten to this point
+            if (source.isTypeReference() && target.isTypeReference()) {
+                if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol.hasBase((<PullTypeReferenceSymbol>target).referencedTypeSymbol)) {
+                    var sourceTypeArguments = (<PullTypeReferenceSymbol>source).getTypeArguments();
+                    var targetTypeArguments = (<PullTypeReferenceSymbol>target).getTypeArguments();
+
+                    if (!(sourceTypeArguments && targetTypeArguments) || sourceTypeArguments.length != targetTypeArguments.length) {
+                        return false;
+                    }
+
+                    for (var i = 0; i < targetTypeArguments.length; i++) {
+                        if (!this.sourceExtendsTarget(sourceTypeArguments[i], targetTypeArguments[i], context)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
             if (source.hasBase(target)) {
                 return true;
             }
@@ -9023,6 +8890,15 @@ module TypeScript {
             //if (this.typesAreIdentical(source, target)) {
             //    return true;
             //}
+
+            if (source && source.isTypeReference() && !source.getIsSpecialized()) {
+                source = (<PullTypeReferenceSymbol>source).getReferencedTypeSymbol();
+            }
+
+            if (target && target.isTypeReference() && !target.getIsSpecialized()) {
+                target = (<PullTypeReferenceSymbol>target).getReferencedTypeSymbol();
+            }
+
             if (source === target) {
                 return true;
             }
@@ -9032,12 +8908,9 @@ module TypeScript {
                 return true;
             }
 
-            if (context.specializingToAny && (target.isTypeParameter() || source.isTypeParameter())) {
+            if (context.instantiatingTypesToAny && (target.isTypeParameter() || source.isTypeParameter())) {
                 return true;
             }
-
-            //source = this.substituteUpperBoundForType(source);
-            //target = this.substituteUpperBoundForType(target);
 
             var sourceSubstitution: PullTypeSymbol = source;
 
@@ -9154,7 +9027,11 @@ module TypeScript {
             //   Type 'A' is missing property 'C' from type 'B'.
             if (source.isArrayNamedTypeReference() && target.isArrayNamedTypeReference()) {
                 comparisonCache[comboId] = false;
-                var ret = this.sourceIsRelatableToTarget(source.getElementType(), target.getElementType(), assignableTo, comparisonCache, context, comparisonInfo);
+
+                var sourceElementType = source.getTypeArguments()[0];
+                var targetElementType = target.getTypeArguments()[0];
+                var ret = this.sourceIsRelatableToTarget(sourceElementType, targetElementType, assignableTo, comparisonCache, context, comparisonInfo);
+
                 if (ret) {
                     comparisonCache[comboId] = true;
                 }
@@ -9198,7 +9075,7 @@ module TypeScript {
                 else {
                     // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
                     // target to be a subtype of its constraint
-                    if (context.isComparingSpecializedSignatures) {
+                    if (context.isComparingInstantiatedSignatures) {
                         target = this.substituteUpperBoundForType(target);
                     }
                     else {
@@ -9211,7 +9088,7 @@ module TypeScript {
 
             // This is an optimization that is a deviation from the spec. The spec sections 3.8.3 and 3.8.4 say to compare structurally,
             // but we know that if a type nominally extends another type, it is both a subtype and assignable.
-            if (this.sourceExtendsTarget(source, target, context)) {
+            if ((source.kind & PullElementKind.SomeNamedType) && (target.kind & PullElementKind.SomeNamedType) && this.sourceExtendsTarget(source, target, context)) {
                 return true;
             }
 
@@ -9219,7 +9096,9 @@ module TypeScript {
                 return true;
             }
 
-            if (this.cachedFunctionInterfaceType() && (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) && target === this.cachedFunctionInterfaceType()) {
+            if (this.cachedFunctionInterfaceType() &&
+                (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) &&
+                target === this.cachedFunctionInterfaceType()) {
                 return true;
             }
 
@@ -9348,7 +9227,7 @@ module TypeScript {
 
             // catch the mutually recursive or cached cases
             if (targetPropType && sourcePropType && (comparisonCache[sourcePropType.pullSymbolIDString + "#" + targetPropType.pullSymbolIDString] != undefined)) {
-                return true;
+                return true; // GTODO: should this be true?
             }
 
             var comparisonInfoPropertyTypeCheck: TypeComparisonInfo = null;
@@ -9562,8 +9441,8 @@ module TypeScript {
 
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
 
-            sourceSig = this.specializeSignatureToObject(sourceSig, sourceSig.getDeclarations()[0].getParentDecl(), context);
-            targetSig = this.specializeSignatureToObject(targetSig, targetSig.getDeclarations()[0].getParentDecl(), context);
+            sourceSig = this.instantiateSignatureToObject(sourceSig);
+            targetSig = this.instantiateSignatureToObject(targetSig);
 
             var sourceParameters = sourceSig.parameters;
             var targetParameters = targetSig.parameters;
@@ -10146,8 +10025,8 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
-                if (expressionType.isGeneric() && !expressionType.isFixed() && !expressionType.isTypeParameter()) {
-                    expressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
+                if (expressionType.isGeneric() && !expressionType.isTypeParameter()) {
+                    expressionType = this.instantiateTypeToAny(expressionType, context);
                 }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
@@ -10155,11 +10034,15 @@ module TypeScript {
 
             var parameterDeclarations = parameterType.getDeclarations();
             var expressionDeclarations = expressionType.getDeclarations();
-            if (parameterDeclarations.length &&
+
+            var anyExpressionType = this.instantiateTypeToAny(expressionType, context);
+            var anyParameterType = this.instantiateTypeToAny(parameterType, context);
+            if (!parameterType.isArrayNamedTypeReference() &&
+                parameterDeclarations.length &&
                 expressionDeclarations.length &&
                 !(parameterType.isTypeParameter() || expressionType.isTypeParameter()) &&
                 (parameterDeclarations[0].isEqual(expressionDeclarations[0]) ||
-                (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(expressionType, parameterType, context, null))) &&
+                (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(anyExpressionType, anyParameterType, context, null))) &&
                 expressionType.isGeneric()) {
                 var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
@@ -10181,21 +10064,9 @@ module TypeScript {
                 }
             }
 
-            // if the expression and parameter type, with type arguments of 'any', are not assignment compatible, ignore
-            //var anyExpressionType = this.specializeTypeToAny(expressionType, enclosingDecl, context);
-            //var anyParameterType = this.specializeTypeToAny(parameterType, enclosingDecl, context);
-
-            //if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
-            //    return;
-            //}
-            var prevSpecializingToAny = context.specializingToAny;
-            context.specializingToAny = true;
-
-            if (!this.sourceIsAssignableToTarget(expressionType, parameterType, context)) {
-                context.specializingToAny = prevSpecializingToAny;
+            if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
                 return;
             }
-            context.specializingToAny = prevSpecializingToAny;
 
             this.relateObjectTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
         }
@@ -10205,14 +10076,6 @@ module TypeScript {
             argContext: ArgumentInferenceContext,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): void {
-            // Sub in 'any' for type parameters
-
-            //var anyExpressionSignature = this.specializeSignatureToAny(expressionSignature, enclosingDecl, context);
-            //var anyParamExpressionSignature = this.specializeSignatureToAny(parameterSignature, enclosingDecl, context);
-
-            //if (!this.signatureIsAssignableToTarget(anyExpressionSignature, anyParamExpressionSignature, context)) {
-            //    return;
-            //}
 
             var expressionParams = expressionSignature.parameters;
             var expressionReturnType = expressionSignature.returnType;
@@ -10314,45 +10177,39 @@ module TypeScript {
             this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
         }
 
-        private specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var prevSpecialize = context.specializingToAny;
+        public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
+            var prevSpecialize = context.instantiatingTypesToAny;
 
-            context.specializingToAny = true;
+            context.instantiatingTypesToAny = true;
 
-            // get the "root" unspecialized type, since even generic types may already be partially specialize
-            var rootType = getRootType(typeToSpecialize);
+            var typeParameters = typeToSpecialize.getTypeParameters();
 
-            var type = specializeType(rootType, [], this, context);
+            if (!typeParameters.length) {
+                return typeToSpecialize;
+            }
 
-            context.specializingToAny = prevSpecialize;
+            var typeArguments: PullTypeSymbol[] = null;
+
+            if (typeParameters.length < this._cachedAnyTypeArgs.length) {
+                typeArguments = this._cachedAnyTypeArgs[typeParameters.length - 1];
+            }
+            else {
+                // REVIEW: might want to cache these arg lists
+                typeArguments = [];
+
+                for (var i = 0; i < typeParameters.length; i++) {
+                    typeArguments[typeArguments.length] = this.semanticInfoChain.anyTypeSymbol;
+                }
+            }
+
+            var type = this.createInstantiatedType(typeToSpecialize, typeArguments);
+
+            context.instantiatingTypesToAny = prevSpecialize;
 
             return type;
         }
 
-        private specializeSignatureToAny(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
-            var typeParameters = signatureToSpecialize.getTypeParameters();
-            var typeReplacementMap: any = {};
-            var typeArguments: PullTypeSymbol[] = []; // PULLTODO - may be expensive, but easy to cache
-
-            for (var i = 0; i < typeParameters.length; i++) {
-                typeArguments[i] = this.semanticInfoChain.anyTypeSymbol;
-                typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
-            }
-            if (!typeArguments.length) {
-                typeArguments[0] = this.semanticInfoChain.anyTypeSymbol;
-            }
-
-            var prevSpecialize = context.specializingToAny;
-
-            context.specializingToAny = true;
-            // no need to worry about returning 'null', since 'any' satisfies all constraints
-            var sig = specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, enclosingDecl, context);
-            context.specializingToAny = prevSpecialize;
-
-            return sig;
-        }
-
-        private specializeSignatureToObject(signatureToSpecialize: PullSignatureSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSignatureSymbol {
+        public instantiateSignatureToObject(signatureToSpecialize: PullSignatureSymbol): PullSignatureSymbol {
             if (!signatureToSpecialize.cachedObjectSpecialization) {
                 var typeParameters = signatureToSpecialize.getTypeParameters();
 
@@ -10365,7 +10222,7 @@ module TypeScript {
                         typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
                     }
 
-                    signatureToSpecialize.cachedObjectSpecialization = specializeSignature(signatureToSpecialize, false, typeReplacementMap, typeArguments, this, enclosingDecl, context);
+                    signatureToSpecialize.cachedObjectSpecialization = instantiateSignature(signatureToSpecialize, typeReplacementMap, true);
                 }
                 else {
                     signatureToSpecialize.cachedObjectSpecialization = signatureToSpecialize;
@@ -10382,6 +10239,8 @@ module TypeScript {
             var scriptDecl = semanticInfoChain.topLevelDecl(scriptName);
 
             var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+            var prevGlobalResolver = globalResolver;
+            globalResolver = resolver;
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
 
             if (resolver.canTypeCheckAST(script, context)) {
@@ -10397,6 +10256,8 @@ module TypeScript {
 
                 resolver.processPostTypeCheckWorkItems(context);
             }
+
+            globalResolver = prevGlobalResolver;
         }
 
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
@@ -11182,7 +11043,8 @@ module TypeScript {
                     // NOTE: we don't want to report this diagnostics.  They'll already have been 
                     // reported when we first hit the return statement.
                     var returnExpressionSymbol = this.resolveTypeReference(returnTypeAnnotation, decl, context);
-                    if (returnExpressionSymbol === funcReturnType) {
+                    
+                    if (PullHelpers.typeSymbolsAreIdentical(returnExpressionSymbol, funcReturnType)) {
                         // Error coming from return annotation
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, messageCode, messageArguments));
                     }
@@ -11202,8 +11064,9 @@ module TypeScript {
                             case NodeType.ReturnStatement:
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
                                 var returnExpressionSymbol = this.resolveAST(returnStatement.returnExpression, false, decl, context).type;
+                                
                                 // Check if return statement's type matches the one that we concluded
-                                if (returnExpressionSymbol === funcReturnType) {
+                                if (PullHelpers.typeSymbolsAreIdentical(returnExpressionSymbol, funcReturnType)) {
                                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnStatement, messageCode, messageArguments));
                                 } else {
                                     reportOnFuncDecl = true;

@@ -7,18 +7,6 @@ module TypeScript {
     export class PullSymbolBinder {
         private static functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
 
-        private static findTypeParameterInCache(name: string) {
-            return this.functionTypeParameterCache[name];
-        }
-
-        private static addTypeParameterToCache(typeParameter: PullTypeParameterSymbol) {
-            this.functionTypeParameterCache[typeParameter.getName()] = typeParameter;
-        }
-
-        public static resetTypeParameterCache() {
-            this.functionTypeParameterCache = new BlockIntrinsics();
-        }
-
         private declsBeingBound: BlockIntrinsics<boolean> = new BlockIntrinsics<boolean>();
 
         constructor(private semanticInfoChain: SemanticInfoChain) {
@@ -663,8 +651,6 @@ module TypeScript {
                 }
             }
 
-            PullSymbolBinder.resetTypeParameterCache();
-
             constructorSymbol = classSymbol.getConstructorMethod();
             constructorTypeSymbol = constructorSymbol ? constructorSymbol.type : null;
 
@@ -779,8 +765,6 @@ module TypeScript {
                     }
                 }
             }
-
-            PullSymbolBinder.resetTypeParameterCache();
 
             var typeParameters = interfaceDecl.getTypeParameters();
             var typeParameter: PullTypeParameterSymbol;
@@ -1661,19 +1645,7 @@ module TypeScript {
                 typeParameter = signature.findTypeParameter(typeParameterName);
 
                 if (!typeParameter) {
-
-                    if (!typeParameterAST.constraint) {
-                        typeParameter = PullSymbolBinder.findTypeParameterInCache(typeParameterName);
-                    }
-
-                    if (!typeParameter) {
-                        typeParameter = new PullTypeParameterSymbol(typeParameterName, true);
-
-                        if (!typeParameterAST.constraint) {
-                            PullSymbolBinder.addTypeParameterToCache(typeParameter);
-                        }
-                    }
-
+                    typeParameter = new PullTypeParameterSymbol(typeParameterName, true);
                     signature.addTypeParameter(typeParameter);
                 }
                 else {
