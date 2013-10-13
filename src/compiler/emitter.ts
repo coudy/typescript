@@ -1255,6 +1255,65 @@ module TypeScript {
             }
         }
 
+        public emitFunctionExpression(funcDecl: FunctionExpression): void {
+            var savedInArrowFunction = this.inArrowFunction;
+            this.inArrowFunction = false;
+
+            var temp = this.setContainer(EmitContainer.Function);
+
+            var funcName = funcDecl.getNameText();
+
+            this.recordSourceMappingStart(funcDecl);
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            this.pushDecl(pullDecl);
+
+            this.recordSourceMappingStart(funcDecl);
+            this.writeToOutput("function ");
+
+            //var id = funcDecl.getNameText();
+            if (funcDecl.name) {
+                this.recordSourceMappingStart(funcDecl.name);
+                this.writeToOutput(funcDecl.name.actualText);
+                this.recordSourceMappingEnd(funcDecl.name);
+            }
+
+            this.writeToOutput("(");
+            this.emitFunctionParameters(funcDecl.parameterList);
+            this.writeLineToOutput(") {");
+
+            this.recordSourceMappingNameStart(funcDecl.getNameText());
+            this.indenter.increaseIndent();
+
+            this.emitDefaultValueAssignments(funcDecl.parameterList);
+            this.emitRestParameterInitializer(funcDecl.parameterList);
+
+            if (this.shouldCaptureThis(funcDecl)) {
+                this.writeCaptureThisStatement(funcDecl);
+            }
+
+            this.emitList(funcDecl.block.statements);
+
+            this.emitCommentsArray(funcDecl.block.closeBraceLeadingComments, /*trailing:*/ false);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceSpan);
+
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(funcDecl);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcDecl);
+
+            this.emitComments(funcDecl, false);
+
+            this.popDecl(pullDecl);
+
+            this.setContainer(temp);
+            this.inArrowFunction = savedInArrowFunction;
+        }
+
         public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;

@@ -470,7 +470,6 @@ module TypeScript {
     function createAnyFunctionExpressionDeclaration(
         functionExpressionDeclAST: AST,
         id: Identifier,
-        returnTypeAnnotation: TypeReference,
         context: DeclCollectionContext,
         displayName: Identifier = null): void {
 
@@ -653,7 +652,10 @@ module TypeScript {
         context.pushParent(decl);
     }
 
-    // set accessors
+    function createFunctionExpressionDeclaration(expression: FunctionExpression, context: DeclCollectionContext): void {
+        createAnyFunctionExpressionDeclaration(expression, expression.name, context);
+    }
+
     function createSetAccessorDeclaration(setAccessorDeclAST: SetMemberAccessorDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
@@ -792,7 +794,7 @@ module TypeScript {
         context.semanticInfoChain.setASTForDecl(decl, propertyAssignment);
 
         createAnyFunctionExpressionDeclaration(
-            propertyAssignment, propertyAssignment.propertyName, propertyAssignment.returnTypeAnnotation, context, propertyAssignment.propertyName);
+            propertyAssignment, propertyAssignment.propertyName, context, propertyAssignment.propertyName);
     }
 
     function preCollectDecls(ast: AST, walker: IAstWalker) {
@@ -835,7 +837,9 @@ module TypeScript {
             case NodeType.SetMemberAccessorDeclaration:
                 createSetAccessorDeclaration(<SetMemberAccessorDeclaration>ast, context);
                 break;
-
+            case NodeType.FunctionExpression:
+                createFunctionExpressionDeclaration(<FunctionExpression>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
@@ -859,16 +863,13 @@ module TypeScript {
                 else if (hasFlag(functionFlags, FunctionFlags.Method)) {
                     createMemberFunctionDeclaration(funcDecl, context);
                 }
-                else if (hasFlag(functionFlags, (FunctionFlags.IsFunctionExpression))) {
-                    createAnyFunctionExpressionDeclaration(funcDecl, funcDecl.name, funcDecl.returnTypeAnnotation, context);
-                }
                 else {
                     createFunctionDeclaration(funcDecl, context);
                 }
                 break;
             case NodeType.ArrowFunctionExpression:
                 var arrowFunction = <ArrowFunctionExpression>ast;
-                createAnyFunctionExpressionDeclaration(ast, /*id*/null, arrowFunction.returnTypeAnnotation, context);
+                createAnyFunctionExpressionDeclaration(ast, /*id*/null, context);
                 break;
             case NodeType.ImportDeclaration:
                 preCollectImportDecls(ast, context);
@@ -1037,6 +1038,7 @@ module TypeScript {
             case NodeType.ConstructorDeclaration:
             case NodeType.FunctionPropertyAssignment:
             case NodeType.FunctionDeclaration:
+            case NodeType.FunctionExpression:
             case NodeType.GetMemberAccessorDeclaration:
             case NodeType.SetMemberAccessorDeclaration:
             case NodeType.ArrowFunctionExpression:

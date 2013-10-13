@@ -620,10 +620,7 @@ module TypeScript {
                                 lastDeclAST = cur;
                             }
 
-                            if (cur.nodeType() === NodeType.FunctionDeclaration && hasFlag((<FunctionDeclaration>cur).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                                lambdaAST = cur;
-                            }
-                            else if (cur.nodeType() === NodeType.ArrowFunctionExpression) {
+                            if (cur.nodeType() === NodeType.FunctionExpression || cur.nodeType() === NodeType.ArrowFunctionExpression) {
                                 lambdaAST = cur;
                             }
                             else if (cur.nodeType() === NodeType.VariableDeclarator) {
@@ -879,14 +876,7 @@ module TypeScript {
                 var current = path[i];
 
                 switch (current.nodeType()) {
-                    case NodeType.FunctionDeclaration:
-                        // A function expression does not have a decl, so we need to resolve it first to get the decl created.
-                        if (hasFlag((<FunctionDeclaration>current).getFunctionFlags(), FunctionFlags.IsFunctionExpression)) {
-                            resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
-                        }
-
-                        break;
-
+                    case NodeType.FunctionExpression:
                     case NodeType.ArrowFunctionExpression:
                         resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         break;

@@ -1363,6 +1363,37 @@ module TypeScript {
         }
     }
 
+    export class FunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(public name: Identifier,
+                    public typeParameters: ASTList,
+                    public parameterList: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
+                        super();
+            name && (name.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.FunctionExpression;
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitFunctionExpression(this);
+        }
+
+        public getNameText() {
+            return this.name ? this.name.actualText : this.hint;
+        }
+    }
+
     export class ConstructorDeclaration extends AST {
         private _functionFlags = FunctionFlags.None;
 

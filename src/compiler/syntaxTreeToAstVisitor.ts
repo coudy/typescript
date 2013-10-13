@@ -822,6 +822,10 @@ module TypeScript {
                     var arrowFunction = <ArrowFunctionExpression>init;
                     arrowFunction.hint = name.actualText;
                 }
+                else if (init.nodeType() === NodeType.FunctionExpression) {
+                    var expression = <FunctionExpression>init;
+                    expression.hint = name.actualText;
+                }
             }
 
             return result;
@@ -1978,7 +1982,8 @@ module TypeScript {
             result.setPostComments(postComments);
 
             if (expression.nodeType() === NodeType.FunctionDeclaration ||
-                expression.nodeType() === NodeType.ArrowFunctionExpression) {
+                expression.nodeType() === NodeType.ArrowFunctionExpression ||
+                expression.nodeType() === NodeType.FunctionExpression) {
                 var funcDecl = <FunctionDeclaration>expression;
                     funcDecl.hint = propertyName.text();
             }
@@ -2023,12 +2028,6 @@ module TypeScript {
             var result = new GetAccessorPropertyAssignment(functionName, parameterList, returnType, block);
             this.setSpan(result, start, node);
 
-            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor | FunctionFlags.IsFunctionExpression);
-            //funcDecl.hint = "get" + node.propertyName.valueText();
-
-            //var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            //this.setSpan(result, start, node);
-
             result.setPreComments(preComments);
             result.setPostComments(postComments);
 
@@ -2052,19 +2051,13 @@ module TypeScript {
             var result = new SetAccessorPropertyAssignment(functionName, parameterList, block);
             this.setSpan(result, start, node);
 
-            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor | FunctionFlags.IsFunctionExpression);
-            //funcDecl.hint = "set" + node.propertyName.valueText();
-
-            //var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            //this.setSpan(result, start, node);
-
             result.setPreComments(preComments);
             result.setPostComments(postComments);
 
             return result;
         }
 
-        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
+        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionExpression {
             var start = this.position;
 
             this.movePast(node.functionKeyword);
@@ -2078,10 +2071,8 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var result = new FunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new FunctionExpression(name, typeParameters, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
-
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);
 
             return result;
         }
@@ -2952,8 +2943,8 @@ module TypeScript {
             return result;
         }
 
-        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionExpression {
+            var result: FunctionExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitFunctionExpression(node);
                 this.setAST(node, result);

@@ -2091,19 +2091,26 @@ module TypeScript {
                 var enclosingAST = this.getASTForDecl(enclosingDecl);
                 var nodeType = enclosingAST.nodeType();
                 var hasRestParameterCodeGen = false;
+
                 if (nodeType == NodeType.FunctionDeclaration) {
                     var functionDeclaration = <FunctionDeclaration>enclosingAST;
                     hasRestParameterCodeGen = !hasFlag(enclosingDecl.kind == PullElementKind.Method ? enclosingDecl.getParentDecl().flags : enclosingDecl.flags, PullElementFlags.Ambient)
-                        && functionDeclaration.block
-                        && lastParameterIsRest(functionDeclaration.parameterList);
-                } else if (nodeType == NodeType.ConstructorDeclaration) {
+                    && functionDeclaration.block
+                    && lastParameterIsRest(functionDeclaration.parameterList);
+                }
+                else if (nodeType == NodeType.ConstructorDeclaration) {
                     var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
                     hasRestParameterCodeGen = !hasFlag(enclosingDecl.getParentDecl().flags, PullElementFlags.Ambient)
-                        && constructorDeclaration.block
-                        && lastParameterIsRest(constructorDeclaration.parameterList);
-                } else if (nodeType == NodeType.ArrowFunctionExpression) {
+                    && constructorDeclaration.block
+                    && lastParameterIsRest(constructorDeclaration.parameterList);
+                }
+                else if (nodeType == NodeType.ArrowFunctionExpression) {
                     var arrowFunctionExpression = <ArrowFunctionExpression>enclosingAST;
-                    hasRestParameterCodeGen = lastParameterIsRest((<ArrowFunctionExpression>enclosingAST).parameterList);
+                    hasRestParameterCodeGen = lastParameterIsRest(arrowFunctionExpression.parameterList);
+                }
+                else if (nodeType === NodeType.FunctionExpression) {
+                    var functionExpression = <FunctionExpression>enclosingAST;
+                    hasRestParameterCodeGen = lastParameterIsRest(functionExpression.parameterList);
                 }
 
                 if (hasRestParameterCodeGen) {
@@ -2938,6 +2945,7 @@ module TypeScript {
                 switch (ast.nodeType()) {
                     case NodeType.FunctionDeclaration:
                     case NodeType.ArrowFunctionExpression:
+                    case NodeType.FunctionExpression:
                         // don't recurse into a function decl - we don't want to confuse a nested
                         // return type with the top-level function's return type
                         go = false;
@@ -3167,6 +3175,10 @@ module TypeScript {
             return false;
         }
 
+        private typeCheckFunctionExpression(funcDecl: FunctionExpression, context: PullTypeResolutionContext): void {
+            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
+        }
+
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
             flags: FunctionFlags,
@@ -3330,10 +3342,7 @@ module TypeScript {
 
             var result: PullSymbol;
 
-            var functionFlags = funcDecl.getFunctionFlags();
-            if (inContextuallyTypedAssignment ||
-                (functionFlags & FunctionFlags.IsFunctionExpression)) {
-
+            if (inContextuallyTypedAssignment) {
                 result = this.resolveAnyFunctionExpression(
                     funcDecl, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block,
                     inContextuallyTypedAssignment, enclosingDecl, context);
@@ -3343,6 +3352,11 @@ module TypeScript {
             }
 
             return result;
+        }
+
+        private resolveFunctionExpression(funcDecl: FunctionExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block,
+                inContextuallyTypedAssignment, enclosingDecl, context);
         }
 
         private resolveArrowFunctionExpression(funcDecl: ArrowFunctionExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4888,6 +4902,7 @@ module TypeScript {
         private isAnyFunctionExpressionOrDeclaration(ast: AST): boolean {
             switch (ast.nodeType()) {
                 case NodeType.ArrowFunctionExpression:
+                case NodeType.FunctionExpression:
                 case NodeType.FunctionDeclaration:
                 case NodeType.FunctionPropertyAssignment:
                 case NodeType.ConstructorDeclaration:
@@ -5122,6 +5137,9 @@ module TypeScript {
 
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+
+                case NodeType.FunctionExpression:
+                    return this.resolveFunctionExpression(<FunctionExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.ArrowFunctionExpression:
                     return this.resolveArrowFunctionExpression(<ArrowFunctionExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -5409,18 +5427,20 @@ module TypeScript {
                         setAccessor, setAccessor.getFunctionFlags(), setAccessor.propertyName, setAccessor.parameterList,
                         setAccessor.block, context);
                     break;
+
+                case NodeType.FunctionExpression:
+                    this.typeCheckFunctionExpression(<FunctionExpression>ast, context);
+                    break;
                 
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
-                        var functionFlags = funcDecl.getFunctionFlags();
-                        if (inContextuallyTypedAssignment ||
-                            (functionFlags & FunctionFlags.IsFunctionExpression)) {
+                        if (inContextuallyTypedAssignment) {
                             this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
                         else {
                             this.typeCheckFunctionDeclaration(
-                                funcDecl, functionFlags, funcDecl.name,
+                                funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
                                 funcDecl.typeParameters, funcDecl.parameterList,
                                 funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
@@ -9779,6 +9799,12 @@ module TypeScript {
                     arg, arrowFunction.typeParameters, arrowFunction.parameterList, arrowFunction.returnTypeAnnotation, arrowFunction.block,
                     argIndex, enclosingDecl, context, comparisonInfo);
             }
+            else if (arg.nodeType() === NodeType.FunctionExpression) {
+                var functionExpression = <FunctionExpression>arg;
+                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
+                    arg, functionExpression.typeParameters, functionExpression.parameterList, functionExpression.returnTypeAnnotation, functionExpression.block,
+                    argIndex, enclosingDecl, context, comparisonInfo);
+            }
             else if (arg.nodeType() === NodeType.FunctionDeclaration) {
                 var funcDecl = <FunctionDeclaration>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
@@ -10854,7 +10880,7 @@ module TypeScript {
             block: Block,
             context: PullTypeResolutionContext) {
 
-            if ((flags & FunctionFlags.IsFunctionExpression) ||
+            if (funcDeclAST.nodeType() === NodeType.FunctionExpression ||
                 funcDeclAST.nodeType() === NodeType.FunctionPropertyAssignment ||
                 funcDeclAST.nodeType() === NodeType.GetAccessorPropertyAssignment ||
                 funcDeclAST.nodeType() === NodeType.SetAccessorPropertyAssignment) {
@@ -11194,6 +11220,7 @@ module TypeScript {
                         switch (ast.nodeType()) {
                             case NodeType.FunctionDeclaration:
                             case NodeType.ArrowFunctionExpression:
+                            case NodeType.FunctionExpression:
                                 // don't recurse into a function decl - we don't want to confuse a nested
                                 // return type with the top-level function's return type
                                 go = false;

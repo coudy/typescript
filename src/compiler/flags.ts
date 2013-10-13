@@ -76,7 +76,6 @@ module TypeScript {
         CallSignature = 1 << 9,
         ConstructMember = 1 << 10,
         IndexerMember = 1 << 12,
-        IsFunctionExpression = 1 << 13,
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;

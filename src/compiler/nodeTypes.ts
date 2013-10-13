@@ -120,6 +120,7 @@ module TypeScript {
         CastExpression,
         ParenthesizedExpression,
         ArrowFunctionExpression,
+        FunctionExpression,
 
         // Statements
         Block,
