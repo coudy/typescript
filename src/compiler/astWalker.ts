@@ -180,6 +180,7 @@ module TypeScript {
             this.childrenWalkers[NodeType.ArrowFunctionExpression] = ChildrenWalkers.walkArrowFunctionExpressionChildren;
             this.childrenWalkers[NodeType.FunctionExpression] = ChildrenWalkers.walkFunctionExpressionChildren;
             this.childrenWalkers[NodeType.FunctionDeclaration] = ChildrenWalkers.walkFuncDeclChildren;
+            this.childrenWalkers[NodeType.MemberFunctionDeclaration] = ChildrenWalkers.walkMemberFunctionDeclarationChildren;
             this.childrenWalkers[NodeType.ConstructorDeclaration] = ChildrenWalkers.walkConstructorDeclarationChildren;
             this.childrenWalkers[NodeType.VariableDeclarator] = ChildrenWalkers.walkVariableDeclaratorChildren;
             this.childrenWalkers[NodeType.MemberVariableDeclaration] = ChildrenWalkers.walkMemberVariableDeclarationChildren;
@@ -385,6 +386,14 @@ module TypeScript {
         }
 
         export function walkArrowFunctionExpressionChildren(preAst: ArrowFunctionExpression, walker: IAstWalker): void {
+            walker.walk(preAst.typeParameters);
+            walker.walk(preAst.parameterList);
+            walker.walk(preAst.returnTypeAnnotation);
+            walker.walk(preAst.block);
+        }
+
+        export function walkMemberFunctionDeclarationChildren(preAst: MemberFunctionDeclaration, walker: IAstWalker): void {
+            walker.walk(preAst.name);
             walker.walk(preAst.typeParameters);
             walker.walk(preAst.parameterList);
             walker.walk(preAst.returnTypeAnnotation);

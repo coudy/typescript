@@ -1401,6 +1401,46 @@ module TypeScript {
         }
     }
 
+    export class MemberFunctionDeclaration extends AST {
+        private _functionFlags = FunctionFlags.None;
+
+        constructor(public name: Identifier,
+                    public typeParameters: ASTList,
+                    public parameterList: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
+            super();
+            name && (name.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberFunctionDeclaration;
+        }
+
+        public getFunctionFlags(): FunctionFlags {
+            return this._functionFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setFunctionFlags(flags: FunctionFlags): void {
+            this._functionFlags = flags;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return emitter.shouldEmitMemberFunctionDeclaration(this);
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitMemberFunctionDeclaration(this);
+        }
+    }
+
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
@@ -2675,6 +2715,8 @@ module TypeScript {
                 return (<VariableDeclarator>ast.parent).id === ast;
             case NodeType.FunctionDeclaration:
                 return (<FunctionDeclaration>ast.parent).name === ast;
+            case NodeType.MemberFunctionDeclaration:
+                return (<MemberFunctionDeclaration>ast.parent).name === ast;
             case NodeType.Parameter:
                 return (<Parameter>ast.parent).id === ast;
             case NodeType.TypeParameter:
@@ -2702,6 +2744,14 @@ module TypeScript {
             && ast.nodeType() === NodeType.Name
             && ast.parent.nodeType() === NodeType.FunctionDeclaration
             && (<FunctionDeclaration>ast.parent).name === ast;
+    }
+
+    export function isNameOfMemberFunction(ast: AST) {
+        return ast
+            && ast.parent
+            && ast.nodeType() === NodeType.Name
+            && ast.parent.nodeType() === NodeType.MemberFunctionDeclaration
+            && (<MemberFunctionDeclaration>ast.parent).name === ast;
     }
 
     export function isNameOfMemberAccessExpression(ast: AST) {

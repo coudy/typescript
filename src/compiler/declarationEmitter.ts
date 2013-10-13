@@ -96,6 +96,8 @@ module TypeScript {
                     return this.emitDeclarationsForSetAccessor(<SetAccessor>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
+                case NodeType.MemberFunctionDeclaration:
+                    return this.emitDeclarationsForMemberFunctionDeclaration(<MemberFunctionDeclaration>ast);
                 case NodeType.ClassDeclaration:
                     return this.emitDeclarationsForClassDeclaration(<ClassDeclaration>ast);
                 case NodeType.InterfaceDeclaration:
@@ -411,7 +413,7 @@ module TypeScript {
             }
         }
 
-        private isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
+        private isOverloadedCallSignature(funcDecl: AST) {
             var start = new Date().getTime();
             var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSymbol = functionDecl.getSymbol();
@@ -498,6 +500,65 @@ module TypeScript {
 
                 this.emitArgDecl(lastArg, flags);
             }
+        }
+
+        private emitDeclarationsForMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration) {
+            var functionFlags = funcDecl.getFunctionFlags();
+
+            var start = new Date().getTime();
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
+
+            TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
+
+            var funcTypeSymbol = funcSymbol.type;
+            if (funcDecl.block) {
+                var constructSignatures = funcTypeSymbol.getConstructSignatures();
+                if (constructSignatures && constructSignatures.length > 1) {
+                    return;
+                }
+                else if (this.isOverloadedCallSignature(funcDecl)) {
+                    // This means its implementation of overload signature. do not emit
+                    return;
+                }
+            }
+            else if (hasFlag(functionFlags, FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
+                // Print only first overload of private function
+                var callSignatures = funcTypeSymbol.getCallSignatures();
+                Debug.assert(callSignatures && callSignatures.length > 1);
+                var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
+                var firstSignatureDecl = firstSignature.getDeclarations()[0];
+                var firstFuncDecl = this.semanticInfoChain.getASTForDecl(firstSignatureDecl);
+                if (firstFuncDecl !== funcDecl) {
+                    return;
+                }
+            }
+
+            if (!this.canEmitDeclarations(ToDeclFlags(functionFlags), funcDecl)) {
+                return;
+            }
+
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            var funcSignature = funcPullDecl.getSignatureSymbol();
+            this.emitDeclarationComments(funcDecl);
+
+            this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
+            var id = funcDecl.name.actualText;
+            this.declFile.Write(id);
+            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+
+            this.declFile.Write("(");
+
+            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
+
+            this.declFile.Write(")");
+
+            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
+                var returnType = funcSignature.returnType;
+                this.declFile.Write(": ");
+                this.emitTypeSignature(returnType);
+            }
+
+            this.declFile.WriteLine(";");
         }
 
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {

@@ -1295,6 +1295,27 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
         }
 
+        public emitMemberFunction(funcDecl: MemberFunctionDeclaration) {
+            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
+                return;
+            }
+
+            var functionFlags = funcDecl.getFunctionFlags();
+            if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
+                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+                if (hasFlag(functionFlags, FunctionFlags.Static)) {
+                    if (this.thisClassNode) {
+                        this.writeLineToOutput("");
+                        this.emitIndent();
+                        this.recordSourceMappingStart(funcDecl);
+                        this.writeToOutput(this.thisClassNode.identifier.actualText + "." + funcDecl.name.actualText + " = " + funcDecl.name.actualText + ";");
+                        this.recordSourceMappingEnd(funcDecl);
+                    }
+                }
+            }
+        }
+
+
         public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
@@ -2283,6 +2304,18 @@ module TypeScript {
                         !hasFlag(setter.getFunctionFlags(), FunctionFlags.Static));
                     lastEmittedMember = memberDecl;
                 }
+                else if (memberDecl.nodeType() === NodeType.MemberFunctionDeclaration) {
+
+                    var memberFunction = <MemberFunctionDeclaration>memberDecl;
+
+                    var functionFlags = memberFunction.getFunctionFlags();
+                    if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
+                        this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
+
+                        this.emitClassMemberFunctionDeclaration(classDecl, memberFunction);
+                        lastEmittedMember = memberDecl;
+                    }
+                }
                 else if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
                     var functionDeclaration = <FunctionDeclaration>memberDecl;
 
@@ -2347,6 +2380,51 @@ module TypeScript {
                     }
                 }
             }
+        }
+
+        private emitClassMemberFunctionDeclaration(classDecl: ClassDeclaration, funcDecl: MemberFunctionDeclaration): void {
+            var functionFlags = funcDecl.getFunctionFlags();
+
+            this.emitIndent();
+            this.recordSourceMappingStart(funcDecl);
+            this.emitComments(funcDecl, true);
+            var functionName = funcDecl.name.actualText;
+
+            this.writeToOutput(classDecl.identifier.actualText);
+
+            if (!hasFlag(functionFlags, FunctionFlags.Static)) {
+                this.writeToOutput(".prototype");
+            }
+
+            if (isQuoted(functionName) || funcDecl.name.isNumber) {
+                this.writeToOutput("[" + functionName + "] = ");
+            }
+            else {
+                this.writeToOutput("." + functionName + " = ");
+            }
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            this.pushDecl(pullDecl);
+
+            this.recordSourceMappingStart(funcDecl);
+            this.writeToOutput("function ");
+
+            this.writeToOutput("(");
+            this.emitFunctionParameters(funcDecl.parameterList);
+            this.writeToOutput(")");
+
+            this.emitFunctionBodyStatements(funcDecl.name.actualText, funcDecl, funcDecl.parameterList, funcDecl.block);
+
+            this.recordSourceMappingEnd(funcDecl);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcDecl);
+
+            this.emitComments(funcDecl, false);
+
+            this.popDecl(pullDecl);
+
+            this.writeLineToOutput(";");
         }
 
         private requiresExtendsBlock(moduleElements: ASTList): boolean {
@@ -3017,6 +3095,19 @@ module TypeScript {
         public emitConstructorDeclaration(declaration: ConstructorDeclaration): void {
             if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
                 this.emitConstructor(declaration);
+            }
+            else {
+                this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+            }
+        }
+
+        public shouldEmitMemberFunctionDeclaration(declaration: MemberFunctionDeclaration): boolean {
+            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
+        }
+
+        public emitMemberFunctionDeclaration(declaration: MemberFunctionDeclaration): void {
+            if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
+                this.emitMemberFunction(declaration);
             }
             else {
                 this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);

@@ -1008,7 +1008,9 @@ module Services {
                 if (node.nodeType() === TypeScript.NodeType.ConstructorDeclaration ||
                     node.nodeType() === TypeScript.NodeType.FunctionDeclaration ||
                     node.nodeType() === TypeScript.NodeType.ArrowFunctionExpression ||
-                    TypeScript.isNameOfFunction(node)) {
+                    node.nodeType() === TypeScript.NodeType.MemberFunctionDeclaration ||
+                    TypeScript.isNameOfFunction(node) ||
+                    TypeScript.isNameOfMemberFunction(node)) {
                     var funcDecl = node.nodeType() === TypeScript.NodeType.Name ? node.parent : node;
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
                         var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(this.compiler.getDeclForAST(funcDecl));

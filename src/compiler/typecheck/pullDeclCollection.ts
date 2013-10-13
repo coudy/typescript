@@ -493,34 +493,38 @@ module TypeScript {
         context.pushParent(decl);
     }
 
+    function createMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: DeclCollectionContext): void {
+        createAnyMemberFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.block, context);
+    }
+
     // methods
-    function createMemberFunctionDeclaration(memberFunctionDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createAnyMemberFunctionDeclaration(memberFunctionDeclAST: AST, flags: FunctionFlags, name: Identifier, block: Block, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
 
-        if (hasFlag(memberFunctionDeclAST.getFunctionFlags(), FunctionFlags.Static)) {
+        if (hasFlag(flags, FunctionFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(memberFunctionDeclAST.getFunctionFlags(), FunctionFlags.Private)) {
+        if (hasFlag(flags, FunctionFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (!memberFunctionDeclAST.block) {
+        if (!block) {
             declFlags |= PullElementFlags.Signature;
         }
 
-        if (hasFlag(memberFunctionDeclAST.name.getFlags(), ASTFlags.OptionalName)) {
+        if (hasFlag(name.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
         var span = TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
         var parent = context.getParent();
 
-        var decl = new NormalPullDecl(memberFunctionDeclAST.name.text(), memberFunctionDeclAST.name.actualText, declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(name.text(), name.actualText, declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(memberFunctionDeclAST, decl);
         context.semanticInfoChain.setASTForDecl(decl, memberFunctionDeclAST);
 
@@ -802,6 +806,10 @@ module TypeScript {
             case NodeType.FunctionExpression:
                 createFunctionExpressionDeclaration(<FunctionExpression>ast, context);
                 break;
+            case NodeType.MemberFunctionDeclaration:
+                createMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
+                break;
+
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
@@ -823,7 +831,7 @@ module TypeScript {
                     createFunctionTypeDeclaration(funcDecl, context);
                 }
                 else if (hasFlag(functionFlags, FunctionFlags.Method)) {
-                    createMemberFunctionDeclaration(funcDecl, context);
+                    createAnyMemberFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.block,  context);
                 }
                 else {
                     createFunctionDeclaration(funcDecl, context);
@@ -1006,6 +1014,7 @@ module TypeScript {
             case NodeType.ConstructorDeclaration:
             case NodeType.FunctionPropertyAssignment:
             case NodeType.FunctionDeclaration:
+            case NodeType.MemberFunctionDeclaration:
             case NodeType.FunctionExpression:
             case NodeType.GetAccessor:
             case NodeType.SetAccessor:

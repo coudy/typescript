@@ -2096,6 +2096,12 @@ module TypeScript {
                     && functionDeclaration.block
                     && lastParameterIsRest(functionDeclaration.parameterList);
                 }
+                else if (nodeType === NodeType.MemberFunctionDeclaration) {
+                    var memberFunction = <MemberFunctionDeclaration>enclosingAST;
+                    hasRestParameterCodeGen = !hasFlag(enclosingDecl.kind == PullElementKind.Method ? enclosingDecl.getParentDecl().flags : enclosingDecl.flags, PullElementFlags.Ambient)
+                    && memberFunction.block
+                    && lastParameterIsRest(memberFunction.parameterList);
+                }
                 else if (nodeType == NodeType.ConstructorDeclaration) {
                     var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
                     hasRestParameterCodeGen = !hasFlag(enclosingDecl.getParentDecl().flags, PullElementFlags.Ambient)
@@ -3346,6 +3352,15 @@ module TypeScript {
             }
 
             return returnTypeSymbol;
+        }
+
+        private resolveMemberFunctionDeclaration(
+            funcDecl: MemberFunctionDeclaration,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext): PullSymbol {
+
+            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
+                funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
         }
 
         private resolveAnyFunctionDeclaration(
@@ -4915,6 +4930,7 @@ module TypeScript {
                 case NodeType.ArrowFunctionExpression:
                 case NodeType.FunctionExpression:
                 case NodeType.FunctionDeclaration:
+                case NodeType.MemberFunctionDeclaration:
                 case NodeType.FunctionPropertyAssignment:
                 case NodeType.ConstructorDeclaration:
                 case NodeType.GetAccessor:
@@ -5142,6 +5158,9 @@ module TypeScript {
                 case NodeType.GetAccessor:
                 case NodeType.SetAccessor:
                     return this.resolveAccessorDeclaration(ast, context);
+
+                case NodeType.MemberFunctionDeclaration:
+                    return this.resolveMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, enclosingDecl, context);
 
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
@@ -5446,6 +5465,19 @@ module TypeScript {
 
                 case NodeType.FunctionExpression:
                     this.typeCheckFunctionExpression(<FunctionExpression>ast, context);
+                    break;
+
+                case NodeType.MemberFunctionDeclaration:
+                    var memberFunction = <MemberFunctionDeclaration>ast;
+                    if (inContextuallyTypedAssignment) {
+                        this.typeCheckAnyFunctionExpression(memberFunction, memberFunction.typeParameters, memberFunction.returnTypeAnnotation, memberFunction.block, context);
+                    }
+                    else {
+                        this.typeCheckFunctionDeclaration(
+                            memberFunction, memberFunction.getFunctionFlags(), memberFunction.name,
+                            memberFunction.typeParameters, memberFunction.parameterList,
+                            memberFunction.returnTypeAnnotation, memberFunction.block, context);
+                    }
                     break;
                 
                 case NodeType.FunctionDeclaration:

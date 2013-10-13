@@ -682,6 +682,12 @@ module TypeScript {
                                 foundAST = previousAST;
                             }
                             break;
+
+                        case NodeType.MemberFunctionDeclaration:
+                            if (foundAST === (<MemberFunctionDeclaration>previousAST).name) {
+                                foundAST = previousAST;
+                            }
+                            break;
                     }
                 }
 
@@ -693,6 +699,7 @@ module TypeScript {
                     symbol.setUnresolved();
                     enclosingDecl = declStack[declStack.length - 1].getParentDecl();
                     if (foundAST.nodeType() === NodeType.FunctionDeclaration ||
+                        foundAST.nodeType() === NodeType.MemberFunctionDeclaration ||
                         foundAST.nodeType() === NodeType.ArrowFunctionExpression) {
                         funcDecl = <FunctionDeclaration>foundAST;
                     }
@@ -726,10 +733,16 @@ module TypeScript {
                                 (<InvocationExpression>resultASTs[i]).target === resultASTs[i + 1]) {
                                 callExpression = <ICallExpression><any>resultASTs[i];
                                 break;
-                            } else if (resultASTs[i].nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
+                            }
+                            else if (resultASTs[i].nodeType() === NodeType.MemberFunctionDeclaration && (<MemberFunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
                                 funcDecl = <FunctionDeclaration>resultASTs[i];
                                 break;
-                            } else {
+                            }
+                            else if (resultASTs[i].nodeType() === NodeType.FunctionDeclaration && (<FunctionDeclaration>resultASTs[i]).name === resultASTs[i + 1]) {
+                                funcDecl = <FunctionDeclaration>resultASTs[i];
+                                break;
+                            }
+                            else {
                                 break;
                             }
                         }

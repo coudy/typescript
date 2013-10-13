@@ -1596,7 +1596,7 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): MemberFunctionDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
@@ -1613,7 +1613,7 @@ module TypeScript {
             var block = node.block ? node.block.accept(this) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new MemberFunctionDeclaration(name, typeParameters, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
@@ -1632,7 +1632,6 @@ module TypeScript {
                 flags = flags | FunctionFlags.Static;
             }
 
-            flags = flags | FunctionFlags.Method;
             result.setFunctionFlags(flags);
 
             return result;
@@ -2672,8 +2671,8 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): MemberFunctionDeclaration {
+            var result: MemberFunctionDeclaration = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitMemberFunctionDeclaration(node);
                 this.setAST(node, result);
