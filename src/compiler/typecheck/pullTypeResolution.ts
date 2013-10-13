@@ -3493,7 +3493,6 @@ module TypeScript {
                     context.inTypeCheck = prevInTypeCheck;
                 }
 
-
                 // resolve the return type annotation
                 if (funcDeclAST.returnTypeAnnotation) {
 
@@ -10063,6 +10062,12 @@ module TypeScript {
             if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
                 return;
             }
+
+            if (expressionType.isArrayNamedTypeReference() && parameterType.isArrayNamedTypeReference()) {
+                this.relateArrayTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
+
+                return;
+            }            
 
             this.relateObjectTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, enclosingDecl, context);
         }
