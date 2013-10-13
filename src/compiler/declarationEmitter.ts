@@ -467,37 +467,38 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
+            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
+            this.declFile.Write(")");
+            this.declFile.WriteLine(";");
+        }
 
-            var hasLastParameterRestParameter = lastParameterIsRest(funcDecl.parameterList);
-            var argsLen = funcDecl.parameterList.members.length;
+        private emitParameterList(flags: FunctionFlags, parameterList: ASTList): void {
+            var hasLastParameterRestParameter = lastParameterIsRest(parameterList);
+            var argsLen = parameterList.members.length;
             if (hasLastParameterRestParameter) {
                 argsLen--;
             }
 
             for (var i = 0; i < argsLen; i++) {
-                var argDecl = <Parameter>funcDecl.parameterList.members[i];
-                this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
+                var argDecl = <Parameter>parameterList.members[i];
+                this.emitArgDecl(argDecl, flags);
                 if (i < (argsLen - 1)) {
                     this.declFile.Write(", ");
                 }
             }
 
             if (hasLastParameterRestParameter) {
-                var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
-                if (funcDecl.parameterList.members.length > 1) {
+                var lastArg = <Parameter>parameterList.members[parameterList.members.length - 1];
+                if (parameterList.members.length > 1) {
                     this.declFile.Write(", ...");
                 }
                 else {
                     this.declFile.Write("...");
                 }
 
-                this.emitArgDecl(lastArg, funcDecl.getFunctionFlags());
+                this.emitArgDecl(lastArg, flags);
             }
-
-            this.declFile.Write(")");
-            this.declFile.WriteLine(";");
         }
-
 
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {
             var functionFlags = funcDecl.getFunctionFlags();
@@ -571,31 +572,7 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
-            var hasLastParameterRestParameter = lastParameterIsRest(funcDecl.parameterList);
-            var argsLen = funcDecl.parameterList.members.length;
-            if (hasLastParameterRestParameter) {
-                argsLen--;
-            }
-
-            for (var i = 0; i < argsLen; i++) {
-                var argDecl = <Parameter>funcDecl.parameterList.members[i];
-                this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
-                if (i < (argsLen - 1)) {
-                    this.declFile.Write(", ");
-                }
-            }
-
-            if (hasLastParameterRestParameter) {
-                var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
-                if (funcDecl.parameterList.members.length > 1) {
-                    this.declFile.Write(", ...");
-                }
-                else {
-                    this.declFile.Write("...");
-                }
-
-                this.emitArgDecl(lastArg, functionFlags);
-            }
+            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
 
             if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
                 this.declFile.Write(")");
