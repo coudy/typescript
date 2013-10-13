@@ -1433,8 +1433,6 @@ module TypeScript {
         public isMethod() {
             return (this.getFunctionFlags() & FunctionFlags.Method) !== FunctionFlags.None;
         }
-
-        public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
     }
 
     export class ModuleDeclaration extends AST {
