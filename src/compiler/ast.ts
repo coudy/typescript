@@ -1429,10 +1429,6 @@ module TypeScript {
                 return this.hint;
             }
         }
-
-        public isMethod() {
-            return (this.getFunctionFlags() & FunctionFlags.Method) !== FunctionFlags.None;
-        }
     }
 
     export class ModuleDeclaration extends AST {
