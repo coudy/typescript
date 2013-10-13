@@ -2165,23 +2165,6 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
-        public emitPrototypeMember(funcDecl: FunctionDeclaration, className: string) {
-            this.emitIndent();
-            this.recordSourceMappingStart(funcDecl);
-            this.emitComments(funcDecl, true);
-
-            var functionName = funcDecl.getNameText();
-            if (isQuoted(functionName) || funcDecl.name.isNumber) {
-                this.writeToOutput(className + ".prototype[" + functionName + "] = ");
-            }
-            else {
-                this.writeToOutput(className + ".prototype." + functionName + " = ");
-            }
-
-            this.emitInnerFunction(funcDecl, /*printName:*/ false, /*includePreComments:*/ false);
-            this.writeLineToOutput(";");
-        }
-
         public emitClass(classDecl: ClassDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(classDecl);
             this.pushDecl(pullDecl);
@@ -2313,38 +2296,6 @@ module TypeScript {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
 
                         this.emitClassMemberFunctionDeclaration(classDecl, memberFunction);
-                        lastEmittedMember = memberDecl;
-                    }
-                }
-                else if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
-                    var functionDeclaration = <FunctionDeclaration>memberDecl;
-
-                    var functionFlags = functionDeclaration.getFunctionFlags();
-                    if (hasFlag(functionFlags, FunctionFlags.Method) &&
-                        !hasFlag(functionFlags, FunctionFlags.Signature)) {
-                        this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
-
-                        if (!hasFlag(functionFlags, FunctionFlags.Static)) {
-                            this.emitPrototypeMember(functionDeclaration, classDecl.identifier.actualText);
-                        }
-                        else {
-                            // static functions
-                            this.emitIndent();
-                            this.recordSourceMappingStart(functionDeclaration);
-                            this.emitComments(functionDeclaration, true);
-
-                            var functionName = functionDeclaration.name.actualText;
-                            if (isQuoted(functionName) || functionDeclaration.name.isNumber) {
-                                this.writeToOutput(classDecl.identifier.actualText + "[" + functionName + "] = ");
-                            }
-                            else {
-                                this.writeToOutput(classDecl.identifier.actualText + "." + functionName + " = ");
-                            }
-
-                            this.emitInnerFunction(functionDeclaration, /*printName:*/ false, /*includePreComments:*/ false);
-                            this.writeLineToOutput(";");
-                        }
-
                         lastEmittedMember = memberDecl;
                     }
                 }
