@@ -623,7 +623,7 @@ module TypeScript {
         context.pushParent(decl);
     }
 
-    function createGetAccessorDeclaration(getAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createGetAccessorDeclaration(getAccessorDeclAST: GetMemberAccessorDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.GetAccessor;
 
@@ -631,16 +631,12 @@ module TypeScript {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(getAccessorDeclAST.name.getFlags(), ASTFlags.OptionalName)) {
-            declFlags |= PullElementFlags.Optional;
-        }
-
         if (hasFlag(getAccessorDeclAST.getFunctionFlags(), FunctionFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
             declFlags |= PullElementFlags.Public;
-        }        
+        }
 
         var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
 
@@ -650,7 +646,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new NormalPullDecl(getAccessorDeclAST.name.text(), getAccessorDeclAST.name.actualText, declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(getAccessorDeclAST.propertyName.text(), getAccessorDeclAST.propertyName.actualText, declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(getAccessorDeclAST, decl);
         context.semanticInfoChain.setASTForDecl(decl, getAccessorDeclAST);
 
@@ -658,7 +654,7 @@ module TypeScript {
     }
 
     // set accessors
-    function createSetAccessorDeclaration(setAccessorDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createSetAccessorDeclaration(setAccessorDeclAST: SetMemberAccessorDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
 
@@ -666,16 +662,12 @@ module TypeScript {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(setAccessorDeclAST.name.getFlags(), ASTFlags.OptionalName)) {
-            declFlags |= PullElementFlags.Optional;
-        }
-
         if (hasFlag(setAccessorDeclAST.getFunctionFlags(), FunctionFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
             declFlags |= PullElementFlags.Public;
-        }         
+        }
 
         var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
 
@@ -685,7 +677,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new NormalPullDecl(setAccessorDeclAST.name.actualText, setAccessorDeclAST.name.actualText, declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(setAccessorDeclAST.propertyName.text(), setAccessorDeclAST.propertyName.actualText, declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(setAccessorDeclAST, decl);
         context.semanticInfoChain.setASTForDecl(decl, setAccessorDeclAST);
 
@@ -837,16 +829,17 @@ module TypeScript {
             case NodeType.ConstructorDeclaration:
                 createClassConstructorDeclaration(<ConstructorDeclaration>ast, context);
                 break;
+            case NodeType.GetMemberAccessorDeclaration:
+                createGetAccessorDeclaration(<GetMemberAccessorDeclaration>ast, context);
+                break;
+            case NodeType.SetMemberAccessorDeclaration:
+                createSetAccessorDeclaration(<SetMemberAccessorDeclaration>ast, context);
+                break;
+
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
-                if (hasFlag(functionFlags, FunctionFlags.GetAccessor)) {
-                    createGetAccessorDeclaration(funcDecl, context);
-                }
-                else if (hasFlag(functionFlags, FunctionFlags.SetAccessor)) {
-                    createSetAccessorDeclaration(funcDecl, context);
-                }
-                else if (hasFlag(functionFlags, FunctionFlags.ConstructMember)) {
+                if (hasFlag(functionFlags, FunctionFlags.ConstructMember)) {
                     if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
                         createConstructorTypeDeclaration(funcDecl, context);
                     }
@@ -1044,6 +1037,8 @@ module TypeScript {
             case NodeType.ConstructorDeclaration:
             case NodeType.FunctionPropertyAssignment:
             case NodeType.FunctionDeclaration:
+            case NodeType.GetMemberAccessorDeclaration:
+            case NodeType.SetMemberAccessorDeclaration:
             case NodeType.ArrowFunctionExpression:
                 context.popParent();
 

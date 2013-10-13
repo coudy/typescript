@@ -42,6 +42,8 @@ module TypeScript {
         ConstructorDeclaration,
         ClassDeclaration,
         InterfaceDeclaration,
+        GetMemberAccessorDeclaration,
+        SetMemberAccessorDeclaration,
         ObjectType,
         ArrayType,
         ModuleDeclaration,

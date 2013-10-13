@@ -704,17 +704,11 @@ module TypeScript {
             }
 
             this.recordSourceMappingStart(funcDecl);
-            var isAccessor = hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor) || hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.SetAccessor);
-            var accessorSymbol = isAccessor ? PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain) : null;
-            var container = accessorSymbol ? accessorSymbol.getContainer() : null;
-            var containerKind = container ? container.kind : PullElementKind.None;
-            if (!(isAccessor && containerKind !== PullElementKind.Class && containerKind !== PullElementKind.ConstructorType)) {
-                this.writeToOutput("function ");
-            }
+            this.writeToOutput("function ");
 
             if (printName) {
                 var id = funcDecl.getNameText();
-                if (id && !isAccessor) {
+                if (id) {
                     if (funcDecl.name) {
                         this.recordSourceMappingStart(funcDecl.name);
                     }
@@ -729,13 +723,7 @@ module TypeScript {
             this.emitFunctionParameters(funcDecl.parameterList);
             this.writeLineToOutput(") {");
 
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
-                this.recordSourceMappingNameStart("get_" + funcDecl.getNameText());
-            } else if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.SetAccessor)) {
-                this.recordSourceMappingNameStart("set_" + funcDecl.getNameText());
-            } else {
-                this.recordSourceMappingNameStart(funcDecl.getNameText());
-            }
+            this.recordSourceMappingNameStart(funcDecl.getNameText());
             this.indenter.increaseIndent();
 
             this.emitDefaultValueAssignments(funcDecl.parameterList);
@@ -1245,6 +1233,28 @@ module TypeScript {
             this.setContainer(temp);
         }
 
+        public emitGetMemberAccessorDeclaration(funcDecl: GetMemberAccessorDeclaration): void {
+            var functionFlags = funcDecl.getFunctionFlags();
+            if (hasFlag(functionFlags, FunctionFlags.Static)) {
+                if (this.thisClassNode) {
+                    this.writeLineToOutput("");
+
+                    this.emitGetAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
+                }
+            }
+        }
+
+        public emitSetMemberAccessorDeclaration(funcDecl: SetMemberAccessorDeclaration): void {
+            var functionFlags = funcDecl.getFunctionFlags();
+            if (hasFlag(functionFlags, FunctionFlags.Static)) {
+                if (this.thisClassNode) {
+                    this.writeLineToOutput("");
+
+                    this.emitSetAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
+                }
+            }
+        }
+
         public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
@@ -1270,15 +1280,10 @@ module TypeScript {
                 if (hasFlag(functionFlags, FunctionFlags.Static)) {
                     if (this.thisClassNode) {
                         this.writeLineToOutput("");
-                        if (functionFlags & FunctionFlags.AnyAccessor) {
-                            this.emitPropertyAccessor(funcDecl, this.thisClassNode.identifier.actualText, false);
-                        }
-                        else {
-                            this.emitIndent();
-                            this.recordSourceMappingStart(funcDecl);
-                            this.writeToOutput(this.thisClassNode.identifier.actualText + "." + funcName + " = " + funcName + ";");
-                            this.recordSourceMappingEnd(funcDecl);
-                        }
+                        this.emitIndent();
+                        this.recordSourceMappingStart(funcDecl);
+                        this.writeToOutput(this.thisClassNode.identifier.actualText + "." + funcName + " = " + funcName + ";");
+                        this.recordSourceMappingEnd(funcDecl);
                     }
                 }
                 else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && pullFunctionDecl && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
@@ -1978,8 +1983,16 @@ module TypeScript {
             ast.emit(this);
         }
 
-        public emitPropertyAccessor(funcDecl: FunctionDeclaration, className: string, isProto: boolean) {
-            if (!hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.GetAccessor)) {
+        private emitGetAccessor(funcDecl: GetMemberAccessorDeclaration, className: string, isProto: boolean) {
+            this.emitPropertyAccessor(funcDecl, funcDecl.propertyName, className, isProto);
+        }
+
+        private emitSetAccessor(funcDecl: SetMemberAccessorDeclaration, className: string, isProto: boolean) {
+            this.emitPropertyAccessor(funcDecl, funcDecl.propertyName, className, isProto);
+        }
+
+        public emitPropertyAccessor(funcDecl: AST, name: Identifier, className: string, isProto: boolean) {
+            if (funcDecl.nodeType() !== NodeType.GetMemberAccessorDeclaration) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
                 if (accessorSymbol.getGetter()) {
                     return;
@@ -1997,7 +2010,7 @@ module TypeScript {
                 this.writeToOutput(", ");
             }
 
-            var functionName = funcDecl.name.actualText;
+            var functionName = name.actualText;
             if (isQuoted(functionName)) {
                 this.writeToOutput(functionName);
             }
@@ -2014,7 +2027,8 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.getter);
                 this.writeToOutput("get: ");
-                this.emitInnerFunction(accessors.getter, false);
+                this.emitComments(accessors.getter, true);
+                this.emitAccessorBody(accessors.getter, accessors.getter.parameterList, accessors.getter.block);
                 this.writeLineToOutput(",");
             }
 
@@ -2022,7 +2036,8 @@ module TypeScript {
                 this.emitIndent();
                 this.recordSourceMappingStart(accessors.setter);
                 this.writeToOutput("set: ");
-                this.emitInnerFunction(accessors.setter, false);
+                this.emitComments(accessors.setter, true);
+                this.emitAccessorBody(accessors.setter, accessors.setter.parameterList, accessors.setter.block);
                 this.writeLineToOutput(",");
             }
 
@@ -2036,26 +2051,54 @@ module TypeScript {
             this.recordSourceMappingEnd(funcDecl);
         }
 
+        private emitAccessorBody(funcDecl: AST, parameterList: ASTList, block: Block): void {
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            this.pushDecl(pullDecl);
+
+            this.recordSourceMappingStart(funcDecl);
+            this.writeToOutput("function ");
+
+            this.writeToOutput("(");
+            this.emitFunctionParameters(parameterList);
+            this.writeLineToOutput(") {");
+
+            this.indenter.increaseIndent();
+
+            if (this.shouldCaptureThis(funcDecl)) {
+                this.writeCaptureThisStatement(funcDecl);
+            }
+
+            this.emitList(block.statements);
+
+            this.emitCommentsArray(block.closeBraceLeadingComments, /*trailing:*/ false);
+
+            this.indenter.decreaseIndent();
+            this.emitIndent();
+            this.writeToOutputWithSourceMapRecord("}", block.closeBraceSpan);
+
+            this.recordSourceMappingNameEnd();
+            this.recordSourceMappingEnd(funcDecl);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcDecl);
+            this.popDecl(pullDecl);
+        }
+
         public emitPrototypeMember(funcDecl: FunctionDeclaration, className: string) {
-            if (funcDecl.getFunctionFlags() & FunctionFlags.AnyAccessor) {
-                this.emitPropertyAccessor(funcDecl, className, true);
+            this.emitIndent();
+            this.recordSourceMappingStart(funcDecl);
+            this.emitComments(funcDecl, true);
+
+            var functionName = funcDecl.getNameText();
+            if (isQuoted(functionName) || funcDecl.name.isNumber) {
+                this.writeToOutput(className + ".prototype[" + functionName + "] = ");
             }
             else {
-                this.emitIndent();
-                this.recordSourceMappingStart(funcDecl);
-                this.emitComments(funcDecl, true);
-
-                var functionName = funcDecl.getNameText();
-                if (isQuoted(functionName) || funcDecl.name.isNumber) {
-                    this.writeToOutput(className + ".prototype[" + functionName + "] = ");
-                }
-                else {
-                    this.writeToOutput(className + ".prototype." + functionName + " = ");
-                }
-
-                this.emitInnerFunction(funcDecl, /*printName:*/ false, /*includePreComments:*/ false);
-                this.writeLineToOutput(";");
+                this.writeToOutput(className + ".prototype." + functionName + " = ");
             }
+
+            this.emitInnerFunction(funcDecl, /*printName:*/ false, /*includePreComments:*/ false);
+            this.writeLineToOutput(";");
         }
 
         public emitClass(classDecl: ClassDeclaration) {
@@ -2166,41 +2209,50 @@ module TypeScript {
             for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
                 var memberDecl = classDecl.classElements.members[i];
 
-                if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
+                if (memberDecl.nodeType() === NodeType.GetMemberAccessorDeclaration) {
+                    this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
+                    var getter = <GetMemberAccessorDeclaration>memberDecl;
+                    this.emitPropertyAccessor(getter, getter.propertyName, classDecl.identifier.actualText,
+                        !hasFlag(getter.getFunctionFlags(), FunctionFlags.Static));
+                    lastEmittedMember = memberDecl;
+                }
+                else if (memberDecl.nodeType() === NodeType.SetMemberAccessorDeclaration) {
+                    this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
+                    var setter = <SetMemberAccessorDeclaration>memberDecl;
+                    this.emitPropertyAccessor(setter, setter.propertyName, classDecl.identifier.actualText,
+                        !hasFlag(setter.getFunctionFlags(), FunctionFlags.Static));
+                    lastEmittedMember = memberDecl;
+                }
+                else if (memberDecl.nodeType() === NodeType.FunctionDeclaration) {
                     var functionDeclaration = <FunctionDeclaration>memberDecl;
 
                     var functionFlags = functionDeclaration.getFunctionFlags();
                     if (hasFlag(functionFlags, FunctionFlags.Method) &&
                         !hasFlag(functionFlags, FunctionFlags.Signature)) {
-                        this.emitSpaceBetweenConstructs(lastEmittedMember, functionDeclaration);
+                        this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
 
                         if (!hasFlag(functionFlags, FunctionFlags.Static)) {
                             this.emitPrototypeMember(functionDeclaration, classDecl.identifier.actualText);
                         }
                         else {
                             // static functions
-                            if (functionFlags & FunctionFlags.AnyAccessor) {
-                                this.emitPropertyAccessor(functionDeclaration, this.thisClassNode.identifier.actualText, false);
+                            this.emitIndent();
+                            this.recordSourceMappingStart(functionDeclaration);
+                            this.emitComments(functionDeclaration, true);
+
+                            var functionName = functionDeclaration.name.actualText;
+                            if (isQuoted(functionName) || functionDeclaration.name.isNumber) {
+                                this.writeToOutput(classDecl.identifier.actualText + "[" + functionName + "] = ");
                             }
                             else {
-                                this.emitIndent();
-                                this.recordSourceMappingStart(functionDeclaration);
-                                this.emitComments(functionDeclaration, true);
-
-                                var functionName = functionDeclaration.name.actualText;
-                                if (isQuoted(functionName) || functionDeclaration.name.isNumber) {
-                                    this.writeToOutput(classDecl.identifier.actualText + "[" + functionName + "] = ");
-                                }
-                                else {
-                                    this.writeToOutput(classDecl.identifier.actualText + "." + functionName + " = ");
-                                }
-
-                                this.emitInnerFunction(functionDeclaration, /*printName:*/ false, /*includePreComments:*/ false);
-                                this.writeLineToOutput(";");
+                                this.writeToOutput(classDecl.identifier.actualText + "." + functionName + " = ");
                             }
+
+                            this.emitInnerFunction(functionDeclaration, /*printName:*/ false, /*includePreComments:*/ false);
+                            this.writeLineToOutput(";");
                         }
 
-                        lastEmittedMember = functionDeclaration;
+                        lastEmittedMember = memberDecl;
                     }
                 }
             }

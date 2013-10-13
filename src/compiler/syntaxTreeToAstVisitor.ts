@@ -1634,17 +1634,17 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionDeclaration {
+        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): GetMemberAccessorDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             this.movePast(node.propertyName);
             var parameters = node.parameterList.accept(this);
-            var returnType = typeAnnotation ? typeAnnotation.accept(this) : null;
+            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new FunctionDeclaration(name, null, parameters, returnType, block);
+            var result = new GetMemberAccessorDeclaration(name, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
@@ -1658,25 +1658,31 @@ module TypeScript {
                 result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Static);
             }
 
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Method);
-
             return result;
         }
 
-        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): FunctionDeclaration {
-            var result = this.visitMemberAccessorDeclaration(node, node.typeAnnotation);
+        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): SetMemberAccessorDeclaration {
+            var start = this.position;
 
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.GetAccessor);
-            result.hint = "get" + result.name.actualText;
+            this.moveTo(node, node.propertyName);
+            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
+            this.movePast(node.propertyName);
+            var parameters = node.parameterList.accept(this);
 
-            return result;
-        }
+            var block = node.block ? node.block.accept(this) : null;
+            var result = new SetMemberAccessorDeclaration(name, parameters, block);
+            this.setCommentsAndSpan(result, start, node);
 
-        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): FunctionDeclaration {
-            var result = this.visitMemberAccessorDeclaration(node, null);
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
+                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Private);
+            }
+            else {
+                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Public);
+            }
 
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.SetAccessor);
-            result.hint = "set" + result.name.actualText;
+            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
+                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Static);
+            }
 
             return result;
         }
@@ -2736,10 +2742,20 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberAccessorDeclaration(node: MemberAccessorDeclarationSyntax, typeAnnotation: TypeAnnotationSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): GetMemberAccessorDeclaration {
+            var result: GetMemberAccessorDeclaration = this.getAndMovePastAST(node);
             if (!result) {
-                result = super.visitMemberAccessorDeclaration(node, typeAnnotation);
+                result = super.visitGetMemberAccessorDeclaration(node);
+                this.setAST(node, result);
+            }
+
+            return result;
+        }
+
+        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): SetMemberAccessorDeclaration {
+            var result: SetMemberAccessorDeclaration = this.getAndMovePastAST(node);
+            if (!result) {
+                result = super.visitSetMemberAccessorDeclaration(node);
                 this.setAST(node, result);
             }
 

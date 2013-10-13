@@ -3331,10 +3331,7 @@ module TypeScript {
             var result: PullSymbol;
 
             var functionFlags = funcDecl.getFunctionFlags();
-            if (functionFlags & FunctionFlags.AnyAccessor) {
-                result = this.resolveAccessorDeclaration(funcDecl, context);
-            }
-            else if (inContextuallyTypedAssignment ||
+            if (inContextuallyTypedAssignment ||
                 (functionFlags & FunctionFlags.IsFunctionExpression)) {
 
                 result = this.resolveAnyFunctionExpression(
@@ -3667,7 +3664,7 @@ module TypeScript {
         }
 
         private resolveGetterReturnTypeAnnotation(
-            getterFunctionDeclarationAst: FunctionDeclaration,
+            getterFunctionDeclarationAst: GetMemberAccessorDeclaration,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
@@ -3679,11 +3676,12 @@ module TypeScript {
         }
 
         private resolveSetterArgumentTypeAnnotation(
-            setterFunctionDeclarationAst: FunctionDeclaration,
+            setterFunctionDeclarationAst: SetMemberAccessorDeclaration,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
             if (setterFunctionDeclarationAst &&
+                setterFunctionDeclarationAst.parameterList &&
                 setterFunctionDeclarationAst.parameterList.members.length > 0) {
                 var parameter = <Parameter>setterFunctionDeclarationAst.parameterList.members[0];
                 return this.resolveTypeReference(parameter.typeExpr, enclosingDecl, context);
@@ -3710,17 +3708,19 @@ module TypeScript {
             }
 
             var getterSymbol = accessorSymbol.getGetter();
-            var getterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(getterSymbol, context);
+            var getterFunctionDeclarationAst = <GetMemberAccessorDeclaration>this.getASTForSymbol(getterSymbol, context);
             var hasGetter = getterSymbol !== null;
 
             var setterSymbol = accessorSymbol.getSetter();
-            var setterFunctionDeclarationAst = <FunctionDeclaration>this.getASTForSymbol(setterSymbol, context);
+            var setterFunctionDeclarationAst = <SetMemberAccessorDeclaration>this.getASTForSymbol(setterSymbol, context);
             var hasSetter = setterSymbol !== null;
 
-            var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(getterFunctionDeclarationAst, functionDeclaration, context);
+            var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(
+                getterFunctionDeclarationAst, functionDeclaration, context);
             var getterHasTypeAnnotation = getterAnnotatedType !== null;
 
-            var setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(setterFunctionDeclarationAst, functionDeclaration, context);
+            var setterAnnotatedType = this.resolveSetterArgumentTypeAnnotation(
+                setterFunctionDeclarationAst, functionDeclaration, context);
             var setterHasTypeAnnotation = setterAnnotatedType !== null;
 
             accessorSymbol.startResolving();
@@ -3730,7 +3730,6 @@ module TypeScript {
                 getterSymbol =
                     this.resolveGetAccessorDeclaration(
                         getterFunctionDeclarationAst,
-                        getterFunctionDeclarationAst.name,
                         getterFunctionDeclarationAst.parameterList,
                         getterFunctionDeclarationAst.returnTypeAnnotation,
                         getterFunctionDeclarationAst.block,
@@ -3797,7 +3796,7 @@ module TypeScript {
                     // if setter has an any type, it must be implicit any
                     if (!setterHasTypeAnnotation && accessorSymbol.type == this.semanticInfoChain.anyTypeSymbol) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(setterFunctionDeclarationAst,
-                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [setterFunctionDeclarationAst.name.actualText]));
+                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [setterFunctionDeclarationAst.propertyName.actualText]));
                     }
                 }
             }
@@ -3817,7 +3816,7 @@ module TypeScript {
                 this.typeCheckGetAccessorDeclaration(
                     getterFunctionDeclarationAst,
                     getterFunctionDeclarationAst.getFunctionFlags(),
-                    getterFunctionDeclarationAst.name,
+                    getterFunctionDeclarationAst.propertyName,
                     getterFunctionDeclarationAst.parameterList,
                     getterFunctionDeclarationAst.returnTypeAnnotation,
                     getterFunctionDeclarationAst.block,
@@ -3831,7 +3830,7 @@ module TypeScript {
                 this.typeCheckSetAccessorDeclaration(
                     setterFunctionDeclarationAst,
                     setterFunctionDeclarationAst.getFunctionFlags(),
-                    setterFunctionDeclarationAst.name,
+                    setterFunctionDeclarationAst.propertyName,
                     setterFunctionDeclarationAst.parameterList,
                     setterFunctionDeclarationAst.block, context);
             }
@@ -3841,7 +3840,6 @@ module TypeScript {
 
         private resolveGetAccessorDeclaration(
             funcDeclAST: AST,
-            name: Identifier,
             parameters: ASTList,
             returnTypeAnnotation: TypeReference,
             block: Block,
@@ -5118,6 +5116,10 @@ module TypeScript {
                 case NodeType.ConstructorDeclaration:
                     return this.resolveConstructorDeclaration(<ConstructorDeclaration>ast, context);
 
+                case NodeType.GetMemberAccessorDeclaration:
+                case NodeType.SetMemberAccessorDeclaration:
+                    return this.resolveAccessorDeclaration(ast, context);
+
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
@@ -5394,21 +5396,25 @@ module TypeScript {
                     this.typeCheckConstructorDeclaration(<ConstructorDeclaration>ast, context);
                     return;
 
+                case NodeType.GetMemberAccessorDeclaration:
+                    var getAccessor = <GetMemberAccessorDeclaration>ast;
+                    this.typeCheckGetAccessorDeclaration(
+                        getAccessor, getAccessor.getFunctionFlags(), getAccessor.propertyName, getAccessor.parameterList,
+                        getAccessor.returnTypeAnnotation, getAccessor.block, context);
+                    break;
+
+                case NodeType.SetMemberAccessorDeclaration:
+                    var setAccessor = <SetMemberAccessorDeclaration>ast;
+                    this.typeCheckSetAccessorDeclaration(
+                        setAccessor, setAccessor.getFunctionFlags(), setAccessor.propertyName, setAccessor.parameterList,
+                        setAccessor.block, context);
+                    break;
+                
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
                         var functionFlags = funcDecl.getFunctionFlags();
-                        if (hasFlag(functionFlags, FunctionFlags.GetAccessor)) {
-                            this.typeCheckGetAccessorDeclaration(
-                                funcDecl, functionFlags, funcDecl.name, funcDecl.parameterList,
-                                funcDecl.returnTypeAnnotation, funcDecl.block, context);
-                        }
-                        else if (hasFlag(functionFlags, FunctionFlags.SetAccessor)) {
-                            this.typeCheckSetAccessorDeclaration(
-                                funcDecl, functionFlags, funcDecl.name, funcDecl.parameterList,
-                                funcDecl.block, context);
-                        }
-                        else if (inContextuallyTypedAssignment ||
+                        if (inContextuallyTypedAssignment ||
                             (functionFlags & FunctionFlags.IsFunctionExpression)) {
                             this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         }
@@ -10849,7 +10855,9 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             if ((flags & FunctionFlags.IsFunctionExpression) ||
-                funcDeclAST.nodeType() === NodeType.FunctionPropertyAssignment) {
+                funcDeclAST.nodeType() === NodeType.FunctionPropertyAssignment ||
+                funcDeclAST.nodeType() === NodeType.GetAccessorPropertyAssignment ||
+                funcDeclAST.nodeType() === NodeType.SetAccessorPropertyAssignment) {
                 return;
             }
 
@@ -10857,8 +10865,8 @@ module TypeScript {
             var functionSymbol = functionDecl.getSymbol();;
             var functionSignature: PullSignatureSymbol;
 
-            var isGetter = hasFlag(flags, FunctionFlags.GetAccessor);
-            var isSetter = hasFlag(flags, FunctionFlags.SetAccessor);
+            var isGetter = funcDeclAST.nodeType() === NodeType.GetMemberAccessorDeclaration;
+            var isSetter = funcDeclAST.nodeType() === NodeType.SetMemberAccessorDeclaration;
             var isIndexSignature = functionDecl.kind === PullElementKind.IndexSignature;
 
             if (isGetter || isSetter) {
@@ -10993,8 +11001,8 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
-            var isGetter = hasFlag(flags, FunctionFlags.GetAccessor);
-            var isSetter = hasFlag(flags, FunctionFlags.SetAccessor);
+            var isGetter = declAST.nodeType() === NodeType.GetMemberAccessorDeclaration || declAST.nodeType() === NodeType.GetAccessorPropertyAssignment;
+            var isSetter = declAST.nodeType() === NodeType.SetMemberAccessorDeclaration || declAST.nodeType() === NodeType.SetAccessorPropertyAssignment;
             var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
@@ -11088,8 +11096,8 @@ module TypeScript {
             var decl = this.semanticInfoChain.getDeclForAST(declAST);
             var enclosingDecl = this.getEnclosingDecl(decl);
 
-            var isGetter = hasFlag(flags, FunctionFlags.GetAccessor);
-            var isSetter = hasFlag(flags, FunctionFlags.SetAccessor);
+            var isGetter = declAST.nodeType() === NodeType.GetMemberAccessorDeclaration || declAST.nodeType() === NodeType.GetAccessorPropertyAssignment;
+            var isSetter = declAST.nodeType() === NodeType.SetMemberAccessorDeclaration || declAST.nodeType() === NodeType.SetAccessorPropertyAssignment;
             var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;

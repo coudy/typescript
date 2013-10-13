@@ -116,6 +116,8 @@ module TypeScript {
             this.childrenWalkers[NodeType.FunctionPropertyAssignment] = ChildrenWalkers.walkFunctionPropertyAssignmentChildren;
             this.childrenWalkers[NodeType.GetAccessorPropertyAssignment] = ChildrenWalkers.walkGetAccessorPropertyAssignmentChildren;
             this.childrenWalkers[NodeType.SetAccessorPropertyAssignment] = ChildrenWalkers.walkSetAccessorPropertyAssignmentChildren;
+            this.childrenWalkers[NodeType.GetMemberAccessorDeclaration] = ChildrenWalkers.walkGetMemberAccessorDeclarationChildren;
+            this.childrenWalkers[NodeType.SetMemberAccessorDeclaration] = ChildrenWalkers.walkSetMemberAccessorDeclarationChildren;
             this.childrenWalkers[NodeType.VoidExpression] = ChildrenWalkers.walkVoidExpressionChildren;
             this.childrenWalkers[NodeType.CommaExpression] = ChildrenWalkers.walkBinaryExpressionChildren;
             this.childrenWalkers[NodeType.PlusExpression] = ChildrenWalkers.walkPrefixUnaryExpressionChildren;
@@ -299,6 +301,19 @@ module TypeScript {
         }
 
         export function walkSetAccessorPropertyAssignmentChildren(preAst: SetAccessorPropertyAssignment, walker: IAstWalker): void {
+            walker.walk(preAst.propertyName);
+            walker.walk(preAst.parameterList);
+            walker.walk(preAst.block);
+        }
+
+        export function walkGetMemberAccessorDeclarationChildren(preAst: GetMemberAccessorDeclaration, walker: IAstWalker): void {
+            walker.walk(preAst.propertyName);
+            walker.walk(preAst.parameterList);
+            walker.walk(preAst.returnTypeAnnotation);
+            walker.walk(preAst.block);
+        }
+
+        export function walkSetMemberAccessorDeclarationChildren(preAst: SetMemberAccessorDeclaration, walker: IAstWalker): void {
             walker.walk(preAst.propertyName);
             walker.walk(preAst.parameterList);
             walker.walk(preAst.block);

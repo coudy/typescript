@@ -71,8 +71,6 @@ module TypeScript {
         Public = 1 << 2,
         Ambient = 1 << 3,
         Static = 1 << 4,
-        GetAccessor = 1 << 5,
-        SetAccessor = 1 << 6,
         Signature = 1 << 7,
         Method = 1 << 8,
         CallSignature = 1 << 9,
@@ -80,8 +78,6 @@ module TypeScript {
         IndexerMember = 1 << 12,
         IsFunctionExpression = 1 << 13,
         IsClassMethod = 1 << 15,
-
-        AnyAccessor = GetAccessor | SetAccessor
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
