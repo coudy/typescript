@@ -2071,42 +2071,42 @@ module TypeScript.Parser {
             return this.isPropertyName(this.peekToken(index), inErrorRecovery);
         }
 
-        private parseAccessor(): SyntaxNode {
+        private parseAccessor(checkForStrictMode: boolean): SyntaxNode {
             // Debug.assert(this.isMemberAccessorDeclaration());
 
             var modifiers = this.parseModifiers();
 
             if (this.currentToken().tokenKind === SyntaxKind.GetKeyword) {
-                return this.parseGetMemberAccessorDeclaration(modifiers);
+                return this.parseGetMemberAccessorDeclaration(modifiers, checkForStrictMode);
             }
             else if (this.currentToken().tokenKind === SyntaxKind.SetKeyword) {
-                return this.parseSetMemberAccessorDeclaration(modifiers);
+                return this.parseSetMemberAccessorDeclaration(modifiers, checkForStrictMode);
             }
             else {
                 throw Errors.invalidOperation();
             }
         }
 
-        private parseGetMemberAccessorDeclaration(modifiers: ISyntaxList): GetAccessorSyntax {
+        private parseGetMemberAccessorDeclaration(modifiers: ISyntaxList, checkForStrictMode: boolean): GetAccessorSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.GetKeyword);
 
             var getKeyword = this.eatKeyword(SyntaxKind.GetKeyword);
             var propertyName = this.eatPropertyName();
             var parameterList = this.parseParameterList();
             var typeAnnotation = this.parseOptionalTypeAnnotation(/*allowStringLiteral:*/ false);
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, checkForStrictMode);
 
             return this.factory.getAccessor(
                 modifiers, getKeyword, propertyName, parameterList, typeAnnotation, block);
         }
 
-        private parseSetMemberAccessorDeclaration(modifiers: ISyntaxList): SetAccessorSyntax {
+        private parseSetMemberAccessorDeclaration(modifiers: ISyntaxList, checkForStrictMode: boolean): SetAccessorSyntax {
             // Debug.assert(this.currentToken().tokenKind === SyntaxKind.SetKeyword);
 
             var setKeyword = this.eatKeyword(SyntaxKind.SetKeyword);
             var propertyName = this.eatPropertyName();
             var parameterList = this.parseParameterList();
-            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, /*checkForStrictMode:*/ false);
+            var block = this.parseBlock(/*parseStatementsEvenWithNoOpenBrace:*/ false, checkForStrictMode);
 
             return this.factory.setAccessor(
                 modifiers, setKeyword, propertyName, parameterList, block);
@@ -2140,7 +2140,7 @@ module TypeScript.Parser {
                 return this.parseMemberFunctionDeclaration();
             }
             else if (this.isAccessor(inErrorRecovery)) {
-                return this.parseAccessor();
+                return this.parseAccessor(/*checkForStrictMode:*/ false);
             }
             else if (this.isMemberVariableDeclaration(inErrorRecovery)) {
                 return this.parseMemberVariableDeclaration();
@@ -4478,7 +4478,7 @@ module TypeScript.Parser {
             // Debug.assert(this.isPropertyAssignment(/*inErrorRecovery:*/ false));
 
             if (this.isAccessor(inErrorRecovery)) {
-                return this.parseAccessor();
+                return this.parseAccessor(/*checkForStrictMode:*/ true);
             }
             else if (this.isFunctionPropertyAssignment(inErrorRecovery)) {
                 return this.parseFunctionPropertyAssignment();
