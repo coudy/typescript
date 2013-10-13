@@ -1047,10 +1047,6 @@ module TypeScript {
 
                             decl = decls[decls.length - 1];
                             ast = this.semanticInfoChain.getASTForDecl(decl);
-
-                            if (ast) {
-                                this.semanticInfoChain.setASTForDecl(variableDeclaration, ast);
-                            }
                         }
                     }
                     else {
@@ -1122,10 +1118,6 @@ module TypeScript {
 
                             decl = decls[decls.length - 1];
                             ast = this.semanticInfoChain.getASTForDecl(decl);
-
-                            if (ast) {
-                                this.semanticInfoChain.setASTForDecl(variableDeclaration, ast);
-                            }
                         }
 
                         // we added the variable to the parent when binding the module
