@@ -1,27 +1,34 @@
 ///<reference path="../../../src/harness/harness.ts" />
 ///<reference path="../runnerbase.ts" />
 
-class UnitTestRunner extends RunnerBase {
+enum UnittestTestType {
+    Compiler,
+    LanguageService,
+    Services,
+    Harness,
+    Samples
+}
 
-    constructor(public testType?: string) {
-        super(testType);
+class UnitTestRunner extends RunnerBase {
+    constructor(public testType?: UnittestTestType) {
+        super();
     }
 
     public initializeTests() {
         switch (this.testType) {
-            case 'compiler':
+            case UnittestTestType.Compiler:
                 this.tests = this.enumerateFiles('tests/cases/unittests/compiler');
                 break;
-            case 'ls':
+            case UnittestTestType.LanguageService:
                 this.tests = this.enumerateFiles('tests/cases/unittests/ls');
                 break;
-            case 'services':
+            case UnittestTestType.Services:
                 this.tests = this.enumerateFiles('tests/cases/unittests/services');
                 break;
-            case 'harness':
+            case UnittestTestType.Harness:
                 this.tests = this.enumerateFiles('tests/cases/unittests/harness');
                 break;
-            case 'samples':
+            case UnittestTestType.Samples:
                 this.tests = this.enumerateFiles('tests/cases/unittests/samples');
                 break;
             default:
@@ -49,8 +56,7 @@ class UnitTestRunner extends RunnerBase {
         var code = lines.join("\n")
 
         describe("Setup compiler for compiler unittests", () => {
-            var useMinimalDefaultLib = this.testType !== 'samples'
-            Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, useMinimalDefaultLib);
+            Harness.Compiler.recreate(Harness.Compiler.CompilerInstance.RunTime, { useMinimalDefaultLib: this.testType !== UnittestTestType.Samples, noImplicitAny: false });
         });
         
         if (typeof require !== "undefined") {

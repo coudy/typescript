@@ -5,8 +5,8 @@
 class FourslashRunner extends RunnerBase {
     public basePath = 'tests/cases/fourslash';
 
-    constructor(testType?: string) {
-        super(testType);
+    constructor() {
+        super();
     }
 
     public initializeTests() {
@@ -89,8 +89,8 @@ class FourslashRunner extends RunnerBase {
 }
 
 class GeneratedFourslashRunner extends FourslashRunner {
-    constructor(testType?: string) {
-        super(testType);
+    constructor() {
+        super();
         this.basePath += '/generated/';
     }
 }
