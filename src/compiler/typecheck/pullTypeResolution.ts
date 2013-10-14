@@ -5367,10 +5367,6 @@ module TypeScript {
                     this.typeCheckParameter(<Parameter>ast, enclosingDecl, context);
                     return;
 
-                case NodeType.TypeParameter:
-                    this.typeCheckTypeParameterDeclaration(<TypeParameter>ast, context);
-                    return;
-
                 case NodeType.ImportDeclaration:
                     this.typeCheckImportDeclaration(<ImportDeclaration>ast, context);
                     return;
@@ -5396,61 +5392,17 @@ module TypeScript {
                     this.resolveQualifiedName(<QualifiedName>ast, enclosingDecl, context);
                     return;
 
-                case NodeType.FunctionPropertyAssignment:
-                    this.typeCheckFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, context);
-                    return;
-
-                case NodeType.ConstructorDeclaration:
-                    this.typeCheckConstructorDeclaration(<ConstructorDeclaration>ast, context);
-                    return;
-
-                case NodeType.GetAccessor:
-                    var getAccessor = <GetAccessor>ast;
-                    if (getAccessor.parent.nodeType() !== NodeType.ObjectLiteralExpression) {
-                        this.typeCheckGetAccessorDeclaration(
-                            getAccessor, getAccessor.getFunctionFlags(), getAccessor.propertyName, getAccessor.parameterList,
-                            getAccessor.returnTypeAnnotation, getAccessor.block, context);
-                    }
-                    break;
-
-                case NodeType.SetAccessor:
-                    var setAccessor = <SetAccessor>ast;
-                    if (setAccessor.parent.nodeType() !== NodeType.ObjectLiteralExpression) {
-                        this.typeCheckSetAccessorDeclaration(
-                            setAccessor, setAccessor.getFunctionFlags(), setAccessor.propertyName, setAccessor.parameterList,
-                            setAccessor.block, context);
-                    }
-                    break;
-
                 case NodeType.FunctionExpression:
                     this.typeCheckFunctionExpression(<FunctionExpression>ast, context);
-                    break;
-
-                case NodeType.MemberFunctionDeclaration:
-                    var memberFunction = <MemberFunctionDeclaration>ast;
-                    if (inContextuallyTypedAssignment) {
-                        this.typeCheckAnyFunctionExpression(memberFunction, memberFunction.typeParameters, memberFunction.returnTypeAnnotation, memberFunction.block, context);
-                    }
-                    else {
-                        this.typeCheckFunctionDeclaration(
-                            memberFunction, memberFunction.getFunctionFlags(), memberFunction.name,
-                            memberFunction.typeParameters, memberFunction.parameterList,
-                            memberFunction.returnTypeAnnotation, memberFunction.block, context);
-                    }
                     break;
                 
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
-                        if (inContextuallyTypedAssignment) {
-                            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
-                        }
-                        else {
-                            this.typeCheckFunctionDeclaration(
-                                funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
-                                funcDecl.typeParameters, funcDecl.parameterList,
-                                funcDecl.returnTypeAnnotation, funcDecl.block, context);
-                        }
+                        this.typeCheckFunctionDeclaration(
+                            funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
+                            funcDecl.typeParameters, funcDecl.parameterList,
+                            funcDecl.returnTypeAnnotation, funcDecl.block, context);
                         return;
                     }
 
@@ -5460,10 +5412,6 @@ module TypeScript {
 
                 case NodeType.ArrayLiteralExpression:
                     this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-                    return;
-
-                case NodeType.ThisExpression:
-                    this.typeCheckThisExpression(ast, enclosingDecl, context);
                     return;
 
                 case NodeType.SuperExpression:
@@ -5478,179 +5426,10 @@ module TypeScript {
                     this.typeCheckObjectCreationExpression(<ObjectCreationExpression>ast, enclosingDecl, context);
                     return;
 
-                case NodeType.CastExpression:
-                    this.typeCheckCastExpression(<CastExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.TypeRef:
-                    this.resolveTypeReference(<TypeReference>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.VoidExpression:
-                    this.typeCheckVoidExpression(<VoidExpression>ast, enclosingDecl, context);
-                    return;
-
-                // boolean operations
-                case NodeType.LogicalNotExpression:
-                    this.typeCheckLogicalNotExpression(<PrefixUnaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.NotEqualsWithTypeConversionExpression:
-                case NodeType.EqualsWithTypeConversionExpression:
-                case NodeType.EqualsExpression:
-                case NodeType.NotEqualsExpression:
-                case NodeType.LessThanExpression:
-                case NodeType.LessThanOrEqualExpression:
-                case NodeType.GreaterThanOrEqualExpression:
-                case NodeType.GreaterThanExpression:
-                    this.typeCheckLogicalOperation(<BinaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.PlusExpression:
-                case NodeType.NegateExpression:
-                case NodeType.BitwiseNotExpression:
-                case NodeType.PreIncrementExpression:
-                case NodeType.PreDecrementExpression:
-                    this.typeCheckUnaryArithmeticOperation(<PrefixUnaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.PostIncrementExpression:
-                case NodeType.PostDecrementExpression:
-                    this.typeCheckPostfixUnaryExpression(<PostfixUnaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.SubtractExpression:
-                case NodeType.MultiplyExpression:
-                case NodeType.DivideExpression:
-                case NodeType.ModuloExpression:
-                case NodeType.BitwiseOrExpression:
-                case NodeType.BitwiseAndExpression:
-                case NodeType.LeftShiftExpression:
-                case NodeType.SignedRightShiftExpression:
-                case NodeType.UnsignedRightShiftExpression:
-                case NodeType.BitwiseExclusiveOrExpression:
-                case NodeType.ExclusiveOrAssignmentExpression:
-                case NodeType.LeftShiftAssignmentExpression:
-                case NodeType.SignedRightShiftAssignmentExpression:
-                case NodeType.UnsignedRightShiftAssignmentExpression:
-                case NodeType.SubtractAssignmentExpression:
-                case NodeType.MultiplyAssignmentExpression:
-                case NodeType.DivideAssignmentExpression:
-                case NodeType.ModuloAssignmentExpression:
-                case NodeType.OrAssignmentExpression:
-                case NodeType.AndAssignmentExpression:
-                    this.typeCheckBinaryArithmeticExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.ElementAccessExpression:
-                    this.typeCheckElementAccessExpression(<ElementAccessExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.LogicalOrExpression:
-                    this.typeCheckLogicalOrExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.TypeOfExpression:
-                    this.typeCheckTypeOfExpression(<TypeOfExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.ThrowStatement:
-                    this.typeCheckThrowStatement(<ThrowStatement>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.DeleteExpression:
-                    this.typeCheckDeleteExpression(<DeleteExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.ConditionalExpression:
-                    this.typeCheckConditionalExpression(<ConditionalExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.InstanceOfExpression:
-                    this.typeCheckInstanceOfExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.CommaExpression:
-                    this.typeCheckCommaExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.InExpression:
-                    this.typeCheckInExpression(<BinaryExpression>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.ForStatement:
-                    this.typeCheckForStatement(<ForStatement>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.ForInStatement:
-                    this.typeCheckForInStatement(ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.WhileStatement:
-                    this.typeCheckWhileStatement(<WhileStatement>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.DoStatement:
-                    this.typeCheckDoStatement(<DoStatement>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.IfStatement:
-                    this.typeCheckIfStatement(<IfStatement>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.ElseClause:
-                    this.typeCheckElseClause(<ElseClause>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.WithStatement:
-                    this.typeCheckWithStatement(ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.TryStatement:
-                    this.typeCheckTryStatement(ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.CatchClause:
-                    this.typeCheckCatchClause(ast, enclosingDecl, context);
-                    return;
-
                 case NodeType.ReturnStatement:
                     // Since we want to resolve the return expression to traverse parents, resolve will take care of typeChecking
                     this.resolveReturnStatement(ast, enclosingDecl, context);
                     return;
-
-                case NodeType.SwitchStatement:
-                    this.typeCheckSwitchStatement(ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.CaseSwitchClause:
-                    this.typeCheckCaseSwitchClause(<CaseSwitchClause>ast, enclosingDecl, context);
-                    return;
-
-                case NodeType.DefaultSwitchClause:
-                    this.typeCheckDefaultSwitchClause(<DefaultSwitchClause>ast, enclosingDecl, context);
-                    return;
-
-                // Below ones should never reach because we never cache these symbols
-
-                //case NodeType.List:
-                //case NodeType.VariableDeclaration:
-                //case NodeType.Block:
-                //case NodeType.VariableStatement:
-                //case NodeType.NumericLiteral:
-                //case NodeType.StringLiteral:
-                //case NodeType.NullLiteral:
-                //case NodeType.TrueLiteral:
-                //case NodeType.FalseLiteral:
-                //case NodeType.LabeledStatement: 
-                //case NodeType.ParenthesizedExpression:
-                //case NodeType.ExpressionStatement:
-                //case NodeType.LogicalAndExpression:
-                //case NodeType.RegularExpressionLiteral:
-                //case NodeType.AddExpression:
-                //case NodeType.AddAssignmentExpression:
-                //case NodeType.AssignmentExpression:
-                //case NodeType.ExportAssignment:
 
                 default:
                     Debug.assert(false, "Implement typeCheck clause if symbol is cached");
