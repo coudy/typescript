@@ -59,15 +59,6 @@ module TypeScript {
             return this.declFile.getOutputFile();
         }
 
-        // TODO: why is this in the declaration emitter?
-        private widenType(type: PullTypeSymbol) {
-            if (type === this.semanticInfoChain.undefinedTypeSymbol || type === this.semanticInfoChain.nullTypeSymbol) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
-
-            return type;
-        }
-
         public emitDeclarations(script: Script) {
             this.emitDeclarationsForScript(script);
         }
@@ -82,8 +73,6 @@ module TypeScript {
             switch (ast.nodeType()) {
                 case NodeType.VariableStatement:
                     return this.emitDeclarationsForVariableStatement(<VariableStatement>ast);
-                case NodeType.VariableDeclaration:
-                    return this.emitDeclarationsForVariableDeclaration(<VariableDeclaration>ast);
                 case NodeType.VariableDeclarator:
                     return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
                 case NodeType.MemberVariableDeclaration:
@@ -194,7 +183,7 @@ module TypeScript {
             this.declFile.Write(this.getDeclFlagsString(declFlags, pullDecl, typeString));
         }
 
-        private canEmitTypeAnnotationSignature(declFlag: DeclFlags = DeclFlags.None) {
+        private canEmitTypeAnnotationSignature(declFlag: DeclFlags) {
             // Private declaration, shouldnt emit type any time.
             return !hasFlag(declFlag, DeclFlags.Private);
         }
@@ -327,11 +316,8 @@ module TypeScript {
             var pullSymbol = decl.getSymbol();
             TypeScript.declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
 
-            var type = this.widenType(pullSymbol.type);
-            if (!type) {
-                // PULLTODO
-                return;
-            }
+            var type = pullSymbol.type;
+            Debug.assert(type);
 
             this.declFile.Write(": ");
             this.emitTypeSignature(type);
@@ -442,23 +428,6 @@ module TypeScript {
                 //    // This means its implementation of overload signature. do not emit
                 //    return;
                 //}
-            }
-            /*
-            else if (!isInterfaceMember && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
-                // Print only first overload of private function
-                var callSignatures = funcTypeSymbol.getCallSignatures();
-                Debug.assert(callSignatures && callSignatures.length > 1);
-                var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
-                var firstSignatureDecl = firstSignature.getDeclarations()[0];
-                var firstFuncDecl = <FunctionDeclaration>this.compiler.semanticInfoChain.getASTForDecl(firstSignatureDecl);
-                if (firstFuncDecl !== funcDecl) {
-                    return;
-                }
-            }
-            */
-
-            if (!this.canEmitDeclarations(ToDeclFlags(funcDecl.getFunctionFlags()), funcDecl)) {
-                return;
             }
 
             var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
