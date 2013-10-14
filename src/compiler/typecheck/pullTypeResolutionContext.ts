@@ -177,11 +177,9 @@ module TypeScript {
         public instantiatingTypesToAny = false;
         public isComparingInstantiatedSignatures = false;
 
-        public isInStaticInitializer = false;
-
         public resolvingTypeNameAsNameExpression = false;
 
-        constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public typeCheckUnitPath?: string) { }
+        constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));

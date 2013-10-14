@@ -169,7 +169,7 @@ module TypeScript {
         }
 
 
-        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, private unitPath: string, inTypeCheck: boolean = false) {
+        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, inTypeCheck: boolean = false) {
             this._cachedAnyTypeArgs = [
                 [this.semanticInfoChain.anyTypeSymbol],
                 [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
@@ -181,12 +181,6 @@ module TypeScript {
             TypeScript.globalResolver = this;
         }
 
-        public getUnitPath() { return this.unitPath; }
-
-        public setUnitPath(unitPath: string) {
-            this.unitPath = unitPath;
-        }
-
         private setTypeChecked(ast: AST, context: PullTypeResolutionContext) {
             if (!context || !context.inProvisionalResolution()) {
                 ast.typeCheckPhase = PullTypeResolver.globalTypeCheckPhase;
@@ -194,7 +188,7 @@ module TypeScript {
         }
 
         private canTypeCheckAST(ast: AST, context: PullTypeResolutionContext) {
-            return ast.typeCheckPhase !== PullTypeResolver.globalTypeCheckPhase && context && context.typeCheck() && this.unitPath == context.typeCheckUnitPath;
+            return ast.typeCheckPhase !== PullTypeResolver.globalTypeCheckPhase && context && context.typeCheck();
         }
 
         private setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext): void {
@@ -866,8 +860,6 @@ module TypeScript {
                 return symbol;
             }
 
-            var thisUnit = this.unitPath;
-
             var decls = symbol.getDeclarations();
 
             // We want to walk and resolve all associated decls, so we can catch
@@ -884,14 +876,12 @@ module TypeScript {
                     (ast.nodeType() === NodeType.GetAccessor && ast.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) ||
                     (ast.nodeType() === NodeType.SetAccessor && ast.parent.parent.nodeType() === NodeType.ObjectLiteralExpression)) {
                     // We'll return the cached results, and let the decl be corrected on the next invalidation
-                    this.setUnitPath(thisUnit);
                     return symbol;
                 }
 
                 // This assert is here to catch potential stack overflows. There have been infinite recursions resulting
                 // from one of these decls pointing to a name expression.
                 Debug.assert(ast.nodeType() != NodeType.Name && ast.nodeType() != NodeType.MemberAccessExpression);
-                this.setUnitPath(decl.fileName());
                 var resolvedSymbol = this.resolveAST(ast, /*inContextuallyTypedAssignment*/false, this.getEnclosingDecl(decl), context);
 
                 // if the symbol is a parameter property referenced in an out-of-order fashion, it may not have been resolved
@@ -907,8 +897,6 @@ module TypeScript {
                 }
             }
 
-            this.setUnitPath(thisUnit);
-
             return symbol;
         }
 
@@ -921,10 +909,7 @@ module TypeScript {
                 var currentDecl = allDecls[i];
                 var astForCurrentDecl = this.getASTForDecl(currentDecl);
                 if (astForCurrentDecl != ast) {
-                    var unitPath = this.unitPath;
-                    this.setUnitPath(currentDecl.fileName());
                     this.resolveAST(astForCurrentDecl, false, this.getEnclosingDecl(currentDecl), context);
-                    this.setUnitPath(unitPath);
                 }
             }
         }
@@ -1198,17 +1183,12 @@ module TypeScript {
                 // (This way, we'll still properly resolve the type even if its parent was already resolved during
                 // base type resolution, making the type otherwise inaccessible).
                 PullTypeResolver.typeCheckCallBacks.push((context) => {
-                    var currentUnitPath = this.unitPath;
-                    this.setUnitPath(typeDecl.fileName());
-
                     if (classOrInterface.nodeType() == NodeType.ClassDeclaration) {
                         this.resolveClassDeclaration(<ClassDeclaration>classOrInterface, context);
                     }
                     else {
                         this.resolveInterfaceDeclaration(<InterfaceDeclaration>classOrInterface, context);
                     }
-
-                    this.setUnitPath(currentUnitPath);
                 });
 
                 return typeDeclSymbol;
@@ -3089,13 +3069,8 @@ module TypeScript {
             //}
 
             PullTypeResolver.typeCheckCallBacks.push((context) => {
-                var currentUnitPath = this.unitPath;
-                this.setUnitPath(funcDecl.fileName());
-
                 // Function or constructor
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
-
-                this.setUnitPath(currentUnitPath);
             });
         }
 
@@ -3194,9 +3169,6 @@ module TypeScript {
             }
 
             PullTypeResolver.typeCheckCallBacks.push((context) => {
-                var currentUnitPath = this.unitPath;
-                this.setUnitPath(funcDecl.fileName());
-
                 if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
                     // Function or constructor
                     this.typeCheckFunctionOverloads(funcDeclAST, context);
@@ -3248,8 +3220,6 @@ module TypeScript {
                         }
                     }
                 }
-
-                this.setUnitPath(currentUnitPath);
             });
         }
 
@@ -6332,10 +6302,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(functionDecl, context);
 
             PullTypeResolver.typeCheckCallBacks.push((context) => {
-                var currentUnitPath = this.unitPath;
-                this.setUnitPath(functionDecl.fileName());
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
-                this.setUnitPath(currentUnitPath);
             });
         }
 
@@ -10032,10 +9999,10 @@ module TypeScript {
         public static typeCheck(compilationSettings: ImmutableCompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
             var scriptDecl = semanticInfoChain.topLevelDecl(scriptName);
 
-            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain, scriptName);
+            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain);
             var prevGlobalResolver = globalResolver;
             globalResolver = resolver;
-            var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true, scriptName);
+            var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
 
             if (resolver.canTypeCheckAST(script, context)) {
                 PullTypeResolver.typeCheckCallBacks.length = 0;

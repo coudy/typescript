@@ -568,7 +568,7 @@ module TypeScript {
                 return null;
             }
 
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, decl.fileName());
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var ast = this.semanticInfoChain.getASTForDecl(decl);
             if (!ast) {
                 return null;
@@ -602,7 +602,7 @@ module TypeScript {
             var asgAST: BinaryExpression = null;
             var typeAssertionASTs: CastExpression[] = [];
 
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var resolutionContext = new PullTypeResolutionContext(resolver);
             var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
@@ -1200,7 +1200,7 @@ module TypeScript {
         }
 
         public pullGetSymbolInformationFromAST(ast: AST, document: Document): PullSymbolInfo {
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1231,7 +1231,7 @@ module TypeScript {
 
             var isNew = ast.nodeType() === NodeType.ObjectCreationExpression;
 
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1257,7 +1257,7 @@ module TypeScript {
         }
 
         public pullGetVisibleMemberSymbolsFromAST(ast: AST, document: Document): PullVisibleSymbolsInfo {
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1275,7 +1275,7 @@ module TypeScript {
         }
 
         public pullGetVisibleDeclsFromAST(ast: AST, document: Document): PullDecl[]{
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ false);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1290,7 +1290,7 @@ module TypeScript {
                 return null;
             }
 
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
@@ -1305,7 +1305,7 @@ module TypeScript {
         }
 
         public pullGetDeclInformation(decl: PullDecl, ast: AST, document: Document): PullSymbolInfo {
-            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain, document.fileName);
+            var resolver = new PullTypeResolver(this.compilationSettings(), this.semanticInfoChain);
             var context = this.extractResolutionContextFromAST(resolver, ast, document, /*propagateContextualTypes*/ true);
             if (!context || context.inWithBlock) {
                 return null;
