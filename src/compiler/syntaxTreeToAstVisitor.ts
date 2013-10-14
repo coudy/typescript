@@ -536,16 +536,6 @@ module TypeScript {
             return result;
         }
 
-        private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): boolean {
-            for (var i = 0, n = parameters.nonSeparatorCount(); i < n; i++) {
-                if ((<ParameterSyntax>parameters.nonSeparatorAt(i)).dotDotDotToken) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
 

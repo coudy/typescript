@@ -987,13 +987,6 @@ module TypeScript {
                 // Note: a variable declarator does not introduce a new decl scope.  So there is no
                 // need to pop a decl here.
                 // context.popParent();
-
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
                 break;
             case NodeType.EnumElement:
                 // Note: a enum element does not introduce a new decl scope.  So there is no

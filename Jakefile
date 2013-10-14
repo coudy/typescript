@@ -105,7 +105,6 @@ var compilerSources = [
 	"syntax/syntaxUtilities.ts",
 	"syntax/syntaxVisitor.generated.ts",
 	"syntax/syntaxWalker.generated.ts",
-	"syntax/textSpanWalker.ts",
 	"syntax/unicode.ts",
 	"text/characterCodes.ts",
 	"text/lineMap.ts",
