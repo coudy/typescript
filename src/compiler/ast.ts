@@ -1204,10 +1204,6 @@ module TypeScript {
             return NodeType.MemberVariableDeclaration;
         }
 
-        public emit(emitter: Emitter) {
-            emitter.emitMemberVariableDeclaration(this);
-        }
-
         public _isDeclaration() { return true; }
 
         public getVarFlags(): VariableFlags {

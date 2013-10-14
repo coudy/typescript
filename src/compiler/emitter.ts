@@ -1411,7 +1411,9 @@ module TypeScript {
             this.emitComments(declaration, false);
         }
 
-        public emitMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
+        private emitMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
+            Debug.assert(!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init);
+
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             this.pushDecl(pullDecl);
 
@@ -1425,23 +1427,11 @@ module TypeScript {
             var parentSymbol = symbol ? symbol.getContainer() : null;
             var parentDecl = pullDecl && pullDecl.getParentDecl();
 
-            if (this.emitState.container !== EmitContainer.Args) {
-                if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static)) {
-                    if (quotedOrNumber) {
-                        this.writeToOutput(parentSymbol.getName() + "[");
-                    }
-                    else {
-                        this.writeToOutput(parentSymbol.getName() + ".");
-                    }
-                }
-                else {
-                    if (quotedOrNumber) {
-                        this.writeToOutput("this[");
-                    }
-                    else {
-                        this.writeToOutput("this.");
-                    }
-                }
+            if (quotedOrNumber) {
+                this.writeToOutput("this[");
+            }
+            else {
+                this.writeToOutput("this.");
             }
 
             this.writeToOutputWithSourceMapRecord(varDecl.id.actualText, varDecl.id);
