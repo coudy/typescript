@@ -46,6 +46,18 @@ module TypeScript {
         private subtypeCache: any[] = <any>{};
         private identicalCache: any[] = <any>{};
 
+        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, inTypeCheck: boolean = false) {
+            this._cachedAnyTypeArgs = [
+                [this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol]
+            ];
+
+            TypeScript.globalResolver = this;
+        }
+
         private cachedArrayInterfaceType() {
             if (!this._cachedArrayInterfaceType) {
                 this._cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
@@ -168,19 +180,6 @@ module TypeScript {
             }
 
             return this._cachedFunctionArgumentsSymbol;
-        }
-
-
-        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, inTypeCheck: boolean = false) {
-            this._cachedAnyTypeArgs = [
-                [this.semanticInfoChain.anyTypeSymbol],
-                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
-                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
-                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
-                [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol]
-            ];
-
-            TypeScript.globalResolver = this;
         }
 
         private setTypeChecked(ast: AST, context: PullTypeResolutionContext) {
@@ -11470,9 +11469,6 @@ module TypeScript {
             }
         }
     }
-
-    //    return false;
-    //}
 
     export function getPropertyAssignmentNameTextFromIdentifier(identifier: AST): { actualText: string; memberName: string } {
         if (identifier.nodeType() === NodeType.Name) {
