@@ -1338,16 +1338,7 @@ module TypeScript {
             var functionFlags = funcDecl.getFunctionFlags();
             if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
                 var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-                if (hasFlag(functionFlags, FunctionFlags.Static)) {
-                    if (this.thisClassNode) {
-                        this.writeLineToOutput("");
-                        this.emitIndent();
-                        this.recordSourceMappingStart(funcDecl);
-                        this.writeToOutput(this.thisClassNode.identifier.actualText + "." + funcName + " = " + funcName + ";");
-                        this.recordSourceMappingEnd(funcDecl);
-                    }
-                }
-                else if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && pullFunctionDecl && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
+                if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && pullFunctionDecl && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
                     this.writeLineToOutput("");
                     this.emitIndent();
                     var modName = this.emitState.container === EmitContainer.Module ? this.moduleName : "exports";
