@@ -59,15 +59,6 @@ module TypeScript {
             return this.declFile.getOutputFile();
         }
 
-        // TODO: why is this in the declaration emitter?
-        private widenType(type: PullTypeSymbol) {
-            if (type === this.semanticInfoChain.undefinedTypeSymbol || type === this.semanticInfoChain.nullTypeSymbol) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
-
-            return type;
-        }
-
         public emitDeclarations(script: Script) {
             this.emitDeclarationsForScript(script);
         }
@@ -82,18 +73,20 @@ module TypeScript {
             switch (ast.nodeType()) {
                 case NodeType.VariableStatement:
                     return this.emitDeclarationsForVariableStatement(<VariableStatement>ast);
-                case NodeType.VariableDeclaration:
-                    return this.emitDeclarationsForVariableDeclaration(<VariableDeclaration>ast);
                 case NodeType.VariableDeclarator:
                     return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
+                case NodeType.MemberVariableDeclaration:
+                    return this.emitDeclarationsForMemberVariableDeclaration(<MemberVariableDeclaration>ast);
                 case NodeType.ConstructorDeclaration:
                     return this.emitDeclarationsForConstructorDeclaration(<ConstructorDeclaration>ast);
-                case NodeType.GetMemberAccessorDeclaration:
-                    return this.emitDeclarationsForGetMemberAccessorDeclaration(<GetMemberAccessorDeclaration>ast);
-                case NodeType.SetMemberAccessorDeclaration:
-                    return this.emitDeclarationsForSetMemberAccessorDeclaration(<SetMemberAccessorDeclaration>ast);
+                case NodeType.GetAccessor:
+                    return this.emitDeclarationsForGetAccessor(<GetAccessor>ast);
+                case NodeType.SetAccessor:
+                    return this.emitDeclarationsForSetAccessor(<SetAccessor>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
+                case NodeType.MemberFunctionDeclaration:
+                    return this.emitDeclarationsForMemberFunctionDeclaration(<MemberFunctionDeclaration>ast);
                 case NodeType.ClassDeclaration:
                     return this.emitDeclarationsForClassDeclaration(<ClassDeclaration>ast);
                 case NodeType.InterfaceDeclaration:
@@ -190,7 +183,7 @@ module TypeScript {
             this.declFile.Write(this.getDeclFlagsString(declFlags, pullDecl, typeString));
         }
 
-        private canEmitTypeAnnotationSignature(declFlag: DeclFlags = DeclFlags.None) {
+        private canEmitTypeAnnotationSignature(declFlag: DeclFlags) {
             // Private declaration, shouldnt emit type any time.
             return !hasFlag(declFlag, DeclFlags.Private);
         }
@@ -323,11 +316,8 @@ module TypeScript {
             var pullSymbol = decl.getSymbol();
             TypeScript.declarationEmitGetBoundDeclTypeTime += new Date().getTime() - start;
 
-            var type = this.widenType(pullSymbol.type);
-            if (!type) {
-                // PULLTODO
-                return;
-            }
+            var type = pullSymbol.type;
+            Debug.assert(type);
 
             this.declFile.Write(": ");
             this.emitTypeSignature(type);
@@ -368,6 +358,20 @@ module TypeScript {
             }
         }
 
+        private emitDeclarationsForMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
+            if (this.canEmitDeclarations(ToDeclFlags(varDecl.getVarFlags()), varDecl)) {
+                this.emitDeclarationComments(varDecl);
+                this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
+                this.declFile.Write(varDecl.id.actualText);
+
+                if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
+                    this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
+                }
+
+                this.declFile.WriteLine(";");
+            }
+        }
+
         private emitDeclarationsForVariableStatement(variableStatement: VariableStatement) {
             this.emitDeclarationsForVariableDeclaration(variableStatement.declaration);
         }
@@ -395,7 +399,7 @@ module TypeScript {
             }
         }
 
-        private isOverloadedCallSignature(funcDecl: FunctionDeclaration) {
+        private isOverloadedCallSignature(funcDecl: AST) {
             var start = new Date().getTime();
             var functionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSymbol = functionDecl.getSymbol();
@@ -425,23 +429,6 @@ module TypeScript {
                 //    return;
                 //}
             }
-            /*
-            else if (!isInterfaceMember && hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
-                // Print only first overload of private function
-                var callSignatures = funcTypeSymbol.getCallSignatures();
-                Debug.assert(callSignatures && callSignatures.length > 1);
-                var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
-                var firstSignatureDecl = firstSignature.getDeclarations()[0];
-                var firstFuncDecl = <FunctionDeclaration>this.compiler.semanticInfoChain.getASTForDecl(firstSignatureDecl);
-                if (firstFuncDecl !== funcDecl) {
-                    return;
-                }
-            }
-            */
-
-            if (!this.canEmitDeclarations(ToDeclFlags(funcDecl.getFunctionFlags()), funcDecl)) {
-                return;
-            }
 
             var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             var funcSignature = funcPullDecl.getSignatureSymbol();
@@ -451,37 +438,97 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
+            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
+            this.declFile.Write(")");
+            this.declFile.WriteLine(";");
+        }
 
-            var hasLastParameterRestParameter = lastParameterIsRest(funcDecl.parameterList);
-            var argsLen = funcDecl.parameterList.members.length;
+        private emitParameterList(flags: FunctionFlags, parameterList: ASTList): void {
+            var hasLastParameterRestParameter = lastParameterIsRest(parameterList);
+            var argsLen = parameterList.members.length;
             if (hasLastParameterRestParameter) {
                 argsLen--;
             }
 
             for (var i = 0; i < argsLen; i++) {
-                var argDecl = <Parameter>funcDecl.parameterList.members[i];
-                this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
+                var argDecl = <Parameter>parameterList.members[i];
+                this.emitArgDecl(argDecl, flags);
                 if (i < (argsLen - 1)) {
                     this.declFile.Write(", ");
                 }
             }
 
             if (hasLastParameterRestParameter) {
-                var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
-                if (funcDecl.parameterList.members.length > 1) {
+                var lastArg = <Parameter>parameterList.members[parameterList.members.length - 1];
+                if (parameterList.members.length > 1) {
                     this.declFile.Write(", ...");
                 }
                 else {
                     this.declFile.Write("...");
                 }
 
-                this.emitArgDecl(lastArg, funcDecl.getFunctionFlags());
+                this.emitArgDecl(lastArg, flags);
             }
-
-            this.declFile.Write(")");
-            this.declFile.WriteLine(";");
         }
 
+        private emitDeclarationsForMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration) {
+            var functionFlags = funcDecl.getFunctionFlags();
+
+            var start = new Date().getTime();
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
+
+            TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
+
+            var funcTypeSymbol = funcSymbol.type;
+            if (funcDecl.block) {
+                var constructSignatures = funcTypeSymbol.getConstructSignatures();
+                if (constructSignatures && constructSignatures.length > 1) {
+                    return;
+                }
+                else if (this.isOverloadedCallSignature(funcDecl)) {
+                    // This means its implementation of overload signature. do not emit
+                    return;
+                }
+            }
+            else if (hasFlag(functionFlags, FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
+                // Print only first overload of private function
+                var callSignatures = funcTypeSymbol.getCallSignatures();
+                Debug.assert(callSignatures && callSignatures.length > 1);
+                var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
+                var firstSignatureDecl = firstSignature.getDeclarations()[0];
+                var firstFuncDecl = this.semanticInfoChain.getASTForDecl(firstSignatureDecl);
+                if (firstFuncDecl !== funcDecl) {
+                    return;
+                }
+            }
+
+            if (!this.canEmitDeclarations(ToDeclFlags(functionFlags), funcDecl)) {
+                return;
+            }
+
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            var funcSignature = funcPullDecl.getSignatureSymbol();
+            this.emitDeclarationComments(funcDecl);
+
+            this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
+            var id = funcDecl.name.actualText;
+            this.declFile.Write(id);
+            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+
+            this.declFile.Write("(");
+
+            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
+
+            this.declFile.Write(")");
+
+            if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
+                var returnType = funcSignature.returnType;
+                this.declFile.Write(": ");
+                this.emitTypeSignature(returnType);
+            }
+
+            this.declFile.WriteLine(";");
+        }
 
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {
             var functionFlags = funcDecl.getFunctionFlags();
@@ -500,17 +547,6 @@ module TypeScript {
                 }
                 else if (this.isOverloadedCallSignature(funcDecl)) {
                     // This means its implementation of overload signature. do not emit
-                    return;
-                }
-            }
-            else if (!isInterfaceMember && hasFlag(functionFlags, FunctionFlags.Private) && this.isOverloadedCallSignature(funcDecl)) {
-                // Print only first overload of private function
-                var callSignatures = funcTypeSymbol.getCallSignatures();
-                Debug.assert(callSignatures && callSignatures.length > 1);
-                var firstSignature = callSignatures[0].isDefinition() ? callSignatures[1] : callSignatures[0];
-                var firstSignatureDecl = firstSignature.getDeclarations()[0];
-                var firstFuncDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(firstSignatureDecl);
-                if (firstFuncDecl !== funcDecl) {
                     return;
                 }
             }
@@ -555,31 +591,7 @@ module TypeScript {
                 this.declFile.Write("[");
             }
 
-            var hasLastParameterRestParameter = lastParameterIsRest(funcDecl.parameterList);
-            var argsLen = funcDecl.parameterList.members.length;
-            if (hasLastParameterRestParameter) {
-                argsLen--;
-            }
-
-            for (var i = 0; i < argsLen; i++) {
-                var argDecl = <Parameter>funcDecl.parameterList.members[i];
-                this.emitArgDecl(argDecl, funcDecl.getFunctionFlags());
-                if (i < (argsLen - 1)) {
-                    this.declFile.Write(", ");
-                }
-            }
-
-            if (hasLastParameterRestParameter) {
-                var lastArg = <Parameter>funcDecl.parameterList.members[funcDecl.parameterList.members.length - 1];
-                if (funcDecl.parameterList.members.length > 1) {
-                    this.declFile.Write(", ...");
-                }
-                else {
-                    this.declFile.Write("...");
-                }
-
-                this.emitArgDecl(lastArg, functionFlags);
-            }
+            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
 
             if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
                 this.declFile.Write(")");
@@ -632,20 +644,20 @@ module TypeScript {
             this.writeDeclarationComments(comments);
         }
 
-        private emitDeclarationsForGetMemberAccessorDeclaration(funcDecl: GetMemberAccessorDeclaration): void {
-            this.emitPropertyAccessorSignature(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
+        private emitDeclarationsForGetAccessor(funcDecl: GetAccessor): void {
+            this.emitMemberAccessorDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
         }
 
-        private emitDeclarationsForSetMemberAccessorDeclaration(funcDecl: SetMemberAccessorDeclaration): void {
-            this.emitPropertyAccessorSignature(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
+        private emitDeclarationsForSetAccessor(funcDecl: SetAccessor): void {
+            this.emitMemberAccessorDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName);
         }
 
-        private emitPropertyAccessorSignature(funcDecl: AST, flags: FunctionFlags, name: Identifier) {
+        private emitMemberAccessorDeclaration(funcDecl: AST, flags: FunctionFlags, name: Identifier) {
             var start = new Date().getTime();
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
             TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
 
-            if (funcDecl.nodeType() === NodeType.SetMemberAccessorDeclaration && accessorSymbol.getGetter()) {
+            if (funcDecl.nodeType() === NodeType.SetAccessor && accessorSymbol.getGetter()) {
                 // Setter is being used to emit the type info. 
                 return;
             }

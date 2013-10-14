@@ -426,10 +426,6 @@ module TypeScript {
     "code": 2016,
     "category": DiagnosticCategory.Error
   },
-  "Accessors cannot have type parameters.": {
-    "code": 2017,
-    "category": DiagnosticCategory.Error
-  },
   "Exported class '{0}' extends private class '{1}'.": {
     "code": 2018,
     "category": DiagnosticCategory.Error
@@ -1404,10 +1400,6 @@ module TypeScript {
   },
   "Base64 value '{0}' finished with a continuation bit.": {
     "code": 5021,
-    "category": DiagnosticCategory.Error
-  },
-  "Key was already in table.": {
-    "code": 5022,
     "category": DiagnosticCategory.Error
   },
   "Unknown option '{0}'": {

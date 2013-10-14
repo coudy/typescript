@@ -178,6 +178,7 @@ module TypeScript {
         public isComparingInstantiatedSignatures = false;
 
         public isInStaticInitializer = false;
+
         public resolvingTypeNameAsNameExpression = false;
 
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public typeCheckUnitPath?: string) { }

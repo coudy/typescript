@@ -4331,55 +4331,25 @@ module TypeScript {
     }
     }
 
-    export class MemberAccessorDeclarationSyntax extends SyntaxNode implements IMemberDeclarationSyntax {
+    export class GetAccessorSyntax extends SyntaxNode implements IMemberDeclarationSyntax, IPropertyAssignmentSyntax {
+
         constructor(public modifiers: ISyntaxList,
+                    public getKeyword: ISyntaxToken,
                     public propertyName: ISyntaxToken,
                     public parameterList: ParameterListSyntax,
+                    public typeAnnotation: TypeAnnotationSyntax,
                     public block: BlockSyntax,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
-        }
-
-    public isMemberDeclaration(): boolean {
-        return true;
-    }
-
-    public isClassElement(): boolean {
-        return true;
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): MemberAccessorDeclarationSyntax {
-        return <MemberAccessorDeclarationSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): MemberAccessorDeclarationSyntax {
-        return <MemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public isTypeScriptSpecific(): boolean {
-        return true;
-    }
-    }
-
-    export class GetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
-
-        constructor(modifiers: ISyntaxList,
-                    public getKeyword: ISyntaxToken,
-                    propertyName: ISyntaxToken,
-                    parameterList: ParameterListSyntax,
-                    public typeAnnotation: TypeAnnotationSyntax,
-                    block: BlockSyntax,
-                    parsedInStrictMode: boolean) {
-            super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
 
         }
 
     public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitGetMemberAccessorDeclaration(this);
+        return visitor.visitGetAccessor(this);
     }
 
     public kind(): SyntaxKind {
-        return SyntaxKind.GetMemberAccessorDeclaration;
+        return SyntaxKind.GetAccessor;
     }
 
     public childCount(): number {
@@ -4398,63 +4368,75 @@ module TypeScript {
         }
     }
 
+    public isMemberDeclaration(): boolean {
+        return true;
+    }
+
+    public isPropertyAssignment(): boolean {
+        return true;
+    }
+
+    public isClassElement(): boolean {
+        return true;
+    }
+
     public update(modifiers: ISyntaxList,
                   getKeyword: ISyntaxToken,
                   propertyName: ISyntaxToken,
                   parameterList: ParameterListSyntax,
                   typeAnnotation: TypeAnnotationSyntax,
-                  block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+                  block: BlockSyntax): GetAccessorSyntax {
         if (this.modifiers === modifiers && this.getKeyword === getKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation && this.block === block) {
             return this;
         }
 
-        return new GetMemberAccessorDeclarationSyntax(modifiers, getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new GetAccessorSyntax(modifiers, getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(getKeyword: ISyntaxToken,
                          propertyName: ISyntaxToken,
                          parameterList: ParameterListSyntax,
-                         block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
-        return new GetMemberAccessorDeclarationSyntax(Syntax.emptyList, getKeyword, propertyName, parameterList, null, block, /*parsedInStrictMode:*/ false);
+                         block: BlockSyntax): GetAccessorSyntax {
+        return new GetAccessorSyntax(Syntax.emptyList, getKeyword, propertyName, parameterList, null, block, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(propertyName: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
-        return new GetMemberAccessorDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.GetKeyword), propertyName, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): GetAccessorSyntax {
+        return new GetAccessorSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.GetKeyword), propertyName, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
-        return <GetMemberAccessorDeclarationSyntax>super.withLeadingTrivia(trivia);
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): GetAccessorSyntax {
+        return <GetAccessorSyntax>super.withLeadingTrivia(trivia);
     }
 
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): GetMemberAccessorDeclarationSyntax {
-        return <GetMemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): GetAccessorSyntax {
+        return <GetAccessorSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withModifiers(modifiers: ISyntaxList): GetMemberAccessorDeclarationSyntax {
+    public withModifiers(modifiers: ISyntaxList): GetAccessorSyntax {
         return this.update(modifiers, this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
-    public withModifier(modifier: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+    public withModifier(modifier: ISyntaxToken): GetAccessorSyntax {
         return this.withModifiers(Syntax.list([modifier]));
     }
 
-    public withGetKeyword(getKeyword: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+    public withGetKeyword(getKeyword: ISyntaxToken): GetAccessorSyntax {
         return this.update(this.modifiers, getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
-    public withPropertyName(propertyName: ISyntaxToken): GetMemberAccessorDeclarationSyntax {
+    public withPropertyName(propertyName: ISyntaxToken): GetAccessorSyntax {
         return this.update(this.modifiers, this.getKeyword, propertyName, this.parameterList, this.typeAnnotation, this.block);
     }
 
-    public withParameterList(parameterList: ParameterListSyntax): GetMemberAccessorDeclarationSyntax {
+    public withParameterList(parameterList: ParameterListSyntax): GetAccessorSyntax {
         return this.update(this.modifiers, this.getKeyword, this.propertyName, parameterList, this.typeAnnotation, this.block);
     }
 
-    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetMemberAccessorDeclarationSyntax {
+    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetAccessorSyntax {
         return this.update(this.modifiers, this.getKeyword, this.propertyName, this.parameterList, typeAnnotation, this.block);
     }
 
-    public withBlock(block: BlockSyntax): GetMemberAccessorDeclarationSyntax {
+    public withBlock(block: BlockSyntax): GetAccessorSyntax {
         return this.update(this.modifiers, this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, block);
     }
 
@@ -4463,24 +4445,24 @@ module TypeScript {
     }
     }
 
-    export class SetMemberAccessorDeclarationSyntax extends MemberAccessorDeclarationSyntax {
+    export class SetAccessorSyntax extends SyntaxNode implements IMemberDeclarationSyntax, IPropertyAssignmentSyntax {
 
-        constructor(modifiers: ISyntaxList,
+        constructor(public modifiers: ISyntaxList,
                     public setKeyword: ISyntaxToken,
-                    propertyName: ISyntaxToken,
-                    parameterList: ParameterListSyntax,
-                    block: BlockSyntax,
+                    public propertyName: ISyntaxToken,
+                    public parameterList: ParameterListSyntax,
+                    public block: BlockSyntax,
                     parsedInStrictMode: boolean) {
-            super(modifiers, propertyName, parameterList, block, parsedInStrictMode); 
+            super(parsedInStrictMode); 
 
         }
 
     public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitSetMemberAccessorDeclaration(this);
+        return visitor.visitSetAccessor(this);
     }
 
     public kind(): SyntaxKind {
-        return SyntaxKind.SetMemberAccessorDeclaration;
+        return SyntaxKind.SetAccessor;
     }
 
     public childCount(): number {
@@ -4498,58 +4480,70 @@ module TypeScript {
         }
     }
 
+    public isMemberDeclaration(): boolean {
+        return true;
+    }
+
+    public isPropertyAssignment(): boolean {
+        return true;
+    }
+
+    public isClassElement(): boolean {
+        return true;
+    }
+
     public update(modifiers: ISyntaxList,
                   setKeyword: ISyntaxToken,
                   propertyName: ISyntaxToken,
                   parameterList: ParameterListSyntax,
-                  block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+                  block: BlockSyntax): SetAccessorSyntax {
         if (this.modifiers === modifiers && this.setKeyword === setKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.block === block) {
             return this;
         }
 
-        return new SetMemberAccessorDeclarationSyntax(modifiers, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new SetAccessorSyntax(modifiers, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public static create(setKeyword: ISyntaxToken,
                          propertyName: ISyntaxToken,
                          parameterList: ParameterListSyntax,
-                         block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
-        return new SetMemberAccessorDeclarationSyntax(Syntax.emptyList, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ false);
+                         block: BlockSyntax): SetAccessorSyntax {
+        return new SetAccessorSyntax(Syntax.emptyList, setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ false);
     }
 
-    public static create1(propertyName: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
-        return new SetMemberAccessorDeclarationSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.SetKeyword), propertyName, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
+    public static create1(propertyName: ISyntaxToken): SetAccessorSyntax {
+        return new SetAccessorSyntax(Syntax.emptyList, Syntax.token(SyntaxKind.SetKeyword), propertyName, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
     }
 
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
-        return <SetMemberAccessorDeclarationSyntax>super.withLeadingTrivia(trivia);
+    public withLeadingTrivia(trivia: ISyntaxTriviaList): SetAccessorSyntax {
+        return <SetAccessorSyntax>super.withLeadingTrivia(trivia);
     }
 
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): SetMemberAccessorDeclarationSyntax {
-        return <SetMemberAccessorDeclarationSyntax>super.withTrailingTrivia(trivia);
+    public withTrailingTrivia(trivia: ISyntaxTriviaList): SetAccessorSyntax {
+        return <SetAccessorSyntax>super.withTrailingTrivia(trivia);
     }
 
-    public withModifiers(modifiers: ISyntaxList): SetMemberAccessorDeclarationSyntax {
+    public withModifiers(modifiers: ISyntaxList): SetAccessorSyntax {
         return this.update(modifiers, this.setKeyword, this.propertyName, this.parameterList, this.block);
     }
 
-    public withModifier(modifier: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+    public withModifier(modifier: ISyntaxToken): SetAccessorSyntax {
         return this.withModifiers(Syntax.list([modifier]));
     }
 
-    public withSetKeyword(setKeyword: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+    public withSetKeyword(setKeyword: ISyntaxToken): SetAccessorSyntax {
         return this.update(this.modifiers, setKeyword, this.propertyName, this.parameterList, this.block);
     }
 
-    public withPropertyName(propertyName: ISyntaxToken): SetMemberAccessorDeclarationSyntax {
+    public withPropertyName(propertyName: ISyntaxToken): SetAccessorSyntax {
         return this.update(this.modifiers, this.setKeyword, propertyName, this.parameterList, this.block);
     }
 
-    public withParameterList(parameterList: ParameterListSyntax): SetMemberAccessorDeclarationSyntax {
+    public withParameterList(parameterList: ParameterListSyntax): SetAccessorSyntax {
         return this.update(this.modifiers, this.setKeyword, this.propertyName, parameterList, this.block);
     }
 
-    public withBlock(block: BlockSyntax): SetMemberAccessorDeclarationSyntax {
+    public withBlock(block: BlockSyntax): SetAccessorSyntax {
         return this.update(this.modifiers, this.setKeyword, this.propertyName, this.parameterList, block);
     }
 
@@ -6300,7 +6294,7 @@ module TypeScript {
         return this.update(this.openBraceToken, propertyAssignments, this.closeBraceToken);
     }
 
-    public withPropertyAssignment(propertyAssignment: PropertyAssignmentSyntax): ObjectLiteralExpressionSyntax {
+    public withPropertyAssignment(propertyAssignment: IPropertyAssignmentSyntax): ObjectLiteralExpressionSyntax {
         return this.withPropertyAssignments(Syntax.separatedList([propertyAssignment]));
     }
 
@@ -6314,32 +6308,13 @@ module TypeScript {
     }
     }
 
-    export class PropertyAssignmentSyntax extends SyntaxNode {
+    export class SimplePropertyAssignmentSyntax extends SyntaxNode implements IPropertyAssignmentSyntax {
+
         constructor(public propertyName: ISyntaxToken,
-                    parsedInStrictMode: boolean) {
-            super(parsedInStrictMode); 
-        }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): PropertyAssignmentSyntax {
-        return <PropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): PropertyAssignmentSyntax {
-        return <PropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public isTypeScriptSpecific(): boolean {
-        return false;
-    }
-    }
-
-    export class SimplePropertyAssignmentSyntax extends PropertyAssignmentSyntax {
-
-        constructor(propertyName: ISyntaxToken,
                     public colonToken: ISyntaxToken,
                     public expression: IExpressionSyntax,
                     parsedInStrictMode: boolean) {
-            super(propertyName, parsedInStrictMode); 
+            super(parsedInStrictMode); 
 
         }
 
@@ -6362,6 +6337,10 @@ module TypeScript {
             case 2: return this.expression;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isPropertyAssignment(): boolean {
+        return true;
     }
 
     public update(propertyName: ISyntaxToken,
@@ -6405,13 +6384,13 @@ module TypeScript {
     }
     }
 
-    export class FunctionPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
+    export class FunctionPropertyAssignmentSyntax extends SyntaxNode implements IPropertyAssignmentSyntax {
 
-        constructor(propertyName: ISyntaxToken,
+        constructor(public propertyName: ISyntaxToken,
                     public callSignature: CallSignatureSyntax,
                     public block: BlockSyntax,
                     parsedInStrictMode: boolean) {
-            super(propertyName, parsedInStrictMode); 
+            super(parsedInStrictMode); 
 
         }
 
@@ -6434,6 +6413,10 @@ module TypeScript {
             case 2: return this.block;
             default: throw Errors.invalidOperation();
         }
+    }
+
+    public isPropertyAssignment(): boolean {
+        return true;
     }
 
     public update(propertyName: ISyntaxToken,
@@ -6472,200 +6455,6 @@ module TypeScript {
 
     public isTypeScriptSpecific(): boolean {
         if (this.callSignature.isTypeScriptSpecific()) { return true; }
-        if (this.block.isTypeScriptSpecific()) { return true; }
-        return false;
-    }
-    }
-
-    export class AccessorPropertyAssignmentSyntax extends PropertyAssignmentSyntax {
-        constructor(propertyName: ISyntaxToken,
-                    public parameterList: ParameterListSyntax,
-                    public block: BlockSyntax,
-                    parsedInStrictMode: boolean) {
-            super(propertyName, parsedInStrictMode); 
-        }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): AccessorPropertyAssignmentSyntax {
-        return <AccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): AccessorPropertyAssignmentSyntax {
-        return <AccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public isTypeScriptSpecific(): boolean {
-        return false;
-    }
-    }
-
-    export class GetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
-
-        constructor(public getKeyword: ISyntaxToken,
-                    propertyName: ISyntaxToken,
-                    parameterList: ParameterListSyntax,
-                    public typeAnnotation: TypeAnnotationSyntax,
-                    block: BlockSyntax,
-                    parsedInStrictMode: boolean) {
-            super(propertyName, parameterList, block, parsedInStrictMode); 
-
-        }
-
-    public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitGetAccessorPropertyAssignment(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.GetAccessorPropertyAssignment;
-    }
-
-    public childCount(): number {
-        return 5;
-    }
-
-    public childAt(slot: number): ISyntaxElement {
-        switch (slot) {
-            case 0: return this.getKeyword;
-            case 1: return this.propertyName;
-            case 2: return this.parameterList;
-            case 3: return this.typeAnnotation;
-            case 4: return this.block;
-            default: throw Errors.invalidOperation();
-        }
-    }
-
-    public update(getKeyword: ISyntaxToken,
-                  propertyName: ISyntaxToken,
-                  parameterList: ParameterListSyntax,
-                  typeAnnotation: TypeAnnotationSyntax,
-                  block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        if (this.getKeyword === getKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.typeAnnotation === typeAnnotation && this.block === block) {
-            return this;
-        }
-
-        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, parameterList, typeAnnotation, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
-    }
-
-    public static create(getKeyword: ISyntaxToken,
-                         propertyName: ISyntaxToken,
-                         parameterList: ParameterListSyntax,
-                         block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        return new GetAccessorPropertyAssignmentSyntax(getKeyword, propertyName, parameterList, null, block, /*parsedInStrictMode:*/ false);
-    }
-
-    public static create1(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return new GetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.GetKeyword), propertyName, ParameterListSyntax.create1(), null, BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
-        return <GetAccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): GetAccessorPropertyAssignmentSyntax {
-        return <GetAccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public withGetKeyword(getKeyword: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, this.block);
-    }
-
-    public withPropertyName(propertyName: ISyntaxToken): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, propertyName, this.parameterList, this.typeAnnotation, this.block);
-    }
-
-    public withParameterList(parameterList: ParameterListSyntax): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, parameterList, this.typeAnnotation, this.block);
-    }
-
-    public withTypeAnnotation(typeAnnotation: TypeAnnotationSyntax): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, this.parameterList, typeAnnotation, this.block);
-    }
-
-    public withBlock(block: BlockSyntax): GetAccessorPropertyAssignmentSyntax {
-        return this.update(this.getKeyword, this.propertyName, this.parameterList, this.typeAnnotation, block);
-    }
-
-    public isTypeScriptSpecific(): boolean {
-        if (this.parameterList.isTypeScriptSpecific()) { return true; }
-        if (this.typeAnnotation !== null && this.typeAnnotation.isTypeScriptSpecific()) { return true; }
-        if (this.block.isTypeScriptSpecific()) { return true; }
-        return false;
-    }
-    }
-
-    export class SetAccessorPropertyAssignmentSyntax extends AccessorPropertyAssignmentSyntax {
-
-        constructor(public setKeyword: ISyntaxToken,
-                    propertyName: ISyntaxToken,
-                    parameterList: ParameterListSyntax,
-                    block: BlockSyntax,
-                    parsedInStrictMode: boolean) {
-            super(propertyName, parameterList, block, parsedInStrictMode); 
-
-        }
-
-    public accept(visitor: ISyntaxVisitor): any {
-        return visitor.visitSetAccessorPropertyAssignment(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.SetAccessorPropertyAssignment;
-    }
-
-    public childCount(): number {
-        return 4;
-    }
-
-    public childAt(slot: number): ISyntaxElement {
-        switch (slot) {
-            case 0: return this.setKeyword;
-            case 1: return this.propertyName;
-            case 2: return this.parameterList;
-            case 3: return this.block;
-            default: throw Errors.invalidOperation();
-        }
-    }
-
-    public update(setKeyword: ISyntaxToken,
-                  propertyName: ISyntaxToken,
-                  parameterList: ParameterListSyntax,
-                  block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
-        if (this.setKeyword === setKeyword && this.propertyName === propertyName && this.parameterList === parameterList && this.block === block) {
-            return this;
-        }
-
-        return new SetAccessorPropertyAssignmentSyntax(setKeyword, propertyName, parameterList, block, /*parsedInStrictMode:*/ this.parsedInStrictMode());
-    }
-
-    public static create1(propertyName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return new SetAccessorPropertyAssignmentSyntax(Syntax.token(SyntaxKind.SetKeyword), propertyName, ParameterListSyntax.create1(), BlockSyntax.create1(), /*parsedInStrictMode:*/ false);
-    }
-
-    public withLeadingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
-        return <SetAccessorPropertyAssignmentSyntax>super.withLeadingTrivia(trivia);
-    }
-
-    public withTrailingTrivia(trivia: ISyntaxTriviaList): SetAccessorPropertyAssignmentSyntax {
-        return <SetAccessorPropertyAssignmentSyntax>super.withTrailingTrivia(trivia);
-    }
-
-    public withSetKeyword(setKeyword: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(setKeyword, this.propertyName, this.parameterList, this.block);
-    }
-
-    public withPropertyName(propertyName: ISyntaxToken): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, propertyName, this.parameterList, this.block);
-    }
-
-    public withParameterList(parameterList: ParameterListSyntax): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, this.propertyName, parameterList, this.block);
-    }
-
-    public withBlock(block: BlockSyntax): SetAccessorPropertyAssignmentSyntax {
-        return this.update(this.setKeyword, this.propertyName, this.parameterList, block);
-    }
-
-    public isTypeScriptSpecific(): boolean {
-        if (this.parameterList.isTypeScriptSpecific()) { return true; }
         if (this.block.isTypeScriptSpecific()) { return true; }
         return false;
     }

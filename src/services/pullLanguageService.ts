@@ -116,7 +116,7 @@ module Services {
                 // scope our search down to the method ast so we don't find other hits elsewhere.
                 while (ast) {
                     if (ast.nodeType() === TypeScript.NodeType.FunctionDeclaration &&
-                        TypeScript.hasFlag((<TypeScript.FunctionDeclaration>ast).getFunctionFlags(), TypeScript.FunctionFlags.IsClassMethod)) {
+                        TypeScript.hasFlag((<TypeScript.FunctionDeclaration>ast).getFunctionFlags(), TypeScript.FunctionFlags.Method)) {
                         return ast;
                     }
 
@@ -1008,7 +1008,9 @@ module Services {
                 if (node.nodeType() === TypeScript.NodeType.ConstructorDeclaration ||
                     node.nodeType() === TypeScript.NodeType.FunctionDeclaration ||
                     node.nodeType() === TypeScript.NodeType.ArrowFunctionExpression ||
-                    TypeScript.isNameOfFunction(node)) {
+                    node.nodeType() === TypeScript.NodeType.MemberFunctionDeclaration ||
+                    TypeScript.isNameOfFunction(node) ||
+                    TypeScript.isNameOfMemberFunction(node)) {
                     var funcDecl = node.nodeType() === TypeScript.NodeType.Name ? node.parent : node;
                     if (symbol && symbol.kind != TypeScript.PullElementKind.Property) {
                         var signatureInfo = TypeScript.PullHelpers.getSignatureForFuncDecl(this.compiler.getDeclForAST(funcDecl));

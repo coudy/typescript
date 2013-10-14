@@ -90,6 +90,7 @@ module TypeScript {
     class GrammarCheckerWalker extends PositionTrackingWalker {
         private inAmbientDeclaration: boolean = false;
         private inBlock: boolean = false;
+        private inObjectLiteralExpression: boolean = false;
         private currentConstructor: ConstructorDeclarationSyntax = null;
 
         constructor(private syntaxTree: SyntaxTree,
@@ -816,21 +817,29 @@ module TypeScript {
             return false;
         }
 
-        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): void {
+        public visitObjectLiteralExpression(node: ObjectLiteralExpressionSyntax): void {
+            var savedInObjectLiteralExpression = this.inObjectLiteralExpression;
+            this.inObjectLiteralExpression = true;
+            super.visitObjectLiteralExpression(node);
+            this.inObjectLiteralExpression = savedInObjectLiteralExpression;
+        }
+
+        public visitGetAccessor(node: GetAccessorSyntax): void {
             if (this.checkForAccessorDeclarationInAmbientContext(node) ||
                 this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
+                this.checkForDisallowedModifiers(node, node.modifiers) ||
                 this.checkClassElementModifiers(node.modifiers) ||
                 this.checkGetAccessorParameter(node, node.getKeyword, node.parameterList)) {
                 this.skip(node);
                 return;
             }
 
-            super.visitGetMemberAccessorDeclaration(node);
+            super.visitGetAccessor(node);
         }
 
-        private checkForAccessorDeclarationInAmbientContext(node: MemberAccessorDeclarationSyntax): boolean {
+        private checkForAccessorDeclarationInAmbientContext(accessor: SyntaxNode): boolean {
             if (this.inAmbientDeclaration) {
-                this.pushDiagnostic1(this.position(), node, DiagnosticCode.Accessors_are_not_allowed_in_ambient_contexts, null);
+                this.pushDiagnostic1(this.position(), accessor, DiagnosticCode.Accessors_are_not_allowed_in_ambient_contexts, null);
                 return true;
             }
 
@@ -876,36 +885,17 @@ module TypeScript {
             return false;
         }
 
-        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): void {
+        public visitSetAccessor(node: SetAccessorSyntax): void {
             if (this.checkForAccessorDeclarationInAmbientContext(node) ||
                 this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
+                this.checkForDisallowedModifiers(node, node.modifiers) ||
                 this.checkClassElementModifiers(node.modifiers) ||
                 this.checkSetAccessorParameter(node, node.setKeyword, node.parameterList)) {
                 this.skip(node);
                 return;
             }
 
-            super.visitSetMemberAccessorDeclaration(node);
-        }
-
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.getKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
-                this.checkGetAccessorParameter(node, node.getKeyword, node.parameterList)) {
-                this.skip(node);
-                return;
-            }
-
-            super.visitGetAccessorPropertyAssignment(node);
-        }
-
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): void {
-            if (this.checkEcmaScriptVersionIsAtLeast(node, node.setKeyword, LanguageVersion.EcmaScript5, DiagnosticCode.Accessors_are_only_available_when_targeting_ECMAScript_5_and_higher) ||
-                this.checkSetAccessorParameter(node, node.setKeyword, node.parameterList)) {
-                this.skip(node);
-                return;
-            }
-
-            super.visitSetAccessorPropertyAssignment(node);
+            super.visitSetAccessor(node);
         }
 
         public visitEnumDeclaration(node: EnumDeclarationSyntax): void {
@@ -1346,10 +1336,12 @@ module TypeScript {
         }
 
         private checkForDisallowedModifiers(parent: ISyntaxElement, modifiers: ISyntaxList): boolean {
-            if (this.inBlock && modifiers.childCount() > 0) {
-                var modifierFullStart = this.childFullStart(parent, modifiers);
-                this.pushDiagnostic1(modifierFullStart, modifiers.childAt(0), DiagnosticCode.Modifiers_cannot_appear_here);
-                return true;
+            if (this.inBlock || this.inObjectLiteralExpression) {
+                if (modifiers.childCount() > 0) {
+                    var modifierFullStart = this.childFullStart(parent, modifiers);
+                    this.pushDiagnostic1(modifierFullStart, modifiers.childAt(0), DiagnosticCode.Modifiers_cannot_appear_here);
+                    return true;
+                }
             }
 
             return false;

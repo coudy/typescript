@@ -536,16 +536,6 @@ module TypeScript {
             return result;
         }
 
-        private hasDotDotDotParameter(parameters: ISeparatedSyntaxList): boolean {
-            for (var i = 0, n = parameters.nonSeparatorCount(); i < n; i++) {
-                if ((<ParameterSyntax>parameters.nonSeparatorAt(i)).dotDotDotToken) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public visitFunctionDeclaration(node: FunctionDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
 
@@ -814,13 +804,13 @@ module TypeScript {
             this.setSpan(result, start, node);
 
             if (init) {
-                if (init.nodeType() === NodeType.FunctionDeclaration) {
-                    var funcDecl = <FunctionDeclaration>init;
-                    funcDecl.hint = name.actualText;
-                }
-                else if (init.nodeType() === NodeType.ArrowFunctionExpression) {
+                if (init.nodeType() === NodeType.ArrowFunctionExpression) {
                     var arrowFunction = <ArrowFunctionExpression>init;
                     arrowFunction.hint = name.actualText;
+                }
+                else if (init.nodeType() === NodeType.FunctionExpression) {
+                    var expression = <FunctionExpression>init;
+                    expression.hint = name.actualText;
                 }
             }
 
@@ -1592,7 +1582,7 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): MemberFunctionDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
@@ -1609,7 +1599,7 @@ module TypeScript {
             var block = node.block ? node.block.accept(this) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new MemberFunctionDeclaration(name, typeParameters, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
@@ -1628,13 +1618,12 @@ module TypeScript {
                 flags = flags | FunctionFlags.Static;
             }
 
-            flags = flags | FunctionFlags.Method | FunctionFlags.IsClassMethod;
             result.setFunctionFlags(flags);
 
             return result;
         }
 
-        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): GetMemberAccessorDeclaration {
+        public visitGetAccessor(node: GetAccessorSyntax): GetAccessor {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
@@ -1644,7 +1633,7 @@ module TypeScript {
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new GetMemberAccessorDeclaration(name, parameters, returnType, block);
+            var result = new GetAccessor(name, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
@@ -1661,7 +1650,7 @@ module TypeScript {
             return result;
         }
 
-        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): SetMemberAccessorDeclaration {
+        public visitSetAccessor(node: SetAccessorSyntax): SetAccessor {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
@@ -1670,7 +1659,7 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new SetMemberAccessorDeclaration(name, parameters, block);
+            var result = new SetAccessor(name, parameters, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
@@ -1687,7 +1676,7 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): MemberVariableDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.variableDeclarator);
@@ -1699,7 +1688,7 @@ module TypeScript {
             var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new VariableDeclarator(name, typeExpr, init);
+            var result = new MemberVariableDeclaration(name, typeExpr, init);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
@@ -1712,8 +1701,6 @@ module TypeScript {
             else {
                 result.setVarFlags(result.getVarFlags() | VariableFlags.Public);
             }
-
-            result.setVarFlags(result.getVarFlags() | VariableFlags.ClassProperty);
 
             return result;
         }
@@ -1978,7 +1965,8 @@ module TypeScript {
             result.setPostComments(postComments);
 
             if (expression.nodeType() === NodeType.FunctionDeclaration ||
-                expression.nodeType() === NodeType.ArrowFunctionExpression) {
+                expression.nodeType() === NodeType.ArrowFunctionExpression ||
+                expression.nodeType() === NodeType.FunctionExpression) {
                 var funcDecl = <FunctionDeclaration>expression;
                     funcDecl.hint = propertyName.text();
             }
@@ -2003,68 +1991,7 @@ module TypeScript {
             return result;
         }
 
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): GetAccessorPropertyAssignment {
-            var start = this.position;
-
-            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
-            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
-
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            this.movePast(node.propertyName);
-            var parameterList = node.parameterList.accept(this);
-            var returnType = node.typeAnnotation
-                ? node.typeAnnotation.accept(this)
-                : null;
-
-            var block = node.block ? node.block.accept(this) : null;
-
-            var result = new GetAccessorPropertyAssignment(functionName, parameterList, returnType, block);
-            this.setSpan(result, start, node);
-
-            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.GetAccessor | FunctionFlags.IsFunctionExpression);
-            //funcDecl.hint = "get" + node.propertyName.valueText();
-
-            //var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            //this.setSpan(result, start, node);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
-
-            return result;
-        }
-
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): SetAccessorPropertyAssignment {
-            var start = this.position;
-
-            var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
-            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
-
-            this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            var functionName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
-            this.movePast(node.propertyName);
-            var parameterList = node.parameterList.accept(this);
-
-            var block = node.block ? node.block.accept(this) : null;
-
-            var result = new SetAccessorPropertyAssignment(functionName, parameterList, block);
-            this.setSpan(result, start, node);
-
-            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.SetAccessor | FunctionFlags.IsFunctionExpression);
-            //funcDecl.hint = "set" + node.propertyName.valueText();
-
-            //var result = new BinaryExpression(NodeType.Member, name, funcDecl);
-            //this.setSpan(result, start, node);
-
-            result.setPreComments(preComments);
-            result.setPostComments(postComments);
-
-            return result;
-        }
-
-        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
+        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionExpression {
             var start = this.position;
 
             this.movePast(node.functionKeyword);
@@ -2078,10 +2005,8 @@ module TypeScript {
 
             var block = node.block ? node.block.accept(this) : null;
 
-            var result = new FunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new FunctionExpression(name, typeParameters, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
-
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IsFunctionExpression);
 
             return result;
         }
@@ -2732,8 +2657,8 @@ module TypeScript {
             return result;
         }
 
-        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitMemberFunctionDeclaration(node: MemberFunctionDeclarationSyntax): MemberFunctionDeclaration {
+            var result: MemberFunctionDeclaration = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitMemberFunctionDeclaration(node);
                 this.setAST(node, result);
@@ -2742,28 +2667,28 @@ module TypeScript {
             return result;
         }
 
-        public visitGetMemberAccessorDeclaration(node: GetMemberAccessorDeclarationSyntax): GetMemberAccessorDeclaration {
-            var result: GetMemberAccessorDeclaration = this.getAndMovePastAST(node);
+        public visitGetAccessor(node: GetAccessorSyntax): GetAccessor {
+            var result: GetAccessor = this.getAndMovePastAST(node);
             if (!result) {
-                result = super.visitGetMemberAccessorDeclaration(node);
+                result = super.visitGetAccessor(node);
                 this.setAST(node, result);
             }
 
             return result;
         }
 
-        public visitSetMemberAccessorDeclaration(node: SetMemberAccessorDeclarationSyntax): SetMemberAccessorDeclaration {
-            var result: SetMemberAccessorDeclaration = this.getAndMovePastAST(node);
+        public visitSetAccessor(node: SetAccessorSyntax): SetAccessor {
+            var result: SetAccessor = this.getAndMovePastAST(node);
             if (!result) {
-                result = super.visitSetMemberAccessorDeclaration(node);
+                result = super.visitSetAccessor(node);
                 this.setAST(node, result);
             }
 
             return result;
         }
 
-        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): VariableDeclarator {
-            var result: VariableDeclarator = this.getAndMovePastAST(node);
+        public visitMemberVariableDeclaration(node: MemberVariableDeclarationSyntax): MemberVariableDeclaration {
+            var result: MemberVariableDeclaration = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitMemberVariableDeclaration(node);
                 this.setAST(node, result);
@@ -2932,28 +2857,8 @@ module TypeScript {
             return result;
         }
 
-        public visitGetAccessorPropertyAssignment(node: GetAccessorPropertyAssignmentSyntax): GetAccessorPropertyAssignment {
-            var result: GetAccessorPropertyAssignment = this.getAndMovePastAST(node);
-            if (!result) {
-                result = super.visitGetAccessorPropertyAssignment(node);
-                this.setAST(node, result);
-            }
-
-            return result;
-        }
-
-        public visitSetAccessorPropertyAssignment(node: SetAccessorPropertyAssignmentSyntax): SetAccessorPropertyAssignment {
-            var result: SetAccessorPropertyAssignment = this.getAndMovePastAST(node);
-            if (!result) {
-                result = super.visitSetAccessorPropertyAssignment(node);
-                this.setAST(node, result);
-            }
-
-            return result;
-        }
-
-        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitFunctionExpression(node: FunctionExpressionSyntax): FunctionExpression {
+            var result: FunctionExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitFunctionExpression(node);
                 this.setAST(node, result);

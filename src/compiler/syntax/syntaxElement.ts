@@ -82,6 +82,9 @@ module TypeScript {
     export interface IMemberDeclarationSyntax extends IClassElementSyntax {
     }
 
+    export interface IPropertyAssignmentSyntax extends IClassElementSyntax {
+    }
+
     export interface ISwitchClauseSyntax extends ISyntaxNode {
     }
 

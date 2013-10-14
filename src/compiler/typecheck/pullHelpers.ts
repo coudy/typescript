@@ -55,21 +55,21 @@ module TypeScript {
             return <PullAccessorSymbol>getterOrSetterSymbol;
         }
 
-        export function getGetterAndSetterFunction(funcDecl: AST, semanticInfoChain: SemanticInfoChain): { getter: GetMemberAccessorDeclaration; setter: SetMemberAccessorDeclaration; } {
+        export function getGetterAndSetterFunction(funcDecl: AST, semanticInfoChain: SemanticInfoChain): { getter: GetAccessor; setter: SetAccessor; } {
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, semanticInfoChain);
-            var result: { getter: GetMemberAccessorDeclaration; setter: SetMemberAccessorDeclaration; } = {
+            var result: { getter: GetAccessor; setter: SetAccessor; } = {
                 getter: null,
                 setter: null
             };
             var getter = accessorSymbol.getGetter();
             if (getter) {
                 var getterDecl = getter.getDeclarations()[0];
-                result.getter = <GetMemberAccessorDeclaration>semanticInfoChain.getASTForDecl(getterDecl);
+                result.getter = <GetAccessor>semanticInfoChain.getASTForDecl(getterDecl);
             }
             var setter = accessorSymbol.getSetter();
             if (setter) {
                 var setterDecl = setter.getDeclarations()[0];
-                result.setter = <SetMemberAccessorDeclaration>semanticInfoChain.getASTForDecl(setterDecl);
+                result.setter = <SetAccessor>semanticInfoChain.getASTForDecl(setterDecl);
             }
 
             return result;

@@ -437,10 +437,6 @@ module TypeScript {
             return this._nodeType;
         }
 
-        public shouldEmit(emitter: Emitter): boolean {
-            return false;
-        }
-
         public structuralEquals(ast: HeritageClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.typeNames, ast.typeNames, includingPosition);
@@ -643,63 +639,7 @@ module TypeScript {
         }
     }
 
-    export class GetAccessorPropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.GetAccessorPropertyAssignment;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return FunctionFlags.Public;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitGetAccessorPropertyAssignment(this);
-        }
-    }
-
-    export class SetAccessorPropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-                    public parameterList: ASTList,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            parameterList && (parameterList.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.SetAccessorPropertyAssignment;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return FunctionFlags.Public;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitSetAccessorPropertyAssignment(this);
-        }
-    }
-
-    export class GetMemberAccessorDeclaration extends AST {
+    export class GetAccessor extends AST {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
         constructor(public propertyName: Identifier,
@@ -714,7 +654,7 @@ module TypeScript {
         }
 
         public nodeType(): NodeType {
-            return NodeType.GetMemberAccessorDeclaration;
+            return NodeType.GetAccessor;
         }
 
         public setFunctionFlags(flags: FunctionFlags): void {
@@ -730,11 +670,11 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter): void {
-            emitter.emitGetMemberAccessorDeclaration(this);
+            emitter.emitGetAccessor(this);
         }
     }
 
-    export class SetMemberAccessorDeclaration extends AST {
+    export class SetAccessor extends AST {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
         constructor(public propertyName: Identifier,
@@ -747,7 +687,7 @@ module TypeScript {
         }
 
         public nodeType(): NodeType {
-            return NodeType.SetMemberAccessorDeclaration;
+            return NodeType.SetAccessor;
         }
 
         public setFunctionFlags(flags: FunctionFlags): void {
@@ -763,7 +703,7 @@ module TypeScript {
         }
 
         public emitWorker(emitter: Emitter): void {
-            emitter.emitSetMemberAccessorDeclaration(this);
+            emitter.emitSetAccessor(this);
         }
     }
 
@@ -1246,6 +1186,32 @@ module TypeScript {
         }
     }
 
+    export class MemberVariableDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST) {
+            super();
+            id && (id.parent = this);
+            typeExpr && (typeExpr.parent = this);
+            init && (init.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberVariableDeclaration;
+        }
+
+        public _isDeclaration() { return true; }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+    }
+
     export class VariableDeclarator extends AST {
         private _varFlags = VariableFlags.None;
 
@@ -1259,8 +1225,6 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.VariableDeclarator;
         }
-
-        public isStatic() { return hasFlag(this.getVarFlags(), VariableFlags.Static); }
 
         public emit(emitter: Emitter) {
             emitter.emitVariableDeclarator(this);
@@ -1363,6 +1327,37 @@ module TypeScript {
         }
     }
 
+    export class FunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(public name: Identifier,
+                    public typeParameters: ASTList,
+                    public parameterList: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
+                        super();
+            name && (name.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.FunctionExpression;
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitFunctionExpression(this);
+        }
+
+        public getNameText() {
+            return this.name ? this.name.actualText : this.hint;
+        }
+    }
+
     export class ConstructorDeclaration extends AST {
         private _functionFlags = FunctionFlags.None;
 
@@ -1393,6 +1388,38 @@ module TypeScript {
 
         public emit(emitter: Emitter) {
             emitter.emitConstructorDeclaration(this);
+        }
+    }
+
+    export class MemberFunctionDeclaration extends AST {
+        private _functionFlags = FunctionFlags.None;
+
+        constructor(public name: Identifier,
+                    public typeParameters: ASTList,
+                    public parameterList: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
+            super();
+            name && (name.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberFunctionDeclaration;
+        }
+
+        public getFunctionFlags(): FunctionFlags {
+            return this._functionFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setFunctionFlags(flags: FunctionFlags): void {
+            this._functionFlags = flags;
         }
     }
 
@@ -1454,12 +1481,6 @@ module TypeScript {
                 return this.hint;
             }
         }
-
-        public isMethod() {
-            return (this.getFunctionFlags() & FunctionFlags.Method) !== FunctionFlags.None;
-        }
-
-        public isStatic() { return hasFlag(this.getFunctionFlags(), FunctionFlags.Static); }
     }
 
     export class ModuleDeclaration extends AST {
@@ -2676,6 +2697,8 @@ module TypeScript {
                 return (<VariableDeclarator>ast.parent).id === ast;
             case NodeType.FunctionDeclaration:
                 return (<FunctionDeclaration>ast.parent).name === ast;
+            case NodeType.MemberFunctionDeclaration:
+                return (<MemberFunctionDeclaration>ast.parent).name === ast;
             case NodeType.Parameter:
                 return (<Parameter>ast.parent).id === ast;
             case NodeType.TypeParameter:
@@ -2703,6 +2726,14 @@ module TypeScript {
             && ast.nodeType() === NodeType.Name
             && ast.parent.nodeType() === NodeType.FunctionDeclaration
             && (<FunctionDeclaration>ast.parent).name === ast;
+    }
+
+    export function isNameOfMemberFunction(ast: AST) {
+        return ast
+            && ast.parent
+            && ast.nodeType() === NodeType.Name
+            && ast.parent.nodeType() === NodeType.MemberFunctionDeclaration
+            && (<MemberFunctionDeclaration>ast.parent).name === ast;
     }
 
     export function isNameOfMemberAccessExpression(ast: AST) {

@@ -16,13 +16,8 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
-
     export function hasFlag(val: number, flag: number): boolean {
         return (val & flag) !== 0;
-    }
-
-    export function withoutFlag(val: number, flag: number): number {
-        return val & ~flag;
     }
 
     export enum ASTFlags {
@@ -59,7 +54,6 @@ module TypeScript {
         Ambient = 1 << 3,
         Static = 1 << 4,
         Property = 1 << 8,
-        ClassProperty = 1 << 11,
         EnumElement = 1 << 13,
         ForInVariable = 1 << 14,
     }
@@ -76,8 +70,6 @@ module TypeScript {
         CallSignature = 1 << 9,
         ConstructMember = 1 << 10,
         IndexerMember = 1 << 12,
-        IsFunctionExpression = 1 << 13,
-        IsClassMethod = 1 << 15,
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
