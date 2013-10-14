@@ -10858,12 +10858,7 @@ module TypeScript {
 
                             case NodeType.ReturnStatement:
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
-<<<<<<< HEAD
-                                var returnExpressionSymbol = this.resolveAST(returnStatement.returnExpression, false, decl, context).type;
-                                
-=======
                                 var returnExpressionSymbol = this.resolveAST(returnStatement.expression, false, decl, context).type;
->>>>>>> Rename many AST members to match SyntaxTree.
                                 // Check if return statement's type matches the one that we concluded
                                 if (PullHelpers.typeSymbolsAreIdentical(returnExpressionSymbol, funcReturnType)) {
                                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnStatement, messageCode, messageArguments));
