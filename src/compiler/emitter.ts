@@ -1214,21 +1214,72 @@ module TypeScript {
         }
 
         public emitGetAccessor(accessor: GetAccessor): void {
-            if (accessor.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) {
-                this.emitGetAccessorPropertyAssignment(accessor);
-            }
-            else {
-                this.emitGetMemberAccessorDeclaration(accessor);
-            }
+            this.recordSourceMappingStart(accessor);
+            this.writeToOutput("get ");
+
+            var temp = this.setContainer(EmitContainer.Function);
+
+            this.recordSourceMappingStart(accessor);
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(accessor);
+            this.pushDecl(pullDecl);
+
+            this.recordSourceMappingStart(accessor);
+
+            var accessorSymbol = PullHelpers.getAccessorSymbol(accessor, this.semanticInfoChain);
+            var container = accessorSymbol.getContainer();
+            var containerKind = container.kind;
+
+            this.recordSourceMappingNameStart(accessor.propertyName.actualText);
+            this.writeToOutput(accessor.propertyName.actualText);
+            this.writeToOutput("(");
+            this.writeToOutput(")");
+
+            this.emitFunctionBodyStatements(null, accessor, accessor.parameterList, accessor.block);
+
+            this.recordSourceMappingEnd(accessor);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(accessor);
+
+            this.popDecl(pullDecl);
+            this.setContainer(temp);
+            this.recordSourceMappingEnd(accessor);
         }
 
         public emitSetAccessor(accessor: SetAccessor): void {
-            if (accessor.parent.parent.nodeType() === NodeType.ObjectLiteralExpression) {
-                this.emitSetAccessorPropertyAssignment(accessor);
-            }
-            else {
-                this.emitSetMemberAccessorDeclaration(accessor);
-            }
+            this.recordSourceMappingStart(accessor);
+            this.writeToOutput("set ");
+
+            var temp = this.setContainer(EmitContainer.Function);
+
+            this.recordSourceMappingStart(accessor);
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(accessor);
+            this.pushDecl(pullDecl);
+
+            this.recordSourceMappingStart(accessor);
+
+            var accessorSymbol = PullHelpers.getAccessorSymbol(accessor, this.semanticInfoChain);
+            var container = accessorSymbol.getContainer();
+            var containerKind = container.kind;
+
+            this.recordSourceMappingNameStart(accessor.propertyName.actualText);
+            this.writeToOutput(accessor.propertyName.actualText);
+            this.writeToOutput("(");
+            this.emitFunctionParameters(accessor.parameterList);
+            this.writeToOutput(")");
+
+            this.emitFunctionBodyStatements(null, accessor, accessor.parameterList, accessor.block);
+
+            this.recordSourceMappingEnd(accessor);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(accessor);
+
+            this.popDecl(pullDecl);
+            this.setContainer(temp);
+            this.recordSourceMappingEnd(accessor);
         }
 
         public emitGetMemberAccessorDeclaration(funcDecl: GetAccessor): void {
@@ -2665,75 +2716,6 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
 
             this.recordSourceMappingEnd(funcProp);
-        }
-
-        public emitGetAccessorPropertyAssignment(property: GetAccessor): void {
-            this.recordSourceMappingStart(property);
-            this.writeToOutput("get ");
-
-            var temp = this.setContainer(EmitContainer.Function);
-
-            this.recordSourceMappingStart(property);
-
-            var pullDecl = this.semanticInfoChain.getDeclForAST(property);
-            this.pushDecl(pullDecl);
-
-            this.recordSourceMappingStart(property);
-
-            var accessorSymbol = PullHelpers.getAccessorSymbol(property, this.semanticInfoChain);
-            var container = accessorSymbol.getContainer();
-            var containerKind = container.kind;
-
-            this.recordSourceMappingNameStart(property.propertyName.actualText);
-            this.writeToOutput(property.propertyName.actualText);
-            this.writeToOutput("(");
-            this.writeToOutput(")");
-
-            this.emitFunctionBodyStatements(null, property, property.parameterList, property.block);
-
-            this.recordSourceMappingEnd(property);
-
-            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
-            this.recordSourceMappingEnd(property);
-
-            this.popDecl(pullDecl);
-            this.setContainer(temp);
-            this.recordSourceMappingEnd(property);
-        }
-
-        public emitSetAccessorPropertyAssignment(property: SetAccessor): void {
-            this.recordSourceMappingStart(property);
-            this.writeToOutput("set ");
-
-            var temp = this.setContainer(EmitContainer.Function);
-
-            this.recordSourceMappingStart(property);
-
-            var pullDecl = this.semanticInfoChain.getDeclForAST(property);
-            this.pushDecl(pullDecl);
-
-            this.recordSourceMappingStart(property);
-
-            var accessorSymbol = PullHelpers.getAccessorSymbol(property, this.semanticInfoChain);
-            var container = accessorSymbol.getContainer();
-            var containerKind = container.kind;
-
-            this.recordSourceMappingNameStart(property.propertyName.actualText);
-            this.writeToOutput(property.propertyName.actualText);
-            this.writeToOutput("(");
-            this.emitFunctionParameters(property.parameterList);
-            this.writeToOutput(")");
-
-            this.emitFunctionBodyStatements(null, property, property.parameterList, property.block);
-
-            this.recordSourceMappingEnd(property);
-
-            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
-            this.recordSourceMappingEnd(property);
-
-            this.popDecl(pullDecl);
-            this.setContainer(temp);
-            this.recordSourceMappingEnd(property);
         }
 
         public emitConditionalExpression(expression: ConditionalExpression): void {
