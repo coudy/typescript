@@ -1972,12 +1972,6 @@ module TypeScript {
             var funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(getAccessorDeclaration);
             this.bindParameterSymbols(funcDecl, funcDecl.parameterList, getterTypeSymbol, signature);
 
-            var typeParameters = getAccessorDeclaration.getTypeParameters();
-
-            if (typeParameters.length) {
-                this.semanticInfoChain.addDiagnosticFromAST(funcDeclAST, DiagnosticCode.Accessors_cannot_have_type_parameters);
-            }
-
             // add the implicit call member for this function type
             getterTypeSymbol.addCallSignature(signature);
         }
@@ -2076,12 +2070,6 @@ module TypeScript {
             // PULLTODO: setter should not have a parameters
             var funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(setAccessorDeclaration);
             this.bindParameterSymbols(funcDecl, funcDecl.parameterList, setterTypeSymbol, signature);
-
-            var typeParameters = setAccessorDeclaration.getTypeParameters();
-
-            if (typeParameters.length) {
-                this.semanticInfoChain.addDiagnosticFromAST(funcDeclAST, DiagnosticCode.Accessors_cannot_have_type_parameters);
-            }
 
             // add the implicit call member for this function type
             setterTypeSymbol.addCallSignature(signature);
