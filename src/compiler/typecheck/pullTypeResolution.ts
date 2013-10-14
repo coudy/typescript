@@ -2136,15 +2136,6 @@ module TypeScript {
             return interfaceSymbol;
         }
 
-        private typeCheckInterfaceTypeReference(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext) {
-            this.setTypeChecked(interfaceDeclAST, context);
-            var interfaceDecl = this.semanticInfoChain.getDeclForAST(interfaceDeclAST);
-            var interfaceSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
-            if (!interfaceSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(interfaceSymbol, interfaceDecl, context);
-            }
-        }
-
         private typeCheckObjectTypeTypeReference(objectType: ObjectType, context: PullTypeResolutionContext) {
             this.setTypeChecked(objectType, context);
             var objectTypeDecl = this.semanticInfoChain.getDeclForAST(objectType);
