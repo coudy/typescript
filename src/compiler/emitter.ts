@@ -2060,14 +2060,6 @@ module TypeScript {
             ast.emit(this);
         }
 
-        private emitGetAccessorWorker(funcDecl: GetAccessor, className: string, isProto: boolean) {
-            this.emitAccessorMemberDeclaration(funcDecl, funcDecl.propertyName, className, isProto);
-        }
-
-        private emitSetAccessorWorker(funcDecl: SetAccessor, className: string, isProto: boolean) {
-            this.emitAccessorMemberDeclaration(funcDecl, funcDecl.propertyName, className, isProto);
-        }
-
         public emitAccessorMemberDeclaration(funcDecl: AST, name: Identifier, className: string, isProto: boolean) {
             if (funcDecl.nodeType() !== NodeType.GetAccessor) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
