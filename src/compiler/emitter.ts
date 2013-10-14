@@ -3043,19 +3043,6 @@ module TypeScript {
             }
         }
 
-        public shouldEmitMemberFunctionDeclaration(declaration: MemberFunctionDeclaration): boolean {
-            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
-        }
-
-        public emitMemberFunctionDeclaration(declaration: MemberFunctionDeclaration): void {
-            if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
-                this.emitMemberFunction(declaration);
-            }
-            else {
-                this.emitComments(declaration, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
-            }
-        }
-
         public shouldEmitFunctionDeclaration(declaration: FunctionDeclaration): boolean {
             return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
         }

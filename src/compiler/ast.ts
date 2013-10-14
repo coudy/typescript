@@ -1431,14 +1431,6 @@ module TypeScript {
         public setFunctionFlags(flags: FunctionFlags): void {
             this._functionFlags = flags;
         }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitMemberFunctionDeclaration(this);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitMemberFunctionDeclaration(this);
-        }
     }
 
     export class FunctionDeclaration extends AST {
