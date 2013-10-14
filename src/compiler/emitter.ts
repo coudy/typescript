@@ -1282,28 +1282,6 @@ module TypeScript {
             this.recordSourceMappingEnd(accessor);
         }
 
-        public emitGetMemberAccessorDeclaration(funcDecl: GetAccessor): void {
-            var functionFlags = funcDecl.getFunctionFlags();
-            if (hasFlag(functionFlags, FunctionFlags.Static)) {
-                if (this.thisClassNode) {
-                    this.writeLineToOutput("");
-
-                    this.emitGetAccessorWorker(funcDecl, this.thisClassNode.identifier.actualText, false);
-                }
-            }
-        }
-
-        public emitSetMemberAccessorDeclaration(funcDecl: SetAccessor): void {
-            var functionFlags = funcDecl.getFunctionFlags();
-            if (hasFlag(functionFlags, FunctionFlags.Static)) {
-                if (this.thisClassNode) {
-                    this.writeLineToOutput("");
-
-                    this.emitSetAccessorWorker(funcDecl, this.thisClassNode.identifier.actualText, false);
-                }
-            }
-        }
-
         public emitFunctionExpression(funcDecl: FunctionExpression): void {
             var savedInArrowFunction = this.inArrowFunction;
             this.inArrowFunction = false;
