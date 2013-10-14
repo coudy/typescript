@@ -1384,7 +1384,6 @@ module TypeScript {
 
             var parentSymbol = symbol ? symbol.getContainer() : null;
             var parentKind = parentSymbol ? parentSymbol.kind : PullElementKind.None;
-            var inClass = parentKind === PullElementKind.Class;
 
             this.emitComments(declaration, true);
 
@@ -1398,12 +1397,7 @@ module TypeScript {
                     var declarator = declaration.declarators.members[i];
 
                     if (i > 0) {
-                        if (inClass) {
-                            this.writeToOutput(";");
-                        }
-                        else {
-                            this.writeToOutput(", ");
-                        }
+                        this.writeToOutput(", ");
                     }
 
                     declarator.emit(this);
