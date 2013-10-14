@@ -54,8 +54,6 @@ module TypeScript {
                 [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
                 [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol]
             ];
-
-            TypeScript.globalResolver = this;
         }
 
         private cachedArrayInterfaceType() {
@@ -825,7 +823,7 @@ module TypeScript {
             }
 
             if (!context) {
-                context = new PullTypeResolutionContext(globalResolver);
+                context = new PullTypeResolutionContext(this);
             }
 
             // This is called while we're resolving type references.  Make sure we're no longer
@@ -1072,7 +1070,7 @@ module TypeScript {
                 typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i] || new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
             }
 
-            return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap);
+            return PullInstantiatedTypeReferenceSymbol.create(this, type, typeParameterArgumentMap);
         }
 
         //
@@ -5853,7 +5851,7 @@ module TypeScript {
                 }
 
                 if (!typeNameSymbol.isGeneric() && (typeNameSymbol.isClass() || typeNameSymbol.isInterface())) {
-                    typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(typeNameSymbol);
+                    typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(this, typeNameSymbol);
                 }
             }
 
@@ -5945,7 +5943,7 @@ module TypeScript {
                         }
                     }
                     else if (typeConstraint.isGeneric()) {
-                        typeConstraint = instantiateType(typeConstraint, typeConstraintSubstitutionMap);
+                        typeConstraint = instantiateType(this, typeConstraint, typeConstraintSubstitutionMap);
                     }
 
                     if (typeArg.isTypeParameter()) {
@@ -7492,7 +7490,7 @@ module TypeScript {
                                         }
                                     }
                                     else if (typeConstraint.getIsSpecialized()) {
-                                        typeConstraint = PullInstantiatedTypeReferenceSymbol.create(typeConstraint, typeReplacementMap);
+                                        typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
                                     }
                                     context.isComparingInstantiatedSignatures = true;
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
@@ -7524,7 +7522,7 @@ module TypeScript {
                             continue;
                         }
 
-                        specializedSignature = instantiateSignature(signatures[i], typeReplacementMap, true);
+                        specializedSignature = instantiateSignature(this, signatures[i], typeReplacementMap, true);
 
                         if (specializedSignature) {
                             resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -7834,7 +7832,7 @@ module TypeScript {
                                                 }
                                             }
                                             else if (typeConstraint.getIsSpecialized()) {
-                                                typeConstraint = PullInstantiatedTypeReferenceSymbol.create(typeConstraint, typeReplacementMap);
+                                                typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
                                             }
 
                                             context.isComparingInstantiatedSignatures = true;
@@ -7866,7 +7864,7 @@ module TypeScript {
                                     continue;
                                 }
 
-                                specializedSignature = instantiateSignature(constructSignatures[i], typeReplacementMap, true);
+                                specializedSignature = instantiateSignature(this, constructSignatures[i], typeReplacementMap, true);
 
                                 if (specializedSignature) {
                                     resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -9909,7 +9907,7 @@ module TypeScript {
                         typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
                     }
 
-                    signatureToSpecialize.cachedObjectSpecialization = instantiateSignature(signatureToSpecialize, typeReplacementMap, true);
+                    signatureToSpecialize.cachedObjectSpecialization = instantiateSignature(this, signatureToSpecialize, typeReplacementMap, true);
                 }
                 else {
                     signatureToSpecialize.cachedObjectSpecialization = signatureToSpecialize;
@@ -9926,8 +9924,6 @@ module TypeScript {
             var scriptDecl = semanticInfoChain.topLevelDecl(scriptName);
 
             var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain);
-            var prevGlobalResolver = globalResolver;
-            globalResolver = resolver;
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
 
             if (resolver.canTypeCheckAST(script, context)) {
@@ -9943,8 +9939,6 @@ module TypeScript {
 
                 resolver.processPostTypeCheckWorkItems(context);
             }
-
-            globalResolver = prevGlobalResolver;
         }
 
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {

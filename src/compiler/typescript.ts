@@ -117,8 +117,6 @@ module TypeScript {
         }
     }
 
-    export var globalResolver: PullTypeResolver = null;
-
     export class TypeScriptCompiler {
         private semanticInfoChain: SemanticInfoChain = null;
 
