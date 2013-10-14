@@ -6742,24 +6742,19 @@ module TypeScript {
             return symbol;
         }
 
-        private tryBindObjectLiteralMembers(
+        private bindObjectLiteralMembers(
             objectLiteralDeclaration: PullDecl,
             objectLiteralTypeSymbol: PullTypeSymbol,
             objectLiteralMembers: ASTList,
             isUsingExistingSymbol: boolean,
-            boundMemberSymbols: PullSymbol[],
-            pullTypeContext: PullTypeResolutionContext): boolean {
-
+            pullTypeContext: PullTypeResolutionContext): PullSymbol[] {
+            var boundMemberSymbols: PullSymbol[] = [];
             var memberSymbol: PullSymbol;
             for (var i = 0, len = objectLiteralMembers.members.length; i < len; i++) {
                 var propertyAssignment = objectLiteralMembers.members[i];
 
                 var id = this.getPropertyAssignmentName(propertyAssignment);
                 var assignmentText = getPropertyAssignmentNameTextFromIdentifier(id);
-
-                if (!assignmentText) {
-                    return false;
-                }
 
                 var isAccessor = propertyAssignment.nodeType() === NodeType.GetAccessor || propertyAssignment.nodeType() === NodeType.SetAccessor;
                 var decl = this.semanticInfoChain.getDeclForAST(propertyAssignment);
@@ -6791,10 +6786,10 @@ module TypeScript {
                     objectLiteralTypeSymbol.addMember(memberSymbol);
                 }
 
-                boundMemberSymbols[i] = memberSymbol;
+                boundMemberSymbols.push(memberSymbol);
             }
 
-            return true;
+            return boundMemberSymbols;
         }
 
         private resolveObjectLiteralMembers(
@@ -6947,12 +6942,8 @@ module TypeScript {
                 }
 
                 // first bind decls and symbols
-                var boundMemberSymbols: PullSymbol[] = [];
-
-                if (!this.tryBindObjectLiteralMembers(objectLitDecl, typeSymbol, propertyAssignments, isUsingExistingSymbol, boundMemberSymbols, context)) {
-                    // TODO: no error for this?
-                    return this.semanticInfoChain.anyTypeSymbol;
-                }
+                var boundMemberSymbols = this.bindObjectLiteralMembers(
+                    objectLitDecl, typeSymbol, propertyAssignments, isUsingExistingSymbol, context);
 
                 // now perform member symbol resolution
                 this.resolveObjectLiteralMembers(
@@ -7125,10 +7116,8 @@ module TypeScript {
             return symbolAndDiagnostic.symbol;
         }
 
-        private typeCheckElementAccessExpression(callEx: ElementAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, symbolAndDiagnostic: { symbol: PullSymbol; diagnostic?: Diagnostic } = null): void {
+        private typeCheckElementAccessExpression(callEx: ElementAccessExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, symbolAndDiagnostic: { symbol: PullSymbol; diagnostic?: Diagnostic }): void {
             this.setTypeChecked(callEx, context);
-            var symbolAndDiagnostic = symbolAndDiagnostic || this.computeElementAccessExpressionSymbolAndDiagnostic(callEx, enclosingDecl, context);
-
             context.postDiagnostic(symbolAndDiagnostic.diagnostic);
         }
 
@@ -8294,16 +8283,6 @@ module TypeScript {
             }
         }
 
-        private computeAssignmentStatementSymbol(binex: BinaryExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var leftType = this.resolveAST(binex.operand1, inContextuallyTypedAssignment, enclosingDecl, context).type;
-
-            context.pushContextualType(leftType, context.inProvisionalResolution(), null);
-            this.resolveAST(binex.operand2, true, enclosingDecl, context);
-            context.popContextualType();
-
-            return leftType;
-        }
-
         private getInstanceTypeForAssignment(lhs: AST, type: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var typeToReturn = type;
             if (typeToReturn && typeToReturn.isAlias()) {
@@ -8404,11 +8383,6 @@ module TypeScript {
             }
 
             return type;
-        }
-
-        private isNullOrUndefinedType(type: PullTypeSymbol) {
-            return type === this.semanticInfoChain.nullTypeSymbol ||
-                type === this.semanticInfoChain.undefinedTypeSymbol;
         }
 
         public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
@@ -8801,10 +8775,6 @@ module TypeScript {
                 this.sourceIsSubtypeOfTarget(source, this.cachedFunctionInterfaceType(), context);
         }
 
-        private signatureGroupIsSubtypeOfTarget(sg1: PullSignatureSymbol[], sg2: PullSignatureSymbol[], context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
-            return this.signatureGroupIsRelatableToTarget(sg1, sg2, false, this.subtypeCache, context, comparisonInfo);
-        }
-
         private signatureIsSubtypeOfTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             return this.signatureIsRelatableToTarget(s1, s2, false, this.subtypeCache, context, comparisonInfo);
         }
@@ -8812,10 +8782,6 @@ module TypeScript {
         private sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isInProvisionalResolution: boolean = false): boolean {
             var cache = isInProvisionalResolution ? {} : this.assignableCache;
             return this.sourceIsRelatableToTarget(source, target, true, cache, context, comparisonInfo);
-        }
-
-        private signatureGroupIsAssignableToTarget(sg1: PullSignatureSymbol[], sg2: PullSignatureSymbol[], context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
-            return this.signatureGroupIsRelatableToTarget(sg1, sg2, true, this.assignableCache, context, comparisonInfo);
         }
 
         private signatureIsAssignableToTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): boolean {
@@ -9590,12 +9556,6 @@ module TypeScript {
                     arg, functionExpression.typeParameters, functionExpression.parameterList, functionExpression.returnTypeAnnotation, functionExpression.block,
                     argIndex, enclosingDecl, context, comparisonInfo);
             }
-            else if (arg.nodeType() === NodeType.FunctionDeclaration) {
-                var funcDecl = <FunctionDeclaration>arg;
-                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
-                    arg, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block,
-                    argIndex, enclosingDecl, context, comparisonInfo);
-            }
             else if (arg.nodeType() === NodeType.ObjectLiteralExpression) {
                 return this.overloadIsApplicableForObjectLiteralArgument(paramType, <ObjectLiteralExpression>arg, argIndex, enclosingDecl, context, comparisonInfo);
             }
@@ -10110,19 +10070,6 @@ module TypeScript {
                     this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, enclosingDecl, context);
                 }
             }
-        }
-
-        private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,
-            parameterArrayType: PullTypeSymbol,
-            shouldFix: boolean,
-            argContext: ArgumentInferenceContext,
-            enclosingDecl: PullDecl,
-            context: PullTypeResolutionContext): void {
-
-            var argElement = argArrayType.getElementType();
-            var paramElement = parameterArrayType.getElementType();
-
-            this.relateTypeToTypeParameters(argElement, paramElement, shouldFix, argContext, enclosingDecl, context);
         }
 
         private specializeTypeToAny(typeToSpecialize: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -11730,35 +11677,24 @@ module TypeScript {
                 this.message = this.indentString() + message;
             }
         }
-
-        private setMessage(message: string) {
-            this.message = this.indentString() + message;
-        }
     }
 
     //    return false;
     //}
 
     export function getPropertyAssignmentNameTextFromIdentifier(identifier: AST): { actualText: string; memberName: string } {
-        var actualText: string;
-        var text: string;
-
         if (identifier.nodeType() === NodeType.Name) {
-            actualText = (<Identifier>identifier).actualText;
-            text = (<Identifier>identifier).text();
+            return { actualText: (<Identifier>identifier).actualText, memberName: (<Identifier>identifier).text() };
         }
         else if (identifier.nodeType() === NodeType.StringLiteral) {
-            actualText = (<StringLiteral>identifier).actualText;
-            text = (<StringLiteral>identifier).text();
+            return { actualText: (<StringLiteral>identifier).actualText, memberName: (<StringLiteral>identifier).text() };
         }
         else if (identifier.nodeType() === NodeType.NumericLiteral) {
-            actualText = text = (<NumericLiteral>identifier).text();
+            return { actualText: (<NumericLiteral>identifier).text(), memberName: (<NumericLiteral>identifier).text() };
         }
         else {
-            return null;
+            throw Errors.invalidOperation();
         }
-
-        return { actualText: actualText, memberName: text };
     }
 
     enum OverloadApplicabilityStatus {
