@@ -198,7 +198,6 @@ var harnessSources = [
 	path.join(harnessDirectory, "harness.ts"),
 	path.join(harnessDirectory, "baselining.ts"),
 	path.join(harnessDirectory, "fourslash.ts"),
-	path.join(harnessDirectory, "dumpAST-baselining.ts"),
 	path.join(harnessDirectory, "runner.ts"),
 
 	path.join(runnersDirectory, "runnerbase.ts"),
