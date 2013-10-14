@@ -46,7 +46,7 @@ module TypeScript {
         private subtypeCache: any[] = <any>{};
         private identicalCache: any[] = <any>{};
 
-        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain, inTypeCheck: boolean = false) {
+        constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain) {
             this._cachedAnyTypeArgs = [
                 [this.semanticInfoChain.anyTypeSymbol],
                 [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
