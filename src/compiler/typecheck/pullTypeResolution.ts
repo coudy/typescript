@@ -5943,7 +5943,7 @@ module TypeScript {
                         }
                     }
                     else if (typeConstraint.isGeneric()) {
-                        typeConstraint = instantiateType(this, typeConstraint, typeConstraintSubstitutionMap);
+                        typeConstraint = this.instantiateType(typeConstraint, typeConstraintSubstitutionMap);
                     }
 
                     if (typeArg.isTypeParameter()) {
@@ -7522,7 +7522,7 @@ module TypeScript {
                             continue;
                         }
 
-                        specializedSignature = instantiateSignature(this, signatures[i], typeReplacementMap, true);
+                        specializedSignature = this.instantiateSignature(signatures[i], typeReplacementMap, true);
 
                         if (specializedSignature) {
                             resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -7864,7 +7864,7 @@ module TypeScript {
                                     continue;
                                 }
 
-                                specializedSignature = instantiateSignature(this, constructSignatures[i], typeReplacementMap, true);
+                                specializedSignature = this.instantiateSignature(constructSignatures[i], typeReplacementMap, true);
 
                                 if (specializedSignature) {
                                     resolvedSignatures[resolvedSignatures.length] = specializedSignature;
@@ -9907,7 +9907,7 @@ module TypeScript {
                         typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
                     }
 
-                    signatureToSpecialize.cachedObjectSpecialization = instantiateSignature(this, signatureToSpecialize, typeReplacementMap, true);
+                    signatureToSpecialize.cachedObjectSpecialization = this.instantiateSignature(signatureToSpecialize, typeReplacementMap, true);
                 }
                 else {
                     signatureToSpecialize.cachedObjectSpecialization = signatureToSpecialize;
@@ -11425,6 +11425,85 @@ module TypeScript {
             }
 
             return false;
+        }
+
+        public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullTypeSymbol {
+            // if the type is a primitive type, nothing to do here
+            if (type.isPrimitive()) {
+                return type;
+            }
+
+            // if the type is an error, nothing to do here
+            if (type.isError()) {
+                return type;
+            }
+
+            if (typeParameterArgumentMap[type.pullSymbolIDString]) {
+                return typeParameterArgumentMap[type.pullSymbolIDString];
+            }
+
+            if (type.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                return PullInstantiatedTypeReferenceSymbol.create(this, type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
+            }
+
+            return type;
+        }
+
+        // Note that the code below does not cache initializations of signatures.  We do this because we were only utilizing the cache on 1 our of
+        // every 6 instantiations, and we would run the risk of getting this wrong when type checking calls within generic type declarations:
+        // For example, if the signature is the root signature, it may not be safe to cache.  For example:
+        //
+        //  class C<T> {
+        //      public p: T;
+        //      public m<U>(u: U, t: T): void {}
+        //      public n<U>() { m(null, this.p); }
+        //  }
+        //
+        // In the code above, we don't want to cache the invocation of 'm' in 'n' against 'any', since the
+        // signature to 'm' is only partially specialized 
+        public instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
+            if (!signature.signatureWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                return signature;
+            }
+
+            var typeArguments: PullTypeSymbol[] = [];
+
+            nSpecializedSignaturesCreated++;
+
+            var instantiatedSignature = new PullSignatureSymbol(signature.kind);
+            instantiatedSignature.setRootSymbol(signature);
+
+            // add type parameters
+            var typeParameters = signature.getTypeParameters();
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                instantiatedSignature.addTypeParameter(typeParameters[i]);
+            }
+
+            instantiatedSignature.returnType = this.instantiateType(signature.returnType, typeParameterArgumentMap, instantiateFunctionTypeParameters);
+
+            var parameters = signature.parameters;
+            var parameter: PullSymbol = null;
+
+            if (parameters) {
+                for (var j = 0; j < parameters.length; j++) {
+                    parameter = new PullSymbol(parameters[j].name, PullElementKind.Parameter);
+                    parameter.setRootSymbol(parameters[j]);
+
+                    if (parameters[j].isOptional) {
+                        parameter.isOptional = true;
+                    }
+                    if (parameters[j].isVarArg) {
+                        parameter.isVarArg = true;
+                        instantiatedSignature.hasVarArgs = true;
+                    }
+                    instantiatedSignature.addParameter(parameter, parameter.isOptional);
+
+                    parameter.type = this.instantiateType(parameters[j].type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
+                }
+            }
+
+            return instantiatedSignature;
         }
     }
 

@@ -1050,6 +1050,36 @@ module TypeScript {
 
             return builder;
         }
+
+        public signatureWrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
+            var signature = this;
+            if (signature.inWrapCheck) {
+                return false;
+            }
+
+            signature.inWrapCheck = true;
+
+            var wrapsSomeTypeParameter = false;
+
+            if (signature.returnType.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                wrapsSomeTypeParameter = true;
+            }
+
+            if (!wrapsSomeTypeParameter) {
+                var parameters = signature.parameters;
+
+                for (var i = 0; i < parameters.length; i++) {
+                    if (parameters[i].type.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                        wrapsSomeTypeParameter = true;
+                        break;
+                    }
+                }
+            }
+
+            signature.inWrapCheck = false;
+
+            return wrapsSomeTypeParameter;
+        }
     }
 
     export class PullTypeSymbol extends PullSymbol {
@@ -1694,7 +1724,7 @@ module TypeScript {
             this._typesThatExtendThisType[this._typesThatExtendThisType.length] = type;
         }
 
-        public getTypesThatExtendThisType(): PullTypeSymbol[]{
+        public getTypesThatExtendThisType(): PullTypeSymbol[] {
             if (!this._typesThatExtendThisType) {
                 this._typesThatExtendThisType = [];
             }
@@ -2068,6 +2098,104 @@ module TypeScript {
             }
 
             return MemberName.create("{}");
+        }
+
+
+
+        // REVIEW: Should cache these checks
+
+        // The argument map prevents us from accidentally flagging method type parameters, or (if we
+        // ever decide to go that route) allows for partial specialization
+        public typeWrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
+            var type = this;
+            if (!type) {
+                return false;
+            }
+
+            var wrapsSomeTypeParameter = false;
+
+            if (type.inWrapCheck) {
+                return wrapsSomeTypeParameter;
+            }
+
+            type.inWrapCheck = true;
+
+            // if we encounter a type paramter, we're obviously wrapping
+            if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
+                wrapsSomeTypeParameter = true;
+            }
+
+            if (!wrapsSomeTypeParameter) {
+                var typeArguments = type.getTypeArguments();
+
+                // If there are no type arguments, we could be instantiating the 'root' type
+                // declaration
+                if (type.isGeneric() && !typeArguments) {
+                    typeArguments = type.getTypeParameters();
+                }
+
+                // if it's a generic type, scan the type arguments to see which may wrap type parameters
+                if (typeArguments) {
+                    for (var i = 0; i < typeArguments.length; i++) {
+                        if (typeArguments[i].typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                            wrapsSomeTypeParameter = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // if it's not a named type, we'll need to introspect its member list
+            if (!(type.kind & PullElementKind.SomeInstantiatableType) || !type.name) {
+                if (!wrapsSomeTypeParameter) {
+                    // otherwise, walk the member list and signatures, checking for wraps
+                    var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+
+                    for (var i = 0; i < members.length; i++) {
+                        if (members[i].type.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                            wrapsSomeTypeParameter = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!wrapsSomeTypeParameter) {
+                    var sigs = type.getCallSignatures(true);
+
+                    for (var i = 0; i < sigs.length; i++) {
+                        if (sigs[i].signatureWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                            wrapsSomeTypeParameter = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!wrapsSomeTypeParameter) {
+                    sigs = type.getConstructSignatures(true);
+
+                    for (var i = 0; i < sigs.length; i++) {
+                        if (sigs[i].signatureWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                            wrapsSomeTypeParameter = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!wrapsSomeTypeParameter) {
+                    sigs = type.getIndexSignatures(true);
+
+                    for (var i = 0; i < sigs.length; i++) {
+                        if (sigs[i].signatureWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                            wrapsSomeTypeParameter = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            type.inWrapCheck = false;
+
+            return wrapsSomeTypeParameter;
         }
     }
 

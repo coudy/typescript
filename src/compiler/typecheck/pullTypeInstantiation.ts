@@ -390,7 +390,7 @@ module TypeScript {
             // to type arguments as previously passed through
             if (type.getIsSpecialized() && typeArguments && typeArguments.length) {
                 for (var i = 0; i < typeArguments.length; i++) {
-                    reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = instantiateType(resolver, typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
+                    reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = resolver.instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
                 }
                 
                 for (var i = 0; i < typeArguments.length; i++) {
@@ -552,13 +552,13 @@ module TypeScript {
                     if (!this._instantiatedMemberNameCache[referencedMember.name]) {
 
                         // if the member does not require further specialization, re-use the referenced symbol
-                        if (!typeWrapsSomeTypeParameter(referencedMember.type, this._typeParameterArgumentMap)) {
+                        if (!referencedMember.type.typeWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                             instantiatedMember = referencedMember;
                         }
                         else {
                             instantiatedMember = new PullSymbol(referencedMember.name, referencedMember.kind);
                             instantiatedMember.setRootSymbol(referencedMember);
-                            instantiatedMember.type = instantiateType(this.resolver, referencedMember.type, this._typeParameterArgumentMap);
+                            instantiatedMember.type = this.resolver.instantiateType(referencedMember.type, this._typeParameterArgumentMap);
                             instantiatedMember.isOptional = referencedMember.isOptional;
                         }
 
@@ -597,7 +597,7 @@ module TypeScript {
 
                     this.resolver.resolveDeclaredSymbol(referencedMemberSymbol);
 
-                    memberSymbol.type = instantiateType(this.resolver, referencedMemberSymbol.type, this._typeParameterArgumentMap);
+                    memberSymbol.type = this.resolver.instantiateType(referencedMemberSymbol.type, this._typeParameterArgumentMap);
 
                     memberSymbol.isOptional = referencedMemberSymbol.isOptional;
 
@@ -648,7 +648,7 @@ module TypeScript {
                     requestedMembers[requestedMembers.length] = this._allInstantiatedMemberNameCache[referencedMember.name];
                 }
                 else {
-                    if (!typeWrapsSomeTypeParameter(referencedMember.type, this._typeParameterArgumentMap)) {
+                    if (!referencedMember.type.typeWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                         this._allInstantiatedMemberNameCache[referencedMember.name] = referencedMember;
                         requestedMembers[requestedMembers.length] = referencedMember;
                     }
@@ -656,7 +656,7 @@ module TypeScript {
                         requestedMember = new PullSymbol(referencedMember.name, referencedMember.kind);
                         requestedMember.setRootSymbol(referencedMember);
 
-                        requestedMember.type = instantiateType(this.resolver, referencedMember.type, this._typeParameterArgumentMap);
+                        requestedMember.type = this.resolver.instantiateType(referencedMember.type, this._typeParameterArgumentMap);
                         requestedMember.isOptional = referencedMember.isOptional;
 
                         this._allInstantiatedMemberNameCache[requestedMember.name] = requestedMember;
@@ -718,11 +718,11 @@ module TypeScript {
             for (var i = 0; i < referencedCallSignatures.length; i++) {
                 this.resolver.resolveDeclaredSymbol(referencedCallSignatures[i]);
 
-                if (!signatureWrapsSomeTypeParameter(referencedCallSignatures[i], this._typeParameterArgumentMap)) {
+                if (!referencedCallSignatures[i].signatureWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                     this._instantiatedCallSignatures[this._instantiatedCallSignatures.length] = referencedCallSignatures[i];
                 }
                 else {
-                    this._instantiatedCallSignatures[this._instantiatedCallSignatures.length] = instantiateSignature(this.resolver, referencedCallSignatures[i], this._typeParameterArgumentMap);
+                    this._instantiatedCallSignatures[this._instantiatedCallSignatures.length] = this.resolver.instantiateSignature(referencedCallSignatures[i], this._typeParameterArgumentMap);
                 }
             }
 
@@ -746,11 +746,11 @@ module TypeScript {
             for (var i = 0; i < referencedConstructSignatures.length; i++) {
                 this.resolver.resolveDeclaredSymbol(referencedConstructSignatures[i]);
 
-                if (!signatureWrapsSomeTypeParameter(referencedConstructSignatures[i], this._typeParameterArgumentMap)) {
+                if (!referencedConstructSignatures[i].signatureWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                     this._instantiatedConstructSignatures[this._instantiatedConstructSignatures.length] = referencedConstructSignatures[i];
                 }
                 else {
-                    this._instantiatedConstructSignatures[this._instantiatedConstructSignatures.length] = instantiateSignature(this.resolver, referencedConstructSignatures[i], this._typeParameterArgumentMap);
+                    this._instantiatedConstructSignatures[this._instantiatedConstructSignatures.length] = this.resolver.instantiateSignature(referencedConstructSignatures[i], this._typeParameterArgumentMap);
                 }
             }
 
@@ -774,11 +774,11 @@ module TypeScript {
             for (var i = 0; i < referencedIndexSignatures.length; i++) {
                 this.resolver.resolveDeclaredSymbol(referencedIndexSignatures[i]);
 
-                if (!signatureWrapsSomeTypeParameter(referencedIndexSignatures[i], this._typeParameterArgumentMap)) {
+                if (!referencedIndexSignatures[i].signatureWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                     this._instantiatedIndexSignatures[this._instantiatedIndexSignatures.length] = referencedIndexSignatures[i];
                 }
                 else {
-                    this._instantiatedIndexSignatures[this._instantiatedIndexSignatures.length] = instantiateSignature(this.resolver, referencedIndexSignatures[i], this._typeParameterArgumentMap);
+                    this._instantiatedIndexSignatures[this._instantiatedIndexSignatures.length] = this.resolver.instantiateSignature(referencedIndexSignatures[i], this._typeParameterArgumentMap);
                 }
             }
 
@@ -788,211 +788,6 @@ module TypeScript {
         public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
             return this.referencedTypeSymbol.hasBase(potentialBase, visited);
         }
-    }
-
-    export function instantiateType(resolver: PullTypeResolver, type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullTypeSymbol {
-        // if the type is a primitive type, nothing to do here
-        if (type.isPrimitive()) {
-            return type;
-        }
-
-        // if the type is an error, nothing to do here
-        if (type.isError()) {
-            return type;
-        }
-
-        if (typeParameterArgumentMap[type.pullSymbolIDString]) {
-            return typeParameterArgumentMap[type.pullSymbolIDString]
-        }
-
-        if (typeWrapsSomeTypeParameter(type, typeParameterArgumentMap)) {
-            return PullInstantiatedTypeReferenceSymbol.create(resolver, type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
-        }
-
-        return type;
-    }
-
-    // REVIEW: Should cache these checks
-
-    // The argument map prevents us from accidentally flagging method type parameters, or (if we
-    // ever decide to go that route) allows for partial specialization
-    function typeWrapsSomeTypeParameter(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
-
-        if (!type) {
-            return false;
-        }
-
-        var wrapsSomeTypeParameter = false;
-
-        if (type.inWrapCheck) {
-            return wrapsSomeTypeParameter;
-        }
-
-        type.inWrapCheck = true;        
-
-        // if we encounter a type paramter, we're obviously wrapping
-        if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
-            wrapsSomeTypeParameter = true;
-        }
-
-        if (!wrapsSomeTypeParameter) {
-            var typeArguments = type.getTypeArguments();
-
-            // If there are no type arguments, we could be instantiating the 'root' type
-            // declaration
-            if (type.isGeneric() && !typeArguments) {
-                typeArguments = type.getTypeParameters();
-            }
-
-            // if it's a generic type, scan the type arguments to see which may wrap type parameters
-            if (typeArguments) {
-                for (var i = 0; i < typeArguments.length; i++) {
-                    if (typeWrapsSomeTypeParameter(typeArguments[i], typeParameterArgumentMap)) {
-                        wrapsSomeTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // if it's not a named type, we'll need to introspect its member list
-        if (!(type.kind & PullElementKind.SomeInstantiatableType) || !type.name) {
-            if (!wrapsSomeTypeParameter) {
-                // otherwise, walk the member list and signatures, checking for wraps
-                var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
-
-                for (var i = 0; i < members.length; i++) {
-                    if (typeWrapsSomeTypeParameter(members[i].type, typeParameterArgumentMap)) {
-                        wrapsSomeTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!wrapsSomeTypeParameter) {
-                var sigs = type.getCallSignatures(true);
-
-                for (var i = 0; i < sigs.length; i++) {
-                    if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                        wrapsSomeTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!wrapsSomeTypeParameter) {
-                sigs = type.getConstructSignatures(true);
-
-                for (var i = 0; i < sigs.length; i++) {
-                    if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                        wrapsSomeTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!wrapsSomeTypeParameter) {
-                sigs = type.getIndexSignatures(true);
-
-                for (var i = 0; i < sigs.length; i++) {
-                    if (signatureWrapsSomeTypeParameter(sigs[i], typeParameterArgumentMap)) {
-                        wrapsSomeTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        type.inWrapCheck = false;
-
-        return wrapsSomeTypeParameter;
-    }
-
-    function signatureWrapsSomeTypeParameter(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
-
-        if (signature.inWrapCheck) {
-            return false;
-        }
-
-        signature.inWrapCheck = true;
-
-        var wrapsSomeTypeParameter = false;
-
-        if (typeWrapsSomeTypeParameter(signature.returnType, typeParameterArgumentMap)) {
-            wrapsSomeTypeParameter = true;
-        }
-
-        if (!wrapsSomeTypeParameter) {
-            var parameters = signature.parameters;
-
-            for (var i = 0; i < parameters.length; i++) {
-                if (typeWrapsSomeTypeParameter(parameters[i].type, typeParameterArgumentMap)) {
-                    wrapsSomeTypeParameter = true;
-                    break;
-                }
-            }
-        }
-
-        signature.inWrapCheck = false;
-
-        return wrapsSomeTypeParameter;
-    }
-
-    // Note that the code below does not cache initializations of signatures.  We do this because we were only utilizing the cache on 1 our of
-    // every 6 instantiations, and we would run the risk of getting this wrong when type checking calls within generic type declarations:
-    // For example, if the signature is the root signature, it may not be safe to cache.  For example:
-    //
-    //  class C<T> {
-    //      public p: T;
-    //      public m<U>(u: U, t: T): void {}
-    //      public n<U>() { m(null, this.p); }
-    //  }
-    //
-    // In the code above, we don't want to cache the invocation of 'm' in 'n' against 'any', since the
-    // signature to 'm' is only partially specialized 
-    export function instantiateSignature(resolver: PullTypeResolver, signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
-        if (!signatureWrapsSomeTypeParameter(signature, typeParameterArgumentMap)) {
-            return signature;
-        }
-
-        var typeArguments: PullTypeSymbol[] = [];
-
-        nSpecializedSignaturesCreated++;
-
-        var instantiatedSignature = new PullSignatureSymbol(signature.kind);
-        instantiatedSignature.setRootSymbol(signature);
-
-        // add type parameters
-        var typeParameters = signature.getTypeParameters();
-
-        for (var i = 0; i < typeParameters.length; i++) {
-            instantiatedSignature.addTypeParameter(typeParameters[i]);
-        }
-
-        instantiatedSignature.returnType = instantiateType(resolver, signature.returnType, typeParameterArgumentMap, instantiateFunctionTypeParameters);
-
-        var parameters = signature.parameters;
-        var parameter: PullSymbol = null;
-
-        if (parameters) {
-            for (var j = 0; j < parameters.length; j++) {
-                parameter = new PullSymbol(parameters[j].name, PullElementKind.Parameter);
-                parameter.setRootSymbol(parameters[j]);
-
-                if (parameters[j].isOptional) {
-                    parameter.isOptional = true;
-                }
-                if (parameters[j].isVarArg) {
-                    parameter.isVarArg = true;
-                    instantiatedSignature.hasVarArgs = true;
-                }
-                instantiatedSignature.addParameter(parameter, parameter.isOptional);
-
-                parameter.type = instantiateType(resolver, parameters[j].type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
-            }
-        }
-
-        return instantiatedSignature;
     }
 
     export function computeGenerativeTypeClassification(type: PullTypeSymbol, typeArguments: PullTypeSymbol[]): GenerativeTypeClassification {
