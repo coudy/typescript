@@ -5102,9 +5102,6 @@ module TypeScript {
                 case NodeType.FunctionPropertyAssignment:
                     return this.resolveFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
-                case NodeType.GenericType:
-                    return this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
-
                 case NodeType.Name:
                     if (context.resolvingTypeReference) {
                         return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
@@ -5380,11 +5377,6 @@ module TypeScript {
 
                 case NodeType.ObjectLiteralExpression:
                     this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);
-                    return;
-
-                case NodeType.GenericType:
-                    // No need to typecheck separately just do resolution again
-                    this.resolveGenericTypeReference(<GenericType>ast, enclosingDecl, context);
                     return;
 
                 case NodeType.Name:
