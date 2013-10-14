@@ -1181,6 +1181,11 @@ module TypeScript {
 
             ast = context.ast;
             var symbol = resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
+
+            if (symbol.isTypeReference()) {
+                symbol = (<PullTypeReferenceSymbol>symbol).getReferencedTypeSymbol();
+            }
+
             var aliasSymbol = this.semanticInfoChain.getAliasSymbolForAST(ast);
 
             return {

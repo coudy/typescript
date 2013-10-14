@@ -7714,7 +7714,7 @@ module TypeScript {
                                         }
                                     }
                                     else if (typeConstraint.getIsSpecialized()) {
-                                        typeConstraint = new PullInstantiatedTypeReferenceSymbol(typeConstraint, typeReplacementMap);
+                                        typeConstraint = PullInstantiatedTypeReferenceSymbol.create(typeConstraint, typeReplacementMap);
                                     }
                                     context.isComparingInstantiatedSignatures = true;
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
@@ -8056,7 +8056,7 @@ module TypeScript {
                                                 }
                                             }
                                             else if (typeConstraint.getIsSpecialized()) {
-                                                typeConstraint = new PullInstantiatedTypeReferenceSymbol(typeConstraint, typeReplacementMap);
+                                                typeConstraint = PullInstantiatedTypeReferenceSymbol.create(typeConstraint, typeReplacementMap);
                                             }
 
                                             context.isComparingInstantiatedSignatures = true;
