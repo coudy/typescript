@@ -8802,18 +8802,8 @@ module TypeScript {
 
                 // if the source is another type parameter (with no constraints), they can only be assignable if they share
                 // a declaration
-                if (source.isTypeParameter() && (source == sourceSubstitution)) {
-                    // We compare parent declarations instead of container symbols because type parameter symbols are shared
-                    // accross overload groups
-                    var targetParentDeclaration = target.getDeclarations()[0].getParentDecl();
-                    var sourceParentDeclaration = source.getDeclarations()[0].getParentDecl();
-
-                    if (targetParentDeclaration !== sourceParentDeclaration) {
-                        return this.symbolsShareDeclaration(target, source);
-                    }
-                    else {
-                        return this.typesAreIdentical(target, sourceSubstitution);
-                    }
+                if (source.isTypeParameter() && (source === sourceSubstitution)) {
+                    return this.typesAreIdentical(target, source);
                 }
                 else {
                     // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
