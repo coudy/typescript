@@ -3332,19 +3332,11 @@ module TypeScript {
 
         private resolveAnyFunctionDeclaration(
             funcDecl: FunctionDeclaration,
-            inContextuallyTypedAssignment: boolean,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullSymbol {
 
-            if (inContextuallyTypedAssignment) {
-                return this.resolveAnyFunctionExpression(
-                    funcDecl, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block,
-                    inContextuallyTypedAssignment, enclosingDecl, context);
-            }
-            else {
-                return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
-                    funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
-            }
+            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
+                funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
         }
 
         private resolveFunctionExpression(funcDecl: FunctionExpression, inContextuallyTypedAssignment: boolean, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -5127,7 +5119,7 @@ module TypeScript {
                     return this.resolveMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, enclosingDecl, context);
 
                 case NodeType.FunctionDeclaration:
-                    return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, inContextuallyTypedAssignment, enclosingDecl, context);
+                    return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, enclosingDecl, context);
 
                 case NodeType.FunctionExpression:
                     return this.resolveFunctionExpression(<FunctionExpression>ast, inContextuallyTypedAssignment, enclosingDecl, context);

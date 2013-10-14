@@ -804,11 +804,7 @@ module TypeScript {
             this.setSpan(result, start, node);
 
             if (init) {
-                if (init.nodeType() === NodeType.FunctionDeclaration) {
-                    var funcDecl = <FunctionDeclaration>init;
-                    funcDecl.hint = name.actualText;
-                }
-                else if (init.nodeType() === NodeType.ArrowFunctionExpression) {
+                if (init.nodeType() === NodeType.ArrowFunctionExpression) {
                     var arrowFunction = <ArrowFunctionExpression>init;
                     arrowFunction.hint = name.actualText;
                 }
