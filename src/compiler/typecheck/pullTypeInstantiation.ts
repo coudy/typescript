@@ -722,6 +722,9 @@ module TypeScript {
             this._instantiatedCallSignatures = [];
 
             for (var i = 0; i < referencedCallSignatures.length; i++) {
+                if (!referencedCallSignatures[i].isResolved) {
+                    globalResolver.resolveDeclaredSymbol(referencedCallSignatures[i]);
+                }
                 if (!signatureWrapsSomeTypeParameter(referencedCallSignatures[i], this._typeParameterArgumentMap)) {
                     this._instantiatedCallSignatures[this._instantiatedCallSignatures.length] = referencedCallSignatures[i];
                 }
@@ -748,6 +751,9 @@ module TypeScript {
             this._instantiatedConstructSignatures = [];
 
             for (var i = 0; i < referencedConstructSignatures.length; i++) {
+                if (!referencedConstructSignatures[i].isResolved) {
+                    globalResolver.resolveDeclaredSymbol(referencedConstructSignatures[i]);
+                }
                 if (!signatureWrapsSomeTypeParameter(referencedConstructSignatures[i], this._typeParameterArgumentMap)) {
                     this._instantiatedConstructSignatures[this._instantiatedConstructSignatures.length] = referencedConstructSignatures[i];
                 }
@@ -774,6 +780,9 @@ module TypeScript {
             this._instantiatedIndexSignatures = [];
 
             for (var i = 0; i < referencedIndexSignatures.length; i++) {
+                if (!referencedIndexSignatures[i].isResolved) {
+                    globalResolver.resolveDeclaredSymbol(referencedIndexSignatures[i]);
+                }
                 if (!signatureWrapsSomeTypeParameter(referencedIndexSignatures[i], this._typeParameterArgumentMap)) {
                     this._instantiatedIndexSignatures[this._instantiatedIndexSignatures.length] = referencedIndexSignatures[i];
                 }

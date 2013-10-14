@@ -108,7 +108,7 @@ module TypeScript {
 
         public bloomFilter(): BloomFilter {
             if (!this._bloomFilter) {
-                var identifiers = <any>new BlockIntrinsics<boolean>();
+                var identifiers = new BlockIntrinsics<boolean>();
                 var pre = function (cur: TypeScript.AST, walker: IAstWalker) {
                     if (isValidAstNode(cur)) {
                         if (cur.nodeType() === NodeType.Name) {
