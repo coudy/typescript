@@ -6378,11 +6378,6 @@ module TypeScript {
                 arrowFunction, arrowFunction.typeParameters, arrowFunction.returnTypeAnnotation, arrowFunction.block, context);
         }
 
-        private typeCheckFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, context: PullTypeResolutionContext): void {
-            this.typeCheckAnyFunctionExpression(
-                funcProp, funcProp.typeParameters, funcProp.returnTypeAnnotation, funcProp.block, context);
-        }
-
         private typeCheckAnyFunctionExpression(
             funcDeclAST: AST,
             typeParameters: ASTList,
