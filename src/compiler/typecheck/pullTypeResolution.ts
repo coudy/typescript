@@ -2952,7 +2952,7 @@ module TypeScript {
                 var returnExpressions: AST[] = [];
 
                 for (var i = 0; i < returnStatements.length; i++) {
-                    var returnExpression = returnStatements[i].returnStatement.returnExpression;
+                    var returnExpression = returnStatements[i].returnStatement.expression;
                     if (returnExpression) {
                         var returnType = this.resolveAST(returnExpression, useContextualType, returnStatements[i].enclosingDecl, context).type;
 
@@ -4032,8 +4032,8 @@ module TypeScript {
         private typeCheckLogicalOperation(binex: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(binex, context);
 
-            var leftType = this.resolveAST(binex.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
-            var rightType = this.resolveAST(binex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var leftType = this.resolveAST(binex.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var rightType = this.resolveAST(binex.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             // September 17, 2013: 
             // The <, >, <=, >=, ==, !=, ===, and !== operators
@@ -4155,10 +4155,10 @@ module TypeScript {
         private typeCheckBinaryArithmeticExpression(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(binaryExpression, context);
 
-            var lhsSymbol = this.resolveAST(binaryExpression.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            var lhsSymbol = this.resolveAST(binaryExpression.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
 
             var lhsType = lhsSymbol.type;
-            var rhsType = this.resolveAST(binaryExpression.operand2, /*inContextuallyTypedAssignment:*/false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(binaryExpression.right, /*inContextuallyTypedAssignment:*/false, enclosingDecl, context).type;
 
             // September 17, 2013:
             // If one operand is the null or undefined value, it is treated as having the 
@@ -4179,11 +4179,11 @@ module TypeScript {
             var rhsIsFit = this.isAnyOrNumberOrEnum(rhsType);
 
             if (!rhsIsFit) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand2, DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.right, DiagnosticCode.The_right_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type));
             }
 
             if (!lhsIsFit) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.The_left_hand_side_of_an_arithmetic_operation_must_be_of_type_any_number_or_an_enum_type));
             }
 
             if (lhsIsFit && rhsIsFit) {
@@ -4199,11 +4199,11 @@ module TypeScript {
                     case NodeType.AndAssignmentExpression:
                     case NodeType.ExclusiveOrAssignmentExpression:
                         // Check if LHS is a valid target
-                        if (!this.isReference(binaryExpression.operand1, lhsSymbol)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
+                        if (!this.isReference(binaryExpression.left, lhsSymbol)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
                         }
 
-                        this.checkAssignability(binaryExpression.operand1, rhsType, lhsType, enclosingDecl, context);
+                        this.checkAssignability(binaryExpression.left, rhsType, lhsType, enclosingDecl, context);
                 }
             }
         }
@@ -4267,23 +4267,23 @@ module TypeScript {
             // September 17, 2013: The instanceof operator requires the left operand to be of type 
             // Any, an object type, or a type parameter type, and the right operand to be of type 
             // Any or a subtype of the ‘Function’ interface type. 
-            var lhsType = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type;
-            var rhsType = this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type;
+            var lhsType = this.resolveAST(binaryExpression.left, false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(binaryExpression.right, false, enclosingDecl, context).type;
 
             var isValidLHS = this.isAnyOrEquivalent(lhsType) || lhsType.isObject() || lhsType.isTypeParameter();
             var isValidRHS = this.isAnyOrEquivalent(rhsType) || this.typeIsSubtypeOfFunction(rhsType, context);
 
             if (!isValidLHS) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter));
             }
 
             if (!isValidRHS) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand2, DiagnosticCode.The_right_hand_side_of_an_instanceof_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.right, DiagnosticCode.The_right_hand_side_of_an_instanceof_expression_must_be_of_type_any_or_a_subtype_of_the_Function_interface_type));
             }
         }
 
         private resolveCommaExpression(commaExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var rhsType = this.resolveAST(commaExpression.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(commaExpression.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             if (this.canTypeCheckAST(commaExpression, context)) {
                 this.typeCheckCommaExpression(commaExpression, enclosingDecl, context);
@@ -4297,8 +4297,8 @@ module TypeScript {
         private typeCheckCommaExpression(commaExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(commaExpression, context);
 
-            this.resolveAST(commaExpression.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context)
-            this.resolveAST(commaExpression.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context)
+            this.resolveAST(commaExpression.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context)
+            this.resolveAST(commaExpression.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context)
         }
 
         private resolveInExpression(ast: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4316,8 +4316,8 @@ module TypeScript {
             // September 17, 2013: The in operator requires the left operand to be of type Any or 
             // the String primitive type, and the right operand to be of type Any, an object type,
             // or a type parameter type. 
-            var lhsType = this.resolveAST(binaryExpression.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
-            var rhsType = this.resolveAST(binaryExpression.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var lhsType = this.resolveAST(binaryExpression.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(binaryExpression.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             var isStringAnyOrNumber =
                 lhsType.type === this.semanticInfoChain.stringTypeSymbol ||
@@ -4325,11 +4325,11 @@ module TypeScript {
             var isValidRHS = this.isAnyOrEquivalent(rhsType) || rhsType.isObject() || rhsType.isTypeParameter();
 
             if (!isStringAnyOrNumber) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.The_left_hand_side_of_an_in_expression_must_be_of_types_string_or_any));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.The_left_hand_side_of_an_in_expression_must_be_of_types_string_or_any));
             }
 
             if (!isValidRHS) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.The_right_hand_side_of_an_in_expression_must_be_of_type_any_an_object_type_or_a_type_parameter));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.The_right_hand_side_of_an_in_expression_must_be_of_type_any_an_object_type_or_a_type_parameter));
             }
         }
 
@@ -4363,11 +4363,11 @@ module TypeScript {
 
             var forInStatement = <ForInStatement>ast;
 
-            var rhsType = this.resolveAST(forInStatement.obj, false, enclosingDecl, context).type;
-            var lval = forInStatement.lval;
+            var rhsType = this.resolveAST(forInStatement.expression, false, enclosingDecl, context).type;
+            var lval = forInStatement.variableDeclaration;
 
             if (lval.nodeType() === NodeType.VariableDeclaration) {
-                var declaration = <VariableDeclaration>forInStatement.lval;
+                var declaration = <VariableDeclaration>forInStatement.variableDeclaration;
                 var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
                 if (varDecl.typeExpr) {
@@ -4375,10 +4375,10 @@ module TypeScript {
                 }
             }
 
-            var varSym = this.resolveAST(forInStatement.lval, false, enclosingDecl, context);
+            var varSym = this.resolveAST(forInStatement.variableDeclaration, false, enclosingDecl, context);
 
             if (lval.nodeType() === NodeType.VariableDeclaration) {
-                varSym = this.getSymbolForAST((<VariableDeclaration>forInStatement.lval).declarators.members[0], context);
+                varSym = this.getSymbolForAST((<VariableDeclaration>forInStatement.variableDeclaration).declarators.members[0], context);
             }
 
             var isStringOrNumber = varSym.type === this.semanticInfoChain.stringTypeSymbol || this.isAnyOrEquivalent(varSym.type);
@@ -4390,10 +4390,10 @@ module TypeScript {
             }
 
             if (!isValidRHS) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(forInStatement.obj, DiagnosticCode.The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(forInStatement.expression, DiagnosticCode.The_right_hand_side_of_a_for_in_statement_must_be_of_type_any_an_object_type_or_a_type_parameter));
             }
 
-            this.resolveAST(forInStatement.body, false, enclosingDecl, context);
+            this.resolveAST(forInStatement.statement, false, enclosingDecl, context);
         }
 
         private resolveWhileStatement(ast: WhileStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4407,8 +4407,8 @@ module TypeScript {
         private typeCheckWhileStatement(ast: WhileStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST(ast.cond, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            this.resolveAST(ast.body, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(ast.condition, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(ast.statement, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
         private resolveDoStatement(ast: DoStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4422,8 +4422,8 @@ module TypeScript {
         private typeCheckDoStatement(ast: DoStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST(ast.cond, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            this.resolveAST(ast.body, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(ast.condition, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(ast.statement, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
         private resolveIfStatement(ast: IfStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4494,7 +4494,7 @@ module TypeScript {
         private typeCheckWithStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
             var withStatement = <WithStatement>ast;
-            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(withStatement.expr, DiagnosticCode.All_symbols_within_a_with_block_will_be_resolved_to_any));
+            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(withStatement.condition, DiagnosticCode.All_symbols_within_a_with_block_will_be_resolved_to_any));
         }
 
         private resolveTryStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -4509,7 +4509,7 @@ module TypeScript {
             this.setTypeChecked(ast, context);
             var tryStatement = <TryStatement>ast;
 
-            this.resolveAST(tryStatement.tryBody, false, enclosingDecl, context);
+            this.resolveAST(tryStatement.block, false, enclosingDecl, context);
             this.resolveAST(tryStatement.catchClause, false, enclosingDecl, context);
             this.resolveAST(tryStatement.finallyBody, false, enclosingDecl, context);
         }
@@ -4525,14 +4525,14 @@ module TypeScript {
         private typeCheckCatchClause(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
             var catchDecl = this.semanticInfoChain.getDeclForAST(ast);
-            this.resolveAST((<CatchClause>ast).body, false, catchDecl, context);
+            this.resolveAST((<CatchClause>ast).block, false, catchDecl, context);
             this.validateVariableDeclarationGroups(catchDecl, context);
         }
 
         private resolveReturnStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var parentDecl = enclosingDecl;
             var returnAST = <ReturnStatement>ast;
-            var returnExpr = returnAST.returnExpression;
+            var returnExpr = returnAST.expression;
 
             var returnType = <PullTypeSymbol>this.getSymbolForAST(ast, context);
             var canTypeCheckAST = this.canTypeCheckAST(ast, context);
@@ -4672,7 +4672,7 @@ module TypeScript {
 
             var switchStatement = <SwitchStatement>ast;
 
-            var expressionType = this.resolveAST(switchStatement.val, false, enclosingDecl, context).type;
+            var expressionType = this.resolveAST(switchStatement.expression, false, enclosingDecl, context).type;
             this.resolveAST(switchStatement.caseList, false, enclosingDecl, context);
 
             if (switchStatement.caseList && switchStatement.caseList.members) {
@@ -7149,8 +7149,8 @@ module TypeScript {
 
         private resolveBinaryAdditionOperation(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
 
-            var lhsType = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context).type;
-            var rhsType = this.resolveAST(binaryExpression.operand2, false, enclosingDecl, context).type;
+            var lhsType = this.resolveAST(binaryExpression.left, false, enclosingDecl, context).type;
+            var rhsType = this.resolveAST(binaryExpression.right, false, enclosingDecl, context).type;
 
             if (PullHelpers.symbolIsEnum(lhsType)) {
                 lhsType = this.semanticInfoChain.numberTypeSymbol;
@@ -7191,16 +7191,16 @@ module TypeScript {
             if (exprType) {
                 if (binaryExpression.nodeType() === NodeType.AddAssignmentExpression) {
                     // Check if LHS is a valid target
-                    var lhsExpression = this.resolveAST(binaryExpression.operand1, false, enclosingDecl, context);
-                    if (!this.isReference(binaryExpression.operand1, lhsExpression)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
+                    var lhsExpression = this.resolveAST(binaryExpression.left, false, enclosingDecl, context);
+                    if (!this.isReference(binaryExpression.left, lhsExpression)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
                     }
 
-                    this.checkAssignability(binaryExpression.operand1, exprType, lhsType, enclosingDecl, context);
+                    this.checkAssignability(binaryExpression.left, exprType, lhsType, enclosingDecl, context);
                 }
             }
             else {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.Invalid_expression_types_not_known_to_support_the_addition_operator));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_expression_types_not_known_to_support_the_addition_operator));
                 exprType = this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -7215,8 +7215,8 @@ module TypeScript {
             // September 17, 2013:  The || operator permits the operands to be of any type and 
             // produces a result that is of the best common type(section 3.10) of the two operand
             // types.
-            var leftType = this.resolveAST(binex.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
-            var rightType = this.resolveAST(binex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var leftType = this.resolveAST(binex.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var rightType = this.resolveAST(binex.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             var bestCommonType = this.bestCommonTypeOfTwoTypes(leftType, rightType, context);
 
@@ -7237,12 +7237,12 @@ module TypeScript {
         private typeCheckLogicalOrExpression(binex: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.setTypeChecked(binex, context);
 
-            this.resolveAST(binex.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            this.resolveAST(binex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(binex.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(binex.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
         private resolveLogicalAndExpression(binex: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var secondOperandType = this.resolveAST(binex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var secondOperandType = this.resolveAST(binex.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             if (this.canTypeCheckAST(binex, context)) {
                 this.typeCheckLogicalAndExpression(binex, enclosingDecl, context);
@@ -7256,8 +7256,8 @@ module TypeScript {
         private typeCheckLogicalAndExpression(binex: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             this.setTypeChecked(binex, context);
 
-            this.resolveAST(binex.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            this.resolveAST(binex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(binex.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            this.resolveAST(binex.right, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
         }
 
         private resolveConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
@@ -7265,8 +7265,8 @@ module TypeScript {
                 this.typeCheckConditionalExpression(trinex, enclosingDecl, context);
             }
 
-            var leftType = this.resolveAST(trinex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
-            var rightType = this.resolveAST(trinex.operand3, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var leftType = this.resolveAST(trinex.whenTrue, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var rightType = this.resolveAST(trinex.whenFalse, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             // September 17, 2013: In a conditional expression of the form
             //      Cond ? Expr1 : Expr2
@@ -7287,9 +7287,9 @@ module TypeScript {
         private typeCheckConditionalExpression(trinex: ConditionalExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext): void {
             this.setTypeChecked(trinex, context);
 
-            this.resolveAST(trinex.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
-            var leftType = this.resolveAST(trinex.operand2, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
-            var rightType = this.resolveAST(trinex.operand3, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            this.resolveAST(trinex.condition, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            var leftType = this.resolveAST(trinex.whenTrue, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
+            var rightType = this.resolveAST(trinex.whenFalse, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context).type;
 
             // September 17, 2013: In a conditional expression of the form
             //      Cond ? Expr1 : Expr2
@@ -7299,7 +7299,7 @@ module TypeScript {
             // Note: we don't need to check if leftType and rightType are identical.  That is 
             // already handled by the subtyping check.
             if (!this.sourceIsSubtypeOfTarget(leftType, rightType, context) && !this.sourceIsSubtypeOfTarget(rightType, leftType, context)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(trinex.operand2,
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(trinex.whenTrue,
                     DiagnosticCode.Type_of_conditional_expression_cannot_be_determined_0_is_not_identical_to_a_supertype_of_or_a_subtype_of_1,
                     [leftType.toString(), rightType.toString()]));
             }
@@ -8112,14 +8112,14 @@ module TypeScript {
             // time error occurs.The result is a value with the type of ValueExpr.
 
 
-            var leftExpr = this.resolveAST(binaryExpression.operand1, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
+            var leftExpr = this.resolveAST(binaryExpression.left, /*inContextuallyTypedAssignment:*/ false, enclosingDecl, context);
             var leftType = leftExpr.type;
 
             context.pushContextualType(leftType, context.inProvisionalResolution(), /*substitutions*/null);
-            var rightType = this.resolveAST(binaryExpression.operand2, true, enclosingDecl, context).type;
+            var rightType = this.resolveAST(binaryExpression.right, true, enclosingDecl, context).type;
             context.popContextualType();
 
-            rightType = this.getInstanceTypeForAssignment(binaryExpression.operand1, rightType, enclosingDecl, context);
+            rightType = this.getInstanceTypeForAssignment(binaryExpression.left, rightType, enclosingDecl, context);
 
             // Check if LHS is a valid target
             if (this.canTypeCheckAST(binaryExpression, context)) {
@@ -8132,11 +8132,11 @@ module TypeScript {
         private typeCheckAssignmentExpression(binaryExpression: BinaryExpression, enclosingDecl: PullDecl, context: PullTypeResolutionContext, leftExpr: PullSymbol, rightType: PullTypeSymbol): void {
             this.setTypeChecked(binaryExpression, context);
 
-            if (!this.isReference(binaryExpression.operand1, leftExpr)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.operand1, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
+            if (!this.isReference(binaryExpression.left, leftExpr)) {
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
             }
             else {
-                this.checkAssignability(binaryExpression.operand1, rightType, leftExpr.type, enclosingDecl, context);
+                this.checkAssignability(binaryExpression.left, rightType, leftExpr.type, enclosingDecl, context);
             }
         }
 
@@ -10858,8 +10858,12 @@ module TypeScript {
 
                             case NodeType.ReturnStatement:
                                 var returnStatement: ReturnStatement = <ReturnStatement>ast;
+<<<<<<< HEAD
                                 var returnExpressionSymbol = this.resolveAST(returnStatement.returnExpression, false, decl, context).type;
                                 
+=======
+                                var returnExpressionSymbol = this.resolveAST(returnStatement.expression, false, decl, context).type;
+>>>>>>> Rename many AST members to match SyntaxTree.
                                 // Check if return statement's type matches the one that we concluded
                                 if (PullHelpers.typeSymbolsAreIdentical(returnExpressionSymbol, funcReturnType)) {
                                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnStatement, messageCode, messageArguments));

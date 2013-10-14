@@ -384,7 +384,7 @@ module Services {
                     case TypeScript.NodeType.LeftShiftAssignmentExpression:
                     case TypeScript.NodeType.UnsignedRightShiftAssignmentExpression:
                     case TypeScript.NodeType.SignedRightShiftAssignmentExpression:
-                        return (<TypeScript.BinaryExpression>parent).operand1 === current;
+                        return (<TypeScript.BinaryExpression>parent).left === current;
 
                     case TypeScript.NodeType.PreIncrementExpression:
                     case TypeScript.NodeType.PostIncrementExpression:

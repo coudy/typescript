@@ -1015,9 +1015,9 @@ module TypeScript {
                             var assignmentExpression = <BinaryExpression>current;
                             var contextualType: PullTypeSymbol = null;
 
-                            if (path[i + 1] && path[i + 1] === assignmentExpression.operand2) {
+                            if (path[i + 1] && path[i + 1] === assignmentExpression.right) {
                                 // propagate the left hand side type as a contextual type
-                                var leftType = resolver.resolveAST(assignmentExpression.operand1, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
+                                var leftType = resolver.resolveAST(assignmentExpression.left, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
                                 if (leftType) {
                                     inContextuallyTypedAssignment = true;
                                     contextualType = leftType;

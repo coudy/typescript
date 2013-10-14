@@ -2575,13 +2575,13 @@ module TypeScript {
             this.recordSourceMappingStart(expression);
             switch (expression.nodeType()) {
                 case NodeType.CommaExpression:
-                    expression.operand1.emit(this);
+                    expression.left.emit(this);
                     this.writeToOutput(", ");
-                    expression.operand2.emit(this);
+                    expression.right.emit(this);
                     break;
                 default:
                     {
-                        expression.operand1.emit(this);
+                        expression.left.emit(this);
                         var binOp = BinaryExpression.getTextForBinaryToken(expression.nodeType());
                         if (binOp === "instanceof") {
                             this.writeToOutput(" instanceof ");
@@ -2592,7 +2592,7 @@ module TypeScript {
                         else {
                             this.writeToOutput(" " + binOp + " ");
                         }
-                        expression.operand2.emit(this);
+                        expression.right.emit(this);
                     }
             }
             this.recordSourceMappingEnd(expression);
@@ -2652,11 +2652,11 @@ module TypeScript {
         }
 
         public emitConditionalExpression(expression: ConditionalExpression): void {
-            expression.operand1.emit(this);
+            expression.condition.emit(this);
             this.writeToOutput(" ? ");
-            expression.operand2.emit(this);
+            expression.whenTrue.emit(this);
             this.writeToOutput(" : ");
-            expression.operand3.emit(this);
+            expression.whenFalse.emit(this);
         }
 
         public emitThrowStatement(statement: ThrowStatement): void {
@@ -2732,19 +2732,19 @@ module TypeScript {
         public emitWhileStatement(statement: WhileStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("while (");
-            statement.cond.emit(this);
+            statement.condition.emit(this);
             this.writeToOutput(")");
-            this.emitBlockOrStatement(statement.body);
+            this.emitBlockOrStatement(statement.statement);
             this.recordSourceMappingEnd(statement);
         }
 
         public emitDoStatement(statement: DoStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("do");
-            this.emitBlockOrStatement(statement.body);
+            this.emitBlockOrStatement(statement.statement);
             this.writeToOutputWithSourceMapRecord(" while", statement.whileSpan);
             this.writeToOutput('(');
-            statement.cond.emit(this);
+            statement.condition.emit(this);
             this.writeToOutput(")");
             this.recordSourceMappingEnd(statement);
             this.writeToOutput(";");
@@ -2785,9 +2785,9 @@ module TypeScript {
 
         public emitReturnStatement(statement: ReturnStatement): void {
             this.recordSourceMappingStart(statement);
-            if (statement.returnExpression) {
+            if (statement.expression) {
                 this.writeToOutput("return ");
-                statement.returnExpression.emit(this);
+                statement.expression.emit(this);
             }
             else {
                 this.writeToOutput("return");
@@ -2799,11 +2799,11 @@ module TypeScript {
         public emitForInStatement(statement: ForInStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("for (");
-            statement.lval.emit(this);
+            statement.variableDeclaration.emit(this);
             this.writeToOutput(" in ");
-            statement.obj.emit(this);
+            statement.expression.emit(this);
             this.writeToOutput(")");
-            this.emitBlockOrStatement(statement.body);
+            this.emitBlockOrStatement(statement.statement);
             this.recordSourceMappingEnd(statement);
         }
 
@@ -2834,14 +2834,14 @@ module TypeScript {
         public emitWithStatement(statement: WithStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("with (");
-            if (statement.expr) {
-                statement.expr.emit(this);
+            if (statement.condition) {
+                statement.condition.emit(this);
             }
 
             this.writeToOutput(")");
             var prevInWithBlock = this.inWithBlock;
             this.inWithBlock = true;
-            this.emitBlockOrStatement(statement.body);
+            this.emitBlockOrStatement(statement.statement);
             this.inWithBlock = prevInWithBlock;
             this.recordSourceMappingEnd(statement);
         }
@@ -2850,7 +2850,7 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             this.recordSourceMappingStart(statement.statement);
             this.writeToOutput("switch (");
-            statement.val.emit(this);
+            statement.expression.emit(this);
             this.writeToOutput(")");
             this.recordSourceMappingEnd(statement.statement);
             this.writeLineToOutput(" {");
@@ -2899,7 +2899,7 @@ module TypeScript {
         public emitTryStatement(statement: TryStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("try ");
-            statement.tryBody.emit(this);
+            statement.block.emit(this);
             this.emitJavascript(statement.catchClause, false);
 
             if (statement.finallyBody) {
@@ -2915,7 +2915,7 @@ module TypeScript {
             this.writeToOutput("catch (");
             clause.param.id.emit(this);
             this.writeToOutput(")");
-            clause.body.emit(this);
+            clause.block.emit(this);
             this.recordSourceMappingEnd(clause);
         }
 
