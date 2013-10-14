@@ -6,8 +6,8 @@
 ////}
 
 ////interface Combinators {
-////    map<T>(c: Collection<T>, f: (x: T) => any): Collection<any>;
 ////    map<T, U>(c: Collection<T>, f: (x: T) => U): Collection<U>;
+////    map<T>(c: Collection<T>, f: (x: T) => any): Collection<any>;
 ////}
 
 ////class A {
@@ -70,17 +70,17 @@ verify.quickInfoIs('A');
 goTo.marker('8');
 verify.quickInfoIs('B<any>'); // Specialized to any because no type argument was specified
 goTo.marker('9');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('10');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<string>');
 goTo.marker('11');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<number>');
 goTo.marker('12');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<number>');
 goTo.marker('13');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<A>');
 goTo.marker('14');
-verify.quickInfoIs('Collection<any>');
+verify.quickInfoIs('Collection<A>');
 goTo.marker('15');
 verify.quickInfoIs('Collection<any>');
 goTo.marker('17');

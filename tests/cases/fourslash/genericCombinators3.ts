@@ -4,8 +4,8 @@
 ////}
 ////
 ////interface Combinators {
-////    map<T, U>(c: Collection<T,U>, f: (x: T, y: U) => any): Collection<any, any>;
 ////    map<T, U, V>(c: Collection<T,U>, f: (x: T, y: U) => V): Collection<T, V>;
+////    map<T, U>(c: Collection<T,U>, f: (x: T, y: U) => any): Collection<any, any>;
 ////}
 ////
 ////var c2: Collection<number, string>;
@@ -21,7 +21,7 @@ goTo.marker('1b');
 verify.quickInfoIs('string');
 
 goTo.marker('1c');
-verify.quickInfoIs('<T, U>(c: Collection<number, string>, f: (x: number, y: string) => any): Collection<any, any> (+ 1 overload(s))');
+verify.quickInfoIs('<T, U, V>(c: Collection<number, string>, f: (x: number, y: string) => string): Collection<number, string> (+ 1 overload(s))');
 
 goTo.marker('9');
-verify.quickInfoIs('Collection<any, any>');
+verify.quickInfoIs('Collection<number, string>');

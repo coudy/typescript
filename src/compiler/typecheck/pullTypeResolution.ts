@@ -9324,11 +9324,16 @@ module TypeScript {
                 return this.overloadHasCorrectArity(signature, args);
             });
 
-            // Now that we have trimmed initial candidates, find which ones are applicable per spec section 4.12.1
-            // October 11, 2013: If the list of candidate signatures is empty, the function call is an error.
-            // Otherwise, if the candidate list contains one or more signatures for which the type of each argument expression is a
-            //    subtype of each corresponding parameter type, the return type of the first of those signatures becomes the return type of the function call.
-            // Otherwise, the return type of the first signature in the candidate list becomes the return type of the function call.
+            // Now that we have trimmed initial candidates, find which ones are applicable per spec
+            //    section 4.12.1
+            // October 11, 2013: If the list of candidate signatures is empty, the function call is
+            //    an error.
+            // Otherwise, if the candidate list contains one or more signatures for which the type
+            //    of each argument expression is a subtype of each corresponding parameter type, 
+            //    the return type of the first of those signatures becomes the return type of the
+            //    function call.
+            // Otherwise, the return type of the first signature in the candidate list becomes
+            //    the return type of the function call.
 
             var firstAssignableButNotSupertypeSignature: PullSignatureSymbol = null;
             var firstAssignableWithProvisionalErrorsSignature: PullSignatureSymbol = null;
