@@ -841,26 +841,6 @@ module TypeScript {
             for (var i = 0; i < childDecls.length; i++) {
                 this.bindDeclToPullSymbol(childDecls[i]);
             }
-
-            var typeParameters = objectDecl.getTypeParameters();
-            var typeParameter: PullTypeParameterSymbol;
-
-            for (var i = 0; i < typeParameters.length; i++) {
-                typeParameter = objectSymbol.findTypeParameter(typeParameters[i].name);
-
-                if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].name, false);
-
-                    objectSymbol.addTypeParameter(typeParameter);
-                }
-                else {
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfoChain.addDiagnosticFromAST(typeParameterAST, DiagnosticCode.Duplicate_identifier_0, [typeParameter.name]);
-                }
-
-                typeParameter.addDeclaration(typeParameters[i]);
-                typeParameters[i].setSymbol(typeParameter);
-            }
         }
 
         private bindConstructorTypeDeclarationToPullSymbol(constructorTypeDeclaration: PullDecl) {
