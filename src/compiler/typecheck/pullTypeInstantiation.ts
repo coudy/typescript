@@ -501,7 +501,7 @@ module TypeScript {
                         typeArgument = <PullTypeSymbol>this._typeParameterArgumentMap[typeParameters[i].pullSymbolIDString];
 
                         if (!typeArgument) {
-                            Debug.assert(this._typeArgumentReferences.length == typeParameters.length, "type argument count mismatch");
+                            Debug.fail("type argument count mismatch");
                         }
 
                         if (typeArgument) {

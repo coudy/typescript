@@ -7713,6 +7713,9 @@ module TypeScript {
                                             }
                                         }
                                     }
+                                    else if (typeConstraint.getIsSpecialized()) {
+                                        typeConstraint = new PullInstantiatedTypeReferenceSymbol(typeConstraint, typeReplacementMap);
+                                    }
                                     context.isComparingInstantiatedSignatures = true;
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context)) {
                                         constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeConstraint.toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true), typeParameters[j].toString(this, /*scopeSymbol*/ null, /*useConstraintInName*/ true)]);
@@ -8051,6 +8054,9 @@ module TypeScript {
                                                         typeConstraint = inferredTypeArgs[k];
                                                     }
                                                 }
+                                            }
+                                            else if (typeConstraint.getIsSpecialized()) {
+                                                typeConstraint = new PullInstantiatedTypeReferenceSymbol(typeConstraint, typeReplacementMap);
                                             }
 
                                             context.isComparingInstantiatedSignatures = true;
