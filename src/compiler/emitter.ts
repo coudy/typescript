@@ -1324,27 +1324,6 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
         }
 
-        public emitMemberFunction(funcDecl: MemberFunctionDeclaration) {
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
-                return;
-            }
-
-            var functionFlags = funcDecl.getFunctionFlags();
-            if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
-                var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-                if (hasFlag(functionFlags, FunctionFlags.Static)) {
-                    if (this.thisClassNode) {
-                        this.writeLineToOutput("");
-                        this.emitIndent();
-                        this.recordSourceMappingStart(funcDecl);
-                        this.writeToOutput(this.thisClassNode.identifier.actualText + "." + funcDecl.name.actualText + " = " + funcDecl.name.actualText + ";");
-                        this.recordSourceMappingEnd(funcDecl);
-                    }
-                }
-            }
-        }
-
-
         public emitFunction(funcDecl: FunctionDeclaration) {
             if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
                 return;
