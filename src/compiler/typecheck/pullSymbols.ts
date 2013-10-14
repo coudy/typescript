@@ -1338,25 +1338,6 @@ module TypeScript {
             }
         }
 
-        public addContainedNonMember(nonMember: PullSymbol) {
-
-            if (!nonMember) {
-                return;
-            }
-
-            if (!this._containedNonMembers) {
-                this._containedNonMembers = [];
-            }
-
-            this._containedNonMembers[this._containedNonMembers.length] = nonMember;
-
-            if (!this._containedNonMemberNameCache) {
-                this._containedNonMemberNameCache = new BlockIntrinsics();
-            }
-
-            this._containedNonMemberNameCache[nonMember.name] = nonMember;
-        }
-
         // TODO: This seems to conflate exposed members with private non-Members
         public findContainedNonMember(name: string): PullSymbol {
             if (!this._containedNonMemberNameCache) {
