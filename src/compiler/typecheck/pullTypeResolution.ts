@@ -9923,7 +9923,7 @@ module TypeScript {
         public static typeCheck(compilationSettings: ImmutableCompilationSettings, semanticInfoChain: SemanticInfoChain, scriptName: string, script: Script): void {
             var scriptDecl = semanticInfoChain.topLevelDecl(scriptName);
 
-            var resolver = new PullTypeResolver(compilationSettings, semanticInfoChain);
+            var resolver = semanticInfoChain.getResolver();
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
 
             if (resolver.canTypeCheckAST(script, context)) {

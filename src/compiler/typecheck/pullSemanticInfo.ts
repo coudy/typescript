@@ -39,7 +39,9 @@ module TypeScript {
         private declCache: BlockIntrinsics<PullDecl[]> = null;
         private symbolCache: BlockIntrinsics<PullSymbol> = null;
         private fileNameToDiagnostics: BlockIntrinsics<Diagnostic[]> = null;
-        private binder: PullSymbolBinder = null;
+
+        private _binder: PullSymbolBinder = null;
+        private _resolver: PullTypeResolver = null;
 
         private _topLevelDecls: PullDecl[] = null;
         private _fileNames: string[] = null;
@@ -436,7 +438,8 @@ module TypeScript {
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
             this.fileNameToDiagnostics = new BlockIntrinsics();
-            this.binder = null;
+            this._binder = null;
+            this._resolver = null;
             this._topLevelDecls = null;
             this._fileNames = null;
 
@@ -547,11 +550,19 @@ module TypeScript {
         }
 
         public getBinder(): PullSymbolBinder {
-            if (!this.binder) {
-                this.binder = new PullSymbolBinder(this);
+            if (!this._binder) {
+                this._binder = new PullSymbolBinder(this);
             }
 
-            return this.binder;
+            return this._binder;
+        }
+
+        public getResolver(): PullTypeResolver {
+            if (!this._resolver) {
+                this._resolver = new PullTypeResolver(this.compiler.compilationSettings(), this);
+            }
+
+            return this._resolver;
         }
 
         public addSyntheticIndexSignature(containingDecl: PullDecl, containingSymbol: PullTypeSymbol, ast: AST,
