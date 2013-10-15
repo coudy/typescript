@@ -5337,23 +5337,6 @@ module TypeScript {
             }
         }
 
-        private resolveNameSymbol(nameSymbol: PullSymbol, context: PullTypeResolutionContext) {
-            if (nameSymbol &&
-                !context.canUseTypeSymbol &&
-                nameSymbol != this.semanticInfoChain.undefinedTypeSymbol &&
-                nameSymbol != this.semanticInfoChain.nullTypeSymbol &&
-                (nameSymbol.isPrimitive() || !(nameSymbol.kind & TypeScript.PullElementKind.SomeValue))) {
-                var valueSymbol = nameSymbol.isAlias() ? (<PullTypeAliasSymbol>nameSymbol).getExportAssignedValueSymbol() : null;
-                if (valueSymbol) {
-                    nameSymbol = valueSymbol;
-                } else {
-                    nameSymbol = null;
-                }
-            }
-
-            return nameSymbol;
-        }
-
         private postTypeCheckNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             this.checkThisCaptureVariableCollides(nameAST, false, enclosingDecl, context);
         }
@@ -5690,7 +5673,6 @@ module TypeScript {
 
             // now for the name...
             var nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
-            nameSymbol = this.resolveNameSymbol(nameSymbol, context);
 
             if (!nameSymbol) {
                 // could be a function symbol
@@ -5715,8 +5697,6 @@ module TypeScript {
                         nameSymbol = this.getMemberSymbol(rhsName, PullElementKind.SomeValue, associatedType);
                     }
                 }
-
-                nameSymbol = this.resolveNameSymbol(nameSymbol, context);
 
                 // could be an object member
                 if (!nameSymbol && !lhsType.isPrimitive() && this.cachedObjectInterfaceType()) {
