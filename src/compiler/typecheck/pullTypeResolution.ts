@@ -754,10 +754,6 @@ module TypeScript {
             return (type === this.semanticInfoChain.anyTypeSymbol) || type.isError();
         }
 
-        private isNumberOrEquivalent(type: PullTypeSymbol) {
-            return (type === this.semanticInfoChain.numberTypeSymbol) || (this.cachedNumberInterfaceType() && type === this.cachedNumberInterfaceType());
-        }
-
         private resolveExternalModuleReference(idText: string, currentFileName: string): PullContainerSymbol {
             var originalIdText = idText;
             var symbol: PullContainerSymbol = null;

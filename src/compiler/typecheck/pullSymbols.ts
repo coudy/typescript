@@ -1096,9 +1096,6 @@ module TypeScript {
         private _indexSignatures: PullSignatureSymbol[] = null;
         private _allIndexSignatures: PullSignatureSymbol[] = null;
 
-        // GTODO
-        private _elementType: PullTypeSymbol = null;
-
         private _memberNameCache: BlockIntrinsics<PullSymbol> = null;
         private _enclosedTypeNameCache: BlockIntrinsics<PullTypeSymbol> = null;
         private _enclosedContainerCache: BlockIntrinsics<PullTypeSymbol> = null;
@@ -1231,11 +1228,7 @@ module TypeScript {
         public getArrayType(): PullTypeSymbol { return this._arrayVersionOfThisType; }
 
         public getElementType(): PullTypeSymbol {
-            return this._elementType;
-        }
-
-        public setElementType(type: PullTypeSymbol) {
-            this._elementType = type;
+            return null;
         }
 
         public setArrayType(arrayType: PullTypeSymbol) {
@@ -2612,17 +2605,6 @@ module TypeScript {
 
             super.invalidate();
         }
-    }
-
-    export function getRootType(typeToSpecialize: PullTypeSymbol) {
-        var decl = typeToSpecialize.getDeclarations()[0];
-
-        if (!typeToSpecialize.isGeneric()) {
-            return typeToSpecialize;
-        }
-
-        // get type from the decl if class or interface (Interface declaration with no name is declaration for object literal)
-        return typeToSpecialize.kind == PullElementKind.Class || (typeToSpecialize.kind == PullElementKind.Interface && typeToSpecialize.name != "") ? <PullTypeSymbol>decl.getSymbol().type : typeToSpecialize;
     }
 
     export function getIDForTypeSubstitutions(types: PullTypeSymbol[]): string {
