@@ -1061,7 +1061,7 @@ module TypeScript {
 
             var wrapsSomeTypeParameter = false;
 
-            if (signature.returnType.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+            if (signature.returnType && signature.returnType.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 wrapsSomeTypeParameter = true;
             }
 
