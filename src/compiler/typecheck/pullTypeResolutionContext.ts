@@ -165,8 +165,6 @@ module TypeScript {
         public resolvingTypeReference = false;
         public resolvingNamespaceMemberAccess = false;
 
-        public canUseTypeSymbol = false;
-
         public instantiatingTypesToAny = false;
 
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }

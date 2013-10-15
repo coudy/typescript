@@ -587,13 +587,9 @@ module TypeScript {
         }
 
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
-
-            var prevCanUseTypeSymbol = context.canUseTypeSymbol;
             var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-            context.canUseTypeSymbol = true;
             context.resolvingNamespaceMemberAccess = true;
             var lhs = this.resolveAST(expression, false, enclosingDecl, context);
-            context.canUseTypeSymbol = prevCanUseTypeSymbol;
             context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
 
             if (context.resolvingTypeReference && (lhs.kind === PullElementKind.Class || lhs.kind === PullElementKind.Interface)) {
@@ -5547,10 +5543,7 @@ module TypeScript {
 
             var rhsName = name.text();
             if (rhsName === "prototype") {
-                var prevCanUseTypeSymbol = context.canUseTypeSymbol;
-                context.canUseTypeSymbol = true;
                 var lhsType = this.resolveAST(expression, /*inContextuallyTypedAssignment*/false, enclosingDecl, context).type;
-                context.canUseTypeSymbol = prevCanUseTypeSymbol;
 
                 if (lhsType) {
                     if (lhsType.isClass() || lhsType.isConstructor()) {
@@ -5576,10 +5569,7 @@ module TypeScript {
 
             // assemble the dotted name path
             var rhsName = name.text();
-            var prevCanUseTypeSymbol = context.canUseTypeSymbol;
-            context.canUseTypeSymbol = true;
             var lhs = this.resolveAST(expression, /*inContextuallyTypedAssignment*/false, enclosingDecl, context);
-            context.canUseTypeSymbol = prevCanUseTypeSymbol;
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
