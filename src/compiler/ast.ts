@@ -384,11 +384,11 @@ module TypeScript {
         constructor(public identifier: Identifier,
             public typeParameterList: ASTList,
             public heritageClauses: ASTList,
-            public members: ASTList) {
+            public body: ObjectType) {
             super();
                 identifier && (identifier.parent = this);
                 typeParameterList && (typeParameterList.parent = this);
-            members && (members.parent = this);
+                body && (body.parent = this);
             heritageClauses && (heritageClauses.parent = this);
         }
 
@@ -421,7 +421,7 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 this._varFlags === ast._varFlags &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                structuralEquals(this.members, ast.members, includingPosition) &&
+                structuralEquals(this.body, ast.body, includingPosition) &&
                 structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
                 structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
         }

@@ -230,6 +230,12 @@ module TypeScript {
     }
 
     function preCollectObjectTypeDecls(objectType: ObjectType, context: DeclCollectionContext): void {
+        // if this is the 'body' of an interface declaration, then we don't want to create a decl 
+        // here.  We want the interface decl to be the parent decl of all the members we visit.
+        if (objectType.parent.nodeType() === NodeType.InterfaceDeclaration) {
+            return;
+        }
+
         var declFlags = PullElementFlags.None;
 
         var span = TextSpan.fromBounds(objectType.minChar, objectType.limChar);

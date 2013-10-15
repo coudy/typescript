@@ -520,7 +520,7 @@ module TypeScript {
             walker.walk(preAst.identifier);
             walker.walk(preAst.typeParameterList);
             walker.walk(preAst.heritageClauses);
-            walker.walk(preAst.members);
+            walker.walk(preAst.body);
         }
 
         export function walkObjectTypeChildren(preAst: ObjectType, walker: IAstWalker): void {

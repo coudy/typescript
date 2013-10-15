@@ -159,7 +159,6 @@ module TypeScript {
         }
     }
 
-
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
 
