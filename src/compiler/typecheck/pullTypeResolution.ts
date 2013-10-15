@@ -4494,13 +4494,12 @@ module TypeScript {
             this.validateVariableDeclarationGroups(catchDecl, context);
         }
 
-        private resolveReturnStatement(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private resolveReturnStatement(returnAST: ReturnStatement, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
             var parentDecl = enclosingDecl;
-            var returnAST = <ReturnStatement>ast;
             var returnExpr = returnAST.expression;
 
-            var returnType = <PullTypeSymbol>this.getSymbolForAST(ast, context);
-            var canTypeCheckAST = this.canTypeCheckAST(ast, context);
+            var returnType = <PullTypeSymbol>this.getSymbolForAST(returnAST, context);
+            var canTypeCheckAST = this.canTypeCheckAST(returnAST, context);
             var inContextuallyTypedAssignment = false;
             if (!returnType || canTypeCheckAST) {
                 while (parentDecl) {
@@ -4552,11 +4551,11 @@ module TypeScript {
 
                 if (!returnType) {
                     returnType = resolvedReturnType;
-                    this.setSymbolForAST(ast, resolvedReturnType, context);
+                    this.setSymbolForAST(returnAST, resolvedReturnType, context);
                 }
 
                 if (returnExpr && canTypeCheckAST) {
-                    this.setTypeChecked(ast, context);
+                    this.setTypeChecked(returnAST, context);
                     // Return type of constructor signature must be assignable to the instance type of the class.
                     if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
                         var classDecl = parentDecl.getParentDecl();
@@ -5187,7 +5186,7 @@ module TypeScript {
                     return this.resolveCatchClause(ast, enclosingDecl, context);
 
                 case NodeType.ReturnStatement:
-                    return this.resolveReturnStatement(ast, enclosingDecl, context);
+                    return this.resolveReturnStatement(<ReturnStatement>ast, enclosingDecl, context);
 
                 case NodeType.SwitchStatement:
                     return this.resolveSwitchStatement(ast, enclosingDecl, context);
@@ -5314,7 +5313,7 @@ module TypeScript {
 
                 case NodeType.ReturnStatement:
                     // Since we want to resolve the return expression to traverse parents, resolve will take care of typeChecking
-                    this.resolveReturnStatement(ast, enclosingDecl, context);
+                    this.resolveReturnStatement(<ReturnStatement>ast, enclosingDecl, context);
                     return;
 
                 default:
