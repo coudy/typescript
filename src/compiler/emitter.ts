@@ -627,17 +627,11 @@ module TypeScript {
                     this.emitCommaSeparatedList(args);
                 }
             } else {
-                if (target.nodeType() === NodeType.FunctionDeclaration) {
-                    this.writeToOutput("(");
-                }
                 if (callNode.target.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                     this.writeToOutput("_super.call");
                 }
                 else {
                     this.emitJavascript(target, false);
-                }
-                if (target.nodeType() === NodeType.FunctionDeclaration) {
-                    this.writeToOutput(")");
                 }
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
