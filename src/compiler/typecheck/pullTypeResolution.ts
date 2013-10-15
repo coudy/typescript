@@ -3628,11 +3628,11 @@ module TypeScript {
             }
 
             var getterSymbol = accessorSymbol.getGetter();
-            var getterFunctionDeclarationAst = <GetAccessor>this.getASTForSymbol(getterSymbol, context);
+            var getterFunctionDeclarationAst = getterSymbol ? <GetAccessor>getterSymbol.getDeclarations()[0].ast() : null;
             var hasGetter = getterSymbol !== null;
 
             var setterSymbol = accessorSymbol.getSetter();
-            var setterFunctionDeclarationAst = <SetAccessor>this.getASTForSymbol(setterSymbol, context);
+            var setterFunctionDeclarationAst = setterSymbol ? <SetAccessor>setterSymbol.getDeclarations()[0].ast() : null;
             var hasSetter = setterSymbol !== null;
 
             var getterAnnotatedType = this.resolveGetterReturnTypeAnnotation(
