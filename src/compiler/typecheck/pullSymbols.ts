@@ -38,7 +38,6 @@ module TypeScript {
 
         private rootSymbol: PullSymbol = null;
 
-        private _parentAccessorSymbol: PullSymbol = null;
         private _enclosingSignature: PullSignatureSymbol = null;
         private _docComments: string = null;
 
@@ -94,14 +93,6 @@ module TypeScript {
             this.name = name;
             this.kind = declKind;
             this.pullSymbolIDString = this.pullSymbolID.toString();
-        }
-
-        public setAccessorSymbol(accessor: PullSymbol) {
-            this._parentAccessorSymbol = accessor;
-        }
-
-        public getAccessorySymbol(): PullSymbol {
-            return this._parentAccessorSymbol;
         }
 
         private findAliasedType(resolver: PullTypeResolver, externalModule: PullSymbol, aliasSymbols: PullTypeAliasSymbol[]= [], lookIntoOnlyExportedAlias?: boolean, visitedExternalModuleDeclarations: PullDecl[]= []): PullTypeAliasSymbol[] {
@@ -2592,8 +2583,6 @@ module TypeScript {
             }
 
             this._setterSymbol = setter;
-
-            setter.setAccessorSymbol(this);
         }
 
         public getSetter(): PullSymbol {
@@ -2606,8 +2595,6 @@ module TypeScript {
             }
 
             this._getterSymbol = getter;
-
-            getter.setAccessorSymbol(this);
         }
 
         public getGetter(): PullSymbol {
