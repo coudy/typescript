@@ -146,7 +146,7 @@ module TypeScript {
 
         public invalidateProvisionallyTypedSymbols() {
             for (var i = 0; i < this.provisionallyTypedSymbols.length; i++) {
-                this.provisionallyTypedSymbols[i].invalidate();
+                this.provisionallyTypedSymbols[i].setUnresolved();
             }
         }
 

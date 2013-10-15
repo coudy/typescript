@@ -307,10 +307,6 @@ module TypeScript {
             this.inResolution = false;
         }
 
-        public invalidate() {
-            this.setUnresolved();
-        }
-
         public hasFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
@@ -871,16 +867,6 @@ module TypeScript {
             memberSymbol = this._memberTypeParameterNameCache[name];
 
             return memberSymbol;
-        }
-
-        public invalidate() {
-
-            this.nonOptionalParamCount = 0;
-            this.hasOptionalParam = false;
-            this.hasAGenericParameter = false;
-            this._stringConstantOverload = undefined;
-
-            super.invalidate();
         }
 
         public isStringConstantOverloadSignature() {
@@ -1925,17 +1911,6 @@ module TypeScript {
             super.setResolved();
         }
 
-        public invalidate(): void {
-
-            if (this._constructorMethod) {
-                this._constructorMethod.invalidate();
-            }
-
-            this._knownBaseTypeCount = 0;
-
-            super.invalidate();
-        }
-
         public getNamePartForFullName(): string {
             var name = super.getNamePartForFullName();
 
@@ -2196,7 +2171,7 @@ module TypeScript {
 
         public isStringConstant() { return false; }
 
-        public invalidate() {
+        public setUnresolved() {
             // do nothing...
         }
     }
@@ -2256,14 +2231,6 @@ module TypeScript {
 
         public getInstanceSymbol(): PullSymbol {
             return this.instanceSymbol;
-        }
-
-        public invalidate() {
-            if (this.instanceSymbol) {
-                this.instanceSymbol.invalidate();
-            }
-
-            super.invalidate();
         }
 
         public setExportAssignedValueSymbol(symbol: PullSymbol) {
@@ -2473,12 +2440,6 @@ module TypeScript {
 
             return sentinelEmptyArray;
         }
-
-        public invalidate() {
-            this.isUsedAsValue = false;
-
-            super.invalidate();
-        }
     }
 
     export class PullDefinitionSignatureSymbol extends PullSignatureSymbol {
@@ -2592,18 +2553,6 @@ module TypeScript {
 
         public getGetter(): PullSymbol {
             return this._getterSymbol;
-        }
-
-        public invalidate() {
-            if (this._getterSymbol) {
-                this._getterSymbol.invalidate();
-            }
-
-            if (this._setterSymbol) {
-                this._setterSymbol.invalidate();
-            }
-
-            super.invalidate();
         }
     }
 
