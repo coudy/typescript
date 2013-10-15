@@ -2010,48 +2010,63 @@ module TypeScript {
                 PullTypeResolver.postTypeCheckWorkitems.push({ ast: astWithName, enclosingDecl: enclosingDecl });
             } else if (nameText == "_super") {
                 this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, enclosingDecl, context);
+            } else if (nameText == "arguments") {
+                this.checkArgumentsCollides(astWithName, enclosingDecl, context);
             } else if (isDeclaration && nameText == "_i") {
                 this.checkIndexOfRestArgumentInitializationCollides(astWithName, enclosingDecl, context);
             }
         }
 
+        private hasRestParameterCodeGen(someFunctionDecl: PullDecl) {
+            var enclosingAST = this.getASTForDecl(someFunctionDecl);
+            var nodeType = enclosingAST.nodeType();
+            var hasRestParameterCodeGen = false;
+
+            if (nodeType == NodeType.FunctionDeclaration) {
+                var functionDeclaration = <FunctionDeclaration>enclosingAST;
+                hasRestParameterCodeGen = !hasFlag(someFunctionDecl.kind == PullElementKind.Method ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, PullElementFlags.Ambient)
+                && functionDeclaration.block
+                && lastParameterIsRest(functionDeclaration.parameterList);
+            }
+            else if (nodeType === NodeType.MemberFunctionDeclaration) {
+                var memberFunction = <MemberFunctionDeclaration>enclosingAST;
+                hasRestParameterCodeGen = !hasFlag(someFunctionDecl.kind == PullElementKind.Method ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, PullElementFlags.Ambient)
+                && memberFunction.block
+                && lastParameterIsRest(memberFunction.parameterList);
+            }
+            else if (nodeType == NodeType.ConstructorDeclaration) {
+                var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
+                hasRestParameterCodeGen = !hasFlag(someFunctionDecl.getParentDecl().flags, PullElementFlags.Ambient)
+                && constructorDeclaration.block
+                && lastParameterIsRest(constructorDeclaration.parameterList);
+            }
+            else if (nodeType == NodeType.ArrowFunctionExpression) {
+                var arrowFunctionExpression = <ArrowFunctionExpression>enclosingAST;
+                hasRestParameterCodeGen = lastParameterIsRest(arrowFunctionExpression.parameterList);
+            }
+            else if (nodeType === NodeType.FunctionExpression) {
+                var functionExpression = <FunctionExpression>enclosingAST;
+                hasRestParameterCodeGen = lastParameterIsRest(functionExpression.parameterList);
+            }
+
+            return hasRestParameterCodeGen;
+        }
+
+        private checkArgumentsCollides(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
+            if (ast.nodeType() == NodeType.Parameter
+                && !!(enclosingDecl.kind & PullElementKind.SomeFunction)) {
+                var hasRestParameterCodeGen = this.hasRestParameterCodeGen(enclosingDecl);
+                if (hasRestParameterCodeGen) {
+                    // It is error to use the arguments as variable name or parameter name in function with rest parameters
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_arguments_Compiler_uses_arguments_to_initialize_rest_parameters));
+                }
+            }
+        }
+
         private checkIndexOfRestArgumentInitializationCollides(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             if (ast.nodeType() == NodeType.Parameter
-                && (enclosingDecl.kind == PullElementKind.Function // Function
-                || enclosingDecl.kind == PullElementKind.FunctionExpression // Function expression
-                || enclosingDecl.kind == PullElementKind.ConstructorMethod // constructor of a class
-                || (enclosingDecl.kind == PullElementKind.Method && enclosingDecl.getParentDecl().kind == PullElementKind.Class))) { // Method of a class
-                var enclosingAST = this.getASTForDecl(enclosingDecl);
-                var nodeType = enclosingAST.nodeType();
-                var hasRestParameterCodeGen = false;
-
-                if (nodeType == NodeType.FunctionDeclaration) {
-                    var functionDeclaration = <FunctionDeclaration>enclosingAST;
-                    hasRestParameterCodeGen = !hasFlag(enclosingDecl.kind == PullElementKind.Method ? enclosingDecl.getParentDecl().flags : enclosingDecl.flags, PullElementFlags.Ambient)
-                    && functionDeclaration.block
-                    && lastParameterIsRest(functionDeclaration.parameterList);
-                }
-                else if (nodeType === NodeType.MemberFunctionDeclaration) {
-                    var memberFunction = <MemberFunctionDeclaration>enclosingAST;
-                    hasRestParameterCodeGen = !hasFlag(enclosingDecl.kind == PullElementKind.Method ? enclosingDecl.getParentDecl().flags : enclosingDecl.flags, PullElementFlags.Ambient)
-                    && memberFunction.block
-                    && lastParameterIsRest(memberFunction.parameterList);
-                }
-                else if (nodeType == NodeType.ConstructorDeclaration) {
-                    var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
-                    hasRestParameterCodeGen = !hasFlag(enclosingDecl.getParentDecl().flags, PullElementFlags.Ambient)
-                    && constructorDeclaration.block
-                    && lastParameterIsRest(constructorDeclaration.parameterList);
-                }
-                else if (nodeType == NodeType.ArrowFunctionExpression) {
-                    var arrowFunctionExpression = <ArrowFunctionExpression>enclosingAST;
-                    hasRestParameterCodeGen = lastParameterIsRest(arrowFunctionExpression.parameterList);
-                }
-                else if (nodeType === NodeType.FunctionExpression) {
-                    var functionExpression = <FunctionExpression>enclosingAST;
-                    hasRestParameterCodeGen = lastParameterIsRest(functionExpression.parameterList);
-                }
-
+                && !!(enclosingDecl.kind & PullElementKind.SomeFunction)) {
+                var hasRestParameterCodeGen = this.hasRestParameterCodeGen(enclosingDecl);
                 if (hasRestParameterCodeGen) {
                     // It is error to use the _i varible name
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_i_Compiler_uses_i_to_initialize_rest_parameter));

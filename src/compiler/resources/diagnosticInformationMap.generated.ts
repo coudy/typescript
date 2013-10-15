@@ -1226,6 +1226,10 @@ module TypeScript {
     "code": 2224,
     "category": DiagnosticCategory.Error
   },
+  "Duplicate identifier 'arguments'. Compiler uses 'arguments' to initialize rest parameters.": {
+    "code": 2225,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
