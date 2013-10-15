@@ -107,6 +107,11 @@ module TypeScript {
         var enumIndexerDecl = new NormalPullDecl("", "", PullElementKind.IndexSignature, PullElementFlags.Signature, enumDeclaration, span);
         var enumIndexerParameter = new NormalPullDecl("x", "x", PullElementKind.Parameter, PullElementFlags.None, enumIndexerDecl, span);
 
+        // create the value decl
+        var valueDecl = new NormalPullDecl(enumDeclaration.name, enumDeclaration.getDisplayName(), PullElementKind.Variable, enumDeclaration.flags, context.getParent(), enumDeclaration.getSpan());
+        enumDeclaration.setValueDecl(valueDecl);
+        context.semanticInfoChain.setASTForDecl(valueDecl, enumDecl);
+
         context.pushParent(enumDeclaration);
     }
 
@@ -134,7 +139,6 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).text();
         var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
-        var kind: PullElementKind = PullElementKind.Container;
 
         if ((hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
             declFlags |= PullElementFlags.Exported;
@@ -144,7 +148,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
+        var kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
 
         var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
 
@@ -152,7 +156,49 @@ module TypeScript {
         context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
 
+        // If we contain any code that requires initialization, then mark us as an initialized.
+        if (containsExecutableCode(moduleDecl.members)) {
+            decl.setFlags(declFlags | getInitializationFlag(decl));
+
+            // create the value decl
+            var valueDecl = new NormalPullDecl(decl.name, decl.getDisplayName(), PullElementKind.Variable, decl.flags, context.getParent(), decl.getSpan());
+            decl.setValueDecl(valueDecl);
+            context.semanticInfoChain.setASTForDecl(valueDecl, moduleDecl);
+        }
+
         context.pushParent(decl);
+    }
+
+    function containsExecutableCode(members: ASTList): boolean {
+        for (var i = 0, n = members.members.length; i < n; i++) {
+            var member = members.members[i];
+
+            // October 11, 2013
+            // Internal modules are either instantiated or non-instantiated. A non-instantiated 
+            // module is an internal module containing only interface types and other non - 
+            // instantiated modules. 
+            //
+            // Note: small spec deviation.  We don't consider an import statement sufficient to
+            // consider a module instantiated.  After all, if there is an import, but no actual
+            // code that references the imported value, then there's no need to emit the import
+            // or the module.
+            if (member.nodeType() === NodeType.ModuleDeclaration) {
+                var moduleDecl = <ModuleDeclaration>member;
+
+                // If we have a module in us, and it contains executable code, then we
+                // contain executable code.
+                if (containsExecutableCode(moduleDecl.members)) {
+                    return true;
+                }
+            }
+            else if (member.nodeType() !== NodeType.InterfaceDeclaration && member.nodeType() !== NodeType.ImportDeclaration) {
+                // If we contain anything that's not an interface declaration, then we contain
+                // executable code.
+                return true;
+            }
+        }
+
+        return false;
     }
 
     function preCollectClassDecls(classDecl: ClassDeclaration, context: DeclCollectionContext): void {
@@ -903,158 +949,11 @@ module TypeScript {
 
     function postCollectDecls(ast: AST, walker: IAstWalker) {
         var context: DeclCollectionContext = walker.state;
-        var parentDecl: PullDecl;
-        var initFlag = PullElementFlags.None;
+        var currentDecl = context.getParent();
 
-        // Note that we never pop the Script - after the traversal, it should be the
-        // one parent left in the context
-        switch (ast.nodeType()) {
-            case NodeType.EnumDeclaration:
-                var thisModule = context.getParent();
-                context.popParent();
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-
-                // create the value decl
-                var valueDecl = new NormalPullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.flags, parentDecl, thisModule.getSpan());
-                thisModule.setValueDecl(valueDecl);
-                context.semanticInfoChain.setASTForDecl(valueDecl, ast);
-
-                break;
-
-
-            case NodeType.ModuleDeclaration:
-                var thisModule = context.getParent();
-                context.popParent();
-
-                parentDecl = context.getParent();
-
-                if (hasInitializationFlag(thisModule)) {
-
-                    if (parentDecl && isContainer(parentDecl)) {
-                        initFlag = getInitializationFlag(parentDecl);
-                        parentDecl.setFlags(parentDecl.flags | initFlag);
-                    }
-
-                    // create the value decl
-                    var valueDecl = new NormalPullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.flags, parentDecl, thisModule.getSpan());
-
-                    thisModule.setValueDecl(valueDecl);
-
-                    context.semanticInfoChain.setASTForDecl(valueDecl, ast);
-                }
-
-                break;
-            case NodeType.ClassDeclaration:
-                context.popParent();
-
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-
-                break;
-            case NodeType.InterfaceDeclaration:
-                context.popParent();
-                break;
-            case NodeType.ObjectType:
-                context.popParent();
-                break;
-            case NodeType.Parameter:
-                // Note: a parameter does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-                break;
-            case NodeType.VariableDeclarator:
-                // Note: a variable declarator does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-                break;
-            case NodeType.MemberVariableDeclaration:
-                // Note: a variable declarator does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-                break;
-            case NodeType.EnumElement:
-                // Note: a enum element does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-                break;
-            case NodeType.ConstructorDeclaration:
-            case NodeType.FunctionPropertyAssignment:
-            case NodeType.FunctionDeclaration:
-            case NodeType.MemberFunctionDeclaration:
-            case NodeType.FunctionExpression:
-            case NodeType.GetAccessor:
-            case NodeType.SetAccessor:
-            case NodeType.ArrowFunctionExpression:
-                context.popParent();
-
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-                break;
-            case NodeType.ImportDeclaration:
-                // Note: an import does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-                break;
-            case NodeType.TypeParameter:
-                // Note: a type parameter does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-                break;
-            case NodeType.CatchClause:
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-
-                context.popParent();
-                break;
-            case NodeType.WithStatement:
-                parentDecl = context.getParent();
-
-                if (parentDecl && isContainer(parentDecl)) {
-                    initFlag = getInitializationFlag(parentDecl);
-                    parentDecl.setFlags(parentDecl.flags | initFlag);
-                }
-
-                context.popParent();
-                break;
-            case NodeType.ObjectLiteralExpression:
-                context.popParent();
-                break;
-            case NodeType.SimplePropertyAssignment:
-                // Note: a property assignment does not introduce a new decl scope.  So there is no
-                // need to pop a decl here.
-                // context.popParent();
-                break;
+        // Don't pop the topmost decl.  We return that out at the end.
+        if (ast.nodeType() !== NodeType.Script && currentDecl.ast() === ast) {
+            context.popParent();
         }
     }
 
