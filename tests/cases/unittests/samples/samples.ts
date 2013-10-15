@@ -26,7 +26,7 @@ describe('Compiling samples', function ()
         }
 
         var result: Harness.Compiler.CompilerResult;
-        harnessCompiler.compileFiles(filesToAdd, [], res => result = res, null, /*noResolve*/ includeWin8Libs);
+        harnessCompiler.compileFiles(filesToAdd, [], res => result = res, null, { noResolve: includeWin8Libs });
 
         assert.arrayLengthIs(result.errors, 0);
     }

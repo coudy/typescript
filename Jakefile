@@ -207,7 +207,34 @@ var harnessSources = [
 	path.join(runnersDirectory, "fourslash/fsrunner.ts"),
 	path.join(runnersDirectory, "projects/runner.ts"),
 	path.join(runnersDirectory, "unittest/unittestrunner.ts"),
-	path.join(runnersDirectory, "rwc/runner.ts")
+	path.join(runnersDirectory, "rwc/runner.ts"),
+
+	path.join(runnersDirectory, "../cases/unittests/samples/samples.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/assignmentCompat.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/assignmentCompatSanityCheck.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/callSignatureTests.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/class.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/classOverloads.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/constructSignatureTests.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/contextualTyping2.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/declarationTests.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/functionCalls.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/functionOverloads.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/functionSignaturesTests.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/genericAssignmentCompat.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/genericInference.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/identifiers.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/literals.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/moduleAlias.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/pathing.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/plusTyping.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/propertyAccess.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/propertySignatureTests.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/recursiveInferenceBug.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/scopeTests.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/ternaryBestCommonTypes.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/thisKeyword.ts"),
+	path.join(runnersDirectory, "../cases/unittests/compiler/widenedTypes.ts")
 ];
 
 var libraryFiles = [

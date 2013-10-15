@@ -788,8 +788,6 @@ module Harness {
             private inputFiles: string[] = [];
             private resolvedFiles: TypeScript.IResolvedFile[] = [];
             private compiler: TypeScript.TypeScriptCompiler;
-            // updateSourceUnit is sufficient if an existing unit is updated, if a new unit is added we need to do a full typecheck
-            private needsFullTypeCheck = true;
             private fileNameToScriptSnapshot = new TypeScript.StringHashTable<TypeScript.IScriptSnapshot>();
             public ioHost = new Harness.Compiler.EmitterIOHost();
             private sourcemapRecorder = new WriterAggregator();
@@ -816,10 +814,12 @@ module Harness {
                 // This is the branch that we want to use to ensure proper testing of file resolution, though there is an alternative
                 if (!this.compiler.compilationSettings().noResolve()) {
                     // Resolve references
-                    var resolutionResults = TypeScript.ReferenceResolver.resolve(this.inputFiles, this,
-                        this.compiler.compilationSettings().useCaseSensitiveFileResolution());
+                    var resolutionResults = TypeScript.ReferenceResolver.resolve(
+                        this.inputFiles,
+                        this,
+                        this.compiler.compilationSettings().useCaseSensitiveFileResolution()
+                    );
                     resolvedFiles = resolutionResults.resolvedFiles;
-
                     resolutionResults.diagnostics.forEach(diag => this.addError(ErrorType.Resolution, diag));
                 }
                 else {
@@ -863,7 +863,7 @@ module Harness {
             }
 
             /* Compile the current set of input files (if resolve = false) or trigger resolution and compile the resulting set of files */
-            public compile(resolve = true) {
+            public compile(options?: { noResolve: boolean }) {
                 // TODO: unsure I actually need resolve = false for unit tests
                 var addScriptSnapshot = (path: string, referencedFiles?: string[]) => {
                     if (path.indexOf('lib.d.ts') === -1) {
@@ -872,30 +872,18 @@ module Harness {
                     }
                 }
 
-                if (resolve) {
-                    this.resolvedFiles = this.resolve();
-                    for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
-                        var resolvedFile = this.resolvedFiles[i];
-                        addScriptSnapshot(resolvedFile.path, resolvedFile.referencedFiles);
-                    }
-                }
-                else {
+                if (options && options.noResolve) {
                     for (var i = 0, n = this.inputFiles.length; i < n; i++) {
                         var inputFile = this.inputFiles[i];
                         addScriptSnapshot(inputFile, []);
                     }
                 }
-
-                if (this.needsFullTypeCheck) {
-                    if (!resolve) {
-                        this.compiler.resolveAllFiles();
+                else {                    
+                    this.resolvedFiles = this.resolve();
+                    for (var i = 0, n = this.resolvedFiles.length; i < n; i++) {
+                        var resolvedFile = this.resolvedFiles[i];
+                        addScriptSnapshot(resolvedFile.path, resolvedFile.referencedFiles);
                     }
-                    this.needsFullTypeCheck = false;
-                }
-                else {
-                    this.getAllFilesInCompiler().forEach(file => {
-                        this.compiler.updateFile(file, this.getScriptSnapshot(file), 0, true, null);
-                    });
                 }
             }
 
@@ -909,7 +897,7 @@ module Harness {
                 otherFiles: { unitName: string; content?: string }[],
                 onComplete: (result: CompilerResult) => void,
                 settingsCallback?: (settings: TypeScript.ImmutableCompilationSettings) => void,
-                noResolve = false) {
+                options?: { noResolve: boolean }) {
 
                 var restoreSavedCompilerSettings = this.saveCompilerSettings();
                 this.reset();
@@ -922,7 +910,7 @@ module Harness {
                 }
 
                 try {
-                    this.compile(/*resolve?*/ !noResolve);
+                    this.compile(options);
 
                     this.reportCompilationErrors();
                     var result = new CompilerResult(this.ioHost.toArray(), this.errorList.slice(0), this.sourcemapRecorder.lines);
@@ -957,10 +945,9 @@ module Harness {
 
                 if (!updatedExistingFile) {
                     this.compiler.addFile(justName, TypeScript.ScriptSnapshot.fromString(code), ByteOrderMark.None, /*version:*/ 0, /*isOpen:*/ true, []);
-                    this.needsFullTypeCheck = true;
                 }
 
-                this.compile(false);
+                this.compile({ noResolve: true });
 
                 this.reportCompilationErrors();
 
@@ -1010,7 +997,6 @@ module Harness {
 
             /** The primary way to add test content. Functionally equivalent to adding files to the command line for a tsc invocation. */
             public addInputFile(file: { unitName: string; content: string }) {
-                this.needsFullTypeCheck = true;
                 var normalizedName = this.fixFilename(switchToForwardSlashes(file.unitName));
                 this.inputFiles.push(normalizedName);
                 this.fileNameToScriptSnapshot.add(normalizedName, TypeScript.ScriptSnapshot.fromString(file.content));
@@ -2008,3 +1994,6 @@ module Harness {
     global.it = it;
     global.assert = Harness.Assert;
 }
+
+import assert = Harness.Assert;
+

@@ -46,7 +46,7 @@ class UnitTestRunner extends RunnerBase {
             return { unitName: test, content: IO.readFile(test, /*codepage:*/ null).contents }
         });
         harnessCompiler.addInputFiles(toBeAdded);
-        harnessCompiler.compile(false);
+        harnessCompiler.compile({ noResolve: true });
         
         var stdout = new Harness.Compiler.EmitterIOHost();
         var emitDiagnostics = harnessCompiler.emitAll(stdout);
