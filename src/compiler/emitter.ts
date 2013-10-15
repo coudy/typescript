@@ -953,6 +953,64 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
+        private getModuleDeclToVerifyChildNameCollision(moduleDecl: PullDecl, changeNameIfAnyDeclarationInContext: boolean) {
+            if (ArrayUtilities.contains(this.declStack, moduleDecl)) {
+                // Given decl is in the scope, we would need to check for child name collision
+                return moduleDecl;
+            } else if (changeNameIfAnyDeclarationInContext) {
+                // Check if any other declaration of the given symbol is in scope 
+                // (eg. when emitting expression of type defined from different declaration in reopened module)
+                var symbol = moduleDecl.getSymbol();
+                if (symbol) {
+                    var otherDecls = symbol.getDeclarations();
+                    for (var i = 0; i < otherDecls.length; i++) {
+                        // If the other decl is in the scope, use this decl to determine which name to display
+                        if (ArrayUtilities.contains(this.declStack, otherDecls[i])) {
+                            return otherDecls[i];
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private hasChildNameCollision(moduleName: string, childDecls: PullDecl[]) {
+            return ArrayUtilities.any(childDecls, (childDecl: PullDecl) => {
+                if (childDecl.name == moduleName) {
+                    // same name child
+                    var childAST = this.semanticInfoChain.getASTForDecl(childDecl);
+                    if (childAST.shouldEmit(this)) {
+                        // Child ast would be emitted
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
+        // Get the moduleName to write in js file
+        // If changeNameIfAnyDeclarationInContext is true, verify if any of the declarations for the symbol would need rename.
+        private getModuleName(moduleDecl: PullDecl, changeNameIfAnyDeclarationInContext?: boolean) {
+            var moduleName = moduleDecl.name;
+            var moduleDisplayName = moduleDecl.getDisplayName();
+
+            // If the decl is in stack it may need name change in the js file
+            moduleDecl = this.getModuleDeclToVerifyChildNameCollision(moduleDecl, changeNameIfAnyDeclarationInContext);
+            if (moduleDecl) {
+                var childDecls = moduleDecl.getChildDecls();
+
+                // If there is any child that would be emitted with same name as module, js files would need to use rename for the module
+                while (this.hasChildNameCollision(moduleName, childDecls)) {
+                    // there was name collision with member which could result in faulty codegen, try rename with prepend of '_'
+                    moduleName = "_" + moduleName;
+                    moduleDisplayName = "_" + moduleDisplayName;
+                }
+            }
+
+            return moduleDisplayName;
+        }
+
         public emitModule(moduleDecl: ModuleDeclaration) {
             var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
             this.pushDecl(pullDecl);
@@ -989,10 +1047,13 @@ module TypeScript {
                 this.writeToOutput("(");
                 this.recordSourceMappingStart(moduleDecl);
                 this.writeToOutput("function (");
+                // Use the name that doesnt conflict with its members, 
+                // this.moduleName needs to be updated to make sure that export member declaration is emitted correctly
+                this.moduleName = this.getModuleName(pullDecl);
                 this.writeToOutputWithSourceMapRecord(this.moduleName, moduleDecl.name);
                 this.writeLineToOutput(") {");
 
-                this.recordSourceMappingNameStart(this.moduleName);
+                this.recordSourceMappingNameStart(moduleDecl.name.actualText);
             }
 
             // body - don't indent for Node
@@ -1005,6 +1066,7 @@ module TypeScript {
             }
 
             this.emitList(moduleDecl.members);
+            this.moduleName = moduleDecl.name.actualText;
             if (!isExternalModule || this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }
@@ -1608,7 +1670,8 @@ module TypeScript {
                     potentialDeclPath[i].flags & PullElementFlags.InitializedDynamicModule) {
                     this.writeToOutput("exports.");
                 } else {
-                    this.writeToOutput(potentialDeclPath[i].getDisplayName() + ".");
+                    // Get the name of the decl that would need to referenced and is conflict free.
+                    this.writeToOutput(this.getModuleName(potentialDeclPath[i], /* changeNameIfAnyDeclarationInContext */ true) + ".");
                 }
             }
         }
