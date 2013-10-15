@@ -2055,7 +2055,9 @@ module TypeScript {
             return MemberName.create("{}");
         }
 
-
+        public getGenerativeTypeClassification(enclosingType: PullTypeSymbol): GenerativeTypeClassification {
+            return GenerativeTypeClassification.Closed;
+        }
 
         // REVIEW: Should cache these checks
 

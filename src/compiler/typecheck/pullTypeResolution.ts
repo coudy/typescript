@@ -8867,6 +8867,38 @@ module TypeScript {
             var sourcePropType = sourceProp.type;
             var targetPropType = targetProp.type;
 
+            // Section 3.8.7 - Recursive Types
+            //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and assignability(section 3.8.4) relationships, 
+            //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
+            //  •	S and T must both be type references to the same named type, and
+            //  •	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
+            var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
+            var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
+
+                if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                    targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+
+                        if (sourcePropType.getRootSymbol() != targetPropType.getRootSymbol()) {
+                            return false;
+                        }
+
+                        var sourcePropTypeArguments = sourcePropType.getTypeArguments();
+                        var targetPropTypeArguments = targetPropType.getTypeArguments();
+
+                        if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
+                            sourcePropTypeArguments.length != targetPropTypeArguments.length) {
+                                return false;
+                        }
+
+                        for (var i = 0; i < sourcePropTypeArguments.length; i++) {
+                            if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo)) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                }
+
             // catch the mutually recursive or cached cases
             if (targetPropType && sourcePropType && (comparisonCache[sourcePropType.pullSymbolIDString + "#" + targetPropType.pullSymbolIDString] != undefined)) {
                 return true; // GTODO: should this be true?

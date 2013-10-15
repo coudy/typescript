@@ -7,6 +7,14 @@ module TypeScript {
         [pullSymbolID: string]: PullTypeSymbol;
     }
 
+    export enum GenerativeTypeClassification {
+        Unknown,
+        Open,
+        Closed,
+        InfinitelyExpanding
+    }
+
+
     // Type references and instantiated type references
     export class PullTypeReferenceSymbol extends PullTypeSymbol {
 
@@ -61,6 +69,7 @@ module TypeScript {
             return this.referencedTypeSymbol;
         }
 
+        // type symbol shims
         public hasMembers(): boolean {
             // no need to resolve first - members are collected during binding
 
@@ -319,13 +328,6 @@ module TypeScript {
         }
     }
 
-    export enum GenerativeTypeClassification {
-        Unknown,
-        Open,
-        Closed,
-        InfinitelyExpanding
-    }
-
     export var nSpecializationsCreated = 0;
     export var nSpecializedSignaturesCreated = 0;    
 
@@ -345,6 +347,79 @@ module TypeScript {
         public isInstanceReferenceType: boolean = false;
 
         public getIsSpecialized() { return !this.isInstanceReferenceType; }
+
+        private _generativeTypeClassification: GenerativeTypeClassification = GenerativeTypeClassification.Unknown;
+
+        public getGenerativeTypeClassification(enclosingType: PullTypeSymbol): GenerativeTypeClassification {
+
+            if (this._generativeTypeClassification == GenerativeTypeClassification.Unknown) {
+
+                var rootType: PullTypeSymbol = <PullTypeSymbol>enclosingType.getRootSymbol();
+                var rootThis: PullTypeSymbol = <PullTypeReferenceSymbol>this.getRootSymbol();
+
+                // With respect to the enclosing type, is this type reference open, closed or 
+                // infinitely expanding?
+
+                var typeParameters = enclosingType.getTypeParameters();
+                var typeReferenceTypeArguments = rootThis.getTypeArguments();
+                var referenceTypeArgument: PullTypeSymbol = null;
+
+                if (!typeReferenceTypeArguments) {
+                    this._generativeTypeClassification = GenerativeTypeClassification.Open;
+                }
+                else {
+                    var i = 0;
+
+                    while (i < typeReferenceTypeArguments.length) {
+                        referenceTypeArgument = <PullTypeSymbol>typeReferenceTypeArguments[i].getRootSymbol();
+
+                        if (referenceTypeArgument.isGeneric() &&
+                            referenceTypeArgument.typeWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                            break;
+                        }
+
+                        i++;
+                    }
+
+                    // if none of the type parameters are wrapped, the type reference is closed
+                    if (i == typeParameters.length) {
+                        this._generativeTypeClassification = GenerativeTypeClassification.Closed;
+                    }
+
+                    // If the type reference is not closed, it's either open or infinitely expanding
+                    if (this._generativeTypeClassification == GenerativeTypeClassification.Unknown) {
+
+                        // A type reference that references any of this type's type parameters in a type
+                        // argument position is 'open'
+
+                        var i = 0;
+
+                        while ((this._generativeTypeClassification == GenerativeTypeClassification.Unknown) &&
+                            (i < typeReferenceTypeArguments.length)) {
+
+                                for (var j = 0; j < typeParameters.length; j++) {
+                                    if (typeParameters[j] == typeReferenceTypeArguments[i]) {
+                                        this._generativeTypeClassification = GenerativeTypeClassification.Open;
+                                        break;
+                                    }
+                                }
+
+                                i++;
+                        }
+
+                        // if it's not open, then it's infinitely expanding (given that the 'wrap' check above
+                        // returned true
+                        if (this._generativeTypeClassification != GenerativeTypeClassification.Open) {
+                            this._generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
+                        }
+                    }
+                }
+            }
+
+            return this._generativeTypeClassification;
+        }
+
+        // shims
 
         public isArrayNamedTypeReference(): boolean {
             if (this._isArray === undefined) {
@@ -376,7 +451,7 @@ module TypeScript {
         // The typeParameterArgumentMap parameter represents a mapping of PUllSymbolID strings of type parameters to type argument symbols
         // The instantiateFunctionTypeParameters parameter is set to true when a signature is being specialized at a call site, or if its
         // type parameters need to otherwise be specialized (say, during a type relationship check)
-        public static create(resolver: PullTypeResolver, type: PullTypeSymbol, typeParameterArgumentMap: { [pullSymbolID: string]: PullTypeSymbol; }, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
+        public static create(resolver: PullTypeResolver, type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
             Debug.assert(resolver);
 
             // check for an existing instantiation
@@ -485,8 +560,6 @@ module TypeScript {
         public isGeneric(): boolean {
             return !!this.referencedTypeSymbol.getTypeParameters().length;
         }
-
-        public generativeTypeClassification: GenerativeTypeClassification = GenerativeTypeClassification.Unknown;
 
         public getTypeArguments(): PullTypeSymbol[]{
 
@@ -788,24 +861,5 @@ module TypeScript {
         public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
             return this.referencedTypeSymbol.hasBase(potentialBase, visited);
         }
-    }
-
-    export function computeGenerativeTypeClassification(type: PullTypeSymbol, typeArguments: PullTypeSymbol[]): GenerativeTypeClassification {
-
-        // a type reference without type arguments
-        if (!type.isGeneric()) {
-            return GenerativeTypeClassification.Closed;
-        }
-
-        // does not reference any of G's type parameters - closed
-
-        // references  any of G's type parameters in a type argument - open
-
-        // directly or indirectly references G through open type references and which 
-        // contains a wrapped form of any of G'ts type parameters in one or more
-        // type arguments - infinitely expanding
-
-
-        return GenerativeTypeClassification.Unknown;
     }
 }
