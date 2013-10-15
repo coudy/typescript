@@ -6,9 +6,7 @@
 module TypeScript {
     class DeclCollectionContext {
         public isDeclareFile = false;
-        public parentChain = new Array<PullDecl>();
-        public containingModuleHasExportAssignmentArray: boolean[] = [false];
-        public isParsingAmbientModuleArray: boolean[] = [false];
+        public parentChain: PullDecl[] = [];
 
         constructor(public semanticInfoChain: SemanticInfoChain) {
         }
@@ -18,18 +16,35 @@ module TypeScript {
         public pushParent(parentDecl: PullDecl) { if (parentDecl) { this.parentChain[this.parentChain.length] = parentDecl; } }
 
         public popParent() { this.parentChain.length--; }
+    }
 
-        public foundValueDecl = false;
+    function containingModuleHasExportAssignment(ast: AST): boolean {
+        ast = ast.parent;
+        while (ast) {
+            if (ast.nodeType() === NodeType.ModuleDeclaration) {
+                var moduleDecl = <ModuleDeclaration>ast;
+                return ArrayUtilities.any(moduleDecl.members.members, m => m.nodeType() === NodeType.ExportAssignment);
+            }
 
-        public containingModuleHasExportAssignment(): boolean {
-            Debug.assert(this.containingModuleHasExportAssignmentArray.length > 0);
-            return ArrayUtilities.last(this.containingModuleHasExportAssignmentArray);
+            ast = ast.parent;
         }
 
-        public isParsingAmbientModule(): boolean {
-            Debug.assert(this.isParsingAmbientModuleArray.length > 0);
-            return ArrayUtilities.last(this.isParsingAmbientModuleArray);
+        return false;
+    }
+
+    function isParsingAmbientModule(ast: AST, context: DeclCollectionContext): boolean {
+        ast = ast.parent;
+        while (ast) {
+            if (ast.nodeType() === NodeType.ModuleDeclaration) {
+                if (hasFlag((<ModuleDeclaration>ast).getModuleFlags(), ModuleFlags.Ambient)) {
+                    return true;
+                }
+            }
+
+            ast = ast.parent;
         }
+
+        return false;
     }
 
     function preCollectImportDecls(ast: AST, context: DeclCollectionContext): void {
@@ -39,7 +54,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (!context.containingModuleHasExportAssignment() && hasFlag(importDecl.getVarFlags(), VariableFlags.Exported)) {
+        if (hasFlag(importDecl.getVarFlags(), VariableFlags.Exported) && !containingModuleHasExportAssignment(ast)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -71,11 +86,11 @@ module TypeScript {
         var enumName = enumDecl.identifier.text();
         var kind: PullElementKind = PullElementKind.Container;
 
-        if (!context.containingModuleHasExportAssignment() && (hasFlag(enumDecl.getModuleFlags(), ModuleFlags.Exported) || context.isParsingAmbientModule())) {
+        if ((hasFlag(enumDecl.getModuleFlags(), ModuleFlags.Exported) || isParsingAmbientModule(enumDecl, context)) && !containingModuleHasExportAssignment(enumDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(enumDecl.getModuleFlags(), ModuleFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+        if (hasFlag(enumDecl.getModuleFlags(), ModuleFlags.Ambient) || isParsingAmbientModule(enumDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -121,11 +136,11 @@ module TypeScript {
         var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
         var kind: PullElementKind = PullElementKind.Container;
 
-        if (!context.containingModuleHasExportAssignment() && (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || context.isParsingAmbientModule())) {
+        if ((hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient) || isParsingAmbientModule(moduleDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -137,11 +152,6 @@ module TypeScript {
         context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
 
-        context.containingModuleHasExportAssignmentArray.push(
-            ArrayUtilities.any(moduleDecl.members.members, m => m.nodeType() === NodeType.ExportAssignment));
-        context.isParsingAmbientModuleArray.push(
-            context.isDeclareFile || ArrayUtilities.last(context.isParsingAmbientModuleArray) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient));
-
         context.pushParent(decl);
     }
 
@@ -149,11 +159,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var constructorDeclKind = PullElementKind.Variable;
 
-        if (!context.containingModuleHasExportAssignment() && (hasFlag(classDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
+        if ((hasFlag(classDecl.getVarFlags(), VariableFlags.Exported) || isParsingAmbientModule(classDecl, context)) && !containingModuleHasExportAssignment(classDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+        if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient) || isParsingAmbientModule(classDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -194,7 +204,7 @@ module TypeScript {
     function preCollectInterfaceDecls(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
 
-        if (!context.containingModuleHasExportAssignment() && (hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
+        if ((hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported) || isParsingAmbientModule(interfaceDecl, context)) && !containingModuleHasExportAssignment(interfaceDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -346,11 +356,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
 
-        if (!context.containingModuleHasExportAssignment() && (hasFlag(varDecl.getVarFlags(), VariableFlags.Exported) || context.isParsingAmbientModule())) {
+        if ((hasFlag(varDecl.getVarFlags(), VariableFlags.Exported) || isParsingAmbientModule(varDecl, context)) && !containingModuleHasExportAssignment(varDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || isParsingAmbientModule(varDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -432,11 +442,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Function;
 
-        if (!context.containingModuleHasExportAssignment() && (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Exported) || context.isParsingAmbientModule())) {
+        if ((hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Exported) || isParsingAmbientModule(funcDeclAST, context)) && !containingModuleHasExportAssignment(funcDeclAST)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Ambient) || context.isParsingAmbientModule() || context.isDeclareFile) {
+        if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Ambient) || isParsingAmbientModule(funcDeclAST, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -920,8 +930,6 @@ module TypeScript {
             case NodeType.ModuleDeclaration:
                 var thisModule = context.getParent();
                 context.popParent();
-                context.containingModuleHasExportAssignmentArray.pop();
-                context.isParsingAmbientModuleArray.pop();
 
                 parentDecl = context.getParent();
 
