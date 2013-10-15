@@ -2757,7 +2757,7 @@ module TypeScript {
             if (declSymbol.kind != PullElementKind.Parameter &&
                 (declSymbol.kind != PullElementKind.Property || declSymbol.getContainer().isNamedTypeSymbol())) {
                 this.checkSymbolPrivacy(declSymbol, declSymbol.type, (symbol: PullSymbol) =>
-                    this.variablePrivacyErrorReporter(declSymbol, symbol, context));
+                    this.variablePrivacyErrorReporter(varDeclOrParameter, declSymbol, symbol, context));
             }
 
             if (declSymbol.kind != PullElementKind.Property || declSymbol.hasFlag(PullElementFlags.PropertyParameter)) {
@@ -10343,9 +10343,8 @@ module TypeScript {
             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseAst, messageCode, messageArguments));
         }
 
-        private variablePrivacyErrorReporter(declSymbol: PullSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
+        private variablePrivacyErrorReporter(declAST: AST, declSymbol: PullSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
             var typeSymbol = <PullTypeSymbol>symbol;
-            var declAST = <VariableDeclarator>this.getASTForSymbol(declSymbol, context);
             var enclosingDecl = this.getEnclosingDecl(declSymbol.getDeclarations()[0]);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
