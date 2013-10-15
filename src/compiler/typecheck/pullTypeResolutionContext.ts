@@ -168,7 +168,6 @@ module TypeScript {
         public canUseTypeSymbol = false;
 
         public instantiatingTypesToAny = false;
-        public isComparingInstantiatedSignatures = false;
 
         public resolvingTypeNameAsNameExpression = false;
 
