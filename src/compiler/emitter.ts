@@ -1686,7 +1686,7 @@ module TypeScript {
                 }
                 var pullSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(name);
                 if (pullSymbol && pullSymbolAlias) {
-                    var symbolToCompare = this.resolvingContext.resolvingTypeReference ?
+                    var symbolToCompare = isTypesOnlyLocation(name) ?
                         pullSymbolAlias.getExportAssignedTypeSymbol() :
                         pullSymbolAlias.getExportAssignedValueSymbol();
 
@@ -2261,9 +2261,7 @@ module TypeScript {
             this.recordSourceMappingStart(classDecl);
             this.writeToOutput(")(");
             if (hasBaseClass) {
-                this.resolvingContext.resolvingTypeReference = true;
                 this.emitJavascript(baseTypeReference.term, /*startLine:*/ false);
-                this.resolvingContext.resolvingTypeReference = false;
             }
             this.writeToOutput(");");
             this.recordSourceMappingEnd(classDecl);

@@ -6,5 +6,6 @@
 ////var x: typeof m1c./*1*/;
 
 goTo.marker('1');
-verify.completionListContains('I');
-verify.not.completionListContains('foo');
+
+// No completion because m1c is not an instantiated module.
+verify.not.completionListContains('I');

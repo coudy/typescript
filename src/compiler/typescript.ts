@@ -602,7 +602,6 @@ module TypeScript {
 
             var resolver = this.semanticInfoChain.getResolver();
             var resolutionContext = new PullTypeResolutionContext(resolver);
-            var inTypeReference = false;
             var enclosingDecl: PullDecl = null;
             var isConstructorCall = false;
 
@@ -635,9 +634,6 @@ module TypeScript {
                             }
                             else if (cur.nodeType() === NodeType.AssignmentExpression) {
                                 asgAST = <BinaryExpression>cur;
-                            }
-                            else if (cur.nodeType() === NodeType.TypeRef) {
-                                inTypeReference = true;
                             }
 
                             resultASTs[resultASTs.length] = cur;
@@ -758,8 +754,6 @@ module TypeScript {
                             }
                         }
                     }
-
-                    resolutionContext.resolvingTypeReference = inTypeReference;
 
                     var inContextuallyTypedAssignment = false;
 
@@ -1036,10 +1030,7 @@ module TypeScript {
                                 var functionDeclaration = <FunctionDeclaration>enclosingDeclAST;
                                 if (functionDeclaration.returnTypeAnnotation) {
                                     // The containing function has a type annotation, propagate it as the contextual type
-                                    var currentResolvingTypeReference = resolutionContext.resolvingTypeReference;
-                                    resolutionContext.resolvingTypeReference = true;
                                     var returnTypeSymbol = resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
-                                    resolutionContext.resolvingTypeReference = currentResolvingTypeReference;
                                     if (returnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;
                                         contextualType = returnTypeSymbol;
@@ -1064,10 +1055,6 @@ module TypeScript {
 
                         break;
 
-                    case NodeType.TypeQuery:
-                        resolutionContext.resolvingTypeReference = false;
-                        break;
-
                     case NodeType.TypeRef:
                         var typeExpressionNode = path[i + 1];
 
@@ -1075,49 +1062,6 @@ module TypeScript {
                         // resolved before descending into it.
                         if (typeExpressionNode && typeExpressionNode.nodeType() === NodeType.ObjectType) {
                             resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
-                        }
-
-                        // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
-                        // when we are looking at a function type (e.g. var y : (a) => void)
-                        if (!typeExpressionNode ||
-                            typeExpressionNode.nodeType() === NodeType.Name ||
-                            typeExpressionNode.nodeType() === NodeType.QualifiedName ||
-                            typeExpressionNode.nodeType() === NodeType.MemberAccessExpression) {
-                            resolutionContext.resolvingTypeReference = true;
-                        }
-
-                        break;
-
-                    case NodeType.TypeParameter:
-                        // Set the resolvingTypeReference to true if this a name (e.g. var x: Type) but not 
-                        // when we are looking at a function type (e.g. var y : (a) => void)
-                        var typeExpressionNode = path[i + 1];
-                        if (!typeExpressionNode ||
-                            typeExpressionNode.nodeType() === NodeType.Name ||
-                            typeExpressionNode.nodeType() === NodeType.QualifiedName ||
-                            typeExpressionNode.nodeType() === NodeType.MemberAccessExpression) {
-                            resolutionContext.resolvingTypeReference = true;
-                        }
-
-                        break;
-
-                    case NodeType.ClassDeclaration:
-                        var classDeclaration = <ClassDeclaration>current;
-                        if (path[i + 1]) {
-                            if (path[i + 1] === classDeclaration.heritageClauses) {
-                                resolutionContext.resolvingTypeReference = true;
-                            }
-                        }
-
-                        break;
-
-                    case NodeType.InterfaceDeclaration:
-                        var interfaceDeclaration = <InterfaceDeclaration>current;
-                        if (path[i + 1]) {
-                            if (path[i + 1] === interfaceDeclaration.heritageClauses ||
-                                path[i + 1] === interfaceDeclaration.identifier) {
-                                resolutionContext.resolvingTypeReference = true;
-                            }
                         }
 
                         break;

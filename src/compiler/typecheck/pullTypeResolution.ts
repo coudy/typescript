@@ -589,7 +589,7 @@ module TypeScript {
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
             var lhs = this.resolveAST(expression, false, enclosingDecl, context);
 
-            if (context.resolvingTypeReference && (lhs.kind === PullElementKind.Class || lhs.kind === PullElementKind.Interface)) {
+            if (isTypesOnlyLocation(expression) && (lhs.kind === PullElementKind.Class || lhs.kind === PullElementKind.Interface)) {
                 // No more sub types in these types
                 return null;
             }
@@ -796,16 +796,7 @@ module TypeScript {
                 context = new PullTypeResolutionContext(this);
             }
 
-            // This is called while we're resolving type references.  Make sure we're no longer
-            // considered to be in that state when we resolve the actual declaration.
-            var savedResolvingTypeReference = context.resolvingTypeReference;
-            context.resolvingTypeReference = false;
-
-            var result = this.resolveDeclaredSymbolWorker(symbol, context);
-
-            context.resolvingTypeReference = savedResolvingTypeReference;
-
-            return result;
+            return this.resolveDeclaredSymbolWorker(symbol, context);
         }
 
         private resolveDeclaredSymbolWorker(symbol: PullSymbol, context: PullTypeResolutionContext): PullSymbol {
@@ -2142,11 +2133,7 @@ module TypeScript {
 
             // a name
             if (term.nodeType() === NodeType.Name) {
-                var prevResolvingTypeReference = context.resolvingTypeReference;
-                context.resolvingTypeReference = true;
                 typeDeclSymbol = this.resolveTypeNameExpression(<Identifier>term, enclosingDecl, context);
-
-                context.resolvingTypeReference = prevResolvingTypeReference;
             }
             // a function
             else if (term.nodeType() === NodeType.FunctionDeclaration) {
@@ -2158,16 +2145,9 @@ module TypeScript {
             else if (term.nodeType() === NodeType.GenericType) {
                 typeDeclSymbol = this.resolveGenericTypeReference(<GenericType>term, enclosingDecl, context);
             }
-            // a dotted name
             else if (term.nodeType() === NodeType.QualifiedName) {
-                // assemble the dotted name path
-                var dottedName = <QualifiedName>term;
-
                 // find the decl
-                prevResolvingTypeReference = context.resolvingTypeReference;
-                context.resolvingTypeReference = true;
-                typeDeclSymbol = this.resolveQualifiedName(dottedName, enclosingDecl, context);
-                context.resolvingTypeReference = prevResolvingTypeReference;
+                typeDeclSymbol = this.resolveQualifiedName(<QualifiedName>term, enclosingDecl, context);
             }
             else if (term.nodeType() === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>term;
@@ -2187,10 +2167,7 @@ module TypeScript {
                     typeQueryTerm = (<TypeReference>typeQueryTerm).term;
                 }
 
-                var savedResolvingTypeReference = context.resolvingTypeReference;
-                context.resolvingTypeReference = false;
                 var valueSymbol = this.resolveAST(typeQueryTerm, false, enclosingDecl, context);
-                context.resolvingTypeReference = savedResolvingTypeReference;
 
                 if (valueSymbol && valueSymbol.isAlias()) {
                     if ((<PullTypeAliasSymbol>valueSymbol).assignedValue) {
@@ -4952,7 +4929,7 @@ module TypeScript {
                     return this.resolveFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, inContextuallyTypedAssignment, enclosingDecl, context);
 
                 case NodeType.Name:
-                    if (context.resolvingTypeReference) {
+                    if (isTypesOnlyLocation(ast)) {
                         return this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
                     }
                     else {
@@ -5225,7 +5202,7 @@ module TypeScript {
                     return;
 
                 case NodeType.Name:
-                    if (context.resolvingTypeReference) {
+                    if (isTypesOnlyLocation(ast)) {
                         this.resolveTypeNameExpression(<Identifier>ast, enclosingDecl, context);
                     }
                     else {
@@ -5798,10 +5775,7 @@ module TypeScript {
         }
 
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
-            var savedResolvingTypeReference = context.resolvingTypeReference;
-            context.resolvingTypeReference = true;
             var genericTypeSymbol = this.resolveAST(genericTypeAST.name, false, enclosingDecl, context).type;
-            context.resolvingTypeReference = savedResolvingTypeReference;
 
             if (genericTypeSymbol.isError()) {
                 return genericTypeSymbol;
@@ -5933,14 +5907,7 @@ module TypeScript {
             }
 
             // assemble the dotted name path
-            var rhsName = dottedNameAST.right.text();
-
-            // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
-            // gotten into this code path if it was already set.
-            var savedResolvingTypeReference = context.resolvingTypeReference;
-            context.resolvingTypeReference = true;
             var lhs = this.resolveAST(dottedNameAST.left, false, enclosingDecl, context);
-            context.resolvingTypeReference = savedResolvingTypeReference;
 
             var lhsType = lhs.isAlias() ? (<PullTypeAliasSymbol>lhs).getExportAssignedContainerSymbol() : lhs.type;
 
@@ -5962,6 +5929,8 @@ module TypeScript {
             // now for the name...
             var onLeftOfDot = this.isLeftSideOfQualifiedName(dottedNameAST);
             var memberKind = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
+
+            var rhsName = dottedNameAST.right.text();
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
 
             // if the lhs exports a container type, but not a type, we should check the container type
@@ -11092,10 +11061,7 @@ module TypeScript {
 
             var typeDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
 
-            var savedResolvingTypeReference = context.resolvingTypeReference;
-            context.resolvingTypeReference = true;
             var baseType = this.resolveTypeReference(baseDeclAST, typeDecl, context).type;
-            context.resolvingTypeReference = savedResolvingTypeReference;
 
             if (!baseType) {
                 return;
@@ -11469,5 +11435,35 @@ module TypeScript {
         else {
             throw Errors.invalidOperation();
         }
+    }
+
+    export function isTypesOnlyLocation(ast: AST): boolean {
+        while (ast) {
+            switch (ast.nodeType()) {
+                case NodeType.TypeQuery:
+                    return false;
+                case NodeType.TypeRef:
+                    // If we're in a TypeQuery node then we're actually in an expression context.  i.e.
+                    // var v: typeof A.B;
+                    // 'A.B' is actually an expression.
+                    // For all other typeref cases, we're definitely in a types only location.
+                    return ast.parent.nodeType() !== NodeType.TypeQuery;
+                //case NodeType.TypeParameter:
+                //    // TODO: Is htis necessary?  The previous code used to explicitly check for 
+                //    // this, but i'm not sure why.
+                //    return true;
+                case NodeType.ClassDeclaration:
+                case NodeType.InterfaceDeclaration:
+                case NodeType.ModuleDeclaration:
+                case NodeType.FunctionDeclaration:
+                case NodeType.MemberAccessExpression:
+                case NodeType.Parameter:
+                    return false;
+            }
+
+            ast = ast.parent;
+        }
+
+        return false;
     }
 }

@@ -162,8 +162,6 @@ module TypeScript {
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
 
-        public resolvingTypeReference = false;
-
         public instantiatingTypesToAny = false;
 
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }
