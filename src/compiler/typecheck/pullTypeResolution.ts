@@ -215,25 +215,6 @@ module TypeScript {
             return symbol;
         }
 
-        private getASTForSymbol(symbol: PullSymbol, context: PullTypeResolutionContext): AST {
-
-            if (!symbol) {
-                return null;
-            } 
-
-            // Check global cache
-            var ast = this.semanticInfoChain.getASTForSymbol(symbol);
-
-            if (!ast) {
-                // Check provisional cache
-                if (context && context.inProvisionalResolution()) {
-                    ast = context.getASTForSymbol(symbol);
-                }
-            }
-
-            return ast;
-        }
-
         public getASTForDecl(decl: PullDecl): AST {
             return this.semanticInfoChain.getASTForDecl(decl);
         }

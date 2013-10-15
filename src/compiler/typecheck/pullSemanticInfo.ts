@@ -29,7 +29,6 @@ module TypeScript {
         // <-- Data to clear when we get invalidated
         private astSymbolMap: DataMap<PullSymbol> = null;
         private astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
-        private symbolASTMap = new DataMap<AST>();
         private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> = null;
 
         private declSymbolMap = new DataMap<PullSymbol>();
@@ -432,7 +431,6 @@ module TypeScript {
 
             this.astSymbolMap = new DataMap<PullSymbol>();
             this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
-            this.symbolASTMap = new DataMap<AST>();
             this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
 
             this.declCache = new BlockIntrinsics();
@@ -480,15 +478,10 @@ module TypeScript {
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
             this.astSymbolMap.link(ast.astIDString, symbol);
-            this.symbolASTMap.link(symbol.pullSymbolIDString, ast);
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
             return this.astSymbolMap.read(ast.astIDString);
-        }
-
-        public getASTForSymbol(symbol: PullSymbol): AST {
-            return this.symbolASTMap.read(symbol.pullSymbolIDString);
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
