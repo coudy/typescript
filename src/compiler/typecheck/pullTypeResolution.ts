@@ -808,16 +808,12 @@ module TypeScript {
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = false;
 
-            var savedResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
-            context.resolvingTypeNameAsNameExpression = false;
-
             var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
             context.resolvingNamespaceMemberAccess = false;
 
             var result = this.resolveDeclaredSymbolWorker(symbol, context);
 
             context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
-            context.resolvingTypeNameAsNameExpression = savedResolvingTypeNameAsNameExpression;
             context.resolvingTypeReference = savedResolvingTypeReference;
 
             return result;
@@ -5375,7 +5371,7 @@ module TypeScript {
                 if (this.canTypeCheckAST(nameAST, context)) {
                     this.typeCheckNameExpression(nameAST, enclosingDecl, context);
                 }
-                nameSymbol = this.computeNameExpression(nameAST, enclosingDecl, context);
+                nameSymbol = this.computeNameExpression(nameAST, enclosingDecl, context, /*reportDiagnostics:*/ true);
             }
 
             this.resolveDeclaredSymbol(nameSymbol, context);
@@ -5390,7 +5386,7 @@ module TypeScript {
             return nameSymbol;
         }
 
-        private computeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
+        private computeNameExpression(nameAST: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
             if (nameAST.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -5427,7 +5423,7 @@ module TypeScript {
             }
 
             if (!nameSymbol) {
-                if (context.resolvingTypeNameAsNameExpression) {
+                if (!reportDiagnostics) {
                     return null;
                 } else {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText]));
@@ -11092,11 +11088,9 @@ module TypeScript {
             typeSymbol: PullTypeSymbol,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext) {
+
             var typeSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(valueDeclAST);
-            var tempResolvingTypeNameAsNameExpression = context.resolvingTypeNameAsNameExpression;
-            context.resolvingTypeNameAsNameExpression = true;
-            var valueSymbol = this.computeNameExpression(valueDeclAST, enclosingDecl, context);
-            context.resolvingTypeNameAsNameExpression = tempResolvingTypeNameAsNameExpression;
+            var valueSymbol = this.computeNameExpression(valueDeclAST, enclosingDecl, context, /*reportDiagnostics:*/ false);
             var valueSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(valueDeclAST);
 
             // Reset the alias value 

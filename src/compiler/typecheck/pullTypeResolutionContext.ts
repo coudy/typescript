@@ -169,8 +169,6 @@ module TypeScript {
 
         public instantiatingTypesToAny = false;
 
-        public resolvingTypeNameAsNameExpression = false;
-
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false) { }
 
         public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
