@@ -3,6 +3,10 @@
 
 module TypeScript {
 
+    export interface PullTypeSubstitutionMap {
+        [pullSymbolID: string]: PullTypeSymbol;
+    }
+
     // Type references and instantiated type references
     export class PullTypeReferenceSymbol extends PullTypeSymbol {
 
@@ -316,11 +320,11 @@ module TypeScript {
         }
     }
 
-    export enum GenerativeTypeKind {
+    export enum GenerativeTypeClassification {
         Unknown,
         Open,
         Closed,
-        Generative
+        InfinitelyExpanding
     }
 
     export var nSpecializationsCreated = 0;
@@ -329,8 +333,8 @@ module TypeScript {
     export class PullInstantiatedTypeReferenceSymbol extends PullTypeReferenceSymbol {
 
         private _instantiatedMembers: PullSymbol[] = null;
-        private _allInstantiatedMemberNameCache: any = null;
-        private _instantiatedMemberNameCache: any = new BlockIntrinsics(); // cache from member names to pull symbols
+        private _allInstantiatedMemberNameCache: { [name: string]: PullSymbol; } = null;
+        private _instantiatedMemberNameCache: { [name: string]: PullSymbol; } = new BlockIntrinsics(); // cache from member names to pull symbols
         private _instantiatedCallSignatures: PullSignatureSymbol[] = null;
         private _instantiatedConstructSignatures: PullSignatureSymbol[] = null;
         private _instantiatedIndexSignatures: PullSignatureSymbol[] = null;
@@ -373,7 +377,7 @@ module TypeScript {
         // The typeParameterArgumentMap parameter represents a mapping of PUllSymbolID strings of type parameters to type argument symbols
         // The instantiateFunctionTypeParameters parameter is set to true when a signature is being specialized at a call site, or if its
         // type parameters need to otherwise be specialized (say, during a type relationship check)
-        public static create(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
+        public static create(type: PullTypeSymbol, typeParameterArgumentMap: { [pullSymbolID: string]: PullTypeSymbol; }, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
 
             // check for an existing instantiation
             var rootType = <PullTypeSymbol>type.getRootSymbol();
@@ -416,7 +420,7 @@ module TypeScript {
             // If the reference is made to itself (e.g., referring to Array<T> within the declaration of Array<T>,
             // We want to special-case the reference so later calls to getMember, etc., will delegate directly
             // to the referenced declaration type, and not force any additional instantiation
-            var isReferencedType = (type.kind & PullElementKind.SomeNamedType) != 0;
+            var isReferencedType = (type.kind & PullElementKind.SomeInstantiatableType) != 0;
 
             if (isReferencedType) {
                 if (typeParameters && reconstructedTypeArgumentList) {
@@ -442,7 +446,7 @@ module TypeScript {
             // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map.  This helps
             // us get the type argument list right when it's requested via getTypeArguments
             if (type.isTypeReference() && type.isGeneric()) {
-                var initializationMap = {};
+                var initializationMap: PullTypeSubstitutionMap = {};
 
                 // first, initialize the argument map
                 for (var typeParameterID in typeParameterArgumentMap) {
@@ -472,7 +476,7 @@ module TypeScript {
             return instantiation;
         }
 
-        constructor(public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: any) {
+        constructor(public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: { [name: string]: PullTypeSymbol; }) {
             super(referencedTypeSymbol);
 
             nSpecializationsCreated++;
@@ -482,7 +486,7 @@ module TypeScript {
             return !!this.referencedTypeSymbol.getTypeParameters().length;
         }
 
-        public generativeTypeKind: GenerativeTypeKind = GenerativeTypeKind.Unknown;
+        public generativeTypeClassification: GenerativeTypeClassification = GenerativeTypeClassification.Unknown;
 
         public getTypeArguments(): PullTypeSymbol[]{
 
@@ -799,7 +803,7 @@ module TypeScript {
         }
     }
     
-    export function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullTypeSymbol {
+    export function instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullTypeSymbol {
 
         // if the type is a primitive type, nothing to do here
         if (type.isPrimitive()) {
@@ -826,7 +830,7 @@ module TypeScript {
 
     // The argument map prevents us from accidentally flagging method type parameters, or (if we
     // ever decide to go that route) allows for partial specialization
-    function typeWrapsSomeTypeParameter(type: PullTypeSymbol, typeParameterArgumentMap: any): boolean {
+    function typeWrapsSomeTypeParameter(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
 
         if (!type) {
             return false;
@@ -866,7 +870,7 @@ module TypeScript {
         }
 
         // if it's not a named type, we'll need to introspect its member list
-        if (!(type.kind & PullElementKind.SomeNamedType) || !type.name) {
+        if (!(type.kind & PullElementKind.SomeInstantiatableType) || !type.name) {
             if (!wrapsSomeTypeParameter) {
                 // otherwise, walk the member list and signatures, checking for wraps
                 var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
@@ -918,7 +922,7 @@ module TypeScript {
         return wrapsSomeTypeParameter;
     }
 
-    function signatureWrapsSomeTypeParameter(signature: PullSignatureSymbol, typeParameterArgumentMap: any): boolean {
+    function signatureWrapsSomeTypeParameter(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
 
         if (signature.inWrapCheck) {
             return false;
@@ -948,7 +952,7 @@ module TypeScript {
         return wrapsSomeTypeParameter;
     }
 
-    export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: any, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
+    export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
 
         if (!signatureWrapsSomeTypeParameter(signature, typeParameterArgumentMap)) {
             return signature;
@@ -956,21 +960,9 @@ module TypeScript {
 
         var typeArguments: PullTypeSymbol[] = [];
 
-        var rootSignature = <PullSignatureSymbol>signature.getRootSymbol();
-
-        for (var typeParameterID in typeParameterArgumentMap) {
-            typeArguments[typeArguments.length] = typeParameterArgumentMap[typeParameterID];
-        }
-
-        var instantiatedSignature = instantiateFunctionTypeParameters ? rootSignature.getSpecialization(typeArguments) : null;
-
-        if (instantiatedSignature) {
-            return instantiatedSignature;
-        }
-
         nSpecializedSignaturesCreated++;
 
-        instantiatedSignature = new PullSignatureSymbol(signature.kind);
+        var instantiatedSignature = new PullSignatureSymbol(signature.kind);
         instantiatedSignature.setRootSymbol(signature);
 
         // add type parameters
@@ -989,7 +981,7 @@ module TypeScript {
             for (var j = 0; j < parameters.length; j++) {
                 parameter = new PullSymbol(parameters[j].name, PullElementKind.Parameter);
                 parameter.setRootSymbol(parameters[j]);
-                //parameter.addDeclaration(parameters[j].getDeclarations()[0]);
+
                 if (parameters[j].isOptional) {
                     parameter.isOptional = true;
                 }
@@ -1003,10 +995,25 @@ module TypeScript {
             }
         }
 
-        if (instantiateFunctionTypeParameters) {
-            signature.addSpecialization(instantiatedSignature, typeArguments);
+        return instantiatedSignature;
+    }
+
+    export function computeGenerativeTypeClassification(type: PullTypeSymbol, typeArguments: PullTypeSymbol[]): GenerativeTypeClassification {
+
+        // a type reference without type arguments
+        if (!type.isGeneric()) {
+            return GenerativeTypeClassification.Closed;
         }
 
-        return instantiatedSignature;
+        // does not reference any of G's type parameters - closed
+
+        // references  any of G's type parameters in a type argument - open
+
+        // directly or indirectly references G through open type references and which 
+        // contains a wrapped form of any of G'ts type parameters in one or more
+        // type arguments - infinitely expanding
+
+
+        return GenerativeTypeClassification.Unknown;
     }
 }

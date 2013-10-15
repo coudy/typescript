@@ -794,7 +794,6 @@ module TypeScript {
     }
 
     export class PullSignatureSymbol extends PullSymbol {
-        private _specializationCache: any = {};
         private _memberTypeParameterNameCache: BlockIntrinsics<PullTypeParameterSymbol> = null;
         private _stringConstantOverload: boolean = undefined;
 
@@ -840,25 +839,6 @@ module TypeScript {
             if (!isOptional) {
                 this.nonOptionalParamCount++;
             }
-        }
-
-        public addSpecialization(signature: PullSignatureSymbol, typeArguments: PullTypeSymbol[]) {
-            if (typeArguments && typeArguments.length) {
-                this._specializationCache[getIDForTypeSubstitutions(typeArguments)] = signature;
-            }
-        }
-
-        public getSpecialization(typeArguments: PullTypeSymbol[]): PullSignatureSymbol {
-
-            if (typeArguments) {
-                var sig = <PullSignatureSymbol>this._specializationCache[getIDForTypeSubstitutions(typeArguments)];
-
-                if (sig) {
-                    return sig;
-                }
-            }
-
-            return null;
         }
 
         public addTypeParameter(typeParameter: PullTypeParameterSymbol) {

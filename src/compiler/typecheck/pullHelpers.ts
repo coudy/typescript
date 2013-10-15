@@ -101,6 +101,8 @@ module TypeScript {
 
 
         export function typeSymbolsAreIdentical(a: PullTypeSymbol, b: PullTypeSymbol): boolean {
+            // initialized types are omitted, since the type reference points back to the generic type
+            // declaration.  (E.g., the referencedTypeSymbol of 'Foo<number>' would be 'Foo<T>'
             if (a.isTypeReference() && !a.getIsSpecialized()) {
                 a = (<PullTypeReferenceSymbol>a).referencedTypeSymbol;
             }

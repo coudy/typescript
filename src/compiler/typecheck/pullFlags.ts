@@ -106,6 +106,6 @@ module TypeScript {
 
         SomeTypeReference = Interface | ObjectType | FunctionType | ConstructorType,
 
-        SomeNamedType = Class | Interface | Enum | TypeParameter,
+        SomeInstantiatableType = Class | Interface | TypeParameter,
     }
 }

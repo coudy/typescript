@@ -1067,10 +1067,10 @@ module TypeScript {
             // and not its type parameters
             var typeParameters = type.getTypeArgumentsOrTypeParameters();
 
-            var typeParameterArgumentMap = {};
+            var typeParameterArgumentMap: { [name: string]: PullTypeSymbol; } = {};
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i] ? typeArguments[i] : new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
+                typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i] || new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
             }
 
             return PullInstantiatedTypeReferenceSymbol.create(type, typeParameterArgumentMap);
@@ -5925,14 +5925,14 @@ module TypeScript {
             // Get the instantiated versions of the type parameters (in case their constraints were generic)
             typeParameters = specializedSymbol.getTypeParameters();
 
-            var typeConstraintArgumentMap: any = {};
+            var typeConstraintSubstitutionMap: { [symbolID: string]: PullTypeSymbol } = {};
             var typeArg: PullTypeSymbol = null;
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
                 typeConstraint = typeParameters[iArg].getConstraint();
 
-                typeConstraintArgumentMap[typeParameters[iArg].pullSymbolIDString] = typeArg;
+                typeConstraintSubstitutionMap[typeParameters[iArg].pullSymbolIDString] = typeArg;
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
@@ -5946,7 +5946,7 @@ module TypeScript {
                         }
                     }
                     else if (typeConstraint.isGeneric()) {
-                        typeConstraint = instantiateType(typeConstraint, typeConstraintArgumentMap);
+                        typeConstraint = instantiateType(typeConstraint, typeConstraintSubstitutionMap);
                     }
 
                     if (typeArg.isTypeParameter()) {
@@ -5957,6 +5957,7 @@ module TypeScript {
                         }
                     }
 
+                    // handle cases where the type argument is a wrapped name type, that's being recursively resolved
                     if (typeArg.inResolution || (typeArg.isTypeReference() && (<PullTypeReferenceSymbol>typeArg).referencedTypeSymbol.inResolution)) {
                         return specializedSymbol;
                     }
@@ -7447,7 +7448,6 @@ module TypeScript {
             var typeParameters: PullTypeParameterSymbol[];
             var typeConstraint: PullTypeSymbol = null;
             var beforeResolutionSignatures = signatures;
-            var sawGenericSignature = false;
 
             for (var i = 0; i < signatures.length; i++) {
                 typeParameters = signatures[i].getTypeParameters();
@@ -8526,18 +8526,8 @@ module TypeScript {
                 return false;
             }
 
-            // Even if the source class does extend the target class, we know that constructor types are allowed
-            // to differ in their construct signatures. Therefore, we need to bail out and do a normal structural
-            // check here to make sure we compare construct signatures.
-            // TODO: If we discover more cases where it is not appropriate for constructor types to extend each other,
-            // consider removing the extends link.
-            if (source.kind & PullElementKind.ConstructorType
-                && target.kind & PullElementKind.ConstructorType) {
-                return false;
-            }
-
             // if these are two type references referencing the same base type, then they must be two different instantiations of a generic
-            // type (if they were not, we never would have gotten to this point
+            // type (if they were not, we never would have gotten to this point)
             if (source.isTypeReference() && target.isTypeReference()) {
                 if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol.hasBase((<PullTypeReferenceSymbol>target).referencedTypeSymbol)) {
                     var sourceTypeArguments = (<PullTypeReferenceSymbol>source).getTypeArguments();
@@ -8844,7 +8834,7 @@ module TypeScript {
 
             // This is an optimization that is a deviation from the spec. The spec sections 3.8.3 and 3.8.4 say to compare structurally,
             // but we know that if a type nominally extends another type, it is both a subtype and assignable.
-            if ((source.kind & PullElementKind.SomeNamedType) && (target.kind & PullElementKind.SomeNamedType) && this.sourceExtendsTarget(source, target, context)) {
+            if ((source.kind & PullElementKind.SomeInstantiatableType) && (target.kind & PullElementKind.SomeInstantiatableType) && this.sourceExtendsTarget(source, target, context)) {
                 return true;
             }
 
