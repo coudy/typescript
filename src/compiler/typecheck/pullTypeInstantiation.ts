@@ -952,6 +952,18 @@ module TypeScript {
         return wrapsSomeTypeParameter;
     }
 
+    // Note that the code below does not cache initializations of signatures.  We do this because we were only utilizing the cache on 1 our of
+    // every 6 instantiations, and we would run the risk of getting this wrong when type checking calls within generic type declarations:
+    // For example, if the signature is the root signature, it may not be safe to cache.  For example:
+    //
+    //  class C<T> {
+    //      public p: T;
+    //      public m<U>(u: U, t: T): void {}
+    //      public n<U>() { m(null, this.p); }
+    //  }
+    //
+    // In the code above, we don't want to cache the invocation of 'm' in 'n' against 'any', since the
+    // signature to 'm' is only partially specialized 
     export function instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
 
         if (!signatureWrapsSomeTypeParameter(signature, typeParameterArgumentMap)) {
