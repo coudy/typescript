@@ -37,8 +37,8 @@ module TypeScript {
         private _cachedRegExpInterfaceType: PullTypeSymbol = null;
         private _cachedAnyTypeArgs: PullTypeSymbol[][] = null;
 
-        static typeCheckCallBacks: { (context: PullTypeResolutionContext): void; }[] = [];
-        private static postTypeCheckWorkitems: { ast: AST; enclosingDecl: PullDecl; }[] = [];
+        private typeCheckCallBacks: { (context: PullTypeResolutionContext): void; }[] = [];
+        private postTypeCheckWorkitems: { ast: AST; enclosingDecl: PullDecl; }[] = [];
 
         private _cachedFunctionArgumentsSymbol: PullSymbol = null;
 
@@ -1162,7 +1162,7 @@ module TypeScript {
                 // Store off and resolve the reference type after we've finished checking the file
                 // (This way, we'll still properly resolve the type even if its parent was already resolved during
                 // base type resolution, making the type otherwise inaccessible).
-                PullTypeResolver.typeCheckCallBacks.push((context) => {
+                this.typeCheckCallBacks.push(context => {
                     if (classOrInterface.nodeType() == NodeType.ClassDeclaration) {
                         this.resolveClassDeclaration(<ClassDeclaration>classOrInterface, context);
                     }
@@ -1344,7 +1344,7 @@ module TypeScript {
             if ((/* In global context*/ !classDeclSymbol.getContainer() ||
                 /* In Dynamic Module */ classDeclSymbol.getContainer().kind == PullElementKind.DynamicModule) &&
                 classDeclAST.identifier.text() == "_this") {
-                PullTypeResolver.postTypeCheckWorkitems.push({ ast: classDeclAST, enclosingDecl: this.getEnclosingDecl(classDecl) });
+                this.postTypeCheckWorkitems.push({ ast: classDeclAST, enclosingDecl: this.getEnclosingDecl(classDecl) });
             }
 
             this.resolveAST(classDeclAST.classElements, false, classDecl, context);
@@ -1988,7 +1988,7 @@ module TypeScript {
         private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: Identifier, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             var nameText = name.text();
             if (nameText == "_this") {
-                PullTypeResolver.postTypeCheckWorkitems.push({ ast: astWithName, enclosingDecl: enclosingDecl });
+                this.postTypeCheckWorkitems.push({ ast: astWithName, enclosingDecl: enclosingDecl });
             } else if (nameText == "_super") {
                 this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, enclosingDecl, context);
             } else if (nameText == "arguments") {
@@ -3049,21 +3049,7 @@ module TypeScript {
             this.checkFunctionTypePrivacy(
                 funcDeclAST, funcDeclAST.getFunctionFlags(), null, funcDeclAST.parameterList, null, funcDeclAST.block, context);
 
-            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
-
-            // It is a constructor or function
-            var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
-
-            // Seems like this should be done for the constructor case as well.
-            //if (funcDecl.kind == PullElementKind.Function) {
-            //    // Non property variable with _this name, we need to verify if this would be ok
-            //    var funcNameText = name.text();
-            //    if (funcNameText == "_super") {
-            //        this.checkSuperCaptureVariableCollides(funcDeclAST, /*isDeclaration*/ true, enclosingDecl, context);
-            //    }
-            //}
-
-            PullTypeResolver.typeCheckCallBacks.push((context) => {
+            this.typeCheckCallBacks.push(context => {
                 // Function or constructor
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
             });
@@ -3163,7 +3149,7 @@ module TypeScript {
                 }
             }
 
-            PullTypeResolver.typeCheckCallBacks.push((context) => {
+            this.typeCheckCallBacks.push(context => {
                 if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
                     // Function or constructor
                     this.typeCheckFunctionOverloads(funcDeclAST, context);
@@ -5322,8 +5308,8 @@ module TypeScript {
         }
 
         private processPostTypeCheckWorkItems(context: PullTypeResolutionContext) {
-            while (PullTypeResolver.postTypeCheckWorkitems.length) {
-                var workItem = PullTypeResolver.postTypeCheckWorkitems.pop();
+            while (this.postTypeCheckWorkitems.length) {
+                var workItem = this.postTypeCheckWorkitems.pop();
                 this.postTypeCheck(workItem.ast, workItem.enclosingDecl, context);
             }
         }
@@ -6296,7 +6282,7 @@ module TypeScript {
 
             this.validateVariableDeclarationGroups(functionDecl, context);
 
-            PullTypeResolver.typeCheckCallBacks.push((context) => {
+            this.typeCheckCallBacks.push(context => {
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
             });
         }
@@ -9912,13 +9898,11 @@ module TypeScript {
             var context = new PullTypeResolutionContext(resolver, /*inTypeCheck*/ true);
 
             if (resolver.canTypeCheckAST(script, context)) {
-                PullTypeResolver.typeCheckCallBacks.length = 0;
-
                 resolver.resolveAST(script, /*inContextuallyTypedAssignment:*/ false, scriptDecl, context);
                 resolver.validateVariableDeclarationGroups(scriptDecl, context);
 
-                while (PullTypeResolver.typeCheckCallBacks.length) {
-                    var callBack = PullTypeResolver.typeCheckCallBacks.pop();
+                while (resolver.typeCheckCallBacks.length) {
+                    var callBack = resolver.typeCheckCallBacks.pop();
                     callBack(context);
                 }
 
