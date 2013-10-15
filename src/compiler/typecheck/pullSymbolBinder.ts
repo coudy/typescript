@@ -895,7 +895,7 @@ module TypeScript {
 
             var isImplicit = (declFlags & PullElementFlags.ImplicitVariable) !== 0;
             var isModuleValue = (declFlags & (PullElementFlags.InitializedModule)) != 0;
-            var isEnumValue = (declFlags & PullElementFlags.InitializedEnum) != 0;
+            var isEnumValue = (declFlags & PullElementFlags.Enum) != 0;
             var isClassConstructorVariable = (declFlags & PullElementFlags.ClassConstructorVariable) != 0;
 
             variableSymbol = this.getExistingSymbol(variableDeclaration, PullElementKind.SomeValue, parent);
@@ -913,7 +913,7 @@ module TypeScript {
 
                 var prevKind = variableSymbol.kind;
                 var prevIsAmbient = variableSymbol.hasFlag(PullElementFlags.Ambient);
-                var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.InitializedEnum);
+                var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.Enum);
                 var prevIsClassConstructorVariable = variableSymbol.hasFlag(PullElementFlags.ClassConstructorVariable);
                 var prevIsModuleValue = variableSymbol.hasFlag(PullElementFlags.InitializedModule);
                 var prevIsImplicit = variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);

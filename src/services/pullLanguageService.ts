@@ -816,7 +816,7 @@ module Services {
                     return (declaration.flags & (TypeScript.PullElementFlags.ClassConstructorVariable |
                         TypeScript.PullElementFlags.InitializedModule |
                         TypeScript.PullElementFlags.InitializedDynamicModule |
-                        TypeScript.PullElementFlags.InitializedEnum)) === 0;
+                        TypeScript.PullElementFlags.Enum)) === 0;
                 case TypeScript.PullElementKind.EnumMember:
                     return true;
                 case TypeScript.PullElementKind.FunctionExpression:
@@ -1461,7 +1461,7 @@ module Services {
                         var declFlags = declarations[i].flags;
                         if (declFlags & TypeScript.PullElementFlags.InitializedModule) {
                             return ScriptElementKind.moduleElement;
-                        } else if (declFlags & TypeScript.PullElementFlags.InitializedEnum) {
+                        } else if (declFlags & TypeScript.PullElementFlags.Enum) {
                             return ScriptElementKind.enumElement;
                         }
                     }

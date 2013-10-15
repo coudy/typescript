@@ -80,7 +80,7 @@ module TypeScript {
         }
 
         // Consider an enum 'always initialized'.
-        declFlags |= (PullElementFlags.Enum | PullElementFlags.InitializedEnum);
+        declFlags |= PullElementFlags.Enum;
         kind = PullElementKind.Enum;
 
         var span = TextSpan.fromBounds(enumDecl.minChar, enumDecl.limChar);
@@ -871,9 +871,6 @@ module TypeScript {
         if (decl.kind & PullElementKind.Container) {
             return PullElementFlags.InitializedModule;
         }
-        else if (decl.kind & PullElementKind.Enum) {
-            return PullElementFlags.InitializedEnum;
-        }
         else if (decl.kind & PullElementKind.DynamicModule) {
             return PullElementFlags.InitializedDynamicModule;
         }
@@ -886,9 +883,6 @@ module TypeScript {
 
         if (kind & PullElementKind.Container) {
             return (decl.flags & PullElementFlags.InitializedModule) !== 0;
-        }
-        else if (kind & PullElementKind.Enum) {
-            return (decl.flags & PullElementFlags.InitializedEnum) != 0;
         }
         else if (kind & PullElementKind.DynamicModule) {
             return (decl.flags & PullElementFlags.InitializedDynamicModule) !== 0;
@@ -910,17 +904,15 @@ module TypeScript {
                 context.popParent();
                 parentDecl = context.getParent();
 
-                if (hasInitializationFlag(thisModule)) {
-                    if (parentDecl && isContainer(parentDecl)) {
-                        initFlag = getInitializationFlag(parentDecl);
-                        parentDecl.setFlags(parentDecl.flags | initFlag);
-                    }
-
-                    // create the value decl
-                    var valueDecl = new NormalPullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.flags, parentDecl, thisModule.getSpan());
-                    thisModule.setValueDecl(valueDecl);
-                    context.semanticInfoChain.setASTForDecl(valueDecl, ast);
+                if (parentDecl && isContainer(parentDecl)) {
+                    initFlag = getInitializationFlag(parentDecl);
+                    parentDecl.setFlags(parentDecl.flags | initFlag);
                 }
+
+                // create the value decl
+                var valueDecl = new NormalPullDecl(thisModule.name, thisModule.getDisplayName(), PullElementKind.Variable, thisModule.flags, parentDecl, thisModule.getSpan());
+                thisModule.setValueDecl(valueDecl);
+                context.semanticInfoChain.setASTForDecl(valueDecl, ast);
 
                 break;
 
