@@ -6822,10 +6822,6 @@ module TypeScript {
                 }
             }
 
-            if (!this.getSymbolForAST(objectLitAST, context)) {
-                objectLitDecl.setSymbol(null);
-            }
-
             typeSymbol.setResolved();
             return typeSymbol;
         }
