@@ -1468,7 +1468,6 @@ module TypeScript {
                 this.recordSourceMappingStart(varDecl);
 
                 var varDeclName = varDecl.id.actualText;
-                var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isNumber;
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1482,20 +1481,10 @@ module TypeScript {
                     }
                     else {
                         if (this.emitState.container === EmitContainer.DynamicModule) {
-                            if (quotedOrNumber) {
-                                this.writeToOutput("exports[");
-                            }
-                            else {
-                                this.writeToOutput("exports.");
-                            }
+                            this.writeToOutput("exports.");
                         }
                         else {
-                            if (quotedOrNumber) {
-                                this.writeToOutput(this.moduleName + "[");
-                            }
-                            else {
-                                this.writeToOutput(this.moduleName + ".");
-                            }
+                            this.writeToOutput(this.moduleName + ".");
                         }
                     }
                 }
@@ -1504,10 +1493,6 @@ module TypeScript {
                 }
 
                 this.writeToOutputWithSourceMapRecord(varDecl.id.actualText, varDecl.id);
-
-                if (quotedOrNumber) {
-                    this.writeToOutput("]");
-                }
 
                 if (varDecl.init) {
                     this.writeToOutput(" = ");

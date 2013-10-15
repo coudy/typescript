@@ -119,10 +119,6 @@ module TypeScript {
             return !!signatureSymbol;
         }
 
-        public setSpecializingSignatureSymbol(specializingSignatureSymbol: PullSignatureSymbol): void {
-            this.semanticInfoChain().setSpecializingSignatureSymbolForDecl(this, specializingSignatureSymbol);
-        }
-
         public setFlags(flags: PullElementFlags) { this.flags = flags; }
 
         public setFlag(flags: PullElementFlags) { this.flags |= flags; }

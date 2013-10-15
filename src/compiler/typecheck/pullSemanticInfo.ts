@@ -33,7 +33,6 @@ module TypeScript {
 
         private declSymbolMap = new DataMap<PullSymbol>();
         private declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
-        private declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
 
         private declCache: BlockIntrinsics<PullDecl[]> = null;
         private symbolCache: BlockIntrinsics<PullSymbol> = null;
@@ -443,7 +442,6 @@ module TypeScript {
 
             this.declSymbolMap = new DataMap<PullSymbol>();
             this.declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
-            this.declSpecializingSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
 
             if (oldSettings && newSettings) {
                 // Depending on which options changed, our cached syntactic data may not be valid
@@ -516,14 +514,6 @@ module TypeScript {
 
         public getSignatureSymbolForDecl(decl: PullDecl): PullSignatureSymbol {
             return this.declSignatureSymbolMap.read(decl.declIDString);
-        }
-
-        public setSpecializingSignatureSymbolForDecl(decl: PullDecl, signatureSymbol: PullSignatureSymbol): void {
-            this.declSpecializingSignatureSymbolMap.link(decl.declIDString, signatureSymbol);
-        }
-
-        public getSpecializingSignatureSymbolForDecl(decl: PullDecl): PullSignatureSymbol {
-            return this.declSpecializingSignatureSymbolMap.read(decl.declIDString);
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {
