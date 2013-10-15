@@ -5748,7 +5748,7 @@ module TypeScript {
                 // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
                 // first if need be, and then fall back to type names.  Otherwise, look for a type first, since we are probably looking for
                 // a type reference (the exception being an alias or export assignment)
-                var onLeftOfDot = nameAST.parent.nodeType() === NodeType.QualifiedName && (<QualifiedName>nameAST.parent).left === nameAST;
+                var onLeftOfDot = this.isLeftSideOfQualifiedName(nameAST);
 
                 var kindToCheckFirst = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
                 var kindToCheckSecond = onLeftOfDot ? PullElementKind.SomeType : PullElementKind.SomeContainer;
@@ -5791,6 +5791,10 @@ module TypeScript {
             }
 
             return typeNameSymbol;
+        }
+
+        private isLeftSideOfQualifiedName(ast: AST): boolean {
+            return ast && ast.parent && ast.parent.nodeType() === NodeType.QualifiedName && (<QualifiedName>ast.parent).left === ast;
         }
 
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -5956,7 +5960,7 @@ module TypeScript {
             }
 
             // now for the name...
-            var onLeftOfDot = dottedNameAST.parent.nodeType() === NodeType.QualifiedName && (<QualifiedName>dottedNameAST.parent).left == dottedNameAST;
+            var onLeftOfDot = this.isLeftSideOfQualifiedName(dottedNameAST);
             var memberKind = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
 
