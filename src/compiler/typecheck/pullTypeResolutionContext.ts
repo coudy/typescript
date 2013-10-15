@@ -163,7 +163,6 @@ module TypeScript {
         private contextStack: PullContextualTypeContext[] = [];
 
         public resolvingTypeReference = false;
-        public resolvingNamespaceMemberAccess = false;
 
         public instantiatingTypesToAny = false;
 

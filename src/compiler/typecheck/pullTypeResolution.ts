@@ -587,10 +587,7 @@ module TypeScript {
         }
 
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
-            var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-            context.resolvingNamespaceMemberAccess = true;
             var lhs = this.resolveAST(expression, false, enclosingDecl, context);
-            context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
 
             if (context.resolvingTypeReference && (lhs.kind === PullElementKind.Class || lhs.kind === PullElementKind.Interface)) {
                 // No more sub types in these types
@@ -804,12 +801,8 @@ module TypeScript {
             var savedResolvingTypeReference = context.resolvingTypeReference;
             context.resolvingTypeReference = false;
 
-            var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-            context.resolvingNamespaceMemberAccess = false;
-
             var result = this.resolveDeclaredSymbolWorker(symbol, context);
 
-            context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
             context.resolvingTypeReference = savedResolvingTypeReference;
 
             return result;
@@ -2172,11 +2165,8 @@ module TypeScript {
 
                 // find the decl
                 prevResolvingTypeReference = context.resolvingTypeReference;
-                var prevResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-                context.resolvingNamespaceMemberAccess = false;
                 context.resolvingTypeReference = true;
                 typeDeclSymbol = this.resolveQualifiedName(dottedName, enclosingDecl, context);
-                context.resolvingNamespaceMemberAccess = prevResolvingNamespaceMemberAccess;
                 context.resolvingTypeReference = prevResolvingTypeReference;
             }
             else if (term.nodeType() === NodeType.StringLiteral) {
@@ -5758,8 +5748,10 @@ module TypeScript {
                 // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
                 // first if need be, and then fall back to type names.  Otherwise, look for a type first, since we are probably looking for
                 // a type reference (the exception being an alias or export assignment)
-                var kindToCheckFirst = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeContainer : PullElementKind.SomeType;
-                var kindToCheckSecond = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeType : PullElementKind.SomeContainer;
+                var onLeftOfDot = nameAST.parent.nodeType() === NodeType.QualifiedName && (<QualifiedName>nameAST.parent).left === nameAST;
+
+                var kindToCheckFirst = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
+                var kindToCheckSecond = onLeftOfDot ? PullElementKind.SomeType : PullElementKind.SomeContainer;
 
                 var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckFirst);
 
@@ -5803,12 +5795,9 @@ module TypeScript {
 
         private resolveGenericTypeReference(genericTypeAST: GenericType, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             var savedResolvingTypeReference = context.resolvingTypeReference;
-            var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-            context.resolvingNamespaceMemberAccess = false;
             context.resolvingTypeReference = true;
             var genericTypeSymbol = this.resolveAST(genericTypeAST.name, false, enclosingDecl, context).type;
             context.resolvingTypeReference = savedResolvingTypeReference;
-            context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
 
             if (genericTypeSymbol.isError()) {
                 return genericTypeSymbol;
@@ -5945,12 +5934,9 @@ module TypeScript {
             // TODO(cyrusn): Setting this context value should not be necessary.  We could have only
             // gotten into this code path if it was already set.
             var savedResolvingTypeReference = context.resolvingTypeReference;
-            var savedResolvingNamespaceMemberAccess = context.resolvingNamespaceMemberAccess;
-            context.resolvingNamespaceMemberAccess = true;
             context.resolvingTypeReference = true;
             var lhs = this.resolveAST(dottedNameAST.left, false, enclosingDecl, context);
             context.resolvingTypeReference = savedResolvingTypeReference;
-            context.resolvingNamespaceMemberAccess = savedResolvingNamespaceMemberAccess;
 
             var lhsType = lhs.isAlias() ? (<PullTypeAliasSymbol>lhs).getExportAssignedContainerSymbol() : lhs.type;
 
@@ -5970,7 +5956,8 @@ module TypeScript {
             }
 
             // now for the name...
-            var memberKind = context.resolvingNamespaceMemberAccess ? PullElementKind.SomeContainer : PullElementKind.SomeType;
+            var onLeftOfDot = dottedNameAST.parent.nodeType() === NodeType.QualifiedName && (<QualifiedName>dottedNameAST.parent).left == dottedNameAST;
+            var memberKind = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
 
             // if the lhs exports a container type, but not a type, we should check the container type
