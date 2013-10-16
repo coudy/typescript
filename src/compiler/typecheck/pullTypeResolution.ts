@@ -1533,8 +1533,13 @@ module TypeScript {
                         var moduleName = (<Identifier>aliasExpr).text();
                         var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
                         var instanceSymbol = (<PullContainerSymbol>aliasedType).getInstanceSymbol();
+                        // If there is module and it is instantiated, value symbol needs to refer to the module instance symbol
                         if (valueSymbol && (instanceSymbol != valueSymbol || valueSymbol.type == aliasedType)) {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [(<Identifier>aliasExpr).actualText, moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                        } else {
+                            // Set value symbol, type and container setting will be taken care of later using aliasedType
+                            var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+                            importDeclSymbol.setAssignedValueSymbol(valueSymbol);
                         }
                     }
                 } else {
