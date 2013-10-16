@@ -781,6 +781,25 @@ module TypeScript {
             return false;
         }
 
+        public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): void {
+            if (this.checkIndexMemberModifiers(node)) {
+                this.skip(node);
+                return;
+            }
+
+            super.visitIndexMemberDeclaration(node);
+        }
+
+        private checkIndexMemberModifiers(node: IndexMemberDeclarationSyntax): boolean {
+            if (node.modifiers.childCount() > 0) {
+                var modifierFullStart = this.childFullStart(node, node.modifiers);
+                this.pushDiagnostic1(modifierFullStart, node.modifiers.childAt(0), DiagnosticCode.Modifiers_cannot_appear_here);
+                return true;
+            }
+
+            return false;
+        }
+
         private checkEcmaScriptVersionIsAtLeast(parent: ISyntaxElement, node: ISyntaxElement, languageVersion: LanguageVersion, diagnosticKey: string): boolean {
             if (this.syntaxTree.parseOptions().languageVersion() < languageVersion) {
                 var nodeFullStart = this.childFullStart(parent, node);

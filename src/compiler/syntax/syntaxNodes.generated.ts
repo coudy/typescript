@@ -4641,7 +4641,8 @@ module TypeScript {
 
     export class IndexMemberDeclarationSyntax extends SyntaxNode implements IClassElementSyntax {
 
-        constructor(public indexSignature: IndexSignatureSyntax,
+        constructor(public modifiers: ISyntaxList,
+                    public indexSignature: IndexSignatureSyntax,
                     public semicolonToken: ISyntaxToken,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
@@ -4657,13 +4658,14 @@ module TypeScript {
     }
 
     public childCount(): number {
-        return 2;
+        return 3;
     }
 
     public childAt(slot: number): ISyntaxElement {
         switch (slot) {
-            case 0: return this.indexSignature;
-            case 1: return this.semicolonToken;
+            case 0: return this.modifiers;
+            case 1: return this.indexSignature;
+            case 2: return this.semicolonToken;
             default: throw Errors.invalidOperation();
         }
     }
@@ -4672,17 +4674,23 @@ module TypeScript {
         return true;
     }
 
-    public update(indexSignature: IndexSignatureSyntax,
+    public update(modifiers: ISyntaxList,
+                  indexSignature: IndexSignatureSyntax,
                   semicolonToken: ISyntaxToken): IndexMemberDeclarationSyntax {
-        if (this.indexSignature === indexSignature && this.semicolonToken === semicolonToken) {
+        if (this.modifiers === modifiers && this.indexSignature === indexSignature && this.semicolonToken === semicolonToken) {
             return this;
         }
 
-        return new IndexMemberDeclarationSyntax(indexSignature, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new IndexMemberDeclarationSyntax(modifiers, indexSignature, semicolonToken, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+    }
+
+    public static create(indexSignature: IndexSignatureSyntax,
+                         semicolonToken: ISyntaxToken): IndexMemberDeclarationSyntax {
+        return new IndexMemberDeclarationSyntax(Syntax.emptyList, indexSignature, semicolonToken, /*parsedInStrictMode:*/ false);
     }
 
     public static create1(indexSignature: IndexSignatureSyntax): IndexMemberDeclarationSyntax {
-        return new IndexMemberDeclarationSyntax(indexSignature, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
+        return new IndexMemberDeclarationSyntax(Syntax.emptyList, indexSignature, Syntax.token(SyntaxKind.SemicolonToken), /*parsedInStrictMode:*/ false);
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): IndexMemberDeclarationSyntax {
@@ -4693,12 +4701,20 @@ module TypeScript {
         return <IndexMemberDeclarationSyntax>super.withTrailingTrivia(trivia);
     }
 
+    public withModifiers(modifiers: ISyntaxList): IndexMemberDeclarationSyntax {
+        return this.update(modifiers, this.indexSignature, this.semicolonToken);
+    }
+
+    public withModifier(modifier: ISyntaxToken): IndexMemberDeclarationSyntax {
+        return this.withModifiers(Syntax.list([modifier]));
+    }
+
     public withIndexSignature(indexSignature: IndexSignatureSyntax): IndexMemberDeclarationSyntax {
-        return this.update(indexSignature, this.semicolonToken);
+        return this.update(this.modifiers, indexSignature, this.semicolonToken);
     }
 
     public withSemicolonToken(semicolonToken: ISyntaxToken): IndexMemberDeclarationSyntax {
-        return this.update(this.indexSignature, semicolonToken);
+        return this.update(this.modifiers, this.indexSignature, semicolonToken);
     }
 
     public isTypeScriptSpecific(): boolean {
