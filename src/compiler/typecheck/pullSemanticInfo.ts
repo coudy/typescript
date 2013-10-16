@@ -68,50 +68,53 @@ module TypeScript {
             return this._fileNames;
         }
 
-        private bindPrimitiveSymbol(decl: PullDecl, symbol: PullSymbol): PullSymbol {
-            decl = decl || symbol.getDeclarations()[0];
-            symbol.addDeclaration(decl);
-            decl.setSymbol(symbol);
+        // Must pass in a new decl, or an old symbol that has a decl available for ownership transfer
+        private bindPrimitiveSymbol(decl: PullDecl, oldSymbol: PullSymbol, newSymbol: PullSymbol): PullSymbol {
+            decl = decl || oldSymbol.getDeclarations()[0];
+            newSymbol.addDeclaration(decl);
+            decl.setSymbol(newSymbol);
+            newSymbol.setResolved();
 
-            return symbol;
+            return newSymbol;
         }
 
         // Pass in the name and the global parent decl, or the old symbol. During initialization
         // of the compiler, the symbol passed in will be null, and this method will create both
         // the decl and the symbol. On subsequent edits, the old symbol should be passed in and
-        // it will be reused.Because the decl<->symbol caches are cleaned on every edit, an entry
-        // is added to each cache using the old decl and the old symbol.
-        private addOrBindPrimitiveType(name: string, globalDecl: PullDecl, symbol: PullPrimitiveTypeSymbol): PullPrimitiveTypeSymbol {
+        // its decl will be transferred to a newly created decl as the owner. Because the
+        // decl->symbol cache is cleaned on every edit, but the decl persists, it is necessary
+        // to bind the original decl to the new symbol. Symbols cannot be reused across edits.
+        private addOrBindPrimitiveType(name: string, globalDecl: PullDecl, oldSymbol: PullPrimitiveTypeSymbol): PullPrimitiveTypeSymbol {
             var decl: PullDecl;
-            if (!symbol) {
+            if (!oldSymbol) {
                 var span = new TextSpan(0, 0);
 
                 decl = globalDecl
                     ? <PullDecl>new NormalPullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span)
                     : new RootPullDecl(name, "", PullElementKind.Primitive, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
-                symbol = new PullPrimitiveTypeSymbol(name);
-                symbol.setResolved();
             }
 
-            return <PullPrimitiveTypeSymbol>this.bindPrimitiveSymbol(decl, symbol);
+            var newSymbol = new PullPrimitiveTypeSymbol(name);
+            return <PullPrimitiveTypeSymbol>this.bindPrimitiveSymbol(decl, oldSymbol, newSymbol);
         }
 
         // Pass in the name, the global parent decl, and the value's type, or just the old symbol.
         // During initialization of the compiler, the symbol passed in will be null, and this
-        // method will create both the decl and the symbol.On subsequent edits, the old symbol
-        // should be passed in and it will be reused. Because the decl<->symbol caches are cleaned
-        // on every edit, an entry is added to each cache using the old decl and the old symbol.
-        private addOrBindPrimitiveValue(name: string, globalDecl: PullDecl, type: PullTypeSymbol, symbol: PullSymbol): PullSymbol {
+        // method will create both the decl and the symbol. On subsequent edits, the old symbol
+        // should be passed in and its decl will be transferred to a newly created decl as the
+        // owner. Because the decl->symbol cache is cleaned on every edit, but the decl persists,
+        // it is necessary to bind the original decl to the new symbol. Symbols cannot be reused
+        // across edits.
+        private addOrBindPrimitiveValue(name: string, globalDecl: PullDecl, type: PullTypeSymbol, oldSymbol: PullSymbol): PullSymbol {
             var decl: PullDecl;
-            if (!symbol) {
+            if (!oldSymbol) {
                 var span = new TextSpan(0, 0);
                 decl = new NormalPullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span);
-                var symbol = new PullSymbol(name, PullElementKind.Variable);
-                symbol.type = type;
-                symbol.setResolved();
             }
 
-            return this.bindPrimitiveSymbol(decl, symbol);
+            var newSymbol = new PullSymbol(name, PullElementKind.Variable);
+            newSymbol.type = type;
+            return this.bindPrimitiveSymbol(decl, oldSymbol, newSymbol);
         }
 
         private getGlobalDecl() {
