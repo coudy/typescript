@@ -1973,43 +1973,42 @@ module TypeScript {
         private hasRestParameterCodeGen(someFunctionDecl: PullDecl) {
             var enclosingAST = this.getASTForDecl(someFunctionDecl);
             var nodeType = enclosingAST.nodeType();
-            var hasRestParameterCodeGen = false;
 
+            // If the method/function/constructor is non ambient, with code block and has rest parameter it would have the rest parameter code gen
             if (nodeType == NodeType.FunctionDeclaration) {
                 var functionDeclaration = <FunctionDeclaration>enclosingAST;
-                hasRestParameterCodeGen = !hasFlag(someFunctionDecl.kind == PullElementKind.Method ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, PullElementFlags.Ambient)
+                return !hasFlag(someFunctionDecl.kind == PullElementKind.Method ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, PullElementFlags.Ambient)
                 && functionDeclaration.block
                 && lastParameterIsRest(functionDeclaration.parameterList);
             }
             else if (nodeType === NodeType.MemberFunctionDeclaration) {
                 var memberFunction = <MemberFunctionDeclaration>enclosingAST;
-                hasRestParameterCodeGen = !hasFlag(someFunctionDecl.kind == PullElementKind.Method ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, PullElementFlags.Ambient)
+                return !hasFlag(someFunctionDecl.kind == PullElementKind.Method ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, PullElementFlags.Ambient)
                 && memberFunction.block
                 && lastParameterIsRest(memberFunction.parameterList);
             }
             else if (nodeType == NodeType.ConstructorDeclaration) {
                 var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
-                hasRestParameterCodeGen = !hasFlag(someFunctionDecl.getParentDecl().flags, PullElementFlags.Ambient)
+                 return !hasFlag(someFunctionDecl.getParentDecl().flags, PullElementFlags.Ambient)
                 && constructorDeclaration.block
                 && lastParameterIsRest(constructorDeclaration.parameterList);
             }
             else if (nodeType == NodeType.ArrowFunctionExpression) {
                 var arrowFunctionExpression = <ArrowFunctionExpression>enclosingAST;
-                hasRestParameterCodeGen = lastParameterIsRest(arrowFunctionExpression.parameterList);
+                return lastParameterIsRest(arrowFunctionExpression.parameterList);
             }
             else if (nodeType === NodeType.FunctionExpression) {
                 var functionExpression = <FunctionExpression>enclosingAST;
-                hasRestParameterCodeGen = lastParameterIsRest(functionExpression.parameterList);
+                return lastParameterIsRest(functionExpression.parameterList);
             }
 
-            return hasRestParameterCodeGen;
+            return false;
         }
 
         private checkArgumentsCollides(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             if (ast.nodeType() == NodeType.Parameter
                 && !!(enclosingDecl.kind & PullElementKind.SomeFunction)) {
-                var hasRestParameterCodeGen = this.hasRestParameterCodeGen(enclosingDecl);
-                if (hasRestParameterCodeGen) {
+                if (this.hasRestParameterCodeGen(enclosingDecl)) {
                     // It is error to use the arguments as variable name or parameter name in function with rest parameters
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_arguments_Compiler_uses_arguments_to_initialize_rest_parameters));
                 }
@@ -2019,8 +2018,7 @@ module TypeScript {
         private checkIndexOfRestArgumentInitializationCollides(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             if (ast.nodeType() == NodeType.Parameter
                 && !!(enclosingDecl.kind & PullElementKind.SomeFunction)) {
-                var hasRestParameterCodeGen = this.hasRestParameterCodeGen(enclosingDecl);
-                if (hasRestParameterCodeGen) {
+                if (this.hasRestParameterCodeGen(enclosingDecl)) {
                     // It is error to use the _i varible name
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_i_Compiler_uses_i_to_initialize_rest_parameter));
                 }
