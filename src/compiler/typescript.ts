@@ -15,6 +15,8 @@
 
 ///<reference path='references.ts' />
 
+if (Error) (<any>Error).stackTraceLimit = 1000;
+
 module TypeScript {
 
     declare var IO: any;
@@ -507,7 +509,7 @@ module TypeScript {
             var script = document.script();
 
             var startTime = (new Date()).getTime();
-            PullTypeResolver.typeCheck(this.compilationSettings(), this.semanticInfoChain, fileName, script)
+            PullTypeResolver.typeCheck(this.compilationSettings(), this.semanticInfoChain, script)
             var endTime = (new Date()).getTime();
 
             typeCheckTime += endTime - startTime;
