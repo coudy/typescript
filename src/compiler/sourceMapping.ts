@@ -42,10 +42,6 @@ module TypeScript {
         }
     }
 
-    //export interface SourceMapEmitterCallback {
-    //    (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void;
-    //}
-
     export class SourceMapper {
         static MapFileExtension = ".map";
 
