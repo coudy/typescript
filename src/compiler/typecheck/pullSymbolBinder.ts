@@ -580,7 +580,7 @@ module TypeScript {
             }
 
             if (!importSymbol) {
-                importSymbol = new PullTypeAliasSymbol(declName);
+                importSymbol = new PullTypeAliasSymbol(declName, this.semanticInfoChain.getResolver());
 
                 if (!parent) {
                     this.semanticInfoChain.cacheGlobalSymbol(importSymbol, PullElementKind.SomeContainer);

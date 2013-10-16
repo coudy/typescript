@@ -268,7 +268,7 @@ module TypeScript {
                     }
                 }
 
-                return importSymbol.isUsedAsValue;
+                return importSymbol.isUsedAsValue();
             }
 
             return false;
@@ -833,7 +833,7 @@ module TypeScript {
                     var importStatementSymbol = <PullTypeAliasSymbol>importStatementDecl.getSymbol();
                     var importStatementAST = <ImportDeclaration>this.semanticInfoChain.getASTForDecl(importStatementDecl);
 
-                    if (importStatementSymbol.isUsedAsValue) {
+                    if (importStatementSymbol.isUsedAsValue()) {
                         if (i <= importDecls.length - 1) {
                             dependencyList += ", ";
                             importList += ", ";

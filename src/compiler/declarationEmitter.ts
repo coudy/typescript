@@ -251,7 +251,7 @@ module TypeScript {
             var declarationPullSymbol = declarationContainerDecl.getSymbol();
             TypeScript.declarationEmitTypeSignatureTime += new Date().getTime() - start;
 
-            var typeNameMembers = type.getScopedNameEx(/*resolver:*/ null, declarationPullSymbol);
+            var typeNameMembers = type.getScopedNameEx(declarationPullSymbol);
             this.emitTypeNamesMember(typeNameMembers);
         }
 
@@ -766,7 +766,7 @@ module TypeScript {
                     this.declFile.Write(", ");
                 }
 
-                var memberName = typars[i].getScopedNameEx(/*resolver:*/ null, containerSymbol, /*useConstraintInName:*/ true);
+                var memberName = typars[i].getScopedNameEx(containerSymbol, /*useConstraintInName:*/ true);
                 this.emitTypeNamesMember(memberName);
             }
 
@@ -804,7 +804,7 @@ module TypeScript {
             var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
             var isExportedImportDecl = hasFlag(importDeclAST.getVarFlags(), VariableFlags.Exported);
 
-            if (isExportedImportDecl || importSymbol.typeUsedExternally || PullContainerSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
+            if (isExportedImportDecl || importSymbol.typeUsedExternally() || PullContainerSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
                 this.emitDeclarationComments(importDeclAST);
                 this.emitIndent();
                 if (isExportedImportDecl) {

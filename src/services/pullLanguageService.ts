@@ -917,7 +917,7 @@ module Services {
             if (this.isLocal(symbol) ||
                 symbol.kind == TypeScript.PullElementKind.Parameter) {
                 // Local var
-                return symbol.getScopedName(this.compiler.getResolver(), enclosingScopeSymbol, /*useConstraintInName*/ true);
+                return symbol.getScopedName(enclosingScopeSymbol, /*useConstraintInName*/ true);
             }
 
             var symbolKind = symbol.kind;
@@ -936,10 +936,10 @@ module Services {
                 symbolKind != TypeScript.PullElementKind.TypeParameter &&
                 !symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
                 // Non exported variable/function
-                return symbol.getScopedName(this.compiler.getResolver(), enclosingScopeSymbol,  /*useConstraintInName*/true);
+                return symbol.getScopedName(enclosingScopeSymbol,  /*useConstraintInName*/true);
             }
 
-            return symbol.fullName(this.compiler.getResolver(), enclosingScopeSymbol);
+            return symbol.fullName(enclosingScopeSymbol);
         }
 
         private getTypeInfoEligiblePath(fileName: string, position: number, isConstructorValidPosition: boolean) {
@@ -1086,10 +1086,9 @@ module Services {
                 }
             }
 
-            var resolver = this.compiler.getResolver();
             var memberName = _isCallExpression
-                ? TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, resolver, enclosingScopeSymbol)
-                : symbol.getTypeNameEx(resolver, enclosingScopeSymbol, /*useConstraintInName*/ true);
+                ? TypeScript.PullSignatureSymbol.getSignatureTypeMemberName(candidateSignature, resolvedSignatures, enclosingScopeSymbol)
+                : symbol.getTypeNameEx(enclosingScopeSymbol, /*useConstraintInName*/ true);
             var kind = this.mapPullElementKind(symbol.kind, symbol, !_isCallExpression, _isCallExpression, isConstructorCall);
 
             var docCommentSymbol = candidateSignature || symbol;
@@ -1252,7 +1251,7 @@ module Services {
 
                 if (symbol.isResolved) {
                     // If the symbol has already been resolved, cache the needed information for completion details.
-                    var typeName = symbol.getTypeName(this.compiler.getResolver(), symbolInfo.enclosingScopeSymbol, /*useConstraintInName*/ true);
+                    var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, /*useConstraintInName*/ true);
                     var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
                     var type = symbol.type;
@@ -1352,7 +1351,7 @@ module Services {
                     }
 
                     var symbol = symbolInfo.symbol;
-                    var typeName = symbol.getTypeName(this.compiler.getResolver(), symbolInfo.enclosingScopeSymbol, /*useConstraintInName*/ true);
+                    var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, /*useConstraintInName*/ true);
                     var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
                     var type = symbol.type;

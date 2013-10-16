@@ -234,10 +234,6 @@ module Services {
             this.logger = this.host;
         }
 
-        public getResolver(): TypeScript.PullTypeResolver {
-            return null;
-        }
-
         private synchronizeHostData(): void {
             TypeScript.timeFunction(this.logger, "refresh()", () => {
                 this.synchronizeHostDataWorker();
