@@ -8878,7 +8878,10 @@ module TypeScript {
                 if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
                     targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
 
-                        if (sourcePropType.getRootSymbol() != targetPropType.getRootSymbol()) {
+                        var targetDecl = targetProp.getDeclarations()[0];
+                        var sourceDecl = sourceProp.getDeclarations()[0];
+
+                        if (!targetDecl.isEqual(sourceDecl)) {
                             return false;
                         }
 
@@ -11356,7 +11359,7 @@ module TypeScript {
                 return typeParameterArgumentMap[type.pullSymbolIDString];
             }
 
-            if (type.typeWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+            if (type.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 return PullInstantiatedTypeReferenceSymbol.create(this, type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
             }
 
@@ -11376,7 +11379,7 @@ module TypeScript {
         // In the code above, we don't want to cache the invocation of 'm' in 'n' against 'any', since the
         // signature to 'm' is only partially specialized 
         public instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
-            if (!signature.signatureWrapsSomeTypeParameter(typeParameterArgumentMap)) {
+            if (!signature.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 return signature;
             }
 

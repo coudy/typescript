@@ -364,8 +364,27 @@ module TypeScript {
                 var typeReferenceTypeArguments = rootThis.getTypeArguments();
                 var referenceTypeArgument: PullTypeSymbol = null;
 
+                // may have an object literal or a function signature
                 if (!typeReferenceTypeArguments) {
-                    this._generativeTypeClassification = GenerativeTypeClassification.Open;
+                    // create a new type map with just the type parameter
+                    var typeParametersMap: PullTypeSubstitutionMap = {};
+
+                    for (var i = 0; i < typeParameters.length; i++) {
+                        typeParametersMap[typeParameters[i].pullSymbolIDString] = typeParameters[i];
+                    }
+
+                    var wrapsSomeTypeParameters = rootThis.wrapsSomeTypeParameter(typeParametersMap);
+
+                    // It's a wrap of a wrap
+                    if (wrapsSomeTypeParameters && rootThis.wrapsSomeNestedType(rootType)) {
+                        this._generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
+                    }
+                    else if (wrapsSomeTypeParameters) {
+                        this._generativeTypeClassification = GenerativeTypeClassification.Open;
+                    }
+                    else {
+                        this._generativeTypeClassification = GenerativeTypeClassification.Closed;
+                    }
                 }
                 else {
                     var i = 0;
@@ -374,7 +393,7 @@ module TypeScript {
                         referenceTypeArgument = <PullTypeSymbol>typeReferenceTypeArguments[i].getRootSymbol();
 
                         if (referenceTypeArgument.isGeneric() &&
-                            referenceTypeArgument.typeWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                            referenceTypeArgument.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                             break;
                         }
 
@@ -625,7 +644,7 @@ module TypeScript {
                     if (!this._instantiatedMemberNameCache[referencedMember.name]) {
 
                         // if the member does not require further specialization, re-use the referenced symbol
-                        if (!referencedMember.type.typeWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                        if (!referencedMember.type.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                             instantiatedMember = referencedMember;
                         }
                         else {
@@ -721,7 +740,7 @@ module TypeScript {
                     requestedMembers[requestedMembers.length] = this._allInstantiatedMemberNameCache[referencedMember.name];
                 }
                 else {
-                    if (!referencedMember.type.typeWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                    if (!referencedMember.type.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                         this._allInstantiatedMemberNameCache[referencedMember.name] = referencedMember;
                         requestedMembers[requestedMembers.length] = referencedMember;
                     }
@@ -791,7 +810,7 @@ module TypeScript {
             for (var i = 0; i < referencedCallSignatures.length; i++) {
                 this.resolver.resolveDeclaredSymbol(referencedCallSignatures[i]);
 
-                if (!referencedCallSignatures[i].signatureWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                if (!referencedCallSignatures[i].wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                     this._instantiatedCallSignatures[this._instantiatedCallSignatures.length] = referencedCallSignatures[i];
                 }
                 else {
@@ -819,7 +838,7 @@ module TypeScript {
             for (var i = 0; i < referencedConstructSignatures.length; i++) {
                 this.resolver.resolveDeclaredSymbol(referencedConstructSignatures[i]);
 
-                if (!referencedConstructSignatures[i].signatureWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                if (!referencedConstructSignatures[i].wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                     this._instantiatedConstructSignatures[this._instantiatedConstructSignatures.length] = referencedConstructSignatures[i];
                 }
                 else {
@@ -847,7 +866,7 @@ module TypeScript {
             for (var i = 0; i < referencedIndexSignatures.length; i++) {
                 this.resolver.resolveDeclaredSymbol(referencedIndexSignatures[i]);
 
-                if (!referencedIndexSignatures[i].signatureWrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                if (!referencedIndexSignatures[i].wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                     this._instantiatedIndexSignatures[this._instantiatedIndexSignatures.length] = referencedIndexSignatures[i];
                 }
                 else {
