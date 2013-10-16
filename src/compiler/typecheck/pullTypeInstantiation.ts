@@ -570,7 +570,7 @@ module TypeScript {
             return instantiation;
         }
 
-        constructor(resolver: PullTypeResolver, public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: { [name: string]: PullTypeSymbol; }) {
+        constructor(resolver: PullTypeResolver, public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: PullTypeSubstitutionMap) {
             super(resolver, referencedTypeSymbol);
 
             nSpecializationsCreated++;
@@ -578,6 +578,10 @@ module TypeScript {
 
         public isGeneric(): boolean {
             return !!this.referencedTypeSymbol.getTypeParameters().length;
+        }
+
+        public getTypeParameterArgumentMap(): PullTypeSubstitutionMap {
+            return this._typeParameterArgumentMap;
         }
 
         public getTypeArguments(): PullTypeSymbol[]{

@@ -7358,6 +7358,7 @@ module TypeScript {
             var typeParameters: PullTypeParameterSymbol[];
             var typeConstraint: PullTypeSymbol = null;
             var beforeResolutionSignatures = signatures;
+            var targetTypeReplacementMap = targetTypeSymbol.getTypeParameterArgumentMap();
 
             for (var i = 0; i < signatures.length; i++) {
                 typeParameters = signatures[i].getTypeParameters();
@@ -7387,6 +7388,14 @@ module TypeScript {
                                 continue;
                             }
 
+                            // When specializing the constraints, seed the replacement map with any substitutions already specified by
+                            // the target function's type
+                            if (targetTypeReplacementMap) {
+                                for (var symbolID in targetTypeReplacementMap) {
+                                    typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
+                                }
+                            }
+
                             for (var j = 0; j < typeParameters.length; j++) {
                                 typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
                             }
@@ -7402,7 +7411,7 @@ module TypeScript {
                                             }
                                         }
                                     }
-                                    else if (typeConstraint.getIsSpecialized()) {
+                                    else if (typeConstraint.isGeneric()) {
                                         typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
                                     }
 
@@ -7700,6 +7709,7 @@ module TypeScript {
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
                     var triedToInferTypeArgs: boolean;
+                    var targetTypeReplacementMap = targetTypeSymbol.getTypeParameterArgumentMap();
 
                     for (var i = 0; i < constructSignatures.length; i++) {
                         couldNotAssignToConstraint = false;
@@ -7728,6 +7738,14 @@ module TypeScript {
                                         continue;
                                     }
 
+                                    // When specializing the constraints, seed the replacement map with any substitutions already specified by
+                                    // the target function's type
+                                    if (targetTypeReplacementMap) {
+                                        for (var symbolID in targetTypeReplacementMap) {
+                                            typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
+                                        }
+                                    }
+
                                     for (var j = 0; j < typeParameters.length; j++) {
                                         typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
                                     }
@@ -7743,7 +7761,7 @@ module TypeScript {
                                                     }
                                                 }
                                             }
-                                            else if (typeConstraint.getIsSpecialized()) {
+                                            else if (typeConstraint.isGeneric()) {
                                                 typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
                                             }
 
@@ -11397,9 +11415,29 @@ module TypeScript {
 
             // add type parameters
             var typeParameters = signature.getTypeParameters();
+            var constraint: PullTypeSymbol = null;
+            var typeParameter: PullTypeParameterSymbol = null;
 
             for (var i = 0; i < typeParameters.length; i++) {
-                instantiatedSignature.addTypeParameter(typeParameters[i]);
+
+                typeParameter = typeParameters[i];
+
+                // REVIEW: I think that the code below is the correct way to handle instantiating constraints (rather than doing so at the invocation site,
+                // like we currently do), but there is a serious performance impact to instantiating this way, which I need to investigate.
+                //
+                //constraint = typeParameter.getConstraint();
+                //
+                ////if (constraint && (constraint.isGeneric() && !constraint.getIsSpecialized()) && !instantiateFunctionTypeParameters) {
+                ////    typeParameter = new PullTypeParameterSymbol(typeParameters[i].name, true);
+                ////    typeParameter.setConstraint(this.instantiateType(constraint, typeParameterArgumentMap, instantiateFunctionTypeParameters));
+                ////    typeParameter.setRootSymbol(typeParameters[i]);
+                //
+                ////    if (!typeParameterArgumentMap[typeParameters[i].pullSymbolIDString]) {
+                ////        typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeParameter;
+                ////    }
+                ////}
+                
+                instantiatedSignature.addTypeParameter(typeParameter);
             }
 
             instantiatedSignature.returnType = this.instantiateType(signature.returnType, typeParameterArgumentMap, instantiateFunctionTypeParameters);

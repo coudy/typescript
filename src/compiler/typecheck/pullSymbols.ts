@@ -1187,6 +1187,10 @@ module TypeScript {
         public isError() { return false; }
         public isEnum() { return this.kind == PullElementKind.Enum; }
 
+        public getTypeParameterArgumentMap(): PullTypeSubstitutionMap {
+            return null;
+        }
+
         public isObject(): boolean {
             return hasFlag(this.kind,
                 PullElementKind.Class | PullElementKind.ConstructorType | PullElementKind.Enum | PullElementKind.FunctionType | PullElementKind.Interface | PullElementKind.ObjectType);
@@ -2650,7 +2654,7 @@ module TypeScript {
             return name;
         }
 
-        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
+        public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
             var name = super.getName(scopeSymbol);
 
             if (this.isPrinting) {
