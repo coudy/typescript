@@ -60,8 +60,7 @@ module TypeScript {
         public compilationSettings() { return this._settings; }
 
         constructor(compiler: TypeScriptCompiler,
-            public resolvePath: (path: string) => string,
-            public sourceMapEmitterCallback: SourceMapEmitterCallback) {
+                    public resolvePath: (path: string) => string) {
 
             var settings = compiler.compilationSettings();
             this._settings = settings;
@@ -1831,7 +1830,7 @@ module TypeScript {
             // Output a source mapping.  As long as we haven't gotten any errors yet.
             var result: OutputFile[] = [];
             if (this.sourceMapper !== null) {
-                this.sourceMapper.emitSourceMapping(this.emitOptions.sourceMapEmitterCallback);
+                this.sourceMapper.emitSourceMapping();
                 result.push(this.sourceMapper.getOutputFile());
             }
 

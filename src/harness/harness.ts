@@ -51,6 +51,10 @@ declare module process {
 }
 
 module Harness {
+    export interface SourceMapEmitterCallback {
+        (emittedFile: string, emittedLine: number, emittedColumn: number, sourceFile: string, sourceLine: number, sourceColumn: number, sourceName: string): void;
+    }
+
     // Settings 
     export var userSpecifiedroot = "";
     var global = <any>Function("return this").call(null);
@@ -1040,8 +1044,14 @@ module Harness {
                     this.sourcemapRecorder.WriteLine("");
                 };
 
-                var output = this.compiler.emitAll((path: string) => host.resolvePath(path), sourceMapEmitterCallback);
-                output.outputFiles.forEach(o => host.writeFile(o.name, o.text, o.writeByteOrderMark));
+                var output = this.compiler.emitAll(path => host.resolvePath(path));
+                output.outputFiles.forEach(o => {
+                    host.writeFile(o.name, o.text, o.writeByteOrderMark);
+
+                    if (o.sourceMapEntries) {
+                        o.sourceMapEntries.forEach(s => sourceMapEmitterCallback(s.emittedFile, s.emittedLine, s.emittedColumn, s.sourceFile, s.sourceLine, s.sourceColumn, s.sourceName));
+                    }
+                });
 
                 return output.diagnostics;
             }

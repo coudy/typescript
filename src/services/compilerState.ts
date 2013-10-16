@@ -384,14 +384,14 @@ module Services {
             return this.compiler.getDeclForAST(ast);
         }
 
-        public emit(fileName: string, resolvePath: (path: string) => string, sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback = null): TypeScript.EmitOutput {
+        public emit(fileName: string, resolvePath: (path: string) => string): TypeScript.EmitOutput {
             this.synchronizeHostData();
-            return this.compiler.emit(fileName, resolvePath, sourceMapEmitterCallback);
+            return this.compiler.emit(fileName, resolvePath);
         }
 
-        public emitDeclarations(fileName: string, resolvePath: (path: string) => string, sourceMapEmitterCallback: TypeScript.SourceMapEmitterCallback = null): TypeScript.EmitOutput {
+        public emitDeclarations(fileName: string, resolvePath: (path: string) => string): TypeScript.EmitOutput {
             this.synchronizeHostData();
-            return this.compiler.emitDeclarations(fileName, resolvePath, sourceMapEmitterCallback);
+            return this.compiler.emitDeclarations(fileName, resolvePath);
         }
     }
 }

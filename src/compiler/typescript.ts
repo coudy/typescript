@@ -84,7 +84,8 @@ module TypeScript {
         constructor(public name: string,
             public writeByteOrderMark: boolean,
             public text: string,
-            public fileType: OutputFileType) {
+            public fileType: OutputFileType,
+            public sourceMapEntries: SourceMapEntry[] = null) {
         }
     }
 
@@ -281,11 +282,11 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAllDeclarations(resolvePath: (path: string) => string, sourceMapEmitterCallback: SourceMapEmitterCallback = null): EmitOutput {
+        public emitAllDeclarations(resolvePath: (path: string) => string): EmitOutput {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -313,11 +314,11 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitDeclarations(fileName: string, resolvePath: (path: string) => string, sourceMapEmitterCallback: SourceMapEmitterCallback = null): EmitOutput {
+        public emitDeclarations(fileName: string, resolvePath: (path: string) => string): EmitOutput {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -412,11 +413,11 @@ module TypeScript {
         }
 
         // Will not throw exceptions.
-        public emitAll(resolvePath: (path: string) => string, sourceMapEmitterCallback: SourceMapEmitterCallback = null): EmitOutput {
+        public emitAll(resolvePath: (path: string) => string): EmitOutput {
             var start = new Date().getTime();
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -446,11 +447,11 @@ module TypeScript {
 
         // Emit single file if outputMany is specified, else emit all
         // Will not throw exceptions.
-        public emit(fileName: string, resolvePath: (path: string) => string, sourceMapEmitterCallback: SourceMapEmitterCallback = null): EmitOutput {
+        public emit(fileName: string, resolvePath: (path: string) => string): EmitOutput {
             fileName = TypeScript.switchToForwardSlashes(fileName);
             var emitOutput = new EmitOutput();
 
-            var emitOptions = new EmitOptions(this, resolvePath, sourceMapEmitterCallback);
+            var emitOptions = new EmitOptions(this, resolvePath);
             if (emitOptions.diagnostic()) {
                 emitOutput.diagnostics.push(emitOptions.diagnostic());
                 return emitOutput;
@@ -477,8 +478,8 @@ module TypeScript {
         // logic and doesn't perform further analysis once diagnostics are produced.  For example,
         // in batch compilation nothing is done if there are any syntactic diagnostics.  Clients
         // can override this if they still want to procede in those cases.
-        public compile(resolvePath: (path: string) => string, sourceMapEmitterCallback: SourceMapEmitterCallback = null, continueOnDiagnostics = false): Iterator<CompileResult> {
-            return new CompilerIterator(this, resolvePath, sourceMapEmitterCallback, continueOnDiagnostics);
+        public compile(resolvePath: (path: string) => string, continueOnDiagnostics = false): Iterator<CompileResult> {
+            return new CompilerIterator(this, resolvePath, continueOnDiagnostics);
         }
 
         //
@@ -1012,13 +1013,11 @@ module TypeScript {
         private hadEmitDiagnostics: boolean = false;
 
         constructor(private compiler: TypeScriptCompiler,
-                    resolvePath: (path: string) => string,
-                    sourceMapEmitterCallback: SourceMapEmitterCallback,
+                    private resolvePath: (path: string) => string,
                     private continueOnDiagnostics: boolean,
                     startingPhase = CompilerPhase.Syntax) {
             this.fileNames = compiler.fileNames();
             this.compilerPhase = startingPhase;
-            this._emitOptions = new EmitOptions(compiler, resolvePath, sourceMapEmitterCallback);
         }
 
         public current(): CompileResult {
@@ -1128,6 +1127,10 @@ module TypeScript {
 
         private moveNextEmitOptionsValidationPhase(): boolean {
             Debug.assert(!this.hadSyntacticDiagnostics);
+
+            if (!this._emitOptions) {
+                this._emitOptions = new EmitOptions(this.compiler, this.resolvePath);
+            }
 
             if (this._emitOptions.diagnostic()) {
                 if (!this.continueOnDiagnostics) {
