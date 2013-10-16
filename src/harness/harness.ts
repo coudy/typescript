@@ -989,10 +989,6 @@ module Harness {
                 return this.compiler.getDocument(documentName);
             }
 
-            public getTypeInfoAtPosition(targetPosition: number, document: TypeScript.Document) {
-                return this.compiler.getTypeInfoAtPosition(targetPosition, document);
-            }
-
             public getContentForFile(fileName: string) {
                 var snapshot: TypeScript.IScriptSnapshot = this.fileNameToScriptSnapshot.lookup(fileName)
                 return snapshot.getText(0, snapshot.getLength());
