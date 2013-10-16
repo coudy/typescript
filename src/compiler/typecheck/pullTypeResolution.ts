@@ -704,7 +704,7 @@ module TypeScript {
 
                         if (instanceType.isConstructor()) {
                             // If this is a cladule
-                            members.push(this.createPrototypeSymbol(instanceType));
+                            members.push(this.createPrototypeSymbol(instanceType, context));
                         }
                     }
 
@@ -716,7 +716,7 @@ module TypeScript {
                 }
                 // Constructor types have a "prototype" property
                 else if (lhsType.isConstructor()) {
-                    members.push(this.createPrototypeSymbol(lhsType));
+                    members.push(this.createPrototypeSymbol(lhsType, context));
                 }
                 else {
                     var associatedContainerSymbol = lhsType.getAssociatedContainerType();
@@ -737,7 +737,7 @@ module TypeScript {
             return members;
         }
 
-        private createPrototypeSymbol(constructorTypeSymbol: PullTypeSymbol): PullSymbol {
+        private createPrototypeSymbol(constructorTypeSymbol: PullTypeSymbol, context: PullTypeResolutionContext): PullSymbol {
             var prototypeStr = "prototype";
             var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
             var parentDecl = constructorTypeSymbol.getDeclarations()[0];
@@ -747,7 +747,7 @@ module TypeScript {
             prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
 
             if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
-                prototypeSymbol.type = this.instantiateTypeToAny(prototypeSymbol.type, new PullTypeResolutionContext(this));
+                prototypeSymbol.type = this.instantiateTypeToAny(prototypeSymbol.type, context);
             }
             prototypeSymbol.setResolved();
 
@@ -3135,8 +3135,8 @@ module TypeScript {
                     if (numberIndexSignature && stringIndexSignature &&
                         (isNumericIndexer || stringIndexSignature.getDeclarations()[0].getParentDecl() !== numberIndexSignature.getDeclarations()[0].getParentDecl())) {
                         var comparisonInfo = new TypeComparisonInfo();
-                        var resolutionContext = new PullTypeResolutionContext(this);
-                        if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, resolutionContext, comparisonInfo)) {
+
+                        if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, context, comparisonInfo)) {
                             if (comparisonInfo.message) {
                                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
                                     [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]));
@@ -10004,8 +10004,6 @@ module TypeScript {
                     // Report error - definition signature cannot specify constant type
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDecl, DiagnosticCode.Overload_signature_implementation_cannot_use_specialized_type));
                 } else {
-                    // PERFREVIEW: Why create a new resolution context?
-                    //var resolutionContext = new PullTypeResolutionContext(true);
                     var foundSubtypeSignature = false;
                     for (var i = 0; i < allSignatures.length; i++) {
                         if (allSignatures[i].isDefinition() || allSignatures[i] === signature) {
@@ -10033,7 +10031,7 @@ module TypeScript {
                 }
             } else if (definitionSignature && definitionSignature != signature) {
                 var comparisonInfo = new TypeComparisonInfo();
-                //var resolutionContext = new PullTypeResolutionContext();
+
                 if (!definitionSignature.isResolved) {
                     this.resolveDeclaredSymbol(definitionSignature, context);
                 }
@@ -10651,8 +10649,7 @@ module TypeScript {
             if (messageCode) {
                 var messageArguments = [typeSymbolName];
                 var reportOnFuncDecl = false;
-                // PERFREVIEW: Why the new context?
-                //var contextForReturnTypeResolution = new PullTypeResolutionContext();
+
                 if (returnTypeAnnotation) {
                     // NOTE: we don't want to report this diagnostics.  They'll already have been 
                     // reported when we first hit the return statement.
@@ -10878,9 +10875,8 @@ module TypeScript {
         private checkThatMemberIsSubtypeOfIndexer(member: PullSymbol, indexSignature: PullSignatureSymbol, astForError: AST, context: PullTypeResolutionContext, enclosingDecl: PullDecl, isNumeric: boolean) {
 
             var comparisonInfo = new TypeComparisonInfo();
-            var resolutionContext = new PullTypeResolutionContext(this);
 
-            if (!this.sourceIsSubtypeOfTarget(member.type, indexSignature.returnType, resolutionContext, comparisonInfo)) {
+            if (!this.sourceIsSubtypeOfTarget(member.type, indexSignature.returnType, context, comparisonInfo)) {
                 if (isNumeric) {
                     if (comparisonInfo.message) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(astForError, DiagnosticCode.All_numerically_named_properties_must_be_subtypes_of_numeric_indexer_type_0_NL_1,
@@ -10945,7 +10941,6 @@ module TypeScript {
 
             var typeMembers = typeSymbol.getMembers();
 
-            var resolutionContext = new PullTypeResolutionContext(this);
             var comparisonInfo = new TypeComparisonInfo();
             var foundError = false;
 
@@ -10958,7 +10953,7 @@ module TypeScript {
                     foundError = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
 
                     if (!foundError) {
-                        foundError = !this.sourcePropertyIsSubtypeOfTargetProperty(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, resolutionContext, comparisonInfo);
+                        foundError = !this.sourcePropertyIsSubtypeOfTargetProperty(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, context, comparisonInfo);
                     }
 
                     if (foundError) {
@@ -10969,17 +10964,17 @@ module TypeScript {
 
             // Check call signatures
             if (!foundError && typeSymbol.hasOwnCallSignatures()) {
-                foundError = !this.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(typeSymbol, extendedType, resolutionContext, comparisonInfo);
+                foundError = !this.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(typeSymbol, extendedType, context, comparisonInfo);
             }
 
             // Check construct signatures
             if (!foundError && typeSymbol.hasOwnConstructSignatures()) {
-                foundError = !this.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(typeSymbol, extendedType, resolutionContext, comparisonInfo);
+                foundError = !this.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(typeSymbol, extendedType, context, comparisonInfo);
             }
 
             // Check index signatures
             if (!foundError && typeSymbol.hasOwnIndexSignatures()) {
-                foundError = !this.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(typeSymbol, extendedType, resolutionContext, comparisonInfo);
+                foundError = !this.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(typeSymbol, extendedType, context, comparisonInfo);
             }
 
             if (!foundError && typeSymbol.isClass()) {
@@ -10996,13 +10991,13 @@ module TypeScript {
                         var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
                         if (extendedConstructorTypeProp) {
                             if (!extendedConstructorTypeProp.isResolved) {
-                                this.resolveDeclaredSymbol(extendedConstructorTypeProp, resolutionContext);
+                                this.resolveDeclaredSymbol(extendedConstructorTypeProp, context);
                             }
 
                             // check if type of property is subtype of extended type's property type
                             var typeConstructorTypePropType = typeConstructorTypeMembers[i].type;
                             var extendedConstructorTypePropType = extendedConstructorTypeProp.type;
-                            if (!this.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, resolutionContext, comparisonInfoForPropTypeCheck)) {
+                            if (!this.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, context, comparisonInfoForPropTypeCheck)) {
                                 var propMessage: string;
                                 if (comparisonInfoForPropTypeCheck.message) {
                                     propMessage = getDiagnosticMessage(DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible_NL_3,
@@ -11043,15 +11038,14 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext) {
 
-            var resolutionContext = new PullTypeResolutionContext(this);
             var comparisonInfo = new TypeComparisonInfo();
-            var foundError = !this.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, resolutionContext, comparisonInfo);
+            var foundError = !this.sourceMembersAreSubtypeOfTargetMembers(classSymbol, implementedType, context, comparisonInfo);
             if (!foundError) {
-                foundError = !this.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                foundError = !this.sourceCallSignaturesAreSubtypeOfTargetCallSignatures(classSymbol, implementedType, context, comparisonInfo);
                 if (!foundError) {
-                    foundError = !this.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                    foundError = !this.sourceConstructSignaturesAreSubtypeOfTargetConstructSignatures(classSymbol, implementedType, context, comparisonInfo);
                     if (!foundError) {
-                        foundError = !this.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(classSymbol, implementedType, resolutionContext, comparisonInfo);
+                        foundError = !this.sourceIndexSignaturesAreSubtypeOfTargetIndexSignatures(classSymbol, implementedType, context, comparisonInfo);
                     }
                 }
             }
