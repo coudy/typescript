@@ -1534,7 +1534,7 @@ module TypeScript {
                         var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
                         var instanceSymbol = (<PullContainerSymbol>aliasedType).getInstanceSymbol();
                         if (valueSymbol && (instanceSymbol != valueSymbol || valueSymbol.type == aliasedType)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_doesn_t_reference_module_instance_for_1, [(<Identifier>aliasExpr).actualText, moduleSymbol.type.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [(<Identifier>aliasExpr).actualText, moduleSymbol.type.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                         }
                     }
                 } else {
@@ -11085,7 +11085,7 @@ module TypeScript {
                 // Verify if the class extends another class verify the value position resolves to the same type expression
                 if (this.hasClassTypeSymbolConflictAsValue(<Identifier>baseDeclAST.term, baseType, enclosingDecl, context)) {
                     // Report error
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, DiagnosticCode.Type_reference_0_in_extends_clause_doesn_t_reference_constructor_function_for_1, [(<Identifier>baseDeclAST.term).actualText, baseType.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, DiagnosticCode.Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1, [(<Identifier>baseDeclAST.term).actualText, baseType.toString(this, enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                 }
             }
 

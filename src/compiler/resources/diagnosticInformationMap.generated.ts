@@ -1070,11 +1070,11 @@ module TypeScript {
     "code": 2185,
     "category": DiagnosticCategory.Error
   },
-  "Type reference '{0}' in extends clause doesn't reference constructor function for '{1}'.": {
+  "Type reference '{0}' in extends clause does not reference constructor function for '{1}'.": {
     "code": 2186,
     "category": DiagnosticCategory.Error
   },
-  "Internal module reference '{0}' in import declaration doesn't reference module instance for '{1}'.": {
+  "Internal module reference '{0}' in import declaration does not reference module instance for '{1}'.": {
     "code": 2187,
     "category": DiagnosticCategory.Error
   },
