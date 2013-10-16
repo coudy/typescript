@@ -1048,9 +1048,7 @@ module Harness {
                 output.outputFiles.forEach(o => {
                     host.writeFile(o.name, o.text, o.writeByteOrderMark);
 
-                    if (o.sourceMapEntries) {
-                        o.sourceMapEntries.forEach(s => sourceMapEmitterCallback(s.emittedFile, s.emittedLine, s.emittedColumn, s.sourceFile, s.sourceLine, s.sourceColumn, s.sourceName));
-                    }
+                    o.sourceMapEntries.forEach(s => sourceMapEmitterCallback(s.emittedFile, s.emittedLine, s.emittedColumn, s.sourceFile, s.sourceLine, s.sourceColumn, s.sourceName));
                 });
 
                 return output.diagnostics;
