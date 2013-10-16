@@ -8894,7 +8894,7 @@ module TypeScript {
                         }
 
                         for (var i = 0; i < sourcePropTypeArguments.length; i++) {
-                            if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo)) {
+                            if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
                                 return false;
                             }
                         }
