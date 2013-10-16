@@ -1572,7 +1572,7 @@ module TypeScript {
 
             var aliasedType: PullTypeSymbol = null;
 
-            if (importDeclSymbol.isResolved || importDeclSymbol.inResolution) {
+            if (importDeclSymbol.isResolved) {
                 return importDeclSymbol;
             }
 
