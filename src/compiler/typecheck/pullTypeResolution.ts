@@ -8398,7 +8398,7 @@ module TypeScript {
 
             var constraint = (<PullTypeParameterSymbol>type).getConstraint();
 
-            if (constraint) {
+            if (constraint && (constraint != type)) {
                 return this.substituteUpperBoundForType(constraint);
             }
 
