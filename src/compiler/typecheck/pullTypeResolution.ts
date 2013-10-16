@@ -2350,7 +2350,7 @@ module TypeScript {
 
                 // if we're lacking both a type annotation and an initialization expression, the type is 'any'
                 if (!(hasTypeExpr || init)) {
-                    var defaultType = this.semanticInfoChain.anyTypeSymbol;
+                    var defaultType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
 
                     if (declSymbol.isVarArg) {
                         defaultType = this.createInstantiatedType(this.cachedArrayInterfaceType(), [defaultType]);
@@ -6433,10 +6433,10 @@ module TypeScript {
 
         // PULLTODO: Optimization: cache this for a given decl path
         private resolveSuperExpression(ast: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol {
-            var superType = this.semanticInfoChain.anyTypeSymbol;
+            var superType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
             if (enclosingDecl) {
                 var declPath = enclosingDecl.getParentPath();
-                var superType = this.semanticInfoChain.anyTypeSymbol;
+                superType = this.semanticInfoChain.anyTypeSymbol;
 
                 var classSymbol = this.getContextualClassSymbolForEnclosingDecl(ast, enclosingDecl, context);
 
