@@ -639,8 +639,6 @@ module TypeScript.PrettyPrinter {
         }
 
         public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): void {
-            this.appendSpaceList(node.modifiers);
-            this.ensureSpace();
             node.indexSignature.accept(this);
             this.appendToken(node.semicolonToken);
         }

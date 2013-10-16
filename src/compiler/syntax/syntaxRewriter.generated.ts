@@ -473,7 +473,6 @@ module TypeScript {
 
         public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): any {
             return node.update(
-                this.visitList(node.modifiers),
                 <IndexSignatureSyntax>this.visitNode(node.indexSignature),
                 this.visitToken(node.semicolonToken));
         }

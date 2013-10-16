@@ -1870,13 +1870,6 @@ module TypeScript {
             this.semanticInfoChain.setSymbolForAST(this.semanticInfoChain.getASTForDecl(indexSignatureDeclaration), indexSignature);
 
             var parent = this.getParent(indexSignatureDeclaration);
-
-            var isStatic = hasFlag(indexSignatureDeclaration.flags, PullElementFlags.Static);
-            if (isStatic) {
-                // Add to the constructor type instead of the instance type
-                parent = parent.getConstructorMethod().type;
-            }
-
             parent.addIndexSignature(indexSignature);
             indexSignature.setContainer(parent);
         }

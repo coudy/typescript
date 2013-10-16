@@ -350,10 +350,6 @@ module TypeScript {
     "code": 1086,
     "category": DiagnosticCategory.Error
   },
-  "Index member declaration can only have the 'static' modifier.": {
-    "code": 1088,
-    "category": DiagnosticCategory.Error
-  },
   "'{0}' modifier cannot appear on a constructor declaration.": {
     "code": 1089,
     "category": DiagnosticCategory.Error

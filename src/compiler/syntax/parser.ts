@@ -2332,17 +2332,15 @@ module TypeScript.Parser {
         }
 
         private isIndexMemberDeclaration(): boolean {
-            var index = this.modifierCount();
-            return this.isIndexSignature(index);
+            return this.isIndexSignature();
         }
 
         private parseIndexMemberDeclaration(): IndexMemberDeclarationSyntax {
             // Debug.assert(this.isIndexMemberDeclaration()
-            var modifiers = this.parseModifiers();
             var indexSignature = this.parseIndexSignature();
             var semicolonToken = this.eatExplicitOrAutomaticSemicolon(/*allowWithoutNewLine:*/ false);
 
-            return this.factory.indexMemberDeclaration(modifiers, indexSignature, semicolonToken);
+            return this.factory.indexMemberDeclaration(indexSignature, semicolonToken);
         }
 
         private tryAddUnexpectedEqualsGreaterThanToken(callSignature: CallSignatureSyntax): CallSignatureSyntax {
@@ -2508,7 +2506,7 @@ module TypeScript.Parser {
 
             return this.isCallSignature(/*tokenIndex:*/ 0) ||
                    this.isConstructSignature() ||
-                   this.isIndexSignature(/*tokenIndex:*/ 0) ||
+                   this.isIndexSignature() ||
                    this.isMethodSignature(inErrorRecovery) ||
                    this.isPropertySignature(inErrorRecovery);
         }
@@ -2524,7 +2522,7 @@ module TypeScript.Parser {
             else if (this.isConstructSignature()) {
                 return this.parseConstructSignature();
             }
-            else if (this.isIndexSignature(/*tokenIndex:*/ 0)) {
+            else if (this.isIndexSignature()) {
                 return this.parseIndexSignature();
             }
             else if (this.isMethodSignature(inErrorRecovery)) {
@@ -2594,8 +2592,8 @@ module TypeScript.Parser {
             return token1.tokenKind === SyntaxKind.LessThanToken || token1.tokenKind === SyntaxKind.OpenParenToken;
         }
 
-        private isIndexSignature(tokenIndex: number): boolean {
-            return this.peekToken(tokenIndex).tokenKind === SyntaxKind.OpenBracketToken;
+        private isIndexSignature(): boolean {
+            return this.currentToken().tokenKind === SyntaxKind.OpenBracketToken;
         }
 
         private isMethodSignature(inErrorRecovery: boolean): boolean {

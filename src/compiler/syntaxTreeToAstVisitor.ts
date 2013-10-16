@@ -1573,15 +1573,10 @@ module TypeScript {
         public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): FunctionDeclaration {
             var start = this.position;
 
-            this.moveTo(node, node.indexSignature);
             var result = node.indexSignature.accept(this);
             this.setCommentsAndSpan(result, start, node);
 
             this.movePast(node.semicolonToken);
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Static);
-            }
 
             return result;
         }

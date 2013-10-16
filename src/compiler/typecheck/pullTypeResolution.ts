@@ -1312,11 +1312,6 @@ module TypeScript {
             if (!classDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
             }
-
-            var classConstructorTypeSymbol = classDeclSymbol.getConstructorMethod().type;
-            if (!classConstructorTypeSymbol.hasBaseTypeConflict()) {
-                this.typeCheckMembersAgainstIndexer(classConstructorTypeSymbol, classDecl, context);
-            }
         }
 
         private postTypeCheckClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext) {
@@ -10785,7 +10780,7 @@ module TypeScript {
                     var member = members[i];
                     if (member.name
                         && member.kind !== PullElementKind.ConstructorMethod
-                        && member.getSymbol().getContainer() === containerType) {
+                        && !hasFlag(member.flags, PullElementFlags.Static)) {
                         // Decide whether to check against the number or string signature
                         var isMemberNumeric = PullHelpers.isNameNumeric(member.name);
                         if (isMemberNumeric && numberSignature) {
