@@ -116,9 +116,8 @@ module TypeScript {
 
         private canEmitDeclarations(declFlags: DeclFlags, declAST: AST) {
             var container = this.getAstDeclarationContainer();
-
-            var pullDecl = this.semanticInfoChain.getDeclForAST(declAST);
             if (container.nodeType() === NodeType.ModuleDeclaration) {
+                var pullDecl = this.semanticInfoChain.getDeclForAST(declAST);
                 if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
                     var start = new Date().getTime();
                     var declSymbol = this.semanticInfoChain.getSymbolForAST(declAST);
@@ -531,76 +530,92 @@ module TypeScript {
         }
 
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {
-            var functionFlags = funcDecl.getFunctionFlags();
-            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            if (funcPullDecl.kind == PullElementKind.IndexSignature) {
+                this.emitDeclarationsForIndexSignature(funcDecl);
+            } else {
+                var functionFlags = funcDecl.getFunctionFlags();
+                var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
 
-            var start = new Date().getTime();
-            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
+                var start = new Date().getTime();
+                var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
-            TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
+                TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
 
-            var funcTypeSymbol = funcSymbol.type;
-            if (funcDecl.block) {
-                var constructSignatures = funcTypeSymbol.getConstructSignatures();
-                if (constructSignatures && constructSignatures.length > 1) {
+                if (funcDecl.block) {
+                    var funcTypeSymbol = funcSymbol.type;
+                    var constructSignatures = funcTypeSymbol.getConstructSignatures();
+                    if (constructSignatures && constructSignatures.length > 1) {
+                        return;
+                    }
+                    else if (this.isOverloadedCallSignature(funcDecl)) {
+                        // This means its implementation of overload signature. do not emit
+                        return;
+                    }
+                }
+
+                if (!this.canEmitDeclarations(ToDeclFlags(functionFlags), funcDecl)) {
                     return;
                 }
-                else if (this.isOverloadedCallSignature(funcDecl)) {
-                    // This means its implementation of overload signature. do not emit
-                    return;
+
+                this.emitDeclarationComments(funcDecl);
+
+                var id = funcDecl.getNameText();
+                if (!isInterfaceMember) {
+                    this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
+                    if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
+                        this.declFile.Write(id);
+                    }
+                    else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
+                        this.declFile.Write("new");
+                    }
                 }
+                else {
+                    this.emitIndent();
+                    if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
+                        this.declFile.Write("new");
+                    }
+                    else if (funcPullDecl.kind !== PullElementKind.CallSignature) {
+                        this.declFile.Write(id);
+                        if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
+                            this.declFile.Write("? ");
+                        }
+                    }
+                }
+
+                var funcSignature = funcPullDecl.getSignatureSymbol();
+                this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+
+                this.declFile.Write("(");
+                this.emitParameterList(functionFlags, funcDecl.parameterList);
+                this.declFile.Write(")");
+
+                if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
+                    var returnType = funcSignature.returnType;
+                    this.declFile.Write(": ");
+                    this.emitTypeSignature(returnType);
+                }
+
+                this.declFile.WriteLine(";");
             }
+        }
 
+        private emitDeclarationsForIndexSignature(funcDecl: FunctionDeclaration) {
+            var functionFlags = funcDecl.getFunctionFlags();
             if (!this.canEmitDeclarations(ToDeclFlags(functionFlags), funcDecl)) {
                 return;
             }
 
-            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-            var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
 
-            var id = funcDecl.getNameText();
-            if (!isInterfaceMember) {
-                this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
-                if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
-                    this.declFile.Write(id);
-                }
-                else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
-                    this.declFile.Write("new");
-                }
-            }
-            else {
-                this.emitIndent();
-                if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
-                    this.declFile.Write("new");
-                }
-                else if (funcPullDecl.kind !== PullElementKind.CallSignature &&
-                    funcPullDecl.kind !== PullElementKind.IndexSignature) {
-                    this.declFile.Write(id);
-                    if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
-                        this.declFile.Write("? ");
-                    }
-                }
-            }
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
-
-            if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
-                this.declFile.Write("(");
-            }
-            else {
-                this.declFile.Write("[");
-            }
-
-            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
-
-            if (funcPullDecl.kind !== PullElementKind.IndexSignature) {
-                this.declFile.Write(")");
-            }
-            else {
-                this.declFile.Write("]");
-            }
+            this.emitIndent();
+            this.declFile.Write("[");
+            this.emitParameterList(functionFlags, funcDecl.parameterList);
+            this.declFile.Write("]");
 
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
+                var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+                var funcSignature = funcPullDecl.getSignatureSymbol();
                 var returnType = funcSignature.returnType;
                 this.declFile.Write(": ");
                 this.emitTypeSignature(returnType);
