@@ -17,6 +17,15 @@ module TypeScript {
         private documents: Document[] = [];
         private fileNameToDocument = new BlockIntrinsics<Document>();
 
+        public anyTypeDecl: PullDecl = null;
+        public booleanTypeDecl: PullDecl = null;
+        public numberTypeDecl: PullDecl = null;
+        public stringTypeDecl: PullDecl = null;
+        public nullTypeDecl: PullDecl = null;
+        public undefinedTypeDecl: PullDecl = null;
+        public voidTypeDecl: PullDecl = null;
+        public undefinedValueDecl: PullDecl = null;
+
         public anyTypeSymbol: PullPrimitiveTypeSymbol = null;
         public booleanTypeSymbol: PullPrimitiveTypeSymbol = null;
         public numberTypeSymbol: PullPrimitiveTypeSymbol = null;
@@ -24,8 +33,8 @@ module TypeScript {
         public nullTypeSymbol: PullPrimitiveTypeSymbol = null;
         public undefinedTypeSymbol: PullPrimitiveTypeSymbol = null;
         public voidTypeSymbol: PullPrimitiveTypeSymbol = null;
-        public emptyTypeSymbol: PullTypeSymbol = null;
         public undefinedValueSymbol: PullSymbol = null;
+        public emptyTypeSymbol: PullTypeSymbol = null;
 
         // <-- Data to clear when we get invalidated
         private astSymbolMap: DataMap<PullSymbol> = null;
@@ -46,6 +55,22 @@ module TypeScript {
         private _fileNames: string[] = null;
 
         constructor(private compiler: TypeScriptCompiler, private logger: ILogger) {
+            var span = new TextSpan(0, 0);
+            var globalDecl = new RootPullDecl(/*name:*/ "", /*fileName:*/ "", PullElementKind.Global, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
+            this.documents[0] = new Document(this.compiler, this, /*fileName:*/ "", /*referencedFiles:*/[], /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null, globalDecl);
+
+            this.anyTypeDecl = new NormalPullDecl("any", "any", PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
+            this.booleanTypeDecl = new NormalPullDecl("boolean", "boolean", PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
+            this.numberTypeDecl = new NormalPullDecl("number", "number", PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
+            this.stringTypeDecl = new NormalPullDecl("string", "string", PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
+            this.voidTypeDecl = new NormalPullDecl("void", "void", PullElementKind.Primitive, PullElementFlags.None, globalDecl, span);
+            
+            // add the global primitive values for "null" and "undefined"
+            // Because you cannot reference them by name, they're not parented by any actual decl.
+            this.nullTypeDecl = new RootPullDecl("null", "", PullElementKind.Primitive, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
+            this.undefinedTypeDecl = new RootPullDecl("undefined", "", PullElementKind.Primitive, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
+            this.undefinedValueDecl = new NormalPullDecl("undefined", "undefined", PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span);
+
             this.invalidate();
         }
 
@@ -69,8 +94,7 @@ module TypeScript {
         }
 
         // Must pass in a new decl, or an old symbol that has a decl available for ownership transfer
-        private bindPrimitiveSymbol(decl: PullDecl, oldSymbol: PullSymbol, newSymbol: PullSymbol): PullSymbol {
-            decl = decl || oldSymbol.getDeclarations()[0];
+        private bindPrimitiveSymbol(decl: PullDecl, newSymbol: PullSymbol): PullSymbol {
             newSymbol.addDeclaration(decl);
             decl.setSymbol(newSymbol);
             newSymbol.setResolved();
@@ -78,74 +102,40 @@ module TypeScript {
             return newSymbol;
         }
 
-        // Pass in the name and the global parent decl, or the old symbol. During initialization
-        // of the compiler, the symbol passed in will be null, and this method will create both
-        // the decl and the symbol. On subsequent edits, the old symbol should be passed in and
-        // its decl will be transferred to a newly created decl as the owner. Because the
-        // decl->symbol cache is cleaned on every edit, but the decl persists, it is necessary
-        // to bind the original decl to the new symbol. Symbols cannot be reused across edits.
-        private addOrBindPrimitiveType(name: string, globalDecl: PullDecl, oldSymbol: PullPrimitiveTypeSymbol): PullPrimitiveTypeSymbol {
-            var decl: PullDecl;
-            if (!oldSymbol) {
-                var span = new TextSpan(0, 0);
-
-                decl = globalDecl
-                    ? <PullDecl>new NormalPullDecl(name, name, PullElementKind.Primitive, PullElementFlags.None, globalDecl, span)
-                    : new RootPullDecl(name, "", PullElementKind.Primitive, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
-            }
-
-            var newSymbol = new PullPrimitiveTypeSymbol(name);
-            return <PullPrimitiveTypeSymbol>this.bindPrimitiveSymbol(decl, oldSymbol, newSymbol);
+        // Creates a new type symbol to be bound to this decl. Must be called during
+        // invalidation after every edit.
+        private addPrimitiveTypeSymbol(decl: PullDecl): PullPrimitiveTypeSymbol {
+            var newSymbol = new PullPrimitiveTypeSymbol(decl.name);
+            return <PullPrimitiveTypeSymbol>this.bindPrimitiveSymbol(decl, newSymbol);
         }
 
-        // Pass in the name, the global parent decl, and the value's type, or just the old symbol.
-        // During initialization of the compiler, the symbol passed in will be null, and this
-        // method will create both the decl and the symbol. On subsequent edits, the old symbol
-        // should be passed in and its decl will be transferred to a newly created decl as the
-        // owner. Because the decl->symbol cache is cleaned on every edit, but the decl persists,
-        // it is necessary to bind the original decl to the new symbol. Symbols cannot be reused
-        // across edits.
-        private addOrBindPrimitiveValue(name: string, globalDecl: PullDecl, type: PullTypeSymbol, oldSymbol: PullSymbol): PullSymbol {
-            var decl: PullDecl;
-            if (!oldSymbol) {
-                var span = new TextSpan(0, 0);
-                decl = new NormalPullDecl(name, name, PullElementKind.Variable, PullElementFlags.Ambient, globalDecl, span);
-            }
-
-            var newSymbol = new PullSymbol(name, PullElementKind.Variable);
+        // Creates a new value symbol to be bound to this decl, and has the specified type.
+        // Must be called during invalidation after every edit.
+        private addPrimitiveValueSymbol(decl: PullDecl, type: PullTypeSymbol): PullSymbol {
+            var newSymbol = new PullSymbol(decl.name, PullElementKind.Variable);
             newSymbol.type = type;
-            return this.bindPrimitiveSymbol(decl, oldSymbol, newSymbol);
+            return this.bindPrimitiveSymbol(decl, newSymbol);
         }
 
-        private getGlobalDecl() {
-            var globalDecl = this.documents[0] && this.documents[0].topLevelDecl();
-            if (!globalDecl) {
-                var span = new TextSpan(0, 0);
-                globalDecl = new RootPullDecl(/*name:*/ "", /*fileName:*/ "", PullElementKind.Global, PullElementFlags.None, span, this, /*isExternalModule:*/ false);
-            }
-
+        private resetGlobalSymbols(): void {
             // add primitive types
-            this.anyTypeSymbol = this.addOrBindPrimitiveType("any", globalDecl, this.anyTypeSymbol);
-            this.booleanTypeSymbol = this.addOrBindPrimitiveType("boolean", globalDecl, this.booleanTypeSymbol);
-            this.numberTypeSymbol = this.addOrBindPrimitiveType("number", globalDecl, this.numberTypeSymbol);
-            this.stringTypeSymbol = this.addOrBindPrimitiveType("string", globalDecl, this.stringTypeSymbol);
-            this.voidTypeSymbol = this.addOrBindPrimitiveType("void", globalDecl, this.voidTypeSymbol);
-
-            // add the global primitive values for "null" and "undefined"
-            // Because you cannot reference them by name, they're not parented by any actual decl.
-            this.nullTypeSymbol = this.addOrBindPrimitiveType("null", null, this.nullTypeSymbol);
-            this.undefinedTypeSymbol = this.addOrBindPrimitiveType("undefined", null, this.undefinedTypeSymbol);
-            this.undefinedValueSymbol = this.addOrBindPrimitiveValue("undefined", globalDecl, this.undefinedTypeSymbol, this.undefinedValueSymbol);
+            this.anyTypeSymbol = this.addPrimitiveTypeSymbol(this.anyTypeDecl);
+            this.booleanTypeSymbol = this.addPrimitiveTypeSymbol(this.booleanTypeDecl);
+            this.numberTypeSymbol = this.addPrimitiveTypeSymbol(this.numberTypeDecl);
+            this.stringTypeSymbol = this.addPrimitiveTypeSymbol(this.stringTypeDecl);
+            this.voidTypeSymbol = this.addPrimitiveTypeSymbol(this.voidTypeDecl);
+            this.nullTypeSymbol = this.addPrimitiveTypeSymbol(this.nullTypeDecl);
+            this.undefinedTypeSymbol = this.addPrimitiveTypeSymbol(this.undefinedTypeDecl);
+            this.undefinedValueSymbol = this.addPrimitiveValueSymbol(this.undefinedValueDecl, this.undefinedTypeSymbol);
 
             // other decls not reachable from the globalDecl
+            var span = new TextSpan(0, 0);
             var emptyTypeDecl = new PullSynthesizedDecl("{}", "{}", PullElementKind.ObjectType, PullElementFlags.None, null, span, this);
             var emptyTypeSymbol = new PullTypeSymbol("{}", PullElementKind.ObjectType);
             emptyTypeDecl.setSymbol(emptyTypeSymbol);
             emptyTypeSymbol.addDeclaration(emptyTypeDecl);
             emptyTypeSymbol.setResolved();
             this.emptyTypeSymbol = emptyTypeSymbol;
-
-            return globalDecl;
         }
 
         public addDocument(document: Document): void {
@@ -484,8 +474,7 @@ module TypeScript {
                 }
             }
 
-            var globalDocument = new Document(this.compiler, this, /*fileName:*/ "", /*referencedFiles:*/[], /*scriptSnapshot:*/null, ByteOrderMark.None, /*version:*/0, /*isOpen:*/ false, /*syntaxTree:*/null, this.getGlobalDecl());
-            this.documents[0] = globalDocument;
+            this.resetGlobalSymbols();
 
             var cleanEnd = new Date().getTime();
             this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
