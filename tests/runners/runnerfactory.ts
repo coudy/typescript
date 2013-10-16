@@ -1,9 +1,9 @@
 ///<reference path="runnerbase.ts" />
-///<reference path="compiler/runner.ts" />
-///<reference path="fourslash/fsrunner.ts" />
-///<reference path="rwc/runner.ts" />
-///<reference path="projects/runner.ts" />
-///<reference path="unittest/unittestrunner.ts" />
+///<reference path="compiler/compilerRunner.ts" />
+///<reference path="fourslash/fourslashRunner.ts" />
+///<reference path="rwc/rwcRunner.ts" />
+///<reference path="projects/projectsRunner.ts" />
+///<reference path="unittest/unittestRunner.ts" />
 
 class RunnerFactory {
     private runners = {};

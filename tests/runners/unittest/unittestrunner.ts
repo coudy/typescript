@@ -1,5 +1,5 @@
 ///<reference path="../../../src/harness/harness.ts" />
-///<reference path="../runnerbase.ts" />
+///<reference path="../runnerBase.ts" />
 
 enum UnittestTestType {
     Compiler,

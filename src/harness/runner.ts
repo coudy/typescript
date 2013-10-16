@@ -20,10 +20,10 @@
 ///<reference path='exec.ts'/>
 ///<reference path='diff.ts'/>
 ///<reference path='..\..\tests\runners\runnerfactory.ts' />
-///<reference path='..\..\tests\runners\compiler\runner.ts' />
-///<reference path='..\..\tests\runners\fourslash\fsrunner.ts' />
-///<reference path='..\..\tests\runners\projects\runner.ts' />
-///<reference path='..\..\tests\runners\unittest\unittestrunner.ts' />
+///<reference path='..\..\tests\runners\compiler\compilerRunner.ts' />
+///<reference path='..\..\tests\runners\fourslash\fourslashRunner.ts' />
+///<reference path='..\..\tests\runners\projects\projectsRunner.ts' />
+///<reference path='..\..\tests\runners\unittest\unittestRunner.ts' />
 
 declare var _inheritsFrom: any; // reference base inheritsFrom in child contexts.
 
