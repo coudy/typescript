@@ -718,7 +718,7 @@ module TypeScript {
                 var docComments: string = "";
                 if (!useConstructorAsClass && this.kind == TypeScript.PullElementKind.ConstructSignature &&
                     decls.length && decls[0].kind == TypeScript.PullElementKind.Class) {
-                        var classSymbol = (<TypeScript.PullSignatureSymbol>this).returnType;
+                    var classSymbol = (<TypeScript.PullSignatureSymbol>this).returnType;
                     var extendedTypes = classSymbol.getExtendedTypes();
                     if (extendedTypes.length) {
                         docComments = extendedTypes[0].getConstructorMethod().docComments();
@@ -804,7 +804,7 @@ module TypeScript {
         }
 
         public isDefinition() { return false; }
-        
+
         // GTODO
         public isGeneric() { return this.hasAGenericParameter || (this.typeParameters && this.typeParameters.length != 0); }
 
@@ -1054,7 +1054,7 @@ module TypeScript {
             return wrapsSomeTypeParameter;
         }
 
-        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isNested = false): boolean {
+        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isNested: boolean): boolean {
             var signature = this;
             if (signature.inWrapCheck) {
                 return false;
@@ -2187,9 +2187,7 @@ module TypeScript {
         //      p1: T; <- no
         //      p2: C<T>; <- yes
         //  }
-        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType = false): boolean {
-
-            var wrapsSomeWrappedTypeParameter = false;
+        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean): boolean {
 
             if (this == typeBeingWrapped || this.inWrapCheck) {
                 return !!isCheckingNestedType;
@@ -2197,80 +2195,82 @@ module TypeScript {
 
             // if we encounter a type parameter or primitive, nothing is being wrapped
             if (this.isPrimitive() || this.isTypeParameter()) {
-                return wrapsSomeWrappedTypeParameter;
+                return false;
             }
 
-            this.inWrapCheck = true;
+            var wrapsSomeWrappedTypeParameter = false;
 
-            if (!wrapsSomeWrappedTypeParameter) {
-                var typeArguments = this.getTypeArguments();
-
-                // If there are no type arguments, we could be instantiating the 'root' type
-                // declaration
-                if (this.isGeneric() && !typeArguments) {
-                    typeArguments = this.getTypeParameters();
-                }
-
-                // if it's a generic type, test to see if we're wrapping
-                if (typeArguments) {
-                    for (var i = 0; i < typeArguments.length; i++) {
-                        if ((isCheckingNestedType && typeArguments[i].isTypeParameter() && (typeArguments[i].getRootSymbol() == typeBeingWrapped.getRootSymbol())) ||
-                             typeArguments[i].wrapsSomeNestedType(typeBeingWrapped, true)) {
-                            wrapsSomeWrappedTypeParameter = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!wrapsSomeWrappedTypeParameter) {
-                // otherwise, walk the member list and signatures, checking for wraps
-                var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
-
-                for (var i = 0; i < members.length; i++) {
-                    if (members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
-                        wrapsSomeWrappedTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!wrapsSomeWrappedTypeParameter) {
-                var sigs = this.getCallSignatures(true);
-
-                for (var i = 0; i < sigs.length; i++) {
-                    if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
-                        wrapsSomeWrappedTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!wrapsSomeWrappedTypeParameter) {
-                sigs = this.getConstructSignatures(true);
-
-                for (var i = 0; i < sigs.length; i++) {
-                    if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
-                        wrapsSomeWrappedTypeParameter = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!wrapsSomeWrappedTypeParameter) {
-                sigs = this.getIndexSignatures(true);
-
-                for (var i = 0; i < sigs.length; i++) {
-                    if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
-                        wrapsSomeWrappedTypeParameter = true;
-                        break;
-                    }
-                }
-            }
+            wrapsSomeWrappedTypeParameter = this._wrapSomeNestedTypeWorker(typeBeingWrapped, isCheckingNestedType);
 
             this.inWrapCheck = false;
 
             return wrapsSomeWrappedTypeParameter;
+        }
+
+        private _wrapSomeNestedTypeWorker(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean): boolean {
+            if (this == typeBeingWrapped || this.inWrapCheck) {
+                return !!isCheckingNestedType;
+            }
+
+            // if we encounter a type parameter or primitive, nothing is being wrapped
+            if (this.isPrimitive() || this.isTypeParameter()) {
+                return false;
+            }
+
+            this.inWrapCheck = true;
+
+            var typeArguments = this.getTypeArguments();
+
+            // If there are no type arguments, we could be instantiating the 'root' type
+            // declaration
+            if (this.isGeneric() && !typeArguments) {
+                typeArguments = this.getTypeParameters();
+            }
+
+            // if it's a generic type, test to see if we're wrapping
+            if (typeArguments) {
+                for (var i = 0; i < typeArguments.length; i++) {
+                    if ((isCheckingNestedType && typeArguments[i].isTypeParameter() && (typeArguments[i].getRootSymbol() == typeBeingWrapped.getRootSymbol())) ||
+                        typeArguments[i].wrapsSomeNestedType(typeBeingWrapped, true)) {
+                        return true;
+                    }
+                }
+            }
+
+            // otherwise, walk the member list and signatures, checking for wraps
+            var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+
+            for (var i = 0; i < members.length; i++) {
+                if (members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                    return true;
+                }
+            }
+
+            var sigs = this.getCallSignatures(true);
+
+            for (var i = 0; i < sigs.length; i++) {
+                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                    return true;
+                }
+            }
+
+            sigs = this.getConstructSignatures(true);
+
+            for (var i = 0; i < sigs.length; i++) {
+                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                    return true;
+                }
+            }
+
+            sigs = this.getIndexSignatures(true);
+
+            for (var i = 0; i < sigs.length; i++) {
+                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
@@ -2613,6 +2613,30 @@ module TypeScript {
             return this._constraint;
         }
 
+        public getCallSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
+            if (this._constraint) {
+                return this._constraint.getCallSignatures();
+            }
+
+            return super.getCallSignatures(collectBaseSignatures);
+        }
+
+        public getConstructSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
+            if (this._constraint) {
+                return this._constraint.getConstructSignatures();
+            }
+
+            return super.getConstructSignatures(collectBaseSignatures);
+        }
+
+        public getIndexSignatures(collectBaseSignatures= true): PullSignatureSymbol[] {
+            if (this._constraint) {
+                return this._constraint.getIndexSignatures();
+            }
+
+            return super.getIndexSignatures(collectBaseSignatures);
+        }
+
         public isGeneric() { return true; }
 
         public fullName(scopeSymbol?: PullSymbol) {
@@ -2663,7 +2687,7 @@ module TypeScript {
         }
 
         public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
-            return true;          
+            return true;
         }
     }
 
