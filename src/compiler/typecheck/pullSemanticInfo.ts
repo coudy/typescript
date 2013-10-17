@@ -474,6 +474,10 @@ module TypeScript {
                 }
             }
 
+            // Reset global counters
+            TypeScript.pullSymbolID = 0;
+            TypeScript.globalTyvarID = 0;
+
             this.resetGlobalSymbols();
 
             var cleanEnd = new Date().getTime();
