@@ -56,7 +56,6 @@ module TypeScript {
     export interface IAST extends IASTSpan {
         nodeType(): NodeType;
         astID: number;
-        astIDString: string;
         getLength(): number;
     }
 
@@ -70,7 +69,6 @@ module TypeScript {
 
         public typeCheckPhase = -1;
 
-        public astIDString: string = astID.toString();
         public astID: number = astID++;
 
         private _preComments: Comment[] = null;

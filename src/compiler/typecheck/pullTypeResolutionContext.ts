@@ -134,7 +134,7 @@ module TypeScript {
     export class PullContextualTypeContext {
         public provisionallyTypedSymbols: PullSymbol[] = [];
         public hasProvisionalErrors = false;
-        private astSymbolMap = new DataMap<PullSymbol>();
+        private astSymbolMap: PullSymbol[] = []
 
         constructor(public contextualType: PullTypeSymbol,
                     public provisional: boolean,
@@ -151,11 +151,11 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap.link(ast.astIDString, symbol);
+            this.astSymbolMap[ast.astID] = symbol;
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
-            return this.astSymbolMap.read(ast.astIDString);
+            return this.astSymbolMap[ast.astID];
         }
     }
 

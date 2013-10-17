@@ -37,9 +37,9 @@ module TypeScript {
         public emptyTypeSymbol: PullTypeSymbol = null;
 
         // <-- Data to clear when we get invalidated
-        private astSymbolMap: DataMap<PullSymbol> = null;
-        private astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
-        private astCallResolutionDataMap: Collections.HashTable<number, PullAdditionalCallResolutionData> = null;
+        private astSymbolMap: PullSymbol[] = [];
+        private astAliasSymbolMap: PullTypeAliasSymbol[] = [];
+        private astCallResolutionDataMap: PullAdditionalCallResolutionData[] = [];
 
         private declSymbolMap = new DataMap<PullSymbol>();
         private declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
@@ -444,9 +444,9 @@ module TypeScript {
             this.logger.log("Invalidating SemanticInfoChain...");
             var cleanStart = new Date().getTime();
 
-            this.astSymbolMap = new DataMap<PullSymbol>();
-            this.astAliasSymbolMap = new DataMap<PullTypeAliasSymbol>();
-            this.astCallResolutionDataMap = Collections.createHashTable<number, PullAdditionalCallResolutionData>(Collections.DefaultHashTableCapacity, k => k);
+            this.astSymbolMap.length = 0;
+            this.astAliasSymbolMap.length = 0;
+            this.astCallResolutionDataMap.length = 0;
 
             this.declCache = new BlockIntrinsics();
             this.symbolCache = new BlockIntrinsics();
@@ -495,28 +495,28 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap.link(ast.astIDString, symbol);
+            this.astSymbolMap[ast.astID] = symbol;
         }
 
         public getSymbolForAST(ast: IAST): PullSymbol {
-            return this.astSymbolMap.read(ast.astIDString);
+            return this.astSymbolMap[ast.astID];
         }
 
         public setAliasSymbolForAST(ast: AST, symbol: PullTypeAliasSymbol): void {
-            this.astAliasSymbolMap.link(ast.astIDString, symbol);
+            this.astAliasSymbolMap[ast.astID] = symbol;
         }
 
         public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
-            return this.astAliasSymbolMap.read(ast.astIDString);
+            return this.astAliasSymbolMap[ast.astID];
         }
 
         public getCallResolutionDataForAST(ast: AST): PullAdditionalCallResolutionData {
-            return <PullAdditionalCallResolutionData>this.astCallResolutionDataMap.get(ast.astID);
+            return this.astCallResolutionDataMap[ast.astID];
         }
 
         public setCallResolutionDataForAST(ast: AST, callResolutionData: PullAdditionalCallResolutionData) {
             if (callResolutionData) {
-                this.astCallResolutionDataMap.set(ast.astID, callResolutionData);
+                this.astCallResolutionDataMap[ast.astID] = callResolutionData;
             }
         }
 

@@ -8,7 +8,7 @@ module TypeScript {
         private _lineMap: LineMap = null;
 
         private _declASTMap = new DataMap<AST>();
-        private _astDeclMap = new DataMap<PullDecl>();
+        private _astDeclMap: PullDecl[] = [];
 
         constructor(private _compiler: TypeScriptCompiler,
                     private _semanticInfoChain: SemanticInfoChain,
@@ -26,7 +26,7 @@ module TypeScript {
         public invalidate(): void {
             // Dump all information related to syntax.  We'll have to recompute it when asked.
             this._declASTMap = new DataMap<AST>();
-            this._astDeclMap = new DataMap<PullDecl>();
+            this._astDeclMap.length = 0;
             this._topLevelDecl = null;
 
             this._syntaxTree = null;
@@ -178,12 +178,12 @@ module TypeScript {
             // Ensure we actually have created all our decls before we try to find a mathcing decl
             // for this ast.
             this.topLevelDecl();
-            return this._astDeclMap.read(ast.astIDString);
+            return this._astDeclMap[ast.astID];
         }
 
         public _setDeclForAST(ast: AST, decl: PullDecl): void {
             Debug.assert(decl.fileName() === this.fileName);
-            this._astDeclMap.link(ast.astIDString, decl);
+            this._astDeclMap[ast.astID] = decl;
         }
 
         public _getASTForDecl(decl: PullDecl): AST {
