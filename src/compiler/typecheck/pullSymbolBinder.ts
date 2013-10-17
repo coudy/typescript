@@ -7,7 +7,7 @@ module TypeScript {
     export class PullSymbolBinder {
         private static functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
 
-        private declsBeingBound: BlockIntrinsics<boolean> = new BlockIntrinsics<boolean>();
+        private declsBeingBound: boolean[] = [];
 
         constructor(private semanticInfoChain: SemanticInfoChain) {
         }
@@ -2062,13 +2062,13 @@ module TypeScript {
                 return;
             }
 
-            if (this.declsBeingBound[decl.declIDString]) {
+            if (this.declsBeingBound[decl.declID]) {
                 // We are already binding it now
                 return;
             }
 
             // Add it to the list in case we revisit it during binding
-            this.declsBeingBound[decl.declIDString] = true;
+            this.declsBeingBound[decl.declID] = true;
 
             try {
                 switch (decl.kind) {
@@ -2178,7 +2178,7 @@ module TypeScript {
             }
             finally {
                 // Rremove the decl from the list
-                delete this.declsBeingBound[decl.declIDString];
+                delete this.declsBeingBound[decl.declID];
             }
         }
 

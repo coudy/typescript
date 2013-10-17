@@ -7,7 +7,7 @@ module TypeScript {
         private _script: Script = null;
         private _lineMap: LineMap = null;
 
-        private _declASTMap = new DataMap<AST>();
+        private _declASTMap: AST[] = [];
         private _astDeclMap: PullDecl[] = [];
 
         constructor(private _compiler: TypeScriptCompiler,
@@ -25,7 +25,7 @@ module TypeScript {
         // Only for use by the semantic info chain.
         public invalidate(): void {
             // Dump all information related to syntax.  We'll have to recompute it when asked.
-            this._declASTMap = new DataMap<AST>();
+            this._declASTMap.length = 0;
             this._astDeclMap.length = 0;
             this._topLevelDecl = null;
 
@@ -187,12 +187,12 @@ module TypeScript {
         }
 
         public _getASTForDecl(decl: PullDecl): AST {
-            return this._declASTMap.read(decl.declIDString);
+            return this._declASTMap[decl.declID];
         }
 
         public _setASTForDecl(decl: PullDecl, ast: AST): void {
             Debug.assert(decl.fileName() === this.fileName);
-            this._declASTMap.link(decl.declIDString, ast);
+            this._declASTMap[decl.declID] = ast;
         }
     }
 }

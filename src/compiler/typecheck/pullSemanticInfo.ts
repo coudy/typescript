@@ -41,8 +41,8 @@ module TypeScript {
         private astAliasSymbolMap: PullTypeAliasSymbol[] = [];
         private astCallResolutionDataMap: PullAdditionalCallResolutionData[] = [];
 
-        private declSymbolMap = new DataMap<PullSymbol>();
-        private declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
+        private declSymbolMap: PullSymbol[] = [];
+        private declSignatureSymbolMap: PullSignatureSymbol[] = [];
 
         private declCache: BlockIntrinsics<PullDecl[]> = null;
         private symbolCache: BlockIntrinsics<PullSymbol> = null;
@@ -456,8 +456,8 @@ module TypeScript {
             this._topLevelDecls = null;
             this._fileNames = null;
 
-            this.declSymbolMap = new DataMap<PullSymbol>();
-            this.declSignatureSymbolMap = new DataMap<PullSignatureSymbol>();
+            this.declSymbolMap.length = 0;
+            this.declSignatureSymbolMap.length = 0;
 
             if (oldSettings && newSettings) {
                 // Depending on which options changed, our cached syntactic data may not be valid
@@ -521,19 +521,19 @@ module TypeScript {
         }
 
         public setSymbolForDecl(decl: PullDecl, symbol: PullSymbol): void {
-            this.declSymbolMap.link(decl.declIDString, symbol);
+            this.declSymbolMap[decl.declID] = symbol;
         }
 
         public getSymbolForDecl(decl: PullDecl): PullSymbol {
-            return this.declSymbolMap.read(decl.declIDString);
+            return this.declSymbolMap[decl.declID];
         }
 
         public setSignatureSymbolForDecl(decl: PullDecl, signatureSymbol: PullSignatureSymbol): void {
-            this.declSignatureSymbolMap.link(decl.declIDString, signatureSymbol);
+            this.declSignatureSymbolMap[decl.declID] = signatureSymbol;
         }
 
         public getSignatureSymbolForDecl(decl: PullDecl): PullSignatureSymbol {
-            return this.declSignatureSymbolMap.read(decl.declIDString);
+            return this.declSignatureSymbolMap[decl.declID];
         }
 
         public addDiagnostic(diagnostic: Diagnostic): void {
