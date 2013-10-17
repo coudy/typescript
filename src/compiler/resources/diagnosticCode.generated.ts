@@ -239,7 +239,6 @@ module TypeScript {
         Overload_signatures_must_all_be_optional_or_required: "Overload signatures must all be optional or required.",
         Specialized_overload_signature_is_not_subtype_of_any_non_specialized_signature: "Specialized overload signature is not subtype of any non-specialized signature.",
         this_cannot_be_referenced_in_constructor_arguments: "'this' cannot be referenced in constructor arguments.",
-        Static_member_cannot_be_accessed_off_an_instance_variable: "Static member cannot be accessed off an instance variable.",
         Instance_member_cannot_be_accessed_off_a_class: "Instance member cannot be accessed off a class.",
         Untyped_function_calls_may_not_accept_type_arguments: "Untyped function calls may not accept type arguments.",
         Non_generic_functions_may_not_accept_type_arguments: "Non-generic functions may not accept type arguments.",

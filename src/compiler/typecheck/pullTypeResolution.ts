@@ -701,11 +701,6 @@ module TypeScript {
                         this.resolveDeclaredSymbol(instanceType, context);
                         var instanceMembers = instanceType.getAllMembers(declSearchKind, memberVisibilty);
                         members = members.concat(instanceMembers);
-
-                        if (instanceType.isConstructor()) {
-                            // If this is a cladule
-                            members.push(this.createPrototypeSymbol(instanceType, context));
-                        }
                     }
 
                     var exportedContainer = (<PullContainerSymbol>lhsType).getExportAssignedContainerSymbol();
@@ -714,11 +709,7 @@ module TypeScript {
                         members = members.concat(exportedContainerMembers);
                     }
                 }
-                // Constructor types have a "prototype" property
-                else if (lhsType.isConstructor()) {
-                    members.push(this.createPrototypeSymbol(lhsType, context));
-                }
-                else {
+                else if (!lhsType.isConstructor()) {
                     var associatedContainerSymbol = lhsType.getAssociatedContainerType();
                     if (associatedContainerSymbol) {
                         var containerType = associatedContainerSymbol.type;
@@ -735,23 +726,6 @@ module TypeScript {
             }
 
             return members;
-        }
-
-        private createPrototypeSymbol(constructorTypeSymbol: PullTypeSymbol, context: PullTypeResolutionContext): PullSymbol {
-            var prototypeStr = "prototype";
-            var prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
-            var parentDecl = constructorTypeSymbol.getDeclarations()[0];
-            var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, parentDecl.kind, parentDecl.flags, parentDecl, parentDecl.getSpan(), parentDecl.semanticInfoChain());
-
-            prototypeSymbol.addDeclaration(prototypeDecl);
-            prototypeSymbol.type = constructorTypeSymbol.getAssociatedContainerType();
-
-            if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
-                prototypeSymbol.type = this.instantiateTypeToAny(prototypeSymbol.type, context);
-            }
-            prototypeSymbol.setResolved();
-
-            return prototypeSymbol;
         }
 
         private isAnyOrEquivalent(type: PullTypeSymbol) {
@@ -5508,30 +5482,6 @@ module TypeScript {
             return symbol;
         }
 
-        private isPrototypeMember(
-            expression: AST, name: Identifier, context: PullTypeResolutionContext): boolean {
-
-            var rhsName = name.text();
-            if (rhsName === "prototype") {
-                var lhsType = this.resolveAST(expression, /*inContextuallyTypedAssignment*/false, context).type;
-
-                if (lhsType) {
-                    if (lhsType.isClass() || lhsType.isConstructor()) {
-                        return true;
-                    }
-                    else {
-                        var classInstanceType = lhsType.getAssociatedContainerType();
-
-                        if (classInstanceType && classInstanceType.isClass()) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private computeDottedNameExpression(expression: AST, name: Identifier, context: PullTypeResolutionContext, checkSuperPrivateAndStaticAccess: boolean): PullSymbol {
             if (name.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -5583,37 +5533,6 @@ module TypeScript {
 
                 if (instanceSymbol) {
                     lhsType = instanceSymbol.type;
-                }
-            }
-
-            if (this.isPrototypeMember(expression, name, context)) {
-                if (lhsType.isClass()) {
-                    this.checkForStaticMemberAccess(expression, name, lhsType, lhsType, context);
-
-                    if (lhsType.isGeneric()) {
-                        return this.instantiateTypeToAny(lhsType, context);
-                    }
-
-                    return lhsType;
-                }
-                else {
-
-                    var instanceType = lhsType.getAssociatedContainerType();
-
-                    if (instanceType) {
-                        if (instanceType.isGeneric()) {
-                            instanceType = this.instantiateTypeToAny(instanceType, context);
-                        }
-                    }
-                    else {
-                        instanceType = lhsType;
-                    }
-
-                    if (instanceType && instanceType.isClass()) {
-                        this.checkForStaticMemberAccess(expression, name, lhsType, instanceType, context);
-
-                        return instanceType;
-                    }
                 }
             }
 
@@ -5672,9 +5591,8 @@ module TypeScript {
 
             if (checkSuperPrivateAndStaticAccess) {
                 this.checkForSuperMemberAccess(expression, name, nameSymbol, context) ||
-                this.checkForPrivateMemberAccess(name, lhsType, nameSymbol, context) ||
-                this.checkForStaticMemberAccess(expression, name, lhsType, nameSymbol, context);
-            }
+                this.checkForPrivateMemberAccess(name, lhsType, nameSymbol, context);
+             }
 
             return nameSymbol;
         }
@@ -11339,27 +11257,6 @@ module TypeScript {
             return false;
         }
 
-        private checkForStaticMemberAccess(
-            expression: AST,
-            name: Identifier,
-            expressionType: PullTypeSymbol,
-            resolvedName: PullSymbol,
-            context: PullTypeResolutionContext): boolean {
-
-            if (expressionType && resolvedName && !resolvedName.isError()) {
-                if (expressionType.isClass() || expressionType.kind === PullElementKind.ConstructorType) {
-                    if (resolvedName.hasFlag(PullElementFlags.Static) || this.isPrototypeMember(expression, name, context)) {
-                        if (expressionType.kind !== PullElementKind.ConstructorType) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name,
-                                DiagnosticCode.Static_member_cannot_be_accessed_off_an_instance_variable));
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
 
         public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullTypeSymbol {
             // if the type is a primitive type, nothing to do here

@@ -954,10 +954,6 @@ module TypeScript {
     "code": 2155,
     "category": DiagnosticCategory.Error
   },
-  "Static member cannot be accessed off an instance variable.": {
-    "code": 2156,
-    "category": DiagnosticCategory.Error
-  },
   "Instance member cannot be accessed off a class.": {
     "code": 2157,
     "category": DiagnosticCategory.Error

@@ -665,14 +665,16 @@ module TypeScript {
                     }
                 }
 
-                constructorSymbol = constructorSymbol || new PullSymbol(className, PullElementKind.ConstructorMethod);
-                constructorTypeSymbol = constructorSymbol.type || new PullTypeSymbol("", PullElementKind.ConstructorType);
+                if (constructorSymbol) {
+                    constructorTypeSymbol = constructorSymbol.type;
+                } else {
+                    constructorSymbol = new PullSymbol(className, PullElementKind.ConstructorMethod);
+                    constructorTypeSymbol = new PullTypeSymbol("", PullElementKind.ConstructorType);
+                    constructorSymbol.setIsSynthesized();
+                    constructorSymbol.type = constructorTypeSymbol;
+                }
 
-                constructorSymbol.setIsSynthesized();
-
-                constructorSymbol.type = constructorTypeSymbol;
                 classSymbol.setConstructorMethod(constructorSymbol);
-
                 classSymbol.setHasDefaultConstructor();
             }
 
@@ -713,6 +715,9 @@ module TypeScript {
             if (valueDecl) {
                 valueDecl.ensureSymbolIsBound();
             }
+
+            // Create the constructorTypeSymbol
+            this.bindStaticPrototypePropertyOfClass(classSymbol, constructorTypeSymbol);
         }
 
         // interfaces
@@ -1654,6 +1659,37 @@ module TypeScript {
             }
         }
 
+        private bindStaticPrototypePropertyOfClass(classTypeSymbol: PullTypeSymbol, constructorTypeSymbol: PullTypeSymbol) {
+            var prototypeStr = "prototype";
+
+            var prototypeSymbol = constructorTypeSymbol.findMember(prototypeStr, /*lookInParent*/ false);
+            if (prototypeSymbol && !prototypeSymbol.getIsSynthesized()) {
+                // Report duplicate symbol error on existing prototype symbol since class has explicit prototype symbol
+                // This kind of scenario can happen with augmented module and class with module member named prototype
+                this.semanticInfoChain.addDiagnostic(
+                    diagnosticFromDecl(prototypeSymbol.getDeclarations()[0], DiagnosticCode.Duplicate_identifier_0, [prototypeSymbol.getDisplayName()]));
+            }
+
+            // Add synthetic prototype decl and symbol
+            if (!prototypeSymbol || !prototypeSymbol.getIsSynthesized()) {
+                var prototypeDecl = new PullSynthesizedDecl(prototypeStr, prototypeStr, PullElementKind.Property,
+                    PullElementFlags.Public | PullElementFlags.Static, constructorTypeSymbol.getDeclarations()[0],
+                    classTypeSymbol.getDeclarations()[0].getSpan(), this.semanticInfoChain);
+
+                prototypeSymbol = new PullSymbol(prototypeStr, PullElementKind.Property);
+                prototypeSymbol.setIsSynthesized();
+                prototypeSymbol.addDeclaration(prototypeDecl);
+                prototypeSymbol.type = classTypeSymbol;
+                constructorTypeSymbol.addMember(prototypeSymbol);
+
+                if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
+                    var resolver = this.semanticInfoChain.getResolver();
+                    prototypeSymbol.type = resolver.instantiateTypeToAny(prototypeSymbol.type, new PullTypeResolutionContext(resolver));
+                }
+                prototypeSymbol.setResolved();
+            }
+        }
+
         // class constructor declarations
         private bindConstructorDeclarationToPullSymbol(constructorDeclaration: PullDecl) {
             var declKind = constructorDeclaration.kind;
@@ -1741,6 +1777,9 @@ module TypeScript {
                     otherDecls[i].ensureSymbolIsBound();
                 }
             }
+
+            // Create the constructorTypeSymbol
+            this.bindStaticPrototypePropertyOfClass(parent, constructorTypeSymbol);
         }
 
         private bindConstructSignatureDeclarationToPullSymbol(constructSignatureDeclaration: PullDecl) {
