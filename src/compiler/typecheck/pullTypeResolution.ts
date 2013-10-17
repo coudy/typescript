@@ -45,7 +45,7 @@ module TypeScript {
 
         private assignableCache: any[] = <any>{};
         private subtypeCache: any[] = <any>{};
-        private identicalCache: any[] = <any>{};
+        private identicalCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
 
         constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain) {
             this._cachedAnyTypeArgs = [
@@ -8182,9 +8182,9 @@ module TypeScript {
                 }
             }
 
-            var comboId = t2.pullSymbolIDString + "#" + t1.pullSymbolIDString;
+            //var comboId = t2.pullSymbolIDString + "#" + t1.pullSymbolIDString;
 
-            if (this.identicalCache[comboId] != undefined) {
+            if (this.identicalCache.valueAt(t1.pullSymbolID, t2.pullSymbolID) != undefined) {
                 return true;
             }
 
@@ -8197,7 +8197,7 @@ module TypeScript {
                 return false;
             }
 
-            this.identicalCache[comboId] = false;
+            this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, false);
 
             // properties are identical in name, optionality, and type
             if (t1.hasMembers() && t2.hasMembers()) {
@@ -8205,7 +8205,7 @@ module TypeScript {
                 var t2Members = t2.getMembers();
 
                 if (t1Members.length != t2Members.length) {
-                    this.identicalCache[comboId] = undefined;
+                    this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                     return false;
                 }
 
@@ -8221,7 +8221,7 @@ module TypeScript {
                     t2MemberSymbol = this.getMemberSymbol(t1MemberSymbol.name, PullElementKind.SomeValue, t2);
 
                     if (!t2MemberSymbol || (t1MemberSymbol.isOptional != t2MemberSymbol.isOptional)) {
-                        this.identicalCache[comboId] = undefined;
+                        this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                         return false;
                     }
 
@@ -8229,18 +8229,18 @@ module TypeScript {
                     t2MemberType = t2MemberSymbol.type;
 
                     // catch the mutually recursive or cached cases
-                    if (t1MemberType && t2MemberType && (this.identicalCache[t2MemberType.pullSymbolIDString + "#" + t1MemberType.pullSymbolIDString] != undefined)) {
+                    if (t1MemberType && t2MemberType && (this.identicalCache.valueAt(t1MemberType.pullSymbolID, t2MemberType.pullSymbolID) != undefined)) {
                         continue;
                     }
 
                     if (!this.typesAreIdentical(t1MemberType, t2MemberType)) {
-                        this.identicalCache[comboId] = undefined;
+                        this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                         return false;
                     }
                 }
             }
             else if (t1.hasMembers() || t2.hasMembers()) {
-                this.identicalCache[comboId] = undefined;
+                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
@@ -8254,21 +8254,21 @@ module TypeScript {
             var t2IndexSigs = t2.getIndexSignatures();
 
             if (!this.signatureGroupsAreIdentical(t1CallSigs, t2CallSigs)) {
-                this.identicalCache[comboId] = undefined;
+                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.signatureGroupsAreIdentical(t1ConstructSigs, t2ConstructSigs)) {
-                this.identicalCache[comboId] = undefined;
+                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.signatureGroupsAreIdentical(t1IndexSigs, t2IndexSigs)) {
-                this.identicalCache[comboId] = undefined;
+                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
-            this.identicalCache[comboId] = true;
+            this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, true);
             return true;
         }
 

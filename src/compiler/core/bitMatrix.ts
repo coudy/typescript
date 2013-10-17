@@ -27,7 +27,7 @@ module TypeScript {
                 Debug.assert(!this.isReleased, "Should not use a released bitvector");
                 var vector = this.vectors[x];
                 if (!vector) {
-                    return false;
+                    return this.allowUndefinedValues ? undefined : false;
                 }
 
                 return vector.valueAt(y);
@@ -37,6 +37,12 @@ module TypeScript {
                 Debug.assert(!this.isReleased, "Should not use a released bitvector");
                 var vector = this.vectors[x];
                 if (!vector) {
+                    if (value === undefined) {
+                        // If they're storing an undefined value, and we don't even have a vector,
+                        // then we can short circuit early here.
+                        return;
+                    }
+
                     vector = BitVector.getBitVector(this.allowUndefinedValues);
                     this.vectors[x] = vector;
                 }
