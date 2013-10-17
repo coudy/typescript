@@ -8896,8 +8896,8 @@ module TypeScript {
             //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
             var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
             var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
-            var widenedTargetPropType = this.widenType(null, targetPropType, context);
-            var widenedSourcePropType = this.widenType(null, sourcePropType, context);
+            var widenedTargetPropType = this.widenType(null, targetPropType, null, context);
+            var widenedSourcePropType = this.widenType(null, sourcePropType, null, context);
 
             if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
                 targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
