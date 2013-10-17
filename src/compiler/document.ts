@@ -181,6 +181,44 @@ module TypeScript {
             return this._astDeclMap[ast.astID];
         }
 
+        public getEnclosingDecl(ast: AST): PullDecl {
+            if (ast.nodeType() === NodeType.Script) {
+                return this._getDeclForAST(ast);
+            }
+
+            // First, walk up the AST, looking for a decl corresponding to that AST node.
+            ast = ast.parent;
+            var decl: PullDecl = null;
+            while (ast) {
+                decl = this._getDeclForAST(ast);
+                if (decl) {
+                    break;
+                }
+
+                ast = ast.parent;
+            }
+
+            // Now, skip over certain decls.  The resolver never considers these the 'enclosing' 
+            // decl for an AST node.
+            while (decl) {
+                switch (decl.kind) {
+                    default:
+                        return decl;
+                    case PullElementKind.Variable:
+                    case PullElementKind.TypeParameter:
+                    case PullElementKind.Parameter:
+                    case PullElementKind.TypeAlias:
+                    case PullElementKind.EnumMember:
+                }
+
+                decl = decl.getParentDecl();
+            }
+
+            Debug.fail();
+            //Debug.assert(decl);
+            //return decl;
+        }
+
         public _setDeclForAST(ast: AST, decl: PullDecl): void {
             Debug.assert(decl.fileName() === this.fileName);
             this._astDeclMap[ast.astID] = decl;
