@@ -1054,7 +1054,7 @@ module TypeScript {
             return wrapsSomeTypeParameter;
         }
 
-        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isNested: boolean, knownWrapMap: { [symbolID: string]: boolean }): boolean {
+        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isNested: boolean, knownWrapMap: IBitMatrix): boolean {
             var signature = this;
             if (signature.inWrapCheck) {
                 return false;
@@ -1064,7 +1064,7 @@ module TypeScript {
 
             var wrapsSomeWrappedTypeParameter = false;
 
-            if (signature.returnType && signature.returnType.wrapsSomeNestedType(typeBeingWrapped, isNested, knownWrapMap)) {
+            if (signature.returnType && signature.returnType._wrapsSomeNestedTypeRecurse(typeBeingWrapped, isNested, knownWrapMap)) {
                 wrapsSomeWrappedTypeParameter = true;
             }
 
@@ -1072,7 +1072,7 @@ module TypeScript {
                 var parameters = signature.parameters;
 
                 for (var i = 0; i < parameters.length; i++) {
-                    if (!parameters[i].isVarArg && parameters[i].type && parameters[i].type.wrapsSomeNestedType(typeBeingWrapped, isNested, knownWrapMap)) {
+                    if (!parameters[i].isVarArg && parameters[i].type && parameters[i].type._wrapsSomeNestedTypeRecurse(typeBeingWrapped, isNested, knownWrapMap)) {
                         wrapsSomeWrappedTypeParameter = true;
                         break;
                     }
@@ -2201,17 +2201,25 @@ module TypeScript {
         //      p1: T; <- no
         //      p2: C<T>; <- yes
         //  }
-        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean, knownWrapMap: { [symbolID: string]: boolean }): boolean {
+        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean) {
+            var knownWrapMap = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
+            var result = this._wrapsSomeNestedTypeRecurse(typeBeingWrapped, isCheckingNestedType, knownWrapMap);
+            knownWrapMap.release();
+
+            return result;
+        }
+
+        public _wrapsSomeNestedTypeRecurse(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean, knownWrapMap: IBitMatrix): boolean {
 
             if (this == typeBeingWrapped || this.inWrapCheck || typeBeingWrapped.inWrapCheck) {
                 if (!!isCheckingNestedType) {
-                    knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] = true;
+                    knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, true);
                 }
                 return !!isCheckingNestedType;
             }
 
-            if (knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] != undefined) {
-                return knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString];
+            if (knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID) != undefined) {
+                return knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID);
             }
 
             // if we encounter a type parameter or primitive, nothing is being wrapped
@@ -2221,18 +2229,18 @@ module TypeScript {
 
             var wrapsSomeWrappedTypeParameter = false;
 
-            knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] = !!isCheckingNestedType;
+            knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, !!isCheckingNestedType);
 
             wrapsSomeWrappedTypeParameter = this._wrapSomeNestedTypeWorker(typeBeingWrapped, isCheckingNestedType, knownWrapMap);
 
-            knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] = wrapsSomeWrappedTypeParameter;
+            knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, wrapsSomeWrappedTypeParameter);
 
             this.inWrapCheck = false;
 
             return wrapsSomeWrappedTypeParameter;
         }
 
-        private _wrapSomeNestedTypeWorker(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean, knownWrapMap: { [symbolID: string]: boolean }): boolean {
+        private _wrapSomeNestedTypeWorker(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean, knownWrapMap: IBitMatrix): boolean {
 
             this.inWrapCheck = true;
 
@@ -2248,7 +2256,7 @@ module TypeScript {
             if (typeArguments) {
                 for (var i = 0; i < typeArguments.length; i++) {
                     if ((isCheckingNestedType && typeArguments[i].isTypeParameter() && (typeArguments[i].getRootSymbol() == typeBeingWrapped.getRootSymbol())) ||
-                        typeArguments[i].wrapsSomeNestedType(typeBeingWrapped, true, knownWrapMap)) {
+                        typeArguments[i]._wrapsSomeNestedTypeRecurse(typeBeingWrapped, true, knownWrapMap)) {
                         return true;
                     }
                 }
@@ -2258,7 +2266,7 @@ module TypeScript {
             var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
             for (var i = 0; i < members.length; i++) {
-                if (members[i].type && members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
+                if (members[i].type && members[i].type._wrapsSomeNestedTypeRecurse(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
                     return true;
                 }
             }

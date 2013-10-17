@@ -20,7 +20,7 @@ module TypeScript {
             public isReleased = false;
             private vectors: IBitVector[] = [];
 
-            constructor(private allowUndefinedValues: boolean) {
+            constructor(public allowUndefinedValues: boolean) {
             }
 
             public valueAt(x: number, y: number): boolean {
@@ -74,6 +74,7 @@ module TypeScript {
 
             var matrix = pool.pop();
             matrix.isReleased = false;
+            matrix.allowUndefinedValues = allowUndefinedValues;
 
             return matrix;
         }

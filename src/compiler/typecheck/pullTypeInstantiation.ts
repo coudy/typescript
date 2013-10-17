@@ -393,7 +393,7 @@ module TypeScript {
                     var wrapsSomeTypeParameters = rootThis.wrapsSomeTypeParameter(typeParametersMap);
 
                     // It's a wrap of a wrap
-                    if (wrapsSomeTypeParameters && rootThis.wrapsSomeNestedType(rootType, false, {})) {
+                    if (wrapsSomeTypeParameters && rootThis.wrapsSomeNestedType(rootType, /*isCheckingNestedType:*/ false)) {
                         this._generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
                     }
                     else if (wrapsSomeTypeParameters) {

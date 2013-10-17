@@ -40,7 +40,7 @@ module TypeScript {
             public isReleased = false;
             private bits: number[] = [];
 
-            constructor(private allowUndefinedValues: boolean) {
+            constructor(public allowUndefinedValues: boolean) {
             }
 
             private computeTriStateArrayIndex(index: number): number {
@@ -202,6 +202,7 @@ module TypeScript {
 
             var vector = pool.pop();
             vector.isReleased = false;
+            vector.allowUndefinedValues = allowUndefinedValues;
 
             return vector;
         }
