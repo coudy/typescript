@@ -6,7 +6,7 @@ module TypeScript {
         isSet(index: number): boolean;
 
         // Sets the value at this specified bit.
-        setBit(index: number): void;
+        setBit(index: number, value: boolean): void;
 
         // Releases the bit vector, allowing its resources to be used by another BitVector.
         // This instance cannot be used after it is released.
@@ -35,16 +35,28 @@ module TypeScript {
                 return hasFlag(value, 1 << bitIndex);
             }
 
-            public setBit(index: number): void {
+            public setBit(index: number, bitValue: boolean): void {
                 Debug.assert(!this.isReleased, "Should not use a released bitvector");
                 var arrayIndex = (index / Constants.MaxBitsPerNumber) >>> 0;
                 var value = this.bits[arrayIndex];
                 if (value === undefined) {
-                    value = 0;
+                    if (bitValue) {
+                        value = 0;
+                    }
+                    else {
+                        // They're trying to set a bit to false that we don't even have an entry 
+                        // for.  We can bail out quickly here.
+                        return;
+                    }
                 }
 
                 var bitIndex = index % Constants.MaxBitsPerNumber;
-                value = value | (1 << bitIndex);
+                if (bitValue) {
+                    value = value | (1 << bitIndex);
+                }
+                else {
+                    value = value & ~(1 << bitIndex);
+                }
                 this.bits[arrayIndex] = value;
             }
 

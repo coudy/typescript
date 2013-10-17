@@ -6,7 +6,7 @@ module TypeScript {
         isSet(x: number, y: number): boolean;
 
         // Sets the value at this specified indices.
-        setBit(x: number, y: number): void;
+        setBit(x: number, y: number, value: boolean): void;
 
         // Releases the bit matrix, allowing its resources to be used by another matrix.
         // This instance cannot be used after it is released.
@@ -30,7 +30,7 @@ module TypeScript {
                 return vector.isSet(y);
             }
 
-            public setBit(x: number, y: number): void {
+            public setBit(x: number, y: number, value: boolean): void {
                 Debug.assert(!this.isReleased, "Should not use a released bitvector");
                 var vector = this.vectors[x];
                 if (!vector) {
@@ -38,7 +38,7 @@ module TypeScript {
                     this.vectors[x] = vector;
                 }
 
-                vector.setBit(y);
+                vector.setBit(y, value);
             }
 
             public release() {
