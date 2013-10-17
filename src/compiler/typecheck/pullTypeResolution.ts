@@ -617,6 +617,17 @@ module TypeScript {
                 lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
             }
 
+            // Check if the type is a type parameter. Memebers of the type parameter will be these of its constraint 
+            // if one exits. 
+            // Also, handle the case where a constraint is itself a type parameter e.g.: foo<T extends Date, U extends T>
+            while (lhsType.isTypeParameter()) {
+                lhsType = (<PullTypeParameterSymbol>lhsType).getConstraint();
+                if (!lhsType) {
+                    // Nothing to look up at this point, no constraint found
+                    return null;
+                }
+            }
+
             if (this.isAnyOrEquivalent(lhsType)) {
                 return null;
             }
