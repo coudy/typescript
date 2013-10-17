@@ -3,10 +3,10 @@
 module TypeScript {
     export interface IBitMatrix {
         // Returns true if the bit at the specified indices is set.  False otherwise.
-        isSet(x: number, y: number): boolean;
+        valueAt(x: number, y: number): boolean;
 
         // Sets the value at this specified indices.
-        setBit(x: number, y: number, value: boolean): void;
+        setValueAt(x: number, y: number, value: boolean): void;
 
         // Releases the bit matrix, allowing its resources to be used by another matrix.
         // This instance cannot be used after it is released.
@@ -20,25 +20,28 @@ module TypeScript {
             public isReleased = false;
             private vectors: IBitVector[] = [];
 
-            public isSet(x: number, y: number): boolean {
+            constructor(private allowUndefinedValues: boolean) {
+            }
+
+            public valueAt(x: number, y: number): boolean {
                 Debug.assert(!this.isReleased, "Should not use a released bitvector");
                 var vector = this.vectors[x];
                 if (!vector) {
                     return false;
                 }
 
-                return vector.isSet(y);
+                return vector.valueAt(y);
             }
 
-            public setBit(x: number, y: number, value: boolean): void {
+            public setValueAt(x: number, y: number, value: boolean): void {
                 Debug.assert(!this.isReleased, "Should not use a released bitvector");
                 var vector = this.vectors[x];
                 if (!vector) {
-                    vector = BitVector.getVector();
+                    vector = BitVector.getBitVector(this.allowUndefinedValues);
                     this.vectors[x] = vector;
                 }
 
-                vector.setBit(y, value);
+                vector.setValueAt(y, value);
             }
 
             public release() {
@@ -58,9 +61,9 @@ module TypeScript {
             }
         }
 
-        export function getMatrix(): IBitMatrix {
+        export function getBitMatrix(allowUndefinedValues: boolean): IBitMatrix {
             if (pool.length === 0) {
-                return new BitMatrixImpl();
+                return new BitMatrixImpl(allowUndefinedValues);
             }
 
             var matrix = pool.pop();
