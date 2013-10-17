@@ -77,7 +77,7 @@ module TypeScript {
         }
 
         public setAssociatedContainerType(type: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": setAssociatedContainerType");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": setAssociatedContainerType");
         }
 
         public getAssociatedContainerType(): PullTypeSymbol {
@@ -92,11 +92,11 @@ module TypeScript {
             return this.referencedTypeSymbol.getFunctionSymbol();
         }
         public setFunctionSymbol(symbol: PullSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": setFunctionSymbol");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": setFunctionSymbol");
         }
 
         public addContainedNonMember(nonMember: PullSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addContainedNonMember");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addContainedNonMember");
         }
         public findContainedNonMemberContainer(containerName: string, kind = PullElementKind.None): PullTypeSymbol {
             this.ensureReferencedTypeIsResolved();
@@ -104,28 +104,28 @@ module TypeScript {
         }
 
         public addMember(memberSymbol: PullSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addMember");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addMember");
         }
         public addEnclosedMemberType(enclosedType: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addEnclosedMemberType");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addEnclosedMemberType");
         }
         public addEnclosedMemberContainer(enclosedContainer: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addEnclosedMemberContainer");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addEnclosedMemberContainer");
         }
         public addEnclosedNonMember(enclosedNonMember: PullSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addEnclosedNonMember");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addEnclosedNonMember");
         }
         public addEnclosedNonMemberType(enclosedNonMemberType: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addEnclosedNonMemberType");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addEnclosedNonMemberType");
         }
         public addEnclosedNonMemberContainer(enclosedNonMemberContainer: PullTypeSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addEnclosedNonMemberContainer");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addEnclosedNonMemberContainer");
         }
         public addTypeParameter(typeParameter: PullTypeParameterSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addTypeParameter");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addTypeParameter");
         }
         public addConstructorTypeParameter(typeParameter: PullTypeParameterSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addConstructorTypeParameter");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addConstructorTypeParameter");
         }
 
         public findContainedNonMember(name: string): PullSymbol {
@@ -151,7 +151,7 @@ module TypeScript {
         }
 
         public setHasDefaultConstructor(hasOne= true): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ":setHasDefaultConstructor");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ":setHasDefaultConstructor");
         }
         public getHasDefaultConstructor(): boolean {
             this.ensureReferencedTypeIsResolved();
@@ -163,7 +163,7 @@ module TypeScript {
             return this.referencedTypeSymbol.getConstructorMethod();
         }
         public setConstructorMethod(constructorMethod: PullSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": setConstructorMethod");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": setConstructorMethod");
         }
         public getTypeParameters(): PullTypeParameterSymbol[]{
             this.ensureReferencedTypeIsResolved();
@@ -198,13 +198,13 @@ module TypeScript {
         }
 
         public addCallSignature(callSignature: PullSignatureSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addCallSignature");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addCallSignature");
         }
         public addConstructSignature(constructSignature: PullSignatureSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addConstructSignature");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addConstructSignature");
         }
         public addIndexSignature(indexSignature: PullSignatureSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolIDString + ": addIndexSignature");
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": addIndexSignature");
         }
 
         public hasOwnCallSignatures(): boolean {
