@@ -600,10 +600,6 @@ module TypeScript {
             return null;
         }
 
-        public getEnclosingDecl(ast: AST): PullDecl {
-            return this.getDocument(ast.fileName()).getEnclosingDecl(ast);
-        }
-
         public setDeclForAST(ast: AST, decl: PullDecl): void {
             this.getDocument(decl.fileName())._setDeclForAST(ast, decl);
         }

@@ -571,7 +571,7 @@ module TypeScript {
                 return this.getSymbolOfDeclaration(enclosingDecl);
             }
 
-            return resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, new PullTypeResolutionContext(resolver));
+            return resolver.resolveAST(ast, /*inContextuallyTypedAssignment:*/false, enclosingDecl, new PullTypeResolutionContext(resolver));
         }
 
         private extractResolutionContextFromAST(resolver: PullTypeResolver, ast: AST, document: Document, propagateContextualTypes: boolean): { ast: AST; enclosingDecl: PullDecl; resolutionContext: PullTypeResolutionContext; inContextuallyTypedAssignment: boolean; inWithBlock: boolean; } {
@@ -598,7 +598,7 @@ module TypeScript {
                 switch (current.nodeType()) {
                     case NodeType.FunctionExpression:
                     case NodeType.ArrowFunctionExpression:
-                        resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ true, resolutionContext);
+                        resolver.resolveAST(current, true, enclosingDecl, resolutionContext);
                         break;
 
                     //case NodeType.Parameter:
@@ -633,10 +633,10 @@ module TypeScript {
                             if ((i + 1 < n) && callExpression.arguments === path[i + 1]) {
                                 var callResolutionResults = new PullAdditionalCallResolutionData();
                                 if (isNew) {
-                                    resolver.resolveObjectCreationExpression(callExpression, resolutionContext, callResolutionResults);
+                                    resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                                 }
                                 else {
-                                    resolver.resolveInvocationExpression(callExpression, resolutionContext, callResolutionResults);
+                                    resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext, callResolutionResults);
                                 }
 
                                 // Find the index in the arguments list
@@ -658,10 +658,10 @@ module TypeScript {
                             else {
                                 // Just resolve the call expression
                                 if (isNew) {
-                                    resolver.resolveObjectCreationExpression(callExpression, resolutionContext);
+                                    resolver.resolveObjectCreationExpression(callExpression, enclosingDecl, resolutionContext);
                                 }
                                 else {
-                                    resolver.resolveInvocationExpression(callExpression, resolutionContext);
+                                    resolver.resolveInvocationExpression(callExpression, enclosingDecl, resolutionContext);
                                 }
                             }
 
@@ -688,7 +688,7 @@ module TypeScript {
                         if (propagateContextualTypes) {
                             var objectLiteralExpression = <ObjectLiteralExpression>current;
                             var objectLiteralResolutionContext = new PullAdditionalObjectLiteralResolutionData();
-                            resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, resolutionContext, objectLiteralResolutionContext);
+                            resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, enclosingDecl, resolutionContext, objectLiteralResolutionContext);
 
                             // find the member in the path
                             var memeberAST = (path[i + 1] && path[i + 1].nodeType() === NodeType.List) ? path[i + 2] : path[i + 1];
@@ -721,7 +721,7 @@ module TypeScript {
 
                             if (path[i + 1] && path[i + 1] === assignmentExpression.right) {
                                 // propagate the left hand side type as a contextual type
-                                var leftType = resolver.resolveAST(assignmentExpression.left, inContextuallyTypedAssignment, resolutionContext).type;
+                                var leftType = resolver.resolveAST(assignmentExpression.left, inContextuallyTypedAssignment, enclosingDecl, resolutionContext).type;
                                 if (leftType) {
                                     inContextuallyTypedAssignment = true;
                                     contextualType = leftType;
@@ -742,7 +742,7 @@ module TypeScript {
                                 var functionDeclaration = <FunctionDeclaration>enclosingDeclAST;
                                 if (functionDeclaration.returnTypeAnnotation) {
                                     // The containing function has a type annotation, propagate it as the contextual type
-                                    var returnTypeSymbol = resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, resolutionContext);
+                                    var returnTypeSymbol = resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, enclosingDecl, resolutionContext);
                                     if (returnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;
                                         contextualType = returnTypeSymbol;
@@ -773,7 +773,7 @@ module TypeScript {
                         // ObjectType are just like Object Literals are bound when needed, ensure we have a decl, by forcing it to be 
                         // resolved before descending into it.
                         if (typeExpressionNode && typeExpressionNode.nodeType() === NodeType.ObjectType) {
-                            resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, resolutionContext);
+                            resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ false, enclosingDecl, resolutionContext);
                         }
 
                         break;
@@ -825,7 +825,7 @@ module TypeScript {
             init: AST): void {
             if (inContextuallyTypedAssignment) {
                 if (propagateContextualTypes) {
-                    resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, resolutionContext);
+                    resolver.resolveAST(assigningAST, /*inContextuallyTypedAssignment*/false, null, resolutionContext);
                     var varSymbol = this.semanticInfoChain.getSymbolForAST(assigningAST);
 
                     var contextualType: PullTypeSymbol = null;
@@ -836,7 +836,7 @@ module TypeScript {
                     resolutionContext.pushContextualType(contextualType, false, null);
 
                     if (init) {
-                        resolver.resolveAST(init, inContextuallyTypedAssignment, resolutionContext);
+                        resolver.resolveAST(init, inContextuallyTypedAssignment, enclosingDecl, resolutionContext);
                     }
                 }
             }
@@ -861,7 +861,7 @@ module TypeScript {
             }
 
             ast = context.ast;
-            var symbol = resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.resolutionContext);
+            var symbol = resolver.resolveAST(ast, context.inContextuallyTypedAssignment, context.enclosingDecl, context.resolutionContext);
 
             if (symbol.isTypeReference()) {
                 symbol = (<PullTypeReferenceSymbol>symbol).getReferencedTypeSymbol();
@@ -894,10 +894,10 @@ module TypeScript {
             var callResolutionResults = new PullAdditionalCallResolutionData();
 
             if (isNew) {
-                resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.resolutionContext, callResolutionResults);
+                resolver.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
             else {
-                resolver.resolveInvocationExpression(<InvocationExpression>ast, context.resolutionContext, callResolutionResults);
+                resolver.resolveInvocationExpression(<InvocationExpression>ast, context.enclosingDecl, context.resolutionContext, callResolutionResults);
             }
 
             return {
