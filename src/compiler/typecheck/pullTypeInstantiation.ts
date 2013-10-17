@@ -357,6 +357,18 @@ module TypeScript {
                 var rootType: PullTypeSymbol = <PullTypeSymbol>enclosingType.getRootSymbol();
                 var rootThis: PullTypeSymbol = <PullTypeReferenceSymbol>this.getRootSymbol();
 
+                var prevRootType: PullTypeSymbol = null;
+                var prevRootThis: PullTypeSymbol = null;
+
+                while (true) {
+                    prevRootType = rootType;
+                    rootType = <PullTypeSymbol>rootType.getRootSymbol();
+
+                    if (prevRootType == rootType) {
+                        break;
+                    }
+                }
+
                 // With respect to the enclosing type, is this type reference open, closed or 
                 // infinitely expanding?
 
@@ -366,6 +378,16 @@ module TypeScript {
 
                 // may have an object literal or a function signature
                 if (!typeReferenceTypeArguments) {
+
+                    while (true) {
+                        prevRootThis = rootThis;
+                        rootThis = <PullTypeSymbol>rootThis.getRootSymbol();
+
+                        if (prevRootThis == rootThis) {
+                            break;
+                        }
+                    }
+
                     // create a new type map with just the type parameter
                     var typeParametersMap: PullTypeSubstitutionMap = {};
 

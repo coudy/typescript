@@ -11268,6 +11268,12 @@ module TypeScript {
                 return typeParameterArgumentMap[type.pullSymbolIDString];
             }
 
+            // If the type parameter is a function type parameter without a substitution, we don't want to create a new instantiated type 
+            // for it, since the function's signature will still utilize this type
+            if (type.isTypeParameter() && (<PullTypeParameterSymbol>type).isFunctionTypeParameter()) {
+                return type;
+            }
+
             if (type.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 return PullInstantiatedTypeReferenceSymbol.create(this, type, typeParameterArgumentMap, instantiateFunctionTypeParameters);
             }

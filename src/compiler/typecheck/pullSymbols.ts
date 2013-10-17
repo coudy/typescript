@@ -2102,16 +2102,26 @@ module TypeScript {
 
             var wrapsSomeTypeParameter = false;
 
+            // if we encounter a type paramter, we're obviously wrapping
+            if (type.isTypeParameter()) {
+                if (typeParameterArgumentMap[type.pullSymbolIDString]) {
+                    return true;
+                }
+
+                var constraint = (<PullTypeParameterSymbol>type).getConstraint();
+
+                if (constraint && constraint.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
+                    return true;
+                }
+
+                return false;
+            }
+
             if (type.inWrapCheck) {
                 return wrapsSomeTypeParameter;
             }
 
             type.inWrapCheck = true;
-
-            // if we encounter a type paramter, we're obviously wrapping
-            if (type.isTypeParameter() && typeParameterArgumentMap[type.pullSymbolIDString]) {
-                wrapsSomeTypeParameter = true;
-            }
 
             if (!wrapsSomeTypeParameter) {
                 var typeArguments = type.getTypeArguments();
@@ -2248,7 +2258,7 @@ module TypeScript {
             var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
             for (var i = 0; i < members.length; i++) {
-                if (members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
+                if (members[i].type && members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
                     return true;
                 }
             }
