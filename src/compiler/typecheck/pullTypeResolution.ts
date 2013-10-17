@@ -19,6 +19,7 @@ module TypeScript {
         public resolvedSignatures: PullSignatureSymbol[] = null;
         public candidateSignature: PullSignatureSymbol = null;
         public actualParametersContextTypeSymbols: PullTypeSymbol[] = null;
+        public diagnosticsFromOverloadResolution: Diagnostic[] = [];
     }
 
     export class PullAdditionalObjectLiteralResolutionData {
@@ -7170,6 +7171,11 @@ module TypeScript {
                     }
                 }
             }
+
+            // Post errors when resolving overload
+            for (var i = 0; i < callResolutionData.diagnosticsFromOverloadResolution.length; i++) {
+                context.postDiagnostic(callResolutionData.diagnosticsFromOverloadResolution[i]);
+            }
         }
 
         private computeInvocationExpressionSymbol(callEx: InvocationExpression, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
@@ -7193,7 +7199,8 @@ module TypeScript {
                 if (callEx.typeArguments && callEx.typeArguments.members.length) {
                     // Can't invoke 'any' generically.
                     if (targetTypeSymbol === this.semanticInfoChain.anyTypeSymbol) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments));
+                        this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments),
+                            additionalResults, context);
                         return this.getNewErrorTypeSymbol();
                     }
 
@@ -7217,7 +7224,8 @@ module TypeScript {
                     targetTypeSymbol = targetSymbol.type;
                 }
                 else {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Calls_to_super_are_only_valid_inside_a_class));
+                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Calls_to_super_are_only_valid_inside_a_class),
+                        additionalResults, context);
                     this.resolveAST(callEx.arguments, /*inContextuallyTypedAssignment:*/ false, context);
                     // POST diagnostics
                     return this.getNewErrorTypeSymbol();
@@ -7227,7 +7235,8 @@ module TypeScript {
             var signatures = isSuperCall ? targetTypeSymbol.getConstructSignatures() : targetTypeSymbol.getCallSignatures();
 
             if (!signatures.length && (targetTypeSymbol.kind == PullElementKind.ConstructorType)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Value_of_type_0_is_not_callable_Did_you_mean_to_include_new, [targetTypeSymbol.toString()]));
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Value_of_type_0_is_not_callable_Did_you_mean_to_include_new, [targetTypeSymbol.toString()]),
+                    additionalResults, context);
             }
 
             var typeArgs: PullTypeSymbol[] = null;
@@ -7390,21 +7399,24 @@ module TypeScript {
                     // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                     if (this.cachedFunctionInterfaceType() && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), context)) {
                         if (callEx.typeArguments) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments));
+                            this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
+                                additionalResults, context);
                         }
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
 
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Cannot_invoke_an_expression_whose_type_lacks_a_call_signature));
+                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Cannot_invoke_an_expression_whose_type_lacks_a_call_signature),
+                        additionalResults, context);
                     errorCondition = this.getNewErrorTypeSymbol();
                 }
                 else {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Could_not_select_overload_for_call_expression));
+                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Could_not_select_overload_for_call_expression),
+                        additionalResults, context);
                     errorCondition = this.getNewErrorTypeSymbol();
                 }
 
                 if (constraintDiagnostic) {
-                    context.postDiagnostic(constraintDiagnostic);
+                    this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
                 }
 
                 return errorCondition;
@@ -7415,10 +7427,11 @@ module TypeScript {
 
             if (!signature) {
                 for (var i = 0; i < diagnostics.length; i++) {
-                    context.postDiagnostic(diagnostics[i]);
+                    this.postOverloadResolutionDiagnostics(diagnostics[i], additionalResults, context);
                 }
 
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Could_not_select_overload_for_call_expression));
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Could_not_select_overload_for_call_expression),
+                    additionalResults, context);
 
                 // Remember the error state
                 // POST diagnostics
@@ -7434,10 +7447,12 @@ module TypeScript {
             }
 
             if (!signature.isGeneric() && callEx.typeArguments) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments));
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
+                    additionalResults, context);
             }
             else if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]));
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]),
+                    additionalResults, context);
             }
 
             var returnType = isSuperCall ? this.semanticInfoChain.voidTypeSymbol : signature.returnType;
@@ -7556,6 +7571,18 @@ module TypeScript {
                     }
                 }
             }
+
+            // Post errors when resolving overload
+            for (var i = 0; i < callResolutionData.diagnosticsFromOverloadResolution.length; i++) {
+                context.postDiagnostic(callResolutionData.diagnosticsFromOverloadResolution[i]);
+            }
+        }
+
+        private postOverloadResolutionDiagnostics(diagnostic: Diagnostic, additionalResults: PullAdditionalCallResolutionData, context: PullTypeResolutionContext) {
+            if (!context.inProvisionalResolution()) {
+                additionalResults.diagnosticsFromOverloadResolution.push(diagnostic);
+            }
+            context.postDiagnostic(diagnostic);
         }
 
         private computeObjectCreationExpressionSymbol(callEx: ObjectCreationExpression, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
@@ -7588,8 +7615,9 @@ module TypeScript {
 
                 // if noImplicitAny flag is set to be true, report an error
                 if (this.compilationSettings.noImplicitAny()) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(callEx,
-                        DiagnosticCode.new_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type));
+                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx,
+                        DiagnosticCode.new_expression_which_lacks_a_constructor_signature_implicitly_has_an_any_type),
+                        additionalResults, context);
                 }
             }
 
@@ -7734,7 +7762,7 @@ module TypeScript {
                 if (!constructSignatures.length) {
 
                     if (constraintDiagnostic) {
-                        context.postDiagnostic(constraintDiagnostic);
+                        this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
                     }
 
                     return this.getNewErrorTypeSymbol();
@@ -7746,10 +7774,11 @@ module TypeScript {
                 if (!signature) {
 
                     for (var i = 0; i < diagnostics.length; i++) {
-                        context.postDiagnostic(diagnostics[i]);
+                        this.postOverloadResolutionDiagnostics(diagnostics[i], additionalResults, context);
                     }
 
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Could_not_select_overload_for_new_expression));
+                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Could_not_select_overload_for_new_expression),
+                        additionalResults, context);
 
                     // Remember the error
                     errorCondition = this.getNewErrorTypeSymbol();
@@ -7764,7 +7793,8 @@ module TypeScript {
                 }
 
                 if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]));
+                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]),
+                        additionalResults, context);
                 }
 
                 returnType = signature.returnType;
@@ -7781,7 +7811,8 @@ module TypeScript {
 
                 if (usedCallSignaturesInstead) {
                     if (returnType != this.semanticInfoChain.voidTypeSymbol) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Call_signatures_used_in_a_new_expression_must_have_a_void_return_type));
+                        this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Call_signatures_used_in_a_new_expression_must_have_a_void_return_type),
+                            additionalResults, context);
                         // POST diagnostics
                         return this.getNewErrorTypeSymbol();
                     }
@@ -7855,7 +7886,8 @@ module TypeScript {
                 this.resolveAST(callEx.arguments, /*inContextuallyTypedAssignment:*/ false, context);
             }
 
-            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Invalid_new_expression));
+            this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Invalid_new_expression),
+                additionalResults, context);
 
             // POST diagnostics
             return this.getNewErrorTypeSymbol();
