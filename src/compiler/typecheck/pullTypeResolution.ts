@@ -43,8 +43,8 @@ module TypeScript {
 
         private _cachedFunctionArgumentsSymbol: PullSymbol = null;
 
-        private assignableCache: any[] = <any>{};
-        private subtypeCache: any[] = <any>{};
+        private assignableCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
+        private subtypeCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
         private identicalCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
 
         constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain) {
@@ -8182,8 +8182,6 @@ module TypeScript {
                 }
             }
 
-            //var comboId = t2.pullSymbolIDString + "#" + t1.pullSymbolIDString;
-
             if (this.identicalCache.valueAt(t1.pullSymbolID, t2.pullSymbolID) != undefined) {
                 return true;
             }
@@ -8493,7 +8491,7 @@ module TypeScript {
             return this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, context, comparisonInfo, isComparingInstantiatedSignatures);
         }
 
-        private sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
+        private sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
 
             // REVIEW: Does this check even matter?
             //if (this.typesAreIdentical(source, target)) {
@@ -8547,10 +8545,10 @@ module TypeScript {
                 sourceSubstitution = this.substituteUpperBoundForType(source);
             }
 
-            var comboId = source.pullSymbolIDString + "#" + target.pullSymbolIDString;
+            // var comboId = source.pullSymbolIDString + "#" + target.pullSymbolIDString;
 
             // In the case of a 'false', we want to short-circuit a recursive typecheck
-            if (comparisonCache[comboId] != undefined) {
+            if (comparisonCache.valueAt(source.pullSymbolID, target.pullSymbolID) != undefined) {
                 return true;
             }
 
@@ -8635,17 +8633,17 @@ module TypeScript {
             // Cannot convert 'A[]' to 'B[]':
             //   Type 'A' is missing property 'C' from type 'B'.
             if (source.isArrayNamedTypeReference() && target.isArrayNamedTypeReference()) {
-                comparisonCache[comboId] = false;
+                comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, false);
 
                 var sourceElementType = source.getTypeArguments()[0];
                 var targetElementType = target.getTypeArguments()[0];
                 var ret = this.sourceIsRelatableToTarget(sourceElementType, targetElementType, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures);
 
                 if (ret) {
-                    comparisonCache[comboId] = true;
+                    comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
                 }
                 else {
-                    comparisonCache[comboId] = undefined;
+                    comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
                 }
 
                 return ret;
@@ -8683,7 +8681,7 @@ module TypeScript {
                 }
             }
 
-            comparisonCache[comboId] = false;
+            comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, false);
 
             // This is an optimization that is a deviation from the spec. The spec sections 3.8.3 and 3.8.4 say to compare structurally,
             // but we know that if a type nominally extends another type, it is both a subtype and assignable.
@@ -8702,31 +8700,31 @@ module TypeScript {
             }
 
             if (target.hasMembers() && !this.sourceMembersAreRelatableToTargetMembers(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
-                comparisonCache[comboId] = undefined;
+                comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.sourceCallSignaturesAreRelatableToTargetCallSignatures(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
-                comparisonCache[comboId] = undefined;
+                comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
-                comparisonCache[comboId] = undefined;
+                comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(sourceSubstitution, target, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
-                comparisonCache[comboId] = undefined;
+                comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
                 return false;
             }
 
-            comparisonCache[comboId] = true;
+            comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
             return true;
         }
 
         private sourceMembersAreRelatableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean,
-            comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
+            comparisonCache: IBitMatrix, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
             var targetProps = target.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
             for (var itargetProp = 0; itargetProp < targetProps.length; itargetProp++) {
@@ -8781,7 +8779,7 @@ module TypeScript {
         }
 
         private sourcePropertyIsRelatableToTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
-            sourceProp: PullSymbol, targetProp: PullSymbol, assignableTo: boolean, comparisonCache: any,
+            sourceProp: PullSymbol, targetProp: PullSymbol, assignableTo: boolean, comparisonCache: IBitMatrix,
             context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
             var targetPropIsPrivate = targetProp.hasFlag(PullElementFlags.Private);
             var sourcePropIsPrivate = sourceProp.hasFlag(PullElementFlags.Private);
@@ -8875,7 +8873,7 @@ module TypeScript {
             }
 
             // catch the mutually recursive or cached cases
-            if (targetPropType && sourcePropType && (comparisonCache[sourcePropType.pullSymbolIDString + "#" + targetPropType.pullSymbolIDString] != undefined)) {
+            if (targetPropType && sourcePropType && (comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID) != undefined)) {
                 return true; // GTODO: should this be true?
             }
 
@@ -8905,7 +8903,7 @@ module TypeScript {
         }
 
         private sourceCallSignaturesAreRelatableToTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
-            assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext,
+            assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
 
             var targetCallSigs = target.getCallSignatures();
@@ -8945,7 +8943,7 @@ module TypeScript {
         }
 
         private sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
-            assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext,
+            assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
 
             // check signature groups
@@ -8984,7 +8982,7 @@ module TypeScript {
         }
 
         private sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
-            assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext,
+            assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
 
             var targetIndexSigs = this.getBothKindsOfIndexSignatures(target, context);
@@ -9044,7 +9042,7 @@ module TypeScript {
         }
 
         // REVIEW: TypeChanges: Return an error context object so the user can get better diagnostic info
-        private signatureGroupIsRelatableToTarget(sourceSG: PullSignatureSymbol[], targetSG: PullSignatureSymbol[], assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
+        private signatureGroupIsRelatableToTarget(sourceSG: PullSignatureSymbol[], targetSG: PullSignatureSymbol[], assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
             if (sourceSG === targetSG) {
                 return true;
             }
@@ -9089,7 +9087,7 @@ module TypeScript {
             return true;
         }
 
-        private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: any, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
+        private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
 
             sourceSig = this.instantiateSignatureToObject(sourceSig);
             targetSig = this.instantiateSignatureToObject(targetSig);
