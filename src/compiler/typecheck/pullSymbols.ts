@@ -1054,7 +1054,7 @@ module TypeScript {
             return wrapsSomeTypeParameter;
         }
 
-        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isNested: boolean): boolean {
+        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isNested: boolean, knownWrapMap: { [symbolID: string]: boolean }): boolean {
             var signature = this;
             if (signature.inWrapCheck) {
                 return false;
@@ -1064,7 +1064,7 @@ module TypeScript {
 
             var wrapsSomeWrappedTypeParameter = false;
 
-            if (signature.returnType && signature.returnType.wrapsSomeNestedType(typeBeingWrapped, isNested)) {
+            if (signature.returnType && signature.returnType.wrapsSomeNestedType(typeBeingWrapped, isNested, knownWrapMap)) {
                 wrapsSomeWrappedTypeParameter = true;
             }
 
@@ -1072,7 +1072,7 @@ module TypeScript {
                 var parameters = signature.parameters;
 
                 for (var i = 0; i < parameters.length; i++) {
-                    if (!parameters[i].isVarArg && parameters[i].type && parameters[i].type.wrapsSomeNestedType(typeBeingWrapped, isNested)) {
+                    if (!parameters[i].isVarArg && parameters[i].type && parameters[i].type.wrapsSomeNestedType(typeBeingWrapped, isNested, knownWrapMap)) {
                         wrapsSomeWrappedTypeParameter = true;
                         break;
                     }
@@ -2191,10 +2191,17 @@ module TypeScript {
         //      p1: T; <- no
         //      p2: C<T>; <- yes
         //  }
-        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean): boolean {
+        public wrapsSomeNestedType(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean, knownWrapMap: { [symbolID: string]: boolean }): boolean {
 
-            if (this == typeBeingWrapped || this.inWrapCheck) {
+            if (this == typeBeingWrapped || this.inWrapCheck || typeBeingWrapped.inWrapCheck) {
+                if (!!isCheckingNestedType) {
+                    knownWrapMap[typeBeingWrapped.pullSymbolIDString] = true;
+                }
                 return !!isCheckingNestedType;
+            }
+
+            if (knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] != undefined) {
+                return knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString];
             }
 
             // if we encounter a type parameter or primitive, nothing is being wrapped
@@ -2204,22 +2211,18 @@ module TypeScript {
 
             var wrapsSomeWrappedTypeParameter = false;
 
-            wrapsSomeWrappedTypeParameter = this._wrapSomeNestedTypeWorker(typeBeingWrapped, isCheckingNestedType);
+            knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] = !!isCheckingNestedType;
+
+            wrapsSomeWrappedTypeParameter = this._wrapSomeNestedTypeWorker(typeBeingWrapped, isCheckingNestedType, knownWrapMap);
+
+            knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] = wrapsSomeWrappedTypeParameter;
 
             this.inWrapCheck = false;
 
             return wrapsSomeWrappedTypeParameter;
         }
 
-        private _wrapSomeNestedTypeWorker(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean): boolean {
-            if (this == typeBeingWrapped || this.inWrapCheck) {
-                return !!isCheckingNestedType;
-            }
-
-            // if we encounter a type parameter or primitive, nothing is being wrapped
-            if (this.isPrimitive() || this.isTypeParameter()) {
-                return false;
-            }
+        private _wrapSomeNestedTypeWorker(typeBeingWrapped: PullTypeSymbol, isCheckingNestedType: boolean, knownWrapMap: { [symbolID: string]: boolean }): boolean {
 
             this.inWrapCheck = true;
 
@@ -2235,7 +2238,7 @@ module TypeScript {
             if (typeArguments) {
                 for (var i = 0; i < typeArguments.length; i++) {
                     if ((isCheckingNestedType && typeArguments[i].isTypeParameter() && (typeArguments[i].getRootSymbol() == typeBeingWrapped.getRootSymbol())) ||
-                        typeArguments[i].wrapsSomeNestedType(typeBeingWrapped, true)) {
+                        typeArguments[i].wrapsSomeNestedType(typeBeingWrapped, true, knownWrapMap)) {
                         return true;
                     }
                 }
@@ -2245,7 +2248,7 @@ module TypeScript {
             var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
             for (var i = 0; i < members.length; i++) {
-                if (members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                if (members[i].type.wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
                     return true;
                 }
             }
@@ -2253,7 +2256,7 @@ module TypeScript {
             var sigs = this.getCallSignatures(true);
 
             for (var i = 0; i < sigs.length; i++) {
-                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
                     return true;
                 }
             }
@@ -2261,7 +2264,7 @@ module TypeScript {
             sigs = this.getConstructSignatures(true);
 
             for (var i = 0; i < sigs.length; i++) {
-                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
                     return true;
                 }
             }
@@ -2269,7 +2272,7 @@ module TypeScript {
             sigs = this.getIndexSignatures(true);
 
             for (var i = 0; i < sigs.length; i++) {
-                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType)) {
+                if (sigs[i].wrapsSomeNestedType(typeBeingWrapped, isCheckingNestedType, knownWrapMap)) {
                     return true;
                 }
             }

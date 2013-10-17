@@ -8903,10 +8903,14 @@ module TypeScript {
             //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
             var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
             var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
+            var widenedTargetPropType = this.widenType(null, targetPropType, null, context);
+            var widenedSourcePropType = this.widenType(null, sourcePropType, null, context);
 
-                if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
-                    targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+            if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
 
+                    if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
+                        (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
                         var targetDecl = targetProp.getDeclarations()[0];
                         var sourceDecl = sourceProp.getDeclarations()[0];
 
@@ -8919,7 +8923,7 @@ module TypeScript {
 
                         if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
                             sourcePropTypeArguments.length != targetPropTypeArguments.length) {
-                                return false;
+                            return false;
                         }
 
                         for (var i = 0; i < sourcePropTypeArguments.length; i++) {
@@ -8927,9 +8931,10 @@ module TypeScript {
                                 return false;
                             }
                         }
+                    }
 
-                        return true;
-                }
+                    return true;
+            }
 
             // catch the mutually recursive or cached cases
             if (targetPropType && sourcePropType && (comparisonCache[sourcePropType.pullSymbolIDString + "#" + targetPropType.pullSymbolIDString] != undefined)) {
