@@ -2205,7 +2205,7 @@ module TypeScript {
 
             if (this == typeBeingWrapped || this.inWrapCheck || typeBeingWrapped.inWrapCheck) {
                 if (!!isCheckingNestedType) {
-                    knownWrapMap[typeBeingWrapped.pullSymbolIDString] = true;
+                    knownWrapMap[this.pullSymbolIDString + typeBeingWrapped.pullSymbolIDString] = true;
                 }
                 return !!isCheckingNestedType;
             }
