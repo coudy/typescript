@@ -7599,7 +7599,7 @@ module TypeScript {
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
 
             var typeArgs: PullTypeSymbol[] = null;
-            var typeReplacementMap: any = null;
+            var typeReplacementMap: PullTypeSymbol[] = null;
             var usedCallSignaturesInstead = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
@@ -7667,7 +7667,7 @@ module TypeScript {
                             if (inferredTypeArgs) {
                                 typeParameters = constructSignatures[i].getTypeParameters();
 
-                                typeReplacementMap = {};
+                                typeReplacementMap = [];
 
                                 if (inferredTypeArgs.length) {
 
@@ -7679,12 +7679,14 @@ module TypeScript {
                                     // the target function's type
                                     if (targetTypeReplacementMap) {
                                         for (var symbolID in targetTypeReplacementMap) {
-                                            typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
+                                            if (targetTypeReplacementMap.hasOwnProperty(symbolID)) {
+                                                typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
+                                            }
                                         }
                                     }
 
                                     for (var j = 0; j < typeParameters.length; j++) {
-                                        typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
+                                        typeReplacementMap[typeParameters[j].pullSymbolID] = inferredTypeArgs[j];
                                     }
                                     for (var j = 0; j < typeParameters.length; j++) {
                                         typeConstraint = typeParameters[j].getConstraint();
@@ -7720,7 +7722,7 @@ module TypeScript {
                                             continue;
                                     } else {
                                         for (var j = 0; j < typeParameters.length; j++) {
-                                            typeReplacementMap[typeParameters[j].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                                            typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.anyTypeSymbol;
                                         }
                                     }
                                 }
