@@ -441,7 +441,7 @@ module TypeScript {
             // operations will proceed.
             PullTypeResolver.globalTypeCheckPhase++;
 
-            this.logger.log("Invalidating SemanticInfoChain...");
+            // this.logger.log("Invalidating SemanticInfoChain...");
             var cleanStart = new Date().getTime();
 
             this.astSymbolMap.length = 0;
@@ -481,7 +481,7 @@ module TypeScript {
             this.resetGlobalSymbols();
 
             var cleanEnd = new Date().getTime();
-            this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
+            // this.logger.log("   time to invalidate: " + (cleanEnd - cleanStart));
         }
 
         private settingsChangeAffectsSyntax(before: ImmutableCompilationSettings, after: ImmutableCompilationSettings): boolean {

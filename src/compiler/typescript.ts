@@ -22,17 +22,23 @@ module TypeScript {
     declare var IO: any;
 
     export var fileResolutionTime = 0;
+    export var fileResolutionIOTime = 0;
+    export var fileResolutionScanImportsTime = 0;
+    export var fileResolutionImportFileSearchTime = 0;
+    export var fileResolutionGetDefaultLibraryTime = 0;
     export var sourceCharactersCompiled = 0;
     export var syntaxTreeParseTime = 0;
     export var syntaxDiagnosticsTime = 0;
     export var astTranslationTime = 0;
     export var typeCheckTime = 0;
 
+    export var compilerResolvePathTime = 0;
+    export var compilerDirectoryNameTime = 0;
+    export var compilerDirectoryExistsTime = 0;
+    export var compilerFileExistsTime = 0;
+
     export var emitTime = 0;
     export var emitWriteFileTime = 0;
-    export var emitDirectoryExistsTime = 0;
-    export var emitFileExistsTime = 0;
-    export var emitResolvePathTime = 0;
 
     export var declarationEmitTime = 0;
     export var declarationEmitIsExternallyVisibleTime = 0;
