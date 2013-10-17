@@ -84,7 +84,7 @@ module TypeScript {
             return inferenceCandidates;
         }
 
-        public inferArgumentTypes(resolver: PullTypeResolver, enclosingDecl: PullDecl, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: boolean; } {
+        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: boolean; } {
             var info: CandidateInferenceInfo = null;
 
             var collection: IPullTypeCollection;
@@ -110,7 +110,7 @@ module TypeScript {
                     }
                 };
 
-                bestCommonType = resolver.widenType(null, resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()), enclosingDecl, context);
+                bestCommonType = resolver.widenType(null, resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()), context);
 
                 if (!bestCommonType) {
                     unfit = true;
