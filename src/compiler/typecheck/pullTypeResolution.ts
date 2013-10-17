@@ -1003,10 +1003,10 @@ module TypeScript {
             // and not its type parameters
             var typeParameters = type.getTypeArgumentsOrTypeParameters();
 
-            var typeParameterArgumentMap: { [name: string]: PullTypeSymbol; } = {};
+            var typeParameterArgumentMap: PullTypeSymbol[] = [];
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameterArgumentMap[typeParameters[i].pullSymbolIDString] = typeArguments[i] || new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
+                typeParameterArgumentMap[typeParameters[i].pullSymbolID] = typeArguments[i] || new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
             }
 
             return PullInstantiatedTypeReferenceSymbol.create(this, type, typeParameterArgumentMap);
@@ -5751,14 +5751,14 @@ module TypeScript {
             // Get the instantiated versions of the type parameters (in case their constraints were generic)
             typeParameters = specializedSymbol.getTypeParameters();
 
-            var typeConstraintSubstitutionMap: { [symbolID: string]: PullTypeSymbol } = {};
+            var typeConstraintSubstitutionMap: PullTypeSymbol[] = [];
             var typeArg: PullTypeSymbol = null;
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
                 typeConstraint = typeParameters[iArg].getConstraint();
 
-                typeConstraintSubstitutionMap[typeParameters[iArg].pullSymbolIDString] = typeArg;
+                typeConstraintSubstitutionMap[typeParameters[iArg].pullSymbolID] = typeArg;
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
@@ -7240,7 +7240,7 @@ module TypeScript {
             }
 
             var typeArgs: PullTypeSymbol[] = null;
-            var typeReplacementMap: any = null;
+            var typeReplacementMap: PullTypeSymbol[] = null;
             var couldNotFindGenericOverload = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
@@ -7296,7 +7296,7 @@ module TypeScript {
                     // if we could infer Args, or we have type arguments, then attempt to specialize the signature
                     if (inferredTypeArgs) {
 
-                        typeReplacementMap = {};
+                        typeReplacementMap = [];
 
                         if (inferredTypeArgs.length) {
 
@@ -7308,12 +7308,14 @@ module TypeScript {
                             // the target function's type
                             if (targetTypeReplacementMap) {
                                 for (var symbolID in targetTypeReplacementMap) {
-                                    typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
+                                    if (targetTypeReplacementMap.hasOwnProperty(symbolID)) {
+                                        typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
+                                    }
                                 }
                             }
 
                             for (var j = 0; j < typeParameters.length; j++) {
-                                typeReplacementMap[typeParameters[j].pullSymbolIDString] = inferredTypeArgs[j];
+                                typeReplacementMap[typeParameters[j].pullSymbolID] = inferredTypeArgs[j];
                             }
                             for (var j = 0; j < typeParameters.length; j++) {
                                 typeConstraint = typeParameters[j].getConstraint();
@@ -7351,7 +7353,7 @@ module TypeScript {
 
                             // specialize to any
                             for (var j = 0; j < typeParameters.length; j++) {
-                                typeReplacementMap[typeParameters[i].pullSymbolIDString] = this.semanticInfoChain.anyTypeSymbol;
+                                typeReplacementMap[typeParameters[i].pullSymbolID] = this.semanticInfoChain.anyTypeSymbol;
                             }
                         }
 
@@ -11283,7 +11285,7 @@ module TypeScript {
         }
 
 
-        public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullTypeSymbol {
+        public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSymbol[], instantiateFunctionTypeParameters = false): PullTypeSymbol {
             // if the type is a primitive type, nothing to do here
             if (type.isPrimitive()) {
                 return type;
@@ -11294,8 +11296,8 @@ module TypeScript {
                 return type;
             }
 
-            if (typeParameterArgumentMap[type.pullSymbolIDString]) {
-                return typeParameterArgumentMap[type.pullSymbolIDString];
+            if (typeParameterArgumentMap[type.pullSymbolID]) {
+                return typeParameterArgumentMap[type.pullSymbolID];
             }
 
             // If the type parameter is a function type parameter without a substitution, we don't want to create a new instantiated type 
@@ -11323,7 +11325,7 @@ module TypeScript {
         //
         // In the code above, we don't want to cache the invocation of 'm' in 'n' against 'any', since the
         // signature to 'm' is only partially specialized 
-        public instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullSignatureSymbol {
+        public instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSymbol[], instantiateFunctionTypeParameters = false): PullSignatureSymbol {
             if (!signature.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 return signature;
             }

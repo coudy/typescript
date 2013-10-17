@@ -2,11 +2,6 @@
 ///<reference path="..\typescript.ts" />
 
 module TypeScript {
-
-    export interface PullTypeSubstitutionMap {
-        [pullSymbolID: string]: PullTypeSymbol;
-    }
-
     export enum GenerativeTypeClassification {
         Unknown,
         Open,
@@ -389,10 +384,10 @@ module TypeScript {
                     }
 
                     // create a new type map with just the type parameter
-                    var typeParametersMap: PullTypeSubstitutionMap = {};
+                    var typeParametersMap: PullTypeSymbol[] = [];
 
                     for (var i = 0; i < typeParameters.length; i++) {
-                        typeParametersMap[typeParameters[i].pullSymbolIDString] = typeParameters[i];
+                        typeParametersMap[typeParameters[i].pullSymbolID] = typeParameters[i];
                     }
 
                     var wrapsSomeTypeParameters = rootThis.wrapsSomeTypeParameter(typeParametersMap);
@@ -492,7 +487,7 @@ module TypeScript {
         // The typeParameterArgumentMap parameter represents a mapping of PUllSymbolID strings of type parameters to type argument symbols
         // The instantiateFunctionTypeParameters parameter is set to true when a signature is being specialized at a call site, or if its
         // type parameters need to otherwise be specialized (say, during a type relationship check)
-        public static create(resolver: PullTypeResolver, type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSubstitutionMap, instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
+        public static create(resolver: PullTypeResolver, type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSymbol[], instantiateFunctionTypeParameters = false): PullInstantiatedTypeReferenceSymbol {
             Debug.assert(resolver);
 
             // check for an existing instantiation
@@ -510,17 +505,19 @@ module TypeScript {
                 }
                 
                 for (var i = 0; i < typeArguments.length; i++) {
-                    typeParameterArgumentMap[typeArguments[i].pullSymbolIDString] = reconstructedTypeArgumentList[i];
+                    typeParameterArgumentMap[typeArguments[i].pullSymbolID] = reconstructedTypeArgumentList[i];
                 }
             }
             else {
                 var tyArg: PullTypeSymbol = null;
 
                 for (var typeParameterID in typeParameterArgumentMap) {
-                    tyArg = typeParameterArgumentMap[typeParameterID];
+                    if (typeParameterArgumentMap.hasOwnProperty(typeParameterID)) {
+                        tyArg = typeParameterArgumentMap[typeParameterID];
 
-                    if (tyArg) {
-                        reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = tyArg;
+                        if (tyArg) {
+                            reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = tyArg;
+                        }
                     }
                 }
             }
@@ -549,7 +546,7 @@ module TypeScript {
                         }
 
                         if (isReferencedType) {
-                            typeParameterArgumentMap = {};
+                            typeParameterArgumentMap = [];
                         }
                     }
                     else {
@@ -562,17 +559,22 @@ module TypeScript {
             // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map.  This helps
             // us get the type argument list right when it's requested via getTypeArguments
             if (type.isTypeReference() && type.isGeneric()) {
-                var initializationMap: PullTypeSubstitutionMap = {};
+                var initializationMap: PullTypeSymbol[] = [];
 
                 // first, initialize the argument map
                 for (var typeParameterID in typeParameterArgumentMap) {
-                    initializationMap[typeParameterID] = typeParameterArgumentMap[typeParameterID];
+                    if (typeParameterArgumentMap.hasOwnProperty(typeParameterID)) {
+                        initializationMap[typeParameterID] = typeParameterArgumentMap[typeParameterID];
+                    }
                 }
 
                 // next, overwrite any entries that should be re-directed to new type parameters
-                for (var typeParameterID in (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap) {
-                    if (typeParameterArgumentMap[(<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap[typeParameterID].pullSymbolIDString]) {
-                        initializationMap[typeParameterID] = typeParameterArgumentMap[(<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap[typeParameterID].pullSymbolIDString];
+                var outerTypeMap = (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap;
+                for (var typeParameterID in outerTypeMap) {
+                    if (outerTypeMap.hasOwnProperty(typeParameterID)) {
+                        if (typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID]) {
+                            initializationMap[typeParameterID] = typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID];
+                        }
                     }
                 }
 
@@ -592,7 +594,7 @@ module TypeScript {
             return instantiation;
         }
 
-        constructor(resolver: PullTypeResolver, public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: PullTypeSubstitutionMap) {
+        constructor(resolver: PullTypeResolver, public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: PullTypeSymbol[]) {
             super(resolver, referencedTypeSymbol);
 
             nSpecializationsCreated++;
@@ -602,7 +604,7 @@ module TypeScript {
             return !!this.referencedTypeSymbol.getTypeParameters().length;
         }
 
-        public getTypeParameterArgumentMap(): PullTypeSubstitutionMap {
+        public getTypeParameterArgumentMap(): PullTypeSymbol[] {
             return this._typeParameterArgumentMap;
         }
 

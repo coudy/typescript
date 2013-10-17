@@ -1024,7 +1024,7 @@ module TypeScript {
             return builder;
         }
 
-        public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
+        public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSymbol[]): boolean {
             var signature = this;
             if (signature.inWrapCheck) {
                 return false;
@@ -1187,7 +1187,7 @@ module TypeScript {
         public isError() { return false; }
         public isEnum() { return this.kind == PullElementKind.Enum; }
 
-        public getTypeParameterArgumentMap(): PullTypeSubstitutionMap {
+        public getTypeParameterArgumentMap(): PullTypeSymbol[] {
             return null;
         }
 
@@ -2097,14 +2097,14 @@ module TypeScript {
 
         // The argument map prevents us from accidentally flagging method type parameters, or (if we
         // ever decide to go that route) allows for partial specialization
-        public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSubstitutionMap): boolean {
+        public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSymbol[]): boolean {
             var type = this;
 
             var wrapsSomeTypeParameter = false;
 
             // if we encounter a type paramter, we're obviously wrapping
             if (type.isTypeParameter()) {
-                if (typeParameterArgumentMap[type.pullSymbolIDString]) {
+                if (typeParameterArgumentMap[type.pullSymbolID]) {
                     return true;
                 }
 
