@@ -7051,9 +7051,14 @@ module TypeScript {
             }, context);
         }
 
-        private computeLogicalOrExpression(binex: BinaryExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
+        private resolveLogicalOrExpression(binex: BinaryExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             // October 11, 2013:  
             // The || operator permits the operands to be of any type.
+            if (this.canTypeCheckAST(binex, context)) {
+                // So there's no type checking we actually have to do.
+                this.setTypeChecked(binex, context);
+            }
+
             if (isContextuallyTyped) {
                 // If the || expression is contextually typed(section 4.19), the operands are 
                 // contextually typed by the same type and the result is of the best common type 
@@ -7077,20 +7082,6 @@ module TypeScript {
 
                 return this.bestCommonTypeOfTwoTypes(leftType, rightType, context);
             }
-        }
-
-        private resolveLogicalOrExpression(binex: BinaryExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
-            if (this.canTypeCheckAST(binex, context)) {
-                this.typeCheckLogicalOrExpression(binex, isContextuallyTyped, context);
-            }
-
-            return this.computeLogicalOrExpression(binex, isContextuallyTyped, context);
-        }
-
-        private typeCheckLogicalOrExpression(binex: BinaryExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext) {
-            this.setTypeChecked(binex, context);
-
-            this.computeLogicalOrExpression(binex, isContextuallyTyped, context);
         }
 
         private resolveLogicalAndExpression(binex: BinaryExpression, context: PullTypeResolutionContext): PullSymbol {
@@ -7130,10 +7121,6 @@ module TypeScript {
         }
 
         private resolveConditionalExpression(trinex: ConditionalExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
-            if (this.canTypeCheckAST(trinex, context)) {
-                this.typeCheckConditionalExpression(trinex, isContextuallyTyped, context);
-            }
-
             // October 11, 2013
             // If the conditional expression is contextually typed (section 4.19), Expr1 and Expr2 
             // are contextually typed by the same type and the result is of the best common type
@@ -7144,7 +7131,11 @@ module TypeScript {
             var rightType = this.resolveAST(trinex.whenFalse, isContextuallyTyped, context).type;
 
             var expressionType = this.computeTypeOfConditionalExpression(leftType, rightType, isContextuallyTyped, context);
-            
+
+            if (this.canTypeCheckAST(trinex, context)) {
+                this.typeCheckConditionalExpression(trinex, isContextuallyTyped, context, leftType, rightType, expressionType);
+            }
+
             // If the conditional is not valid, then return an error symbol.  That way we won't 
             // report further errors higher up the stack.
             if (!this.conditionExpressionTypesAreValid(leftType, rightType, expressionType, isContextuallyTyped, context)) {
@@ -7175,20 +7166,11 @@ module TypeScript {
             return false;
         }
 
-        private typeCheckConditionalExpression(trinex: ConditionalExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
+        private typeCheckConditionalExpression(trinex: ConditionalExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext,
+            leftType: PullTypeSymbol, rightType: PullTypeSymbol, expressionType: PullTypeSymbol): void {
+
             this.setTypeChecked(trinex, context);
-
-            // October 11, 2013
-            // If the conditional expression is contextually typed (section 4.19), Expr1 and Expr2 
-            // are contextually typed by the same type and the result is of the best common type
-            // (section 3.10) of the contextual type and the types of Expr1 and Expr2.  An error 
-            // occurs if the best common type is not identical to at least one of the three 
-            // candidate types.
             this.resolveAST(trinex.condition, /*isContextuallyTyped:*/ false, context);
-            var leftType = this.resolveAST(trinex.whenTrue, isContextuallyTyped, context).type;
-            var rightType = this.resolveAST(trinex.whenFalse, isContextuallyTyped, context).type;
-
-            var expressionType = this.computeTypeOfConditionalExpression(leftType, rightType, isContextuallyTyped, context);
 
             if (!this.conditionExpressionTypesAreValid(leftType, rightType, expressionType, isContextuallyTyped, context)) {
                 if (isContextuallyTyped) {
