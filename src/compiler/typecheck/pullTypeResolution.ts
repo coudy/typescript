@@ -6873,15 +6873,15 @@ module TypeScript {
 
             // Resolve element types
             if (elements) {
-                if (isContextuallyTyped) {
+                if (contextualElementType) {
                     context.pushContextualType(contextualElementType, context.inProvisionalResolution(), null);
                 }
 
-                for (var i = 0; i < elements.members.length; i++) {
-                    elementTypes[elementTypes.length] = this.resolveAST(elements.members[i], isContextuallyTyped, context).type;
+                for (var i = 0, n = elements.members.length; i < n; i++) {
+                    elementTypes.push(this.resolveAST(elements.members[i], contextualElementType !== null, context).type);
                 }
 
-                if (isContextuallyTyped) {
+                if (contextualElementType) {
                     context.popContextualType();
                 }
             }
