@@ -75,23 +75,42 @@ module TypeScript {
             if (token.fullWidth() === 0) {
                 result = new MissingIdentifier();
             }
-            else if (token.tokenKind === SyntaxKind.IdentifierName) {
-                // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
-                // so that we can safely use it as a key in a javascript object.
-                var tokenText = token.text();
-                var text = tokenText === SyntaxTreeToAstVisitor.protoString
-                    ? SyntaxTreeToAstVisitor.protoSubstitutionString
-                    : null;
-
-                result = new Identifier(tokenText, text);
-            }
             else {
-                var tokenText = token.text();
-                var text = token.tokenKind === SyntaxKind.StringLiteral ? <string>token.value() : null;
-                if (stringLiteralIsTextOfIdentifier && text) {
-                    text = quoteStr(text);
+                switch (token.tokenKind) {
+                    case SyntaxKind.AnyKeyword:
+                    case SyntaxKind.BooleanKeyword:
+                    case SyntaxKind.NumberKeyword:
+                    case SyntaxKind.StringKeyword:
+                    case SyntaxKind.VoidKeyword:
+                        // TODO: there's no reason to use an identifier node for these.  We 
+                        // can just have specialized nodes for these primitives.
+                        result = new Identifier(token.text(), token.text());
+                        break;
+
+                    case SyntaxKind.IdentifierName:
+                        // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
+                        // so that we can safely use it as a key in a javascript object.
+                        var tokenText = token.text();
+                        var text = tokenText === SyntaxTreeToAstVisitor.protoString
+                            ? SyntaxTreeToAstVisitor.protoSubstitutionString
+                            : null;
+
+                        result = new Identifier(tokenText, text);
+                        break;
+
+                    case SyntaxKind.NumericLiteral:
+                    case SyntaxKind.StringLiteral:
+                        var tokenText = token.text();
+                        var text = token.valueText();
+                        if (stringLiteralIsTextOfIdentifier && text) {
+                            text = quoteStr(text);
+                        }
+                        result = new Identifier(tokenText, text, /*isStringOrNumericLiteral:*/ true);
+                        break;
+
+                    default:
+                        throw Errors.invalidOperation();
                 }
-                result = new Identifier(tokenText, text, /*isNumber:*/ token.tokenKind === SyntaxKind.NumericLiteral);
             }
 
             if (isOptional) {

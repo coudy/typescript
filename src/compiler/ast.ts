@@ -455,7 +455,7 @@ module TypeScript {
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
         // as emitting, use the actualText field.
-        constructor(public actualText: string, text: string, public isNumber: boolean = false) {
+        constructor(public actualText: string, text: string, public isStringOrNumericLiteral: boolean = false) {
             super();
             this._text = text;
         }

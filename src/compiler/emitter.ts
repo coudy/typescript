@@ -1476,7 +1476,7 @@ module TypeScript {
             this.recordSourceMappingStart(varDecl);
 
             var varDeclName = varDecl.id.actualText;
-            var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isNumber;
+            var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isStringOrNumericLiteral;
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
             var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -2329,7 +2329,7 @@ module TypeScript {
                         this.recordSourceMappingStart(varDecl);
 
                         var varDeclName = varDecl.id.actualText;
-                        if (isQuoted(varDeclName) || varDecl.id.isNumber) {
+                        if (isQuoted(varDeclName) || varDecl.id.isStringOrNumericLiteral) {
                             this.writeToOutput(classDecl.identifier.actualText + "[" + varDeclName + "] = ");
                         }
                         else {
@@ -2361,7 +2361,7 @@ module TypeScript {
                 this.writeToOutput(".prototype");
             }
 
-            if (isQuoted(functionName) || funcDecl.name.isNumber) {
+            if (isQuoted(functionName) || funcDecl.name.isStringOrNumericLiteral) {
                 this.writeToOutput("[" + functionName + "] = ");
             }
             else {
