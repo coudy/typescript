@@ -17,23 +17,22 @@ module TypeScript {
     }
 
     export class ArgumentInferenceContext {
-        public inferenceCache: any = {};
+        public inferenceCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ false);
         public candidateCache: CandidateInferenceInfo[] = [];
 
         public alreadyRelatingTypes(objectType: PullTypeSymbol, parameterType: PullTypeSymbol) {
-            var comboID = objectType.pullSymbolIDString + "#" + parameterType.pullSymbolIDString;
-
-            if (this.inferenceCache[comboID]) {
+            if (this.inferenceCache.valueAt(objectType.pullSymbolID, parameterType.pullSymbolID)) {
                 return true;
             }
             else {
-                this.inferenceCache[comboID] = true;
+                this.inferenceCache.setValueAt(objectType.pullSymbolID, parameterType.pullSymbolID, true);
                 return false;
-            }            
+            }
         }
 
         public resetRelationshipCache() {
-            this.inferenceCache = {};
+            this.inferenceCache.release();
+            this.inferenceCache = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ false);
         }
 
         public addInferenceRoot(param: PullTypeParameterSymbol) {
