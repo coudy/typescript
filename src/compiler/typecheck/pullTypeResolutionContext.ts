@@ -66,18 +66,17 @@ module TypeScript {
             }
         }
 
-        public getInferenceCandidates(): any[] {
-            var inferenceCandidates: any[] = [];
+        public getInferenceCandidates(): PullTypeSymbol[][] {
+            var inferenceCandidates: PullTypeSymbol[][] = [];
             var info: CandidateInferenceInfo;
-            var val: any;
 
             for (var infoKey in this.candidateCache) {
                 info = <CandidateInferenceInfo>this.candidateCache[infoKey];
 
                 for (var i = 0; i < info.inferenceCandidates.length; i++) {
-                    val = {};
-                    val[info.typeParameter.pullSymbolIDString] = info.inferenceCandidates[i];
-                    inferenceCandidates[inferenceCandidates.length] = val;
+                    var val: PullTypeSymbol[] = [];
+                    val[info.typeParameter.pullSymbolID] = info.inferenceCandidates[i];
+                    inferenceCandidates.push(val);
                 }
             }
 
@@ -138,7 +137,7 @@ module TypeScript {
 
         constructor(public contextualType: PullTypeSymbol,
                     public provisional: boolean,
-                    public substitutions: any) { }
+                    public substitutions: PullTypeSymbol[]) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -170,7 +169,7 @@ module TypeScript {
             }
         }
 
-        public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: any) {
+        public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: PullTypeSymbol[]) {
             this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
         }
 
@@ -199,7 +198,7 @@ module TypeScript {
             if (this.contextStack.length) {
                 for (var i = this.contextStack.length - 1; i >= 0; i--) {
                     if (this.contextStack[i].substitutions) {
-                        substitution = this.contextStack[i].substitutions[type.pullSymbolIDString];
+                        substitution = this.contextStack[i].substitutions[type.pullSymbolID];
 
                         if (substitution) {
                             break;

@@ -9496,10 +9496,6 @@ module TypeScript {
                 argContext.addInferenceRoot(typeParameters[i]);
             }
 
-            var substitutions: any;
-            var inferenceCandidates: PullTypeSymbol[];
-            var inferenceCandidate: PullTypeSymbol;
-
             for (var i = 0; i < args.members.length; i++) {
 
                 if (i >= parameters.length) {
@@ -9513,17 +9509,13 @@ module TypeScript {
                     parameterType = parameterType.getElementType();
                 }
 
-                inferenceCandidates = argContext.getInferenceCandidates();
-                substitutions = {};
+                var inferenceCandidates = argContext.getInferenceCandidates();
 
                 if (inferenceCandidates.length) {
                     for (var j = 0; j < inferenceCandidates.length; j++) {
 
                         argContext.resetRelationshipCache();
-
-                        inferenceCandidate = inferenceCandidates[j];
-
-                        substitutions = inferenceCandidates[j];
+                        var substitutions = inferenceCandidates[j];
 
                         context.pushContextualType(parameterType, true, substitutions);
 
@@ -9535,7 +9527,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    context.pushContextualType(parameterType, true, {});
+                    context.pushContextualType(parameterType, true, []);
                     var argSym = this.resolveAST(args.members[i], true, context);
 
                     this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, context);
