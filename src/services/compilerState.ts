@@ -312,11 +312,6 @@ module Services {
             return this.hostCache.getHostFileName(fileName);
         }
 
-        public getScriptVersion(fileName: string) {
-            this.synchronizeHostData();
-            return this.hostCache.getVersion(fileName);
-        }
-
         // Methods that defer to the compiler to get the result.
 
         public compilationSettings(): TypeScript.ImmutableCompilationSettings {

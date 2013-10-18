@@ -1222,7 +1222,7 @@ module Services {
             }, null);
 
             // Store this completion list as the active completion list
-            this.activeCompletionSession = new CompletionSession(fileName, position, this.compiler.getScriptVersion(fileName), entries);
+            this.activeCompletionSession = new CompletionSession(fileName, position, document.version, entries);
 
             return completions;
         }
@@ -1325,7 +1325,8 @@ module Services {
                 var decl = (<DeclReferenceCompletionEntry>entry).decl;
 
                 // If this decl has been invalidated becuase of a user edit, try to find the new decl that matches it
-                if (decl.fileName() === TypeScript.switchToForwardSlashes(fileName) && this.compiler.getScriptVersion(fileName) !== this.activeCompletionSession.version) {
+                var document = this.compiler.getDocument(fileName);
+                if (decl.fileName() === TypeScript.switchToForwardSlashes(fileName) && document.version !== this.activeCompletionSession.version) {
                     decl = this.tryFindDeclFromPreviousCompilerVersion(decl);
 
                     if (decl) {
@@ -1342,7 +1343,6 @@ module Services {
 
                 // This entry has not been resolved yet. Resolve it.
                 if (decl) {
-                    var document = this.compiler.getDocument(fileName);
                     var node = TypeScript.getAstAtPosition(document.script(), position);
                     var symbolInfo = this.compiler.pullGetDeclInformation(decl, node, document);
 
