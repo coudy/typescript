@@ -1278,7 +1278,7 @@ module TypeScript {
                     }
 
                     if (params[argDecl.id.valueText()]) {
-                        this.semanticInfoChain.addDiagnosticFromAST(argDecl, DiagnosticCode.Duplicate_identifier_0, [argDecl.id.actualText]);
+                        this.semanticInfoChain.addDiagnosticFromAST(argDecl, DiagnosticCode.Duplicate_identifier_0, [argDecl.id.text()]);
                     }
                     else {
                         params[argDecl.id.valueText()] = true;

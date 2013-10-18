@@ -967,7 +967,7 @@ module TypeScript {
             var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.validateVariableDeclarationGroups(containerDecl, context);
 
-            if (isRelative(stripStartAndEndQuotes(ast.name.actualText))) {
+            if (isRelative(stripStartAndEndQuotes(ast.name.text()))) {
                 this.semanticInfoChain.addDiagnosticFromAST(
                     ast.name, DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name);
             }
@@ -1516,7 +1516,7 @@ module TypeScript {
                         var instanceSymbol = (<PullContainerSymbol>aliasedType).getInstanceSymbol();
                         // If there is module and it is instantiated, value symbol needs to refer to the module instance symbol
                         if (valueSymbol && (instanceSymbol != valueSymbol || valueSymbol.type == aliasedType)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [(<Identifier>aliasExpr).actualText, moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [(<Identifier>aliasExpr).text(), moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                         } else {
                             // Set value symbol, type and container setting will be taken care of later using aliasedType
                             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
@@ -1574,7 +1574,7 @@ module TypeScript {
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
 
                 if (!aliasedType) {
-                    this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.moduleReference).actualText]);
+                    this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.moduleReference).text()]);
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
             } else {
@@ -1840,7 +1840,7 @@ module TypeScript {
                     // if the noImplicitAny flag is set to be true, report an error 
                     if (this.compilationSettings.noImplicitAny()) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
-                            [argDeclAST.id.actualText]));
+                            [argDeclAST.id.text()]));
                     }
                 }
             }
@@ -1887,7 +1887,7 @@ module TypeScript {
                 }
 
                 if (!initExprSymbol || !initExprSymbol.type) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Unable_to_resolve_type_of_0, [argDeclAST.id.actualText]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Unable_to_resolve_type_of_0, [argDeclAST.id.text()]));
 
                     if (!contextualType) {
                         context.setTypeInContext(paramSymbol, this.getNewErrorTypeSymbol(paramSymbol.name));
@@ -1929,12 +1929,12 @@ module TypeScript {
                 var functionExpressionName = (<PullFunctionExpressionDecl>paramDecl.getParentDecl()).getFunctionExpressionName();
                 if (functionExpressionName) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST,
-                        DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [argDeclAST.id.actualText, functionExpressionName]));
+                        DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [argDeclAST.id.text(), functionExpressionName]));
                 }
                 else {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST,
                         DiagnosticCode.Parameter_0_of_lambda_function_implicitly_has_an_any_type,
-                        [argDeclAST.id.actualText]));
+                        [argDeclAST.id.text()]));
                 }
             }
 
@@ -2141,8 +2141,8 @@ module TypeScript {
             else if (term.nodeType() === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>term;
                 var enclosingDecl = this.getEnclosingDeclForAST(term);
-                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.actualText);
-                var decl = new PullSynthesizedDecl(stringConstantAST.actualText, stringConstantAST.actualText,
+                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text());
+                var decl = new PullSynthesizedDecl(stringConstantAST.text(), stringConstantAST.text(),
                     typeDeclSymbol.kind, null, enclosingDecl,
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()),
                     enclosingDecl.semanticInfoChain());
@@ -2387,7 +2387,7 @@ module TypeScript {
             var typeExprSymbol = this.resolveTypeReference(typeExpr, context);
 
             if (!typeExprSymbol) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Unable_to_resolve_type_of_0, [name.actualText]));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Unable_to_resolve_type_of_0, [name.text()]));
                 declSymbol.type = this.getNewErrorTypeSymbol();
 
                 if (declParameterSymbol) {
@@ -2485,7 +2485,7 @@ module TypeScript {
             }
 
             if (!initExprSymbol) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Unable_to_resolve_type_of_0, [name.actualText]));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Unable_to_resolve_type_of_0, [name.text()]));
 
                 if (!hasTypeExpr) {
                     context.setTypeInContext(declSymbol, this.getNewErrorTypeSymbol());
@@ -2512,7 +2512,7 @@ module TypeScript {
                         // initializer is resolved to any type from widening variable declaration (i.e var x = null)
                         if ((widenedInitTypeSymbol != initTypeSymbol) && (widenedInitTypeSymbol == this.semanticInfoChain.anyTypeSymbol)) {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Variable_0_implicitly_has_an_any_type,
-                                [name.actualText]));
+                                [name.text()]));
                         }
                     }
                 }
@@ -2623,7 +2623,7 @@ module TypeScript {
                     wrapperDecl.kind === TypeScript.PullElementKind.ConstructorMethod ||
                     wrapperDecl.kind === TypeScript.PullElementKind.ConstructSignature)) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                        DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.actualText, enclosingDecl.name]));
+                        DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
                 }
                 // varDecl is a method paremeter
                 else if (wrapperDecl.kind === TypeScript.PullElementKind.Method) {
@@ -2632,32 +2632,32 @@ module TypeScript {
                     // parentDecl is not an ambient declaration; so report an error
                     if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.actualText, enclosingDecl.name]));
+                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
                     }
                     // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
                     else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
                         !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.actualText, enclosingDecl.name]));
+                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
                     }
                 }
                 // varDecl is a property in object type
                 else if (wrapperDecl.kind === TypeScript.PullElementKind.ObjectType) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                        DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.actualText]));
+                        DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.text()]));
                 }
                 // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
                 else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
                     // varDecl is not declared in ambient declaration; so report an error
                     if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.actualText]));
+                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
                     }
                     // varDecl is delcared in ambient declaration but it is not private; so report an error
                     else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
                         !TypeScript.hasFlag((<any>varDeclOrParameter).getVarFlags(), VariableFlags.Private)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.actualText]));
+                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
                     }
                 }
             }
@@ -3430,7 +3430,7 @@ module TypeScript {
                             var funcDeclASTName = name;
                             if (funcDeclASTName) {
                                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
-                                    [funcDeclASTName.actualText]));
+                                    [funcDeclASTName.text()]));
                             }
                             else {
                                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST,
@@ -3611,7 +3611,7 @@ module TypeScript {
                     // if setter has an any type, it must be implicit any
                     if (!setterHasTypeAnnotation && accessorSymbol.type == this.semanticInfoChain.anyTypeSymbol) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(setterFunctionDeclarationAst,
-                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [setterFunctionDeclarationAst.propertyName.actualText]));
+                            DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type, [setterFunctionDeclarationAst.propertyName.text()]));
                     }
                 }
             }
@@ -5346,7 +5346,7 @@ module TypeScript {
                 if (!reportDiagnostics) {
                     return null;
                 } else {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
                     return this.getNewErrorTypeSymbol(id);
                 }
             }
@@ -5385,7 +5385,7 @@ module TypeScript {
                         // We didn't find a matching parameter to the left, so error
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
                             DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
-                            [(<Parameter>enclosingFunctionAST.parameterList.members[currentParameterIndex]).id.actualText, nameAST.actualText]));
+                            [(<Parameter>enclosingFunctionAST.parameterList.members[currentParameterIndex]).id.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
                 }
@@ -5506,7 +5506,7 @@ module TypeScript {
             }
 
             if (!lhsType) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [name.actualText]));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [name.text()]));
                 return this.getNewErrorTypeSymbol();
             }
 
@@ -5580,7 +5580,7 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [name.actualText, lhsType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [name.text(), lhsType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                     return this.getNewErrorTypeSymbol(rhsName);
                 }
             }
@@ -5656,7 +5656,7 @@ module TypeScript {
                 }
 
                 if (!typeNameSymbol) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.actualText]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
                     return this.getNewErrorTypeSymbol(id);
                 }
 
@@ -5886,7 +5886,7 @@ module TypeScript {
             }
 
             if (!childTypeSymbol) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(dottedNameAST.right, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [dottedNameAST.right.actualText, lhsType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(dottedNameAST.right, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [dottedNameAST.right.text(), lhsType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                 return this.getNewErrorTypeSymbol(rhsName);
             }
 
@@ -6846,7 +6846,7 @@ module TypeScript {
             // a property with that name,  the property access is the type of that property
             if (callEx.argumentExpression.nodeType() === NodeType.StringLiteral || callEx.argumentExpression.nodeType() === NodeType.NumericLiteral) {
                 var memberName = callEx.argumentExpression.nodeType() === NodeType.StringLiteral
-                    ? stripStartAndEndQuotes((<StringLiteral>callEx.argumentExpression).actualText)
+                    ? stripStartAndEndQuotes((<StringLiteral>callEx.argumentExpression).text())
                     : (<NumericLiteral>callEx.argumentExpression).value.toString();
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
@@ -8147,11 +8147,11 @@ module TypeScript {
             }
 
             if (val && t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
-                return (val.nodeType() === NodeType.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).actualText) === stripStartAndEndQuotes(t1.name));
+                return (val.nodeType() === NodeType.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).text()) === stripStartAndEndQuotes(t1.name));
             }
 
             if (val && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
-                return (val.nodeType() === NodeType.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).actualText) === stripStartAndEndQuotes(t2.name));
+                return (val.nodeType() === NodeType.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).text()) === stripStartAndEndQuotes(t2.name));
             }
 
             if (t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2.isPrimitive() && (<PullPrimitiveTypeSymbol>t2).isStringConstant()) {
@@ -8560,7 +8560,7 @@ module TypeScript {
                 return comparisonInfo &&
                     comparisonInfo.stringConstantVal &&
                     (comparisonInfo.stringConstantVal.nodeType() === NodeType.StringLiteral) &&
-                    (stripStartAndEndQuotes((<StringLiteral>comparisonInfo.stringConstantVal).actualText) === stripStartAndEndQuotes(target.name));
+                    (stripStartAndEndQuotes((<StringLiteral>comparisonInfo.stringConstantVal).text()) === stripStartAndEndQuotes(target.name));
             }
 
             // this is one difference between subtyping and assignment compatibility
@@ -11078,7 +11078,7 @@ module TypeScript {
                 // Verify if the class extends another class verify the value position resolves to the same type expression
                 if (this.hasClassTypeSymbolConflictAsValue(<Identifier>baseDeclAST.term, baseType, enclosingDecl, context)) {
                     // Report error
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, DiagnosticCode.Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1, [(<Identifier>baseDeclAST.term).actualText, baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, DiagnosticCode.Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1, [(<Identifier>baseDeclAST.term).text(), baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                 }
             }
 
@@ -11268,7 +11268,7 @@ module TypeScript {
                         }
 
                         if (!containingClass || containingClass.getSymbol() !== memberContainer) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode._0_1_is_inaccessible, [memberContainer.toString(/*scopeSymbol*/ null, /*useConstraintInName*/ false), name.actualText]));
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode._0_1_is_inaccessible, [memberContainer.toString(/*scopeSymbol*/ null, /*useConstraintInName*/ false), name.text()]));
                             return true;
                         }
                     }
@@ -11423,10 +11423,10 @@ module TypeScript {
 
     export function getPropertyAssignmentNameTextFromIdentifier(identifier: AST): { actualText: string; memberName: string } {
         if (identifier.nodeType() === NodeType.Name) {
-            return { actualText: (<Identifier>identifier).actualText, memberName: (<Identifier>identifier).valueText() };
+            return { actualText: (<Identifier>identifier).text(), memberName: (<Identifier>identifier).valueText() };
         }
         else if (identifier.nodeType() === NodeType.StringLiteral) {
-            return { actualText: (<StringLiteral>identifier).actualText, memberName: (<StringLiteral>identifier).valueText() };
+            return { actualText: (<StringLiteral>identifier).text(), memberName: (<StringLiteral>identifier).valueText() };
         }
         else if (identifier.nodeType() === NodeType.NumericLiteral) {
             return { actualText: (<NumericLiteral>identifier).text(), memberName: (<NumericLiteral>identifier).valueText() };

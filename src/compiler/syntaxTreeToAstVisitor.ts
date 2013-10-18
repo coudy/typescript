@@ -821,11 +821,11 @@ module TypeScript {
             if (init) {
                 if (init.nodeType() === NodeType.ArrowFunctionExpression) {
                     var arrowFunction = <ArrowFunctionExpression>init;
-                    arrowFunction.hint = name.actualText;
+                    arrowFunction.hint = name.text();
                 }
                 else if (init.nodeType() === NodeType.FunctionExpression) {
                     var expression = <FunctionExpression>init;
-                    expression.hint = name.actualText;
+                    expression.hint = name.text();
                 }
             }
 

@@ -270,7 +270,7 @@ module TypeScript {
 
         public isExternalImportDeclaration() {
             if (this.moduleReference.nodeType() == NodeType.Name) {
-                var text = (<Identifier>this.moduleReference).actualText;
+                var text = (<Identifier>this.moduleReference).text();
                 return isQuoted(text);
             }
 
@@ -291,7 +291,7 @@ module TypeScript {
             }
 
             if (aliasAST.nodeType() === NodeType.Name) {
-                return (<Identifier>aliasAST).actualText;
+                return (<Identifier>aliasAST).text();
             } else {
                 var dotExpr = <QualifiedName>aliasAST;
                 return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
@@ -322,7 +322,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            emitter.setExportAssignmentIdentifier(this.identifier.actualText);
+            emitter.setExportAssignmentIdentifier(this.identifier.text());
         }
     }
 
@@ -453,13 +453,17 @@ module TypeScript {
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
         // as emitting, use the actualText field.
-        constructor(public actualText: string, private _valueText: string, public isStringOrNumericLiteral: boolean = false) {
+        constructor(private _text: string, private _valueText: string, public isStringOrNumericLiteral: boolean = false) {
             super();
+        }
+
+        public text(): string {
+            return this._text;
         }
 
         public valueText(): string {
             if (!this._valueText) {
-                this._valueText = Syntax.massageEscapes(this.actualText);
+                this._valueText = Syntax.massageEscapes(this.text());
             }
 
             return this._valueText;
@@ -477,7 +481,7 @@ module TypeScript {
 
         public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.actualText === ast.actualText &&
+                   this._text === ast._text &&
                    this.isMissing() === ast.isMissing();
         }
     }
@@ -1153,11 +1157,11 @@ module TypeScript {
     }
 
     export class StringLiteral extends AST {
-        constructor(public actualText: string, private _valueText: string) {
+        constructor(private _text: string, private _valueText: string) {
             super();
         }
 
-        public text(): string { return this._valueText; }
+        public text(): string { return this._text; }
         public valueText(): string { return this._valueText; }
 
         public nodeType(): NodeType {
@@ -1170,7 +1174,7 @@ module TypeScript {
 
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.actualText === ast.actualText;
+                   this._text === ast._text;
         }
     }
 
@@ -1342,7 +1346,7 @@ module TypeScript {
         }
 
         public getNameText() {
-            return this.name ? this.name.actualText : this.hint;
+            return this.name ? this.name.text() : this.hint;
         }
     }
 
@@ -1463,7 +1467,7 @@ module TypeScript {
 
         public getNameText() {
             if (this.name) {
-                return this.name.actualText;
+                return this.name.text();
             }
             else {
                 return this.hint;
