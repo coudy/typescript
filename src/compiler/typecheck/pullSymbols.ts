@@ -12,7 +12,6 @@ module TypeScript {
 
         // private state
         public pullSymbolID = pullSymbolID++;
-        public pullSymbolIDString: string = null;
 
         public name: string;
 
@@ -92,7 +91,6 @@ module TypeScript {
         constructor(name: string, declKind: PullElementKind) {
             this.name = name;
             this.kind = declKind;
-            this.pullSymbolIDString = this.pullSymbolID.toString();
         }
 
         private findAliasedType(externalModule: PullSymbol, aliasSymbols: PullTypeAliasSymbol[]= [], lookIntoOnlyExportedAlias?: boolean, visitedExternalModuleDeclarations: PullDecl[]= []): PullTypeAliasSymbol[] {
@@ -1115,7 +1113,15 @@ module TypeScript {
         private _containedNonMemberNameCache: BlockIntrinsics<PullSymbol> = null;
         private _containedNonMemberTypeNameCache: BlockIntrinsics<PullTypeSymbol> = null;
         private _containedNonMemberContainerCache: BlockIntrinsics<PullTypeSymbol> = null;
-        private _specializedTypeIDCache: BlockIntrinsics<PullTypeSymbol> = null;
+
+        // The instanatiation cache we use when we are instantiating this type with a single 
+        // non-object type.
+        private _simpleInstantiationCache: PullTypeSymbol[] = null;
+
+        // The instantiation cache we use in all other circumstances.  i.e. instantiating with
+        // multiple types, or instantiating with object types.
+        private _complexSpecializationCache: BlockIntrinsics<PullTypeSymbol> = null;
+
 
         // GTODO
         private _hasGenericSignature = false;
@@ -1471,23 +1477,36 @@ module TypeScript {
                 this.isArrayNamedTypeReference();
         }
 
+        private canUseSimpleInstantiationCache(substitutingTypes: PullTypeSymbol[]): boolean {
+            return substitutingTypes.length === 1 && substitutingTypes[0].kind !== PullElementKind.ObjectType;
+        }
+
         public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
 
             if (!substitutingTypes || !substitutingTypes.length) {
                 return;
             }
 
-            if (!this._specializedTypeIDCache) {
-                this._specializedTypeIDCache = new BlockIntrinsics();
+            if (this.canUseSimpleInstantiationCache(substitutingTypes)) {
+                if (!this._simpleInstantiationCache) {
+                    this._simpleInstantiationCache = [];
+                }
+
+                this._simpleInstantiationCache[substitutingTypes[0].pullSymbolID] = specializedVersionOfThisType;
+            }
+            else {
+                if (!this._complexSpecializationCache) {
+                    this._complexSpecializationCache = new BlockIntrinsics<PullTypeSymbol>();
+                }
+
+                this._complexSpecializationCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
             }
 
             if (!this._specializedVersionsOfThisType) {
                 this._specializedVersionsOfThisType = [];
             }
 
-            this._specializedVersionsOfThisType[this._specializedVersionsOfThisType.length] = specializedVersionOfThisType;
-
-            this._specializedTypeIDCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
+            this._specializedVersionsOfThisType.push(specializedVersionOfThisType);
         }
 
         public getSpecialization(substitutingTypes: PullTypeSymbol[]): PullTypeSymbol {
@@ -1496,19 +1515,22 @@ module TypeScript {
                 return null;
             }
 
-            if (!this._specializedTypeIDCache) {
-                this._specializedTypeIDCache = new BlockIntrinsics();
+            if (this.canUseSimpleInstantiationCache(substitutingTypes)) {
+                if (!this._simpleInstantiationCache) {
+                    return null;
+                }
 
-                return null;
+                var result = this._simpleInstantiationCache[substitutingTypes[0].pullSymbolID];
+                return result ? result : null;
             }
+            else {
+                if (!this._complexSpecializationCache) {
+                    return null;
+                }
 
-            var specialization = <PullTypeSymbol>this._specializedTypeIDCache[getIDForTypeSubstitutions(substitutingTypes)];
-
-            if (!specialization) {
-                return null;
+                var result = this._complexSpecializationCache[getIDForTypeSubstitutions(substitutingTypes)];
+                return result ? result : null;
             }
-
-            return specialization;
         }
 
         public getKnownSpecializations(): PullTypeSymbol[] {
@@ -2759,8 +2781,8 @@ module TypeScript {
         for (var i = 0; i < types.length; i++) {
 
             // Cache object types structurally
-            if (types[i].kind != PullElementKind.ObjectType) {
-                substitution += types[i].pullSymbolIDString + "#";
+            if (types[i].kind !== PullElementKind.ObjectType) {
+                substitution += types[i].pullSymbolID + "#";
             }
             else {
                 var structure = getIDForTypeSubstitutionsFromObjectType(types[i]);
@@ -2769,7 +2791,7 @@ module TypeScript {
                     substitution += structure;
                 }
                 else {
-                    substitution += types[i].pullSymbolIDString + "#";
+                    substitution += types[i].pullSymbolID + "#";
                 }
             }
         }
