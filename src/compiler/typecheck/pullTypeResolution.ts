@@ -8647,21 +8647,32 @@ module TypeScript {
             // We instead report:
             // Cannot convert 'A[]' to 'B[]':
             //   Type 'A' is missing property 'C' from type 'B'.
-            if (source.isArrayNamedTypeReference() && target.isArrayNamedTypeReference()) {
-                comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, false);
 
-                var sourceElementType = source.getTypeArguments()[0];
-                var targetElementType = target.getTypeArguments()[0];
-                var ret = this.sourceIsRelatableToTarget(sourceElementType, targetElementType, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures);
+            if (source.getIsSpecialized() && target.getIsSpecialized()) {
+                if (PullHelpers.getRootType(source) == PullHelpers.getRootType(target)) {
 
-                if (ret) {
-                    comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
+                    var sourceTypeArguments = source.getTypeArguments();
+                    var targetTypeArguments = target.getTypeArguments();
+
+                    if (sourceTypeArguments && targetTypeArguments) {
+                        comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, false);
+
+                        for (var i = 0; i < sourceTypeArguments.length; i++) {
+                            if (!this.sourceIsRelatableToTarget(sourceTypeArguments[i], targetTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
+                                break;
+                            }
+                        }
+
+                        if (i == sourceTypeArguments.length) {
+                            comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
+                            return true;
+                        }
+                        else {
+                            comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
+                            return false;
+                        }
+                    }
                 }
-                else {
-                    comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
-                }
-
-                return ret;
             }
 
             // this check ensures that we only operate on object types from this point forward,
@@ -8852,13 +8863,14 @@ module TypeScript {
             //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
             //  -	S and T must both be type references to the same named type, and
             //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
-            var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
-            var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
-            var widenedTargetPropType = this.widenType(null, targetPropType, context);
-            var widenedSourcePropType = this.widenType(null, sourcePropType, context);
+            if ((comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID) == undefined)) {
+                var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
+                var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
+                var widenedTargetPropType = this.widenType(null, targetPropType, context);
+                var widenedSourcePropType = this.widenType(null, sourcePropType, context);
 
-            if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
-                targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+                if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                    targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
 
                     if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
                         (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
@@ -8866,29 +8878,49 @@ module TypeScript {
                         var sourceDecl = sourceProp.getDeclarations()[0];
 
                         if (!targetDecl.isEqual(sourceDecl)) {
+                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                            if (comparisonInfo) {
+                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                                    [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                            }
                             return false;
                         }
 
                         var sourcePropTypeArguments = sourcePropType.getTypeArguments();
                         var targetPropTypeArguments = targetPropType.getTypeArguments();
 
+                        if (!sourcePropTypeArguments && !targetPropTypeArguments) {
+                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+                            return true;
+                        }
+
                         if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
                             sourcePropTypeArguments.length != targetPropTypeArguments.length) {
+                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                            if (comparisonInfo) {
+                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                                    [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                            }
                             return false;
                         }
 
                         for (var i = 0; i < sourcePropTypeArguments.length; i++) {
                             if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
+                                comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                                if (comparisonInfo) {
+                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                                        [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                                }
                                 return false;
                             }
                         }
                     }
 
+                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
                     return true;
+                }
             }
-
-            // catch the mutually recursive or cached cases
-            if (targetPropType && sourcePropType && (comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID) != undefined)) {
+            else {
                 return true; // GTODO: should this be true?
             }
 
@@ -9706,6 +9738,15 @@ module TypeScript {
                 objectMember = this.getMemberSymbol(parameterTypeMembers[i].name, PullElementKind.SomeValue, objectType);
 
                 if (objectMember) {
+
+                    var objectMemberGenerativeTypeKind = objectMember.type.getGenerativeTypeClassification(objectType);
+                    var parameterMemberGenerativeTypeKind = parameterTypeMembers[i].type.getGenerativeTypeClassification(parameterType);
+
+                    if ((objectMemberGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) ||
+                        (parameterMemberGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding)) {
+                            continue;
+                    }
+
                     this.relateTypeToTypeParameters(objectMember.type, parameterTypeMembers[i].type, shouldFix, argContext, context);
                 }
             }
@@ -10900,8 +10941,10 @@ module TypeScript {
 
             var typeMembers = typeSymbol.getMembers();
 
-            var comparisonInfo = new TypeComparisonInfo();
-            var foundError = false;
+                var comparisonInfo = new TypeComparisonInfo();
+                var foundError = false;
+                var foundError1 = false;
+                var foundError2 = false;
 
             // Check members
             for (var i = 0; i < typeMembers.length; i++) {
@@ -10909,13 +10952,14 @@ module TypeScript {
                 var extendedTypeProp = extendedType.findMember(propName);
                 if (extendedTypeProp) {
                     this.resolveDeclaredSymbol(extendedTypeProp, context);
-                    foundError = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
+                    foundError1 = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
 
-                    if (!foundError) {
-                        foundError = !this.sourcePropertyIsSubtypeOfTargetProperty(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, context, comparisonInfo);
+                    if (!foundError1) {
+                        foundError2 = !this.sourcePropertyIsSubtypeOfTargetProperty(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, context, comparisonInfo);
                     }
 
-                    if (foundError) {
+                    if (foundError1 || foundError2) {
+                        foundError = true;
                         break;
                     }
                 }
