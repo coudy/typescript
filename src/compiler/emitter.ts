@@ -204,7 +204,6 @@ module TypeScript {
         public captureThisStmtString = "var _this = this;";
         private currentVariableDeclaration: VariableDeclaration;
         private declStack: PullDecl[] = [];
-        private resolvingContext = new PullTypeResolutionContext(null);
         private exportAssignmentIdentifier: string = null;
         private inWithBlock = false;
 

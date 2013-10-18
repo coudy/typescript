@@ -2326,40 +2326,38 @@ module TypeScript {
                     return declSymbol;
                 }
 
-                if (declSymbol.type && declSymbol.type.isError()) {
-                    return declSymbol;
-                }
+                if (!declSymbol.type || !declSymbol.type.isError()) {
+                    declSymbol.startResolving();
 
-                declSymbol.startResolving();
+                    // Does this have a type expression? If so, that's the type
+                    var typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(
+                        varDeclOrParameter, name, typeExpr, context);
 
-                // Does this have a type expression? If so, that's the type
-                var typeExprSymbol = this.resolveAndTypeCheckVariableDeclarationTypeExpr(
-                    varDeclOrParameter, name, typeExpr, context);
-
-                // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
-                if (!hasTypeExpr) {
-                    this.resolveAndTypeCheckVariableDeclaratorOrParameterInitExpr(
-                        varDeclOrParameter, name, typeExpr, init, context, typeExprSymbol);
-                }
-
-                // if we're lacking both a type annotation and an initialization expression, the type is 'any'
-                if (!(hasTypeExpr || init)) {
-                    var defaultType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
-
-                    if (declSymbol.isVarArg) {
-                        defaultType = this.createInstantiatedType(this.cachedArrayInterfaceType(), [defaultType]);
+                    // If we're not type checking, and have a type expression, don't bother looking at the initializer expression
+                    if (!hasTypeExpr) {
+                        this.resolveAndTypeCheckVariableDeclaratorOrParameterInitExpr(
+                            varDeclOrParameter, name, typeExpr, init, context, typeExprSymbol);
                     }
 
-                    context.setTypeInContext(declSymbol, defaultType);
+                    // if we're lacking both a type annotation and an initialization expression, the type is 'any'
+                    if (!(hasTypeExpr || init)) {
+                        var defaultType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
+
+                        if (declSymbol.isVarArg) {
+                            defaultType = this.createInstantiatedType(this.cachedArrayInterfaceType(), [defaultType]);
+                        }
+
+                        context.setTypeInContext(declSymbol, defaultType);
+
+                        if (declParameterSymbol) {
+                            declParameterSymbol.type = defaultType;
+                        }
+                    }
+                    declSymbol.setResolved();
 
                     if (declParameterSymbol) {
-                        declParameterSymbol.type = defaultType;
+                        declParameterSymbol.setResolved();
                     }
-                }
-                declSymbol.setResolved();
-
-                if (declParameterSymbol) {
-                    declParameterSymbol.setResolved();
                 }
             }
 
@@ -3182,6 +3180,18 @@ module TypeScript {
 
             return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
+        }
+
+        private typeCheckMemberFunctionDeclaration(
+            funcDeclAST: AST,
+            flags: FunctionFlags,
+            name: Identifier,
+            typeParameters: ASTList,
+            parameters: ASTList,
+            returnTypeAnnotation: TypeReference,
+            block: Block,
+            context: PullTypeResolutionContext) {
+                this.typeCheckFunctionDeclaration(funcDeclAST, flags, name, typeParameters, parameters, returnTypeAnnotation, block, context);
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
@@ -5221,6 +5231,16 @@ module TypeScript {
                             funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
                             funcDecl.typeParameters, funcDecl.parameterList,
                             funcDecl.returnTypeAnnotation, funcDecl.block, context);
+                        return;
+                    }
+
+                case NodeType.MemberFunctionDeclaration:
+                    {
+                        var memberFuncDecl = <MemberFunctionDeclaration>ast;
+                        this.typeCheckMemberFunctionDeclaration(
+                            memberFuncDecl, memberFuncDecl.getFunctionFlags(), memberFuncDecl.name,
+                            memberFuncDecl.typeParameters, memberFuncDecl.parameterList,
+                            memberFuncDecl.returnTypeAnnotation, memberFuncDecl.block, context);
                         return;
                     }
 
