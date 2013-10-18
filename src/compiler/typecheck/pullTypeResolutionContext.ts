@@ -18,8 +18,7 @@ module TypeScript {
 
     export class ArgumentInferenceContext {
         public inferenceCache: any = {};
-        public candidateCache: any = {};
-
+        public candidateCache: CandidateInferenceInfo[] = [];
 
         public alreadyRelatingTypes(objectType: PullTypeSymbol, parameterType: PullTypeSymbol) {
             var comboID = objectType.pullSymbolIDString + "#" + parameterType.pullSymbolIDString;
@@ -38,17 +37,17 @@ module TypeScript {
         }
 
         public addInferenceRoot(param: PullTypeParameterSymbol) {
-            var info = <CandidateInferenceInfo>this.candidateCache[param.pullSymbolIDString];
+            var info = this.candidateCache[param.pullSymbolID];
 
             if (!info) {
                 info = new CandidateInferenceInfo();
                 info.typeParameter = param;
-                this.candidateCache[param.pullSymbolIDString] = info;
-            }        
+                this.candidateCache[param.pullSymbolID] = info;
+            }
         }
 
-        public getInferenceInfo(param: PullTypeParameterSymbol) {
-            return <CandidateInferenceInfo>this.candidateCache[param.pullSymbolIDString];
+        public getInferenceInfo(param: PullTypeParameterSymbol): CandidateInferenceInfo {
+            return this.candidateCache[param.pullSymbolID];
         }
 
         public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: boolean) {
@@ -68,15 +67,16 @@ module TypeScript {
 
         public getInferenceCandidates(): PullTypeSymbol[][] {
             var inferenceCandidates: PullTypeSymbol[][] = [];
-            var info: CandidateInferenceInfo;
 
             for (var infoKey in this.candidateCache) {
-                info = <CandidateInferenceInfo>this.candidateCache[infoKey];
+                if (this.candidateCache.hasOwnProperty(infoKey)) {
+                    var info = this.candidateCache[infoKey];
 
-                for (var i = 0; i < info.inferenceCandidates.length; i++) {
-                    var val: PullTypeSymbol[] = [];
-                    val[info.typeParameter.pullSymbolID] = info.inferenceCandidates[i];
-                    inferenceCandidates.push(val);
+                    for (var i = 0; i < info.inferenceCandidates.length; i++) {
+                        var val: PullTypeSymbol[] = [];
+                        val[info.typeParameter.pullSymbolID] = info.inferenceCandidates[i];
+                        inferenceCandidates.push(val);
+                    }
                 }
             }
 
@@ -84,8 +84,6 @@ module TypeScript {
         }
 
         public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: boolean; } {
-            var info: CandidateInferenceInfo = null;
-
             var collection: IPullTypeCollection;
 
             var bestCommonType: PullTypeSymbol;
@@ -95,35 +93,37 @@ module TypeScript {
             var unfit = false;
 
             for (var infoKey in this.candidateCache) {
-                info = <CandidateInferenceInfo>this.candidateCache[infoKey];
+                if (this.candidateCache.hasOwnProperty(infoKey)) {
+                    var info = this.candidateCache[infoKey];
 
-                if (!info.inferenceCandidates.length) {
-                    results[results.length] = { param: info.typeParameter, type: resolver.semanticInfoChain.anyTypeSymbol };
-                    continue;
-                }
-
-                collection = {
-                    getLength: () => { return info.inferenceCandidates.length; },
-                    getTypeAtIndex: (index: number) => {
-                        return info.inferenceCandidates[index].type;
+                    if (!info.inferenceCandidates.length) {
+                        results[results.length] = { param: info.typeParameter, type: resolver.semanticInfoChain.anyTypeSymbol };
+                        continue;
                     }
-                };
 
-                bestCommonType = resolver.widenType(null, resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()), context);
+                    collection = {
+                        getLength: () => { return info.inferenceCandidates.length; },
+                        getTypeAtIndex: (index: number) => {
+                            return info.inferenceCandidates[index].type;
+                        }
+                    };
 
-                if (!bestCommonType) {
-                    unfit = true;
-                }
-                else {
-                    // is there already a substitution for this type?
-                    for (var i = 0; i < results.length; i++) {
-                        if (results[i].type == info.typeParameter) {
-                            results[i].type = bestCommonType;
+                    bestCommonType = resolver.widenType(null, resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()), context);
+
+                    if (!bestCommonType) {
+                        unfit = true;
+                    }
+                    else {
+                        // is there already a substitution for this type?
+                        for (var i = 0; i < results.length; i++) {
+                            if (results[i].type == info.typeParameter) {
+                                results[i].type = bestCommonType;
+                            }
                         }
                     }
-                }
 
-                results[results.length] = { param: info.typeParameter, type: bestCommonType };
+                    results[results.length] = { param: info.typeParameter, type: bestCommonType };
+                }
             }
 
             return { results: results, unfit: unfit };

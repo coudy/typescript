@@ -622,7 +622,7 @@ module TypeScript {
                     var typeArguments: PullTypeSymbol[] = [];
 
                     for (var i = 0; i < typeParameters.length; i++) {
-                        typeArgument = <PullTypeSymbol>this._typeParameterArgumentMap[typeParameters[i].pullSymbolIDString];
+                        typeArgument = <PullTypeSymbol>this._typeParameterArgumentMap[typeParameters[i].pullSymbolID];
 
                         if (!typeArgument) {
                             Debug.fail("type argument count mismatch");

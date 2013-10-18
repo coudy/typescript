@@ -9782,12 +9782,12 @@ module TypeScript {
                 var typeParameters = signatureToSpecialize.getTypeParameters();
 
                 if (typeParameters.length) {
-                    var typeReplacementMap: any = {};
+                    var typeReplacementMap: PullTypeSymbol[] = [];
                     var typeArguments: PullTypeSymbol[] = [];
 
                     for (var i = 0; i < typeParameters.length; i++) {
                         typeArguments[i] = this.cachedObjectInterfaceType();
-                        typeReplacementMap[typeParameters[i].pullSymbolIDString] = typeArguments[i];
+                        typeReplacementMap[typeParameters[i].pullSymbolID] = typeArguments[i];
                     }
 
                     signatureToSpecialize.cachedObjectSpecialization = this.instantiateSignature(signatureToSpecialize, typeReplacementMap, true);
