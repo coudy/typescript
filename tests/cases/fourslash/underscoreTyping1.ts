@@ -18,5 +18,4 @@
 //// }
 
 goTo.position(0);
-// Bug 805234: Assert here
-// verify.numberOfErrorsInCurrentFile(1);
+verify.numberOfErrorsInCurrentFile(3);
