@@ -7364,7 +7364,7 @@ module TypeScript {
 
                             // specialize to any
                             for (var j = 0; j < typeParameters.length; j++) {
-                                typeReplacementMap[typeParameters[i].pullSymbolID] = this.semanticInfoChain.anyTypeSymbol;
+                                typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.anyTypeSymbol;
                             }
                         }
 
