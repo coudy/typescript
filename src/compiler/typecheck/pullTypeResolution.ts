@@ -2969,9 +2969,8 @@ module TypeScript {
             }
 
             this.resolveAST(funcDeclAST.block, false, context);
-            var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
-            if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl)) {
+            if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl.getParentDecl())) {
                 // Constructors for derived classes must contain a call to the class's 'super' constructor
                 if (!this.constructorHasSuperCall(funcDeclAST)) {
                     context.postDiagnostic(new Diagnostic(funcDeclAST.fileName(), this.semanticInfoChain.lineMap(funcDeclAST.fileName()), funcDeclAST.minChar, 11 /* "constructor" */,
@@ -2980,7 +2979,7 @@ module TypeScript {
                 // The first statement in the body of a constructor must be a super call if both of the following are true:
                 //  - The containing class is a derived class.
                 //  - The constructor declares parameter properties or the containing class declares instance member variables with initializers.
-                else if (this.superCallMustBeFirstStatementInConstructor(funcDecl, enclosingDecl)) {
+                else if (this.superCallMustBeFirstStatementInConstructor(funcDecl)) {
                     var firstStatement = this.getFirstStatementOfBlockOrNull(funcDeclAST.block);
                     if (!firstStatement || !this.isSuperInvocationExpressionStatement(firstStatement)) {
                         context.postDiagnostic(new Diagnostic(funcDeclAST.fileName(), this.semanticInfoChain.lineMap(funcDeclAST.fileName()), funcDeclAST.minChar, 11 /* "constructor" */,
@@ -6277,34 +6276,92 @@ module TypeScript {
             return false;
         }
 
-        private typeCheckThisExpression(thisExpression: ThisExpression, context: PullTypeResolutionContext): void {
-            var enclosingDecl = this.getEnclosingDeclForAST(thisExpression);
-            var enclosingNonLambdaDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
-
-            var thisTypeSymbol = this.computeThisTypeSymbol(thisExpression);
-            var decls = thisTypeSymbol.getDeclarations();
-            var classDecl = decls && decls[0] ? decls[0] : null;
-
-            if (this.inArgumentListOfSuperInvocation(thisExpression) &&
-                this.superCallMustBeFirstStatementInConstructor(enclosingDecl, classDecl)) {
-
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_current_location));
+        private isFunctionOrNonArrowFunctionExpression(decl: PullDecl): boolean {
+            if (decl.kind === PullElementKind.Function) {
+                return true;
             }
-            else if (enclosingNonLambdaDecl) {
-                if (enclosingNonLambdaDecl.kind === PullElementKind.Container || enclosingNonLambdaDecl.kind === PullElementKind.DynamicModule) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_within_module_bodies));
+            else if (decl.kind === PullElementKind.FunctionExpression && !hasFlag(decl.flags, PullElementFlags.FatArrow)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        private typeCheckThisExpression(thisExpression: ThisExpression, context: PullTypeResolutionContext): void {
+            this.checkForThisCaptureInArrowFunction(thisExpression);
+
+            var enclosingDecl = this.getEnclosingDeclForAST(thisExpression);
+
+            if (this.inConstructorParameterList(thisExpression)) {
+                // October 11, 2013
+                // Similar to functions, only the constructor implementation (and not 
+                // constructor overloads) can specify default value expressions for optional
+                // parameters.It is a compile - time error for such default value expressions
+                //  to reference this. 
+                //
+                // Note: this applies for constructor parameters and constructor parameter 
+                // properties.
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_constructor_arguments));
+                return;
+            }
+
+            // October 11, 2013
+            // The type of this in an expression depends on the location in which the reference 
+            // takes place:
+            //      In a constructor, member function, member accessor, or member variable 
+            //      initializer, this is of the class instance type of the containing class.
+            //
+            //      In a static function or static accessor, the type of this is the constructor 
+            //      function type of the containing class.
+            //
+            //      In a function declaration or a standard function expression, this is of type Any.
+            //
+            //      In the global module, this is of type Any.
+            //
+            // In all other contexts it is a compile - time error to reference this.
+
+            for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
+                if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
+                    // 'this' is always ok in a function.
+                    return;
                 }
-                else if (this.inConstructorParameterList(thisExpression)) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_constructor_arguments));
+                else if (currentDecl.kind === PullElementKind.Container || currentDecl.kind === PullElementKind.DynamicModule) {
+                    if (currentDecl.getParentDecl() === null) {
+                        // Legal in the global module.
+                        return;
+                    }
+                    else {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_within_module_bodies));
+                        return;
+                    }
                 }
-                else if (enclosingNonLambdaDecl.kind === PullElementKind.Property || enclosingNonLambdaDecl.kind === PullElementKind.Class) {
+                else if (currentDecl.kind === PullElementKind.ConstructorMethod) {
+                    // October 11, 2013
+                    // The first statement in the body of a constructor must be a super call if 
+                    // both of the following are true:
+                    //      The containing class is a derived class.
+                    //      The constructor declares parameter properties or the containing class 
+                    //      declares instance member variables with initializers.
+                    // In such a required super call, it is a compile - time error for argument
+                    // expressions to reference this.
+                    if (this.inArgumentListOfSuperInvocation(thisExpression) &&
+                        this.superCallMustBeFirstStatementInConstructor(currentDecl)) {
+
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_current_location));
+                    }
+
+                    // Otherwise, it's ok to access 'this' in a constructor.
+                    return;
+                }
+                else if (currentDecl.kind === PullElementKind.Class) {
                     if (this.inStaticMemberVariableDeclaration(thisExpression)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_static_initializers_in_a_class_body));
                     }
+
+                    // Legal use of 'this'.  
+                    return;
                 }
             }
-
-            this.checkForThisCaptureInArrowFunction(thisExpression);
         }
 
         private getContextualClassSymbolForEnclosingDecl(ast: AST): PullTypeSymbol {
@@ -6362,15 +6419,17 @@ module TypeScript {
             return false;
         }
 
-        private getEnclosingNonLambdaDecl(enclosingDecl: PullDecl) {
+        private getEnclosingClassMemberDeclaration(enclosingDecl: PullDecl) {
             var declPath = enclosingDecl.getParentPath();
 
-                for (var i = declPath.length - 1; i >= 0; i--) {
-                    var decl = declPath[i];
-                    if (!(decl.kind === PullElementKind.FunctionExpression && (decl.flags & PullElementFlags.FatArrow))) {
-                        return decl;
-                    }
+            for (var i = declPath.length - 1; i > 0; i--) {
+                var decl = declPath[i];
+                var parentDecl = declPath[i - 1];
+
+                if (parentDecl.kind === PullElementKind.Class) {
+                    return decl;
                 }
+            }
 
             return null;
         }
@@ -6409,37 +6468,82 @@ module TypeScript {
 
             this.checkForThisCaptureInArrowFunction(ast);
 
+            var isSuperCall = ast.parent.nodeType() === NodeType.InvocationExpression;
+            var isSuperPropertyAccess = ast.parent.nodeType() === NodeType.MemberAccessExpression;
+            Debug.assert(isSuperCall || isSuperPropertyAccess);
+
             var enclosingDecl = this.getEnclosingDeclForAST(ast);
-            if (!enclosingDecl) {
+
+            if (isSuperPropertyAccess) {
+                // October 11, 2013
+                // Super property accesses are permitted as follows:
+                //      In a constructor, instance member function, or instance member accessor of a 
+                //      derived class, a super property access must specify a public instance member
+                //      function of the base class.
+                //
+                //      In a static member function or static member accessor of a derived class, a 
+                //      super property access must specify a public static member function of the base
+                //      class.
+                for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
+                    if (currentDecl.kind === PullElementKind.Class) {
+                        // We're in some class member.  That's good.
+
+                        if (!this.enclosingClassIsDerived(currentDecl)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
+                            return;
+                        }
+                        else if (this.inConstructorParameterList(ast)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
+                            return;
+                        }
+                        else if (this.inStaticMemberVariableDeclaration(ast)) {
+                            break;
+                        }
+
+                        // We've checked the bad cases, at this point we're good.
+                        return;
+                    }
+                }
+
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class));
                 return;
             }
+            else {
+                // October 11, 2013
+                // Constructors of classes with no extends clause may not contain super calls, 
+                // whereas constructors of derived classes must contain at least one super call 
+                // somewhere in their function body. Super calls are not permitted outside 
+                // constructors or in local functions inside constructors.
+                // 
+                // The first statement in the body of a constructor must be a super call if both 
+                // of the following are true:
+                //      The containing class is a derived class.
+                //      The constructor declares parameter properties or the containing class 
+                //      declares instance member variables with initializers.
+                for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
+                    if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
+                        break;
+                    }
+                    else if (currentDecl.kind === PullElementKind.ConstructorMethod) {
+                        // We were in a constructor.  That's good.
+                        var classDecl = currentDecl.getParentDecl();
 
-            var nonLambdaEnclosingDecl = this.getEnclosingNonLambdaDecl(enclosingDecl);
+                        if (!this.enclosingClassIsDerived(classDecl)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
+                            return;
+                        }
+                        else if (this.inConstructorParameterList(ast)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
+                            return;
+                        }
 
-            if (nonLambdaEnclosingDecl) {
-
-                var nonLambdaEnclosingDeclKind = nonLambdaEnclosingDecl.kind;
-                var inSuperConstructorTarget = this.inArgumentListOfSuperInvocation(ast);
-
-                // October 1, 2013.
-                // Super calls are not permitted outside constructors or in local functions inside 
-                // constructors.
-                if (inSuperConstructorTarget && enclosingDecl.kind !== PullElementKind.ConstructorMethod) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors));
+                        // Nothing wrong with how we were referenced.  Note: the check if we're the
+                        // first statement in the constructor happens in typeCheckConstructorDeclaration.
+                        return;
+                    }
                 }
-                // A super property access is permitted only in a constructor, instance member function, or instance member accessor
-                else if ((nonLambdaEnclosingDeclKind !== PullElementKind.Property && nonLambdaEnclosingDeclKind !== PullElementKind.Method && nonLambdaEnclosingDeclKind !== PullElementKind.GetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.SetAccessor && nonLambdaEnclosingDeclKind !== PullElementKind.ConstructorMethod) ||
-                    this.inStaticMemberVariableDeclaration(ast)) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class));
-                }
-                // A super is permitted only in a derived class 
-                else if (!this.enclosingClassIsDerived(enclosingDecl)) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
-                }
-                // Cannot be referenced in constructor arguments
-                else if (this.inConstructorParameterList(ast)) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
-                }
+                
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors));
             }
         }
 
@@ -10795,24 +10899,11 @@ module TypeScript {
             }
         }
 
-        private enclosingClassIsDerived(decl: PullDecl): boolean {
-            if (decl) {
-                var classSymbol: PullTypeSymbol = null;
+        private enclosingClassIsDerived(classDecl: PullDecl): boolean {
+            Debug.assert(classDecl.kind === PullElementKind.Class);
 
-                while (decl) {
-                    if (decl.kind == PullElementKind.Class) {
-                        classSymbol = <PullTypeSymbol>decl.getSymbol();
-                        if (classSymbol.getExtendedTypes().length > 0) {
-                            return true;
-                        }
-
-                        break;
-                    }
-                    decl = decl.getParentDecl();
-                }
-            }
-
-            return false;
+            var classSymbol = <PullTypeSymbol>classDecl.getSymbol();
+            return classSymbol.getExtendedTypes().length > 0;
         }
 
         private isSuperInvocationExpression(ast: AST): boolean {
@@ -10844,14 +10935,18 @@ module TypeScript {
             return null;
         }
 
-        private superCallMustBeFirstStatementInConstructor(enclosingConstructor: PullDecl, enclosingClass: PullDecl): boolean {
+        private superCallMustBeFirstStatementInConstructor(constructorDecl: PullDecl): boolean {
+            Debug.assert(constructorDecl.kind === PullElementKind.ConstructorMethod);
+
             /*
             The first statement in the body of a constructor must be a super call if both of the following are true:
                 •   The containing class is a derived class.
                 •   The constructor declares parameter properties or the containing class declares instance member variables with initializers.
             In such a required super call, it is a compile-time error for argument expressions to reference this.
             */
-            if (enclosingConstructor && enclosingClass) {
+            if (constructorDecl) {
+                var enclosingClass = constructorDecl.getParentDecl();
+
                 var classSymbol = <PullTypeSymbol>enclosingClass.getSymbol();
                 if (classSymbol.getExtendedTypes().length === 0) {
                     return false;
