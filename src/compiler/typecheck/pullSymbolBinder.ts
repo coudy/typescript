@@ -1267,7 +1267,7 @@ module TypeScript {
                     argDecl = <Parameter>parameterList.members[i];
                     decl = this.semanticInfoChain.getDeclForAST(argDecl);
                     isProperty = hasFlag(decl.flags, PullElementFlags.PropertyParameter);
-                    parameterSymbol = new PullSymbol(argDecl.id.text(), PullElementKind.Parameter);
+                    parameterSymbol = new PullSymbol(argDecl.id.valueText(), PullElementKind.Parameter);
 
                     if (argDecl.isRest) {
                         parameterSymbol.isVarArg = true;
@@ -1277,11 +1277,11 @@ module TypeScript {
                         parameterSymbol.isOptional = true;
                     }
 
-                    if (params[argDecl.id.text()]) {
+                    if (params[argDecl.id.valueText()]) {
                         this.semanticInfoChain.addDiagnosticFromAST(argDecl, DiagnosticCode.Duplicate_identifier_0, [argDecl.id.actualText]);
                     }
                     else {
-                        params[argDecl.id.text()] = true;
+                        params[argDecl.id.valueText()] = true;
                     }
                     if (decl) {
 

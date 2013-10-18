@@ -876,7 +876,7 @@ module TypeScript {
                 var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
                 var moduleName = this.getDeclFlagsString(ToDeclFlags(moduleDecl.getModuleFlags()), modulePullDecl, "module");
 
-                if (!isQuoted(moduleDecl.name.text())) {
+                if (!isQuoted(moduleDecl.name.valueText())) {
                     // Module is dotted if it contains single module element with exported flag and it does not have doc comments for it
                     for (;
                         // Till the module has single module element with exported flag and without doc comments,

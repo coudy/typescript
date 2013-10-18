@@ -112,7 +112,7 @@ module TypeScript {
                 var pre = function (cur: TypeScript.AST, walker: IAstWalker) {
                     if (isValidAstNode(cur)) {
                         if (cur.nodeType() === NodeType.Name) {
-                            var nodeText = (<TypeScript.Identifier>cur).text();
+                            var nodeText = (<TypeScript.Identifier>cur).valueText();
 
                             identifiers[nodeText] = true;
                         }

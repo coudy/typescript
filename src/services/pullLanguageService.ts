@@ -54,7 +54,7 @@ module Services {
 
             // if we are not looking for any but we get an any symbol, then we ran into a wrong symbol
             if (requireName) {
-                var actualNameAtPosition = (<TypeScript.Identifier>topNode).text();
+                var actualNameAtPosition = (<TypeScript.Identifier>topNode).valueText();
 
                 if ((symbol.isError() || symbol.isAny()) && actualNameAtPosition !== symbolName) {
                     this.logger.log("Unknown symbol found at the given position");
@@ -178,7 +178,7 @@ module Services {
             }
 
             // Store the actual name before calling getSymbolInformationFromPath
-            var actualNameAtPosition = (<TypeScript.Identifier>ast).text();
+            var actualNameAtPosition = (<TypeScript.Identifier>ast).valueText();
 
             var symbolInfoAtPosition = this.compiler.getSymbolInformationFromAST(ast, document);
             var symbol = symbolInfoAtPosition.symbol;

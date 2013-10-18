@@ -1301,7 +1301,7 @@ module TypeScript {
             // Add for post typeChecking if we want to verify name collision with _this
             if ((/* In global context*/ !classDeclSymbol.getContainer() ||
                 /* In Dynamic Module */ classDeclSymbol.getContainer().kind == PullElementKind.DynamicModule) &&
-                classDeclAST.identifier.text() == "_this") {
+                classDeclAST.identifier.valueText() == "_this") {
                 this.postTypeCheckWorkitems.push(classDeclAST);
             }
 
@@ -1409,7 +1409,7 @@ module TypeScript {
             }
 
             var moduleTypeSymbol = <PullContainerSymbol>moduleSymbol.type;
-            var rhsName = identifier.text();
+            var rhsName = identifier.valueText();
             var containerSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeContainer, moduleTypeSymbol, enclosingDecl, context);
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
@@ -1477,14 +1477,14 @@ module TypeScript {
                 var dottedNameAST = <QualifiedName>moduleNameExpr;
                 var moduleContainer = this.resolveModuleReference(importDecl, dottedNameAST.left, enclosingDecl, context, declPath);
                 if (moduleContainer) {
-                    moduleName = dottedNameAST.right.text();
+                    moduleName = dottedNameAST.right.valueText();
                     moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
                     if (!moduleSymbol) {
                         this.semanticInfoChain.addDiagnosticFromAST(dottedNameAST.right, DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]);
                     }
                 }
             } else if (!(<Identifier>moduleNameExpr).isMissing()) {
-                moduleName = (<Identifier>moduleNameExpr).text();
+                moduleName = (<Identifier>moduleNameExpr).valueText();
                 moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
                 if (moduleSymbol) {
                     // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
@@ -1511,7 +1511,7 @@ module TypeScript {
                 if (moduleSymbol) {
                     aliasedType = moduleSymbol.type;
                     if (aliasedType.hasFlag(PullElementFlags.InitializedModule)) {
-                        var moduleName = (<Identifier>aliasExpr).text();
+                        var moduleName = (<Identifier>aliasExpr).valueText();
                         var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
                         var instanceSymbol = (<PullContainerSymbol>aliasedType).getInstanceSymbol();
                         // If there is module and it is instantiated, value symbol needs to refer to the module instance symbol
@@ -1568,7 +1568,7 @@ module TypeScript {
             // reference
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
-                var modPath = (<Identifier>importStatementAST.moduleReference).text();
+                var modPath = (<Identifier>importStatementAST.moduleReference).valueText();
                 var declPath = enclosingDecl.getParentPath();
 
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
@@ -1625,7 +1625,7 @@ module TypeScript {
                         DiagnosticCode.Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set, null));
                 }
 
-                var modPath = (<Identifier>importStatementAST.moduleReference).text();
+                var modPath = (<Identifier>importStatementAST.moduleReference).valueText();
                 if (enclosingDecl.kind === PullElementKind.DynamicModule) {
                     var ast = this.getASTForDecl(enclosingDecl);
                     if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
@@ -1690,7 +1690,7 @@ module TypeScript {
             }
 
             // get the identifier text
-            var id = exportAssignmentAST.identifier.text();
+            var id = exportAssignmentAST.identifier.valueText();
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
             var containerSymbol: PullSymbol = null;
@@ -1945,7 +1945,7 @@ module TypeScript {
         }
 
         private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: Identifier, context: PullTypeResolutionContext) {
-            var nameText = name.text();
+            var nameText = name.valueText();
             if (nameText == "_this") {
                 this.postTypeCheckWorkitems.push(astWithName);
             } else if (nameText == "_super") {
@@ -3077,7 +3077,7 @@ module TypeScript {
 
             if (funcDecl.kind == PullElementKind.Function) {
                 // Non property variable with _this name, we need to verify if this would be ok
-                var funcNameText = name.text();
+                var funcNameText = name.valueText();
                 if (funcNameText == "_super") {
                     this.checkSuperCaptureVariableCollides(funcDeclAST, /*isDeclaration*/ true, context);
                 }
@@ -4636,7 +4636,7 @@ module TypeScript {
 
             // In other words, you can 'break' to any enclosing statement.  But you can only 'continue'
             // to an enclosing *iteration* statement.
-            var labelIdentifier = ast.identifier.text();
+            var labelIdentifier = ast.identifier.valueText();
 
             var breakableLabels = this.getEnclosingLabels(ast, /*breakable:*/ true, /*crossFunctions:*/ false);
 
@@ -4749,13 +4749,13 @@ module TypeScript {
                     var labeledStatement = <LabeledStatement>ast;
                     if (breakable) {
                         // Breakable labels can be placed on any construct
-                        result.push(labeledStatement.identifier.text());
+                        result.push(labeledStatement.identifier.valueText());
                     }
                     else {
                         // They're asking for continuable labels.  Continuable labels must be on
                         // a loop construct.
                         if (this.labelIsOnContinuableConstruct(labeledStatement.statement)) {
-                            result.push(labeledStatement.identifier.text());
+                            result.push(labeledStatement.identifier.valueText());
                         }
                     }
                 }
@@ -5319,7 +5319,7 @@ module TypeScript {
                 nameSymbol = this.semanticInfoChain.getDeclForAST(nameAST.parent).getSymbol();
             }
 
-            var id = nameAST.text();
+            var id = nameAST.valueText();
             var declPath = enclosingDecl.getParentPath();
 
             if (!nameSymbol) {
@@ -5376,7 +5376,7 @@ module TypeScript {
                     if (enclosingFunctionAST.parameterList) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
                             var candidateParameter = <Parameter>enclosingFunctionAST.parameterList.members[i];
-                            if (candidateParameter && candidateParameter.id.text() === id) {
+                            if (candidateParameter && candidateParameter.id.valueText() === id) {
                                 foundMatchingParameter = true;
                             }
                         }
@@ -5485,7 +5485,7 @@ module TypeScript {
 
             // assemble the dotted name path
             var enclosingDecl = this.getEnclosingDeclForAST(expression);
-            var rhsName = name.text();
+            var rhsName = name.valueText();
             var lhs = this.resolveAST(expression, /*inContextuallyTypedAssignment*/false, context);
             var lhsType = lhs.type;
 
@@ -5620,7 +5620,7 @@ module TypeScript {
             }
 
             var enclosingDecl = this.getEnclosingDeclForAST(nameAST);
-            var id = nameAST.text();
+            var id = nameAST.valueText();
 
             // if it's a known primitive name, cheat
             if (id === "any") {
@@ -5850,7 +5850,7 @@ module TypeScript {
             var onLeftOfDot = this.isLeftSideOfQualifiedName(dottedNameAST);
             var memberKind = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
 
-            var rhsName = dottedNameAST.right.text();
+            var rhsName = dottedNameAST.right.valueText();
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
 
             // if the lhs exports a container type, but not a type, we should check the container type
@@ -11423,13 +11423,13 @@ module TypeScript {
 
     export function getPropertyAssignmentNameTextFromIdentifier(identifier: AST): { actualText: string; memberName: string } {
         if (identifier.nodeType() === NodeType.Name) {
-            return { actualText: (<Identifier>identifier).actualText, memberName: (<Identifier>identifier).text() };
+            return { actualText: (<Identifier>identifier).actualText, memberName: (<Identifier>identifier).valueText() };
         }
         else if (identifier.nodeType() === NodeType.StringLiteral) {
-            return { actualText: (<StringLiteral>identifier).actualText, memberName: (<StringLiteral>identifier).text() };
+            return { actualText: (<StringLiteral>identifier).actualText, memberName: (<StringLiteral>identifier).valueText() };
         }
         else if (identifier.nodeType() === NodeType.NumericLiteral) {
-            return { actualText: (<NumericLiteral>identifier).text(), memberName: (<NumericLiteral>identifier).text() };
+            return { actualText: (<NumericLiteral>identifier).text(), memberName: (<NumericLiteral>identifier).valueText() };
         }
         else {
             throw Errors.invalidOperation();

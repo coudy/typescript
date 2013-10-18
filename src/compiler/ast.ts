@@ -443,8 +443,6 @@ module TypeScript {
     }
 
     export class Identifier extends AST {
-        private _text: string;
-
         // 'actualText' is the text that the user has entered for the identifier. the text might 
         // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
         // the resolved value of any escape sequences in the actual text; so in the previous 
@@ -455,17 +453,16 @@ module TypeScript {
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
         // as emitting, use the actualText field.
-        constructor(public actualText: string, text: string, public isStringOrNumericLiteral: boolean = false) {
+        constructor(public actualText: string, private _valueText: string, public isStringOrNumericLiteral: boolean = false) {
             super();
-            this._text = text;
         }
 
-        public text(): string {
-            if (!this._text) {
-                this._text = Syntax.massageEscapes(this.actualText);
+        public valueText(): string {
+            if (!this._valueText) {
+                this._valueText = Syntax.massageEscapes(this.actualText);
             }
 
-            return this._text;
+            return this._valueText;
         }
 
         public nodeType(): NodeType {
@@ -1112,15 +1109,14 @@ module TypeScript {
     }
 
     export class NumericLiteral extends AST {
-        private _text: string;
-
         constructor(public value: number,
-                    text: string) {
+                    private _text: string,
+                    private _valueText: string) {
             super();
-            this._text = text;
         }
 
         public text(): string { return this._text; }
+        public valueText(): string { return this._valueText; }
 
         public nodeType(): NodeType {
             return NodeType.NumericLiteral;
@@ -1157,14 +1153,12 @@ module TypeScript {
     }
 
     export class StringLiteral extends AST {
-        private _text: string;
-
-        constructor(public actualText: string, text: string) {
+        constructor(public actualText: string, private _valueText: string) {
             super();
-            this._text = text;
         }
 
-        public text(): string { return this._text; }
+        public text(): string { return this._valueText; }
+        public valueText(): string { return this._valueText; }
 
         public nodeType(): NodeType {
             return NodeType.StringLiteral;

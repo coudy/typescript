@@ -261,8 +261,7 @@ module TypeScript {
             else if (token.tokenKind === SyntaxKind.NumericLiteral) {
                 var preComments = this.convertTokenLeadingComments(token, fullStart);
 
-                var value = token.text().indexOf(".") > 0 ? parseFloat(token.text()) : parseInt(token.text());
-                result = new NumericLiteral(value, token.text());
+                result = new NumericLiteral(token.value(), token.text(), token.valueText());
 
                 result.setPreComments(preComments);
             }
@@ -688,7 +687,7 @@ module TypeScript {
                     case SyntaxKind.IdentifierName:
                         // If it's a name, see if we already had an enum value named this.  If so,
                         // return that value.
-                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.identifier.text() === (<ISyntaxToken>expression).valueText());
+                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.identifier.valueText() === (<ISyntaxToken>expression).valueText());
                         return variableDeclarator ? variableDeclarator.constantValue : null;
 
                     case SyntaxKind.LeftShiftExpression:
@@ -1968,7 +1967,7 @@ module TypeScript {
             var preComments = this.convertTokenLeadingComments(node.firstToken(), start);
             var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
 
-            var propertyName = node.propertyName.accept(this);
+            var propertyName: Identifier = node.propertyName.accept(this);
 
             var afterColonComments = this.convertTokenTrailingComments(
                 node.colonToken, this.position + node.colonToken.leadingTriviaWidth() + node.colonToken.width());
@@ -1987,7 +1986,7 @@ module TypeScript {
                 expression.nodeType() === NodeType.ArrowFunctionExpression ||
                 expression.nodeType() === NodeType.FunctionExpression) {
                 var funcDecl = <FunctionDeclaration>expression;
-                    funcDecl.hint = propertyName.text();
+                    funcDecl.hint = propertyName.valueText();
             }
 
             return result;
