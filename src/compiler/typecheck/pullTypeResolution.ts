@@ -7194,7 +7194,7 @@ module TypeScript {
                 if (isContextuallyTyped) {
                     var contextualType = context.getContextualType();
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(trinex,
-                        DiagnosticCode.Type_of_conditional_0_must_be_identical_to_1_or_2,
+                        DiagnosticCode.Type_of_conditional_0_must_be_identical_to_1_2_or_3,
                         [expressionType.toString(), leftType.toString(), rightType.toString(), contextualType.toString()]));
                 }
                 else {
