@@ -9954,7 +9954,7 @@ module TypeScript {
             for (var i = 0; i < parameterTypeMembers.length; i++) {
                 objectMember = this.getMemberSymbol(parameterTypeMembers[i].name, PullElementKind.SomeValue, objectType);
 
-                if (objectMember) {
+                if (objectMember && objectMember.type) {
 
                     var objectMemberGenerativeTypeKind = objectMember.type.getGenerativeTypeClassification(objectType);
                     var parameterMemberGenerativeTypeKind = parameterTypeMembers[i].type.getGenerativeTypeClassification(parameterType);
