@@ -432,7 +432,7 @@ module TypeScript {
                 this.writeToOutput(" ");
             }
 
-            if (comment.isBlockComment) {
+            if (comment.isBlockComment()) {
                 this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
 

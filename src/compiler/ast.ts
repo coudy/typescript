@@ -2237,9 +2237,9 @@ module TypeScript {
     export class Comment extends AST {
         public text: string[] = null;
         private docCommentText: string = null;
+        private _content: string = null;
 
-        constructor(public content: string,
-                    public isBlockComment: boolean,
+        constructor(private _trivia: ISyntaxTrivia,
                     public endsLine: boolean) {
             super();
         }
@@ -2248,32 +2248,43 @@ module TypeScript {
             return NodeType.Comment;
         }
 
+        public content(): string {
+            if (!this._content) {
+                this._content = this._trivia.fullText();
+            }
+
+            return this._content;
+        }
+
+        public isBlockComment(): boolean {
+            return this._trivia.kind() === SyntaxKind.MultiLineCommentTrivia;
+        }
+
         public structuralEquals(ast: Comment, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this.content === ast.content &&
-                   this.isBlockComment === ast.isBlockComment &&
+                   this._trivia.fullText() === ast._trivia.fullText() &&
                    this.endsLine === ast.endsLine;
         }
 
         public isPinnedOrTripleSlash(): boolean {
-            if (this.content.match(tripleSlashReferenceRegExp)) {
+            if (this.content().match(tripleSlashReferenceRegExp)) {
                 return true;
             }
             else {
-                return this.content.indexOf("/*!") === 0;
+                return this.content().indexOf("/*!") === 0;
             }
         }
 
         public getText(): string[] {
             if (this.text === null) {
-                if (this.isBlockComment) {
-                    this.text = this.content.split("\n");
+                if (this.isBlockComment()) {
+                    this.text = this.content().split("\n");
                     for (var i = 0; i < this.text.length; i++) {
                         this.text[i] = this.text[i].replace(/^\s+|\s+$/g, '');
                     }
                 }
                 else {
-                    this.text = [(this.content.replace(/^\s+|\s+$/g, ''))];
+                    this.text = [(this.content().replace(/^\s+|\s+$/g, ''))];
                 }
             }
 
@@ -2281,8 +2292,8 @@ module TypeScript {
         }
 
         public isDocComment() {
-            if (this.isBlockComment) {
-                return this.content.charAt(2) === "*" && this.content.charAt(3) !== "/";
+            if (this.isBlockComment()) {
+                return this.content().charAt(2) === "*" && this.content().charAt(3) !== "/";
             }
 
             return false;
@@ -2290,7 +2301,7 @@ module TypeScript {
 
         public getDocCommentTextValue() {
             if (this.docCommentText === null) {
-                this.docCommentText = Comment.cleanJSDocComment(this.content);
+                this.docCommentText = Comment.cleanJSDocComment(this.content());
             }
 
             return this.docCommentText;
@@ -2426,14 +2437,14 @@ module TypeScript {
         }
 
         static getParameterDocCommentText(param: string, fncDocComments: Comment[]) {
-            if (fncDocComments.length === 0 || !fncDocComments[0].isBlockComment) {
+            if (fncDocComments.length === 0 || !fncDocComments[0].isBlockComment()) {
                 // there were no fnc doc comments and the comment is not block comment then it cannot have 
                 // @param comment that can be parsed
                 return "";
             }
 
             for (var i = 0; i < fncDocComments.length; i++) {
-                var commentContents = fncDocComments[i].content;
+                var commentContents = fncDocComments[i].content();
                 for (var j = commentContents.indexOf("@param", 0); 0 <= j; j = commentContents.indexOf("@param", j)) {
                     j += 6;
                     if (!Comment.isSpaceChar(commentContents, j)) {
