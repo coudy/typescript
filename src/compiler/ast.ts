@@ -2237,7 +2237,6 @@ module TypeScript {
     export class Comment extends AST {
         public text: string[] = null;
         private docCommentText: string = null;
-        private _content: string = null;
 
         constructor(private _trivia: ISyntaxTrivia,
                     public endsLine: boolean) {
@@ -2248,12 +2247,8 @@ module TypeScript {
             return NodeType.Comment;
         }
 
-        public content(): string {
-            if (!this._content) {
-                this._content = this._trivia.fullText();
-            }
-
-            return this._content;
+        public fullText(): string {
+            return this._trivia.fullText();
         }
 
         public isBlockComment(): boolean {
@@ -2267,24 +2262,24 @@ module TypeScript {
         }
 
         public isPinnedOrTripleSlash(): boolean {
-            if (this.content().match(tripleSlashReferenceRegExp)) {
+            if (this.fullText().match(tripleSlashReferenceRegExp)) {
                 return true;
             }
             else {
-                return this.content().indexOf("/*!") === 0;
+                return this.fullText().indexOf("/*!") === 0;
             }
         }
 
         public getText(): string[] {
             if (this.text === null) {
                 if (this.isBlockComment()) {
-                    this.text = this.content().split("\n");
+                    this.text = this.fullText().split("\n");
                     for (var i = 0; i < this.text.length; i++) {
                         this.text[i] = this.text[i].replace(/^\s+|\s+$/g, '');
                     }
                 }
                 else {
-                    this.text = [(this.content().replace(/^\s+|\s+$/g, ''))];
+                    this.text = [(this.fullText().replace(/^\s+|\s+$/g, ''))];
                 }
             }
 
@@ -2293,7 +2288,7 @@ module TypeScript {
 
         public isDocComment() {
             if (this.isBlockComment()) {
-                return this.content().charAt(2) === "*" && this.content().charAt(3) !== "/";
+                return this.fullText().charAt(2) === "*" && this.fullText().charAt(3) !== "/";
             }
 
             return false;
@@ -2301,7 +2296,7 @@ module TypeScript {
 
         public getDocCommentTextValue() {
             if (this.docCommentText === null) {
-                this.docCommentText = Comment.cleanJSDocComment(this.content());
+                this.docCommentText = Comment.cleanJSDocComment(this.fullText());
             }
 
             return this.docCommentText;
@@ -2444,7 +2439,7 @@ module TypeScript {
             }
 
             for (var i = 0; i < fncDocComments.length; i++) {
-                var commentContents = fncDocComments[i].content();
+                var commentContents = fncDocComments[i].fullText();
                 for (var j = commentContents.indexOf("@param", 0); 0 <= j; j = commentContents.indexOf("@param", j)) {
                     j += 6;
                     if (!Comment.isSpaceChar(commentContents, j)) {
