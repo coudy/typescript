@@ -29,10 +29,10 @@ module TypeScript {
 
         // Caches
         // Mappings from names to decls.  Public only for diffing purposes.
-        public childDeclTypeCache = new BlockIntrinsics<PullDecl[]>();
-        public childDeclValueCache = new BlockIntrinsics<PullDecl[]>();
-        public childDeclNamespaceCache = new BlockIntrinsics<PullDecl[]>();
-        public childDeclTypeParameterCache = new BlockIntrinsics<PullDecl[]>();
+        public childDeclTypeCache: BlockIntrinsics<PullDecl[]> = null;
+        public childDeclValueCache: BlockIntrinsics<PullDecl[]> = null;
+        public childDeclNamespaceCache: BlockIntrinsics<PullDecl[]>= null;
+        public childDeclTypeParameterCache: BlockIntrinsics<PullDecl[]> = null;
 
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan) {
             this.name = declName;
@@ -133,16 +133,36 @@ module TypeScript {
                     (this.span.end() === other.span.end());
         }
 
-        private getChildDeclCache(declKind: PullElementKind): any {
-            return declKind === PullElementKind.TypeParameter
-                ? this.childDeclTypeParameterCache
-                : hasFlag(declKind, PullElementKind.SomeContainer)
-                ? this.childDeclNamespaceCache
-                    : hasFlag(declKind, PullElementKind.SomeType)
-                        ? this.childDeclTypeCache
-                        : this.childDeclValueCache;
-        }
-        
+        private getChildDeclCache(declKind: PullElementKind): BlockIntrinsics<PullDecl[]> {
+            if (declKind === PullElementKind.TypeParameter) {
+                if (!this.childDeclTypeParameterCache) {
+                    this.childDeclTypeParameterCache = new BlockIntrinsics();
+                }
+
+                return this.childDeclTypeParameterCache;
+            }
+            else if (hasFlag(declKind, PullElementKind.SomeContainer)) {
+                if (!this.childDeclNamespaceCache) {
+                    this.childDeclNamespaceCache = new BlockIntrinsics();
+                }
+
+                return this.childDeclNamespaceCache;
+            }
+            else if (hasFlag(declKind, PullElementKind.SomeType)) {
+                if (!this.childDeclTypeCache) {
+                    this.childDeclTypeCache = new BlockIntrinsics();
+                }
+
+                return this.childDeclTypeCache;
+            }
+            else {
+                if (!this.childDeclValueCache) {
+                    this.childDeclValueCache = new BlockIntrinsics();
+                }
+
+                return this.childDeclValueCache;
+            }
+        }        
         // Should only be called by subclasses.
         public addChildDecl(childDecl: PullDecl): void {
             if (childDecl.kind === PullElementKind.TypeParameter) {
@@ -163,7 +183,7 @@ module TypeScript {
 
             if (!(childDecl.kind & PullElementKind.SomeSignature)) {
                 var cache = this.getChildDeclCache(childDecl.kind);
-                var childrenOfName = <PullDecl[]>cache[declName];
+                var childrenOfName = cache[declName];
                 if (!childrenOfName) {
                     childrenOfName = [];
                 }
@@ -193,13 +213,13 @@ module TypeScript {
             var cacheVal: PullDecl[] = null;
 
             if (searchKind & PullElementKind.SomeType) {
-                cacheVal = <PullDecl[]>this.childDeclTypeCache[declName];
+                cacheVal = this.childDeclTypeCache ? this.childDeclTypeCache[declName] : null;
             }
             else if (searchKind & PullElementKind.SomeContainer) {
-                cacheVal = <PullDecl[]>this.childDeclNamespaceCache[declName];
+                cacheVal = this.childDeclNamespaceCache ? this.childDeclNamespaceCache[declName] : null;
             }
             else {
-                cacheVal = <PullDecl[]>this.childDeclValueCache[declName];
+                cacheVal = this.childDeclValueCache ? this.childDeclValueCache[declName] : null;
             }
 
             if (cacheVal) {
@@ -209,7 +229,7 @@ module TypeScript {
                 // If we didn't find it, and they were searching for types, then also check the 
                 // type parameter cache.
                 if (searchKind & PullElementKind.SomeType) {
-                    cacheVal = this.childDeclTypeParameterCache[declName];
+                    cacheVal = this.childDeclTypeParameterCache ? this.childDeclTypeParameterCache[declName] : null;
 
                     if (cacheVal) {
                         return cacheVal;

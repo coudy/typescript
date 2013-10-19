@@ -5,8 +5,6 @@
 
 module TypeScript {
     export class PullSymbolBinder {
-        private static functionTypeParameterCache = new BlockIntrinsics<PullTypeParameterSymbol>();
-
         private declsBeingBound: boolean[] = [];
 
         constructor(private semanticInfoChain: SemanticInfoChain) {
