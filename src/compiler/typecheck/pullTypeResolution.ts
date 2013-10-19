@@ -9086,7 +9086,7 @@ module TypeScript {
             //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
             //  -	S and T must both be type references to the same named type, and
             //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
-            if ((comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID) == undefined)) {
+            if (!comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID)) {
                 var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
                 var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
                 var widenedTargetPropType = this.widenType(null, targetPropType, context);
@@ -9100,6 +9100,14 @@ module TypeScript {
                         var targetDecl = targetProp.getDeclarations()[0];
                         var sourceDecl = sourceProp.getDeclarations()[0];
 
+                        var sourcePropTypeArguments = sourcePropType.getTypeArguments();
+                        var targetPropTypeArguments = targetPropType.getTypeArguments();
+
+                        if (!sourcePropTypeArguments && !targetPropTypeArguments) {
+                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+                            return true;
+                        }
+
                         if (!targetDecl.isEqual(sourceDecl)) {
                             comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
                             if (comparisonInfo) {
@@ -9107,14 +9115,6 @@ module TypeScript {
                                     [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
                             }
                             return false;
-                        }
-
-                        var sourcePropTypeArguments = sourcePropType.getTypeArguments();
-                        var targetPropTypeArguments = targetPropType.getTypeArguments();
-
-                        if (!sourcePropTypeArguments && !targetPropTypeArguments) {
-                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
-                            return true;
                         }
 
                         if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
@@ -9144,7 +9144,7 @@ module TypeScript {
                 }
             }
             else {
-                return true; // GTODO: should this be true?
+                return true;
             }
 
             var comparisonInfoPropertyTypeCheck: TypeComparisonInfo = null;
