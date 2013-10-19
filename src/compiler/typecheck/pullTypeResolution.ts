@@ -6342,7 +6342,7 @@ module TypeScript {
 
             for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
                 if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
-                    // 'this' is always ok in a function.
+                    // 'this' is always ok in a function.  It just has the 'any' type.
                     return;
                 }
                 else if (currentDecl.kind === PullElementKind.Container || currentDecl.kind === PullElementKind.DynamicModule) {
@@ -6505,7 +6505,13 @@ module TypeScript {
                 //      super property access must specify a public static member function of the base
                 //      class.
                 for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
-                    if (currentDecl.kind === PullElementKind.Class) {
+                    if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
+                        // TODO: quote relevant spec section once it is in place.
+                        // you can only access 'super' in places where 'this' is strongly typed 
+                        // and of a derived class type
+                        break;
+                    }
+                    else if (currentDecl.kind === PullElementKind.Class) {
                         // We're in some class member.  That's good.
 
                         if (!this.enclosingClassIsDerived(currentDecl)) {
