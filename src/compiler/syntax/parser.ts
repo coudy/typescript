@@ -3918,17 +3918,19 @@ module TypeScript.Parser {
 
         private parseArgumentList(typeArgumentList: TypeArgumentListSyntax): ArgumentListSyntax {
             var openParenToken = this.eatToken(SyntaxKind.OpenParenToken);
-            var arguments = Syntax.emptySeparatedList;
+
+            // Don't use the name 'arguments' it prevents V8 from optimizing this method.
+            var _arguments = Syntax.emptySeparatedList;
 
             if (openParenToken.fullWidth() > 0) {
                 var result = this.parseSeparatedSyntaxList(ListParsingState.ArgumentList_AssignmentExpressions);
-                arguments = result.list;
+                _arguments = result.list;
                 openParenToken = this.addSkippedTokensAfterToken(openParenToken, result.skippedTokens);
             }
 
             var closeParenToken = this.eatToken(SyntaxKind.CloseParenToken);
 
-            return this.factory.argumentList(typeArgumentList, openParenToken, arguments, closeParenToken);
+            return this.factory.argumentList(typeArgumentList, openParenToken, _arguments, closeParenToken);
         }
 
         private parseElementAccessExpression(expression: IExpressionSyntax, inObjectCreation: boolean): ElementAccessExpressionSyntax {
