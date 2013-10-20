@@ -7512,7 +7512,7 @@ module TypeScript {
                     if (typeArgs) {
                         inferredTypeArgs = typeArgs;
                     }
-                    else if (callEx.arguments.members.length) {
+                    else if (callEx.arguments && callEx.arguments.members.length) {
                         inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
@@ -7882,7 +7882,7 @@ module TypeScript {
                             if (typeArgs) {
                                 inferredTypeArgs = typeArgs;
                             }
-                            else if (callEx.arguments.members.length) {
+                            else if (callEx.arguments && callEx.arguments.members.length) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }

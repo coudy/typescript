@@ -1994,7 +1994,7 @@ module Harness {
         }
     }
 
-    if (Error) (<any>Error).stackTraceLimit = 100;
+    if (Error) (<any>Error).stackTraceLimit = 0;
 
     var currentRun = new Run();
 
