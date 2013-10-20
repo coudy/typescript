@@ -850,6 +850,7 @@ module TypeScript {
             var memberSymbol: PullTypeParameterSymbol;
 
             if (!this._memberTypeParameterNameCache) {
+
                 this._memberTypeParameterNameCache = createIntrinsicsObject();
 
                 if (this.typeParameters) {

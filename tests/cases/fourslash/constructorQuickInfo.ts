@@ -13,4 +13,4 @@ goTo.marker('2');
 verify.quickInfoIs('SS<any>');
 
 goTo.marker('3');
-verify.quickInfoIs('SS<any>');
+verify.quickInfoIs('SS<{}>');

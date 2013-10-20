@@ -125,7 +125,7 @@ module TypeScript {
 
         public visitSyntaxList(node: ISyntaxList): ASTList {
             var start = this.position;
-            var array = new Array(node.childCount());
+            var array = new Array<any>(node.childCount());
 
             for (var i = 0, n = node.childCount(); i < n; i++) {
                 array[i] = node.childAt(i).accept(this);
@@ -139,7 +139,7 @@ module TypeScript {
 
         public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
             var start = this.position;
-            var array = new Array(list.nonSeparatorCount());
+            var array = new Array<any>(list.nonSeparatorCount());
 
             for (var i = 0, n = list.childCount(); i < n; i++) {
                 if (i % 2 === 0) {
@@ -445,7 +445,7 @@ module TypeScript {
 
         public visitHeritageClause(node: HeritageClauseSyntax): HeritageClause {
             var start = this.position;
-            var array = new Array(node.typeNames.nonSeparatorCount());
+            var array = new Array<any>(node.typeNames.nonSeparatorCount());
 
             this.movePast(node.extendsOrImplementsKeyword);
             for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
@@ -1034,7 +1034,7 @@ module TypeScript {
         }
 
         public visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
-            var array = new Array(node.typeArguments.nonSeparatorCount());
+            var array = new Array<any>(node.typeArguments.nonSeparatorCount());
 
             this.movePast(node.lessThanToken);
 
@@ -1771,7 +1771,7 @@ module TypeScript {
             var closeParenPosition = this.position;
             this.movePast(node.openBraceToken);
 
-            var array = new Array(node.switchClauses.childCount());
+            var array = new Array<any>(node.switchClauses.childCount());
 
             for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
                 var switchClause = node.switchClauses.childAt(i);

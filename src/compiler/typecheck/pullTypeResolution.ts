@@ -7512,7 +7512,7 @@ module TypeScript {
                     if (typeArgs) {
                         inferredTypeArgs = typeArgs;
                     }
-                    else if (callEx.arguments) {
+                    else if (callEx.arguments.members.length) {
                         inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
@@ -7578,9 +7578,9 @@ module TypeScript {
                                     continue;
                             }
 
-                            // specialize to any
+                            // otherwise, use "{}" for each parameter
                             for (var j = 0; j < typeParameters.length; j++) {
-                                typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.anyTypeSymbol;
+                                typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.emptyTypeSymbol;
                             }
                         }
 
@@ -7882,7 +7882,7 @@ module TypeScript {
                             if (typeArgs) {
                                 inferredTypeArgs = typeArgs;
                             }
-                            else if (callEx.arguments) {
+                            else if (callEx.arguments.members.length) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
@@ -7949,7 +7949,7 @@ module TypeScript {
                                             continue;
                                     } else {
                                         for (var j = 0; j < typeParameters.length; j++) {
-                                            typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.anyTypeSymbol;
+                                            typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.emptyTypeSymbol;
                                         }
                                     }
                                 }
@@ -8231,6 +8231,15 @@ module TypeScript {
         // type relationships
 
         private mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
+            if (!(a || b)) {
+                return this.semanticInfoChain.emptyTypeSymbol;
+            }
+            if (!a) {
+                return b;
+            }
+            if (!b) {
+                return a;
+            }
             if (this.isAnyOrEquivalent(a) || this.isAnyOrEquivalent(b)) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
@@ -9810,21 +9819,22 @@ module TypeScript {
             // match inferred types in-order to type parameters
             for (var i = 0; i < typeParameters.length; i++) {
                 for (var j = 0; j < inferenceResults.results.length; j++) {
-                    if (inferenceResults.results[j].param == typeParameters[i]) {
+                    if ((inferenceResults.results[j].param == typeParameters[i]) && inferenceResults.results[j].type) {
                         resultTypes[resultTypes.length] = inferenceResults.results[j].type;
                         break;
                     }
                 }
             }
 
+            // REVIEW: Remove this block?
             if (!args.members.length && !resultTypes.length && typeParameters.length) {
                 for (var i = 0; i < typeParameters.length; i++) {
-                    resultTypes[resultTypes.length] = this.semanticInfoChain.anyTypeSymbol;
+                    resultTypes[resultTypes.length] = this.semanticInfoChain.emptyTypeSymbol;
                 }
             }
-            else if (resultTypes.length && resultTypes.length < typeParameters.length) {
+            else if (resultTypes.length < typeParameters.length) {
                 for (var i = resultTypes.length; i < typeParameters.length; i++) {
-                    resultTypes[i] = this.semanticInfoChain.anyTypeSymbol;
+                    resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
                 }
             }
 
@@ -10130,7 +10140,6 @@ module TypeScript {
                     var importSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.TypeAlias, null);
                     if (importSymbol && importSymbol.isAlias()) {
                         importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
-                        importDeclarationNames[name] = true;
                     }
                 }
 

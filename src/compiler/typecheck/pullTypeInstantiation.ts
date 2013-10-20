@@ -745,7 +745,7 @@ module TypeScript {
             var allReferencedMembers = this.referencedTypeSymbol.getAllMembers(searchDeclKind, memberVisiblity);
 
             if (!this._allInstantiatedMemberNameCache) {
-                this._allInstantiatedMemberNameCache = createIntrinsicsObject();
+                this._allInstantiatedMemberNameCache = createIntrinsicsObject<PullSymbol>();
 
                 // first, seed with this type's members
                 var members = this.getMembers();
