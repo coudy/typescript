@@ -20,8 +20,37 @@ module TypeScript {
         [s: string]: T;
     }
 
+    var proto = "__proto__"
+
+    export class BlockIntrinsics<T> {
+        public prototype: T = undefined;
+        public toString: T = undefined;
+        public toLocaleString: T = undefined;
+        public valueOf: T = undefined;
+        public hasOwnProperty: T = undefined;
+        public propertyIsEnumerable: T = undefined;
+        public isPrototypeOf: T = undefined;
+        [s: string]: T;
+
+        constructor() {
+            // initialize the 'constructor' field
+            this["constructor"] = undefined;
+
+            // First we set it to null, because that's the only way to erase the value in node. Then we set it to undefined in case we are not in node, since
+            // in StringHashTable below, we check for undefined explicitly.
+            this[proto] = null;
+            this[proto] = undefined;
+        }
+    }
+
+    // If Object.create exists, then we can just use that.  Otherwise, we need a workaround
+    // that creates an Object but deletes all existing members on it first.
+    var createEmptyObject = Object.create ? Object.create : function (arg: any) {
+        return new BlockIntrinsics();
+    };
+
     export function createIntrinsicsObject<T>(): IIndexable<T> {
-        return Object.create(null);
+        return createEmptyObject(null);
     }
 
     export interface IHashTable<T> {

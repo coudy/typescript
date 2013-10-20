@@ -1228,7 +1228,7 @@ module TypeScript {
                 return Collections.DefaultStringTable.addCharArray(this.slidingWindow.window, offset, length);
             }
             else {
-                return StringUtilities.fromCharCodeArray(this.slidingWindow.window.slice(offset, offset + length));
+                return StringUtilities.fromCharCodeArray(<number[]>this.slidingWindow.window.slice(offset, offset + length));
             }
         }
 

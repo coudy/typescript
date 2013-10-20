@@ -38,6 +38,14 @@ module TypeScript {
         return structuralEquals(ast1, ast2, true);
     }
 
+    function commentStructuralEqualsNotIncludingPosition(ast1: Comment, ast2: Comment): boolean {
+        return commentStructuralEquals(ast1, ast2, false);
+    }
+
+    function commentStructuralEqualsIncludingPosition(ast1: Comment, ast2: Comment): boolean {
+        return commentStructuralEquals(ast1, ast2, true);
+    }
+
     function structuralEquals(ast1: AST, ast2: AST, includingPosition: boolean): boolean {
         if (ast1 === ast2) {
             return true;
@@ -48,9 +56,23 @@ module TypeScript {
                ast1.structuralEquals(ast2, includingPosition);
     }
 
+    function commentStructuralEquals(ast1: Comment, ast2: Comment, includingPosition: boolean): boolean {
+        if (ast1 === ast2) {
+            return true;
+        }
+
+        return ast1 !== null && ast2 !== null &&
+            ast1.structuralEquals(ast2, includingPosition);
+    }
+
     function astArrayStructuralEquals(array1: AST[], array2: AST[], includingPosition: boolean): boolean {
         return ArrayUtilities.sequenceEquals(array1, array2,
             includingPosition ? structuralEqualsIncludingPosition : structuralEqualsNotIncludingPosition);
+    }
+
+    function commentArrayStructuralEquals(array1: Comment[], array2: Comment[], includingPosition: boolean): boolean {
+        return ArrayUtilities.sequenceEquals(array1, array2,
+            includingPosition ? commentStructuralEqualsIncludingPosition : commentStructuralEqualsNotIncludingPosition);
     }
 
     export interface IAST extends IASTSpan {
@@ -176,8 +198,8 @@ module TypeScript {
             }
 
             return this._flags === ast._flags &&
-                astArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
-                astArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition);
+                commentArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
+                commentArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition);
         }
     }
 
@@ -2234,17 +2256,16 @@ module TypeScript {
         }
     }
 
-    export class Comment extends AST {
+    export class Comment {
         public text: string[] = null;
         private docCommentText: string = null;
+        public trailingTriviaWidth = 0;
 
         constructor(private _trivia: ISyntaxTrivia,
-                    public endsLine: boolean) {
-            super();
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.Comment;
+                    public endsLine: boolean,
+                    public minChar: number,
+                    public limChar: number) {
+            // super();
         }
 
         public fullText(): string {
@@ -2256,8 +2277,13 @@ module TypeScript {
         }
 
         public structuralEquals(ast: Comment, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   this._trivia.fullText() === ast._trivia.fullText() &&
+            if (includingPosition) {
+                if (this.minChar !== ast.minChar || this.limChar !== ast.limChar) {
+                    return false;
+                }
+            }
+
+            return this._trivia.fullText() === ast._trivia.fullText() &&
                    this.endsLine === ast.endsLine;
         }
 

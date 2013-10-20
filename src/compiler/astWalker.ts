@@ -219,7 +219,6 @@ module TypeScript {
             this.childrenWalkers[NodeType.ExpressionStatement] = ChildrenWalkers.walkExpressionStatementChildren;
             this.childrenWalkers[NodeType.LabeledStatement] = ChildrenWalkers.walkLabeledStatementChildren;
             this.childrenWalkers[NodeType.VariableStatement] = ChildrenWalkers.walkVariableStatementChildren;
-            this.childrenWalkers[NodeType.Comment] = ChildrenWalkers.walkNone;
             this.childrenWalkers[NodeType.DebuggerStatement] = ChildrenWalkers.walkNone;
 
             // Verify the code is up to date with the enum
