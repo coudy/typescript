@@ -946,74 +946,73 @@ module TypeScript {
             // Debug.assert(this.currentCharCode() === CharacterCodes.slash);
 
             var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
-            try {
+
+            this.slidingWindow.moveToNextItem();
+
+            var inEscape = false;
+            var inCharacterClass = false;
+            while (true) {
+                var ch = this.currentCharCode();
+
+                if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
+                    this.slidingWindow.rewindToPinnedIndex(startIndex);
+                    this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+                    return SyntaxKind.None;
+                }
+
                 this.slidingWindow.moveToNextItem();
+                if (inEscape) {
+                    inEscape = false;
+                    continue;
+                }
 
-                var inEscape = false;
-                var inCharacterClass = false;
-                while (true) {
-                    var ch = this.currentCharCode();
-                    if (this.isNewLineCharacter(ch) || this.slidingWindow.isAtEndOfSource()) {
-                        this.slidingWindow.rewindToPinnedIndex(startIndex);
-                        return SyntaxKind.None;
-                    }
-
-                    this.slidingWindow.moveToNextItem();
-                    if (inEscape) {
-                        inEscape = false;
+                switch (ch) {
+                    case CharacterCodes.backslash:
+                        // We're now in an escape.  Consume the next character we see (unless it's
+                        // a newline or null.
+                        inEscape = true;
                         continue;
-                    }
 
-                    switch (ch) {
-                        case CharacterCodes.backslash:
-                            // We're now in an escape.  Consume the next character we see (unless it's
-                            // a newline or null.
-                            inEscape = true;
+                    case CharacterCodes.openBracket:
+                        // If we see a [ then we're starting an character class.  Note: it's ok if 
+                        // we then hit another [ inside a character class.  We'll just set the value
+                        // to true again and that's ok.
+                        inCharacterClass = true;
+                        continue;
+
+                    case CharacterCodes.closeBracket:
+                        // If we ever hit a cloe bracket then we're now no longer in a character 
+                        // class.  If we weren't in a character class to begin with, then this has 
+                        // no effect.
+                        inCharacterClass = false;
+                        continue;
+
+                    case CharacterCodes.slash:
+                        // If we see a slash, and we're in a character class, then ignore it.
+                        if (inCharacterClass) {
                             continue;
+                        }
 
-                        case CharacterCodes.openBracket:
-                            // If we see a [ then we're starting an character class.  Note: it's ok if 
-                            // we then hit another [ inside a character class.  We'll just set the value
-                            // to true again and that's ok.
-                            inCharacterClass = true;
-                            continue;
+                        // We're done with the regex.  Break out of the switch (which will break 
+                        // out of hte loop.
+                        break;
 
-                        case CharacterCodes.closeBracket:
-                            // If we ever hit a cloe bracket then we're now no longer in a character 
-                            // class.  If we weren't in a character class to begin with, then this has 
-                            // no effect.
-                            inCharacterClass = false;
-                            continue;
-
-                        case CharacterCodes.slash:
-                            // If we see a slash, and we're in a character class, then ignore it.
-                            if (inCharacterClass) {
-                                continue;
-                            }
-
-                            // We're done with the regex.  Break out of the switch (which will break 
-                            // out of hte loop.
-                            break;
-
-                        default:
-                            // Just consume any other characters.
-                            continue;
-                    }
-
-                    break;
+                    default:
+                        // Just consume any other characters.
+                        continue;
                 }
 
-                // TODO: The grammar says any identifier part is allowed here.  Do we need to support
-                // \u identifiers here?  The existing typescript parser does not.  
-                while (isIdentifierPartCharacter[this.currentCharCode()]) {
-                    this.slidingWindow.moveToNextItem();
-                }
+                break;
+            }
 
-                return SyntaxKind.RegularExpressionLiteral;
+            // TODO: The grammar says any identifier part is allowed here.  Do we need to support
+            // \u identifiers here?  The existing typescript parser does not.  
+            while (isIdentifierPartCharacter[this.currentCharCode()]) {
+                this.slidingWindow.moveToNextItem();
             }
-            finally {
-                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-            }
+
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+            return SyntaxKind.RegularExpressionLiteral;
         }
 
         private scanExclamationToken(): SyntaxKind {
@@ -1063,53 +1062,51 @@ module TypeScript {
             // Debug.assert(this.currentCharCode() === CharacterCodes.backslash);
 
             var rewindPoint = this.slidingWindow.getAndPinAbsoluteIndex();
-            try {
-                // Consume the backslash.
-                this.slidingWindow.moveToNextItem();
 
-                // Get the char after the backslash
-                var ch = this.currentCharCode();
-                this.slidingWindow.moveToNextItem();
-                switch (ch) {
-                    case CharacterCodes.x:
-                    case CharacterCodes.u:
-                        this.slidingWindow.rewindToPinnedIndex(rewindPoint);
-                        var value = this.scanUnicodeOrHexEscape(diagnostics);
-                        return;
+            // Consume the backslash.
+            this.slidingWindow.moveToNextItem();
 
-                    case CharacterCodes.carriageReturn:
-                        // If it's \r\n then consume both characters.
-                        if (this.currentCharCode() === CharacterCodes.lineFeed) {
-                            this.slidingWindow.moveToNextItem();
-                        }
-                        return;
+            // Get the char after the backslash
+            var ch = this.currentCharCode();
+            this.slidingWindow.moveToNextItem();
+            switch (ch) {
+                case CharacterCodes.x:
+                case CharacterCodes.u:
+                    this.slidingWindow.rewindToPinnedIndex(rewindPoint);
+                    var value = this.scanUnicodeOrHexEscape(diagnostics);
+                    break;
 
-                    // We don't have to do anything special about these characters.  I'm including them
-                    // Just so it's clear that we intentially process them in the exact same way:
-                    //case CharacterCodes.singleQuote:
-                    //case CharacterCodes.doubleQuote:
-                    //case CharacterCodes.backslash:
-                    //case CharacterCodes._0:
-                    //case CharacterCodes.b:
-                    //case CharacterCodes.f:
-                    //case CharacterCodes.n:
-                    //case CharacterCodes.r:
-                    //case CharacterCodes.t:
-                    //case CharacterCodes.v:
-                    //case CharacterCodes.lineFeed:
-                    //case CharacterCodes.paragraphSeparator:
-                    //case CharacterCodes.lineSeparator:
-                    default:
-                        // Any other character is ok as well.  As per rule:
-                        // EscapeSequence :: CharacterEscapeSequence
-                        // CharacterEscapeSequence :: NonEscapeCharacter
-                        // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
-                        return;
-                }
+                case CharacterCodes.carriageReturn:
+                    // If it's \r\n then consume both characters.
+                    if (this.currentCharCode() === CharacterCodes.lineFeed) {
+                        this.slidingWindow.moveToNextItem();
+                    }
+                    break;
+
+                // We don't have to do anything special about these characters.  I'm including them
+                // Just so it's clear that we intentially process them in the exact same way:
+                //case CharacterCodes.singleQuote:
+                //case CharacterCodes.doubleQuote:
+                //case CharacterCodes.backslash:
+                //case CharacterCodes._0:
+                //case CharacterCodes.b:
+                //case CharacterCodes.f:
+                //case CharacterCodes.n:
+                //case CharacterCodes.r:
+                //case CharacterCodes.t:
+                //case CharacterCodes.v:
+                //case CharacterCodes.lineFeed:
+                //case CharacterCodes.paragraphSeparator:
+                //case CharacterCodes.lineSeparator:
+                default:
+                    // Any other character is ok as well.  As per rule:
+                    // EscapeSequence :: CharacterEscapeSequence
+                    // CharacterEscapeSequence :: NonEscapeCharacter
+                    // NonEscapeCharacter :: SourceCharacter but notEscapeCharacter or LineTerminator
+                    break;
             }
-            finally {
-                this.slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint);
-            }
+
+            this.slidingWindow.releaseAndUnpinAbsoluteIndex(rewindPoint);
         }
 
         private scanStringLiteral(diagnostics: Diagnostic[]): SyntaxKind {
