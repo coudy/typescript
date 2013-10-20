@@ -17,7 +17,7 @@ module TypeScript {
         public flags: PullElementFlags = PullElementFlags.None;
         private span: TextSpan;
 
-        private declGroups: BlockIntrinsics<PullDeclGroup> = null;
+        private declGroups: IIndexable<PullDeclGroup> = null;
 
         // Child decls
         private childDecls: PullDecl[] = null;
@@ -29,10 +29,10 @@ module TypeScript {
 
         // Caches
         // Mappings from names to decls.  Public only for diffing purposes.
-        public childDeclTypeCache: BlockIntrinsics<PullDecl[]> = null;
-        public childDeclValueCache: BlockIntrinsics<PullDecl[]> = null;
-        public childDeclNamespaceCache: BlockIntrinsics<PullDecl[]>= null;
-        public childDeclTypeParameterCache: BlockIntrinsics<PullDecl[]> = null;
+        public childDeclTypeCache: IIndexable<PullDecl[]> = null;
+        public childDeclValueCache: IIndexable<PullDecl[]> = null;
+        public childDeclNamespaceCache: IIndexable<PullDecl[]> = null;
+        public childDeclTypeParameterCache: IIndexable<PullDecl[]> = null;
 
         constructor(declName: string, displayName: string, kind: PullElementKind, declFlags: PullElementFlags, span: TextSpan) {
             this.name = declName;
@@ -133,31 +133,31 @@ module TypeScript {
                     (this.span.end() === other.span.end());
         }
 
-        private getChildDeclCache(declKind: PullElementKind): BlockIntrinsics<PullDecl[]> {
+        private getChildDeclCache(declKind: PullElementKind): IIndexable<PullDecl[]> {
             if (declKind === PullElementKind.TypeParameter) {
                 if (!this.childDeclTypeParameterCache) {
-                    this.childDeclTypeParameterCache = new BlockIntrinsics();
+                    this.childDeclTypeParameterCache = createIntrinsicsObject<PullDecl[]>();
                 }
 
                 return this.childDeclTypeParameterCache;
             }
             else if (hasFlag(declKind, PullElementKind.SomeContainer)) {
                 if (!this.childDeclNamespaceCache) {
-                    this.childDeclNamespaceCache = new BlockIntrinsics();
+                    this.childDeclNamespaceCache = createIntrinsicsObject<PullDecl[]>();
                 }
 
                 return this.childDeclNamespaceCache;
             }
             else if (hasFlag(declKind, PullElementKind.SomeType)) {
                 if (!this.childDeclTypeCache) {
-                    this.childDeclTypeCache = new BlockIntrinsics();
+                    this.childDeclTypeCache = createIntrinsicsObject<PullDecl[]>();
                 }
 
                 return this.childDeclTypeCache;
             }
             else {
                 if (!this.childDeclValueCache) {
-                    this.childDeclValueCache = new BlockIntrinsics();
+                    this.childDeclValueCache = createIntrinsicsObject<PullDecl[]>();
                 }
 
                 return this.childDeclValueCache;
@@ -248,7 +248,7 @@ module TypeScript {
 
         public addVariableDeclToGroup(decl: PullDecl) {
             if (!this.declGroups) {
-                this.declGroups = new BlockIntrinsics<PullDeclGroup>();
+                this.declGroups = createIntrinsicsObject<PullDeclGroup>();
             }
 
             var declGroup = this.declGroups[decl.name];

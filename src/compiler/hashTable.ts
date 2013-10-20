@@ -16,31 +16,12 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
-    interface IIndexable<T> {
+    export interface IIndexable<T> {
         [s: string]: T;
     }
 
-    var proto = "__proto__"
-
-    export class BlockIntrinsics<T> {
-        public prototype: T = undefined;
-        public toString: T = undefined;
-        public toLocaleString: T = undefined;
-        public valueOf: T = undefined;
-        public hasOwnProperty: T = undefined;
-        public propertyIsEnumerable: T = undefined;
-        public isPrototypeOf: T = undefined;
-        [s: string]: T;
-
-        constructor() {
-            // initialize the 'constructor' field
-            this["constructor"] = undefined;
-
-            // First we set it to null, because that's the only way to erase the value in node. Then we set it to undefined in case we are not in node, since
-            // in StringHashTable below, we check for undefined explicitly.
-            this[proto] = null;
-            this[proto] = undefined;
-        }
+    export function createIntrinsicsObject<T>(): IIndexable<T> {
+        return Object.create(null);
     }
 
     export interface IHashTable<T> {
@@ -56,7 +37,7 @@ module TypeScript {
 
     export class StringHashTable<T> implements IHashTable<T> {
         private itemCount = 0;
-        private table: IIndexable<T> = new BlockIntrinsics<T>();
+        private table: IIndexable<T> = createIntrinsicsObject<T>();
 
         public getAllKeys(): string[] {
             var result: string[] = [];

@@ -10100,13 +10100,13 @@ module TypeScript {
         private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
             // If we're inside a module, collect the names of imports so we can ensure they don't 
             // conflict with any variable declaration names.
-            var importDeclarationNames: BlockIntrinsics<boolean> = null;
+            var importDeclarationNames: IIndexable<boolean> = null;
             if (enclosingDecl.kind & (PullElementKind.Container | PullElementKind.DynamicModule | PullElementKind.Script)) {
                 var childDecls = enclosingDecl.getChildDecls();
                 for (var i = 0, n = childDecls.length; i < n; i++) {
                     var childDecl = childDecls[i];
                     if (childDecl.kind === PullElementKind.TypeAlias) {
-                        importDeclarationNames = importDeclarationNames || new BlockIntrinsics();
+                        importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
                         importDeclarationNames[childDecl.name] = true;
                     }
                 }
@@ -10132,7 +10132,7 @@ module TypeScript {
                     // Also collect any imports with this name (throughout any of the files)
                     var importSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.TypeAlias, null);
                     if (importSymbol && importSymbol.isAlias()) {
-                        importDeclarationNames = importDeclarationNames || new BlockIntrinsics();
+                        importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
                         importDeclarationNames[name] = true;
                     }
                 }
@@ -11417,7 +11417,7 @@ module TypeScript {
 
             // Check that all the extended base types have compatible members (members of the same name must have identical types)
             var allMembers = typeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.externallyVisible);
-            var membersBag = new BlockIntrinsics<PullSymbol>();
+            var membersBag = createIntrinsicsObject<PullSymbol>();
             for (var i = 0; i < allMembers.length; i++) {
                 var member = allMembers[i];
                 var memberName = member.name;

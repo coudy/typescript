@@ -1257,7 +1257,7 @@ module TypeScript {
             var argDecl: Parameter = null;
             var parameterSymbol: PullSymbol = null;
             var isProperty = false;
-            var params = new BlockIntrinsics<boolean>();
+            var params = createIntrinsicsObject<boolean>();
             var funcDecl = this.semanticInfoChain.getDeclForAST(functionDeclaration);
 
             if (parameterList) {
