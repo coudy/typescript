@@ -1795,9 +1795,9 @@ module TypeScript.Parser {
                 return null;
             }
             else {
+                this.releaseRewindPoint(rewindPoint);
                 var typeArgumentList = this.factory.typeArgumentList(lessThanToken, typeArguments, greaterThanToken);
 
-                this.releaseRewindPoint(rewindPoint);
                 return typeArgumentList;
             }
         }
@@ -3888,9 +3888,11 @@ module TypeScript.Parser {
                 // Wasn't generic.  Rewind to where we started so this can be parsed as an 
                 // arithmetic expression.
                 this.rewind(rewindPoint);
-                argumentList = null;
+                this.releaseRewindPoint(rewindPoint);
+                return null;
             }
             else {
+                this.releaseRewindPoint(rewindPoint);
                 // It's not uncommon for a user to type: "Foo<T>."
                 //
                 // This is not legal in typescript (as an parameter list must follow the type
@@ -3903,16 +3905,13 @@ module TypeScript.Parser {
                         DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected, null);
                     this.addDiagnostic(diagnostic);
 
-                    argumentList = this.factory.argumentList(typeArgumentList,
+                    return this.factory.argumentList(typeArgumentList,
                         Syntax.emptyToken(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.emptyToken(SyntaxKind.CloseParenToken));
                 }
                 else {
-                    argumentList = this.parseArgumentList(typeArgumentList);
+                    return this.parseArgumentList(typeArgumentList);
                 }
             }
-
-            this.releaseRewindPoint(rewindPoint);
-            return argumentList;
         }
 
         private tryParseArgumentList(): ArgumentListSyntax {
@@ -4633,9 +4632,9 @@ module TypeScript.Parser {
                 return null;
             }
             else {
+                this.releaseRewindPoint(rewindPoint);
                 var typeParameterList = this.factory.typeParameterList(lessThanToken, typeParameters, greaterThanToken);
 
-                this.releaseRewindPoint(rewindPoint);
                 return typeParameterList;
             }
         }
