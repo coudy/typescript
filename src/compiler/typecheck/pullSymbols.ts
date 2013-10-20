@@ -1315,11 +1315,11 @@ module TypeScript {
                 this._memberNameCache = createIntrinsicsObject<PullSymbol>();
             }
 
-            if (this._members == sentinelEmptyArray) {
+            if (this._members === sentinelEmptyArray) {
                 this._members = [];
             }
 
-            this._members[this._members.length] = memberSymbol;
+            this._members.push(memberSymbol);
             this._memberNameCache[memberSymbol.name] = memberSymbol;
         }
 

@@ -3870,48 +3870,58 @@ module TypeScript.Parser {
             return expression;
         }
 
-        private tryParseArgumentList(): ArgumentListSyntax {
-            var typeArgumentList: TypeArgumentListSyntax = null;
+        private tryParseGenericArgumentList(): ArgumentListSyntax {
+            // Debug.assert(this.currentToken().tokenKind === SyntaxKind.LessThanToken);
+            // If we have a '<', then only parse this as a arugment list if the type arguments
+            // are complete and we have an open paren.  if we don't, rewind and return nothing.
+            var rewindPoint = this.getRewindPoint();
 
-            if (this.currentToken().tokenKind === SyntaxKind.LessThanToken) {
-                // If we have a '<', then only parse this as a arugment list if the type arguments
-                // are complete and we have an open paren.  if we don't, rewind and return nothing.
-                var rewindPoint = this.getRewindPoint();
-                try {
-                    typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ true);
-                    var token0 = this.currentToken();
+            var typeArgumentList = this.tryParseTypeArgumentList(/*inExpression:*/ true);
+            var token0 = this.currentToken();
 
-                    var isOpenParen = token0.tokenKind === SyntaxKind.OpenParenToken;
-                    var isDot = token0.tokenKind === SyntaxKind.DotToken;
-                    var isOpenParenOrDot = isOpenParen || isDot;
-                    if (typeArgumentList === null || !isOpenParenOrDot) {
-                        this.rewind(rewindPoint);
-                        return null;
-                    }
+            var isOpenParen = token0.tokenKind === SyntaxKind.OpenParenToken;
+            var isDot = token0.tokenKind === SyntaxKind.DotToken;
+            var isOpenParenOrDot = isOpenParen || isDot;
 
-                    // It's not uncommon for a user to type: "Foo<T>."
-                    //
-                    // This is not legal in typescript (as an parameter list must follow the type
-                    // arguments).  We want to give a good error message for this as otherwise
-                    // we'll bail out here and give a poor error message when we try to parse this
-                    // as an arithmetic expression.
-                    if (isDot) {
-                        // A parameter list must follow a generic type argument list.
-                        var diagnostic = new Diagnostic(this.fileName, this.lineMap, this.currentTokenStart(), token0.width(),
-                            DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected, null);
-                        this.addDiagnostic(diagnostic);
+            var argumentList: ArgumentListSyntax = null;
+            if (typeArgumentList === null || !isOpenParenOrDot) {
+                // Wasn't generic.  Rewind to where we started so this can be parsed as an 
+                // arithmetic expression.
+                this.rewind(rewindPoint);
+                argumentList = null;
+            }
+            else {
+                // It's not uncommon for a user to type: "Foo<T>."
+                //
+                // This is not legal in typescript (as an parameter list must follow the type
+                // arguments).  We want to give a good error message for this as otherwise
+                // we'll bail out here and give a poor error message when we try to parse this
+                // as an arithmetic expression.
+                if (isDot) {
+                    // A parameter list must follow a generic type argument list.
+                    var diagnostic = new Diagnostic(this.fileName, this.lineMap, this.currentTokenStart(), token0.width(),
+                        DiagnosticCode.A_parameter_list_must_follow_a_generic_type_argument_list_expected, null);
+                    this.addDiagnostic(diagnostic);
 
-                        return this.factory.argumentList(typeArgumentList,
-                            Syntax.emptyToken(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.emptyToken(SyntaxKind.CloseParenToken));
-                    }
+                    argumentList = this.factory.argumentList(typeArgumentList,
+                        Syntax.emptyToken(SyntaxKind.OpenParenToken), Syntax.emptySeparatedList, Syntax.emptyToken(SyntaxKind.CloseParenToken));
                 }
-                finally {
-                    this.releaseRewindPoint(rewindPoint);
+                else {
+                    argumentList = this.parseArgumentList(typeArgumentList);
                 }
             }
 
+            this.releaseRewindPoint(rewindPoint);
+            return argumentList;
+        }
+
+        private tryParseArgumentList(): ArgumentListSyntax {
+            if (this.currentToken().tokenKind === SyntaxKind.LessThanToken) {
+                return this.tryParseGenericArgumentList();
+            }
+
             if (this.currentToken().tokenKind === SyntaxKind.OpenParenToken) {
-                return this.parseArgumentList(typeArgumentList);
+                return this.parseArgumentList(null);
             }
 
             return null;
