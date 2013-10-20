@@ -7679,7 +7679,7 @@ module TypeScript {
                 this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
                     additionalResults, context);
             }
-            else if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
+            else if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length != signature.getTypeParameters().length)) {
                 this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]),
                     additionalResults, context);
             }
@@ -7879,7 +7879,9 @@ module TypeScript {
                         couldNotAssignToConstraint = false;
 
                         if (constructSignatures[i].isGeneric()) {
-                            if (typeArgs && typeArgs.length == typeParameters.length) {
+                            typeParameters = constructSignatures[i].getTypeParameters();
+
+                            if (typeArgs && typeParameters && typeArgs.length == typeParameters.length) {
                                 inferredTypeArgs = typeArgs;
                             }
                             else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
@@ -7892,7 +7894,6 @@ module TypeScript {
 
                             // if we could infer Args, or we have type arguments, then attempt to specialize the signature
                             if (inferredTypeArgs) {
-                                typeParameters = constructSignatures[i].getTypeParameters();
 
                                 typeReplacementMap = [];
 
@@ -8023,7 +8024,7 @@ module TypeScript {
                     signature = constructSignatures[0];
                 }
 
-                if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length > signature.getTypeParameters().length)) {
+                if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length != signature.getTypeParameters().length)) {
                     this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]),
                         additionalResults, context);
                 }

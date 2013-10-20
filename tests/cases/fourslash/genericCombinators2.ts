@@ -75,9 +75,9 @@ goTo.marker('4b');
 verify.quickInfoIs('B<any>');
 
 goTo.marker('5a');
-verify.quickInfoIs('number');
+verify.quickInfoIs('{}');
 goTo.marker('5b');
-verify.quickInfoIs('string');
+verify.quickInfoIs('{}');
 
 goTo.marker('6a');
 verify.quickInfoIs('Collection<number, number>');
@@ -85,9 +85,9 @@ goTo.marker('6b');
 verify.quickInfoIs('string');
 
 goTo.marker('7a');
-verify.quickInfoIs('number');
+verify.quickInfoIs('{}');
 goTo.marker('7b');
-verify.quickInfoIs('A');
+verify.quickInfoIs('{}');
 
 goTo.marker('8a');
 verify.quickInfoIs('number');
@@ -110,7 +110,7 @@ goTo.marker('15');
 verify.quickInfoIs('Collection<number, any>');
 
 goTo.marker('17');
-verify.quickInfoIs('any');
+verify.quickInfoIs('Collection<any, any>');
 
 goTo.marker('18');
 verify.quickInfoIs('Collection<number, Date>');
@@ -122,10 +122,10 @@ goTo.marker('20');
 verify.quickInfoIs('Collection<Collection<number, number>, Date>');
 
 goTo.marker('21');
-verify.quickInfoIs('any');
+verify.quickInfoIs('Collection<any, any>');
 
 goTo.marker('22');
-verify.quickInfoIs('any');
+verify.quickInfoIs('Collection<any, any>');
 
 goTo.marker('23');
 verify.quickInfoIs('Collection<number, string>');
