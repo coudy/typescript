@@ -5522,7 +5522,6 @@ module TypeScript {
             }
 
             // assemble the dotted name path
-            var enclosingDecl = this.getEnclosingDeclForAST(expression);
             var rhsName = name.valueText();
             var lhs = this.resolveAST(expression, /*isContextuallyTyped*/false, context);
             var lhsType = lhs.type;
@@ -5618,6 +5617,7 @@ module TypeScript {
                 }
 
                 if (!nameSymbol) {
+                    var enclosingDecl = this.getEnclosingDeclForAST(expression);
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [name.text(), lhsType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                     return this.getNewErrorTypeSymbol(rhsName);
                 }
