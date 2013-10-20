@@ -11518,7 +11518,6 @@ module TypeScript {
             expressionType: PullTypeSymbol,
             resolvedName: PullSymbol,
             context: PullTypeResolutionContext): boolean {
-            var enclosingDecl = this.getEnclosingDeclForAST(name);
 
             if (resolvedName) {
                 if (resolvedName.hasFlag(PullElementFlags.Private)) {
@@ -11530,13 +11529,14 @@ module TypeScript {
                     if (memberContainer && memberContainer.isClass()) {
                         // We're accessing a private member of a class.  We can only do that if we're 
                         // actually contained within that class.
-                        var containingClass = enclosingDecl;
+                        var memberClass = memberContainer.getDeclarations()[0].ast();
+                        Debug.assert(memberClass);
 
-                        while (containingClass && containingClass.kind != PullElementKind.Class) {
-                            containingClass = containingClass.getParentDecl();
-                        }
+                        var containingClass = this.getEnclosingClassDeclaration(name);
 
-                        if (!containingClass || containingClass.getSymbol() !== memberContainer) {
+                        var enclosingDecl = this.getEnclosingDeclForAST(name);
+
+                        if (!containingClass || containingClass !== memberClass) {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode._0_1_is_inaccessible, [memberContainer.toString(/*scopeSymbol*/ null, /*useConstraintInName*/ false), name.text()]));
                             return true;
                         }
