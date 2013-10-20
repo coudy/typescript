@@ -7509,10 +7509,10 @@ module TypeScript {
 
                 if (signatures[i].isGeneric() && typeParameters.length) {
 
-                    if (typeArgs) {
+                    if (typeArgs && typeArgs.length == typeParameters.length) {
                         inferredTypeArgs = typeArgs;
                     }
-                    else if (callEx.arguments && callEx.arguments.members.length) {
+                    else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
                         inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
@@ -7879,10 +7879,10 @@ module TypeScript {
                         couldNotAssignToConstraint = false;
 
                         if (constructSignatures[i].isGeneric()) {
-                            if (typeArgs) {
+                            if (typeArgs && typeArgs.length == typeParameters.length) {
                                 inferredTypeArgs = typeArgs;
                             }
-                            else if (callEx.arguments && callEx.arguments.members.length) {
+                            else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
