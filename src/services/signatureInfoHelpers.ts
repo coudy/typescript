@@ -279,6 +279,10 @@ module Services {
         }
 
         public static isSignatureHelpBlocker(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
+            if (position < 0 || position >= sourceUnit.fullWidth()) {
+                return true;
+            }
+
             return TypeScript.Syntax.isEntirelyInsideComment(sourceUnit, position);
         }
 
