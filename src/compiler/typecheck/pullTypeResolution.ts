@@ -2693,7 +2693,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDeclForAST(superAST);
             var declPath = enclosingDecl.getParentPath();
 
-            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(superAST);
+            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(superAST, enclosingDecl);
 
             if (classSymbol && !classSymbol.hasFlag(PullElementFlags.Ambient)) {
                 if (superAST.nodeType() == NodeType.Parameter) {
@@ -5219,10 +5219,6 @@ module TypeScript {
                     this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
                     return;
 
-                //case NodeType.SuperExpression:
-                //    this.typeCheckSuperExpression(ast, context);
-                //    return;
-
                 case NodeType.InvocationExpression:
                     this.typeCheckInvocationExpression(<InvocationExpression>ast, context);
                     return;
@@ -6134,16 +6130,14 @@ module TypeScript {
         }
 
         private resolveThisExpression(thisExpression: ThisExpression, context: PullTypeResolutionContext): PullSymbol {
-            var thisTypeSymbol = this.computeThisTypeSymbol(thisExpression);
+            var enclosingDecl = this.getEnclosingDeclForAST(thisExpression);
+            var thisTypeSymbol = this.getContextualClassSymbolForEnclosingDecl(thisExpression, enclosingDecl) || this.semanticInfoChain.anyTypeSymbol;
+
             if (this.canTypeCheckAST(thisExpression, context)) {
-                this.typeCheckThisExpression(thisExpression, context);
+                this.typeCheckThisExpression(thisExpression, context, enclosingDecl);
             }
 
             return thisTypeSymbol;
-        }
-
-        private computeThisTypeSymbol(ast: AST): PullTypeSymbol {
-            return this.getContextualClassSymbolForEnclosingDecl(ast) || this.semanticInfoChain.anyTypeSymbol;
         }
 
         private inTypeArgumentList(ast: AST): boolean {
@@ -6274,10 +6268,8 @@ module TypeScript {
             return false;
         }
 
-        private typeCheckThisExpression(thisExpression: ThisExpression, context: PullTypeResolutionContext): void {
+        private typeCheckThisExpression(thisExpression: ThisExpression, context: PullTypeResolutionContext, enclosingDecl: PullDecl): void {
             this.checkForThisCaptureInArrowFunction(thisExpression);
-
-            var enclosingDecl = this.getEnclosingDeclForAST(thisExpression);
 
             if (this.inConstructorParameterList(thisExpression)) {
                 // October 11, 2013
@@ -6351,8 +6343,7 @@ module TypeScript {
             }
         }
 
-        private getContextualClassSymbolForEnclosingDecl(ast: AST): PullTypeSymbol {
-            var enclosingDecl = this.getEnclosingDeclForAST(ast);
+        private getContextualClassSymbolForEnclosingDecl(ast: AST, enclosingDecl: PullDecl): PullTypeSymbol {
             var declPath = enclosingDecl.getParentPath();
 
             // work back up the decl path, until you can find a class
@@ -6421,12 +6412,11 @@ module TypeScript {
             return null;
         }
 
-        // PULLTODO: Optimization: cache this for a given decl path
         private resolveSuperExpression(ast: AST, context: PullTypeResolutionContext): PullSymbol {
             var enclosingDecl = this.getEnclosingDeclForAST(ast);
             var superType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
 
-            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(ast);
+            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(ast, enclosingDecl);
 
             if (classSymbol) {
                 this.resolveDeclaredSymbol(classSymbol, context);
