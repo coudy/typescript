@@ -3,7 +3,7 @@
 module TypeScript {
     export module LineMap1 {
         export function fromSimpleText(text: ISimpleText): LineMap {
-            return new LineMap(() => TextUtilities.parseLineStarts(text), text.length());
+            return new LineMap(() => TextUtilities.parseLineStarts({ charCodeAt: index => text.charCodeAt(index), length: text.length() }), text.length());
         }
 
         export function fromScriptSnapshot(scriptSnapshot: IScriptSnapshot): LineMap {
@@ -11,7 +11,7 @@ module TypeScript {
         }
 
         export function fromString(text: string): LineMap {
-            return LineMap1.fromSimpleText(SimpleText.fromString(text));
+            return new LineMap(() => TextUtilities.parseLineStarts(text), text.length);
         }
     }
 }

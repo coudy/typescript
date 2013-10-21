@@ -11471,8 +11471,6 @@ module TypeScript {
 
                         var containingClass = this.getEnclosingClassDeclaration(name);
 
-                        var enclosingDecl = this.getEnclosingDeclForAST(name);
-
                         if (!containingClass || containingClass !== memberClass) {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode._0_1_is_inaccessible, [memberContainer.toString(/*scopeSymbol*/ null, /*useConstraintInName*/ false), name.text()]));
                             return true;

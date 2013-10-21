@@ -2269,7 +2269,6 @@ module TypeScript {
                     public endsLine: boolean,
                     public minChar: number,
                     public limChar: number) {
-            // super();
         }
 
         public fullText(): string {
