@@ -1741,10 +1741,6 @@ module TypeScript.Parser {
             return identifierName;
         }
 
-        private isName(): boolean {
-            return this.isIdentifier(this.currentToken());
-        }
-
         private tryParseTypeArgumentList(inExpression: boolean): TypeArgumentListSyntax {
             if (this.currentToken().kind() !== SyntaxKind.LessThanToken) {
                 return null;
@@ -2659,7 +2655,7 @@ module TypeScript.Parser {
         }
 
         private isHeritageClauseTypeName(): boolean {
-            if (this.isName()) {
+            if (this.isIdentifier(this.currentToken())) {
                 // We want to make sure that the "extends" in "extends foo" or the "implements" in
                 // "implements foo" is not considered a type name.
                 return !this.isNotHeritageClauseTypeName();
@@ -4630,28 +4626,54 @@ module TypeScript.Parser {
         }
 
         private isType(): boolean {
-            return this.isPredefinedType() ||
-                   this.isTypeLiteral() ||
-                   this.isTypeQuery() ||
-                   this.isName();
+            var currentToken = this.currentToken();
+            var currentTokenKind = currentToken.tokenKind;
+
+            switch (currentTokenKind) {
+                // TypeQuery
+                case SyntaxKind.TypeOfKeyword:
+
+                // Pedefined types:
+                case SyntaxKind.AnyKeyword:
+                case SyntaxKind.NumberKeyword:
+                case SyntaxKind.BooleanKeyword:
+                case SyntaxKind.StringKeyword:
+                case SyntaxKind.VoidKeyword:
+
+                // Object type
+                case SyntaxKind.OpenBraceToken:
+
+                // Function type:
+                case SyntaxKind.OpenParenToken:
+                case SyntaxKind.LessThanToken:
+
+                // Constructor type:
+                case SyntaxKind.NewKeyword:
+                    return true;
+            }
+
+            // Name
+            return this.isIdentifier(currentToken);
         }
 
         private parseType(): ITypeSyntax {
-            if (this.isTypeQuery()) {
+            var currentToken = this.currentToken();
+            var currentTokenKind = currentToken.tokenKind;
+
+            if (currentTokenKind === SyntaxKind.TypeOfKeyword) {
                 return this.parseTypeQuery();
             }
-            else {
-                var type = this.parseNonArrayType();
 
-                while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
-                    var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
-                    var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
+            var type = this.parseNonArrayType(currentToken);
 
-                    type = this.factory.arrayType(type, openBracketToken, closeBracketToken);
-                }
+            while (this.currentToken().tokenKind === SyntaxKind.OpenBracketToken) {
+                var openBracketToken = this.eatToken(SyntaxKind.OpenBracketToken);
+                var closeBracketToken = this.eatToken(SyntaxKind.CloseBracketToken);
 
-                return type;
+                type = this.factory.arrayType(type, openBracketToken, closeBracketToken);
             }
+
+            return type;
         }
 
         private isTypeQuery(): boolean {
@@ -4666,16 +4688,32 @@ module TypeScript.Parser {
             return this.factory.typeQuery(typeOfKeyword, name);
         }
 
-        private parseNonArrayType(): ITypeSyntax {
-            if (this.isPredefinedType()) {
-                return this.parsePredefinedType();
+        private parseNonArrayType(currentToken: ISyntaxToken): ITypeSyntax {
+            var currentTokenKind = currentToken.tokenKind;
+            switch (currentTokenKind) {
+                // Pedefined types:
+                case SyntaxKind.AnyKeyword:
+                case SyntaxKind.NumberKeyword:
+                case SyntaxKind.BooleanKeyword:
+                case SyntaxKind.StringKeyword:
+                case SyntaxKind.VoidKeyword:
+                    return this.eatAnyToken();
+
+                // Object type
+                case SyntaxKind.OpenBraceToken:
+                    return this.parseObjectType();
+
+                // Function type:
+                case SyntaxKind.OpenParenToken:
+                case SyntaxKind.LessThanToken:
+                    return this.parseFunctionType();
+
+                // Constructor type:
+                case SyntaxKind.NewKeyword:
+                    return this.parseConstructorType();
             }
-            else if (this.isTypeLiteral()) {
-                return this.parseTypeLiteral();
-            }
-            else {
-                return this.parseNameOrGenericType();
-            }
+
+            return this.parseNameOrGenericType();
         }
 
         private parseNameOrGenericType(): ITypeSyntax {
@@ -4685,22 +4723,6 @@ module TypeScript.Parser {
             return typeArgumentList === null
                 ? name
                 : this.factory.genericType(name, typeArgumentList);
-        }
-
-        private parseTypeLiteral(): ITypeSyntax {
-            // Debug.assert(this.isTypeLiteral(/*allowFunctionType:*/ true, /*allowConstructorType:*/ true));
-            if (this.isObjectType()) {
-                return this.parseObjectType();
-            }
-            else if (this.isFunctionType()) {
-                return this.parseFunctionType();
-            }
-            else if (this.isConstructorType()) {
-                return this.parseConstructorType();
-            }
-            else {
-                throw Errors.invalidOperation();
-            }
         }
 
         private parseFunctionType(): FunctionTypeSyntax {
@@ -4724,43 +4746,6 @@ module TypeScript.Parser {
             var type = this.parseType();
 
             return this.factory.constructorType(newKeyword, typeParameterList, parameterList, equalsGreaterThanToken, type);
-        }
-
-        private isTypeLiteral(): boolean {
-            return this.isObjectType() ||
-                   this.isFunctionType() ||
-                   this.isConstructorType();
-        }
-
-        private isObjectType(): boolean {
-            return this.currentToken().tokenKind === SyntaxKind.OpenBraceToken;
-        }
-
-        private isFunctionType(): boolean {
-            var tokenKind = this.currentToken().tokenKind;
-            return tokenKind === SyntaxKind.OpenParenToken || tokenKind === SyntaxKind.LessThanToken;
-        }
-
-        private isConstructorType(): boolean {
-            return this.currentToken().tokenKind === SyntaxKind.NewKeyword;
-        }
-
-        private parsePredefinedType(): ITypeSyntax {
-            // Debug.assert(this.isPredefinedType());
-            return this.eatAnyToken();
-        }
-
-        private isPredefinedType(): boolean {
-            switch (this.currentToken().tokenKind) {
-                case SyntaxKind.AnyKeyword:
-                case SyntaxKind.NumberKeyword:
-                case SyntaxKind.BooleanKeyword:
-                case SyntaxKind.StringKeyword:
-                case SyntaxKind.VoidKeyword:
-                    return true;
-            }
-
-            return false;
         }
 
         private isParameter(): boolean {
