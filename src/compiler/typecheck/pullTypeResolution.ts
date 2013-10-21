@@ -5219,9 +5219,9 @@ module TypeScript {
                     this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
                     return;
 
-                case NodeType.SuperExpression:
-                    this.typeCheckSuperExpression(ast, context);
-                    return;
+                //case NodeType.SuperExpression:
+                //    this.typeCheckSuperExpression(ast, context);
+                //    return;
 
                 case NodeType.InvocationExpression:
                     this.typeCheckInvocationExpression(<InvocationExpression>ast, context);
@@ -6423,34 +6423,29 @@ module TypeScript {
 
         // PULLTODO: Optimization: cache this for a given decl path
         private resolveSuperExpression(ast: AST, context: PullTypeResolutionContext): PullSymbol {
-            var superType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
             var enclosingDecl = this.getEnclosingDeclForAST(ast);
-            if (enclosingDecl) {
-                var declPath = enclosingDecl.getParentPath();
-                superType = this.semanticInfoChain.anyTypeSymbol;
+            var superType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
 
-                var classSymbol = this.getContextualClassSymbolForEnclosingDecl(ast);
+            var classSymbol = this.getContextualClassSymbolForEnclosingDecl(ast);
 
-                if (classSymbol) {
-                    this.resolveDeclaredSymbol(classSymbol, context);
+            if (classSymbol) {
+                this.resolveDeclaredSymbol(classSymbol, context);
 
-                    var parents = classSymbol.getExtendedTypes();
+                var parents = classSymbol.getExtendedTypes();
 
-                    if (parents.length) {
-                        superType = parents[0];
-                    }
+                if (parents.length) {
+                    superType = parents[0];
                 }
             }
-            this.setSymbolForAST(ast, superType, context);
 
             if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckSuperExpression(ast, context);
+                this.typeCheckSuperExpression(ast, context, enclosingDecl);
             }
 
             return superType;
         }
 
-        private typeCheckSuperExpression(ast: AST, context: PullTypeResolutionContext) {
+        private typeCheckSuperExpression(ast: AST, context: PullTypeResolutionContext, enclosingDecl: PullDecl) {
             this.setTypeChecked(ast, context);
 
             this.checkForThisCaptureInArrowFunction(ast);
@@ -6458,8 +6453,6 @@ module TypeScript {
             var isSuperCall = ast.parent.nodeType() === NodeType.InvocationExpression;
             var isSuperPropertyAccess = ast.parent.nodeType() === NodeType.MemberAccessExpression;
             Debug.assert(isSuperCall || isSuperPropertyAccess);
-
-            var enclosingDecl = this.getEnclosingDeclForAST(ast);
 
             if (isSuperPropertyAccess) {
                 // October 11, 2013
@@ -7052,8 +7045,8 @@ module TypeScript {
         }
 
         private resolveBinaryAdditionOperation(binaryExpression: BinaryExpression, context: PullTypeResolutionContext): PullSymbol {
-
-            var lhsType = this.resolveAST(binaryExpression.left, /*isContextuallyTyped*/ false, context).type;
+            var lhsExpression = this.resolveAST(binaryExpression.left, /*isContextuallyTyped*/ false, context);
+            var lhsType = lhsExpression.type;
             var rhsType = this.resolveAST(binaryExpression.right, /*isContextuallyTyped*/ false, context).type;
 
             if (PullHelpers.symbolIsEnum(lhsType)) {
@@ -7092,24 +7085,26 @@ module TypeScript {
                 exprType = this.semanticInfoChain.numberTypeSymbol;
             }
 
-            if (exprType) {
-                if (binaryExpression.nodeType() === NodeType.AddAssignmentExpression) {
-                    // Check if LHS is a valid target
-                    var lhsExpression = this.resolveAST(binaryExpression.left, /*isContextuallyTyped*/ false, context);
-                    if (!this.isReference(binaryExpression.left, lhsExpression)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
-                    }
-
-                    this.checkAssignability(binaryExpression.left, exprType, lhsType, context);
-                }
-            }
-            else {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_expression_types_not_known_to_support_the_addition_operator));
-                exprType = this.semanticInfoChain.anyTypeSymbol;
-            }
-
             if (this.canTypeCheckAST(binaryExpression, context)) {
                 this.setTypeChecked(binaryExpression, context);
+
+                if (exprType) {
+                    if (binaryExpression.nodeType() === NodeType.AddAssignmentExpression) {
+                        // Check if LHS is a valid target
+                        if (!this.isReference(binaryExpression.left, lhsExpression)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
+                        }
+
+                        this.checkAssignability(binaryExpression.left, exprType, lhsType, context);
+                    }
+                }
+                else {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_expression_types_not_known_to_support_the_addition_operator));
+                }
+            }
+
+            if (!exprType) {
+                exprType = this.semanticInfoChain.anyTypeSymbol;
             }
 
             return exprType;
@@ -7185,19 +7180,14 @@ module TypeScript {
             var secondOperandType = this.resolveAST(binex.right, /*isContextuallyTyped:*/ false, context).type;
 
             if (this.canTypeCheckAST(binex, context)) {
-                this.typeCheckLogicalAndExpression(binex, context);
+                this.setTypeChecked(binex, context);
+
+                this.resolveAST(binex.left, /*isContextuallyTyped:*/ false, context);
             }
 
             // September 17, 2013: The && operator permits the operands to be of any type and 
             // produces a result of the same type as the second operand.
             return secondOperandType;
-        }
-
-        private typeCheckLogicalAndExpression(binex: BinaryExpression, context: PullTypeResolutionContext): void {
-            this.setTypeChecked(binex, context);
-
-            this.resolveAST(binex.left, /*isContextuallyTyped:*/ false, context);
-            this.resolveAST(binex.right, /*isContextuallyTyped:*/ false, context);
         }
 
         private computeTypeOfConditionalExpression(leftType: PullTypeSymbol, rightType: PullTypeSymbol, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -7287,9 +7277,7 @@ module TypeScript {
 
             // September 17, 2013: A parenthesized expression (Expression) has the same type and 
             // classification as the Expression itself
-            var result = this.resolveAST(ast.expression, /*isContextuallyTyped*/ false, context);
-
-            return result;
+            return this.resolveAST(ast.expression, /*isContextuallyTyped*/ false, context);
         }
 
         private resolveExpressionStatement(ast: ExpressionStatement, context: PullTypeResolutionContext): PullSymbol {
@@ -8087,11 +8075,11 @@ module TypeScript {
         }
 
         private resolveCastExpression(assertionExpression: CastExpression, context: PullTypeResolutionContext): PullTypeSymbol {
-            if (this.canTypeCheckAST(assertionExpression, context)) {
-                this.typeCheckCastExpression(assertionExpression, context);
-            }
-
             var typeAssertionType = this.resolveAST(assertionExpression.castType, /*isContextuallyTyped:*/ false, context).type;
+
+            if (this.canTypeCheckAST(assertionExpression, context)) {
+                this.typeCheckCastExpression(assertionExpression, context, typeAssertionType);
+            }
 
             // October 11, 2013: 
             // In a type assertion expression of the form < T > e, e is contextually typed (section 
@@ -8102,7 +8090,7 @@ module TypeScript {
             return typeAssertionType;
         }
 
-        private typeCheckCastExpression(assertionExpression: CastExpression, context: PullTypeResolutionContext): void {
+        private typeCheckCastExpression(assertionExpression: CastExpression, context: PullTypeResolutionContext, typeAssertionType: PullTypeSymbol): void {
             this.setTypeChecked(assertionExpression, context);
 
             // October 11, 2013: 
@@ -8111,8 +8099,6 @@ module TypeScript {
             // otherwise a compile - time error occurs.
             //
             // The type of the result is T.
-
-            var typeAssertionType = this.resolveAST(assertionExpression.castType, /*isContextuallyTyped:*/ false, context).type;
 
             context.pushContextualType(typeAssertionType, context.inProvisionalResolution(), null);
             var exprType = this.resolveAST(assertionExpression.operand, /*isContextuallyTyped:*/ true, context).type;
@@ -8158,21 +8144,17 @@ module TypeScript {
 
             // Check if LHS is a valid target
             if (this.canTypeCheckAST(binaryExpression, context)) {
-                this.typeCheckAssignmentExpression(binaryExpression, context, leftExpr, rightType);
+                this.setTypeChecked(binaryExpression, context);
+
+                if (!this.isReference(binaryExpression.left, leftExpr)) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
+                }
+                else {
+                    this.checkAssignability(binaryExpression.left, rightType, leftExpr.type, context);
+                }
             }
 
             return rightType;
-        }
-
-        private typeCheckAssignmentExpression(binaryExpression: BinaryExpression, context: PullTypeResolutionContext, leftExpr: PullSymbol, rightType: PullTypeSymbol): void {
-            this.setTypeChecked(binaryExpression, context);
-
-            if (!this.isReference(binaryExpression.left, leftExpr)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binaryExpression.left, DiagnosticCode.Invalid_left_hand_side_of_assignment_expression));
-            }
-            else {
-                this.checkAssignability(binaryExpression.left, rightType, leftExpr.type, context);
-            }
         }
 
         private getInstanceTypeForAssignment(lhs: AST, type: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -11511,7 +11493,6 @@ module TypeScript {
 
             return false;
         }
-
 
         public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSymbol[], instantiateFunctionTypeParameters = false): PullTypeSymbol {
             // if the type is a primitive type, nothing to do here
