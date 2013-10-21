@@ -204,12 +204,16 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        constructor(public members: AST[], public separatorCount?: number) {
+        constructor(private _fileName: string, public members: AST[], public separatorCount?: number) {
             super();
 
             for (var i = 0, n = members.length; i < n; i++) {
                 members[i].parent = this;
             }
+        }
+
+        public fileName(): string {
+            return this._fileName;
         }
 
         public nodeType(): NodeType {
