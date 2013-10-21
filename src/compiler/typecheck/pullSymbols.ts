@@ -789,8 +789,6 @@ module TypeScript {
 
         public hasVarArgs = false;
 
-        public cachedObjectSpecialization: PullSignatureSymbol = null;
-
         // GTODO
         public hasAGenericParameter = false;
 

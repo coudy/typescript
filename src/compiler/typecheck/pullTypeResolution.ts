@@ -8125,6 +8125,45 @@ module TypeScript {
             return this.getNewErrorTypeSymbol();
         }
 
+        private instantiateSignatureInContext(signatureA: PullSignatureSymbol, signatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
+            var typeReplacementMap: PullTypeSymbol[] = [];
+            var inferredTypeArgs: PullTypeSymbol[];
+            var specializedSignature: PullSignatureSymbol;
+            var typeParameters: PullTypeParameterSymbol[] = signatureA.getTypeParameters();
+            var typeConstraint: PullTypeSymbol = null;
+
+            // create a type argument list based on the parameters of signatureB
+            var signatureAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context);
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeReplacementMap[typeParameters[i].pullSymbolID] = inferredTypeArgs[i];
+            }
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeConstraint = typeParameters[i].getConstraint();
+
+                // test specialization type for assignment compatibility with the constraint
+                if (typeConstraint) {
+                    if (typeConstraint.isTypeParameter()) {
+                        for (var j = 0; j < typeParameters.length && j < inferredTypeArgs.length; j++) {
+                            if (typeParameters[j] == typeConstraint) {
+                                typeConstraint = inferredTypeArgs[j];
+                            }
+                        }
+                    }
+                    else if (typeConstraint.isGeneric()) {
+                        typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
+                    }
+
+                    if (!this.sourceIsAssignableToTarget(inferredTypeArgs[i], typeConstraint, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
+                        return null;
+                    }
+                }
+            }
+
+            return this.instantiateSignature(signatureA, typeReplacementMap, true);
+        }
+
         private resolveCastExpression(assertionExpression: CastExpression, context: PullTypeResolutionContext): PullTypeSymbol {
             var typeAssertionType = this.resolveAST(assertionExpression.castType, /*isContextuallyTyped:*/ false, context).type;
 
@@ -9366,8 +9405,13 @@ module TypeScript {
 
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
 
-            sourceSig = this.instantiateSignatureToObject(sourceSig);
-            targetSig = this.instantiateSignatureToObject(targetSig);
+            if (sourceSig.isGeneric()) {
+                sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context);
+
+                if (!sourceSig) {
+                    return false;
+                }
+            }
 
             var sourceParameters = sourceSig.parameters;
             var targetParameters = targetSig.parameters;
@@ -10058,29 +10102,6 @@ module TypeScript {
             context.instantiatingTypesToAny = prevSpecialize;
 
             return type;
-        }
-
-        public instantiateSignatureToObject(signatureToSpecialize: PullSignatureSymbol): PullSignatureSymbol {
-            if (!signatureToSpecialize.cachedObjectSpecialization) {
-                var typeParameters = signatureToSpecialize.getTypeParameters();
-
-                if (typeParameters.length) {
-                    var typeReplacementMap: PullTypeSymbol[] = [];
-                    var typeArguments: PullTypeSymbol[] = [];
-
-                    for (var i = 0; i < typeParameters.length; i++) {
-                        typeArguments[i] = this.cachedObjectInterfaceType();
-                        typeReplacementMap[typeParameters[i].pullSymbolID] = typeArguments[i];
-                    }
-
-                    signatureToSpecialize.cachedObjectSpecialization = this.instantiateSignature(signatureToSpecialize, typeReplacementMap, true);
-                }
-                else {
-                    signatureToSpecialize.cachedObjectSpecialization = signatureToSpecialize;
-                }
-            }
-
-            return signatureToSpecialize.cachedObjectSpecialization;
         }
 
         public static globalTypeCheckPhase = 0;
