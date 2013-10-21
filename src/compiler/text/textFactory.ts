@@ -158,7 +158,7 @@ module TypeScript.TextFactory {
         }
 
         public lineMap(): LineMap {
-            return new LineMap(this.lineStarts(), this.length());
+            return new LineMap(() => this.lineStarts(), this.length());
         }
 
         private lineStarts(): number[] {
@@ -513,8 +513,7 @@ module TypeScript.SimpleText {
         }
 
         public lineMap(): LineMap {
-            var lineStartPositions = this.scriptSnapshot.getLineStartPositions();
-            return new LineMap(lineStartPositions, this.length());
+            return new LineMap(() => this.scriptSnapshot.getLineStartPositions(), this.length());
         }
     }
 
