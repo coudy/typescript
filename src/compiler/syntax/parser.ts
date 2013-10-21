@@ -1616,12 +1616,13 @@ module TypeScript.Parser {
                 return true;
             }
 
-            return this.isImportDeclaration() ||
+            var modifierCount = this.modifierCount();
+            return this.isImportDeclaration(modifierCount) ||
                    this.isExportAssignment() ||
-                   this.isModuleDeclaration() ||
-                   this.isInterfaceDeclaration() ||
-                   this.isClassDeclaration() ||
-                   this.isEnumDeclaration() ||
+                   this.isModuleDeclaration(modifierCount) ||
+                   this.isInterfaceDeclaration(modifierCount) ||
+                   this.isClassDeclaration(modifierCount) ||
+                   this.isEnumDeclaration(modifierCount) ||
                    this.isStatement(inErrorRecovery);
         }
         
@@ -1630,22 +1631,23 @@ module TypeScript.Parser {
                 return <IModuleElementSyntax>this.eatNode();
             }
 
-            if (this.isImportDeclaration()) {
+            var modifierCount = this.modifierCount();
+            if (this.isImportDeclaration(modifierCount)) {
                 return this.parseImportDeclaration();
             }
             else if (this.isExportAssignment()) {
                 return this.parseExportAssignment();
             }
-            else if (this.isModuleDeclaration()) {
+            else if (this.isModuleDeclaration(modifierCount)) {
                 return this.parseModuleDeclaration();
             }
-            else if (this.isInterfaceDeclaration()) {
+            else if (this.isInterfaceDeclaration(modifierCount)) {
                 return this.parseInterfaceDeclaration();
             }
-            else if (this.isClassDeclaration()) {
+            else if (this.isClassDeclaration(modifierCount)) {
                 return this.parseClassDeclaration();
             }
-            else if (this.isEnumDeclaration()) {
+            else if (this.isEnumDeclaration(modifierCount)) {
                 return this.parseEnumDeclaration();
             }
             else if (this.isStatement(inErrorRecovery)) {
@@ -1656,13 +1658,11 @@ module TypeScript.Parser {
             }
         }
 
-        private isImportDeclaration(): boolean {
-            var index = this.modifierCount();
-
+        private isImportDeclaration(modifierCount: number): boolean {
             // If we have at least one modifier, and we see 'import', then consider this an import
             // declaration.
-            if (index > 0 &&
-                this.peekToken(index).tokenKind === SyntaxKind.ImportKeyword) {
+            if (modifierCount > 0 &&
+                this.peekToken(modifierCount).tokenKind === SyntaxKind.ImportKeyword) {
                 return true;
             }
 
@@ -1881,13 +1881,11 @@ module TypeScript.Parser {
             return current;
         }
 
-        private isEnumDeclaration(): boolean {
-            var index = this.modifierCount();
-
+        private isEnumDeclaration(modifierCount: number): boolean {
             // If we have at least one modifier, and we see 'enum', then consider this an enum
             // declaration.
-            if (index > 0 &&
-                this.peekToken(index).tokenKind === SyntaxKind.EnumKeyword) {
+            if (modifierCount > 0 &&
+                this.peekToken(modifierCount).tokenKind === SyntaxKind.EnumKeyword) {
                 return true;
             }
 
@@ -1991,13 +1989,11 @@ module TypeScript.Parser {
             return result;
         }
 
-        private isClassDeclaration(): boolean {
-            var index = this.modifierCount();
-
+        private isClassDeclaration(modifierCount: number): boolean {
             // If we have at least one modifier, and we see 'class', then consider this a class
             // declaration.
-            if (index > 0 &&
-                this.peekToken(index).tokenKind === SyntaxKind.ClassKeyword) {
+            if (modifierCount > 0 &&
+                this.peekToken(modifierCount).tokenKind === SyntaxKind.ClassKeyword) {
                 return true;
             }
 
@@ -2402,13 +2398,11 @@ module TypeScript.Parser {
             return this.factory.functionDeclaration(modifiers, functionKeyword, identifier, callSignature, block, semicolonToken);
         }
 
-        private isModuleDeclaration(): boolean {
-            var index = this.modifierCount();
-
+        private isModuleDeclaration(modifierCount: number): boolean {
             // If we have at least one modifier, and we see 'module', then consider this a module
             // declaration.
-            if (index > 0 &&
-                this.peekToken(index).tokenKind === SyntaxKind.ModuleKeyword) {
+            if (modifierCount > 0 &&
+                this.peekToken(modifierCount).tokenKind === SyntaxKind.ModuleKeyword) {
                 return true;
             }
 
@@ -2454,13 +2448,11 @@ module TypeScript.Parser {
                 openBraceToken, moduleElements, closeBraceToken);
         }
 
-        private isInterfaceDeclaration(): boolean {
-            var index = this.modifierCount();
-
+        private isInterfaceDeclaration(modifierCount: number): boolean {
             // If we have at least one modifier, and we see 'interface', then consider this an interface
             // declaration.
-            if (index > 0 &&
-                this.peekToken(index).tokenKind === SyntaxKind.InterfaceKeyword) {
+            if (modifierCount > 0 &&
+                this.peekToken(modifierCount).tokenKind === SyntaxKind.InterfaceKeyword) {
                     return true;
             }
 
