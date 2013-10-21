@@ -1908,7 +1908,7 @@ module TypeScript {
                     var initTypeSymbol = this.getInstanceTypeForAssignment(argDeclAST, initExprSymbol.type, context);
                     if (!contextualType) {
                         // Set the type to the inferred initializer type
-                        context.setTypeInContext(paramSymbol, this.widenType(argDeclAST.init, initTypeSymbol, context));
+                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol, argDeclAST.init, context));
                         isImplicitAny = initTypeSymbol !== paramSymbol.type;
                     }
                     else {
@@ -2506,7 +2506,7 @@ module TypeScript {
             }
             else {
                 var initTypeSymbol = initExprSymbol.type;
-                var widenedInitTypeSymbol = this.widenType(init, initTypeSymbol, context);
+                var widenedInitTypeSymbol = this.widenType(initTypeSymbol, init, context);
 
                 // Don't reset the type if we already have one from the type expression
                 if (!hasTypeExpr) {
@@ -2916,7 +2916,7 @@ module TypeScript {
 
                     if (returnType) {
                         var previousReturnType = returnType;
-                        var newReturnType = this.widenType(returnExpression, returnType, context);
+                        var newReturnType = this.widenType(returnType, returnExpression, context);
                         signature.returnType = newReturnType;
 
                         if (!ArrayUtilities.contains(returnExpressionSymbols, bestCommonReturnType)) {
@@ -6710,7 +6710,7 @@ module TypeScript {
                 }
 
                 var propertySymbol = this.resolveAST(propertyAssignment, contextualMemberType != null, pullTypeContext);
-                var memberExpr = this.widenType(propertyAssignment, propertySymbol.type, pullTypeContext);
+                var memberExpr = this.widenType(propertySymbol.type, propertyAssignment, pullTypeContext);
 
                 if (memberExpr.type) {
                     if (memberExpr.type.isGeneric()) {
@@ -6861,7 +6861,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
                 };
                 var decl = objectLiteralSymbol.getDeclarations()[0];
-                var indexerReturnType = this.widenType(null, this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context), context);
+                var indexerReturnType = this.widenType(this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context));
                 if (indexerReturnType == contextualIndexSignature.returnType) {
                     objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
                 }
@@ -8320,7 +8320,7 @@ module TypeScript {
             return null;
         }
 
-        public widenType(ast: AST, type: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
+        public widenType(type: PullTypeSymbol, ast?: AST, context?: PullTypeResolutionContext): PullTypeSymbol {
             if (type === this.semanticInfoChain.undefinedTypeSymbol ||
                 type === this.semanticInfoChain.nullTypeSymbol ||
                 type.isError()) {
@@ -8329,7 +8329,7 @@ module TypeScript {
             }
 
             if (type.isArrayNamedTypeReference()) {
-                var elementType = this.widenType(null, type.getElementType(), context);
+                var elementType = this.widenType(type.getElementType(), null, context);
 
                 if (this.compilationSettings.noImplicitAny() && ast && ast.nodeType() === NodeType.ArrayLiteralExpression) {
                     // If we widened from non-'any' type to 'any', then report error.
@@ -8513,6 +8513,15 @@ module TypeScript {
                     // catch the mutually recursive or cached cases
                     if (t1MemberType && t2MemberType && (this.identicalCache.valueAt(t1MemberType.pullSymbolID, t2MemberType.pullSymbolID) != undefined)) {
                         continue;
+                    }
+
+                    var t1PropGenerativeTypeKind = t1MemberType.getGenerativeTypeClassification(t1);
+                    var t2PropGenerativeTypeKind = t2MemberType.getGenerativeTypeClassification(t2);
+
+                    if (t1PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                        t2PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+
+                            return this.infinitelyExpandingPropertyTypesAreIdentical(t1, t2, t1MemberSymbol, t2MemberSymbol);
                     }
 
                     if (!this.typesAreIdentical(t1MemberType, t2MemberType)) {
@@ -9073,6 +9082,117 @@ module TypeScript {
             return true;
         }
 
+        private infinitelyExpandingPropertyTypesAreEquivalent(
+            source: PullTypeSymbol,
+            target: PullTypeSymbol,
+            sourceProp: PullSymbol,
+            targetProp: PullSymbol,
+            assignableTo: boolean,
+            comparisonCache: IBitMatrix,
+            context: PullTypeResolutionContext,
+            comparisonInfo: TypeComparisonInfo,
+            isComparingInstantiatedSignatures: boolean): boolean {
+
+            var sourcePropType = sourceProp.type;
+            var targetPropType = targetProp.type;
+            var widenedTargetPropType = this.widenType(targetPropType);
+            var widenedSourcePropType = this.widenType(sourcePropType);
+
+            if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
+                (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
+                var targetDecl = targetProp.getDeclarations()[0];
+                var sourceDecl = sourceProp.getDeclarations()[0];
+
+                var sourcePropTypeArguments = sourcePropType.getTypeArguments();
+                var targetPropTypeArguments = targetPropType.getTypeArguments();
+
+                if (!sourcePropTypeArguments && !targetPropTypeArguments) {
+                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+                    return true;
+                }
+
+                if (!targetDecl.isEqual(sourceDecl)) {
+                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                    if (comparisonInfo) {
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                    }
+                    return false;
+                }
+
+                if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
+                    sourcePropTypeArguments.length != targetPropTypeArguments.length) {
+                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                    if (comparisonInfo) {
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                    }
+                    return false;
+                }
+
+                for (var i = 0; i < sourcePropTypeArguments.length; i++) {
+                    if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
+                        comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                        if (comparisonInfo) {
+                            comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                                [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        }
+                        return false;
+                    }
+                }
+            }
+
+            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+            return true;
+        }
+
+        private infinitelyExpandingPropertyTypesAreIdentical(
+            source: PullTypeSymbol,
+            target: PullTypeSymbol,
+            sourceProp: PullSymbol,
+            targetProp: PullSymbol): boolean {
+
+            var sourcePropType = sourceProp.type;
+            var targetPropType = targetProp.type;
+            var widenedTargetPropType = this.widenType(targetPropType);
+            var widenedSourcePropType = this.widenType(sourcePropType);
+
+            if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
+                (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
+                var targetDecl = targetProp.getDeclarations()[0];
+                var sourceDecl = sourceProp.getDeclarations()[0];
+
+                var sourcePropTypeArguments = sourcePropType.getTypeArguments();
+                var targetPropTypeArguments = targetPropType.getTypeArguments();
+
+                if (!sourcePropTypeArguments && !targetPropTypeArguments) {
+                    this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+                    return true;
+                }
+
+                if (!targetDecl.isEqual(sourceDecl)) {
+                    this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                    return false;
+                }
+
+                if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
+                    sourcePropTypeArguments.length != targetPropTypeArguments.length) {
+                    this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                    return false;
+                }
+
+                for (var i = 0; i < sourcePropTypeArguments.length; i++) {
+                    if (!this.typesAreIdentical(sourcePropTypeArguments[i], targetPropTypeArguments[i])) {
+                        this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                        return false;
+                    }
+                }
+            }
+
+            this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+            return true;
+        }
+
         private sourcePropertyIsRelatableToTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
             sourceProp: PullSymbol, targetProp: PullSymbol, assignableTo: boolean, comparisonCache: IBitMatrix,
             context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
@@ -9135,58 +9255,11 @@ module TypeScript {
             if (!comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID)) {
                 var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
                 var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
-                var widenedTargetPropType = this.widenType(null, targetPropType, context);
-                var widenedSourcePropType = this.widenType(null, sourcePropType, context);
 
                 if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
                     targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
 
-                    if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
-                        (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
-                        var targetDecl = targetProp.getDeclarations()[0];
-                        var sourceDecl = sourceProp.getDeclarations()[0];
-
-                        var sourcePropTypeArguments = sourcePropType.getTypeArguments();
-                        var targetPropTypeArguments = targetPropType.getTypeArguments();
-
-                        if (!sourcePropTypeArguments && !targetPropTypeArguments) {
-                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
-                            return true;
-                        }
-
-                        if (!targetDecl.isEqual(sourceDecl)) {
-                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
-                            if (comparisonInfo) {
-                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                                    [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
-                            }
-                            return false;
-                        }
-
-                        if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
-                            sourcePropTypeArguments.length != targetPropTypeArguments.length) {
-                            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
-                            if (comparisonInfo) {
-                                comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                                    [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
-                            }
-                            return false;
-                        }
-
-                        for (var i = 0; i < sourcePropTypeArguments.length; i++) {
-                            if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
-                                comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
-                                if (comparisonInfo) {
-                                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                                        [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
-                                }
-                                return false;
-                            }
-                        }
-                    }
-
-                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
-                    return true;
+                    return this.infinitelyExpandingPropertyTypesAreEquivalent(source, target, sourceProp, targetProp, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures);
                 }
             }
             else {
@@ -9405,13 +9478,7 @@ module TypeScript {
 
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
 
-            if (sourceSig.isGeneric()) {
-                sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context);
-
-                if (!sourceSig) {
-                    return false;
-                }
-            }
+            comparisonCache.setValueAt(sourceSig.pullSymbolID, targetSig.pullSymbolID, false);
 
             var sourceParameters = sourceSig.parameters;
             var targetParameters = targetSig.parameters;
@@ -9429,6 +9496,30 @@ module TypeScript {
                     comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Call_signature_expects_0_or_fewer_parameters, [targetVarArgCount]));
                 }
                 return false;
+            }
+
+            if (sourceSig.isGeneric()) {
+
+                //var rootSourceSig = sourceSig.getRootSymbol();
+                //var rootTargetSig = targetSig.getRootSymbol();
+
+                //if (comparisonCache.valueAt(rootSourceSig.pullSymbolID, rootTargetSig.pullSymbolID) != undefined) {
+                //    return true;
+                //}
+
+                //comparisonCache.setValueAt(rootSourceSig.pullSymbolID, rootTargetSig.pullSymbolID, false);
+
+                sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context);
+
+                //comparisonCache.setValueAt(sourceSig.pullSymbolID, targetSig.pullSymbolID, false);
+
+                if (!sourceSig) {
+                    return false;
+                }
+                else {
+                    // fix up the source parameter list
+                    sourceParameters = sourceSig.parameters;
+                }
             }
 
             var sourceReturnType = sourceSig.returnType;
@@ -9918,14 +10009,12 @@ module TypeScript {
             var parameterDeclarations = parameterType.getDeclarations();
             var expressionDeclarations = expressionType.getDeclarations();
 
-            var anyExpressionType = this.instantiateTypeToAny(expressionType, context);
-            var anyParameterType = this.instantiateTypeToAny(parameterType, context);
             if (!parameterType.isArrayNamedTypeReference() &&
                 parameterDeclarations.length &&
                 expressionDeclarations.length &&
                 !(parameterType.isTypeParameter() || expressionType.isTypeParameter()) &&
-                (parameterDeclarations[0].isEqual(expressionDeclarations[0]) ||
-                (expressionType.isGeneric() && parameterType.isGeneric() && this.sourceIsSubtypeOfTarget(anyExpressionType, anyParameterType, context, null))) &&
+                (parameterDeclarations[0].isEqual(expressionDeclarations[0]) || (expressionType.isGeneric() && parameterType.isGeneric() &&
+                this.sourceIsSubtypeOfTarget(this.instantiateTypeToAny(expressionType, context), this.instantiateTypeToAny(parameterType, context), context, null))) &&
                 expressionType.isGeneric()) {
                 var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
                 var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
@@ -9945,10 +10034,6 @@ module TypeScript {
                         }
                     }
                 }
-            }
-
-            if (!this.sourceIsAssignableToTarget(anyExpressionType, anyParameterType, context)) {
-                return;
             }
 
             if (expressionType.isArrayNamedTypeReference() && parameterType.isArrayNamedTypeReference()) {
@@ -9988,7 +10073,6 @@ module TypeScript {
 
             var parameterTypeMembers = parameterType.getMembers();
             var parameterSignatures: PullSignatureSymbol[];
-            var parameterSignature: PullSignatureSymbol;
 
             var objectMember: PullSymbol;
             var objectSignatures: PullSignatureSymbol[];
@@ -10001,14 +10085,22 @@ module TypeScript {
             var objectTypeArguments = objectType.getTypeArguments();
             var parameterTypeParameters = parameterType.getTypeParameters();
 
-            if (objectTypeArguments && (objectTypeArguments.length === parameterTypeParameters.length)) {
-                for (var i = 0; i < objectTypeArguments.length; i++) {
-                    // PULLREVIEW: This may lead to duplicate inferences for type argument parameters, if the two are the same
-                    // (which could occur via mutually recursive method calls within a generic class declaration)
-                    argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i], shouldFix);
+                if (objectTypeArguments) {
+                    if (objectTypeArguments.length === parameterTypeParameters.length) {
+                        for (var i = 0; i < objectTypeArguments.length; i++) {
+                            // PULLREVIEW: This may lead to duplicate inferences for type argument parameters, if the two are the same
+                            // (which could occur via mutually recursive method calls within a generic class declaration)
+                            argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i], shouldFix);
+                        }
+                    }
+                    else if (parameterType == this.semanticInfoChain.anyTypeSymbol) {
+                        for (var i = 0; i < objectTypeArguments.length; i++) {
+                            this.relateTypeToTypeParameters(parameterType, objectTypeArguments[i], shouldFix, argContext, context);
+                        }
+                    }
                 }
-            }
 
+            // - If M is a property and S contains a property N with the same name as M, inferences are made from the type of N to the type of M.
             for (var i = 0; i < parameterTypeMembers.length; i++) {
                 objectMember = this.getMemberSymbol(parameterTypeMembers[i].name, PullElementKind.SomeValue, objectType);
 
@@ -10029,35 +10121,55 @@ module TypeScript {
             parameterSignatures = parameterType.getCallSignatures();
             objectSignatures = objectType.getCallSignatures();
 
-            for (var i = 0; i < parameterSignatures.length; i++) {
-                parameterSignature = parameterSignatures[i];
+            // if: 
+            //  - M is a call signature
+            //  - no other call signatures exist in T
+            //  - exactly one call signature N exists in S
+            //  - N is non - generic, and
+            //  - the number of required parameters in N is greater than or equal to that of M,
+            // then inferences are made from parameter types in N to parameter types in the same position in M, 
+            // and from the return type of N to the return type of M.
+            if ((parameterSignatures.length == 1) &&
+                (objectSignatures.length == 1) &&
+                !objectSignatures[0].isGeneric() &&
+                (parameterSignatures[0].nonOptionalParamCount >= objectSignatures[0].nonOptionalParamCount)) {
 
-                for (var j = 0; j < objectSignatures.length; j++) {
-                    this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, context);
-                }
+                this.relateFunctionSignatureToTypeParameters(objectSignatures[0], parameterSignatures[0], argContext, context);
+
             }
 
             parameterSignatures = parameterType.getConstructSignatures();
             objectSignatures = objectType.getConstructSignatures();
 
-            for (var i = 0; i < parameterSignatures.length; i++) {
-                parameterSignature = parameterSignatures[i];
+            // if: 
+            //  - M is a call signature
+            //  - no other call signatures exist in T
+            //  - exactly one call signature N exists in S
+            //  - N is non - generic, and
+            //  - the number of required parameters in N is greater than or equal to that of M,
+            // then inferences are made from parameter types in N to parameter types in the same position in M, 
+            // and from the return type of N to the return type of M.
+            if ((parameterSignatures.length == 1) &&
+                (objectSignatures.length == 1) &&
+                !objectSignatures[0].isGeneric() &&
+                (parameterSignatures[0].nonOptionalParamCount >= objectSignatures[0].nonOptionalParamCount)) {
 
-                for (var j = 0; j < objectSignatures.length; j++) {
-                    this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, context);
-                }
+                this.relateFunctionSignatureToTypeParameters(objectSignatures[0], parameterSignatures[0], argContext, context);
+
             }
 
-            parameterSignatures = parameterType.getIndexSignatures();
-            objectSignatures = objectType.getIndexSignatures();
+            var parameterIndexSignatures = this.getBothKindsOfIndexSignatures(parameterType, context);
+            var objectIndexSignatures = this.getBothKindsOfIndexSignatures(objectType, context);
 
-            for (var i = 0; i < parameterSignatures.length; i++) {
-                parameterSignature = parameterSignatures[i];
-
-                for (var j = 0; j < objectSignatures.length; j++) {
-                    this.relateFunctionSignatureToTypeParameters(objectSignatures[j], parameterSignature, argContext, context);
-                }
+            // - If M is a string index signature and S contains a string index signature N, inferences are made from the type of N to the type of M.
+            // - If M is a numeric index signature and S contains a numeric index signature N, inferences are made from the type of N to the type of M.
+            if (parameterIndexSignatures.stringSignature && objectIndexSignatures.stringSignature) {
+                this.relateFunctionSignatureToTypeParameters(objectIndexSignatures.stringSignature, parameterIndexSignatures.stringSignature, argContext, context);
             }
+            if (parameterIndexSignatures.numericSignature && objectIndexSignatures.numericSignature) {
+                this.relateFunctionSignatureToTypeParameters(objectIndexSignatures.numericSignature, parameterIndexSignatures.numericSignature, argContext, context);
+            }
+
         }
 
         private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,

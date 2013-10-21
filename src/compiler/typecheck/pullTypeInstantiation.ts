@@ -409,8 +409,7 @@ module TypeScript {
                     while (i < typeReferenceTypeArguments.length) {
                         referenceTypeArgument = <PullTypeSymbol>typeReferenceTypeArguments[i].getRootSymbol();
 
-                        if (referenceTypeArgument.isGeneric() &&
-                            referenceTypeArgument.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
+                        if (referenceTypeArgument.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
                             break;
                         }
 
