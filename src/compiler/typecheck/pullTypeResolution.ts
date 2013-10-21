@@ -3892,8 +3892,9 @@ module TypeScript {
                 this.setTypeChecked(list, context);
 
                 // Visit members   
-                for (var i = 0; i < list.members.length; i++) {
-                    this.resolveAST(list.members[i], /*isContextuallyTyped*/ false, context);
+                var members = list.members;
+                for (var i = 0, n = members.length; i < n; i++) {
+                    this.resolveAST(members[i], /*isContextuallyTyped*/ false, context);
                 }
             }
 
@@ -4340,9 +4341,9 @@ module TypeScript {
         private typeCheckIfStatement(ast: IfStatement, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST(ast.condition, false, context);
-            this.resolveAST(ast.statement, false, context);
-            this.resolveAST(ast.elseClause, false, context);
+            this.resolveAST(ast.condition, /*isContextuallyTyped:*/ false, context);
+            this.resolveAST(ast.statement, /*isContextuallyTyped:*/ false, context);
+            this.resolveAST(ast.elseClause, /*isContextuallyTyped:*/ false, context);
         }
 
         private resolveElseClause(ast: ElseClause, context: PullTypeResolutionContext): PullSymbol {
@@ -4574,33 +4575,32 @@ module TypeScript {
         private typeCheckSwitchStatement(ast: SwitchStatement, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            var switchStatement = <SwitchStatement>ast;
+            var expressionType = this.resolveAST(ast.expression, false, context).type;
 
-            var expressionType = this.resolveAST(switchStatement.expression, false, context).type;
-            this.resolveAST(switchStatement.caseList, false, context);
+            for (var i = 0, n = ast.caseList.members.length; i < n; i++) {
+                var switchClause = ast.caseList.members[i];
+                if (switchClause.nodeType() === NodeType.CaseSwitchClause) {
+                    var caseSwitchClause = <CaseSwitchClause>switchClause;
 
-            if (switchStatement.caseList && switchStatement.caseList.members) {
-                for (var i = 0, n = switchStatement.caseList.members.length; i < n; i++) {
-                    var switchClause = switchStatement.caseList.members[i];
-                    if (switchClause.nodeType() === NodeType.CaseSwitchClause) {
-                        var caseSwitchClause = <CaseSwitchClause>switchClause;
-                        if (caseSwitchClause.expr) {
-                            var caseClauseExpressionType = this.resolveAST(caseSwitchClause.expr, /*isContextuallyTyped:*/ false, context).type;
+                    var caseClauseExpressionType = this.resolveAST(caseSwitchClause.expr, /*isContextuallyTyped:*/ false, context).type;
+                    this.resolveAST(caseSwitchClause.body, /*isContextuallyTyped:*/ false, context);
 
-                            var comparisonInfo = new TypeComparisonInfo();
-                            if (!this.sourceIsAssignableToTarget(expressionType, caseClauseExpressionType, context, comparisonInfo) &&
-                                !this.sourceIsAssignableToTarget(caseClauseExpressionType, expressionType, context, comparisonInfo)) {
-                                if (comparisonInfo.message) {
-                                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(caseSwitchClause.expr,
-                                        DiagnosticCode.Cannot_convert_0_to_1_NL_2, [caseClauseExpressionType.toString(), expressionType.toString(), comparisonInfo.message]));
-                                }
-                                else {
-                                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(caseSwitchClause.expr,
-                                        DiagnosticCode.Cannot_convert_0_to_1, [caseClauseExpressionType.toString(), expressionType.toString()]));
-                                }
-                            }
+                    var comparisonInfo = new TypeComparisonInfo();
+                    if (!this.sourceIsAssignableToTarget(expressionType, caseClauseExpressionType, context, comparisonInfo) &&
+                        !this.sourceIsAssignableToTarget(caseClauseExpressionType, expressionType, context, comparisonInfo)) {
+                        if (comparisonInfo.message) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(caseSwitchClause.expr,
+                                DiagnosticCode.Cannot_convert_0_to_1_NL_2, [caseClauseExpressionType.toString(), expressionType.toString(), comparisonInfo.message]));
+                        }
+                        else {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(caseSwitchClause.expr,
+                                DiagnosticCode.Cannot_convert_0_to_1, [caseClauseExpressionType.toString(), expressionType.toString()]));
                         }
                     }
+                }
+                else {
+                    var defaultSwitchClause = <DefaultSwitchClause>switchClause;
+                    this.resolveAST(defaultSwitchClause.body, /*isContextuallyTyped:*/ false, context);
                 }
             }
         }
