@@ -3183,15 +3183,11 @@ module TypeScript {
         }
 
         private typeCheckMemberFunctionDeclaration(
-            funcDeclAST: AST,
-            flags: FunctionFlags,
-            name: Identifier,
-            typeParameters: ASTList,
-            parameters: ASTList,
-            returnTypeAnnotation: TypeReference,
-            block: Block,
+            memberFuncDecl: MemberFunctionDeclaration,
             context: PullTypeResolutionContext) {
-                this.typeCheckFunctionDeclaration(funcDeclAST, flags, name, typeParameters, parameters, returnTypeAnnotation, block, context);
+            this.typeCheckFunctionDeclaration(memberFuncDecl, memberFuncDecl.getFunctionFlags(), memberFuncDecl.name,
+                memberFuncDecl.typeParameters, memberFuncDecl.parameterList, memberFuncDecl.returnTypeAnnotation,
+                memberFuncDecl.block, context);
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
@@ -5236,11 +5232,7 @@ module TypeScript {
 
                 case NodeType.MemberFunctionDeclaration:
                     {
-                        var memberFuncDecl = <MemberFunctionDeclaration>ast;
-                        this.typeCheckMemberFunctionDeclaration(
-                            memberFuncDecl, memberFuncDecl.getFunctionFlags(), memberFuncDecl.name,
-                            memberFuncDecl.typeParameters, memberFuncDecl.parameterList,
-                            memberFuncDecl.returnTypeAnnotation, memberFuncDecl.block, context);
+                        this.typeCheckMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
                         return;
                     }
 
@@ -5270,7 +5262,7 @@ module TypeScript {
                     return;
 
                 default:
-                    Debug.assert(false, "Implement typeCheck clause if symbol is cached");
+                    Debug.assert(false, "Implement typeCheck when symbol is set for the ast as part of resolution");
             }
         }
 
