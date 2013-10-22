@@ -7427,12 +7427,6 @@ module TypeScript {
             var targetSymbol = this.resolveAST(callEx.target, /*isContextuallyTyped:*/ false, context);
             var targetAST = this.getCallTargetErrorSpanAST(callEx);
 
-            // don't be fooled
-            //if (target === this.semanticInfoChain.anyTypeSymbol) {
-            //    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid call expression", enclosingDecl);
-            //    return this.getNewErrorTypeSymbol(diagnostic); 
-            //}
-
             var targetTypeSymbol = targetSymbol.type;
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 // Note: targetType is either any or an error.
@@ -7488,6 +7482,7 @@ module TypeScript {
             var couldNotFindGenericOverload = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
+            var typeArgumentCountDiagnostic: Diagnostic = null;
             var diagnostics: Diagnostic[] = [];
 
             // resolve the type arguments, specializing if necessary
@@ -7526,8 +7521,22 @@ module TypeScript {
 
                 if (signatures[i].isGeneric() && typeParameters.length) {
 
-                    if (typeArgs && typeArgs.length == typeParameters.length) {
-                        inferredTypeArgs = typeArgs;
+                    if (typeArgs) {
+                        // October 16, 2013: Section 4.12.2
+                        // A generic signature is a candidate in a function call with type arguments
+                        // arguments when:
+                        // The signature has the same number of type parameters as were supplied in
+                        // the type argument list
+                        // ...
+                        if (typeArgs.length == typeParameters.length) {
+                            inferredTypeArgs = typeArgs;
+                        }
+                        else {
+                            typeArgumentCountDiagnostic = typeArgumentCountDiagnostic ||
+                            this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead,
+                                [typeParameters.length, typeArgs.length]);
+                            continue;
+                        }
                     }
                     else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
                         inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), context);
@@ -7625,11 +7634,6 @@ module TypeScript {
 
             signatures = resolvedSignatures;
 
-            // the target should be a function
-            //if (!targetTypeSymbol.isType()) {
-            //    this.log("Attempting to call a non-function symbol");
-            //    return this.semanticInfoChain.anyTypeSymbol;
-            //}
             var errorCondition: PullSymbol = null;
 
             if (!signatures.length) {
@@ -7653,19 +7657,19 @@ module TypeScript {
 
                     this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Cannot_invoke_an_expression_whose_type_lacks_a_call_signature),
                         additionalResults, context);
-                    errorCondition = this.getNewErrorTypeSymbol();
+                }
+                else if (constraintDiagnostic) {
+                    this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
+                }
+                else if (typeArgumentCountDiagnostic) {
+                    this.postOverloadResolutionDiagnostics(typeArgumentCountDiagnostic, additionalResults, context);
                 }
                 else {
                     this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Could_not_select_overload_for_call_expression),
                         additionalResults, context);
-                    errorCondition = this.getNewErrorTypeSymbol();
                 }
 
-                if (constraintDiagnostic) {
-                    this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
-                }
-
-                return errorCondition;
+                return this.getNewErrorTypeSymbol();
             }
 
             var signature = this.resolveOverloads(callEx, signatures, callEx.typeArguments != null, context, diagnostics);
@@ -7847,6 +7851,7 @@ module TypeScript {
             var usedCallSignaturesInstead = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
+            var typeArgumentCountDiagnostic: Diagnostic = null;
             var diagnostics: Diagnostic[] = [];
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
@@ -7898,8 +7903,22 @@ module TypeScript {
                         if (constructSignatures[i].isGeneric()) {
                             typeParameters = constructSignatures[i].getTypeParameters();
 
-                            if (typeArgs && typeParameters && typeArgs.length == typeParameters.length) {
-                                inferredTypeArgs = typeArgs;
+                            if (typeArgs) {
+                                // October 16, 2013: Section 4.12.2
+                                // A generic signature is a candidate in a function call with type arguments
+                                // arguments when:
+                                // The signature has the same number of type parameters as were supplied in
+                                // the type argument list
+                                // ...
+                                if (typeArgs.length == typeParameters.length) {
+                                    inferredTypeArgs = typeArgs;
+                                }
+                                else {
+                                    typeArgumentCountDiagnostic = typeArgumentCountDiagnostic ||
+                                        this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead,
+                                            [typeParameters.length, typeArgs.length]);
+                                    continue;
+                                }
                             }
                             else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), context);
@@ -7994,12 +8013,6 @@ module TypeScript {
                     constructSignatures = resolvedSignatures;
                 }
 
-                // the target should be a function
-                //if (!targetSymbol.isType()) {
-                //    this.log("Attempting to call a non-function symbol");
-                //    return this.semanticInfoChain.anyTypeSymbol;
-                //}
-
                 var signature = this.resolveOverloads(callEx, constructSignatures, callEx.typeArguments != null, context, diagnostics);
 
                 // Store any additional resolution results if needed before we return
@@ -8012,6 +8025,9 @@ module TypeScript {
 
                     if (constraintDiagnostic) {
                         this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
+                    }
+                    else if (typeArgumentCountDiagnostic) {
+                        this.postOverloadResolutionDiagnostics(typeArgumentCountDiagnostic, additionalResults, context);
                     }
 
                     return this.getNewErrorTypeSymbol();
@@ -8039,11 +8055,6 @@ module TypeScript {
 
                     // First, pick the first signature as the candidate signature
                     signature = constructSignatures[0];
-                }
-
-                if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length != signature.getTypeParameters().length)) {
-                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]),
-                        additionalResults, context);
                 }
 
                 returnType = signature.returnType;
