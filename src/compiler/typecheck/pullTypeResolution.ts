@@ -5365,6 +5365,17 @@ module TypeScript {
             return nameSymbol;
         }
 
+        private isSomeFunctionScope(declPath: PullDecl[]) {
+            for (var i = declPath.length - 1; i >= 0; i--) {
+                var decl = declPath[i];
+                if (decl.kind & PullElementKind.SomeFunction) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
             if (nameAST.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -5385,7 +5396,7 @@ module TypeScript {
                 var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
             }
 
-            if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction)) {
+            if (!nameSymbol && id === "arguments" && this.isSomeFunctionScope(declPath)) {
                 nameSymbol = this.cachedFunctionArgumentsSymbol();
 
                 this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), context);
