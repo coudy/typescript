@@ -149,11 +149,11 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap[ast.astID] = symbol;
+            this.astSymbolMap[ast.astID()] = symbol;
         }
 
         public getSymbolForAST(ast: AST): PullSymbol {
-            return this.astSymbolMap[ast.astID];
+            return this.astSymbolMap[ast.astID()];
         }
     }
 

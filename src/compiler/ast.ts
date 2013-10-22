@@ -90,13 +90,17 @@ module TypeScript {
 
         public typeCheckPhase = -1;
 
-        public astID: number = astID++;
+        private _astID: number = astID++;
 
         private _preComments: Comment[] = null;
         private _postComments: Comment[] = null;
         private _docComments: Comment[] = null;
 
         constructor() {
+        }
+
+        public astID(): number {
+            return this._astID;
         }
 
         public fileName(): string {
