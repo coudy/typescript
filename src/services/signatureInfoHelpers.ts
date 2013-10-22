@@ -281,7 +281,7 @@ module Services {
         public static isSignatureHelpBlocker(sourceUnit: TypeScript.SourceUnitSyntax, position: number): boolean {
             // isEntirelyInsideComment can't handle when the position is out of bounds,
             // so we return true (this position is a blocker for getting signature help)
-            if (position < 0 || position >= sourceUnit.fullWidth()) {
+            if (position < 0 || position > sourceUnit.fullWidth()) {
                 return true;
             }
 
