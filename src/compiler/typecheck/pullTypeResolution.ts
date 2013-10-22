@@ -8136,6 +8136,26 @@ module TypeScript {
             var signatureAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
             inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context);
 
+            var functionTypeA = signatureA.functionType;
+            var functionTypeB = signatureB.functionType;
+            var enclosingTypeParameterMap: PullTypeSymbol[];
+
+            if (functionTypeA) {
+                enclosingTypeParameterMap = functionTypeA.getTypeParameterArgumentMap();
+
+                for (var id in enclosingTypeParameterMap) {
+                    typeReplacementMap[id] = enclosingTypeParameterMap[id];
+                }
+            }
+
+            if (functionTypeB) {
+                enclosingTypeParameterMap = functionTypeB.getTypeParameterArgumentMap();
+
+                for (var id in enclosingTypeParameterMap) {
+                    typeReplacementMap[id] = enclosingTypeParameterMap[id];
+                }
+            }
+
             for (var i = 0; i < typeParameters.length; i++) {
                 typeReplacementMap[typeParameters[i].pullSymbolID] = inferredTypeArgs[i];
             }
@@ -8510,18 +8530,22 @@ module TypeScript {
                     t1MemberType = t1MemberSymbol.type;
                     t2MemberType = t2MemberSymbol.type;
 
+
                     // catch the mutually recursive or cached cases
-                    if (t1MemberType && t2MemberType && (this.identicalCache.valueAt(t1MemberType.pullSymbolID, t2MemberType.pullSymbolID) != undefined)) {
-                        continue;
-                    }
+                    if (t1MemberType && t2MemberType) {
 
-                    var t1PropGenerativeTypeKind = t1MemberType.getGenerativeTypeClassification(t1);
-                    var t2PropGenerativeTypeKind = t2MemberType.getGenerativeTypeClassification(t2);
+                        if (this.identicalCache.valueAt(t1MemberType.pullSymbolID, t2MemberType.pullSymbolID) != undefined) {
+                            continue;
+                        }
 
-                    if (t1PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
-                        t2PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+                        var t1PropGenerativeTypeKind = t1MemberType.getGenerativeTypeClassification(t1);
+                        var t2PropGenerativeTypeKind = t2MemberType.getGenerativeTypeClassification(t2);
+
+                        if (t1PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                            t2PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
 
                             return this.infinitelyExpandingPropertyTypesAreIdentical(t1, t2, t1MemberSymbol, t2MemberSymbol);
+                        }
                     }
 
                     if (!this.typesAreIdentical(t1MemberType, t2MemberType)) {
