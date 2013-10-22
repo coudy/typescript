@@ -8834,10 +8834,6 @@ module TypeScript {
                 return true;
             }
 
-            if (context.instantiatingTypesToAny && (target.isTypeParameter() || source.isTypeParameter())) {
-                return true;
-            }
-
             var sourceSubstitution: PullTypeSymbol = source;
 
             // We substitute for the source in the following ways:
@@ -10209,9 +10205,6 @@ module TypeScript {
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            var prevSpecialize = context.instantiatingTypesToAny;
-
-            context.instantiatingTypesToAny = true;
 
             var typeParameters = typeToSpecialize.getTypeParameters();
 
@@ -10234,8 +10227,6 @@ module TypeScript {
             }
 
             var type = this.createInstantiatedType(typeToSpecialize, typeArguments);
-
-            context.instantiatingTypesToAny = prevSpecialize;
 
             return type;
         }
