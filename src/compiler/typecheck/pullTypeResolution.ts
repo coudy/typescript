@@ -5813,6 +5813,12 @@ module TypeScript {
             var typeConstraintSubstitutionMap: PullTypeSymbol[] = [];
             var typeArg: PullTypeSymbol = null;
 
+            var instantiatedSubstitutionMap = specializedSymbol.getTypeParameterArgumentMap();
+
+            for (var id in instantiatedSubstitutionMap) {
+                typeConstraintSubstitutionMap[id] = instantiatedSubstitutionMap[id];
+            }
+
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
                 typeConstraint = typeParameters[iArg].getConstraint();
