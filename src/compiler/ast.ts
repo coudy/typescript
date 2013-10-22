@@ -19,7 +19,6 @@ module TypeScript {
     export interface IASTSpan {
         minChar: number;
         limChar: number;
-        trailingTriviaWidth: number;
     }
 
     export class ASTSpan implements IASTSpan {
