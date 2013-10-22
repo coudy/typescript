@@ -849,7 +849,7 @@ module TypeScript {
 
             if (!this._memberTypeParameterNameCache) {
 
-                this._memberTypeParameterNameCache = createIntrinsicsObject();
+                this._memberTypeParameterNameCache = createIntrinsicsObject<PullTypeParameterSymbol>();
 
                 if (this.typeParameters) {
                     for (var i = 0; i < this.typeParameters.length; i++) {
@@ -1401,7 +1401,7 @@ module TypeScript {
             enclosedNonMemberContainer.setContainer(this);
 
             if (!this._containedNonMemberContainerCache) {
-                this._containedNonMemberContainerCache = createIntrinsicsObject();
+                this._containedNonMemberContainerCache = createIntrinsicsObject<PullTypeSymbol>();
             }
 
             this._containedNonMemberContainerCache[enclosedNonMemberContainer.name] = enclosedNonMemberContainer;
@@ -1417,7 +1417,7 @@ module TypeScript {
             }
 
             if (!this._typeParameterNameCache) {
-                this._typeParameterNameCache = createIntrinsicsObject();
+                this._typeParameterNameCache = createIntrinsicsObject<PullTypeParameterSymbol>();
             }
 
             if (!this._typeParameters) {
@@ -1495,7 +1495,7 @@ module TypeScript {
             }
             else {
                 if (!this._complexSpecializationCache) {
-                    this._complexSpecializationCache = createIntrinsicsObject();
+                    this._complexSpecializationCache = createIntrinsicsObject<PullTypeSymbol>();
                 }
 
                 this._complexSpecializationCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
