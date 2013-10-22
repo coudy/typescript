@@ -75,12 +75,7 @@ module TypeScript {
             includingPosition ? commentStructuralEqualsIncludingPosition : commentStructuralEqualsNotIncludingPosition);
     }
 
-    export interface IAST extends IASTSpan {
-        nodeType(): NodeType;
-        getLength(): number;
-    }
-
-    export class AST implements IAST {
+    export class AST implements IASTSpan {
         public parent: AST = null;
         public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
@@ -919,7 +914,7 @@ module TypeScript {
         }
     }
 
-    export interface ICallExpression extends IAST {
+    export interface ICallExpression extends IASTSpan {
         target: AST;
         typeArguments: ASTList;
         arguments: ASTList;
