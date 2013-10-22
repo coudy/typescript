@@ -1251,18 +1251,9 @@ module Services {
 
                 if (symbol.isResolved) {
                     // If the symbol has already been resolved, cache the needed information for completion details.
-                    var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, /*useConstraintInName*/ true);
-                    var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
+                    var completionInfo = this.getResolvedCompletionEntryDetailsFromSymbol(symbol, symbolInfo.enclosingScopeSymbol);
 
-                    var type = symbol.type;
-                    var symbolForDocComments = symbol;
-                    if (type && type.hasOnlyOverloadCallSignatures()) {
-                        symbolForDocComments = type.getCallSignatures()[0];
-                    }
-
-                    var docComments = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
-
-                    entry = new ResolvedCompletionEntry(symbolDisplayName, kindName, kindModifiersName, typeName, fullSymbolName, docComments);
+                    entry = new ResolvedCompletionEntry(symbolDisplayName, kindName, kindModifiersName, completionInfo.typeName, completionInfo.fullSymbolName, completionInfo.docComments);
                 }
                 else {
                     entry = new DeclReferenceCompletionEntry(symbolDisplayName, kindName, kindModifiersName, symbol.getDeclarations()[0]);
@@ -1293,10 +1284,44 @@ module Services {
                 var kindName = this.mapPullElementKind(declKind, /*symbol*/ null, true);
                 var kindModifiersName = this.getScriptElementKindModifiersFromFlags(decl.flags);
 
-                var entry = new DeclReferenceCompletionEntry(declDisplaylName, kindName, kindModifiersName, decl);
+                var entry: CachedCompletionEntryDetails = null;
+                // Do not call getSymbol if the decl is not already bound. This would force a bind,
+                // which is too expensive to do for every completion item when we are building the
+                // list.
+                var symbol = decl.hasSymbol() && decl.getSymbol();
+                // If the symbol has already been resolved, cache the needed information for completion details.
+                var enclosingDecl = decl.getEnclosingDecl();
+                var enclosingScopeSymbol = (enclosingDecl && enclosingDecl.hasSymbol()) ? enclosingDecl.getSymbol() : null;
+
+                if (symbol && symbol.isResolved && enclosingScopeSymbol && enclosingScopeSymbol.isResolved) {
+                    var completionInfo = this.getResolvedCompletionEntryDetailsFromSymbol(symbol, enclosingScopeSymbol);
+                    entry = new ResolvedCompletionEntry(declDisplaylName, kindName, kindModifiersName, completionInfo.typeName, completionInfo.fullSymbolName, completionInfo.docComments);
+                }
+                else {
+                    entry = new DeclReferenceCompletionEntry(declDisplaylName, kindName, kindModifiersName, decl);
+                }
 
                 result.addOrUpdate(declDisplaylName, entry);
             }
+        }
+
+        private getResolvedCompletionEntryDetailsFromSymbol(symbol: TypeScript.PullSymbol, enclosingScopeSymbol: TypeScript.PullSymbol):
+            { typeName: string; fullSymbolName: string; docComments: string } {
+            var typeName = symbol.getTypeName(enclosingScopeSymbol, /*useConstraintInName*/ true);
+            var fullSymbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
+
+            var type = symbol.type;
+            var symbolForDocComments = symbol;
+            if (type && type.hasOnlyOverloadCallSignatures()) {
+                symbolForDocComments = type.getCallSignatures()[0];
+            }
+
+            var docComments = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
+            return {
+                typeName: typeName,
+                fullSymbolName: fullSymbolName,
+                docComments: docComments
+            };
         }
 
         private getCompletionEntriesForKeywords(keywords: ResolvedCompletionEntry[], result: TypeScript.IdentiferNameHashTable<CompletionEntryDetails>): void {
@@ -1355,19 +1380,9 @@ module Services {
                     }
 
                     var symbol = symbolInfo.symbol;
-                    var typeName = symbol.getTypeName(symbolInfo.enclosingScopeSymbol, /*useConstraintInName*/ true);
-                    var fullSymbolName = this.getFullNameOfSymbol(symbol, symbolInfo.enclosingScopeSymbol);
-
-                    var type = symbol.type;
-                    var symbolForDocComments = symbol;
-                    if (type && type.hasOnlyOverloadCallSignatures()) {
-                        symbolForDocComments = type.getCallSignatures()[0];
-                    }
-
-                    var docComment = symbolForDocComments.docComments(/*useConstructorAsClass:*/ true);
-
+                    var completionInfo = this.getResolvedCompletionEntryDetailsFromSymbol(symbol, symbolInfo.enclosingScopeSymbol);
                     // Store the information for next lookup
-                    (<DeclReferenceCompletionEntry>entry).resolve(typeName, fullSymbolName, docComment);
+                    (<DeclReferenceCompletionEntry>entry).resolve(completionInfo.typeName, completionInfo.fullSymbolName, completionInfo.docComments);
                 }
             }
 

@@ -202,23 +202,7 @@ module TypeScript {
 
             // Now, skip over certain decls.  The resolver never considers these the 'enclosing' 
             // decl for an AST node.
-            while (decl) {
-                switch (decl.kind) {
-                    default:
-                        return decl;
-                    case PullElementKind.Variable:
-                    case PullElementKind.TypeParameter:
-                    case PullElementKind.Parameter:
-                    case PullElementKind.TypeAlias:
-                    case PullElementKind.EnumMember:
-                }
-
-                decl = decl.getParentDecl();
-            }
-
-            Debug.fail();
-            //Debug.assert(decl);
-            //return decl;
+            return decl._getEnclosingDeclFromParentDecl();
         }
 
         public _setDeclForAST(ast: AST, decl: PullDecl): void {

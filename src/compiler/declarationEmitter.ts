@@ -593,7 +593,12 @@ module TypeScript {
                 if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
                     var returnType = funcSignature.returnType;
                     this.declFile.Write(": ");
-                    this.emitTypeSignature(returnType);
+                    if (returnType) {
+                        this.emitTypeSignature(returnType);
+                    }
+                    else {
+                        this.declFile.Write("any");
+                    }
                 }
 
                 this.declFile.WriteLine(";");

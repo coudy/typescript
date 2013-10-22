@@ -448,9 +448,9 @@ module TypeScript {
             this.astAliasSymbolMap.length = 0;
             this.astCallResolutionDataMap.length = 0;
 
-            this.declCache = createIntrinsicsObject();
-            this.symbolCache = createIntrinsicsObject();
-            this.fileNameToDiagnostics = createIntrinsicsObject();
+            this.declCache = createIntrinsicsObject<PullDecl[]>();
+            this.symbolCache = createIntrinsicsObject<PullSymbol>();
+            this.fileNameToDiagnostics = createIntrinsicsObject<Diagnostic[]>();
             this._binder = null;
             this._resolver = null;
             this._topLevelDecls = null;

@@ -96,7 +96,7 @@ module TypeScript {
                     var info = this.candidateCache[infoKey];
 
                     if (!info.inferenceCandidates.length) {
-                        results[results.length] = { param: info.typeParameter, type: resolver.semanticInfoChain.anyTypeSymbol };
+                        results[results.length] = { param: info.typeParameter, type: null };
                         continue;
                     }
 
@@ -107,7 +107,7 @@ module TypeScript {
                         }
                     };
 
-                    bestCommonType = resolver.widenType(null, resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()), context);
+                    bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()));
 
                     if (!bestCommonType) {
                         unfit = true;
