@@ -8973,7 +8973,7 @@ module TypeScript {
                         }
                         else {
                             comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
-                            return false;
+                            //return false;
                         }
                     }
                 }

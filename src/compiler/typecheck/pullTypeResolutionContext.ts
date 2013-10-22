@@ -160,8 +160,6 @@ module TypeScript {
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
 
-        public instantiatingTypesToAny = false;
-
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public fileName: string = null) {
             if (inTypeCheck) {
                 Debug.assert(fileName, "A file name must be provided if you are typechecking");
