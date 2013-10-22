@@ -8975,7 +8975,7 @@ module TypeScript {
                         }
                         else {
                             comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
-                            //return false;
+                            // don't return from here - if we've failed, keep checking (this will allow contravariant checks against generic methods to properly pass or fail)
                         }
                     }
                 }
