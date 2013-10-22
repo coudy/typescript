@@ -274,7 +274,7 @@ module TypeScript {
             return this.childDecls ? this.childDecls : sentinelEmptyPullDeclArray;
         }
 
-        public getTypeParameters() { return this.typeParameters ? this.typeParameters : sentinelEmptyPullDeclArray; }
+        public getTypeParameters(): PullDecl[] { return this.typeParameters ? this.typeParameters : sentinelEmptyPullDeclArray; }
 
         public addVariableDeclToGroup(decl: PullDecl) {
             if (!this.declGroups) {

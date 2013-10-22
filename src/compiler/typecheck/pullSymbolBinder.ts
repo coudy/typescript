@@ -5,6 +5,7 @@
 
 module TypeScript {
     export class PullSymbolBinder {
+    
         private declsBeingBound: boolean[] = [];
 
         constructor(private semanticInfoChain: SemanticInfoChain) {

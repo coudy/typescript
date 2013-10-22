@@ -8696,6 +8696,8 @@ module TypeScript {
                             return false;
                         }
                     }
+
+                    return true;
                 }
             }
 
@@ -9500,18 +9502,16 @@ module TypeScript {
 
             if (sourceSig.isGeneric()) {
 
-                //var rootSourceSig = sourceSig.getRootSymbol();
-                //var rootTargetSig = targetSig.getRootSymbol();
+                var rootSourceSig = sourceSig.getRootSymbol();
+                var rootTargetSig = targetSig.getRootSymbol();
 
-                //if (comparisonCache.valueAt(rootSourceSig.pullSymbolID, rootTargetSig.pullSymbolID) != undefined) {
-                //    return true;
-                //}
+                if (comparisonCache.valueAt(rootSourceSig.pullSymbolID, rootTargetSig.pullSymbolID) != undefined) {
+                    return true;
+                }
 
-                //comparisonCache.setValueAt(rootSourceSig.pullSymbolID, rootTargetSig.pullSymbolID, false);
+                comparisonCache.setValueAt(rootSourceSig.pullSymbolID, rootTargetSig.pullSymbolID, false);
 
                 sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context);
-
-                //comparisonCache.setValueAt(sourceSig.pullSymbolID, targetSig.pullSymbolID, false);
 
                 if (!sourceSig) {
                     return false;
