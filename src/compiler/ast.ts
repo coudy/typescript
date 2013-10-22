@@ -77,7 +77,6 @@ module TypeScript {
 
     export interface IAST extends IASTSpan {
         nodeType(): NodeType;
-        astID: number;
         getLength(): number;
     }
 

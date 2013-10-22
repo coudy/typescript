@@ -502,7 +502,7 @@ module TypeScript {
             this.astSymbolMap[ast.astID] = symbol;
         }
 
-        public getSymbolForAST(ast: IAST): PullSymbol {
+        public getSymbolForAST(ast: AST): PullSymbol {
             return this.astSymbolMap[ast.astID];
         }
 
@@ -510,7 +510,7 @@ module TypeScript {
             this.astAliasSymbolMap[ast.astID] = symbol;
         }
 
-        public getAliasSymbolForAST(ast: IAST): PullTypeAliasSymbol {
+        public getAliasSymbolForAST(ast: AST): PullTypeAliasSymbol {
             return this.astAliasSymbolMap[ast.astID];
         }
 
