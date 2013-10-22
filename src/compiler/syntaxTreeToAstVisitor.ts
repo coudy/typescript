@@ -37,22 +37,28 @@ module TypeScript {
             var firstToken = node.firstToken();
             var lastToken = node.lastToken();
 
-            this.setSpan2(ast, fullStart, node, firstToken, lastToken);
+            this.setSpan(ast, fullStart, node, firstToken, lastToken);
             ast.setPreComments(this.convertTokenLeadingComments(firstToken, fullStart));
             ast.setPostComments(this.convertNodeTrailingComments(node, lastToken, fullStart));
         }
 
-        private copySpan(from: IASTSpan, to: IASTSpan): void {
+        private copySpan(from: AST, to: AST): void {
             to.minChar = from.minChar;
             to.limChar = from.limChar;
             to.trailingTriviaWidth = from.trailingTriviaWidth;
         }
 
-        public setSpan(span: IASTSpan, fullStart: number, element: ISyntaxElement): void {
-            this.setSpan2(span, fullStart, element, element.firstToken(), element.lastToken());
+        public setTokenSpan(span: IASTSpan, fullStart: number, element: ISyntaxToken): void {
+            var leadingTriviaWidth = element.leadingTriviaWidth();
+            var trailingTriviaWidth = element.trailingTriviaWidth();
+
+            var desiredMinChar = fullStart + leadingTriviaWidth;
+            var desiredLimChar = fullStart + element.fullWidth() - trailingTriviaWidth;
+
+            this.setSpanExplicit(span, desiredMinChar, desiredLimChar);
         }
 
-        public setSpan2(span: IASTSpan, fullStart: number, element: ISyntaxElement, firstToken: ISyntaxToken, lastToken: ISyntaxToken): void {
+        public setSpan(span: AST, fullStart: number, element: ISyntaxElement, firstToken = element.firstToken(), lastToken = element.lastToken()): void {
             var leadingTriviaWidth = firstToken ? firstToken.leadingTriviaWidth() : 0;
             var trailingTriviaWidth = lastToken ? lastToken.trailingTriviaWidth() : 0;
 
@@ -403,7 +409,7 @@ module TypeScript {
             var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
             var closeBraceSpan = new ASTSpan();
-            this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
+            this.setTokenSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
             var result = new ClassDeclaration(name, typeParameters, heritageClauses, members, closeBraceSpan);
             this.setCommentsAndSpan(result, start, node);
@@ -514,7 +520,7 @@ module TypeScript {
             var closeBracePosition = this.position;
             this.movePast(node.closeBraceToken);
             var closeBraceSpan = new ASTSpan();
-            this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
+            this.setTokenSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
             for (var i = names.length - 1; i >= 0; i--) {
                 var innerName = names[i];
@@ -1176,7 +1182,7 @@ module TypeScript {
             var closeBraceLeadingComments = this.convertTokenLeadingComments(node.closeBraceToken, this.position);
             this.movePast(node.closeBraceToken);
             var closeBraceSpan = new ASTSpan();
-            this.setSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
+            this.setTokenSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
             var result = new Block(statements, closeBraceSpan);
             this.setSpan(result, start, node);
@@ -1275,7 +1281,7 @@ module TypeScript {
             var closeParenPos = this.position;
             this.movePast(node.closeParenToken);
             var closeParenSpan = new ASTSpan();
-            this.setSpan(closeParenSpan, closeParenPos, node.closeParenToken);
+            this.setTokenSpan(closeParenSpan, closeParenPos, node.closeParenToken);
             
             return {
                 argumentList: result,
@@ -2104,7 +2110,7 @@ module TypeScript {
             this.movePast(node.doKeyword);
             var statement = node.statement.accept(this);
             var whileSpan = new ASTSpan();
-            this.setSpan(whileSpan, this.position, node.whileKeyword);
+            this.setTokenSpan(whileSpan, this.position, node.whileKeyword);
 
             this.movePast(node.whileKeyword);
             this.movePast(node.openParenToken);
@@ -2167,7 +2173,7 @@ module TypeScript {
         }
     }
 
-    function applyDelta(ast: TypeScript.ASTSpan, delta: number) {
+    function applyDelta(ast: TypeScript.IASTSpan, delta: number) {
         if (ast) {
             if (ast.minChar !== -1) {
                 ast.minChar += delta;

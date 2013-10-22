@@ -213,7 +213,7 @@ module TypeScript {
             }
         }
 
-        private getSymbolForAST(ast: IAST, context: PullTypeResolutionContext): PullSymbol {
+        private getSymbolForAST(ast: AST, context: PullTypeResolutionContext): PullSymbol {
             // Check global cache
             var symbol = this.semanticInfoChain.getSymbolForAST(ast);
 

@@ -149,11 +149,11 @@ module TypeScript {
         }
 
         public setSymbolForAST(ast: AST, symbol: PullSymbol): void {
-            this.astSymbolMap[ast.astID] = symbol;
+            this.astSymbolMap[ast.astID()] = symbol;
         }
 
-        public getSymbolForAST(ast: IAST): PullSymbol {
-            return this.astSymbolMap[ast.astID];
+        public getSymbolForAST(ast: AST): PullSymbol {
+            return this.astSymbolMap[ast.astID()];
         }
     }
 
@@ -279,7 +279,7 @@ module TypeScript {
             this.contextStack[this.contextStack.length - 1].setSymbolForAST(ast, symbol);
         }
 
-        public getSymbolForAST(ast: IAST): PullSymbol {
+        public getSymbolForAST(ast: AST): PullSymbol {
             for (var i = this.contextStack.length - 1; i >= 0; i--) {
                 var typeContext = this.contextStack[i];
                 if (!typeContext.provisional) {

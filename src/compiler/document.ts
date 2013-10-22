@@ -180,7 +180,7 @@ module TypeScript {
             // Ensure we actually have created all our decls before we try to find a mathcing decl
             // for this ast.
             this.topLevelDecl();
-            return this._astDeclMap[ast.astID];
+            return this._astDeclMap[ast.astID()];
         }
 
         public getEnclosingDecl(ast: AST): PullDecl {
@@ -207,7 +207,7 @@ module TypeScript {
 
         public _setDeclForAST(ast: AST, decl: PullDecl): void {
             Debug.assert(decl.fileName() === this.fileName);
-            this._astDeclMap[ast.astID] = decl;
+            this._astDeclMap[ast.astID()] = decl;
         }
 
         public _getASTForDecl(decl: PullDecl): AST {
