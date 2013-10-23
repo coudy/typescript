@@ -871,10 +871,6 @@ module TypeScript {
             return result;
         }
 
-        private isOnSingleLine(start: number, end: number): boolean {
-            return this.lineMap.getLineNumberFromPosition(start) === this.lineMap.getLineNumberFromPosition(end);
-        }
-
         public visitArrayLiteralExpression(node: ArrayLiteralExpressionSyntax): ArrayLiteralExpression {
             var start = this.position;
             var openStart = this.position + node.openBracketToken.leadingTriviaWidth();
@@ -888,8 +884,13 @@ module TypeScript {
             var result = new ArrayLiteralExpression(expressions);
             this.setSpan(result, start, node);
 
-            if (this.isOnSingleLine(openStart, closeStart)) {
-                result.setFlags(result.getFlags() | ASTFlags.SingleLine);
+            if (!node.openBracketToken.hasTrailingNewLine()) {
+                var childCount = node.expressions.childCount();
+                if (childCount === 0 ||
+                    !node.expressions.childAt(childCount - 1).lastToken().hasTrailingNewLine()) {
+
+                    result.setFlags(result.getFlags() | ASTFlags.SingleLine);
+                }
             }
 
             return result;
@@ -1957,8 +1958,13 @@ module TypeScript {
             var result = new ObjectLiteralExpression(propertyAssignments);
             this.setCommentsAndSpan(result, start, node);
 
-            if (this.isOnSingleLine(openStart, closeStart)) {
-                result.setFlags(result.getFlags() | ASTFlags.SingleLine);
+            if (!node.openBraceToken.hasTrailingNewLine()) {
+                var childCount = node.propertyAssignments.childCount();
+                if (childCount === 0 ||
+                    !node.propertyAssignments.childAt(childCount - 1).lastToken().hasTrailingNewLine()) {
+
+                    result.setFlags(result.getFlags() | ASTFlags.SingleLine);
+                }
             }
 
             return result;
