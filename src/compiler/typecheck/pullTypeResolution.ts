@@ -4889,7 +4889,7 @@ module TypeScript {
 
         // Expression resolution
 
-        public resolveAST(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext, specializingSignature= false): PullSymbol {
+        public resolveAST(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             if (!ast) {
                 return;
             }
@@ -5011,10 +5011,13 @@ module TypeScript {
                 // primitives
                 case NodeType.NumericLiteral:
                     return this.semanticInfoChain.numberTypeSymbol;
+
                 case NodeType.StringLiteral:
                     return this.semanticInfoChain.stringTypeSymbol;
+
                 case NodeType.NullLiteral:
                     return this.semanticInfoChain.nullTypeSymbol;
+
                 case NodeType.TrueLiteral:
                 case NodeType.FalseLiteral:
                     return this.semanticInfoChain.booleanTypeSymbol;
