@@ -2899,7 +2899,7 @@ module TypeScript {
                         }
                     };
 
-                    var bestCommonReturnType = this.findBestCommonType(returnExpressionSymbols[0], collection, context, new TypeComparisonInfo());
+                    var bestCommonReturnType = this.findBestCommonType(collection, context, new TypeComparisonInfo());
                     var returnType = bestCommonReturnType;
                     var returnExpression = returnExpressions[returnExpressionSymbols.indexOf(returnType)];
 
@@ -5365,6 +5365,17 @@ module TypeScript {
             return nameSymbol;
         }
 
+        private isSomeFunctionScope(declPath: PullDecl[]) {
+            for (var i = declPath.length - 1; i >= 0; i--) {
+                var decl = declPath[i];
+                if (decl.kind & PullElementKind.SomeFunction) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
             if (nameAST.isMissing()) {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -5385,7 +5396,7 @@ module TypeScript {
                 var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
             }
 
-            if (!nameSymbol && id === "arguments" && enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction)) {
+            if (!nameSymbol && id === "arguments" && this.isSomeFunctionScope(declPath)) {
                 nameSymbol = this.cachedFunctionArgumentsSymbol();
 
                 this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), context);
@@ -5812,6 +5823,12 @@ module TypeScript {
 
             var typeConstraintSubstitutionMap: PullTypeSymbol[] = [];
             var typeArg: PullTypeSymbol = null;
+
+            var instantiatedSubstitutionMap = specializedSymbol.getTypeParameterArgumentMap();
+
+            for (var id in instantiatedSubstitutionMap) {
+                typeConstraintSubstitutionMap[id] = instantiatedSubstitutionMap[id];
+            }
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
                 typeArg = typeArgs[iArg];
@@ -6861,7 +6878,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
                 };
                 var decl = objectLiteralSymbol.getDeclarations()[0];
-                var indexerReturnType = this.widenType(this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context));
+                var indexerReturnType = this.widenType(this.findBestCommonType(typeCollection, context));
                 if (indexerReturnType == contextualIndexSignature.returnType) {
                     objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
                 }
@@ -6946,7 +6963,7 @@ module TypeScript {
                 };
             }
 
-            elementType = elementType ? this.findBestCommonType(elementType, collection, context, comparisonInfo) : elementType;
+            elementType = elementType ? this.findBestCommonType(collection, context, comparisonInfo) : elementType;
 
             if (!elementType) {
                 elementType = this.semanticInfoChain.undefinedTypeSymbol;
@@ -7163,9 +7180,7 @@ module TypeScript {
         }
 
         private bestCommonTypeOfTwoTypes(type1: PullTypeSymbol, type2: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            // findBestCommonType skips the first type (since it is explicitly provided as an 
-            // argument).  So we simply return the second type when asked.
-            return this.findBestCommonType(type1, {
+            return this.findBestCommonType({
                 getLength() {
                     return 2;
                 },
@@ -7179,9 +7194,7 @@ module TypeScript {
         }
 
         private bestCommonTypeOfThreeTypes(type1: PullTypeSymbol, type2: PullTypeSymbol, type3: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            // findBestCommonType skips the first type (since it is explicitly provided as an 
-            // argument).  So we simply return the second type when asked.
-            return this.findBestCommonType(type1, {
+            return this.findBestCommonType({
                 getLength() {
                     return 3;
                 },
@@ -7410,12 +7423,6 @@ module TypeScript {
             var targetSymbol = this.resolveAST(callEx.target, /*isContextuallyTyped:*/ false, context);
             var targetAST = this.getCallTargetErrorSpanAST(callEx);
 
-            // don't be fooled
-            //if (target === this.semanticInfoChain.anyTypeSymbol) {
-            //    diagnostic = context.postError(callEx.minChar, callEx.getLength(), this.unitPath, "Invalid call expression", enclosingDecl);
-            //    return this.getNewErrorTypeSymbol(diagnostic); 
-            //}
-
             var targetTypeSymbol = targetSymbol.type;
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 // Note: targetType is either any or an error.
@@ -7471,6 +7478,7 @@ module TypeScript {
             var couldNotFindGenericOverload = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
+            var typeArgumentCountDiagnostic: Diagnostic = null;
             var diagnostics: Diagnostic[] = [];
 
             // resolve the type arguments, specializing if necessary
@@ -7509,8 +7517,22 @@ module TypeScript {
 
                 if (signatures[i].isGeneric() && typeParameters.length) {
 
-                    if (typeArgs && typeArgs.length == typeParameters.length) {
-                        inferredTypeArgs = typeArgs;
+                    if (typeArgs) {
+                        // October 16, 2013: Section 4.12.2
+                        // A generic signature is a candidate in a function call with type arguments
+                        // arguments when:
+                        // The signature has the same number of type parameters as were supplied in
+                        // the type argument list
+                        // ...
+                        if (typeArgs.length == typeParameters.length) {
+                            inferredTypeArgs = typeArgs;
+                        }
+                        else {
+                            typeArgumentCountDiagnostic = typeArgumentCountDiagnostic ||
+                            this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead,
+                                [typeParameters.length, typeArgs.length]);
+                            continue;
+                        }
                     }
                     else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
                         inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.arguments, new TypeComparisonInfo(), context);
@@ -7608,11 +7630,6 @@ module TypeScript {
 
             signatures = resolvedSignatures;
 
-            // the target should be a function
-            //if (!targetTypeSymbol.isType()) {
-            //    this.log("Attempting to call a non-function symbol");
-            //    return this.semanticInfoChain.anyTypeSymbol;
-            //}
             var errorCondition: PullSymbol = null;
 
             if (!signatures.length) {
@@ -7636,19 +7653,19 @@ module TypeScript {
 
                     this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Cannot_invoke_an_expression_whose_type_lacks_a_call_signature),
                         additionalResults, context);
-                    errorCondition = this.getNewErrorTypeSymbol();
+                }
+                else if (constraintDiagnostic) {
+                    this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
+                }
+                else if (typeArgumentCountDiagnostic) {
+                    this.postOverloadResolutionDiagnostics(typeArgumentCountDiagnostic, additionalResults, context);
                 }
                 else {
                     this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(callEx, DiagnosticCode.Could_not_select_overload_for_call_expression),
                         additionalResults, context);
-                    errorCondition = this.getNewErrorTypeSymbol();
                 }
 
-                if (constraintDiagnostic) {
-                    this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
-                }
-
-                return errorCondition;
+                return this.getNewErrorTypeSymbol();
             }
 
             var signature = this.resolveOverloads(callEx, signatures, callEx.typeArguments != null, context, diagnostics);
@@ -7830,6 +7847,7 @@ module TypeScript {
             var usedCallSignaturesInstead = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
+            var typeArgumentCountDiagnostic: Diagnostic = null;
             var diagnostics: Diagnostic[] = [];
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
@@ -7881,8 +7899,22 @@ module TypeScript {
                         if (constructSignatures[i].isGeneric()) {
                             typeParameters = constructSignatures[i].getTypeParameters();
 
-                            if (typeArgs && typeParameters && typeArgs.length == typeParameters.length) {
-                                inferredTypeArgs = typeArgs;
+                            if (typeArgs) {
+                                // October 16, 2013: Section 4.12.2
+                                // A generic signature is a candidate in a function call with type arguments
+                                // arguments when:
+                                // The signature has the same number of type parameters as were supplied in
+                                // the type argument list
+                                // ...
+                                if (typeArgs.length == typeParameters.length) {
+                                    inferredTypeArgs = typeArgs;
+                                }
+                                else {
+                                    typeArgumentCountDiagnostic = typeArgumentCountDiagnostic ||
+                                        this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead,
+                                            [typeParameters.length, typeArgs.length]);
+                                    continue;
+                                }
                             }
                             else if (!typeArgs && callEx.arguments && callEx.arguments.members.length) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.arguments, new TypeComparisonInfo(), context);
@@ -7977,12 +8009,6 @@ module TypeScript {
                     constructSignatures = resolvedSignatures;
                 }
 
-                // the target should be a function
-                //if (!targetSymbol.isType()) {
-                //    this.log("Attempting to call a non-function symbol");
-                //    return this.semanticInfoChain.anyTypeSymbol;
-                //}
-
                 var signature = this.resolveOverloads(callEx, constructSignatures, callEx.typeArguments != null, context, diagnostics);
 
                 // Store any additional resolution results if needed before we return
@@ -7995,6 +8021,9 @@ module TypeScript {
 
                     if (constraintDiagnostic) {
                         this.postOverloadResolutionDiagnostics(constraintDiagnostic, additionalResults, context);
+                    }
+                    else if (typeArgumentCountDiagnostic) {
+                        this.postOverloadResolutionDiagnostics(typeArgumentCountDiagnostic, additionalResults, context);
                     }
 
                     return this.getNewErrorTypeSymbol();
@@ -8022,11 +8051,6 @@ module TypeScript {
 
                     // First, pick the first signature as the candidate signature
                     signature = constructSignatures[0];
-                }
-
-                if (signature.isGeneric() && callEx.typeArguments && signature.getTypeParameters() && (callEx.typeArguments.members.length != signature.getTypeParameters().length)) {
-                    this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.typeArguments.members.length]),
-                        additionalResults, context);
                 }
 
                 returnType = signature.returnType;
@@ -8126,6 +8150,7 @@ module TypeScript {
         }
 
         private instantiateSignatureInContext(signatureA: PullSignatureSymbol, signatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
+
             var typeReplacementMap: PullTypeSymbol[] = [];
             var inferredTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
@@ -8176,7 +8201,14 @@ module TypeScript {
                     }
 
                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[i], typeConstraint, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
-                        return null;
+                        // if the signature is not assignable due to a constraint mismatch, it may be because the two signatures are identical
+                        // (hence, no inferences could be made for the signature's type parameters)
+                        if (this.signaturesAreIdentical(signatureA, signatureB, true)) {
+                            return signatureA;
+                        }
+                        else {
+                            return null;
+                        }
                     }
                 }
             }
@@ -8290,9 +8322,9 @@ module TypeScript {
 
         // type relationships
 
-        private mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
+        private chooseCommonType(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
             if (!(a || b)) {
-                return this.semanticInfoChain.emptyTypeSymbol;
+                return null;
             }
             if (!a) {
                 return b;
@@ -8378,50 +8410,40 @@ module TypeScript {
             return type;
         }
 
-        public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        public findBestCommonType(collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
-            var nlastChecked = 0;
-            var bestCommonType = initialType;
+            var bestCommonType: PullTypeSymbol = null;
 
-            // it's important that we set the convergence type here, and not in the loop,
-            // since the first element considered may be the contextual type
-            var convergenceType: PullTypeSymbol = bestCommonType;
+            // We set i = Math.max(i, j) + 1 in the incrementor as an optimization. If we did not converge on a type in the inner loop,
+            // then every type that we tried in the inner loop would not be a suitable candidate. Therefore there is no point in
+            // trying them.
+            for (var i = 0, j = 0; i < len; i = Math.max(i, j) + 1) {
+                bestCommonType = collection.getTypeAtIndex(i);
 
-            while (nlastChecked < len) {
-
-                for (var i = 0; i < len; i++) {
+                for (j = 0; j < len; j++) {
 
                     // no use in comparing a type against itself
-                    if (i === nlastChecked) {
+                    if (i == j) {
                         continue;
                     }
 
-                    if (convergenceType && (bestCommonType = this.mergeOrdered(convergenceType, collection.getTypeAtIndex(i), context, comparisonInfo))) {
-                        convergenceType = bestCommonType;
-                    }
+                    bestCommonType = this.chooseCommonType(bestCommonType, collection.getTypeAtIndex(j), context, comparisonInfo);
 
+                    // If there is no common type, try starting again with the next type in the collection
                     if (bestCommonType === null || this.isAnyOrEquivalent(bestCommonType)) {
                         break;
                     }
                 }
 
-                // use the type if we've agreed upon it
-                if (convergenceType && bestCommonType) {
-                    break;
-                }
-
-                nlastChecked++;
-                if (nlastChecked < len) {
-                    convergenceType = collection.getTypeAtIndex(nlastChecked);
+                // If we've found a type by this point, it is the best common type
+                if (bestCommonType) {
+                    return bestCommonType;
                 }
             }
 
-            if (!bestCommonType) {
-                // if no best common type can be determined, use "{}"
-                bestCommonType = this.semanticInfoChain.emptyTypeSymbol;
-            }
-
-            return bestCommonType;
+            // October 16, 2013: It is possible that no such [common] type exists or more than one
+            // such type exists, in which case the best common type is an empty object type.
+            return this.semanticInfoChain.emptyTypeSymbol;
         }
 
         // Type Identity
@@ -8834,10 +8856,6 @@ module TypeScript {
                 return true;
             }
 
-            if (context.instantiatingTypesToAny && (target.isTypeParameter() || source.isTypeParameter())) {
-                return true;
-            }
-
             var sourceSubstitution: PullTypeSymbol = source;
 
             // We substitute for the source in the following ways:
@@ -8973,7 +8991,7 @@ module TypeScript {
                         }
                         else {
                             comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, undefined);
-                            return false;
+                            // don't return from here - if we've failed, keep checking (this will allow contravariant checks against generic methods to properly pass or fail)
                         }
                     }
                 }
@@ -10209,9 +10227,6 @@ module TypeScript {
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            var prevSpecialize = context.instantiatingTypesToAny;
-
-            context.instantiatingTypesToAny = true;
 
             var typeParameters = typeToSpecialize.getTypeParameters();
 
@@ -10234,8 +10249,6 @@ module TypeScript {
             }
 
             var type = this.createInstantiatedType(typeToSpecialize, typeArguments);
-
-            context.instantiatingTypesToAny = prevSpecialize;
 
             return type;
         }

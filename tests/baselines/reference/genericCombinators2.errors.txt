@@ -1,3 +1,8 @@
-genericCombinators2.ts line 15 col 13: error TS4027: Signature expected 2 type arguments, got 3 instead.
-genericCombinators2.ts line 15 col 64: error TS2094: The property 'toFixed' does not exist on value of type '{}'.
-genericCombinators2.ts line 16 col 13: error TS4027: Signature expected 2 type arguments, got 3 instead.
+genericCombinators2.ts line 15 col 13: error TS2082: Supplied parameters do not match any signature of call target:
+	Call signatures of types '(x: number, y: string) => string' and '(x: number, y: string) => Date' are incompatible:
+		Type 'String' is missing property 'toDateString' from type 'Date'.
+genericCombinators2.ts line 15 col 13: error TS2087: Could not select overload for 'call' expression.
+genericCombinators2.ts line 16 col 13: error TS2082: Supplied parameters do not match any signature of call target:
+	Call signatures of types '(x: number, y: string) => string' and '(x: number, y: string) => Date' are incompatible:
+		Type 'String' is missing property 'toDateString' from type 'Date'.
+genericCombinators2.ts line 16 col 13: error TS2087: Could not select overload for 'call' expression.

@@ -107,7 +107,7 @@ module TypeScript {
                         }
                     };
 
-                    bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()));
+                    bestCommonType = resolver.widenType(resolver.findBestCommonType(collection, context, new TypeComparisonInfo()));
 
                     if (!bestCommonType) {
                         unfit = true;
@@ -159,8 +159,6 @@ module TypeScript {
 
     export class PullTypeResolutionContext {
         private contextStack: PullContextualTypeContext[] = [];
-
-        public instantiatingTypesToAny = false;
 
         constructor(private resolver: PullTypeResolver, public inTypeCheck = false, public fileName: string = null) {
             if (inTypeCheck) {

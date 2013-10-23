@@ -392,7 +392,7 @@ module TypeScript {
             var parentDecl = moduleContainerDecl.getParentDecl();
             var moduleAST = <ModuleDeclaration>this.semanticInfoChain.getASTForDecl(moduleContainerDecl);
 
-            var isExported = moduleContainerDecl.flags & PullElementFlags.Exported;
+            var isExported = hasFlag(moduleContainerDecl.flags, PullElementFlags.Exported);
             var searchKind = PullElementKind.SomeContainer;
             var isInitializedModule = (moduleContainerDecl.flags & PullElementFlags.SomeInitializedModule) != 0;
 
@@ -472,31 +472,31 @@ module TypeScript {
                         }
                     }
                 }
-                else if (!(moduleContainerDecl.flags & PullElementFlags.Exported)) {
-                    // Search locally to this file for a previous declaration that's suitable for augmentation
+                else if (!isExported) {
+                    // Search locally to this file for a declaration that's suitable for augmentation.
+                    // Note: we have to check all declarations because it may be hte case (due to
+                    // recursive binding), that a later module gets bound before us.  
                     var siblingDecls = parentDecl.getChildDecls();
-                    var augmentedDecl: PullDecl = null;
 
                     for (var i = 0; i < siblingDecls.length; i++) {
-                        if (siblingDecls[i] == moduleContainerDecl) {
-                            break;
-                        }
+                        var sibling = siblingDecls[i];
+                        if (sibling !== moduleContainerDecl &&
+                            sibling.name === modName &&
+                            hasFlag(sibling.kind, PullElementKind.SomeValue)) {
 
-                        if ((siblingDecls[i].name == modName) && (siblingDecls[i].kind & PullElementKind.SomeValue)) {
-                            augmentedDecl = siblingDecls[i];
-                            break;
-                        }
-                    }
+                            // IMPORTANT: We don't want to just call sibling.getSymbol() here.  
+                            // That would force the sibling to get bound.  Something we don't want
+                            // to do while binding ourselves (to avoid recursion issues).
+                            if (sibling.hasSymbol()) {
+                                variableSymbol = sibling.getSymbol();
+                                if (variableSymbol.isContainer()) {
+                                    variableSymbol = (<PullContainerSymbol>variableSymbol).getInstanceSymbol();
+                                }
+                                else if (variableSymbol && variableSymbol.isType()) {
+                                    variableSymbol = (<PullTypeSymbol>variableSymbol).getConstructorMethod();
+                                }
 
-                    if (augmentedDecl) {
-                        variableSymbol = augmentedDecl.getSymbol();
-
-                        if (variableSymbol) {
-                            if (variableSymbol.isContainer()) {
-                                variableSymbol = (<PullContainerSymbol>variableSymbol).getInstanceSymbol();
-                            }
-                            else if (variableSymbol && variableSymbol.isType()) {
-                                variableSymbol = (<PullTypeSymbol>variableSymbol).getConstructorMethod();
+                                break;
                             }
                         }
                     }
@@ -1109,18 +1109,6 @@ module TypeScript {
 
                         variableSymbol.addDeclaration(variableDeclaration);
                         variableDeclaration.setSymbol(variableSymbol);
-
-                        // set the AST to the constructor method's if possible
-                        decls = moduleContainerTypeSymbol.getDeclarations();
-
-                        if (decls.length) {
-
-                            decl = decls[decls.length - 1];
-                            ast = this.semanticInfoChain.getASTForDecl(decl);
-                        }
-
-                        // we added the variable to the parent when binding the module
-                        //parentHadSymbol = true;
                     }
                     else {
                         Debug.assert(false, "Attempted to bind invalid implicit variable symbol");
