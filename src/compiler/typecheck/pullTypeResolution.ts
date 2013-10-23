@@ -1415,12 +1415,12 @@ module TypeScript {
             {
                 valueSymbol: PullSymbol; typeSymbol: PullTypeSymbol; containerSymbol: PullContainerSymbol;
             } {
-            if (identifier.isMissing()) {
+            var rhsName = identifier.valueText();
+            if (rhsName.length === 0) {
                 return null;
             }
 
             var moduleTypeSymbol = <PullContainerSymbol>moduleSymbol.type;
-            var rhsName = identifier.valueText();
             var containerSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeContainer, moduleTypeSymbol, enclosingDecl, context);
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
@@ -1494,7 +1494,8 @@ module TypeScript {
                         this.semanticInfoChain.addDiagnosticFromAST(dottedNameAST.right, DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]);
                     }
                 }
-            } else if (!(<Identifier>moduleNameExpr).isMissing()) {
+            }
+            else if ((<Identifier>moduleNameExpr).text().length > 0) {
                 moduleName = (<Identifier>moduleNameExpr).valueText();
                 moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
                 if (moduleSymbol) {
@@ -1695,13 +1696,13 @@ module TypeScript {
         }
 
         private resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, context: PullTypeResolutionContext): PullSymbol {
-            if (exportAssignmentAST.identifier.isMissing()) {
+            var id = exportAssignmentAST.identifier.valueText();
+            if (id.length === 0) {
                 // No point trying to resolve an export assignment without an actual identifier.
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             // get the identifier text
-            var id = exportAssignmentAST.identifier.valueText();
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
             var containerSymbol: PullSymbol = null;
@@ -5382,7 +5383,8 @@ module TypeScript {
         }
 
         private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
-            if (nameAST.isMissing()) {
+            var id = nameAST.valueText();
+            if (id.length === 0) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -5394,7 +5396,6 @@ module TypeScript {
                 nameSymbol = this.semanticInfoChain.getDeclForAST(nameAST.parent).getSymbol();
             }
 
-            var id = nameAST.valueText();
             var declPath = enclosingDecl.getParentPath();
 
             if (!nameSymbol) {
@@ -5554,12 +5555,12 @@ module TypeScript {
         }
 
         private computeDottedNameExpression(expression: AST, name: Identifier, context: PullTypeResolutionContext, checkSuperPrivateAndStaticAccess: boolean): PullSymbol {
-            if (name.isMissing()) {
+            var rhsName = name.valueText();
+            if (rhsName.length === 0) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             // assemble the dotted name path
-            var rhsName = name.valueText();
             var lhs = this.resolveAST(expression, /*isContextuallyTyped*/false, context);
             var lhsType = lhs.type;
 
@@ -5690,12 +5691,12 @@ module TypeScript {
         }
 
         private computeTypeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext): PullTypeSymbol {
-            if (nameAST.isMissing()) {
+            var id = nameAST.valueText();
+            if (id.length === 0) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
             var enclosingDecl = this.getEnclosingDeclForAST(nameAST);
-            var id = nameAST.valueText();
 
             var declPath = enclosingDecl.getParentPath();
 
@@ -5884,7 +5885,8 @@ module TypeScript {
         }
 
         private computeQualifiedName(dottedNameAST: QualifiedName, context: PullTypeResolutionContext): PullTypeSymbol {
-            if (dottedNameAST.right.isMissing()) {
+            var rhsName = dottedNameAST.right.valueText();
+            if (rhsName.length === 0) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
 
@@ -5913,7 +5915,6 @@ module TypeScript {
             var onLeftOfDot = this.isLeftSideOfQualifiedName(dottedNameAST);
             var memberKind = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
 
-            var rhsName = dottedNameAST.right.valueText();
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
 
             // if the lhs exports a container type, but not a type, we should check the container type

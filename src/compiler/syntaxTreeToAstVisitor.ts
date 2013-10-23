@@ -6,9 +6,6 @@ module TypeScript {
 
         public previousTokenTrailingComments: Comment[] = null;
 
-        private static protoString = "__proto__";
-        private static protoSubstitutionString = "#__proto__";
-
         constructor(private fileName: string,
                     public lineMap: LineMap,
                     private compilationSettings: ImmutableCompilationSettings) {
@@ -72,35 +69,24 @@ module TypeScript {
 
         public identifierFromToken(token: ISyntaxToken, isOptional: boolean, stringLiteralIsTextOfIdentifier?: boolean): Identifier {
             var result: Identifier = null;
-            if (token.fullWidth() === 0) {
-                result = new MissingIdentifier();
-            }
-            else {
-                switch (token.tokenKind) {
-                    case SyntaxKind.IdentifierName:
-                        // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
-                        // so that we can safely use it as a key in a javascript object.
-                        var tokenText = token.text();
-                        var text = tokenText === SyntaxTreeToAstVisitor.protoString
-                            ? SyntaxTreeToAstVisitor.protoSubstitutionString
-                            : null;
 
-                        result = new Identifier(tokenText, text, /*isStringOrNumericLiteral:*/ false);
-                        break;
+            switch (token.tokenKind) {
+                case SyntaxKind.IdentifierName:
+                    result = new Identifier(token.text(), null, /*isStringOrNumericLiteral:*/ false);
+                    break;
 
-                    case SyntaxKind.NumericLiteral:
-                    case SyntaxKind.StringLiteral:
-                        var tokenText = token.text();
-                        var text = token.valueText();
-                        if (stringLiteralIsTextOfIdentifier && text) {
-                            text = quoteStr(text);
-                        }
-                        result = new Identifier(tokenText, text, /*isStringOrNumericLiteral:*/ true);
-                        break;
+                case SyntaxKind.NumericLiteral:
+                case SyntaxKind.StringLiteral:
+                    var tokenText = token.text();
+                    var text = token.valueText();
+                    if (stringLiteralIsTextOfIdentifier && text) {
+                        text = quoteStr(text);
+                    }
+                    result = new Identifier(tokenText, text, /*isStringOrNumericLiteral:*/ true);
+                    break;
 
-                    default:
-                        throw Errors.invalidOperation();
-                }
+                default:
+                    throw Errors.invalidOperation();
             }
 
             if (isOptional) {

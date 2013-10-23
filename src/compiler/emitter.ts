@@ -1392,7 +1392,7 @@ module TypeScript {
             if (((temp !== EmitContainer.Constructor) ||
                 ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
                 this.recordSourceMappingStart(funcDecl);
-                this.emitInnerFunction(funcDecl, (funcDecl.name && !funcDecl.name.isMissing()));
+                this.emitInnerFunction(funcDecl, funcDecl.name !== null);
             }
             this.setContainer(temp);
             this.inArrowFunction = savedInArrowFunction;
@@ -1677,7 +1677,7 @@ module TypeScript {
         public emitName(name: Identifier, addThis: boolean) {
             this.emitComments(name, true);
             this.recordSourceMappingStart(name);
-            if (!name.isMissing()) {
+            if (name.text().length > 0) {
                 var pullSymbol = this.semanticInfoChain.getSymbolForAST(name);
                 if (!pullSymbol) {
                     pullSymbol = this.semanticInfoChain.anyTypeSymbol;

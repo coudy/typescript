@@ -486,7 +486,15 @@ module TypeScript {
 
         public valueText(): string {
             if (!this._valueText) {
-                this._valueText = Syntax.massageEscapes(this.text());
+                // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
+                // so that we can safely use it as a key in a javascript object.
+                var text = this._text;
+                if (text === "__proto__") {
+                    this._valueText = "#__proto__";
+                }
+                else {
+                    this._valueText = Syntax.massageEscapes(text);
+                }
             }
 
             return this._valueText;
@@ -496,30 +504,13 @@ module TypeScript {
             return NodeType.Name;
         }
 
-        public isMissing() { return false; }
-
         public emit(emitter: Emitter) {
             emitter.emitName(this, true);
         }
 
         public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this._text === ast._text &&
-                   this.isMissing() === ast.isMissing();
-        }
-    }
-
-    export class MissingIdentifier extends Identifier {
-        constructor() {
-            super("__missing", "__missing", false);
-        }
-
-        public isMissing() {
-            return true;
-        }
-
-        public emit(emitter: Emitter) {
-            // Emit nothing for a missing ID
+                   this._text === ast._text;
         }
     }
 

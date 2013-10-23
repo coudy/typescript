@@ -563,7 +563,7 @@ module TypeScript {
                 var id = funcDecl.getNameText();
                 if (!isInterfaceMember) {
                     this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
-                    if (id !== "__missing" || !funcDecl.name || !funcDecl.name.isMissing()) {
+                    if (id !== "" || !funcDecl.name || funcDecl.name.text().length > 0) {
                         this.declFile.Write(id);
                     }
                     else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
