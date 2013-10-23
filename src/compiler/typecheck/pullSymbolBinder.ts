@@ -916,13 +916,13 @@ module TypeScript {
             if (variableSymbol) {
 
                 var prevKind = variableSymbol.kind;
-                var prevIsAmbient = variableSymbol.hasFlag(PullElementFlags.Ambient);
                 var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.Enum);
                 var prevIsClassConstructorVariable = variableSymbol.hasFlag(PullElementFlags.ClassConstructorVariable);
-                var prevIsModuleValue = variableSymbol.hasFlag(PullElementFlags.InitializedModule);
+                var prevIsModuleValue = variableSymbol.allDeclsHaveFlag(PullElementFlags.InitializedModule);
                 var prevIsImplicit = variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
                 var prevIsFunction = prevKind == PullElementKind.Function;
-                var isAmbient = (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
+                var prevIsAmbient = variableSymbol.allDeclsHaveFlag(PullElementFlags.Ambient);
+                var isAmbientOrPrevIsAmbient = prevIsAmbient || (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
                 var prevDecl = variableSymbol.getDeclarations()[0];
                 var prevParentDecl = prevDecl.getParentDecl();
                 var bothAreGlobal = parentDecl && (parentDecl.kind == PullElementKind.Script) && (prevParentDecl.kind == PullElementKind.Script);
@@ -933,11 +933,11 @@ module TypeScript {
                     (isImplicit &&
                     ((!isEnumValue && !isClassConstructorVariable && prevIsFunction) || // Enums can't mix with functions
                     ((isModuleValue || isEnumValue) && (prevIsModuleValue || prevIsEnum)) || // modules and enums can mix freely
-                    (isClassConstructorVariable && prevIsModuleValue && isAmbient) || // an ambient class can be declared after a module
+                    (isClassConstructorVariable && prevIsModuleValue && isAmbientOrPrevIsAmbient) || // an ambient class can be declared after a module
                     (isModuleValue && prevIsClassConstructorVariable))); // the module variable can come after the class constructor variable
 
                 // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
-                if (acceptableRedeclaration && (prevIsClassConstructorVariable || prevIsFunction) && !prevIsAmbient) {
+                if (acceptableRedeclaration && (prevIsClassConstructorVariable || prevIsFunction) && !isAmbientOrPrevIsAmbient) {
                     if (prevDecl.fileName() != variableDeclaration.fileName()) {
                         this.semanticInfoChain.addDiagnostic(diagnosticFromDecl(variableDeclaration,
                             DiagnosticCode.Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2, [declName, declName, prevDecl.fileName()]));
@@ -1325,9 +1325,10 @@ module TypeScript {
 
             if (functionSymbol) {
                 // Duplicate is acceptable if it is another signature (not a duplicate implementation), or an ambient fundule
-                var isAmbient = functionDeclaration.flags & PullElementFlags.Ambient;
+                var previousIsAmbient = functionSymbol.allDeclsHaveFlag(PullElementFlags.Ambient);
+                var isAmbientOrPreviousIsAmbient = previousIsAmbient || functionDeclaration.flags & PullElementFlags.Ambient;
                 var acceptableRedeclaration = functionSymbol.kind === PullElementKind.Function && (isSignature || functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)) ||
-                    functionSymbol.hasFlag(PullElementFlags.InitializedModule) && isAmbient;
+                    functionSymbol.allDeclsHaveFlag(PullElementFlags.InitializedModule) && isAmbientOrPreviousIsAmbient;
                 if (!acceptableRedeclaration) {
                     this.semanticInfoChain.addDiagnosticFromAST(funcDeclAST, DiagnosticCode.Duplicate_identifier_0, [functionDeclaration.getDisplayName()]);
                     functionSymbol.type = new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, funcName);
