@@ -8143,6 +8143,11 @@ module TypeScript {
         }
 
         private instantiateSignatureInContext(signatureA: PullSignatureSymbol, signatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
+
+            if (signatureA && signatureB && this.signaturesAreIdentical(signatureA, signatureB, true)) {
+                return signatureA;
+            }
+
             var typeReplacementMap: PullTypeSymbol[] = [];
             var inferredTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
