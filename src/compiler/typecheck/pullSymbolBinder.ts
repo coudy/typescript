@@ -6,7 +6,7 @@
 module TypeScript {
     export class PullSymbolBinder {
     
-        private declsBeingBound: boolean[] = [];
+        private declsBeingBound: number[] = [];
 
         constructor(private semanticInfoChain: SemanticInfoChain) {
         }
@@ -2073,13 +2073,13 @@ module TypeScript {
                 return;
             }
 
-            if (this.declsBeingBound[decl.declID]) {
+            if (this.declsBeingBound.indexOf(decl.declID) >= 0) {
                 // We are already binding it now
                 return;
             }
 
             // Add it to the list in case we revisit it during binding
-            this.declsBeingBound[decl.declID] = true;
+            this.declsBeingBound.push(decl.declID);
 
             switch (decl.kind) {
                 case PullElementKind.Script:
@@ -2187,7 +2187,8 @@ module TypeScript {
             }
 
             // Rremove the decl from the list
-            delete this.declsBeingBound[decl.declID];
+            Debug.assert(ArrayUtilities.last(this.declsBeingBound) === decl.declID);
+            this.declsBeingBound.pop();
         }
 
         //public bindTopLevelDecl() {
