@@ -31,6 +31,11 @@ module TypeScript {
         NullLiteral,
 
         // Types
+        AnyType,
+        BooleanType,
+        NumberType,
+        StringType,
+        VoidType,
         TypeParameter,
         GenericType,
         TypeRef,

@@ -2129,6 +2129,14 @@ module TypeScript {
             // an array of any of the above
             // a type query
 
+            switch (term.nodeType()) {
+                case NodeType.AnyType: return this.semanticInfoChain.anyTypeSymbol;
+                case NodeType.BooleanType: return this.semanticInfoChain.booleanTypeSymbol;
+                case NodeType.NumberType: return this.semanticInfoChain.numberTypeSymbol;
+                case NodeType.StringType: return this.semanticInfoChain.stringTypeSymbol;
+                case NodeType.VoidType: return this.semanticInfoChain.voidTypeSymbol;
+            }
+
             var typeDeclSymbol: PullTypeSymbol = null;
 
             // a name
@@ -2232,10 +2240,7 @@ module TypeScript {
             // an array of any of the above
             // a type query
 
-            var typeDeclSymbol = this.computeTypeReferenceSymbolWorker(
-                typeRef.term, context);
-
-            return typeDeclSymbol;
+            return this.computeTypeReferenceSymbolWorker(typeRef.term, context);
         }
 
         private genericTypeIsUsedWithoutRequiredTypeArguments(typeSymbol: PullTypeSymbol, term: AST, context: PullTypeResolutionContext): boolean {
@@ -5692,68 +5697,50 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDeclForAST(nameAST);
             var id = nameAST.valueText();
 
-            // if it's a known primitive name, cheat
-            if (id === "any") {
-                return this.semanticInfoChain.anyTypeSymbol;
+            var declPath = enclosingDecl.getParentPath();
+
+            // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
+            // first if need be, and then fall back to type names.  Otherwise, look for a type first, since we are probably looking for
+            // a type reference (the exception being an alias or export assignment)
+            var onLeftOfDot = this.isLeftSideOfQualifiedName(nameAST);
+
+            var kindToCheckFirst = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
+            var kindToCheckSecond = onLeftOfDot ? PullElementKind.SomeType : PullElementKind.SomeContainer;
+
+            var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckFirst);
+
+            if (!typeNameSymbol) {
+                typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckSecond);
             }
-            else if (id === "string") {
-                return this.semanticInfoChain.stringTypeSymbol;
+
+            if (!typeNameSymbol) {
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
+                return this.getNewErrorTypeSymbol(id);
             }
-            else if (id === "number") {
-                return this.semanticInfoChain.numberTypeSymbol;
+
+            var typeNameSymbolAlias: PullTypeAliasSymbol = null;
+            if (typeNameSymbol.isAlias()) {
+                typeNameSymbolAlias = <PullTypeAliasSymbol>typeNameSymbol;
+                this.resolveDeclaredSymbol(typeNameSymbol, context);
+
+                var aliasedType = typeNameSymbolAlias.getExportAssignedTypeSymbol();
+
+                this.resolveDeclaredSymbol(aliasedType, context);
             }
-            else if (id === "boolean") {
-                return this.semanticInfoChain.booleanTypeSymbol;
-            }
-            else if (id === "void") {
-                return this.semanticInfoChain.voidTypeSymbol;
-            }
-            else {
-                var declPath = enclosingDecl.getParentPath();
 
-                // If we're resolving a dotted type name, every dotted name but the last will be a container type, so we'll search those
-                // first if need be, and then fall back to type names.  Otherwise, look for a type first, since we are probably looking for
-                // a type reference (the exception being an alias or export assignment)
-                var onLeftOfDot = this.isLeftSideOfQualifiedName(nameAST);
+            if (typeNameSymbol.isTypeParameter()) {
+                if (enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction) && (enclosingDecl.flags & PullElementFlags.Static)) {
+                    var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
 
-                var kindToCheckFirst = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
-                var kindToCheckSecond = onLeftOfDot ? PullElementKind.SomeType : PullElementKind.SomeContainer;
-
-                var typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckFirst);
-
-                if (!typeNameSymbol) {
-                    typeNameSymbol = <PullTypeSymbol>this.getSymbolFromDeclPath(id, declPath, kindToCheckSecond);
-                }
-
-                if (!typeNameSymbol) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
-                    return this.getNewErrorTypeSymbol(id);
-                }
-
-                var typeNameSymbolAlias: PullTypeAliasSymbol = null;
-                if (typeNameSymbol.isAlias()) {
-                    typeNameSymbolAlias = <PullTypeAliasSymbol>typeNameSymbol;
-                    this.resolveDeclaredSymbol(typeNameSymbol, context);
-
-                    var aliasedType = typeNameSymbolAlias.getExportAssignedTypeSymbol();
-
-                    this.resolveDeclaredSymbol(aliasedType, context);
-                }
-
-                if (typeNameSymbol.isTypeParameter()) {
-                    if (enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction) && (enclosingDecl.flags & PullElementFlags.Static)) {
-                        var parentDecl = typeNameSymbol.getDeclarations()[0].getParentDecl();
-
-                        if (parentDecl.kind == PullElementKind.Class) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Static_methods_cannot_reference_class_type_parameters));
-                            return this.getNewErrorTypeSymbol();
-                        }
+                    if (parentDecl.kind == PullElementKind.Class) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Static_methods_cannot_reference_class_type_parameters));
+                        return this.getNewErrorTypeSymbol();
                     }
                 }
+            }
 
-                if (!typeNameSymbol.isGeneric() && (typeNameSymbol.isClass() || typeNameSymbol.isInterface())) {
-                    typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(this, typeNameSymbol);
-                }
+            if (!typeNameSymbol.isGeneric() && (typeNameSymbol.isClass() || typeNameSymbol.isInterface())) {
+                typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(this, typeNameSymbol);
             }
 
             return typeNameSymbol;

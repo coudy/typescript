@@ -42,12 +42,6 @@ module TypeScript {
             ast.setPostComments(this.convertNodeTrailingComments(node, lastToken, fullStart));
         }
 
-        private copySpan(from: AST, to: AST): void {
-            to.minChar = from.minChar;
-            to.limChar = from.limChar;
-            to.trailingTriviaWidth = from.trailingTriviaWidth;
-        }
-
         public setTokenSpan(span: IASTSpan, fullStart: number, element: ISyntaxToken): void {
             var leadingTriviaWidth = element.leadingTriviaWidth();
             var trailingTriviaWidth = element.trailingTriviaWidth();
@@ -83,16 +77,6 @@ module TypeScript {
             }
             else {
                 switch (token.tokenKind) {
-                    case SyntaxKind.AnyKeyword:
-                    case SyntaxKind.BooleanKeyword:
-                    case SyntaxKind.NumberKeyword:
-                    case SyntaxKind.StringKeyword:
-                    case SyntaxKind.VoidKeyword:
-                        // TODO: there's no reason to use an identifier node for these.  We 
-                        // can just have specialized nodes for these primitives.
-                        result = new Identifier(token.text(), token.text());
-                        break;
-
                     case SyntaxKind.IdentifierName:
                         // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
                         // so that we can safely use it as a key in a javascript object.
@@ -101,7 +85,7 @@ module TypeScript {
                             ? SyntaxTreeToAstVisitor.protoSubstitutionString
                             : null;
 
-                        result = new Identifier(tokenText, text);
+                        result = new Identifier(tokenText, text, /*isStringOrNumericLiteral:*/ false);
                         break;
 
                     case SyntaxKind.NumericLiteral:
@@ -239,44 +223,52 @@ module TypeScript {
         public visitToken(token: ISyntaxToken): AST {
             var fullStart = this.position;
 
-            var result: AST;
-            if (token.tokenKind === SyntaxKind.ThisKeyword) {
-                result = new ThisExpression();
-            }
-            else if (token.tokenKind === SyntaxKind.SuperKeyword) {
-                result = new SuperExpression();
-            }
-            else if (token.tokenKind === SyntaxKind.TrueKeyword) {
-                result = new LiteralExpression(NodeType.TrueLiteral);
-            }
-            else if (token.tokenKind === SyntaxKind.FalseKeyword) {
-                result = new LiteralExpression(NodeType.FalseLiteral);
-            }
-            else if (token.tokenKind === SyntaxKind.NullKeyword) {
-                result = new LiteralExpression(NodeType.NullLiteral);
-            }
-            else if (token.tokenKind === SyntaxKind.StringLiteral) {
-                result = new StringLiteral(token.text(), token.valueText());
-            }
-            else if (token.tokenKind === SyntaxKind.RegularExpressionLiteral) {
-                result = new RegularExpressionLiteral(token.text());
-            }
-            else if (token.tokenKind === SyntaxKind.NumericLiteral) {
-                var preComments = this.convertTokenLeadingComments(token, fullStart);
-
-                result = new NumericLiteral(token.value(), token.text(), token.valueText());
-
-                result.setPreComments(preComments);
-            }
-            else {
-                result = this.identifierFromToken(token, /*isOptional:*/ false);
-            }
+            var result = this.visitTokenWorker(token);
 
             this.movePast(token);
 
             var start = fullStart + token.leadingTriviaWidth();
             this.setSpanExplicit(result, start, start + token.width());
             return result;
+        }
+
+        public visitTokenWorker(token: ISyntaxToken): AST {
+            switch (token.tokenKind) {
+                case SyntaxKind.AnyKeyword:
+                    return new BuiltInType(NodeType.AnyType);
+                case SyntaxKind.BooleanKeyword:
+                    return new BuiltInType(NodeType.BooleanType);
+                case SyntaxKind.NumberKeyword:
+                    return new BuiltInType(NodeType.NumberType);
+                case SyntaxKind.StringKeyword:
+                    return new BuiltInType(NodeType.StringType);
+                case SyntaxKind.VoidKeyword:
+                    return new BuiltInType(NodeType.VoidType);
+                case SyntaxKind.ThisKeyword:
+                    return new ThisExpression();
+                case SyntaxKind.SuperKeyword:
+                    return new SuperExpression();
+                case SyntaxKind.TrueKeyword:
+                    return new LiteralExpression(NodeType.TrueLiteral);
+                case SyntaxKind.FalseKeyword:
+                    return new LiteralExpression(NodeType.FalseLiteral);
+                case SyntaxKind.NullKeyword:
+                    return new LiteralExpression(NodeType.NullLiteral);
+                case SyntaxKind.StringLiteral:
+                    return new StringLiteral(token.text(), token.valueText());
+                case SyntaxKind.RegularExpressionLiteral:
+                    return new RegularExpressionLiteral(token.text());
+                case SyntaxKind.NumericLiteral:
+                    var fullStart = this.position;
+                    var preComments = this.convertTokenLeadingComments(token, fullStart);
+
+                    var result = new NumericLiteral(token.value(), token.text(), token.valueText());
+
+                    result.setPreComments(preComments);
+                    return result;
+                default:
+                    return this.identifierFromToken(token, /*isOptional:*/ false);
+            }
         }
 
         private getLeadingComments(node: SyntaxNode): ISyntaxTrivia[] {
@@ -349,7 +341,7 @@ module TypeScript {
                 isExternalModule = true;
 
                 var correctedFileName = switchToForwardSlashes(this.fileName);
-                var id: Identifier = new Identifier(correctedFileName, correctedFileName);
+                var id: Identifier = new Identifier(correctedFileName, correctedFileName, /*isStringOrNumericLiteral:*/ false);
                 var topLevelMod = new ModuleDeclaration(id, bod, null);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
@@ -997,17 +989,12 @@ module TypeScript {
         }
 
         public visitType(type: ITypeSyntax): TypeReference {
-            var result: TypeReference;
             if (type.isToken()) {
-                var start = this.position;
-                result = new TypeReference(type.accept(this));
-                this.setSpan(result, start, type);
+                return new TypeReference(type.accept(this));
             }
             else {
-                result = type.accept(this);
+                return type.accept(this);
             }
-
-            return result;
         }
 
         public visitTypeQuery(node: TypeQuerySyntax): TypeReference {
@@ -1018,10 +1005,7 @@ module TypeScript {
             var typeQuery = new TypeQuery(name);
             this.setSpan(typeQuery, start, node);
 
-            var result = new TypeReference(typeQuery);
-            this.copySpan(typeQuery, result);
-
-            return result;
+            return new TypeReference(typeQuery);
         }
 
         public visitQualifiedName(node: QualifiedNameSyntax): TypeReference {
@@ -1034,10 +1018,7 @@ module TypeScript {
             var term = new QualifiedName(left, right);
             this.setSpan(term, start, node);
 
-            var result = new TypeReference(term);
-            this.copySpan(term, result);
-
-            return result;
+            return new TypeReference(term);
         }
 
         public visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
@@ -1080,10 +1061,7 @@ module TypeScript {
             funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
             funcDecl.hint = "_construct";
 
-            var result = new TypeReference(funcDecl);
-            this.copySpan(funcDecl, result);
-
-            return result;
+            return new TypeReference(funcDecl);
         }
 
         public visitFunctionType(node: FunctionTypeSyntax): TypeReference {
@@ -1099,10 +1077,7 @@ module TypeScript {
             funcDecl.setFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature);
             funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(funcDecl);
-            this.copySpan(funcDecl, result);
-
-            return result;
+            return new TypeReference(funcDecl);
         }
 
         public visitObjectType(node: ObjectTypeSyntax): TypeReference {
@@ -1111,10 +1086,7 @@ module TypeScript {
             var objectType = this.visitObjectTypeWorker(node);
             objectType.setFlags(objectType.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(objectType);
-            this.copySpan(objectType, result);
-
-            return result;
+            return new TypeReference(objectType);
         }
 
         private visitObjectTypeWorker(node: ObjectTypeSyntax): ObjectType {
@@ -1147,7 +1119,6 @@ module TypeScript {
             var result = new TypeReference(arrayType);
             result.setFlags(result.getFlags() | ASTFlags.TypeReference);
 
-            this.setSpan(result, start, node);
             return result;
         }
 
@@ -1162,10 +1133,7 @@ module TypeScript {
 
             genericType.setFlags(genericType.getFlags() | ASTFlags.TypeReference);
 
-            var result = new TypeReference(genericType);
-            this.copySpan(genericType, result);
-
-            return result;
+            return new TypeReference(genericType);
         }
 
         public visitTypeAnnotation(node: TypeAnnotationSyntax): TypeReference {
@@ -1439,7 +1407,7 @@ module TypeScript {
             this.movePast(node.closeBracketToken);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var name = new Identifier("__item", "__item");
+            var name = new Identifier("__item", "__item", /*isStringOrNumericLiteral:*/ false);
             this.setSpanExplicit(name, start, start);   // 0 length name.
 
             var parameters = new ASTList(this.fileName, [parameter]);

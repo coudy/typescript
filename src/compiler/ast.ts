@@ -476,7 +476,7 @@ module TypeScript {
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
         // as emitting, use the actualText field.
-        constructor(private _text: string, private _valueText: string, public isStringOrNumericLiteral: boolean = false) {
+        constructor(private _text: string, private _valueText: string, public isStringOrNumericLiteral: boolean) {
             super();
         }
 
@@ -511,7 +511,7 @@ module TypeScript {
 
     export class MissingIdentifier extends Identifier {
         constructor() {
-            super("__missing", "__missing");
+            super("__missing", "__missing", false);
         }
 
         public isMissing() {
@@ -2146,6 +2146,7 @@ module TypeScript {
             Debug.assert(term !== null && term !== undefined);
             this.minChar = term.minChar;
             this.limChar = term.limChar;
+            this.trailingTriviaWidth = term.trailingTriviaWidth;
         }
 
         public nodeType(): NodeType {
@@ -2159,6 +2160,20 @@ module TypeScript {
         public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.term, ast.term, includingPosition);
+        }
+    }
+
+    export class BuiltInType extends AST {
+        constructor(private _nodeType: NodeType) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public emit(emitter: Emitter) {
+            throw Errors.invalidOperation("Should not emit a builtin type.");
         }
     }
 
