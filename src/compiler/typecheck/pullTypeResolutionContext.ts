@@ -107,7 +107,7 @@ module TypeScript {
                         }
                     };
 
-                    bestCommonType = resolver.widenType(resolver.findBestCommonType(info.inferenceCandidates[0], collection, context, new TypeComparisonInfo()));
+                    bestCommonType = resolver.widenType(resolver.findBestCommonType(collection, context, new TypeComparisonInfo()));
 
                     if (!bestCommonType) {
                         unfit = true;

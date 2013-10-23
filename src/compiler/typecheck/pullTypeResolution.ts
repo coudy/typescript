@@ -2899,7 +2899,7 @@ module TypeScript {
                         }
                     };
 
-                    var bestCommonReturnType = this.findBestCommonType(returnExpressionSymbols[0], collection, context, new TypeComparisonInfo());
+                    var bestCommonReturnType = this.findBestCommonType(collection, context, new TypeComparisonInfo());
                     var returnType = bestCommonReturnType;
                     var returnExpression = returnExpressions[returnExpressionSymbols.indexOf(returnType)];
 
@@ -6878,7 +6878,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
                 };
                 var decl = objectLiteralSymbol.getDeclarations()[0];
-                var indexerReturnType = this.widenType(this.findBestCommonType(indexerTypeCandidates[0], typeCollection, context));
+                var indexerReturnType = this.widenType(this.findBestCommonType(typeCollection, context));
                 if (indexerReturnType == contextualIndexSignature.returnType) {
                     objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
                 }
@@ -6963,7 +6963,7 @@ module TypeScript {
                 };
             }
 
-            elementType = elementType ? this.findBestCommonType(elementType, collection, context, comparisonInfo) : elementType;
+            elementType = elementType ? this.findBestCommonType(collection, context, comparisonInfo) : elementType;
 
             if (!elementType) {
                 elementType = this.semanticInfoChain.undefinedTypeSymbol;
@@ -7180,9 +7180,7 @@ module TypeScript {
         }
 
         private bestCommonTypeOfTwoTypes(type1: PullTypeSymbol, type2: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            // findBestCommonType skips the first type (since it is explicitly provided as an 
-            // argument).  So we simply return the second type when asked.
-            return this.findBestCommonType(type1, {
+            return this.findBestCommonType({
                 getLength() {
                     return 2;
                 },
@@ -7196,9 +7194,7 @@ module TypeScript {
         }
 
         private bestCommonTypeOfThreeTypes(type1: PullTypeSymbol, type2: PullTypeSymbol, type3: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            // findBestCommonType skips the first type (since it is explicitly provided as an 
-            // argument).  So we simply return the second type when asked.
-            return this.findBestCommonType(type1, {
+            return this.findBestCommonType({
                 getLength() {
                     return 3;
                 },
@@ -8326,9 +8322,9 @@ module TypeScript {
 
         // type relationships
 
-        private mergeOrdered(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
+        private chooseCommonType(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
             if (!(a || b)) {
-                return this.semanticInfoChain.emptyTypeSymbol;
+                return null;
             }
             if (!a) {
                 return b;
@@ -8414,50 +8410,40 @@ module TypeScript {
             return type;
         }
 
-        public findBestCommonType(initialType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
+        public findBestCommonType(collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
-            var nlastChecked = 0;
-            var bestCommonType = initialType;
+            var bestCommonType: PullTypeSymbol = null;
 
-            // it's important that we set the convergence type here, and not in the loop,
-            // since the first element considered may be the contextual type
-            var convergenceType: PullTypeSymbol = bestCommonType;
+            // We set i = Math.max(i, j) + 1 in the incrementor as an optimization. If we did not converge on a type in the inner loop,
+            // then every type that we tried in the inner loop would not be a suitable candidate. Therefore there is no point in
+            // trying them.
+            for (var i = 0, j = 0; i < len; i = Math.max(i, j) + 1) {
+                bestCommonType = collection.getTypeAtIndex(i);
 
-            while (nlastChecked < len) {
-
-                for (var i = 0; i < len; i++) {
+                for (j = 0; j < len; j++) {
 
                     // no use in comparing a type against itself
-                    if (i === nlastChecked) {
+                    if (i == j) {
                         continue;
                     }
 
-                    if (convergenceType && (bestCommonType = this.mergeOrdered(convergenceType, collection.getTypeAtIndex(i), context, comparisonInfo))) {
-                        convergenceType = bestCommonType;
-                    }
+                    bestCommonType = this.chooseCommonType(bestCommonType, collection.getTypeAtIndex(j), context, comparisonInfo);
 
+                    // If there is no common type, try starting again with the next type in the collection
                     if (bestCommonType === null || this.isAnyOrEquivalent(bestCommonType)) {
                         break;
                     }
                 }
 
-                // use the type if we've agreed upon it
-                if (convergenceType && bestCommonType) {
-                    break;
-                }
-
-                nlastChecked++;
-                if (nlastChecked < len) {
-                    convergenceType = collection.getTypeAtIndex(nlastChecked);
+                // If we've found a type by this point, it is the best common type
+                if (bestCommonType) {
+                    return bestCommonType;
                 }
             }
 
-            if (!bestCommonType) {
-                // if no best common type can be determined, use "{}"
-                bestCommonType = this.semanticInfoChain.emptyTypeSymbol;
-            }
-
-            return bestCommonType;
+            // October 16, 2013: It is possible that no such [common] type exists or more than one
+            // such type exists, in which case the best common type is an empty object type.
+            return this.semanticInfoChain.emptyTypeSymbol;
         }
 
         // Type Identity
