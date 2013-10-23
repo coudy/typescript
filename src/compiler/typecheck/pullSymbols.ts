@@ -588,16 +588,23 @@ module TypeScript {
                         return true;
                     }
                 }
-            } else {
+            }
+            else {
                 inIsExternallyVisibleSymbols = [];
             }
 
             if (fromIsExternallyVisibleSymbol === symbol) {
                 return true;
             }
-            inIsExternallyVisibleSymbols = inIsExternallyVisibleSymbols.concat(<any>fromIsExternallyVisibleSymbol);
 
-            return symbol.isExternallyVisible(inIsExternallyVisibleSymbols);
+            inIsExternallyVisibleSymbols.push(fromIsExternallyVisibleSymbol);
+
+            var result = symbol.isExternallyVisible(inIsExternallyVisibleSymbols);
+
+            Debug.assert(ArrayUtilities.last(inIsExternallyVisibleSymbols) === fromIsExternallyVisibleSymbol);
+            inIsExternallyVisibleSymbols.pop();
+
+            return result;
         }
 
         public isExternallyVisible(inIsExternallyVisibleSymbols?: PullSymbol[]): boolean {
