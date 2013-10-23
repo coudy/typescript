@@ -569,7 +569,7 @@ module TypeScript {
 
         public getConstantDecl(dotExpr: MemberAccessExpression): EnumElement {
             var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
-            if (pullSymbol && pullSymbol.hasFlag(PullElementFlags.Constant)) {
+            if (pullSymbol && pullSymbol.anyDeclHasFlag(PullElementFlags.Constant)) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
                     var pullDecl = pullDecls[0];
@@ -1607,7 +1607,7 @@ module TypeScript {
                             var same = symbolDeclarationEnclosingContainer === enclosingContainer;
 
                             // initialized module object variables are bound to their parent's decls
-                            if (!same && symbol.hasFlag(PullElementFlags.InitializedModule)) {
+                            if (!same && symbol.anyDeclHasFlag(PullElementFlags.InitializedModule)) {
                                 same = symbolDeclarationEnclosingContainer === enclosingContainer.getParentDecl();
                             }
 
@@ -1703,7 +1703,7 @@ module TypeScript {
                         var pullSymbolContainerKind = pullSymbolContainer.kind;
 
                         if (pullSymbolContainerKind === PullElementKind.Class) {
-                            if (pullSymbol.hasFlag(PullElementFlags.Static)) {
+                            if (pullSymbol.anyDeclHasFlag(PullElementFlags.Static)) {
                                 // This is static symbol
                                 this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
@@ -1713,29 +1713,29 @@ module TypeScript {
                             }
                         }
                         else if (PullHelpers.symbolIsModule(pullSymbolContainer) || pullSymbolContainerKind === PullElementKind.Enum ||
-                            pullSymbolContainer.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.Enum)) {
+                            pullSymbolContainer.anyDeclHasFlag(PullElementFlags.InitializedModule | PullElementFlags.Enum)) {
                             // If property or, say, a constructor being invoked locally within the module of its definition
                             if (pullSymbolKind === PullElementKind.Property || pullSymbolKind === PullElementKind.EnumMember) {
                                 this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
-                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
+                            else if (pullSymbol.anyDeclHasFlag(PullElementFlags.Exported) &&
                                 pullSymbolKind === PullElementKind.Variable &&
-                                !pullSymbol.hasFlag(PullElementFlags.InitializedModule | PullElementFlags.Enum)) {
+                                !pullSymbol.anyDeclHasFlag(PullElementFlags.InitializedModule | PullElementFlags.Enum)) {
                                 this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
-                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
+                            else if (pullSymbol.anyDeclHasFlag(PullElementFlags.Exported) && !this.symbolIsUsedInItsEnclosingContainer(pullSymbol)) {
                                 this.emitSymbolContainerNameInEnclosingContext(pullSymbol);
                             }
                         }
                         else if (pullSymbolContainerKind === PullElementKind.DynamicModule ||
-                            pullSymbolContainer.hasFlag(PullElementFlags.InitializedDynamicModule)) {
+                            pullSymbolContainer.anyDeclHasFlag(PullElementFlags.InitializedDynamicModule)) {
                             if (pullSymbolKind === PullElementKind.Property) {
                                 // If dynamic module
                                 this.writeToOutput("exports.");
                             }
-                            else if (pullSymbol.hasFlag(PullElementFlags.Exported) &&
+                            else if (pullSymbol.anyDeclHasFlag(PullElementFlags.Exported) &&
                                 !isLocalAlias &&
-                                !pullSymbol.hasFlag(PullElementFlags.ImplicitVariable) &&
+                                !pullSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable) &&
                                 pullSymbol.kind !== PullElementKind.ConstructorMethod &&
                                 pullSymbol.kind !== PullElementKind.Class &&
                                 pullSymbol.kind !== PullElementKind.Enum) {

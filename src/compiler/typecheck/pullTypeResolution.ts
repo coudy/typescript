@@ -253,7 +253,7 @@ module TypeScript {
                 var containerType = !isContainer ? parent.getAssociatedContainerType() : parent;
 
                 if (isContainer && containerType) {
-                    if (symbol.hasFlag(PullElementFlags.Exported)) {
+                    if (symbol.anyDeclHasFlag(PullElementFlags.Exported)) {
                         return symbol;
                     }
 
@@ -410,7 +410,7 @@ module TypeScript {
                             childSymbol = this.getMemberSymbol(symbolName, declSearchKind, instanceType);
 
                             // Make sure we are not picking up a static from a class (it is never in scope)
-                            if (childSymbol && (childSymbol.kind & declSearchKind) && !childSymbol.hasFlag(PullElementFlags.Static)) {
+                            if (childSymbol && (childSymbol.kind & declSearchKind) && !childSymbol.anyDeclHasFlag(PullElementFlags.Static)) {
                                 return childSymbol;
                             }
                         }
@@ -427,7 +427,7 @@ module TypeScript {
 
                     var childSymbol = this.getMemberSymbol(symbolName, declSearchKind, declSymbol);
 
-                    if (childSymbol && (childSymbol.kind & declSearchKind) && !childSymbol.hasFlag(PullElementFlags.Static)) {
+                    if (childSymbol && (childSymbol.kind & declSearchKind) && !childSymbol.anyDeclHasFlag(PullElementFlags.Static)) {
                         return childSymbol;
                     }
                 }
@@ -839,7 +839,7 @@ module TypeScript {
                     !symbol.isResolved &&
                     !symbol.type &&
                     resolvedSymbol &&
-                    symbol.hasFlag(PullElementFlags.PropertyParameter | PullElementFlags.ConstructorParameter)) {
+                    symbol.anyDeclHasFlag(PullElementFlags.PropertyParameter | PullElementFlags.ConstructorParameter)) {
 
                     symbol.type = resolvedSymbol.type;
                     symbol.setResolved();
@@ -1522,7 +1522,7 @@ module TypeScript {
                 var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
                     aliasedType = moduleSymbol.type;
-                    if (aliasedType.hasFlag(PullElementFlags.InitializedModule)) {
+                    if (aliasedType.anyDeclHasFlag(PullElementFlags.InitializedModule)) {
                         var moduleName = (<Identifier>aliasExpr).valueText();
                         var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
                         var instanceSymbol = (<PullContainerSymbol>aliasedType).getInstanceSymbol();
@@ -2085,7 +2085,7 @@ module TypeScript {
                 var instanceSymbol = container.getInstanceSymbol();
                 // check if it is actually merged with class
                 if (instanceSymbol &&
-                    (instanceSymbol.hasFlag(PullElementFlags.ClassConstructorVariable) || instanceSymbol.kind == PullElementKind.ConstructorMethod)) {
+                    (instanceSymbol.anyDeclHasFlag(PullElementFlags.ClassConstructorVariable) || instanceSymbol.kind == PullElementKind.ConstructorMethod)) {
                     type = instanceSymbol.type.getAssociatedContainerType();
                 }
             }
@@ -2689,7 +2689,7 @@ module TypeScript {
                     this.variablePrivacyErrorReporter(varDeclOrParameter, declSymbol, symbol, context));
             }
 
-            if (declSymbol.kind != PullElementKind.Property || declSymbol.hasFlag(PullElementFlags.PropertyParameter)) {
+            if (declSymbol.kind != PullElementKind.Property || declSymbol.anyDeclHasFlag(PullElementFlags.PropertyParameter)) {
                 // Non property variable with _this name, we need to verify if this would be ok
                 this.checkNameForCompilerGeneratedDeclarationCollision(varDeclOrParameter, /*isDeclaration*/ true, name, context);
             }
@@ -2701,7 +2701,7 @@ module TypeScript {
 
             var classSymbol = this.getContextualClassSymbolForEnclosingDecl(superAST, enclosingDecl);
 
-            if (classSymbol && !classSymbol.hasFlag(PullElementFlags.Ambient)) {
+            if (classSymbol && !classSymbol.anyDeclHasFlag(PullElementFlags.Ambient)) {
                 if (superAST.nodeType() == NodeType.Parameter) {
                     var enclosingAST = this.getASTForDecl(enclosingDecl);
                     var block = enclosingDecl.kind == PullElementKind.Method ? (<FunctionDeclaration>enclosingAST).block : (<ConstructorDeclaration>enclosingAST).block;
@@ -5367,7 +5367,7 @@ module TypeScript {
             // We don't want to capture an intermediate 'any' from a recursive resolution
             if (nameSymbol &&
                 (nameSymbol.type != this.semanticInfoChain.anyTypeSymbol ||
-                nameSymbol.hasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !nameSymbol.inResolution*/) {
+                nameSymbol.anyDeclHasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !nameSymbol.inResolution*/) {
                 this.setSymbolForAST(nameAST, nameSymbol, context);
             }
 
@@ -5549,7 +5549,7 @@ module TypeScript {
 
             if (symbol &&
                 (symbol.type != this.semanticInfoChain.anyTypeSymbol ||
-                symbol.hasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !symbol.inResolution*/) {
+                symbol.anyDeclHasFlag(PullElementFlags.IsAnnotatedWithAny | PullElementFlags.Exported))/*&& !symbol.inResolution*/) {
                 this.setSymbolForAST(dottedNameAST, symbol, context);
                 this.setSymbolForAST(name, symbol, context);
             }
@@ -9075,7 +9075,7 @@ module TypeScript {
 
                 var targetPropType = targetProp.type;
 
-                if (sourceProp && sourceProp.hasFlag(PullElementFlags.Static) && source.isClass()) {
+                if (sourceProp && sourceProp.anyDeclHasFlag(PullElementFlags.Static) && source.isClass()) {
                     // static source prop is not really member of the source which is class instance
                     sourceProp = null;
                 }
@@ -9231,8 +9231,8 @@ module TypeScript {
         private sourcePropertyIsRelatableToTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
             sourceProp: PullSymbol, targetProp: PullSymbol, assignableTo: boolean, comparisonCache: IBitMatrix,
             context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
-            var targetPropIsPrivate = targetProp.hasFlag(PullElementFlags.Private);
-            var sourcePropIsPrivate = sourceProp.hasFlag(PullElementFlags.Private);
+            var targetPropIsPrivate = targetProp.anyDeclHasFlag(PullElementFlags.Private);
+            var sourcePropIsPrivate = sourceProp.anyDeclHasFlag(PullElementFlags.Private);
 
             // if visibility doesn't match, the types don't match
             if (targetPropIsPrivate != sourcePropIsPrivate) {
@@ -10292,7 +10292,7 @@ module TypeScript {
                     var name = declGroups[i][0].name;
                     var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl);
                     if (candidateSymbol && candidateSymbol.isResolved) {
-                        if (!candidateSymbol.hasFlag(PullElementFlags.ImplicitVariable)) {
+                        if (!candidateSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable)) {
                             firstSymbol = candidateSymbol;
                             firstSymbolType = candidateSymbol.type;
                         }
@@ -10447,16 +10447,16 @@ module TypeScript {
             if (funcDecl.nodeType() !== NodeType.ConstructorDeclaration && functionDeclaration.kind !== PullElementKind.ConstructSignature && signatureForVisibilityCheck && signature != signatureForVisibilityCheck) {
                 var errorCode: string;
                 // verify it satisfies all the properties of first signature
-                if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Private) != signature.hasFlag(PullElementFlags.Private)) {
+                if (signatureForVisibilityCheck.anyDeclHasFlag(PullElementFlags.Private) != signature.anyDeclHasFlag(PullElementFlags.Private)) {
                     errorCode = DiagnosticCode.Overload_signatures_must_all_be_public_or_private;
                 }
-                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Exported) != signature.hasFlag(PullElementFlags.Exported)) {
+                else if (signatureForVisibilityCheck.anyDeclHasFlag(PullElementFlags.Exported) != signature.anyDeclHasFlag(PullElementFlags.Exported)) {
                     errorCode = DiagnosticCode.Overload_signatures_must_all_be_exported_or_not_exported;
                 }
-                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Ambient) != signature.hasFlag(PullElementFlags.Ambient)) {
+                else if (signatureForVisibilityCheck.anyDeclHasFlag(PullElementFlags.Ambient) != signature.anyDeclHasFlag(PullElementFlags.Ambient)) {
                     errorCode = DiagnosticCode.Overload_signatures_must_all_be_ambient_or_non_ambient;
                 }
-                else if (signatureForVisibilityCheck.hasFlag(PullElementFlags.Optional) != signature.hasFlag(PullElementFlags.Optional)) {
+                else if (signatureForVisibilityCheck.anyDeclHasFlag(PullElementFlags.Optional) != signature.anyDeclHasFlag(PullElementFlags.Optional)) {
                     errorCode = DiagnosticCode.Overload_signatures_must_all_be_optional_or_required;
                 }
 
@@ -10679,7 +10679,7 @@ module TypeScript {
                     typeSymbolName = "'" + typeSymbolName + "'";
                 }
 
-                if (declSymbol.hasFlag(PullElementFlags.Static)) {
+                if (declSymbol.anyDeclHasFlag(PullElementFlags.Static)) {
                     messageCode = DiagnosticCode.Public_static_property_0_of_exported_class_is_using_inaccessible_module_1;
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
@@ -10691,7 +10691,7 @@ module TypeScript {
                     messageCode = DiagnosticCode.Exported_variable_0_is_using_inaccessible_module_1;
                 }
             } else {
-                if (declSymbol.hasFlag(PullElementFlags.Static)) {
+                if (declSymbol.anyDeclHasFlag(PullElementFlags.Static)) {
                     messageCode = DiagnosticCode.Public_static_property_0_of_exported_class_has_or_is_using_private_type_1;
                 } else if (isProperty) {
                     if (isPropertyOfClass) {
@@ -11460,7 +11460,7 @@ module TypeScript {
             }
 
             // Verify if value refers to same class;
-            if (!valueSymbol.hasFlag(PullElementFlags.ClassConstructorVariable)) {
+            if (!valueSymbol.anyDeclHasFlag(PullElementFlags.ClassConstructorVariable)) {
                 return true;
             }
 
@@ -11637,11 +11637,11 @@ module TypeScript {
 
             // Disallow assignment to an enum, class or module variables.
             if (ast.nodeType() === NodeType.Name) {
-                if (astSymbol.kind === PullElementKind.Variable && astSymbol.hasFlag(PullElementFlags.Enum)) {
+                if (astSymbol.kind === PullElementKind.Variable && astSymbol.anyDeclHasFlag(PullElementFlags.Enum)) {
                     return false;
                 }
 
-                if (astSymbol.kind === PullElementKind.Variable && astSymbol.hasFlag(PullElementFlags.SomeInitializedModule)) {
+                if (astSymbol.kind === PullElementKind.Variable && astSymbol.anyDeclHasFlag(PullElementFlags.SomeInitializedModule)) {
                     return false;
                 }
 
@@ -11688,7 +11688,7 @@ module TypeScript {
             context: PullTypeResolutionContext): boolean {
 
             if (resolvedName) {
-                if (resolvedName.hasFlag(PullElementFlags.Private)) {
+                if (resolvedName.anyDeclHasFlag(PullElementFlags.Private)) {
                     var memberContainer = resolvedName.getContainer();
                     if (memberContainer && memberContainer.kind === PullElementKind.ConstructorType) {
                         memberContainer = memberContainer.getAssociatedContainerType();

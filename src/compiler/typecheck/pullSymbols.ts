@@ -302,10 +302,10 @@ module TypeScript {
             this.inResolution = false;
         }
 
-        public hasFlag(flag: PullElementFlags): boolean {
+        public anyDeclHasFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
-                if ((declarations[i].flags & flag) !== PullElementFlags.None) {
+                if (hasFlag(declarations[i].flags, flag)) {
                     return true;
                 }
             }
@@ -315,7 +315,7 @@ module TypeScript {
         public allDeclsHaveFlag(flag: PullElementFlags): boolean {
             var declarations = this.getDeclarations();
             for (var i = 0, n = declarations.length; i < n; i++) {
-                if (!((declarations[i].flags & flag) !== PullElementFlags.None)) {
+                if (!hasFlag(declarations[i].flags, flag)) {
                     return false;
                 }
             }
@@ -627,7 +627,7 @@ module TypeScript {
             }
 
             // Private member
-            if (this.hasFlag(PullElementFlags.Private)) {
+            if (this.anyDeclHasFlag(PullElementFlags.Private)) {
                 return false;
             }
 
@@ -662,7 +662,7 @@ module TypeScript {
             }
 
             // If non exported member and is not class properties and method, it is not visible
-            if (!this.hasFlag(PullElementFlags.Exported) && kind != PullElementKind.Property && kind != PullElementKind.Method) {
+            if (!this.anyDeclHasFlag(PullElementFlags.Exported) && kind != PullElementKind.Property && kind != PullElementKind.Method) {
                 return false;
             }
 
@@ -1918,7 +1918,7 @@ module TypeScript {
 
                 for (var i = 0, n = this._members.length; i < n; i++) {
                     var member = this._members[i];
-                    if ((member.kind & searchDeclKind) && (memberVisiblity !== GetAllMembersVisiblity.externallyVisible || !member.hasFlag(PullElementFlags.Private))) {
+                    if ((member.kind & searchDeclKind) && (memberVisiblity !== GetAllMembersVisiblity.externallyVisible || !member.anyDeclHasFlag(PullElementFlags.Private))) {
                         allMembers[allMembers.length] = member;
                     }
                 }

@@ -916,10 +916,10 @@ module TypeScript {
             if (variableSymbol) {
 
                 var prevKind = variableSymbol.kind;
-                var prevIsEnum = variableSymbol.hasFlag(PullElementFlags.Enum);
-                var prevIsClassConstructorVariable = variableSymbol.hasFlag(PullElementFlags.ClassConstructorVariable);
+                var prevIsEnum = variableSymbol.anyDeclHasFlag(PullElementFlags.Enum);
+                var prevIsClassConstructorVariable = variableSymbol.anyDeclHasFlag(PullElementFlags.ClassConstructorVariable);
                 var prevIsModuleValue = variableSymbol.allDeclsHaveFlag(PullElementFlags.InitializedModule);
-                var prevIsImplicit = variableSymbol.hasFlag(PullElementFlags.ImplicitVariable);
+                var prevIsImplicit = variableSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable);
                 var prevIsFunction = prevKind == PullElementKind.Function;
                 var prevIsAmbient = variableSymbol.allDeclsHaveFlag(PullElementFlags.Ambient);
                 var isAmbientOrPrevIsAmbient = prevIsAmbient || (variableDeclaration.flags & PullElementFlags.Ambient) != 0;
@@ -1697,7 +1697,7 @@ module TypeScript {
                 var constructorSigs = constructorSymbol.type.getConstructSignatures();
 
                 for (var i = 0; i < constructorSigs.length; i++) {
-                    if (!constructorSigs[i].hasFlag(PullElementFlags.Signature)) {
+                    if (!constructorSigs[i].anyDeclHasFlag(PullElementFlags.Signature)) {
                         hasDefinitionSignature = true;
                         break;
                     }

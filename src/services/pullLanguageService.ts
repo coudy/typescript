@@ -945,7 +945,7 @@ module Services {
                 symbolKind != TypeScript.PullElementKind.EnumMember &&
                 symbolKind != TypeScript.PullElementKind.Method &&
                 symbolKind != TypeScript.PullElementKind.TypeParameter &&
-                !symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
+                !symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Exported)) {
                 // Non exported variable/function
                 return symbol.getScopedName(enclosingScopeSymbol,  /*useConstraintInName*/true);
             }
@@ -1469,7 +1469,7 @@ module Services {
                     return true;
                 }
 
-                if (containerKind == TypeScript.PullElementKind.ConstructorType && !symbol.hasFlag(TypeScript.PullElementFlags.Static)) {
+                if (containerKind == TypeScript.PullElementKind.ConstructorType && !symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Static)) {
                     return true;
                 }
             }
@@ -1597,19 +1597,19 @@ module Services {
         private getScriptElementKindModifiers(symbol: TypeScript.PullSymbol): string {
             var result: string[] = [];
 
-            if (symbol.hasFlag(TypeScript.PullElementFlags.Exported)) {
+            if (symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Exported)) {
                 result.push(ScriptElementKindModifier.exportedModifier);
             }
-            if (symbol.hasFlag(TypeScript.PullElementFlags.Ambient)) {
+            if (symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Ambient)) {
                 result.push(ScriptElementKindModifier.ambientModifier);
             }
-            if (symbol.hasFlag(TypeScript.PullElementFlags.Public)) {
+            if (symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Public)) {
                 result.push(ScriptElementKindModifier.publicMemberModifier);
             }
-            if (symbol.hasFlag(TypeScript.PullElementFlags.Private)) {
+            if (symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Private)) {
                 result.push(ScriptElementKindModifier.privateMemberModifier);
             }
-            if (symbol.hasFlag(TypeScript.PullElementFlags.Static)) {
+            if (symbol.anyDeclHasFlag(TypeScript.PullElementFlags.Static)) {
                 result.push(ScriptElementKindModifier.staticModifier);
             }
 
