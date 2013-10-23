@@ -111,7 +111,7 @@ module TypeScript {
         public bloomFilter(): BloomFilter {
             if (!this._bloomFilter) {
                 var identifiers = createIntrinsicsObject<boolean>();
-                var pre = function (cur: TypeScript.AST, walker: IAstWalker) {
+                var pre = function (cur: TypeScript.AST) {
                     if (isValidAstNode(cur)) {
                         if (cur.nodeType() === NodeType.Name) {
                             var nodeText = (<TypeScript.Identifier>cur).valueText();
@@ -121,7 +121,7 @@ module TypeScript {
                     }
                 };
 
-                TypeScript.getAstWalkerFactory().walk(this.script(), pre, null, null, identifiers);
+                TypeScript.getAstWalkerFactory().simpleWalk(this.script(), pre, null, identifiers);
 
                 var identifierCount = 0;
                 for (var name in identifiers) {

@@ -155,5 +155,7 @@ module TypeScript {
         ExtendsHeritageClause,
         ImplementsHeritageClause,
         ElseClause,
+
+        LastNodeType = ElseClause
     }
 }

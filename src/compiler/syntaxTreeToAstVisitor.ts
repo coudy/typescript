@@ -2160,7 +2160,7 @@ module TypeScript {
                 return;
             }
 
-            var pre = function (cur: TypeScript.AST, walker: TypeScript.IAstWalker) {
+            var pre = function (cur: TypeScript.AST) {
                 // Apply delta to this node
                 applyDelta(cur, delta);
                 applyDeltaToComments(cur.preComments(), delta);
@@ -2198,7 +2198,7 @@ module TypeScript {
                 }
             };
 
-            TypeScript.getAstWalkerFactory().walk(ast, pre);
+            TypeScript.getAstWalkerFactory().simpleWalk(ast, pre);
         }
 
         public setSpanExplicit(span: IASTSpan, start: number, end: number): void {
