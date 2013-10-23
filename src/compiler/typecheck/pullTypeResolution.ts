@@ -8144,10 +8144,6 @@ module TypeScript {
 
         private instantiateSignatureInContext(signatureA: PullSignatureSymbol, signatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
 
-            if (signatureA && signatureB && this.signaturesAreIdentical(signatureA, signatureB, true)) {
-                return signatureA;
-            }
-
             var typeReplacementMap: PullTypeSymbol[] = [];
             var inferredTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
@@ -8198,7 +8194,14 @@ module TypeScript {
                     }
 
                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[i], typeConstraint, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
-                        return null;
+                        // if the signature is not assignable due to a constraint mismatch, it may be because the two signatures are identical
+                        // (hence, no inferences could be made for the signature's type parameters)
+                        if (this.signaturesAreIdentical(signatureA, signatureB, true)) {
+                            return signatureA;
+                        }
+                        else {
+                            return null;
+                        }
                     }
                 }
             }
