@@ -585,6 +585,17 @@ module Services {
             }
 
             var symbol = symbolInfo.symbol;
+
+            TypeScript.Debug.assert(symbol.kind !== TypeScript.PullElementKind.None &&
+                symbol.kind !== TypeScript.PullElementKind.Global &&
+                symbol.kind !== TypeScript.PullElementKind.Script, "getDefinitionAtPosition - Invalid symbol kind");
+
+            if (symbol.kind === TypeScript.PullElementKind.Primitive) {
+                // Primitive symbols do not have definition locations that map to host soruces.
+                // Return null to indicate they have no "definition locations".
+                return null;
+            }
+
             var declarations = symbol.getDeclarations();
             var symbolName = symbol.getDisplayName();
             var symbolKind = this.mapPullElementKind(symbol.kind, symbol);
