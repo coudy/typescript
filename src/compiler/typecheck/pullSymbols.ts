@@ -216,7 +216,10 @@ module TypeScript {
 
             // Get the actual name associated with a declaration for this symbol
             var decls = this.getDeclarations();
-            return decls.length ? this.getDeclarations()[0].getDisplayName() : this.name;
+            var name = decls.length && decls[0].getDisplayName();
+
+            // In case the decl does not have a name like in the case of named function expression
+            return (name && name.length) ? name : this.name;
         }
 
         public getIsSpecialized() { return false; }
@@ -232,6 +235,7 @@ module TypeScript {
         public setIsSynthesized(value = true) {
             this.isSynthesized = value;
         }
+
         public getIsSynthesized() { return this.isSynthesized; }
 
         public setEnclosingSignature(signature: PullSignatureSymbol) {

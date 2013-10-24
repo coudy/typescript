@@ -6,4 +6,4 @@
 
 
 goTo.marker();
-verify.occurrencesAtPositionCount(0);
+verify.occurrencesAtPositionCount(1);
