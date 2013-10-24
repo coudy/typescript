@@ -414,6 +414,11 @@ module Services {
             /// TODO: Cache symbol existence for files to save text search
             // Also, need to make this work for unicode escapes.
 
+            // Be reseliant in the face of a symbol with no name or zero length name
+            if (!symbolName || !symbolName.length) {
+                return positions;
+            }
+
             var sourceText = this.compiler.getScriptSnapshot(fileName);
             var sourceLength = sourceText.getLength();
             var text = sourceText.getText(0, sourceLength);
