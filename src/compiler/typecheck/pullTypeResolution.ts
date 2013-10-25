@@ -8150,7 +8150,7 @@ module TypeScript {
 
             // create a type argument list based on the parameters of signatureB
             var signatureAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context, true);
 
             var functionTypeA = signatureA.functionType;
             var functionTypeB = signatureB.functionType;
@@ -9921,7 +9921,8 @@ module TypeScript {
         private inferArgumentTypesForSignature(signature: PullSignatureSymbol,
             args: ASTList,
             comparisonInfo: TypeComparisonInfo,
-            context: PullTypeResolutionContext): PullTypeSymbol[] {
+            context: PullTypeResolutionContext,
+            instantiatingSignatureInContext = false): PullTypeSymbol[] {
 
             var cxt: PullContextualTypeContext = null;
 
@@ -10007,6 +10008,15 @@ module TypeScript {
                 }
             }
 
+            // Do not let local type parameters escape at call sites
+            if (!instantiatingSignatureInContext) {
+                for (var i = 0; i < resultTypes.length; i++) {
+                    if (argContext.candidateCache[resultTypes[i].pullSymbolID]) {
+                        resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
+                    }
+                }
+            }
+
             return resultTypes;
         }
 
@@ -10022,13 +10032,6 @@ module TypeScript {
 
             if (expressionType.isError()) {
                 expressionType = this.semanticInfoChain.anyTypeSymbol;
-            }
-
-            if (parameterType === expressionType) {
-                //if (parameterType.isTypeParameter() && shouldFix) {
-                //    argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, this.semanticInfoChain.anyTypeSymbol, shouldFix);
-                //}
-                return;
             }
 
             if (parameterType.isTypeParameter()) {
