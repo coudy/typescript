@@ -19,6 +19,7 @@ var copyright = "CopyrightNotice.txt";
 var thirdParty = "ThirdPartyNoticeText.txt";
 var compilerSources = [
 	"ast.ts",
+	"astHelpers.ts",
 	"astWalker.ts",
 	"base64.ts",
 	"bloomFilter.ts",

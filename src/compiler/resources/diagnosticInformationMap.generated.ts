@@ -1226,6 +1226,10 @@ module TypeScript {
     "code": 2227,
     "category": DiagnosticCategory.Error
   },
+  "Duplicate identifier '{0}'. Compiler reserves name '{1}' in top level scope of an external module.": {
+    "code": 2228,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix

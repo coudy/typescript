@@ -26,6 +26,22 @@ module TypeScript {
         public membersContextTypeSymbols: PullTypeSymbol[] = null;
     }
 
+    enum CompilerReservedNames {
+        _this = 1,
+        _super,
+        arguments,
+        _i,
+        require,
+        exports
+    }
+
+    function getCompilerReservedName(name: Identifier) {
+        // If this array changes, update the order accordingly in CompilerReservedNames
+        var nameText = name.valueText();
+        var index = <CompilerReservedNames>CompilerReservedNames[nameText];
+        return CompilerReservedNames[index] ? index : undefined;
+    }
+
     // The resolver associates types with a given AST
     export class PullTypeResolver {
         private _cachedArrayInterfaceType: PullTypeSymbol = null;
@@ -918,6 +934,14 @@ module TypeScript {
             this.resolveAST(ast.enumElements, false, context);
             var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.validateVariableDeclarationGroups(containerDecl, context);
+
+            if (!enumIsElided(ast)) {
+                this.checkNameForCompilerGeneratedDeclarationCollision(ast, /*isDeclaration*/ true, ast.identifier, context);
+            }
+        }
+
+        private postTypeCheckEnumDeclaration(ast: EnumDeclaration, context: PullTypeResolutionContext) {
+            this.checkThisCaptureVariableCollides(ast, /*isDeclaration*/ true, context);
         }
 
         //
@@ -982,6 +1006,14 @@ module TypeScript {
                 this.semanticInfoChain.addDiagnosticFromAST(
                     ast.name, DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name);
             }
+
+            if (!moduleIsElided(ast)) {
+                this.checkNameForCompilerGeneratedDeclarationCollision(ast, /*isDeclaration*/ true, ast.name, context);
+            }
+        }
+
+        private postTypeCheckModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext) {
+            this.checkThisCaptureVariableCollides(ast, /*isDeclaration*/ true, context);
         }
 
         private isTypeRefWithoutTypeArgs(term: AST) {
@@ -1310,12 +1342,7 @@ module TypeScript {
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
 
             // Add for post typeChecking if we want to verify name collision with _this
-            if ((/* In global context*/ !classDeclSymbol.getContainer() ||
-                /* In Dynamic Module */ classDeclSymbol.getContainer().kind == PullElementKind.DynamicModule) &&
-                classDeclAST.identifier.valueText() == "_this") {
-                this.postTypeCheckWorkitems.push(classDeclAST);
-            }
-
+            this.checkNameForCompilerGeneratedDeclarationCollision(classDeclAST, /*isDeclaration*/ true, classDeclAST.identifier, context);
             this.resolveAST(classDeclAST.classElements, false, context);
 
             this.typeCheckTypeParametersOfTypeDeclaration(classDeclAST, context);
@@ -1327,7 +1354,7 @@ module TypeScript {
         }
 
         private postTypeCheckClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext) {
-            this.checkThisCaptureVariableCollides(classDeclAST, true, context);
+            this.checkThisCaptureVariableCollides(classDeclAST, /*isDeclaration*/ true, context);
         }
 
         private resolveTypeSymbolSignatures(typeSymbol: PullTypeSymbol, context: PullTypeResolutionContext): void {
@@ -1693,6 +1720,17 @@ module TypeScript {
                     });
                 }
             }
+
+            if (getCompilerReservedName(importStatementAST.identifier)) {
+                // Add as a post callback to make sure that isUsedAsValue flag is set correctly
+                this.postTypeCheckWorkitems.push(importStatementAST);
+            }
+        }
+
+        private postTypeCheckImportDeclaration(importStatementAST: ImportDeclaration, context: PullTypeResolutionContext) {
+            if (importDeclarationIsElided(importStatementAST, this.semanticInfoChain)) {
+                this.checkNameForCompilerGeneratedDeclarationCollision(importStatementAST, /*isDeclaration*/ true, importStatementAST.identifier, context, /*immediateThisCheck*/ true);
+            }
         }
 
         private resolveExportAssignmentStatement(exportAssignmentAST: ExportAssignment, context: PullTypeResolutionContext): PullSymbol {
@@ -1956,16 +1994,42 @@ module TypeScript {
             paramSymbol.setResolved();
         }
 
-        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: Identifier, context: PullTypeResolutionContext) {
-            var nameText = name.valueText();
-            if (nameText == "_this") {
-                this.postTypeCheckWorkitems.push(astWithName);
-            } else if (nameText == "_super") {
-                this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, context);
-            } else if (nameText == "arguments") {
-                this.checkArgumentsCollides(astWithName, context);
-            } else if (isDeclaration && nameText == "_i") {
-                this.checkIndexOfRestArgumentInitializationCollides(astWithName, context);
+        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: Identifier, context: PullTypeResolutionContext, immediateThisCheck?: boolean) {
+            var compilerReservedName = getCompilerReservedName(name);
+            if (compilerReservedName) {
+                switch (compilerReservedName) {
+                    case CompilerReservedNames._this: // _this
+                        if (immediateThisCheck) {
+                            this.checkThisCaptureVariableCollides(astWithName, isDeclaration, context);
+                        } else {
+                            this.postTypeCheckWorkitems.push(astWithName);
+                        }
+                        return;
+
+                    case CompilerReservedNames._super: // _super
+                        this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, context);
+                        return;
+
+                    case CompilerReservedNames.arguments: // arguments
+                        this.checkArgumentsCollides(astWithName, context);
+                        return;
+
+                    case CompilerReservedNames._i: // _i
+                        if (isDeclaration) {
+                            this.checkIndexOfRestArgumentInitializationCollides(astWithName, context);
+                        }
+                        return;
+
+                    case CompilerReservedNames.require: // require
+                    case CompilerReservedNames.exports: // require
+                        if (isDeclaration) {
+                            this.checkExternalModuleRequireExportsCollides(astWithName, name, context);
+                        }
+                        return;
+
+                    default:
+                        Debug.fail("Unknown compiler reserved name: " + name.text());
+                }
             }
         }
 
@@ -2024,6 +2088,20 @@ module TypeScript {
                         // It is error to use the _i varible name
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_i_Compiler_uses_i_to_initialize_rest_parameter));
                     }
+                }
+            }
+        }
+
+        private checkExternalModuleRequireExportsCollides(ast: AST, name: Identifier, context: PullTypeResolutionContext) {
+            var enclosingDecl = this.getEnclosingDeclForAST(ast);
+            // If the declaration is in external module
+            if (enclosingDecl && enclosingDecl.kind == PullElementKind.DynamicModule) {
+                var decl = this.semanticInfoChain.getDeclForAST(ast);
+                // This is not ambient declaration, then there would be code gen
+                if (!hasFlag(decl.flags, PullElementFlags.Ambient)) { 
+                    // It is error to use 'require' or 'exports' as name for the declaration
+                    var nameText = name.valueText();
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_an_external_module, [nameText, nameText]));
                 }
             }
         }
@@ -2689,7 +2767,7 @@ module TypeScript {
                     this.variablePrivacyErrorReporter(varDeclOrParameter, declSymbol, symbol, context));
             }
 
-            if (declSymbol.kind != PullElementKind.Property || declSymbol.anyDeclHasFlag(PullElementFlags.PropertyParameter)) {
+            if ((declSymbol.kind != PullElementKind.Property && declSymbol.kind != PullElementKind.EnumMember) || declSymbol.anyDeclHasFlag(PullElementFlags.PropertyParameter)) {
                 // Non property variable with _this name, we need to verify if this would be ok
                 this.checkNameForCompilerGeneratedDeclarationCollision(varDeclOrParameter, /*isDeclaration*/ true, name, context);
             }
@@ -3090,11 +3168,7 @@ module TypeScript {
             }
 
             if (funcDecl.kind == PullElementKind.Function) {
-                // Non property variable with _this name, we need to verify if this would be ok
-                var funcNameText = name.valueText();
-                if (funcNameText == "_super") {
-                    this.checkSuperCaptureVariableCollides(funcDeclAST, /*isDeclaration*/ true, context);
-                }
+                this.checkNameForCompilerGeneratedDeclarationCollision(funcDeclAST, /*isDeclaration*/ true, name, context);
             }
 
             this.typeCheckCallBacks.push(context => {
@@ -3150,6 +3224,10 @@ module TypeScript {
                     }
                 }
             });
+        }
+
+        private postTypeCheckFunctionDeclaration(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext) {
+            this.checkThisCaptureVariableCollides(funcDeclAST, /*isDeclaration*/ true, context);
         }
 
         private resolveReturnTypeAnnotationOfFunctionDeclaration(
@@ -5324,12 +5402,28 @@ module TypeScript {
                     this.postTypeCheckClassDeclaration(<ClassDeclaration>ast, context);
                     return;
 
+                case NodeType.FunctionDeclaration:
+                    this.postTypeCheckFunctionDeclaration(<FunctionDeclaration>ast, context);
+                    return;
+
+                case NodeType.ModuleDeclaration:
+                    this.postTypeCheckModuleDeclaration(<ModuleDeclaration>ast, context);
+                    return;
+
+                case NodeType.EnumDeclaration:
+                    this.postTypeCheckEnumDeclaration(<EnumDeclaration>ast, context);
+                    return;
+
+                case NodeType.ImportDeclaration:
+                    this.postTypeCheckImportDeclaration(<ImportDeclaration>ast, context);
+                    return;
+
                 case NodeType.Name:
                     this.postTypeCheckNameExpression(<Identifier>ast, context);
                     return;
 
                 default:
-                    Debug.assert(false, "Implement postTypeCheck clause to handle the postTypeCheck work");
+                    Debug.assert(false, "Implement postTypeCheck clause to handle the postTypeCheck work, nodeType: " +  TypeScript.NodeType[ast.nodeType()]);
             }
         }
 
@@ -5343,7 +5437,7 @@ module TypeScript {
         }
 
         private postTypeCheckNameExpression(nameAST: Identifier, context: PullTypeResolutionContext) {
-            this.checkThisCaptureVariableCollides(nameAST, false, context);
+            this.checkThisCaptureVariableCollides(nameAST, /*isDeclaration*/ false, context);
         }
 
         private typeCheckNameExpression(nameAST: Identifier, context: PullTypeResolutionContext) {

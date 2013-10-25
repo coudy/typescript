@@ -247,29 +247,7 @@ module TypeScript {
         }
 
         public shouldEmitImportDeclaration(importDeclAST: ImportDeclaration) {
-            var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
-            var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
-            var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
-            var isAmdCodeGen = this.emitOptions.compilationSettings().moduleGenTarget() == ModuleGenTarget.Asynchronous;
-
-            if (!isExternalModuleReference || // Any internal reference needs to check if the emit can happen
-                isExported || // External module reference with export modifier always needs to be emitted
-                !isAmdCodeGen) {// commonjs needs the var declaration for the import declaration
-                var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-                if (!importDeclAST.isExternalImportDeclaration()) {
-                    if (importSymbol.getExportAssignedValueSymbol()) {
-                        return true;
-                    }
-                    var containerSymbol = importSymbol.getExportAssignedContainerSymbol();
-                    if (containerSymbol && containerSymbol.getInstanceSymbol()) {
-                        return true;
-                    }
-                }
-
-                return importSymbol.isUsedAsValue();
-            }
-
-            return false;
+            return importDeclarationIsElided(importDeclAST, this.semanticInfoChain, this.emitOptions.compilationSettings());
         }
 
         public emitImportDeclaration(importDeclAST: ImportDeclaration) {
@@ -2027,7 +2005,7 @@ module TypeScript {
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script);
 
-            var isNonElidedExternalModule = hasFlag(script.getModuleFlags(), ModuleFlags.IsExternalModule) && !this.scriptIsElided(script);
+            var isNonElidedExternalModule = hasFlag(script.getModuleFlags(), ModuleFlags.IsExternalModule) && !scriptIsElided(script);
             if (isNonElidedExternalModule) {
                 this.recordSourceMappingStart(script);
 
@@ -3015,56 +2993,12 @@ module TypeScript {
             }
         }
 
-        private scriptIsElided(script: Script): boolean {
-            if (hasFlag(script.getModuleFlags(), ModuleFlags.Ambient)) {
-                return true;
-            }
-
-            return this.moduleMembersAreElided(script.moduleElements);
-        }
-
-        private enumIsElided(declaration: EnumDeclaration): boolean {
-            if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private moduleIsElided(declaration: ModuleDeclaration): boolean {
-            if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
-                return true;
-            }
-
-            return this.moduleMembersAreElided(declaration.members);
-        }
-
-        private moduleMembersAreElided(members: ASTList): boolean {
-            for (var i = 0, n = members.members.length; i < n; i++) {
-                var member = members.members[i];
-
-                // We should emit *this* module if it contains any non-interface types. 
-                // Caveat: if we have contain a module, then we should be emitted *if we want to
-                // emit that inner module as well.
-                if (member.nodeType() === NodeType.ModuleDeclaration) {
-                    if (!this.moduleIsElided(<ModuleDeclaration>member)) {
-                        return false;
-                    }
-                }
-                else if (member.nodeType() !== NodeType.InterfaceDeclaration) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public shouldEmitEnumDeclaration(declaration: EnumDeclaration): boolean {
-            return declaration.preComments() !== null || ! this.enumIsElided(declaration);
+            return declaration.preComments() !== null || ! enumIsElided(declaration);
         }
 
         public emitEnumDeclaration(declaration: EnumDeclaration): void {
-            if (!this.enumIsElided(declaration)) {
+            if (!enumIsElided(declaration)) {
                 this.emitComments(declaration, true);
                 this.emitEnum(declaration);
                 this.emitComments(declaration, false);
@@ -3075,11 +3009,11 @@ module TypeScript {
         }
 
         public shouldEmitModuleDeclaration(declaration: ModuleDeclaration): boolean {
-            return declaration.preComments() !== null || !this.moduleIsElided(declaration);
+            return declaration.preComments() !== null || !moduleIsElided(declaration);
         }
 
         public emitModuleDeclaration(declaration: ModuleDeclaration): void {
-            if (!this.moduleIsElided(declaration)) {
+            if (!moduleIsElided(declaration)) {
                 this.emitComments(declaration, true);
                 this.emitModule(declaration);
                 this.emitComments(declaration, false);

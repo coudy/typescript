@@ -41388,6 +41388,7 @@ var TypeScript;
             switch (nodeType) {
                 case 26 /* Parameter */:
                 case 24 /* VariableDeclarator */:
+                case TypeScript.NodeType.EnumElement:
                     this.postTypeCheckVariableDeclaratorOrParameter(ast, context);
                     return;
 
@@ -41400,7 +41401,7 @@ var TypeScript;
                     return;
 
                 default:
-                    TypeScript.Debug.assert(false, "Implement postTypeCheck clause to handle the postTypeCheck work");
+                    TypeScript.Debug.assert(false, "Implement postTypeCheck clause to handle the postTypeCheck work, nodeType: " + TypeScript.NodeType[ast.nodeType()]);
             }
         };
 
