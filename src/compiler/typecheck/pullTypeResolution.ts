@@ -11792,7 +11792,8 @@ module TypeScript {
                 instantiatedSignature.addTypeParameter(typeParameter);
             }
 
-            instantiatedSignature.returnType = this.instantiateType(signature.returnType, typeParameterArgumentMap, instantiateFunctionTypeParameters);
+            // if the instantiation occurred via a recursive funciton invocation, the return type may be null so we should set it to any
+            instantiatedSignature.returnType = this.instantiateType((signature.returnType || this.semanticInfoChain.anyTypeSymbol), typeParameterArgumentMap, instantiateFunctionTypeParameters);
 
             var parameters = signature.parameters;
             var parameter: PullSymbol = null;
