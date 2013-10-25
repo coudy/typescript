@@ -8150,7 +8150,7 @@ module TypeScript {
 
             // create a type argument list based on the parameters of signatureB
             var signatureAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context, true);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context, /*instantiatingSignatureInContext*/true);
 
             var functionTypeA = signatureA.functionType;
             var functionTypeB = signatureB.functionType;
@@ -10009,8 +10009,16 @@ module TypeScript {
             }
 
             // Do not let local type parameters escape at call sites
+            //  Because we're comparing for equality between two signatures (where one is instantiated
+            //  against the type parameters of the other), we want to know * exactly * what the
+            //  instantiation would be give the set of type parameters.In the case where the two
+            //  signatures are otherwise equal, we don't want to sub in '{ }' for any of the type parameters,
+            //  since that would short - circuit the equality check.The substitution is only desirable at call sites,
+            //  where type parameters can leak out of scope, but during contextual instantiation
+            //  the type parameters * should * be considered in scope
             if (!instantiatingSignatureInContext) {
                 for (var i = 0; i < resultTypes.length; i++) {
+                    // if it's in the candidate cache, it's a self-reference
                     if (argContext.candidateCache[resultTypes[i].pullSymbolID]) {
                         resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
                     }
