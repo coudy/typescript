@@ -7716,7 +7716,6 @@ module TypeScript {
             signatures = resolvedSignatures;
 
             var errorCondition: PullSymbol = null;
-
             if (!signatures.length) {
                 additionalResults.targetSymbol = targetSymbol;
                 additionalResults.resolvedSignatures = beforeResolutionSignatures;
@@ -8650,8 +8649,7 @@ module TypeScript {
 
                         if (t1PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
                             t2PropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
-
-                            return this.infinitelyExpandingPropertyTypesAreIdentical(t1, t2, t1MemberSymbol, t2MemberSymbol);
+                            return this.infinitelyExpandingTypesAreIdentical(t1MemberType, t2MemberType);
                         }
                     }
 
@@ -9211,114 +9209,146 @@ module TypeScript {
             return true;
         }
 
-        private infinitelyExpandingPropertyTypesAreEquivalent(
-            source: PullTypeSymbol,
-            target: PullTypeSymbol,
-            sourceProp: PullSymbol,
-            targetProp: PullSymbol,
+        private infinitelyExpandingSourceTypeIsRelatableToTargetType(
+            sourceType: PullTypeSymbol,
+            targetType: PullTypeSymbol,
             assignableTo: boolean,
             comparisonCache: IBitMatrix,
             context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo,
             isComparingInstantiatedSignatures: boolean): boolean {
 
-            var sourcePropType = sourceProp.type;
-            var targetPropType = targetProp.type;
-            var widenedTargetPropType = this.widenType(targetPropType);
-            var widenedSourcePropType = this.widenType(sourcePropType);
+            // Section 3.8.7 - Recursive Types
+            //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and 
+            //  assignability(section 3.8.4) relationships, 
+            //  if either type originates in an infinitely expanding type reference, S and T are not compared
+            //  by the rules in the preceding sections.Instead, for the relationship to be considered true,
+            //  -	S and T must both be type references to the same named type, and
+            //  -	the relationship in question must be true for each corresponding pair of type arguments in
+            //      the type argument lists of S and T.
 
-            if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
-                (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
-                var targetDecl = targetProp.getDeclarations()[0];
-                var sourceDecl = sourceProp.getDeclarations()[0];
+            var widenedTargetType = this.widenType(targetType);
+            var widenedSourceType = this.widenType(sourceType);
 
-                var sourcePropTypeArguments = sourcePropType.getTypeArguments();
-                var targetPropTypeArguments = targetPropType.getTypeArguments();
+            // Check if the type is not any/null or undefined
+            if ((widenedSourceType != this.semanticInfoChain.anyTypeSymbol) &&
+                (widenedTargetType != this.semanticInfoChain.anyTypeSymbol)) {
 
-                if (!sourcePropTypeArguments && !targetPropTypeArguments) {
-                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+                var sourceTypeNamedTypeReference = PullHelpers.getRootType(sourceType);
+                var targetTypeNamedTypeReference = PullHelpers.getRootType(targetType);
+                //  -	S and T must both be type references to the same named type, and
+                if (sourceTypeNamedTypeReference != targetTypeNamedTypeReference) {
+                    comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
+                    if (comparisonInfo) {
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_do_not_refer_to_same_named_type,
+                            [sourceType.getScopedNameEx().toString(), targetType.toString()]));
+                    }
+                    return false;
+                }
+
+                var sourceTypeArguments = sourceType.getTypeArguments();
+                var targetTypeArguments = targetType.getTypeArguments();
+
+                // Verify if all type arguments can relate
+                if (!sourceTypeArguments && !targetTypeArguments) {
+                    // Both interface have 0 type arguments, so they relate
+                    comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, true);
                     return true;
                 }
 
-                if (!targetDecl.isEqual(sourceDecl)) {
-                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                // If the number of type arguments mismatch (because of incomplete list - types are incompatible
+                if (!(sourceTypeArguments && targetTypeArguments) ||
+                    sourceTypeArguments.length != targetTypeArguments.length) {
+                    comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
                     if (comparisonInfo) {
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_have_incompatible_type_arguments,
+                            [sourceType.toString(), targetType.toString()]));
                     }
                     return false;
                 }
 
-                if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
-                    sourcePropTypeArguments.length != targetPropTypeArguments.length) {
-                    comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
-                    if (comparisonInfo) {
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
-                    }
-                    return false;
+                var comparisonInfoTypeArgumentsCheck: TypeComparisonInfo = null;
+                if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
+                    comparisonInfoTypeArgumentsCheck = new TypeComparisonInfo(comparisonInfo);
                 }
-
-                for (var i = 0; i < sourcePropTypeArguments.length; i++) {
-                    if (!this.sourceIsRelatableToTarget(sourcePropTypeArguments[i], targetPropTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
-                        comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                for (var i = 0; i < sourceTypeArguments.length; i++) {
+                    //  -	the relationship in question must be true for each corresponding pair of type arguments
+                    //      in the type argument lists of S and T.
+                    if (!this.sourceIsRelatableToTarget(sourceTypeArguments[i], targetTypeArguments[i], assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures)) {
                         if (comparisonInfo) {
-                            comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                                [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]));
+                            var message: string;
+                            if (comparisonInfoTypeArgumentsCheck && comparisonInfoTypeArgumentsCheck.message) {
+                                message = getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_have_incompatible_type_arguments_NL_2,
+                                    [sourceType.toString(), targetType.toString(), comparisonInfoTypeArgumentsCheck.message]);
+                            } else {
+                                message = getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_have_incompatible_type_arguments,
+                                    [sourceType.toString(), targetType.toString()]);
+                            }
+                            comparisonInfo.addMessage(message);
                         }
-                        return false;
+
                     }
                 }
             }
 
-            comparisonCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+            comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, true);
             return true;
         }
 
-        private infinitelyExpandingPropertyTypesAreIdentical(
-            source: PullTypeSymbol,
-            target: PullTypeSymbol,
-            sourceProp: PullSymbol,
-            targetProp: PullSymbol): boolean {
+        private infinitelyExpandingTypesAreIdentical(sourceType: PullTypeSymbol, targetType: PullTypeSymbol): boolean {
 
-            var sourcePropType = sourceProp.type;
-            var targetPropType = targetProp.type;
-            var widenedTargetPropType = this.widenType(targetPropType);
-            var widenedSourcePropType = this.widenType(sourcePropType);
+            // Section 3.8.7 - Recursive Types
+            //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and 
+            //  assignability(section 3.8.4) relationships, 
+            //  if either type originates in an infinitely expanding type reference, S and T are not compared
+            //  by the rules in the preceding sections.Instead, for the relationship to be considered true,
+            //  -	S and T must both be type references to the same named type, and
+            //  -	the relationship in question must be true for each corresponding pair of type arguments in
+            //      the type argument lists of S and T.
 
-            if ((widenedSourcePropType != this.semanticInfoChain.anyTypeSymbol) &&
-                (widenedTargetPropType != this.semanticInfoChain.anyTypeSymbol)) {
-                var targetDecl = targetProp.getDeclarations()[0];
-                var sourceDecl = sourceProp.getDeclarations()[0];
+            var widenedTargetType = this.widenType(targetType);
+            var widenedSourceType = this.widenType(sourceType);
 
-                var sourcePropTypeArguments = sourcePropType.getTypeArguments();
-                var targetPropTypeArguments = targetPropType.getTypeArguments();
+            // Check if the type is not any/null or undefined
+            if ((widenedSourceType != this.semanticInfoChain.anyTypeSymbol) &&
+                (widenedTargetType != this.semanticInfoChain.anyTypeSymbol)) {
 
-                if (!sourcePropTypeArguments && !targetPropTypeArguments) {
-                    this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+                //  -	S and T must both be type references to the same named type, and
+                var sourceTypeNamedTypeReference = PullHelpers.getRootType(sourceType);
+                var targetTypeNamedTypeReference = PullHelpers.getRootType(targetType);
+                if (sourceTypeNamedTypeReference != targetTypeNamedTypeReference) {
+                    this.identicalCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
+                    return false;
+                }
+
+                //  -	the relationship in question must be true for each corresponding pair of type arguments in
+                //      the type argument lists of S and T.
+                var sourceTypeArguments = sourceType.getTypeArguments();
+                var targetTypeArguments = targetType.getTypeArguments();
+
+                if (!sourceTypeArguments && !targetTypeArguments) {
+                    // Both types do not refere to any type arguments so they are identical
+                    this.identicalCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, true);
                     return true;
                 }
 
-                if (!targetDecl.isEqual(sourceDecl)) {
-                    this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                if (!(sourceTypeArguments && targetTypeArguments) ||
+                    sourceTypeArguments.length != targetTypeArguments.length) {
+                    // Mismatch in type arguments length - may be missing type arguments - it is error 
+                    this.identicalCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
                     return false;
                 }
 
-                if (!(sourcePropTypeArguments && targetPropTypeArguments) ||
-                    sourcePropTypeArguments.length != targetPropTypeArguments.length) {
-                    this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
-                    return false;
-                }
-
-                for (var i = 0; i < sourcePropTypeArguments.length; i++) {
-                    if (!this.typesAreIdentical(sourcePropTypeArguments[i], targetPropTypeArguments[i])) {
-                        this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, false);
+                for (var i = 0; i < sourceTypeArguments.length; i++) {
+                    // Each pair of type argument needs to be identical for the type to be identical
+                    if (!this.typesAreIdentical(sourceTypeArguments[i], targetTypeArguments[i])) {
+                        this.identicalCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
                         return false;
                     }
                 }
             }
 
-            this.identicalCache.setValueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID, true);
+            this.identicalCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, true);
             return true;
         }
 
@@ -9376,22 +9406,7 @@ module TypeScript {
             var sourcePropType = sourceProp.type;
             var targetPropType = targetProp.type;
 
-            // Section 3.8.7 - Recursive Types
-            //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and assignability(section 3.8.4) relationships, 
-            //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
-            //  -	S and T must both be type references to the same named type, and
-            //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
-            if (!comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID)) {
-                var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
-                var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
-
-                if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
-                    targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
-
-                    return this.infinitelyExpandingPropertyTypesAreEquivalent(source, target, sourceProp, targetProp, assignableTo, comparisonCache, context, comparisonInfo, isComparingInstantiatedSignatures);
-                }
-            }
-            else {
+            if (comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID)) {
                 return true;
             }
 
@@ -9400,24 +9415,40 @@ module TypeScript {
                 comparisonInfoPropertyTypeCheck = new TypeComparisonInfo(comparisonInfo);
             }
 
-            if (!this.sourceIsRelatableToTarget(sourcePropType, targetPropType, assignableTo, comparisonCache, context, comparisonInfoPropertyTypeCheck, isComparingInstantiatedSignatures)) {
-                if (comparisonInfo) {
-                    comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
-                    var message: string;
-                    if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                        message = getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3,
-                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
-                    } else {
-                        message = getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                            [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
-                    }
-                    comparisonInfo.addMessage(message);
-                }
+            // Section 3.8.7 - Recursive Types
+            //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and assignability(section 3.8.4) relationships, 
+            //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
+            //  -	S and T must both be type references to the same named type, and
+            //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
 
-                return false;
+            var sourcePropGenerativeTypeKind = sourcePropType.getGenerativeTypeClassification(source);
+            var targetPropGenerativeTypeKind = targetPropType.getGenerativeTypeClassification(target);
+
+            if (sourcePropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                targetPropGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+                if (this.infinitelyExpandingSourceTypeIsRelatableToTargetType(sourcePropType, targetPropType, assignableTo, comparisonCache, context, comparisonInfoPropertyTypeCheck, isComparingInstantiatedSignatures)) {
+                    return true;
+                }
+            }
+            else if (this.sourceIsRelatableToTarget(sourcePropType, targetPropType, assignableTo, comparisonCache, context, comparisonInfoPropertyTypeCheck, isComparingInstantiatedSignatures)) {
+                return true;
             }
 
-            return true;
+            // Update error message correctly
+            if (comparisonInfo) {
+                comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
+                var message: string;
+                if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
+                    message = getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3,
+                        [targetProp.getScopedNameEx().toString(), source.toString(), target.toString(), comparisonInfoPropertyTypeCheck.message]);
+                } else {
+                    message = getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
+                        [targetProp.getScopedNameEx().toString(), source.toString(), target.toString()]);
+                }
+                comparisonInfo.addMessage(message);
+            }
+
+            return false;
         }
 
         private sourceCallSignaturesAreRelatableToTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol,

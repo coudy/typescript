@@ -2359,9 +2359,6 @@ module TypeScript {
 
             this.recordSourceMappingEnd(funcDecl);
 
-            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
-            this.recordSourceMappingEnd(funcDecl);
-
             this.emitComments(funcDecl, false);
 
             this.popDecl(pullDecl);
