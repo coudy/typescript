@@ -8244,7 +8244,7 @@ module TypeScript {
 
             // create a type argument list based on the parameters of signatureB
             var signatureAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context, /*instantiatingSignatureInContext*/true);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo, context);
 
             var functionTypeA = signatureA.functionType;
             var functionTypeB = signatureB.functionType;
@@ -10013,10 +10013,9 @@ module TypeScript {
         }
 
         private inferArgumentTypesForSignature(signature: PullSignatureSymbol,
-            args: ASTList,
-            comparisonInfo: TypeComparisonInfo,
-            context: PullTypeResolutionContext,
-            instantiatingSignatureInContext = false): PullTypeSymbol[] {
+        args: ASTList,
+        comparisonInfo: TypeComparisonInfo,
+        context: PullTypeResolutionContext): PullTypeSymbol[] {
 
             var cxt: PullContextualTypeContext = null;
 
@@ -10102,7 +10101,7 @@ module TypeScript {
                 }
             }
 
-            // Do not let local type parameters escape at call sites
+            //  Do not let local type parameters escape at call sites
             //  Because we're comparing for equality between two signatures (where one is instantiated
             //  against the type parameters of the other), we want to know * exactly * what the
             //  instantiation would be give the set of type parameters.In the case where the two
@@ -10110,16 +10109,33 @@ module TypeScript {
             //  since that would short - circuit the equality check.The substitution is only desirable at call sites,
             //  where type parameters can leak out of scope, but during contextual instantiation
             //  the type parameters * should * be considered in scope
-            if (!instantiatingSignatureInContext) {
-                for (var i = 0; i < resultTypes.length; i++) {
-                    // if it's in the candidate cache, it's a self-reference
-                    if (argContext.candidateCache[resultTypes[i].pullSymbolID]) {
-                        resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
+
+            // We know that if we are inferring at a call expression we are not doing
+            // contextual signature instantiation
+            var inferringAtCallExpression = args.parent.nodeType() === NodeType.InvocationExpression || args.parent.nodeType() === NodeType.ObjectCreationExpression;
+
+            if (inferringAtCallExpression) {
+                // Need to know if the type parameters are in scope. If not, they are not legal inference
+                // candidates unless we are in contextual signature instantiation
+                if (!this.typeParametersAreInScopeAtArgumentList(typeParameters, args)) {
+                    for (var i = 0; i < resultTypes.length; i++) {
+                        // Check if the inferred type wraps any one of the type parameters
+                        if (resultTypes[i].wrapsSomeTypeParameter(argContext.candidateCache)) {
+                            resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
+                        }
                     }
                 }
             }
 
             return resultTypes;
+        }
+
+        private typeParametersAreInScopeAtArgumentList(typeParameters: PullTypeParameterSymbol[], args: ASTList): boolean {
+            // If the parent path from the current enclosing decl contains the type parameters'
+            // parent decl, then the type parameters must be in scope
+            var enclosingDecl = this.getEnclosingDeclForAST(args);
+            var typeParameterParentDecl = typeParameters[0].getDeclarations()[0].getParentDecl();
+            return enclosingDecl.getParentPath().indexOf(typeParameterParentDecl) > -1;
         }
 
         private relateTypeToTypeParameters(expressionType: PullTypeSymbol,
@@ -11782,7 +11798,7 @@ module TypeScript {
             return false;
         }
 
-        private getEnclosingDeclForAST(ast: AST/*, skipNonScopeDecls = true*/): PullDecl {
+        private getEnclosingDeclForAST(ast: AST): PullDecl {
             return this.semanticInfoChain.getEnclosingDecl(ast);
         }
 
