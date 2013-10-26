@@ -5911,6 +5911,13 @@ module TypeScript {
 
             var instantiatedSubstitutionMap = specializedSymbol.getTypeParameterArgumentMap();
 
+
+            // To defend against forward references amongst constraints, first enter each type
+            // parameter into the substitution map, set to itself
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeConstraintSubstitutionMap[typeParameters[i].pullSymbolID] = typeParameters[i];
+            }
+
             for (var id in instantiatedSubstitutionMap) {
                 typeConstraintSubstitutionMap[id] = instantiatedSubstitutionMap[id];
             }
@@ -7661,10 +7668,13 @@ module TypeScript {
                                             if (typeParameters[k] == typeConstraint) {
                                                 typeConstraint = inferredTypeArgs[k];
                                             }
+                                            else {
+                                                typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
+                                            }
                                         }
                                     }
                                     else if (typeConstraint.isGeneric()) {
-                                        typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
+                                        typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
                                     }
 
                                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context, /*comparisonInfo:*/ null, /*isComparingInstantiatedSignatures:*/ true)) {
@@ -8042,10 +8052,13 @@ module TypeScript {
                                                     if (typeParameters[k] == typeConstraint) {
                                                         typeConstraint = inferredTypeArgs[k];
                                                     }
+                                                    else {
+                                                        typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
+                                                    }
                                                 }
                                             }
                                             else if (typeConstraint.isGeneric()) {
-                                                typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
+                                                typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
                                             }
 
                                             if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
