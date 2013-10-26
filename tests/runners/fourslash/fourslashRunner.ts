@@ -77,7 +77,7 @@ class FourslashRunner extends RunnerBase {
             lines.push('    </ScenarioList>');
             lines.push('    <CleanupScenario>');
             lines.push('        <CloseAllDocuments />');
-            lines.push('        <CleanupLoadedFiles />');
+            lines.push('        <CleanupCreatedFiles />');
             lines.push('    </CleanupScenario>');
             lines.push('    <CleanupTest>');
             lines.push('        <CloseTarget />');
