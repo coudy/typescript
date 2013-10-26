@@ -1253,8 +1253,11 @@ module TypeScript {
                 : null;
             var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-            var result = new InvocationExpression(expression, typeArguments,
-                argumentList ? argumentList.argumentList : null, argumentList ? argumentList.closeParenSpan : null);
+            var result = new InvocationExpression(
+                                expression,
+                                typeArguments,
+                                argumentList ? argumentList.argumentList : null,
+                                argumentList ? argumentList.closeParenSpan : null);
             this.setSpan(result, start, node);
 
             return result;
@@ -1715,8 +1718,11 @@ module TypeScript {
             var typeArgumentList = node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this);
             var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-            var result = new ObjectCreationExpression(expression, typeArgumentList,
-                argumentList ? argumentList.argumentList : null, argumentList ? argumentList.closeParenSpan : null);
+            var result = new ObjectCreationExpression(
+                                expression,
+                                typeArgumentList,
+                                argumentList ? argumentList.argumentList : null,
+                                argumentList ? argumentList.closeParenSpan : null);
             this.setSpan(result, start, node);
 
             return result;
