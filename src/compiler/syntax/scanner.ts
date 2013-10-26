@@ -576,39 +576,44 @@ module TypeScript {
 
         private tryFastScanIdentifierOrKeyword(firstCharacter: number): SyntaxKind {
             var startIndex = this.slidingWindow.getAndPinAbsoluteIndex();
+            var character: number;
 
             while (true) {
-                var character = this.currentCharCode();
+                character = this.currentCharCode();
                 if (isIdentifierPartCharacter[character]) {
                     // Still part of an identifier.  Move to the next caracter.
                     this.slidingWindow.moveToNextItem();
                 }
-                else if (character === CharacterCodes.backslash || character > CharacterCodes.maxAsciiCharacter) {
-                    // We saw a \ (which could start a unicode escape), or we saw a unicode character.
-                    // This can't be scanned quickly.  Reset to the beginning and bail out.  We'll 
-                    // go and try the slow path instead.
-                    this.slidingWindow.rewindToPinnedIndex(startIndex);
-                    this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                    return SyntaxKind.None;
+                else {
+                    break;
+                }
+            }
+
+            if (character === CharacterCodes.backslash || character > CharacterCodes.maxAsciiCharacter) {
+                // We saw a \ (which could start a unicode escape), or we saw a unicode character.
+                // This can't be scanned quickly.  Reset to the beginning and bail out.  We'll 
+                // go and try the slow path instead.
+                this.slidingWindow.rewindToPinnedIndex(startIndex);
+                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+                return SyntaxKind.None;
+            }
+            else {
+                // Saw an ascii character that wasn't a backslash and wasn't an identifier 
+                // character.  This identifier is done.
+                var endIndex = this.slidingWindow.absoluteIndex();
+
+                // Also check if it a keyword if it started with a lowercase letter.
+                var kind: SyntaxKind;
+                if (isKeywordStartCharacter[firstCharacter]) {
+                    var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
+                    kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
                 }
                 else {
-                    // Saw an ascii character that wasn't a backslash and wasn't an identifier 
-                    // character.  This identifier is done.
-                    var endIndex = this.slidingWindow.absoluteIndex();
-
-                    // Also check if it a keyword if it started with a lowercase letter.
-                    var kind: SyntaxKind;
-                    if (isKeywordStartCharacter[firstCharacter]) {
-                        var offset = startIndex - this.slidingWindow.windowAbsoluteStartIndex;
-                        kind = ScannerUtilities.identifierKind(this.slidingWindow.window, offset, endIndex - startIndex);
-                    }
-                    else {
-                        kind = SyntaxKind.IdentifierName;
-                    }
-
-                    this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
-                    return kind;
+                    kind = SyntaxKind.IdentifierName;
                 }
+
+                this.slidingWindow.releaseAndUnpinAbsoluteIndex(startIndex);
+                return kind;
             }
         }
 
