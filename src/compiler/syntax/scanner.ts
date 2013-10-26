@@ -577,16 +577,21 @@ module TypeScript {
         private tryFastScanIdentifierOrKeyword(firstCharacter: number): SyntaxKind {
             var slidingWindow = this.slidingWindow;
             var window: number[] = slidingWindow.window;
+
             var startIndex = slidingWindow.currentRelativeItemIndex;
+            var endIndex = slidingWindow.windowCount;
+            var currentIndex = startIndex;
             var character: number = 0;
 
             // Note that we go up to the windowCount-1 so that we can read the character at the end
             // of the window and check if it's *not* an identifier part character.
-            for (var currentIndex = startIndex, endIndex = slidingWindow.windowCount; currentIndex < endIndex; currentIndex++) {
+            while (currentIndex < endIndex) {
                 character = window[currentIndex];
                 if (!isIdentifierPartCharacter[character]) {
                     break;
                 }
+
+                currentIndex++;
             }
 
             if (currentIndex === endIndex) {
