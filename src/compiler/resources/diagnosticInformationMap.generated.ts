@@ -1346,6 +1346,18 @@ module TypeScript {
     "code": 4028,
     "category": DiagnosticCategory.NoPrefix
   },
+  "Types '{0}' and '{1}' originating in inifinitely expanding type reference do not refer to same named type.": {
+    "code": 4029,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "Types '{0}' and '{1}' originating in inifinitely expanding type reference have incompatible type arguments.": {
+    "code": 4030,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "Types '{0}' and '{1}' originating in inifinitely expanding type reference have incompatible type arguments:{NL}{2}": {
+    "code": 4031,
+    "category": DiagnosticCategory.NoPrefix
+  },
   "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error
