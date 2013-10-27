@@ -668,7 +668,7 @@ module TypeScript {
                     case SyntaxKind.IdentifierName:
                         // If it's a name, see if we already had an enum value named this.  If so,
                         // return that value.
-                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.identifier.valueText() === (<ISyntaxToken>expression).valueText());
+                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.propertyName.valueText() === (<ISyntaxToken>expression).valueText());
                         return variableDeclarator ? variableDeclarator.constantValue : null;
 
                     case SyntaxKind.LeftShiftExpression:

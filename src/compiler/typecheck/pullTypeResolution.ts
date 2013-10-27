@@ -2366,12 +2366,12 @@ module TypeScript {
 
         private resolveEnumElement(enumElement: EnumElement, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                enumElement, enumElement.identifier, null, enumElement.value, context);
+                enumElement, enumElement.propertyName, null, enumElement.value, context);
         }
 
         private typeCheckEnumElement(enumElement: EnumElement, context: PullTypeResolutionContext): void {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                enumElement, enumElement.identifier, null, enumElement.value, context);
+                enumElement, enumElement.propertyName, null, enumElement.value, context);
         }
 
         private resolveVariableDeclaratorOrParameterOrEnumElement(
@@ -8491,7 +8491,7 @@ module TypeScript {
         }
 
         private resolveCastExpression(assertionExpression: CastExpression, context: PullTypeResolutionContext): PullTypeSymbol {
-            var typeAssertionType = this.resolveAST(assertionExpression.castType, /*isContextuallyTyped:*/ false, context).type;
+            var typeAssertionType = this.resolveAST(assertionExpression.type, /*isContextuallyTyped:*/ false, context).type;
 
             if (this.canTypeCheckAST(assertionExpression, context)) {
                 this.typeCheckCastExpression(assertionExpression, context, typeAssertionType);
@@ -8517,7 +8517,7 @@ module TypeScript {
             // The type of the result is T.
 
             context.pushContextualType(typeAssertionType, context.inProvisionalResolution(), null);
-            var exprType = this.resolveAST(assertionExpression.operand, /*isContextuallyTyped:*/ true, context).type;
+            var exprType = this.resolveAST(assertionExpression.expression, /*isContextuallyTyped:*/ true, context).type;
             context.popContextualType();
 
             // TODO: why are we resolving these symbols here?

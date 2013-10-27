@@ -583,10 +583,10 @@ module TypeScript {
     }
 
     export class CastExpression extends AST {
-        constructor(public castType: TypeReference, public operand: AST) {
+        constructor(public type: TypeReference, public expression: AST) {
             super();
-            castType && (castType.parent = this);
-            operand && (operand.parent = this);
+            type && (type.parent = this);
+            expression && (expression.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -599,8 +599,8 @@ module TypeScript {
 
         public structuralEquals(ast: CastExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.castType, ast.castType, includingPosition) &&
-                structuralEquals(this.operand, ast.operand, includingPosition);
+                structuralEquals(this.type, ast.type, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
         }
     }
 
@@ -1788,9 +1788,9 @@ module TypeScript {
     export class EnumElement extends AST {
         public constantValue: number = null;
 
-        constructor(public identifier: Identifier, public value: AST) {
+        constructor(public propertyName: Identifier, public value: AST) {
             super();
-            identifier && (identifier.parent = this);
+            propertyName && (propertyName.parent = this);
             value && (value.parent = this);
         }
 
@@ -2780,7 +2780,7 @@ module TypeScript {
             case NodeType.FunctionPropertyAssignment:
                 return (<FunctionPropertyAssignment>ast.parent).propertyName === ast;
             case NodeType.EnumElement:
-                return (<EnumElement>ast.parent).identifier === ast;
+                return (<EnumElement>ast.parent).propertyName === ast;
             case NodeType.ImportDeclaration:
                 return (<ImportDeclaration>ast.parent).identifier === ast;
         }

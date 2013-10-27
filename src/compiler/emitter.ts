@@ -1125,7 +1125,7 @@ module TypeScript {
             // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
             this.emitComments(varDecl, true);
             this.recordSourceMappingStart(varDecl);
-            var name = varDecl.identifier.text();
+            var name = varDecl.propertyName.text();
             var quoted = isQuoted(name);
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
@@ -2476,7 +2476,7 @@ module TypeScript {
         }
 
         public emitCastExpression(expression: CastExpression): void {
-            expression.operand.emit(this);
+            expression.expression.emit(this);
         }
 
         public emitPrefixUnaryExpression(expression: PrefixUnaryExpression): void {

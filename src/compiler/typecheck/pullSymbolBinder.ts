@@ -1207,7 +1207,7 @@ module TypeScript {
             propertySymbol.addDeclaration(propertyDeclaration);
             propertyDeclaration.setSymbol(propertySymbol);
 
-            this.semanticInfoChain.setSymbolForAST(propDeclAST.identifier, propertySymbol);
+            this.semanticInfoChain.setSymbolForAST(propDeclAST.propertyName, propertySymbol);
             this.semanticInfoChain.setSymbolForAST(propDeclAST, propertySymbol);
 
             if (parent && !parentHadSymbol) {

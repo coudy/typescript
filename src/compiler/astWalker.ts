@@ -82,8 +82,8 @@ module TypeScript {
     }
 
     function walkCastExpressionChildren(preAst: CastExpression, walker: AstWalker): void {
-        walker.walk(preAst.castType);
-        walker.walk(preAst.operand);
+        walker.walk(preAst.type);
+        walker.walk(preAst.expression);
     }
 
     function walkParenthesizedExpressionChildren(preAst: ParenthesizedExpression, walker: AstWalker): void {
@@ -322,7 +322,7 @@ module TypeScript {
     }
 
     function walkEnumElementChildren(preAst: EnumElement, walker: AstWalker): void {
-        walker.walk(preAst.identifier);
+        walker.walk(preAst.propertyName);
         walker.walk(preAst.value);
     }
 

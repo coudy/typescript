@@ -126,7 +126,7 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
 
-        var decl = new NormalPullDecl(propertyDecl.identifier.valueText(), propertyDecl.identifier.text(), declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(propertyDecl.propertyName.valueText(), propertyDecl.propertyName.text(), declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(propertyDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, propertyDecl);
 

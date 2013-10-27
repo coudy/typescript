@@ -856,7 +856,7 @@ module TypeScript {
                 var enumElement = <EnumElement>memberDecl;
                 this.emitDeclarationComments(enumElement);
                 this.emitIndent();
-                this.declFile.Write(enumElement.identifier.text());
+                this.declFile.Write(enumElement.propertyName.text());
                 if (enumElement.value && enumElement.value.nodeType() == NodeType.NumericLiteral) {
                     this.declFile.Write(" = " + (<NumericLiteral>enumElement.value).text());
                 }
