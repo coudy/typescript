@@ -4668,7 +4668,7 @@ module TypeScript {
 
             this.resolveAST(tryStatement.block, false, context);
             this.resolveAST(tryStatement.catchClause, false, context);
-            this.resolveAST(tryStatement.finallyBody, false, context);
+            this.resolveAST(tryStatement.finallyClause, false, context);
         }
 
         private resolveCatchClause(ast: CatchClause, context: PullTypeResolutionContext): PullSymbol {
@@ -4685,6 +4685,19 @@ module TypeScript {
 
             var catchDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.validateVariableDeclarationGroups(catchDecl, context);
+        }
+
+        private resolveFinallyClause(ast: FinallyClause, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckFinallyClause(ast, context);
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private typeCheckFinallyClause(ast: FinallyClause, context: PullTypeResolutionContext) {
+            this.setTypeChecked(ast, context);
+            this.resolveAST(ast.block, /*isContextuallyTyped*/ false, context);
         }
 
         private resolveReturnStatement(returnAST: ReturnStatement, context: PullTypeResolutionContext): PullSymbol {
@@ -5382,6 +5395,9 @@ module TypeScript {
 
                 case NodeType.CatchClause:
                     return this.resolveCatchClause(<CatchClause>ast, context);
+
+                case NodeType.FinallyClause:
+                    return this.resolveFinallyClause(<FinallyClause>ast, context);
 
                 case NodeType.ReturnStatement:
                     return this.resolveReturnStatement(<ReturnStatement>ast, context);

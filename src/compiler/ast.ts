@@ -1589,32 +1589,6 @@ module TypeScript {
         }
     }
 
-    export class LabeledStatement extends AST {
-        constructor(public identifier: Identifier, public statement: AST) {
-            super();
-            identifier && (identifier.parent = this);
-            statement && (statement.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.LabeledStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitLabeledStatement(this);
-        }
-
-        public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                   structuralEquals(this.statement, ast.statement, includingPosition);
-        }
-    }
-
     export class VariableDeclaration extends AST {
         constructor(public declarators: ASTList) {
             super();
@@ -2103,11 +2077,11 @@ module TypeScript {
     }
 
     export class TryStatement extends AST {
-        constructor(public block: Block, public catchClause: CatchClause, public finallyBody: Block) {
+        constructor(public block: Block, public catchClause: CatchClause, public finallyClause: FinallyClause) {
             super();
             block && (block.parent = this);
             catchClause && (catchClause.parent = this);
-            finallyBody && (finallyBody.parent = this);
+            finallyClause && (finallyClause.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -2126,7 +2100,7 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition) &&
                    structuralEquals(this.catchClause, ast.catchClause, includingPosition) &&
-                   structuralEquals(this.finallyBody, ast.finallyBody, includingPosition);
+                   structuralEquals(this.finallyClause, ast.finallyClause, includingPosition);
         }
     }
 
@@ -2149,6 +2123,26 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.param, ast.param, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition);
+        }
+    }
+
+    export class FinallyClause extends AST {
+        constructor(public block: Block) {
+            super();
+            block && (block.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.FinallyClause;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitFinallyClause(this);
+        }
+
+        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.block, ast.block, includingPosition);
         }
     }
 
@@ -2180,6 +2174,32 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class LabeledStatement extends AST {
+        constructor(public identifier: Identifier, public statement: AST) {
+            super();
+            identifier && (identifier.parent = this);
+            statement && (statement.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.LabeledStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitLabeledStatement(this);
+        }
+
+        public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.statement, ast.statement, includingPosition);
         }
     }
 

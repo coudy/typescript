@@ -2010,7 +2010,7 @@ module TypeScript {
                 catchClause = node.catchClause.accept(this);
             }
 
-            var finallyBody: Block = null;
+            var finallyBody: FinallyClause = null;
             if (node.finallyClause !== null) {
                 finallyBody = node.finallyClause.accept(this);
             }
@@ -2041,9 +2041,15 @@ module TypeScript {
             return result;
         }
 
-        public visitFinallyClause(node: FinallyClauseSyntax): Block {
+        public visitFinallyClause(node: FinallyClauseSyntax): FinallyClause {
+            var start = this.position;
             this.movePast(node.finallyKeyword);
-            return node.block.accept(this);
+            var block: Block = node.block.accept(this);
+
+            var result = new FinallyClause(block);
+            this.setSpan(result, start, node);
+
+            return result;
         }
 
         public visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {

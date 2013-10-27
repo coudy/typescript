@@ -153,6 +153,7 @@ module TypeScript {
         CaseSwitchClause,
         DefaultSwitchClause,
         CatchClause,
+        FinallyClause,
         ExtendsHeritageClause,
         ImplementsHeritageClause,
         ElseClause,

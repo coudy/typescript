@@ -2915,9 +2915,8 @@ module TypeScript {
             statement.block.emit(this);
             this.emitJavascript(statement.catchClause, false);
 
-            if (statement.finallyBody) {
-                this.writeToOutput(" finally");
-                statement.finallyBody.emit(this);
+            if (statement.finallyClause) {
+                statement.finallyClause.emit(this);
             }
             this.recordSourceMappingEnd(statement);
         }
@@ -2930,6 +2929,11 @@ module TypeScript {
             this.writeToOutput(")");
             clause.block.emit(this);
             this.recordSourceMappingEnd(clause);
+        }
+
+        public emitFinallyClause(clause: FinallyClause): void {
+            this.writeToOutput(" finally");
+            clause.block.emit(this);
         }
 
         public emitDebuggerStatement(statement: DebuggerStatement): void {
