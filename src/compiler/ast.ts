@@ -864,46 +864,6 @@ module TypeScript {
         }
     }
 
-    export class DeleteExpression extends AST {
-        constructor(public expression: AST) {
-            super();
-            expression && (expression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.DeleteExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDeleteExpression(this);
-        }
-
-        public structuralEquals(ast: DeleteExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition);
-        }
-    }
-
-    export class VoidExpression extends AST {
-        constructor(public expression: AST) {
-            super();
-            expression && (expression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.VoidExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitVoidExpression(this);
-        }
-
-        public structuralEquals(ast: VoidExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition);
-        }
-    }
-
     export interface ICallExpression extends IASTSpan {
         target: AST;
         typeArguments: ASTList;
@@ -2266,6 +2226,46 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class DeleteExpression extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.DeleteExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitDeleteExpression(this);
+        }
+
+        public structuralEquals(ast: DeleteExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+    }
+
+    export class VoidExpression extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.VoidExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitVoidExpression(this);
+        }
+
+        public structuralEquals(ast: VoidExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
         }
     }
 
