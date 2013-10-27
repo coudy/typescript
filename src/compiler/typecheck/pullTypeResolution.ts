@@ -3131,11 +3131,7 @@ module TypeScript {
             }
 
             // resolve parameter type annotations as necessary
-            if (parameters) {
-                for (var i = 0; i < parameters.members.length; i++) {
-                    this.resolveAST(parameters.members[i], /*isContextuallyTyped:*/ false, context);
-                }
-            }
+            this.resolveAST(parameters, /*isContextuallyTyped:*/ false, context);
 
             this.resolveAST(block, false, context);
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
@@ -3149,76 +3145,96 @@ module TypeScript {
                 funcDeclAST, flags, typeParameters, parameters, returnTypeAnnotation, block, context);
 
             var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
-            if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
-                // It is a constructor or function
-                var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                // If this is a function and it has returnType annotation, check if block contains non void return expression
-                if (!hasFlag(flags, FunctionFlags.ConstructMember)
-                    && block && returnTypeAnnotation != null && !hasReturn) {
-                    var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
+            // It is a constructor or function
+            var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
-                    if (!isVoidOrAny && !(block.statements.members.length > 0 && block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
-                        var funcName = funcDecl.getDisplayName();
-                        funcName = funcName ? funcName : "expression";
+            // If this is a function and it has returnType annotation, check if block contains non void return expression
+            if (!hasFlag(flags, FunctionFlags.ConstructMember)
+                && block && returnTypeAnnotation != null && !hasReturn) {
+                var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
 
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
-                    }
+                if (!isVoidOrAny && !(block.statements.members.length > 0 && block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                    var funcName = funcDecl.getDisplayName();
+                    funcName = funcName ? funcName : "expression";
+
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
                 }
             }
 
-            if (funcDecl.kind == PullElementKind.Function) {
+            if (funcDecl.kind === PullElementKind.Function) {
                 this.checkNameForCompilerGeneratedDeclarationCollision(funcDeclAST, /*isDeclaration*/ true, name, context);
             }
 
             this.typeCheckCallBacks.push(context => {
-                if (!hasFlag(flags, FunctionFlags.IndexerMember)) {
-                    // Function or constructor
-                    this.typeCheckFunctionOverloads(funcDeclAST, context);
-                } else {
-                    // Index signatures
-                    var parentSymbol = funcDecl.getSignatureSymbol().getContainer();
-                    var allIndexSignatures = this.getBothKindsOfIndexSignatures(parentSymbol, context);
-                    var stringIndexSignature = allIndexSignatures.stringSignature;
-                    var numberIndexSignature = allIndexSignatures.numericSignature;
-                    var isNumericIndexer = numberIndexSignature === signature;
+                // Function or constructor
+                this.typeCheckFunctionOverloads(funcDeclAST, context);
+            });
+        }
 
-                    // Check that the number signature is a subtype of the string index signature. To ensure that we only check this once,
-                    // we make sure that if the two signatures share a container, we only check this when type checking the number signature.
-                    if (numberIndexSignature && stringIndexSignature &&
-                        (isNumericIndexer || stringIndexSignature.getDeclarations()[0].getParentDecl() !== numberIndexSignature.getDeclarations()[0].getParentDecl())) {
-                        var comparisonInfo = new TypeComparisonInfo();
+        private typeCheckIndexSignature(funcDeclAST: IndexSignature, context: PullTypeResolutionContext): void {
 
-                        if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, context, comparisonInfo)) {
-                            if (comparisonInfo.message) {
-                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
-                                    [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]));
-                            } else {
-                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
-                                    [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()]));
-                            }
+            this.setTypeChecked(funcDeclAST, context);
+
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
+
+            // resolve parameter type annotations as necessary
+            this.resolveAST(funcDeclAST.parameterList, /*isContextuallyTyped:*/ false, context);
+
+            var enclosingDecl = this.getEnclosingDecl(funcDecl);
+
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(
+                funcDeclAST, FunctionFlags.None, funcDeclAST.returnTypeAnnotation, context);
+
+            this.validateVariableDeclarationGroups(funcDecl, context);
+
+            this.checkFunctionTypePrivacy(
+                funcDeclAST, FunctionFlags.None, null, funcDeclAST.parameterList, funcDeclAST.returnTypeAnnotation, null, context);
+
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
+
+            this.typeCheckCallBacks.push(context => {
+                var parentSymbol = funcDecl.getSignatureSymbol().getContainer();
+                var allIndexSignatures = this.getBothKindsOfIndexSignatures(parentSymbol, context);
+                var stringIndexSignature = allIndexSignatures.stringSignature;
+                var numberIndexSignature = allIndexSignatures.numericSignature;
+                var isNumericIndexer = numberIndexSignature === signature;
+
+                // Check that the number signature is a subtype of the string index signature. To ensure that we only check this once,
+                // we make sure that if the two signatures share a container, we only check this when type checking the number signature.
+                if (numberIndexSignature && stringIndexSignature &&
+                    (isNumericIndexer || stringIndexSignature.getDeclarations()[0].getParentDecl() !== numberIndexSignature.getDeclarations()[0].getParentDecl())) {
+                    var comparisonInfo = new TypeComparisonInfo();
+
+                    if (!this.sourceIsSubtypeOfTarget(numberIndexSignature.returnType, stringIndexSignature.returnType, context, comparisonInfo)) {
+                        if (comparisonInfo.message) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1_NL_2,
+                                [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString(), comparisonInfo.message]));
+                        } else {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Numeric_indexer_type_0_must_be_a_subtype_of_string_indexer_type_1,
+                                [numberIndexSignature.returnType.toString(), stringIndexSignature.returnType.toString()]));
                         }
                     }
+                }
 
-                    // Check that property names comply with indexer constraints (either string or numeric)
-                    var allMembers = parentSymbol.type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
-                    for (var i = 0; i < allMembers.length; i++) {
-                        var name = allMembers[i].name;
-                        if (name) {
-                            if (!allMembers[i].isResolved) {
-                                this.resolveDeclaredSymbol(allMembers[i], context);
-                            }
-                            // Skip members in the same container, they will be checked during their member type check
-                            if (parentSymbol !== allMembers[i].getContainer()) {
-                                // Check if the member name kind (number or string), matches the index signature kind. If it does give an error.
-                                // If it doesn't we only want to give an error if this is a string signature, and we don't have a numeric signature
-                                var isMemberNumeric = PullHelpers.isNameNumeric(name);
-                                var indexerKindMatchesMemberNameKind = isNumericIndexer === isMemberNumeric;
-                                var onlyStringIndexerIsPresent = !numberIndexSignature;
+                // Check that property names comply with indexer constraints (either string or numeric)
+                var allMembers = parentSymbol.type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
+                for (var i = 0; i < allMembers.length; i++) {
+                    var name = allMembers[i].name;
+                    if (name) {
+                        if (!allMembers[i].isResolved) {
+                            this.resolveDeclaredSymbol(allMembers[i], context);
+                        }
+                        // Skip members in the same container, they will be checked during their member type check
+                        if (parentSymbol !== allMembers[i].getContainer()) {
+                            // Check if the member name kind (number or string), matches the index signature kind. If it does give an error.
+                            // If it doesn't we only want to give an error if this is a string signature, and we don't have a numeric signature
+                            var isMemberNumeric = PullHelpers.isNameNumeric(name);
+                            var indexerKindMatchesMemberNameKind = isNumericIndexer === isMemberNumeric;
+                            var onlyStringIndexerIsPresent = !numberIndexSignature;
 
-                                if (indexerKindMatchesMemberNameKind || onlyStringIndexerIsPresent) {
-                                    this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], signature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
-                                }
+                            if (indexerKindMatchesMemberNameKind || onlyStringIndexerIsPresent) {
+                                this.checkThatMemberIsSubtypeOfIndexer(allMembers[i], signature, funcDeclAST, context, enclosingDecl, isNumericIndexer);
                             }
                         }
                     }
@@ -3261,7 +3277,6 @@ module TypeScript {
         }
 
         private resolveMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-
             return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
         }
@@ -3275,7 +3290,6 @@ module TypeScript {
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-
             return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
         }
@@ -3399,6 +3413,134 @@ module TypeScript {
             return funcSymbol;
         }
 
+        private resolveIndexSignature(funcDeclAST: IndexSignature, context: PullTypeResolutionContext): PullSymbol {
+            var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
+
+            var funcSymbol = funcDecl.getSymbol();
+
+            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
+
+            var hadError = false;
+
+            if (signature) {
+                if (signature.isResolved) {
+                    if (this.canTypeCheckAST(funcDeclAST, context)) {
+                        this.typeCheckIndexSignature(funcDeclAST, context);
+                    }
+                    return funcSymbol;
+                }
+
+                // Save this in case we had set the function type to any because of a recursive reference.
+                var functionTypeSymbol = funcSymbol && funcSymbol.type;
+
+                if (signature.inResolution) {
+
+                    // try to set the return type, even though we may be lacking in some information
+                    if (funcDeclAST.returnTypeAnnotation) {
+                        var returnTypeSymbol = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, context);
+                        if (!returnTypeSymbol) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST.returnTypeAnnotation, DiagnosticCode.Cannot_resolve_return_type_reference));
+                            signature.returnType = this.getNewErrorTypeSymbol();
+                            hadError = true;
+                        } else {
+                            signature.returnType = returnTypeSymbol;
+                        }
+                    }
+                    else {
+                        signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+                    }
+
+                    if (funcSymbol) {
+                        funcSymbol.setUnresolved();
+                        if (funcSymbol.type === this.semanticInfoChain.anyTypeSymbol) {
+                            funcSymbol.type = functionTypeSymbol;
+                        }
+                    }
+                    signature.setResolved();
+                    return funcSymbol;
+                }
+
+                if (funcSymbol) {
+                    funcSymbol.startResolving();
+                }
+                signature.startResolving();
+
+                // resolve parameter type annotations as necessary
+
+                if (funcDeclAST.parameterList) {
+                    var prevInTypeCheck = context.inTypeCheck;
+
+                    // TODO: why are we setting inTypeCheck false here?
+                    context.inTypeCheck = false;
+
+                    for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
+                        // TODO: why are are calling resolveParameter directly here?
+                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context);
+                    }
+
+                    context.inTypeCheck = prevInTypeCheck;
+                }
+
+                // resolve the return type annotation
+                if (funcDeclAST.returnTypeAnnotation) {
+
+                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
+                        funcDeclAST, FunctionFlags.None, funcDeclAST.returnTypeAnnotation, context);
+
+                    if (!returnTypeSymbol) {
+                        signature.returnType = this.getNewErrorTypeSymbol();
+                        hadError = true;
+                    }
+                    else {
+                        signature.returnType = returnTypeSymbol;
+                    }
+                }
+                // if there's no return-type annotation
+                //     - if it's not a definition signature, set the return type to 'any'
+                //     - if it's a definition sigature, take the best common type of all return expressions
+                //     - if it's a constructor, we set the return type link during binding
+                else {
+                    signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+                    var parentDeclFlags = TypeScript.PullElementFlags.None;
+                    if (TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.Method) ||
+                        TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.ConstructorMethod)) {
+                        var parentDecl = funcDecl.getParentDecl();
+                        parentDeclFlags = parentDecl.flags;
+                    }
+
+                    // if the noImplicitAny flag is set to be true, report an error
+                    if (this.compilationSettings.noImplicitAny() &&
+                        (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
+                        (TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) && !TypeScript.hasFlag(funcDecl.flags, PullElementFlags.Private)))) {
+                        var funcDeclASTName = name;
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
+                            ["Indexer"]));
+                    }
+                }
+
+                if (!hadError) {
+                    if (funcSymbol) {
+                        funcSymbol.setUnresolved();
+                        if (funcSymbol.type === this.semanticInfoChain.anyTypeSymbol) {
+                            funcSymbol.type = functionTypeSymbol;
+                        }
+                    }
+                    signature.setResolved();
+                }
+            }
+
+            if (funcSymbol) {
+                this.resolveOtherDeclarations(funcDeclAST, context);
+            }
+
+            if (this.canTypeCheckAST(funcDeclAST, context)) {
+                this.typeCheckIndexSignature(funcDeclAST, context);
+            }
+
+            return funcSymbol;
+        }
+
+
         private resolveFunctionDeclaration(funcDeclAST: AST, flags: FunctionFlags, name: Identifier, typeParameters: ASTList, parameterList: ASTList, returnTypeAnnotation: TypeReference, block: Block, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
@@ -3411,7 +3553,6 @@ module TypeScript {
             var isConstructor = hasFlag(flags, FunctionFlags.ConstructMember);
 
             if (signature) {
-
                 if (signature.isResolved) {
                     if (this.canTypeCheckAST(funcDeclAST, context)) {
                         this.typeCheckFunctionDeclaration(
@@ -5050,6 +5191,9 @@ module TypeScript {
                 case NodeType.SetAccessor:
                     return this.resolveAccessorDeclaration(ast, context);
 
+                case NodeType.IndexSignature:
+                    return this.resolveIndexSignature(<IndexSignature>ast, context);
+
                 case NodeType.MemberFunctionDeclaration:
                     return this.resolveMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
 
@@ -5338,6 +5482,10 @@ module TypeScript {
 
                 case NodeType.FunctionExpression:
                     this.typeCheckFunctionExpression(<FunctionExpression>ast, context);
+                    break;
+
+                case NodeType.IndexSignature:
+                    this.typeCheckIndexSignature(<IndexSignature>ast, context);
                     break;
                 
                 case NodeType.FunctionDeclaration:

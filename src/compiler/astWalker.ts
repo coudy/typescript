@@ -178,6 +178,11 @@ module TypeScript {
         walker.walk(preAst.block);
     }
 
+    function walkIndexSignatureChildren(preAst: IndexSignature, walker: AstWalker): void {
+        walker.walk(preAst.parameterList);
+        walker.walk(preAst.returnTypeAnnotation);
+    }
+
     function walkConstructorDeclarationChildren(preAst: ConstructorDeclaration, walker: AstWalker): void {
         walker.walk(preAst.parameterList);
         walker.walk(preAst.block);
@@ -425,6 +430,7 @@ module TypeScript {
     childrenWalkers[NodeType.ArrowFunctionExpression] = walkArrowFunctionExpressionChildren;
     childrenWalkers[NodeType.FunctionExpression] = walkFunctionExpressionChildren;
     childrenWalkers[NodeType.FunctionDeclaration] = walkFuncDeclChildren;
+    childrenWalkers[NodeType.IndexSignature] = walkIndexSignatureChildren;
     childrenWalkers[NodeType.MemberFunctionDeclaration] = walkMemberFunctionDeclarationChildren;
     childrenWalkers[NodeType.ConstructorDeclaration] = walkConstructorDeclarationChildren;
     childrenWalkers[NodeType.VariableDeclarator] = walkVariableDeclaratorChildren;
@@ -465,11 +471,16 @@ module TypeScript {
     childrenWalkers[NodeType.LabeledStatement] = walkLabeledStatementChildren;
     childrenWalkers[NodeType.VariableStatement] = walkVariableStatementChildren;
     childrenWalkers[NodeType.DebuggerStatement] = null;
+    childrenWalkers[NodeType.AnyType] = null;
+    childrenWalkers[NodeType.BooleanType] = null;
+    childrenWalkers[NodeType.NumberType] = null;
+    childrenWalkers[NodeType.StringType] = null;
+    childrenWalkers[NodeType.VoidType] = null;
 
     // Verify the code is up to date with the enum
     for (var e in NodeType) {
         if (NodeType.hasOwnProperty(e) && StringUtilities.isString(NodeType[e])) {
-            CompilerDiagnostics.assert(childrenWalkers[e] !== undefined, "initWalkers function is not up to date with enum content!");
+            TypeScript.Debug.assert(childrenWalkers[e] !== undefined, "initWalkers function is not up to date with enum content!");
         }
     }
 

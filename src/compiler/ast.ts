@@ -1429,6 +1429,26 @@ module TypeScript {
         }
     }
 
+    export class IndexSignature extends AST {
+        constructor(
+            public parameterList: ASTList,
+            public returnTypeAnnotation: TypeReference) {
+            super();
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.IndexSignature;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return false;
+        }
+    }
+
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;

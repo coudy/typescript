@@ -590,7 +590,7 @@ module TypeScript {
     }
 
     // index signatures
-    function createIndexSignatureDeclaration(indexSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createIndexSignatureDeclaration(indexSignatureDeclAST: IndexSignature, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.IndexSignature;
 
@@ -858,7 +858,9 @@ module TypeScript {
             case NodeType.MemberFunctionDeclaration:
                 createMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
                 break;
-
+            case NodeType.IndexSignature:
+                createIndexSignatureDeclaration(<IndexSignature>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
@@ -872,9 +874,6 @@ module TypeScript {
                 }
                 else if (hasFlag(functionFlags, FunctionFlags.CallSignature)) {
                     createCallSignatureDeclaration(funcDecl, context);
-                }
-                else if (hasFlag(functionFlags, FunctionFlags.IndexerMember)) {
-                    createIndexSignatureDeclaration(funcDecl, context);
                 }
                 else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
                     createFunctionTypeDeclaration(funcDecl, context);

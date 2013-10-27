@@ -62,6 +62,7 @@ module TypeScript {
         EnumElement,
         MemberVariableDeclaration,
         MemberFunctionDeclaration,
+        IndexSignature,
 
         // Expressions
         Name,

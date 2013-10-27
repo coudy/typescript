@@ -1386,7 +1386,7 @@ module TypeScript {
             return result;
         }
 
-        public visitIndexSignature(node: IndexSignatureSyntax): FunctionDeclaration {
+        public visitIndexSignature(node: IndexSignatureSyntax): IndexSignature {
             var start = this.position;
 
             this.movePast(node.openBracketToken);
@@ -1396,15 +1396,12 @@ module TypeScript {
             this.movePast(node.closeBracketToken);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var name = new Identifier("__item", "__item", /*isStringOrNumericLiteral:*/ false);
-            this.setSpanExplicit(name, start, start);   // 0 length name.
-
             var parameters = new ASTList(this.fileName, [parameter]);
 
-            var result = new FunctionDeclaration(name, null, parameters, returnType, null);
+            var result = new IndexSignature(parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
 
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IndexerMember | FunctionFlags.Method | FunctionFlags.Signature);
+            // result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IndexerMember | FunctionFlags.Method | FunctionFlags.Signature);
 
             return result;
         }
@@ -1549,12 +1546,12 @@ module TypeScript {
             return result;
         }
 
-        public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): FunctionDeclaration {
+        public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): IndexSignature {
             var start = this.position;
 
             this.moveTo(node, node.indexSignature);
-            var result = node.indexSignature.accept(this);
-            this.setCommentsAndSpan(result, start, node);
+            var result: IndexSignature = node.indexSignature.accept(this);
+            // this.setCommentsAndSpan(result, start, node);
 
             this.movePast(node.semicolonToken);
 
@@ -2574,8 +2571,8 @@ module TypeScript {
             return result;
         }
 
-        public visitIndexSignature(node: IndexSignatureSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitIndexSignature(node: IndexSignatureSyntax): IndexSignature {
+            var result: IndexSignature = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitIndexSignature(node);
                 this.setAST(node, result);
