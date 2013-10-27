@@ -2028,14 +2028,11 @@ module TypeScript {
             this.movePast(node.openParenToken);
             var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var typeAnnotation = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             this.movePast(node.closeParenToken);
             var block = node.block.accept(this);
 
-            var varDecl = new VariableDeclarator(identifier, typeExpr, null);
-            this.setSpanExplicit(varDecl, identifier.minChar, identifier.limChar);
-
-            var result = new CatchClause(varDecl, block);
+            var result = new CatchClause(identifier, typeAnnotation, block);
             this.setSpan(result, start, node);
 
             return result;

@@ -738,7 +738,7 @@ module TypeScript {
         context.pushParent(decl);
     }
 
-    function preCollectCatchDecls(ast: AST, context: DeclCollectionContext): void {
+    function preCollectCatchDecls(ast: CatchClause, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.CatchBlock;
 
@@ -755,6 +755,27 @@ module TypeScript {
         context.semanticInfoChain.setASTForDecl(decl, ast);
 
         context.pushParent(decl);
+
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.CatchVariable;
+
+        // Create a decl for the catch clause variable.
+        var span = TextSpan.fromBounds(ast.identifier.minChar, ast.identifier.limChar);
+
+        var parent = context.getParent();
+
+        if (hasFlag(parent.flags, PullElementFlags.DeclaredInAWithBlock)) {
+            declFlags |= PullElementFlags.DeclaredInAWithBlock;
+        }
+
+        var decl = new NormalPullDecl(ast.identifier.valueText(), ast.identifier.text(), declType, declFlags, parent, span);
+        context.semanticInfoChain.setDeclForAST(ast.identifier, decl);
+        context.semanticInfoChain.setASTForDecl(decl, ast.identifier);
+
+        if (parent) {
+            // Record this decl in its parent in the declGroup with the corresponding name
+            parent.addVariableDeclToGroup(decl);
+        }
     }
 
     function preCollectWithDecls(ast: AST, context: DeclCollectionContext): void {
@@ -896,7 +917,7 @@ module TypeScript {
                 preCollectTypeParameterDecl(<TypeParameter>ast, context);
                 break;
             case NodeType.CatchClause:
-                preCollectCatchDecls(ast, context);
+                preCollectCatchDecls(<CatchClause>ast, context);
                 break;
             case NodeType.WithStatement:
                 preCollectWithDecls(ast, context);

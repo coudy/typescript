@@ -272,7 +272,8 @@ module TypeScript {
     }
 
     function walkCatchClauseChildren(preAst: CatchClause, walker: AstWalker): void {
-        walker.walk(preAst.param);
+        walker.walk(preAst.identifier);
+        walker.walk(preAst.typeAnnotation);
         walker.walk(preAst.block);
     }
 

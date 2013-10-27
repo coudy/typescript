@@ -844,6 +844,10 @@ module TypeScript {
                     return symbol;
                 }
 
+                if (ast.nodeType() === NodeType.Name && ast.parent && ast.parent.nodeType() === NodeType.CatchClause) {
+                    return symbol;
+                }
+
                 // This assert is here to catch potential stack overflows. There have been infinite recursions resulting
                 // from one of these decls pointing to a name expression.
                 Debug.assert(ast.nodeType() != NodeType.Name && ast.nodeType() != NodeType.MemberAccessExpression);

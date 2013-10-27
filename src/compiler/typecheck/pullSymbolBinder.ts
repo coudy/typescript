@@ -1138,6 +1138,45 @@ module TypeScript {
             }
         }
 
+        private bindCatchVariableToPullSymbol(variableDeclaration: PullDecl) {
+            var declFlags = variableDeclaration.flags;
+            var declKind = variableDeclaration.kind;
+            var identifier = <Identifier>this.semanticInfoChain.getASTForDecl(variableDeclaration);
+
+            var declName = variableDeclaration.name;
+
+            //var parent = this.getParent(variableDeclaration, true);
+            //var parentDecl = variableDeclaration.getParentDecl();
+
+            var variableSymbol = new PullSymbol(declName, declKind);
+
+            variableSymbol.addDeclaration(variableDeclaration);
+            variableDeclaration.setSymbol(variableSymbol);
+
+            // Catch variable are of type 'any'.  So we don't need to actually resolve anything later.
+            variableSymbol.type = this.semanticInfoChain.anyTypeSymbol;
+
+            this.semanticInfoChain.setSymbolForAST(identifier, variableSymbol);
+
+            //if (parent && !parentHadSymbol) {
+
+            //    if (declFlags & PullElementFlags.Exported) {
+            //        parent.addMember(variableSymbol);
+            //    }
+            //    else {
+            //        parent.addEnclosedNonMember(variableSymbol);
+            //    }
+            //}
+
+            //var otherDecls = this.findDeclsInContext(variableDeclaration, variableDeclaration.kind, /*searchGlobally*/ false);
+
+            //if (otherDecls && otherDecls.length) {
+            //    for (var i = 0; i < otherDecls.length; i++) {
+            //        otherDecls[i].ensureSymbolIsBound();
+            //    }
+            //}
+        }
+
         // properties
         private bindEnumMemberDeclarationToPullSymbol(propertyDeclaration: PullDecl) {
             var declFlags = propertyDeclaration.flags;
@@ -2112,6 +2151,10 @@ module TypeScript {
 
                 case PullElementKind.Variable:
                     this.bindVariableDeclarationToPullSymbol(decl);
+                    break;
+
+                case PullElementKind.CatchVariable:
+                    this.bindCatchVariableToPullSymbol(decl);
                     break;
 
                 case PullElementKind.EnumMember:

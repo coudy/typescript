@@ -2076,6 +2076,37 @@ module TypeScript {
         }
     }
 
+    export class OmittedExpression extends AST {
+        public nodeType(): NodeType {
+            return NodeType.OmittedExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+        }
+
+        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class EmptyStatement extends AST {
+        public nodeType(): NodeType {
+            return NodeType.EmptyStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.writeToOutputWithSourceMapRecord(";", this);
+        }
+
+        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
     export class TryStatement extends AST {
         constructor(public block: Block, public catchClause: CatchClause, public finallyClause: FinallyClause) {
             super();
@@ -2105,9 +2136,10 @@ module TypeScript {
     }
 
     export class CatchClause extends AST {
-        constructor(public param: VariableDeclarator, public block: Block) {
+        constructor(public identifier: Identifier, public typeAnnotation: TypeReference, public block: Block) {
             super();
-            param && (param.parent = this);
+            identifier && (identifier.parent = this);
+            typeAnnotation && (typeAnnotation.parent = this);
             block && (block.parent = this);
         }
 
@@ -2121,7 +2153,8 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.param, ast.param, includingPosition) &&
+                   structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                   structuralEquals(this.typeAnnotation, ast.typeAnnotation, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition);
         }
     }
@@ -2143,37 +2176,6 @@ module TypeScript {
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.block, ast.block, includingPosition);
-        }
-    }
-
-    export class OmittedExpression extends AST {
-        public nodeType(): NodeType {
-            return NodeType.OmittedExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-        }
-
-        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition);
-        }
-    }
-
-    export class EmptyStatement extends AST {
-        public nodeType(): NodeType {
-            return NodeType.EmptyStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.writeToOutputWithSourceMapRecord(";", this);
-        }
-
-        public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition);
         }
     }
 

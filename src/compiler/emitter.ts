@@ -2925,7 +2925,7 @@ module TypeScript {
             this.writeToOutput(" ");
             this.recordSourceMappingStart(clause);
             this.writeToOutput("catch (");
-            clause.param.id.emit(this);
+            clause.identifier.emit(this);
             this.writeToOutput(")");
             clause.block.emit(this);
             this.recordSourceMappingEnd(clause);
