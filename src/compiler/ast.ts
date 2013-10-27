@@ -844,26 +844,6 @@ module TypeScript {
         }
     }
 
-    export class TypeOfExpression extends AST {
-        constructor(public expression: AST) {
-            super();
-            expression && (expression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.TypeOfExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitTypeOfExpression(this);
-        }
-
-        public structuralEquals(ast: TypeOfExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition);
-        }
-    }
-
     export interface ICallExpression extends IASTSpan {
         target: AST;
         typeArguments: ASTList;
@@ -1735,32 +1715,6 @@ module TypeScript {
         }
     }
 
-    export class DoStatement extends AST {
-        constructor(public statement: AST, public condition: AST, public whileSpan: ASTSpan) {
-            super();
-            statement && (statement.parent = this);
-            condition && (condition.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.DoStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDoStatement(this);
-        }
-
-        public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.statement, ast.statement, includingPosition) &&
-                   structuralEquals(this.condition, ast.condition, includingPosition);
-        }
-    }
-
     export class IfStatement extends AST {
         constructor(public condition: AST,
                     public statement: AST,
@@ -2226,6 +2180,52 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class DoStatement extends AST {
+        constructor(public statement: AST, public whileKeyword: ASTSpan, public condition: AST) {
+            super();
+            statement && (statement.parent = this);
+            condition && (condition.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.DoStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitDoStatement(this);
+        }
+
+        public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.statement, ast.statement, includingPosition) &&
+                structuralEquals(this.condition, ast.condition, includingPosition);
+        }
+    }
+
+    export class TypeOfExpression extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TypeOfExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitTypeOfExpression(this);
+        }
+
+        public structuralEquals(ast: TypeOfExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
         }
     }
 

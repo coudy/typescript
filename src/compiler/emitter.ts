@@ -2755,7 +2755,7 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("do");
             this.emitBlockOrStatement(statement.statement);
-            this.writeToOutputWithSourceMapRecord(" while", statement.whileSpan);
+            this.writeToOutputWithSourceMapRecord(" while", statement.whileKeyword);
             this.writeToOutput('(');
             statement.condition.emit(this);
             this.writeToOutput(")");

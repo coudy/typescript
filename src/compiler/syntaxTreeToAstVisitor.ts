@@ -2064,17 +2064,17 @@ module TypeScript {
             var start = this.position;
 
             this.movePast(node.doKeyword);
-            var statement = node.statement.accept(this);
+            var statement: AST = node.statement.accept(this);
             var whileSpan = new ASTSpan();
             this.setTokenSpan(whileSpan, this.position, node.whileKeyword);
 
             this.movePast(node.whileKeyword);
             this.movePast(node.openParenToken);
-            var condition = node.condition.accept(this);
+            var condition: AST = node.condition.accept(this);
             this.movePast(node.closeParenToken);
             this.movePast(node.semicolonToken);
 
-            var result = new DoStatement(statement, condition, whileSpan);
+            var result = new DoStatement(statement, whileSpan, condition);
             this.setSpan(result, start, node);
 
             return result;
@@ -2185,7 +2185,7 @@ module TypeScript {
                         break;
 
                     case NodeType.DoStatement:
-                        applyDelta((<DoStatement>cur).whileSpan, delta);
+                        applyDelta((<DoStatement>cur).whileKeyword, delta);
                         break;
 
                     case NodeType.SwitchStatement:
