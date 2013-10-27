@@ -604,54 +604,6 @@ module TypeScript {
         }
     }
 
-    export class SimplePropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-                    public expression: AST) {
-            super();
-            propertyName && (propertyName.parent = this);
-            expression && (expression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.SimplePropertyAssignment;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitSimplePropertyAssignment(this);
-        }
-    }
-
-    export class FunctionPropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-                    public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.FunctionPropertyAssignment;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitFunctionPropertyAssignment(this);
-        }
-    }
-
     export class GetAccessor extends AST {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
@@ -717,26 +669,6 @@ module TypeScript {
 
         public emitWorker(emitter: Emitter): void {
             emitter.emitSetAccessor(this);
-        }
-    }
-
-    export class ObjectLiteralExpression extends AST {
-        constructor(public propertyAssignments: ASTList) {
-            super();
-            propertyAssignments && (propertyAssignments.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ObjectLiteralExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitObjectLiteralExpression(this);
-        }
-
-        public structuralEquals(ast: ObjectLiteralExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.propertyAssignments, ast.propertyAssignments, includingPosition);
         }
     }
 
@@ -1270,37 +1202,6 @@ module TypeScript {
 
         public getNameText() {
             return this.hint;
-        }
-    }
-
-    export class FunctionExpression extends AST {
-        public hint: string = null;
-
-        constructor(public name: Identifier,
-                    public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-                        super();
-            name && (name.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public _isDeclaration() { return true; }
-
-        public nodeType(): NodeType {
-            return NodeType.FunctionExpression;
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitFunctionExpression(this);
-        }
-
-        public getNameText() {
-            return this.name ? this.name.text() : this.hint;
         }
     }
 
@@ -2086,6 +1987,105 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class ObjectLiteralExpression extends AST {
+        constructor(public propertyAssignments: ASTList) {
+            super();
+            propertyAssignments && (propertyAssignments.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ObjectLiteralExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitObjectLiteralExpression(this);
+        }
+
+        public structuralEquals(ast: ObjectLiteralExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.propertyAssignments, ast.propertyAssignments, includingPosition);
+        }
+    }
+
+    export class SimplePropertyAssignment extends AST {
+        constructor(public propertyName: Identifier,
+            public expression: AST) {
+            super();
+            propertyName && (propertyName.parent = this);
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SimplePropertyAssignment;
+        }
+
+        public _isDeclaration() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitSimplePropertyAssignment(this);
+        }
+    }
+
+    export class FunctionPropertyAssignment extends AST {
+        constructor(public propertyName: Identifier,
+            public typeParameters: ASTList,
+            public parameterList: ASTList,
+            public returnTypeAnnotation: TypeReference,
+            public block: Block) {
+            super();
+            propertyName && (propertyName.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.FunctionPropertyAssignment;
+        }
+
+        public _isDeclaration() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitFunctionPropertyAssignment(this);
+        }
+    }
+
+    export class FunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(public name: Identifier,
+            public typeParameters: ASTList,
+            public parameterList: ASTList,
+            public returnTypeAnnotation: TypeReference,
+            public block: Block) {
+            super();
+            name && (name.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.FunctionExpression;
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitFunctionExpression(this);
+        }
+
+        public getNameText() {
+            return this.name ? this.name.text() : this.hint;
         }
     }
 
