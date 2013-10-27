@@ -2238,20 +2238,6 @@ module TypeScript {
         }
     }
 
-    export class DebuggerStatement extends AST {
-        public nodeType(): NodeType {
-            return NodeType.DebuggerStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDebuggerStatement(this);
-        }
-    }
-
     export class OmittedExpression extends AST {
         public nodeType(): NodeType {
             return NodeType.OmittedExpression;
@@ -2280,6 +2266,20 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class DebuggerStatement extends AST {
+        public nodeType(): NodeType {
+            return NodeType.DebuggerStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitDebuggerStatement(this);
         }
     }
 
