@@ -2702,7 +2702,7 @@ module TypeScript {
                     }
                 }
             }
-            else if (varDeclOrParameter.nodeType() !== NodeType.EnumElement && this.compilationSettings.noImplicitAny() && !TypeScript.hasFlag((<any>varDeclOrParameter).getVarFlags(), VariableFlags.ForInVariable)) {
+            else if (varDeclOrParameter.nodeType() !== NodeType.EnumElement && this.compilationSettings.noImplicitAny() && !this.isForInVariableDeclarator(varDeclOrParameter)) {
                 // if we're lacking both a type annotation and an initialization expression, the type is 'any'
                 // if the noImplicitAny flag is set to be true, report an error
                 // Do not report an error if the variable declaration is declared in ForIn statement
@@ -2771,6 +2771,15 @@ module TypeScript {
                 // Non property variable with _this name, we need to verify if this would be ok
                 this.checkNameForCompilerGeneratedDeclarationCollision(varDeclOrParameter, /*isDeclaration*/ true, name, context);
             }
+        }
+
+        private isForInVariableDeclarator(ast: AST): boolean {
+            return ast.nodeType() === NodeType.VariableDeclarator &&
+                ast.parent && ast.parent.parent && ast.parent.parent.parent &&
+                ast.parent.nodeType() === NodeType.List &&
+                ast.parent.parent.nodeType() === NodeType.VariableDeclaration &&
+                ast.parent.parent.parent.nodeType() === NodeType.ForInStatement &&
+                (<ForInStatement>ast.parent.parent.parent).variableDeclaration === ast.parent.parent;
         }
 
         private checkSuperCaptureVariableCollides(superAST: AST, isDeclaration: boolean, context: PullTypeResolutionContext) {

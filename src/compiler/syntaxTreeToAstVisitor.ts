@@ -1840,13 +1840,6 @@ module TypeScript {
             this.movePast(node.forKeyword);
             this.movePast(node.openParenToken);
             var init = node.variableDeclaration ? node.variableDeclaration.accept(this) : node.left.accept(this);
-            if (node.variableDeclaration) {
-                var variableDeclaration: VariableDeclaration = init;
-                for (var i = 0, n = variableDeclaration.declarators.members.length; i < n; i++) {
-                    var boundDecl = <VariableDeclarator>variableDeclaration.declarators.members[i];
-                    boundDecl.setVarFlags(boundDecl.getVarFlags() | VariableFlags.ForInVariable);
-                }
-            }
 
             this.movePast(node.inKeyword);
             var expression = node.expression.accept(this);

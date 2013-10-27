@@ -54,8 +54,6 @@ module TypeScript {
         Ambient = 1 << 3,
         Static = 1 << 4,
         Property = 1 << 8,
-        EnumElement = 1 << 13,
-        ForInVariable = 1 << 14,
     }
 
     export enum FunctionFlags {
