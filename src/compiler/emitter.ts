@@ -2807,7 +2807,12 @@ module TypeScript {
         public emitForInStatement(statement: ForInStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("for (");
-            statement.variableDeclaration.emit(this);
+            if (statement.left) {
+                statement.left.emit(this);
+            }
+            else {
+                statement.variableDeclaration.emit(this);
+            }
             this.writeToOutput(" in ");
             statement.expression.emit(this);
             this.writeToOutput(")");

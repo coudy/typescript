@@ -4519,35 +4519,31 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private resolveForInStatement(ast: AST, context: PullTypeResolutionContext): PullSymbol {
-            if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckForInStatement(ast, context);
+        private resolveForInStatement(forInStatement: ForInStatement, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(forInStatement, context)) {
+                this.typeCheckForInStatement(forInStatement, context);
             }
 
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private typeCheckForInStatement(ast: AST, context: PullTypeResolutionContext) {
-            this.setTypeChecked(ast, context);
-
-            var forInStatement = <ForInStatement>ast;
+        private typeCheckForInStatement(forInStatement: ForInStatement, context: PullTypeResolutionContext) {
+            this.setTypeChecked(forInStatement, context);
 
             var rhsType = this.resolveAST(forInStatement.expression, /*isContextuallyTyped*/ false, context).type;
-            var lval = forInStatement.variableDeclaration;
+            var lval = forInStatement.variableDeclaration || forInStatement.left;
 
-            if (lval.nodeType() === NodeType.VariableDeclaration) {
+            var varSym = this.resolveAST(lval, /*isContextuallyTyped*/ false, context);
+
+            if (forInStatement.variableDeclaration) {
                 var declaration = <VariableDeclaration>forInStatement.variableDeclaration;
                 var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
                 if (varDecl.typeExpr) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(lval, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_use_a_type_annotation));
                 }
-            }
 
-            var varSym = this.resolveAST(forInStatement.variableDeclaration, /*isContextuallyTyped*/ false, context);
-
-            if (lval.nodeType() === NodeType.VariableDeclaration) {
-                varSym = this.getSymbolForAST((<VariableDeclaration>forInStatement.variableDeclaration).declarators.members[0], context);
+                var varSym = this.getSymbolForAST(varDecl, context);
             }
 
             var isStringOrNumber = varSym.type === this.semanticInfoChain.stringTypeSymbol || this.isAnyOrEquivalent(varSym.type);
@@ -5382,7 +5378,7 @@ module TypeScript {
                     return this.resolveForStatement(<ForStatement>ast, context);
 
                 case NodeType.ForInStatement:
-                    return this.resolveForInStatement(ast, context);
+                    return this.resolveForInStatement(<ForInStatement>ast, context);
 
                 case NodeType.WhileStatement:
                     return this.resolveWhileStatement(<WhileStatement>ast, context);

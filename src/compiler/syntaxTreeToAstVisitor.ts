@@ -1843,14 +1843,15 @@ module TypeScript {
 
             this.movePast(node.forKeyword);
             this.movePast(node.openParenToken);
-            var init = node.variableDeclaration ? node.variableDeclaration.accept(this) : node.left.accept(this);
+            var variableDeclaration: VariableDeclaration = node.variableDeclaration ? node.variableDeclaration.accept(this) : null;
+            var left: AST = node.left ? node.left.accept(this) : null;
 
             this.movePast(node.inKeyword);
             var expression = node.expression.accept(this);
             this.movePast(node.closeParenToken);
             var body = node.statement.accept(this);
 
-            var result = new ForInStatement(init, expression, body);
+            var result = new ForInStatement(variableDeclaration, left, expression, body);
             this.setSpan(result, start, node);
 
             return result;

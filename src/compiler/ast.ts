@@ -1766,9 +1766,10 @@ module TypeScript {
     }
 
     export class ForInStatement extends AST {
-        constructor(public variableDeclaration: VariableDeclaration, public expression: AST, public statement: AST) {
+        constructor(public variableDeclaration: VariableDeclaration, public left: AST, public expression: AST, public statement: AST) {
             super();
             variableDeclaration && (variableDeclaration.parent = this);
+            left && (left.parent = this);
             expression && (expression.parent = this);
             statement && (statement.parent = this);
         }

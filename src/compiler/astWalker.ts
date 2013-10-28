@@ -223,6 +223,7 @@ module TypeScript {
 
     function walkForInStatementChildren(preAst: ForInStatement, walker: AstWalker): void {
         walker.walk(preAst.variableDeclaration);
+        walker.walk(preAst.left);
         walker.walk(preAst.expression);
         walker.walk(preAst.statement);
     }
