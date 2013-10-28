@@ -4510,6 +4510,7 @@ module TypeScript {
             if (this.canTypeCheckAST(ast, context)) {
                 this.setTypeChecked(ast, context);
 
+                this.resolveAST(ast.variableDeclaration, /*isContextuallyTyped:*/ false, context);
                 this.resolveAST(ast.initializer, /*isContextuallyTyped:*/ false, context);
                 this.resolveAST(ast.condition, /*isContextuallyTyped:*/ false, context);
                 this.resolveAST(ast.incrementor, /*isContextuallyTyped:*/ false, context);

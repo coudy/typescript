@@ -1819,15 +1819,17 @@ module TypeScript {
     }
 
     export class ForStatement extends AST {
-        constructor(public initializer: AST,
-            public condition: AST,
-            public incrementor: AST,
-            public statement: AST) {
+        constructor(public variableDeclaration: VariableDeclaration,
+                    public initializer: AST,
+                    public condition: AST,
+                    public incrementor: AST,
+                    public statement: AST) {
             super();
-                initializer && (initializer.parent = this);
-                condition && (condition.parent = this);
-                incrementor && (incrementor.parent = this);
-                statement && (statement.parent = this);
+            variableDeclaration && (variableDeclaration.parent = this);
+            initializer && (initializer.parent = this);
+            condition && (condition.parent = this);
+            incrementor && (incrementor.parent = this);
+            statement && (statement.parent = this);
         }
 
         public nodeType(): NodeType {

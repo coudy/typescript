@@ -2823,13 +2823,11 @@ module TypeScript {
         public emitForStatement(statement: ForStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("for (");
-            if (statement.initializer) {
-                if (statement.initializer.nodeType() !== NodeType.List) {
-                    statement.initializer.emit(this);
-                }
-                else {
-                    this.emitCommaSeparatedList(<ASTList>statement.initializer);
-                }
+            if (statement.variableDeclaration) {
+                statement.variableDeclaration.emit(this);
+            }
+            else if (statement.initializer) {
+                statement.initializer.emit(this);
             }
 
             this.writeToOutput("; ");

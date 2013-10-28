@@ -1820,11 +1820,9 @@ module TypeScript {
 
             this.movePast(node.forKeyword);
             this.movePast(node.openParenToken);
-            var init = node.variableDeclaration
-                ? node.variableDeclaration.accept(this)
-                : node.initializer
-                ? node.initializer.accept(this)
-                : null;
+            var variableDeclaration: VariableDeclaration = node.variableDeclaration ? node.variableDeclaration.accept(this) : null;
+            var initializer: AST = node.initializer ? node.initializer.accept(this) : null;
+
             this.movePast(node.firstSemicolonToken);
             var cond = node.condition ? node.condition.accept(this) : null;
             this.movePast(node.secondSemicolonToken);
@@ -1832,7 +1830,7 @@ module TypeScript {
             this.movePast(node.closeParenToken);
             var body = node.statement.accept(this);
 
-            var result = new ForStatement(init, cond, incr, body);
+            var result = new ForStatement(variableDeclaration, initializer, cond, incr, body);
             this.setSpan(result, start, node);
 
             return result;
