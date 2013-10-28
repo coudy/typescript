@@ -1591,74 +1591,6 @@ module TypeScript {
         }
     }
 
-    export class SwitchStatement extends AST {
-        constructor(public expression: AST, public caseList: ASTList, public statement: ASTSpan) {
-            super();
-            expression && (expression.parent = this);
-            caseList && (caseList.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.SwitchStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitSwitchStatement(this);
-        }
-
-        public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.caseList, ast.caseList, includingPosition) &&
-                   structuralEquals(this.expression, ast.expression, includingPosition);
-        }
-    }
-
-    export class CaseSwitchClause extends AST {
-        constructor(public expr: AST, public body: ASTList) {
-            super();
-            expr && (expr.parent = this);
-            body && (body.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.CaseSwitchClause;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitCaseSwitchClause(this);
-        }
-
-        public structuralEquals(ast: CaseSwitchClause, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.expr, ast.expr, includingPosition) &&
-                   structuralEquals(this.body, ast.body, includingPosition);
-        }
-    }
-
-    export class DefaultSwitchClause extends AST {
-        constructor(public body: ASTList) {
-            super();
-            body && (body.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.DefaultSwitchClause;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDefaultSwitchClause(this);
-        }
-
-        public structuralEquals(ast: DefaultSwitchClause, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.body, ast.body, includingPosition);
-        }
-    }
-
     export class TypeParameter extends AST {
         constructor(public name: Identifier, public constraint: TypeReference) {
             super();
@@ -1771,6 +1703,74 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class SwitchStatement extends AST {
+        constructor(public expression: AST, public switchClauses: ASTList, public statement: ASTSpan) {
+            super();
+            expression && (expression.parent = this);
+            switchClauses && (switchClauses.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SwitchStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitSwitchStatement(this);
+        }
+
+        public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.switchClauses, ast.switchClauses, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+    }
+
+    export class CaseSwitchClause extends AST {
+        constructor(public expression: AST, public statements: ASTList) {
+            super();
+            expression && (expression.parent = this);
+            statements && (statements.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.CaseSwitchClause;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitCaseSwitchClause(this);
+        }
+
+        public structuralEquals(ast: CaseSwitchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.statements, ast.statements, includingPosition);
+        }
+    }
+
+    export class DefaultSwitchClause extends AST {
+        constructor(public statements: ASTList) {
+            super();
+            statements && (statements.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.DefaultSwitchClause;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitDefaultSwitchClause(this);
+        }
+
+        public structuralEquals(ast: DefaultSwitchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.statements, ast.statements, includingPosition);
         }
     }
 

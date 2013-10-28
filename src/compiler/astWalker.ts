@@ -258,17 +258,17 @@ module TypeScript {
     }
 
     function walkCaseSwitchClauseChildren(preAst: CaseSwitchClause, walker: AstWalker): void {
-        walker.walk(preAst.expr);
-        walker.walk(preAst.body);
+        walker.walk(preAst.expression);
+        walker.walk(preAst.statements);
     }
 
     function walkDefaultSwitchClauseChildren(preAst: DefaultSwitchClause, walker: AstWalker): void {
-        walker.walk(preAst.body);
+        walker.walk(preAst.statements);
     }
 
     function walkSwitchStatementChildren(preAst: SwitchStatement, walker: AstWalker): void {
         walker.walk(preAst.expression);
-        walker.walk(preAst.caseList);
+        walker.walk(preAst.switchClauses);
     }
 
     function walkTryStatementChildren(preAst: TryStatement, walker: AstWalker): void {

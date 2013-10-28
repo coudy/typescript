@@ -2866,7 +2866,7 @@ module TypeScript {
             this.recordSourceMappingEnd(statement.statement);
             this.writeLineToOutput(" {");
             this.indenter.increaseIndent();
-            this.emitList(statement.caseList, /*useNewLineSeparator:*/ false);
+            this.emitList(statement.switchClauses, /*useNewLineSeparator:*/ false);
             this.indenter.decreaseIndent();
             this.emitIndent();
             this.writeToOutput("}");
@@ -2876,10 +2876,10 @@ module TypeScript {
         public emitCaseSwitchClause(clause: CaseSwitchClause): void {
             this.recordSourceMappingStart(clause);
             this.writeToOutput("case ");
-            clause.expr.emit(this);
+            clause.expression.emit(this);
             this.writeToOutput(":");
 
-            this.emitSwitchClauseBody(clause.body);
+            this.emitSwitchClauseBody(clause.statements);
             this.recordSourceMappingEnd(clause);
         }
 
@@ -2900,10 +2900,9 @@ module TypeScript {
 
         public emitDefaultSwitchClause(clause: DefaultSwitchClause): void {
             this.recordSourceMappingStart(clause);
-            this.writeToOutput("default");
-            this.writeToOutput(":");
+            this.writeToOutput("default:");
 
-            this.emitSwitchClauseBody(clause.body);
+            this.emitSwitchClauseBody(clause.statements);
             this.recordSourceMappingEnd(clause);
         }
 
