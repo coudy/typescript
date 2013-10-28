@@ -295,7 +295,7 @@ module TypeScript {
         var decl = new NormalPullDecl(argDecl.id.valueText(), argDecl.id.text(), PullElementKind.Parameter, declFlags, parent, span);
 
         // If it has a default arg, record the fact that the parent has default args (we will need this during resolution)
-        if (argDecl.init) {
+        if (argDecl.equalsValueClause) {
             parent.flags |= PullElementFlags.HasDefaultArgs;
         }
 

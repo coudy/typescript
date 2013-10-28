@@ -594,7 +594,7 @@ module TypeScript {
                     var memberName = this.identifierFromToken(enumElementSyntax.propertyName, /*isOptional:*/ false);
                     this.movePast(enumElementSyntax.propertyName);
 
-                    var value = enumElementSyntax.equalsValueClause !== null ? enumElementSyntax.equalsValueClause.accept(this) : null;
+                    var value: EqualsValueClause = enumElementSyntax.equalsValueClause !== null ? enumElementSyntax.equalsValueClause.accept(this) : null;
 
                     var enumElement = new EnumElement(memberName, value);
                     this.setCommentsAndSpan(enumElement, enumElementFullStart, enumElementSyntax);
@@ -794,18 +794,18 @@ module TypeScript {
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
-            var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
+            var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var result = new VariableDeclarator(name, typeExpr, init);
             this.setSpan(result, start, node);
 
             if (init) {
-                if (init.nodeType() === NodeType.ArrowFunctionExpression) {
-                    var arrowFunction = <ArrowFunctionExpression>init;
+                if (init.value.nodeType() === NodeType.ArrowFunctionExpression) {
+                    var arrowFunction = <ArrowFunctionExpression>init.value;
                     arrowFunction.hint = name.text();
                 }
-                else if (init.nodeType() === NodeType.FunctionExpression) {
-                    var expression = <FunctionExpression>init;
+                else if (init.value.nodeType() === NodeType.FunctionExpression) {
+                    var expression = <FunctionExpression>init.value;
                     expression.hint = name.text();
                 }
             }
@@ -814,12 +814,16 @@ module TypeScript {
         }
 
         public visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
+            var start = this.position;
             var afterEqualsComments = this.convertTokenTrailingComments(node.equalsToken,
                 this.position + node.equalsToken.leadingTriviaWidth() + node.equalsToken.width());
 
             this.movePast(node.equalsToken);
-            var result: AST = node.value.accept(this);
-            result.setPreComments(this.mergeComments(afterEqualsComments, result.preComments()));
+            var value: AST = node.value.accept(this);
+            value.setPreComments(this.mergeComments(afterEqualsComments, value.preComments()));
+
+            var result = new EqualsValueClause(value);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1155,7 +1159,7 @@ module TypeScript {
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
-            var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
+            var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var result = new Parameter(identifier, typeExpr, init, !!node.questionToken, node.dotDotDotToken !== null);
             this.setCommentsAndSpan(result, start, node);
@@ -1661,7 +1665,7 @@ module TypeScript {
             var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false);
             this.movePast(node.variableDeclarator.identifier);
             var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
-            var init = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
+            var init: EqualsValueClause = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
             this.movePast(node.semicolonToken);
 
             var result = new MemberVariableDeclaration(name, typeExpr, init);

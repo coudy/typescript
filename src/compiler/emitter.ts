@@ -558,7 +558,7 @@ module TypeScript {
                         // the ambient enum member may have been generated based on a computed value - unless it is
                         // explicitly initialized in the ambient enum to an integer constant.
                         var memberIsAmbient = hasFlag(pullDecl.getParentDecl().flags, PullElementFlags.Ambient);
-                        var memberIsInitialized = varDecl.value !== null;
+                        var memberIsInitialized = varDecl.equalsValueClause !== null;
                         if (!memberIsAmbient || memberIsInitialized) {
                             return varDecl;
                         }
@@ -729,13 +729,12 @@ module TypeScript {
 
             for (var i = 0; i < n; i++) {
                 var arg = <Parameter>parameters.members[i];
-                if (arg.init) {
+                if (arg.equalsValueClause) {
                     this.emitIndent();
                     this.recordSourceMappingStart(arg);
                     this.writeToOutput("if (typeof " + arg.id.text() + " === \"undefined\") { ");//
                     this.writeToOutputWithSourceMapRecord(arg.id.text(), arg.id);
-                    this.writeToOutput(" = ");
-                    this.emitJavascript(arg.init, false);
+                    this.emitJavascript(arg.equalsValueClause, false);
                     this.writeLineToOutput("; }");
                     this.recordSourceMappingEnd(arg);
                 }
@@ -1132,16 +1131,17 @@ module TypeScript {
             this.writeToOutput(this.moduleName);
             this.writeToOutput('[');
             this.writeToOutput(quoted ? name : '"' + name + '"');
-            this.writeToOutput('] = ');
+            this.writeToOutput(']');
 
-            if (varDecl.value) {
-                varDecl.value.emit(this);
+            if (varDecl.equalsValueClause) {
+                varDecl.equalsValueClause.emit(this);
             }
             else if (varDecl.constantValue !== null) {
+                this.writeToOutput(' = ');
                 this.writeToOutput(varDecl.constantValue.toString());
             }
             else {
-                this.writeToOutput("null");
+                this.writeToOutput(' = null');
             }
 
             this.writeToOutput('] = ');
@@ -1391,12 +1391,11 @@ module TypeScript {
 
         public emitAmbientVarDecl(varDecl: VariableDeclarator) {
             this.recordSourceMappingStart(this.currentVariableDeclaration);
-            if (varDecl.init) {
+            if (varDecl.equalsValueClause) {
                 this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
                 this.writeToOutputWithSourceMapRecord(varDecl.id.text(), varDecl.id);
-                this.writeToOutput(" = ");
-                this.emitJavascript(varDecl.init, false);
+                this.emitJavascript(varDecl.equalsValueClause, false);
                 this.recordSourceMappingEnd(varDecl);
                 this.emitComments(varDecl, false);
             }
@@ -1420,7 +1419,7 @@ module TypeScript {
             this.emitComments(declaration, true);
 
             var pullVarDecl = this.semanticInfoChain.getDeclForAST(varDecl);
-            var isAmbientWithoutInit = pullVarDecl && hasFlag(pullVarDecl.flags, PullElementFlags.Ambient) && varDecl.init === null;
+            var isAmbientWithoutInit = pullVarDecl && hasFlag(pullVarDecl.flags, PullElementFlags.Ambient) && varDecl.equalsValueClause === null;
             if (!isAmbientWithoutInit) {
                 var prevVariableDeclaration = this.currentVariableDeclaration;
                 this.currentVariableDeclaration = declaration;
@@ -1444,7 +1443,7 @@ module TypeScript {
         }
 
         private emitMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
-            Debug.assert(!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init);
+            Debug.assert(!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.equalsValueClause);
 
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             this.pushDecl(pullDecl);
@@ -1472,14 +1471,12 @@ module TypeScript {
                 this.writeToOutput("]");
             }
 
-            if (varDecl.init) {
-                this.writeToOutput(" = ");
-
+            if (varDecl.equalsValueClause) {
                 // Ensure we have a fresh var list count when recursing into the variable 
                 // initializer.  We don't want our current list of variables to affect how we
                 // emit nested variable lists.
                 var prevVariableDeclaration = this.currentVariableDeclaration;
-                varDecl.init.emit(this);
+                varDecl.equalsValueClause.emit(this);
                 this.currentVariableDeclaration = prevVariableDeclaration;
             }
 
@@ -1532,14 +1529,12 @@ module TypeScript {
 
                 this.writeToOutputWithSourceMapRecord(varDecl.id.text(), varDecl.id);
 
-                if (varDecl.init) {
-                    this.writeToOutput(" = ");
-
+                if (varDecl.equalsValueClause) {
                     // Ensure we have a fresh var list count when recursing into the variable 
                     // initializer.  We don't want our current list of variables to affect how we
                     // emit nested variable lists.
                     var prevVariableDeclaration = this.currentVariableDeclaration;
-                    varDecl.init.emit(this);
+                    varDecl.equalsValueClause.emit(this);
                     this.currentVariableDeclaration = prevVariableDeclaration;
                 }
 
@@ -1838,7 +1833,7 @@ module TypeScript {
             for (var i = 0, n = this.thisClassNode.classElements.members.length; i < n; i++) {
                 if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>this.thisClassNode.classElements.members[i];
-                    if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                    if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.equalsValueClause) {
                         this.emitIndent();
                         this.emitMemberVariableDeclaration(varDecl);
                         this.writeLineToOutput("");
@@ -2299,7 +2294,7 @@ module TypeScript {
                 if (memberDecl.nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>memberDecl;
 
-                    if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.init) {
+                    if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.equalsValueClause) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, varDecl);
 
                         this.emitIndent();
@@ -2307,13 +2302,13 @@ module TypeScript {
 
                         var varDeclName = varDecl.id.text();
                         if (isQuoted(varDeclName) || varDecl.id.isStringOrNumericLiteral) {
-                            this.writeToOutput(classDecl.identifier.text() + "[" + varDeclName + "] = ");
+                            this.writeToOutput(classDecl.identifier.text() + "[" + varDeclName + "]");
                         }
                         else {
-                            this.writeToOutput(classDecl.identifier.text() + "." + varDeclName + " = ");
+                            this.writeToOutput(classDecl.identifier.text() + "." + varDeclName);
                         }
 
-                        varDecl.init.emit(this);
+                        varDecl.equalsValueClause.emit(this);
 
                         this.recordSourceMappingEnd(varDecl);
                         this.writeLineToOutput(";");
@@ -2953,6 +2948,11 @@ module TypeScript {
             this.writeToOutputWithSourceMapRecord(literal.text(), literal);
         }
 
+        public emitEqualsValueClause(clause: EqualsValueClause): void {
+            this.writeToOutput(" = ");
+            clause.value.emit(this);
+        }
+
         public emitParameter(parameter: Parameter): void {
             this.writeToOutputWithSourceMapRecord(parameter.id.text(), parameter);
         }
@@ -3050,7 +3050,7 @@ module TypeScript {
         }
 
         private isNotAmbientOrHasInitializer(varDecl: VariableDeclarator): boolean {
-            return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.init !== null;
+            return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.equalsValueClause !== null;
         }
 
         public shouldEmitVariableStatement(statement: VariableStatement): boolean {

@@ -1067,11 +1067,11 @@ module TypeScript {
     export class MemberVariableDeclaration extends AST {
         private _varFlags = VariableFlags.None;
 
-        constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST) {
+        constructor(public id: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause) {
             super();
             id && (id.parent = this);
             typeExpr && (typeExpr.parent = this);
-            init && (init.parent = this);
+            equalsValueClause && (equalsValueClause.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -1093,11 +1093,11 @@ module TypeScript {
     export class VariableDeclarator extends AST {
         private _varFlags = VariableFlags.None;
 
-        constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST) {
+        constructor(public id: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause) {
             super();
             id && (id.parent = this);
             typeExpr && (typeExpr.parent = this);
-            init && (init.parent = this);
+            equalsValueClause && (equalsValueClause.parent = this);
         }
 
         public nodeType(): NodeType {
@@ -1124,20 +1124,39 @@ module TypeScript {
         public structuralEquals(ast: VariableDeclarator, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this._varFlags === ast._varFlags &&
-                structuralEquals(this.init, ast.init, includingPosition) &&
+                structuralEquals(this.equalsValueClause, ast.equalsValueClause, includingPosition) &&
                 structuralEquals(this.typeExpr, ast.typeExpr, includingPosition) &&
                 structuralEquals(this.id, ast.id, includingPosition);
+        }
+    }
+
+    export class EqualsValueClause extends AST {
+        constructor(public value: AST) {
+            super();
+            value && (value.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.EqualsValueClause;
+        }
+
+        public shouldEmit(emitter: Emitter): boolean {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitEqualsValueClause(this);
         }
     }
 
     export class Parameter extends AST {
         private _varFlags = VariableFlags.None;
 
-        constructor(public id: Identifier, public typeExpr: TypeReference, public init: AST, public isOptional: boolean, public isRest: boolean) {
+        constructor(public id: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause, public isOptional: boolean, public isRest: boolean) {
             super();
             id && (id.parent = this);
             typeExpr && (typeExpr.parent = this);
-            init && (init.parent = this);
+            equalsValueClause && (equalsValueClause.parent = this);
         }
 
         public _isDeclaration() { return true; }
@@ -1155,7 +1174,7 @@ module TypeScript {
             return NodeType.Parameter;
         }
 
-        public isOptionalArg(): boolean { return this.isOptional || this.init !== null; }
+        public isOptionalArg(): boolean { return this.isOptional || this.equalsValueClause !== null; }
 
         public emitWorker(emitter: Emitter) {
             emitter.emitParameter(this);
@@ -1788,10 +1807,10 @@ module TypeScript {
     export class EnumElement extends AST {
         public constantValue: number = null;
 
-        constructor(public propertyName: Identifier, public value: AST) {
+        constructor(public propertyName: Identifier, public equalsValueClause: EqualsValueClause) {
             super();
             propertyName && (propertyName.parent = this);
-            value && (value.parent = this);
+            equalsValueClause && (equalsValueClause.parent = this);
         }
 
         public nodeType(): NodeType {

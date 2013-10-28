@@ -1929,12 +1929,12 @@ module TypeScript {
 
             // Resolve the function expression parameter init only if we have contexual type to evaluate the expression in or we are in typeCheck
             var canTypeCheckAST = this.canTypeCheckAST(argDeclAST, context);
-            if (argDeclAST.init && (canTypeCheckAST || !contextualType)) {
+            if (argDeclAST.equalsValueClause && (canTypeCheckAST || !contextualType)) {
                 if (contextualType) {
                     context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                 }
 
-                var initExprSymbol = this.resolveAST(argDeclAST.init, contextualType != null, context);
+                var initExprSymbol = this.resolveAST(argDeclAST.equalsValueClause, contextualType != null, context);
 
                 if (contextualType) {
                     context.popContextualType();
@@ -1951,7 +1951,7 @@ module TypeScript {
                     var initTypeSymbol = this.getInstanceTypeForAssignment(argDeclAST, initExprSymbol.type, context);
                     if (!contextualType) {
                         // Set the type to the inferred initializer type
-                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol, argDeclAST.init, context));
+                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol, argDeclAST.equalsValueClause, context));
                         isImplicitAny = initTypeSymbol !== paramSymbol.type;
                     }
                     else {
@@ -2340,19 +2340,19 @@ module TypeScript {
         private resolveMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext): PullSymbol {
 
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, context);
+                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
 
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
 
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, context);
+                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
 
         private resolveParameter(parameter: Parameter, context: PullTypeResolutionContext): PullSymbol {
 
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.id, parameter.typeExpr, parameter.init, context);
+                parameter, parameter.id, parameter.typeExpr, parameter.equalsValueClause, context);
         }
 
         private getEnumTypeSymbol(enumElement: EnumElement, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2366,19 +2366,27 @@ module TypeScript {
 
         private resolveEnumElement(enumElement: EnumElement, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                enumElement, enumElement.propertyName, null, enumElement.value, context);
+                enumElement, enumElement.propertyName, null, enumElement.equalsValueClause, context);
         }
 
         private typeCheckEnumElement(enumElement: EnumElement, context: PullTypeResolutionContext): void {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                enumElement, enumElement.propertyName, null, enumElement.value, context);
+                enumElement, enumElement.propertyName, null, enumElement.equalsValueClause, context);
+        }
+
+        private resolveEqualsValueClause(clause: EqualsValueClause, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(clause, context)) {
+                this.setTypeChecked(clause, context);
+            }
+
+            return this.resolveAST(clause.value, isContextuallyTyped, context);
         }
 
         private resolveVariableDeclaratorOrParameterOrEnumElement(
             varDeclOrParameter: AST,
             name: Identifier,
             typeExpr: TypeReference,
-            init: AST,
+            init: EqualsValueClause,
             context: PullTypeResolutionContext): PullSymbol {
 
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.nodeType() === NodeType.EnumElement;
@@ -2554,7 +2562,7 @@ module TypeScript {
             varDeclOrParameter: AST,
             name: Identifier,
             typeExpr: TypeReference,
-            init: AST,
+            init: EqualsValueClause,
             context: PullTypeResolutionContext,
             typeExprSymbol: PullTypeSymbol) {
 
@@ -2594,7 +2602,7 @@ module TypeScript {
             }
             else {
                 var initTypeSymbol = initExprSymbol.type;
-                var widenedInitTypeSymbol = this.widenType(initTypeSymbol, init, context);
+                var widenedInitTypeSymbol = this.widenType(initTypeSymbol, init.value, context);
 
                 // Don't reset the type if we already have one from the type expression
                 if (!hasTypeExpr) {
@@ -2623,7 +2631,7 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, context);
+                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(
@@ -2631,7 +2639,7 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.init, context);
+                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
 
         private typeCheckParameter(
@@ -2639,14 +2647,14 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.id, parameter.typeExpr, parameter.init, context);
+                parameter, parameter.id, parameter.typeExpr, parameter.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclaratorOrParameterOrEnumElement(
             varDeclOrParameter: AST,
             name: Identifier,
             typeExpr: TypeReference,
-            init: AST,
+            init: EqualsValueClause,
             context: PullTypeResolutionContext) {
 
             this.setTypeChecked(varDeclOrParameter, context);
@@ -5180,6 +5188,9 @@ module TypeScript {
 
                 case NodeType.EnumElement:
                     return this.resolveEnumElement(<EnumElement>ast, context);
+
+                case NodeType.EqualsValueClause:
+                    return this.resolveEqualsValueClause(<EqualsValueClause>ast, isContextuallyTyped, context);
 
                 case NodeType.TypeParameter:
                     return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
@@ -11503,7 +11514,7 @@ module TypeScript {
 
                             if (ast.nodeType() === NodeType.MemberVariableDeclaration) {
                                 var variableDeclarator = <MemberVariableDeclaration>ast;
-                                if (variableDeclarator.init) {
+                                if (variableDeclarator.equalsValueClause) {
                                     return true;
                                 }
                             }

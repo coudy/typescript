@@ -110,6 +110,10 @@ module TypeScript {
         walker.walk(preAst.right);
     }
 
+    function walkEqualsValueClauseChildren(preAst: EqualsValueClause, walker: AstWalker): void {
+        walker.walk(preAst.value);
+    }
+
     function walkTypeParameterChildren(preAst: TypeParameter, walker: AstWalker): void {
         walker.walk(preAst.name);
         walker.walk(preAst.constraint);
@@ -191,19 +195,19 @@ module TypeScript {
     function walkParameterChildren(preAst: Parameter, walker: AstWalker): void {
         walker.walk(preAst.id);
         walker.walk(preAst.typeExpr);
-        walker.walk(preAst.init);
+        walker.walk(preAst.equalsValueClause);
     }
 
     function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: AstWalker): void {
         walker.walk(preAst.id);
         walker.walk(preAst.typeExpr);
-        walker.walk(preAst.init);
+        walker.walk(preAst.equalsValueClause);
     }
 
     function walkMemberVariableDeclarationChildren(preAst: MemberVariableDeclaration, walker: AstWalker): void {
         walker.walk(preAst.id);
         walker.walk(preAst.typeExpr);
-        walker.walk(preAst.init);
+        walker.walk(preAst.equalsValueClause);
     }
 
     function walkReturnStatementChildren(preAst: ReturnStatement, walker: AstWalker): void {
@@ -323,7 +327,7 @@ module TypeScript {
 
     function walkEnumElementChildren(preAst: EnumElement, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.value);
+        walker.walk(preAst.equalsValueClause);
     }
 
     function walkImportDeclChildren(preAst: ImportDeclaration, walker: AstWalker): void {
@@ -390,6 +394,7 @@ module TypeScript {
     childrenWalkers[NodeType.EnumDeclaration] = walkEnumDeclarationChildren;
     childrenWalkers[NodeType.EnumElement] = walkEnumElementChildren;
     childrenWalkers[NodeType.EqualsExpression] = walkBinaryExpressionChildren;
+    childrenWalkers[NodeType.EqualsValueClause] = walkEqualsValueClauseChildren;
     childrenWalkers[NodeType.EqualsWithTypeConversionExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.ExclusiveOrAssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.ExportAssignment] = walkExportAssignmentChildren;

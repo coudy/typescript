@@ -857,8 +857,8 @@ module TypeScript {
                 this.emitDeclarationComments(enumElement);
                 this.emitIndent();
                 this.declFile.Write(enumElement.propertyName.text());
-                if (enumElement.value && enumElement.value.nodeType() == NodeType.NumericLiteral) {
-                    this.declFile.Write(" = " + (<NumericLiteral>enumElement.value).text());
+                if (enumElement.equalsValueClause && enumElement.equalsValueClause.value.nodeType() == NodeType.NumericLiteral) {
+                    this.declFile.Write(" = " + (<NumericLiteral>enumElement.equalsValueClause.value).text());
                 }
                 this.declFile.WriteLine(",");
             }

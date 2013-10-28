@@ -367,7 +367,7 @@ module Services {
 
                     case TypeScript.NodeType.VariableDeclarator:
                         var varDeclarator = <TypeScript.VariableDeclarator>parent;
-                        return !!(varDeclarator.init && varDeclarator.id === current);
+                        return !!(varDeclarator.equalsValueClause && varDeclarator.id === current);
 
                     case TypeScript.NodeType.Parameter:
                         return true;
