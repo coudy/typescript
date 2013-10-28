@@ -1791,9 +1791,8 @@ module TypeScript {
             var start = this.position;
 
             this.movePast(node.breakKeyword);
-            this.movePast(node.identifier);
+            var identifier: Identifier = node.identifier ? node.identifier.accept(this) : null;
             this.movePast(node.semicolonToken);
-            var identifier = node.identifier ? node.identifier.valueText() : null;
 
             var result = new BreakStatement(identifier);
             this.setSpan(result, start, node);
@@ -1805,10 +1804,9 @@ module TypeScript {
             var start = this.position;
 
             this.movePast(node.continueKeyword);
-            this.movePast(node.identifier);
+            var identifier = node.identifier ? node.identifier.accept(this) : null;
             this.movePast(node.semicolonToken);
 
-            var identifier = node.identifier ? node.identifier.valueText() : null;
             var result = new ContinueStatement(identifier);
             this.setSpan(result, start, node);
 

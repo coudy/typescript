@@ -2718,7 +2718,7 @@ module TypeScript {
             this.writeToOutput("break");
 
             if (jump.identifier) {
-                this.writeToOutput(" " + jump.identifier);
+                this.writeToOutput(" " + jump.identifier.text());
             }
 
             this.recordSourceMappingEnd(jump);
@@ -2730,7 +2730,7 @@ module TypeScript {
             this.writeToOutput("continue");
 
             if (jump.identifier) {
-                this.writeToOutput(" " + jump.identifier);
+                this.writeToOutput(" " + jump.identifier.text());
             }
 
             this.recordSourceMappingEnd(jump);

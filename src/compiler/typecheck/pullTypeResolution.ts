@@ -5079,14 +5079,14 @@ module TypeScript {
             else if (ast.identifier) {
                 var continuableLabels = this.getEnclosingLabels(ast, /*breakable:*/ false, /*crossFunctions:*/ false);
 
-                if (!ArrayUtilities.contains(continuableLabels, ast.identifier)) {
+                if (!ArrayUtilities.contains(continuableLabels, ast.identifier.valueText())) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
                     var continuableLabels = this.getEnclosingLabels(ast, /*breakable:*/ false, /*crossFunctions:*/ true);
 
-                    if (ArrayUtilities.contains(continuableLabels, ast.identifier)) {
+                    if (ArrayUtilities.contains(continuableLabels, ast.identifier.valueText())) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary));
                     }
@@ -5115,13 +5115,13 @@ module TypeScript {
             if (ast.identifier) {
                 var breakableLabels = this.getEnclosingLabels(ast, /*breakable:*/ true, /*crossFunctions:*/ false);
 
-                if (!ArrayUtilities.contains(breakableLabels, ast.identifier)) {
+                if (!ArrayUtilities.contains(breakableLabels, ast.identifier.valueText())) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
                     var breakableLabels = this.getEnclosingLabels(ast, /*breakable:*/ true, /*crossFunctions:*/ true);
-                    if (ArrayUtilities.contains(breakableLabels, ast.identifier)) {
+                    if (ArrayUtilities.contains(breakableLabels, ast.identifier.valueText())) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary));
                     }

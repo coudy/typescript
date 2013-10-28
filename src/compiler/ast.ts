@@ -710,50 +710,6 @@ module TypeScript {
         }
     }
 
-    export class ContinueStatement extends AST {
-        constructor(public identifier: string) {
-            super();
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ContinueStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitContinueStatement(this);
-        }
-
-        public structuralEquals(ast: ContinueStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition);
-        }
-    }
-
-    export class BreakStatement extends AST {
-        constructor(public identifier: string) {
-            super();
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.BreakStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitBreakStatement(this);
-        }
-
-        public structuralEquals(ast: BreakStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition);
-        }
-    }
-
     export interface ICallExpression extends IASTSpan {
         target: AST;
         typeArguments: ASTList;
@@ -1814,6 +1770,50 @@ module TypeScript {
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class BreakStatement extends AST {
+        constructor(public identifier: Identifier) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.BreakStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitBreakStatement(this);
+        }
+
+        public structuralEquals(ast: BreakStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class ContinueStatement extends AST {
+        constructor(public identifier: Identifier) {
+            super();
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ContinueStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitContinueStatement(this);
+        }
+
+        public structuralEquals(ast: ContinueStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
     }
