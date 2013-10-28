@@ -24,6 +24,10 @@ module Services {
             }
         }
 
+        public cleanupSemanticCache(): void {
+            this.compiler.cleanupSemanticCache();
+        }
+
         public refresh(): void {
             // No-op.  Only kept around for compatability with the interface we shipped.
         }

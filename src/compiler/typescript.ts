@@ -145,6 +145,10 @@ module TypeScript {
             return this.semanticInfoChain.getDocument(fileName);
         }
 
+        public cleanupSemanticCache(): void {
+            this.semanticInfoChain.invalidate();
+        }
+
         public addFile(fileName: string,
             scriptSnapshot: IScriptSnapshot,
             byteOrderMark: ByteOrderMark,

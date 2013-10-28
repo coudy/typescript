@@ -41,6 +41,8 @@ module Services {
         // Note: refresh is a no-op now.  It is only around for back compat purposes.
         refresh(): void;
 
+        cleanupSemanticCache(): void;
+
         getSyntacticDiagnostics(fileName: string): TypeScript.Diagnostic[];
         getSemanticDiagnostics(fileName: string): TypeScript.Diagnostic[];
 

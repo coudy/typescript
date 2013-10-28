@@ -324,6 +324,10 @@ module Services {
             return this.compiler.fileNames();
         }
 
+        public cleanupSemanticCache(): void {
+            this.compiler.cleanupSemanticCache();
+        }
+
         public getDocument(fileName: string): TypeScript.Document {
             this.synchronizeHostData();
             return this.compiler.getDocument(fileName);

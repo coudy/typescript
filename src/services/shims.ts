@@ -84,6 +84,8 @@ module Services {
 
         refresh(throwOnError: boolean): void;
 
+        cleanupSemanticCache(): void;
+
         getSyntacticDiagnostics(fileName: string): string;
         getSemanticDiagnostics(fileName: string): string;
 
@@ -335,6 +337,14 @@ module Services {
                 });
         }
 
+        public cleanupSemanticCache(): void {
+            this.forwardJSONCall(
+                "cleanupSemanticCache()",
+                () => {
+                    this.languageService.cleanupSemanticCache();
+                    return <any>null;
+                });
+        }
         /// SQUIGGLES
         ///
 
