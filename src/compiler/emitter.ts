@@ -535,7 +535,7 @@ module TypeScript {
             var target = objectCreationExpression.expression;
             var args = objectCreationExpression.argumentList ? objectCreationExpression.argumentList.arguments : null;
 
-            target.emit(this);
+            this.emit(target);
             this.recordSourceMappingStart(args);
             this.writeToOutput("(");
             this.emitCommaSeparatedList(args);
@@ -593,7 +593,7 @@ module TypeScript {
             var args = callNode.argumentList.arguments;
 
             if (target.nodeType() === NodeType.MemberAccessExpression && (<MemberAccessExpression>target).expression.nodeType() === NodeType.SuperExpression) {
-                target.emit(this);
+                this.emit(target);
                 this.writeToOutput(".call");
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
@@ -639,7 +639,7 @@ module TypeScript {
                 }
                 for (var i = 0; i < printLen; i++) {
                     var arg = parameters.astAt(i);
-                    arg.emit(this);
+                    this.emit(arg);
 
                     if (i < (printLen - 1)) {
                         this.writeToOutput(", ");
@@ -959,7 +959,7 @@ module TypeScript {
                 if (childDecl.name == moduleName) {
                     // same name child
                     var childAST = this.semanticInfoChain.getASTForDecl(childDecl);
-                    if (childAST.shouldEmit(this)) {
+                    if (this.shouldEmit(childAST)) {
                         // Child ast would be emitted
                         return true;
                     }
@@ -1138,7 +1138,7 @@ module TypeScript {
             this.writeToOutput(']');
 
             if (varDecl.equalsValueClause) {
-                varDecl.equalsValueClause.emit(this);
+                this.emit(varDecl.equalsValueClause);
             }
             else if (varDecl.constantValue !== null) {
                 this.writeToOutput(' = ');
@@ -1157,9 +1157,9 @@ module TypeScript {
 
         public emitElementAccessExpression(expression: ElementAccessExpression) {
             this.recordSourceMappingStart(expression);
-            expression.expression.emit(this);
+            this.emit(expression.expression);
             this.writeToOutput("[");
-            expression.argumentExpression.emit(this);
+            this.emit(expression.argumentExpression);
             this.writeToOutput("]");
             this.recordSourceMappingEnd(expression);
         }
@@ -1448,7 +1448,7 @@ module TypeScript {
                         this.writeToOutput(", ");
                     }
 
-                    declarator.emit(this);
+                    this.emit(declarator);
                 }
                 this.currentVariableDeclaration = prevVariableDeclaration;
 
@@ -1493,7 +1493,7 @@ module TypeScript {
                 // initializer.  We don't want our current list of variables to affect how we
                 // emit nested variable lists.
                 var prevVariableDeclaration = this.currentVariableDeclaration;
-                varDecl.variableDeclarator.equalsValueClause.emit(this);
+                this.emit(varDecl.variableDeclarator.equalsValueClause);
                 this.currentVariableDeclaration = prevVariableDeclaration;
             }
 
@@ -1551,7 +1551,7 @@ module TypeScript {
                     // initializer.  We don't want our current list of variables to affect how we
                     // emit nested variable lists.
                     var prevVariableDeclaration = this.currentVariableDeclaration;
-                    varDecl.equalsValueClause.emit(this);
+                    this.emit(varDecl.equalsValueClause);
                     this.currentVariableDeclaration = prevVariableDeclaration;
                 }
 
@@ -1893,7 +1893,7 @@ module TypeScript {
             for (var i = startInclusive; i < endExclusive; i++) {
                 var node = list.members[i];
 
-                if (node.shouldEmit(this)) {
+                if (this.shouldEmit(node)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
 
                     this.emitJavascript(node, true);
@@ -2058,7 +2058,7 @@ module TypeScript {
 
                 var node = list.members[i];
 
-                if (node.shouldEmit(this)) {
+                if (this.shouldEmit(node)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
 
                     this.emitJavascript(node, true);
@@ -2087,7 +2087,7 @@ module TypeScript {
                 this.emitIndent();
             }
 
-            ast.emit(this);
+            this.emit(ast);
         }
 
         public emitAccessorMemberDeclaration(funcDecl: AST, name: Identifier, className: string, isProto: boolean) {
@@ -2211,7 +2211,7 @@ module TypeScript {
             // output constructor
             if (constrDecl) {
                 // declared constructor
-                constrDecl.emit(this);
+                this.emit(constrDecl);
                 this.writeLineToOutput("");
             }
             else {
@@ -2327,7 +2327,7 @@ module TypeScript {
                             this.writeToOutput(classDecl.identifier.text() + "." + varDeclName);
                         }
 
-                        varDecl.variableDeclarator.equalsValueClause.emit(this);
+                        this.emit(varDecl.variableDeclarator.equalsValueClause);
 
                         this.recordSourceMappingEnd(varDecl);
                         this.writeLineToOutput(";");
@@ -2436,7 +2436,7 @@ module TypeScript {
 
         public emitBlockOrStatement(node: AST): void {
             if (node.nodeType() === NodeType.Block) {
-                node.emit(this);
+                this.emit(node);
             }
             else {
                 this.writeLineToOutput("");
@@ -2479,20 +2479,20 @@ module TypeScript {
             if (parenthesizedExpression.expression.nodeType() === NodeType.CastExpression && parenthesizedExpression.openParenTrailingComments === null) {
                 // We have an expression of the form: (<Type>SubExpr)
                 // Emitting this as (SubExpr) is really not desirable.  Just emit the subexpr as is.
-                parenthesizedExpression.expression.emit(this);
+                this.emit(parenthesizedExpression.expression);
             }
             else {
                 this.recordSourceMappingStart(parenthesizedExpression);
                 this.writeToOutput("(");
                 this.emitCommentsArray(parenthesizedExpression.openParenTrailingComments, /*trailing:*/ false);
-                parenthesizedExpression.expression.emit(this);
+                this.emit(parenthesizedExpression.expression);
                 this.writeToOutput(")");
                 this.recordSourceMappingEnd(parenthesizedExpression);
             }
         }
 
         public emitCastExpression(expression: CastExpression): void {
-            expression.expression.emit(this);
+            this.emit(expression.expression);
         }
 
         public emitPrefixUnaryExpression(expression: PrefixUnaryExpression): void {
@@ -2502,33 +2502,33 @@ module TypeScript {
             switch (nodeType) {
                 case NodeType.LogicalNotExpression:
                     this.writeToOutput("!");
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     break;
                 case NodeType.BitwiseNotExpression:
                     this.writeToOutput("~");
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     break;
                 case NodeType.NegateExpression:
                     this.writeToOutput("-");
                     if (expression.operand.nodeType() === NodeType.NegateExpression || expression.operand.nodeType() === NodeType.PreDecrementExpression) {
                         this.writeToOutput(" ");
                     }
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     break;
                 case NodeType.PlusExpression:
                     this.writeToOutput("+");
                     if (expression.operand.nodeType() === NodeType.PlusExpression || expression.operand.nodeType() === NodeType.PreIncrementExpression) {
                         this.writeToOutput(" ");
                     }
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     break;
                 case NodeType.PreIncrementExpression:
                     this.writeToOutput("++");
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     break;
                 case NodeType.PreDecrementExpression:
                     this.writeToOutput("--");
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     break;
                 default:
                     throw Errors.abstract();
@@ -2543,11 +2543,11 @@ module TypeScript {
             this.recordSourceMappingStart(expression);
             switch (nodeType) {
                 case NodeType.PostIncrementExpression:
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     this.writeToOutput("++");
                     break;
                 case NodeType.PostDecrementExpression:
-                    expression.operand.emit(this);
+                    this.emit(expression.operand);
                     this.writeToOutput("--");
                     break;
                 default:
@@ -2560,21 +2560,21 @@ module TypeScript {
         public emitTypeOfExpression(expression: TypeOfExpression): void {
             this.recordSourceMappingStart(expression);
             this.writeToOutput("typeof ");
-            expression.expression.emit(this);
+            this.emit(expression.expression);
             this.recordSourceMappingEnd(expression);
         }
 
         public emitDeleteExpression(expression: DeleteExpression): void {
             this.recordSourceMappingStart(expression);
             this.writeToOutput("delete ");
-            expression.expression.emit(this);
+            this.emit(expression.expression);
             this.recordSourceMappingEnd(expression);
         }
 
         public emitVoidExpression(expression: VoidExpression): void {
             this.recordSourceMappingStart(expression);
             this.writeToOutput("void ");
-            expression.expression.emit(this);
+            this.emit(expression.expression);
             this.recordSourceMappingEnd(expression);
         }
 
@@ -2582,7 +2582,7 @@ module TypeScript {
             this.recordSourceMappingStart(expression);
 
             if (!this.tryEmitConstant(expression)) {
-                expression.expression.emit(this);
+                this.emit(expression.expression);
                 this.writeToOutput(".");
                 this.emitName(expression.name, false);
             }
@@ -2593,7 +2593,7 @@ module TypeScript {
         public emitQualifiedName(name: QualifiedName): void {
             this.recordSourceMappingStart(name);
 
-            name.left.emit(this);
+            this.emit(name.left);
             this.writeToOutput(".");
             this.emitName(name.right, false);
 
@@ -2604,13 +2604,13 @@ module TypeScript {
             this.recordSourceMappingStart(expression);
             switch (expression.nodeType()) {
                 case NodeType.CommaExpression:
-                    expression.left.emit(this);
+                    this.emit(expression.left);
                     this.writeToOutput(", ");
-                    expression.right.emit(this);
+                    this.emit(expression.right);
                     break;
                 default:
                     {
-                        expression.left.emit(this);
+                        this.emit(expression.left);
                         var binOp = BinaryExpression.getTextForBinaryToken(expression.nodeType());
                         if (binOp === "instanceof") {
                             this.writeToOutput(" instanceof ");
@@ -2621,7 +2621,7 @@ module TypeScript {
                         else {
                             this.writeToOutput(" " + binOp + " ");
                         }
-                        expression.right.emit(this);
+                        this.emit(expression.right);
                     }
             }
             this.recordSourceMappingEnd(expression);
@@ -2629,16 +2629,16 @@ module TypeScript {
 
         public emitSimplePropertyAssignment(property: SimplePropertyAssignment): void {
             this.recordSourceMappingStart(property);
-            property.propertyName.emit(this);
+            this.emit(property.propertyName);
             this.writeToOutput(": ");
-            property.expression.emit(this);
+            this.emit(property.expression);
             this.recordSourceMappingEnd(property);
         }
 
         public emitFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment): void {
             this.recordSourceMappingStart(funcProp);
 
-            funcProp.propertyName.emit(this);
+            this.emit(funcProp.propertyName);
             this.writeToOutput(": ");
 
             var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcProp);
@@ -2683,17 +2683,17 @@ module TypeScript {
         }
 
         public emitConditionalExpression(expression: ConditionalExpression): void {
-            expression.condition.emit(this);
+            this.emit(expression.condition);
             this.writeToOutput(" ? ");
-            expression.whenTrue.emit(this);
+            this.emit(expression.whenTrue);
             this.writeToOutput(" : ");
-            expression.whenFalse.emit(this);
+            this.emit(expression.whenFalse);
         }
 
         public emitThrowStatement(statement: ThrowStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("throw ");
-            statement.expression.emit(this);
+            this.emit(statement.expression);
             this.recordSourceMappingEnd(statement);
             this.writeToOutput(";");
         }
@@ -2706,7 +2706,7 @@ module TypeScript {
                 this.writeToOutput("(");
             }
 
-            statement.expression.emit(this);
+            this.emit(statement.expression);
 
             if (isArrowExpression) {
                 this.writeToOutput(")");
@@ -2763,7 +2763,7 @@ module TypeScript {
         public emitWhileStatement(statement: WhileStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("while (");
-            statement.condition.emit(this);
+            this.emit(statement.condition);
             this.writeToOutput(")");
             this.emitBlockOrStatement(statement.statement);
             this.recordSourceMappingEnd(statement);
@@ -2775,7 +2775,7 @@ module TypeScript {
             this.emitBlockOrStatement(statement.statement);
             this.writeToOutputWithSourceMapRecord(" while", statement.whileKeyword);
             this.writeToOutput('(');
-            statement.condition.emit(this);
+            this.emit(statement.condition);
             this.writeToOutput(")");
             this.recordSourceMappingEnd(statement);
             this.writeToOutput(";");
@@ -2784,7 +2784,7 @@ module TypeScript {
         public emitIfStatement(statement: IfStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("if (");
-            statement.condition.emit(this);
+            this.emit(statement.condition);
             this.writeToOutput(")");
 
             this.emitBlockOrStatement(statement.statement);
@@ -2798,7 +2798,7 @@ module TypeScript {
                     this.writeToOutput(" ");
                 }
 
-                statement.elseClause.emit(this);
+                this.emit(statement.elseClause);
             }
             this.recordSourceMappingEnd(statement);
         }
@@ -2806,7 +2806,7 @@ module TypeScript {
         public emitElseClause(elseClause: ElseClause): void {
             if (elseClause.statement.nodeType() === NodeType.IfStatement) {
                 this.writeToOutput("else ");
-                elseClause.statement.emit(this);
+                this.emit(elseClause.statement);
             }
             else {
                 this.writeToOutput("else");
@@ -2818,7 +2818,7 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             if (statement.expression) {
                 this.writeToOutput("return ");
-                statement.expression.emit(this);
+                this.emit(statement.expression);
             }
             else {
                 this.writeToOutput("return");
@@ -2831,13 +2831,13 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("for (");
             if (statement.left) {
-                statement.left.emit(this);
+                this.emit(statement.left);
             }
             else {
-                statement.variableDeclaration.emit(this);
+                this.emit(statement.variableDeclaration);
             }
             this.writeToOutput(" in ");
-            statement.expression.emit(this);
+            this.emit(statement.expression);
             this.writeToOutput(")");
             this.emitBlockOrStatement(statement.statement);
             this.recordSourceMappingEnd(statement);
@@ -2847,10 +2847,10 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("for (");
             if (statement.variableDeclaration) {
-                statement.variableDeclaration.emit(this);
+                this.emit(statement.variableDeclaration);
             }
             else if (statement.initializer) {
-                statement.initializer.emit(this);
+                this.emit(statement.initializer);
             }
 
             this.writeToOutput("; ");
@@ -2869,7 +2869,7 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("with (");
             if (statement.condition) {
-                statement.condition.emit(this);
+                this.emit(statement.condition);
             }
 
             this.writeToOutput(")");
@@ -2884,7 +2884,7 @@ module TypeScript {
             this.recordSourceMappingStart(statement);
             this.recordSourceMappingStart(statement.statement);
             this.writeToOutput("switch (");
-            statement.expression.emit(this);
+            this.emit(statement.expression);
             this.writeToOutput(")");
             this.recordSourceMappingEnd(statement.statement);
             this.writeLineToOutput(" {");
@@ -2899,7 +2899,7 @@ module TypeScript {
         public emitCaseSwitchClause(clause: CaseSwitchClause): void {
             this.recordSourceMappingStart(clause);
             this.writeToOutput("case ");
-            clause.expression.emit(this);
+            this.emit(clause.expression);
             this.writeToOutput(":");
 
             this.emitSwitchClauseBody(clause.statements);
@@ -2909,14 +2909,14 @@ module TypeScript {
         private emitSwitchClauseBody(body: ASTList): void {
             if (body.members.length === 1 && body.members[0].nodeType() === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
-                body.members[0].emit(this);
+                this.emit(body.members[0]);
                 this.writeLineToOutput("");
             }
             else {
                 // No curly braces. Format in the expected way
                 this.writeLineToOutput("");
                 this.indenter.increaseIndent();
-                body.emit(this);
+                this.emit(body);
                 this.indenter.decreaseIndent();
             }
         }
@@ -2932,11 +2932,11 @@ module TypeScript {
         public emitTryStatement(statement: TryStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("try ");
-            statement.block.emit(this);
+            this.emit(statement.block);
             this.emitJavascript(statement.catchClause, false);
 
             if (statement.finallyClause) {
-                statement.finallyClause.emit(this);
+                this.emit(statement.finallyClause);
             }
             this.recordSourceMappingEnd(statement);
         }
@@ -2945,15 +2945,15 @@ module TypeScript {
             this.writeToOutput(" ");
             this.recordSourceMappingStart(clause);
             this.writeToOutput("catch (");
-            clause.identifier.emit(this);
+            this.emit(clause.identifier);
             this.writeToOutput(")");
-            clause.block.emit(this);
+            this.emit(clause.block);
             this.recordSourceMappingEnd(clause);
         }
 
         public emitFinallyClause(clause: FinallyClause): void {
             this.writeToOutput(" finally");
-            clause.block.emit(this);
+            this.emit(clause.block);
         }
 
         public emitDebuggerStatement(statement: DebuggerStatement): void {
@@ -2975,7 +2975,7 @@ module TypeScript {
 
         public emitEqualsValueClause(clause: EqualsValueClause): void {
             this.writeToOutput(" = ");
-            clause.value.emit(this);
+            this.emit(clause.value);
         }
 
         public emitParameter(parameter: Parameter): void {
@@ -3086,7 +3086,7 @@ module TypeScript {
         public emitVariableStatement(statement: VariableStatement): void {
             var varDecl = this.firstVariableDeclarator(statement);
             if (this.isNotAmbientOrHasInitializer(varDecl)) {
-                statement.declaration.emit(this);
+                this.emit(statement.declaration);
                 this.writeToOutput(";");
             }
             else {
@@ -3095,7 +3095,254 @@ module TypeScript {
         }
 
         public emitGenericType(type: GenericType): void {
-            type.name.emit(this);
+            this.emit(type.name);
+        }
+
+        private shouldEmit(ast: AST): boolean {
+            if (!ast) {
+                return false;
+            }
+
+            switch (ast.nodeType()) {
+                case NodeType.ImportDeclaration:
+                    return this.shouldEmitImportDeclaration(<ImportDeclaration>ast);
+                case NodeType.ClassDeclaration:
+                    return this.shouldEmitClassDeclaration(<ClassDeclaration>ast);
+                case NodeType.InterfaceDeclaration:
+                    return this.shouldEmitInterfaceDeclaration(<InterfaceDeclaration>ast);
+                case NodeType.IndexSignature:
+                    return false;
+                case NodeType.FunctionDeclaration:
+                    return this.shouldEmitFunctionDeclaration(<FunctionDeclaration>ast);
+                case NodeType.ModuleDeclaration:
+                    return this.shouldEmitModuleDeclaration(<ModuleDeclaration>ast);
+                case NodeType.ArrayType:
+                case NodeType.ObjectType:
+                    return false;
+                case NodeType.VariableStatement:
+                    return this.shouldEmitVariableStatement(<VariableStatement>ast);
+                case NodeType.OmittedExpression:
+                    return false;
+                case NodeType.ConstructorDeclaration:
+                    return this.shouldEmitConstructorDeclaration(<ConstructorDeclaration>ast);
+                case NodeType.EnumDeclaration:
+                    return this.shouldEmitEnumDeclaration(<EnumDeclaration>ast);
+            }
+
+            return true;
+        }
+
+        private emit(ast: AST): void {
+            if (!ast) {
+                return;
+            }
+
+            switch (ast.nodeType()) {
+                case NodeType.List:
+                    return this.emitList(<ASTList>ast);
+                case NodeType.Script:
+                    return this.emitScript(<Script>ast);
+                case NodeType.ImportDeclaration:
+                    return this.emitImportDeclaration(<ImportDeclaration>ast);
+                case NodeType.ExportAssignment:
+                    return this.setExportAssignmentIdentifier((<ExportAssignment>ast).identifier.text());
+                case NodeType.ClassDeclaration:
+                    return this.emitClassDeclaration(<ClassDeclaration>ast);
+                case NodeType.InterfaceDeclaration:
+                    return this.emitInterfaceDeclaration(<InterfaceDeclaration>ast);
+                case NodeType.Name:
+                    return this.emitName(<Identifier>ast, true);
+                case NodeType.VariableDeclarator:
+                    return this.emitVariableDeclarator(<VariableDeclarator>ast);
+                case NodeType.SimpleArrowFunctionExpression:
+                    return this.emitSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast);
+                case NodeType.ParenthesizedArrowFunctionExpression:
+                    return this.emitParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast);
+                case NodeType.FunctionDeclaration:
+                    return this.emitFunctionDeclaration(<FunctionDeclaration>ast);
+                case NodeType.ModuleDeclaration:
+                    return this.emitModuleDeclaration(<ModuleDeclaration>ast);
+                case NodeType.VariableDeclaration:
+                    return this.emitVariableDeclaration(<VariableDeclaration>ast);
+                case NodeType.GenericType:
+                    return this.emitGenericType(<GenericType>ast);
+                case NodeType.TypeQuery:
+                    throw Errors.invalidOperation("Should not emit a type query.");
+                case NodeType.TypeRef:
+                    throw Errors.invalidOperation("Should not emit a type reference.");
+                case NodeType.AnyType:
+                case NodeType.BooleanType:
+                case NodeType.NumberType:
+                case NodeType.StringType:
+                case NodeType.VoidType:
+                    throw Errors.invalidOperation("Should not emit a builtin type.");
+                case NodeType.ConstructorDeclaration:
+                    return this.emitConstructorDeclaration(<ConstructorDeclaration>ast);
+                case NodeType.EnumDeclaration:
+                    return this.emitEnumDeclaration(<EnumDeclaration>ast);
+                case NodeType.EnumElement:
+                    return this.emitEnumElement(<EnumElement>ast);
+                case NodeType.FunctionExpression:
+                    return this.emitFunctionExpression(<FunctionExpression>ast);
+            }
+
+            this.emitComments(ast, true);
+            this.emitWorker(ast);
+            this.emitComments(ast, false);
+        }
+
+        private emitWorker(ast: AST): void {
+            if (!ast) {
+                return;
+            }
+
+            switch (ast.nodeType()) {
+                case NodeType.NumericLiteral:
+                    return this.emitNumericLiteral(<NumericLiteral>ast);
+                case NodeType.RegularExpressionLiteral:
+                    return this.emitRegularExpressionLiteral(<RegularExpressionLiteral>ast);
+                case NodeType.StringLiteral:
+                    return this.emitStringLiteral(<StringLiteral>ast);
+                case NodeType.FalseLiteral:
+                case NodeType.NullLiteral:
+                case NodeType.TrueLiteral:
+                    return this.emitLiteralExpression(<LiteralExpression>ast);
+                case NodeType.ThisExpression:
+                    return this.emitThisExpression(<ThisExpression>ast);
+                case NodeType.SuperExpression:
+                    return this.emitSuperExpression(<SuperExpression>ast);
+                case NodeType.ParenthesizedExpression:
+                    return this.emitParenthesizedExpression(<ParenthesizedExpression>ast);
+                case NodeType.ArrayLiteralExpression:
+                    return this.emitArrayLiteralExpression(<ArrayLiteralExpression>ast);
+                case NodeType.PostDecrementExpression:
+                case NodeType.PostIncrementExpression:
+                    return this.emitPostfixUnaryExpression(<PostfixUnaryExpression>ast);
+                case NodeType.LogicalNotExpression:
+                case NodeType.BitwiseNotExpression:
+                case NodeType.NegateExpression:
+                case NodeType.PlusExpression:
+                case NodeType.PreIncrementExpression:
+                case NodeType.PreDecrementExpression:
+                    return this.emitPrefixUnaryExpression(<PrefixUnaryExpression>ast);
+                case NodeType.InvocationExpression:
+                    return this.emitInvocationExpression(<InvocationExpression>ast);
+                case NodeType.ElementAccessExpression:
+                    return this.emitElementAccessExpression(<ElementAccessExpression>ast);
+                case NodeType.MemberAccessExpression:
+                    return this.emitMemberAccessExpression(<MemberAccessExpression>ast);
+                case NodeType.QualifiedName:
+                    return this.emitQualifiedName(<QualifiedName>ast);
+                case NodeType.CommaExpression: 
+                case NodeType.AssignmentExpression: 
+                case NodeType.AddAssignmentExpression: 
+                case NodeType.SubtractAssignmentExpression: 
+                case NodeType.MultiplyAssignmentExpression: 
+                case NodeType.DivideAssignmentExpression: 
+                case NodeType.ModuloAssignmentExpression: 
+                case NodeType.AndAssignmentExpression: 
+                case NodeType.ExclusiveOrAssignmentExpression: 
+                case NodeType.OrAssignmentExpression: 
+                case NodeType.LeftShiftAssignmentExpression: 
+                case NodeType.SignedRightShiftAssignmentExpression: 
+                case NodeType.UnsignedRightShiftAssignmentExpression: 
+                case NodeType.LogicalOrExpression: 
+                case NodeType.LogicalAndExpression: 
+                case NodeType.BitwiseOrExpression: 
+                case NodeType.BitwiseExclusiveOrExpression: 
+                case NodeType.BitwiseAndExpression: 
+                case NodeType.EqualsWithTypeConversionExpression: 
+                case NodeType.NotEqualsWithTypeConversionExpression: 
+                case NodeType.EqualsExpression: 
+                case NodeType.NotEqualsExpression: 
+                case NodeType.LessThanExpression: 
+                case NodeType.GreaterThanExpression: 
+                case NodeType.LessThanOrEqualExpression: 
+                case NodeType.GreaterThanOrEqualExpression: 
+                case NodeType.InstanceOfExpression: 
+                case NodeType.InExpression: 
+                case NodeType.LeftShiftExpression: 
+                case NodeType.SignedRightShiftExpression: 
+                case NodeType.UnsignedRightShiftExpression: 
+                case NodeType.MultiplyExpression: 
+                case NodeType.DivideExpression: 
+                case NodeType.ModuloExpression: 
+                case NodeType.AddExpression: 
+                case NodeType.SubtractExpression:
+                    return this.emitBinaryExpression(<BinaryExpression>ast);
+                case NodeType.ConditionalExpression:
+                    return this.emitConditionalExpression(<ConditionalExpression>ast);
+                case NodeType.EqualsValueClause:
+                    return this.emitEqualsValueClause(<EqualsValueClause>ast);
+                case NodeType.Parameter:
+                    return this.emitParameter(<Parameter>ast);
+                case NodeType.VariableStatement:
+                    return this.emitVariableStatement(<VariableStatement>ast);
+                case NodeType.Block:
+                    return this.emitBlock(<Block>ast);
+                case NodeType.ElseClause:
+                    return this.emitElseClause(<ElseClause>ast);
+                case NodeType.IfStatement:
+                    return this.emitIfStatement(<IfStatement>ast);
+                case NodeType.ExpressionStatement:
+                    return this.emitExpressionStatement(<ExpressionStatement>ast);
+                case NodeType.GetAccessor:
+                    return this.emitGetAccessor(<GetAccessor>ast);
+                case NodeType.SetAccessor:
+                    return this.emitSetAccessor(<SetAccessor>ast);
+                case NodeType.ThrowStatement:
+                    return this.emitThrowStatement(<ThrowStatement>ast);
+                case NodeType.ReturnStatement:
+                    return this.emitReturnStatement(<ReturnStatement>ast);
+                case NodeType.ObjectCreationExpression:
+                    return this.emitObjectCreationExpression(<ObjectCreationExpression>ast);
+                case NodeType.SwitchStatement:
+                    return this.emitSwitchStatement(<SwitchStatement>ast);
+                case NodeType.CaseSwitchClause:
+                    return this.emitCaseSwitchClause(<CaseSwitchClause>ast);
+                case NodeType.DefaultSwitchClause:
+                    return this.emitDefaultSwitchClause(<DefaultSwitchClause>ast);
+                case NodeType.BreakStatement:
+                    return this.emitBreakStatement(<BreakStatement>ast);
+                case NodeType.ContinueStatement:
+                    return this.emitContinueStatement(<ContinueStatement>ast);
+                case NodeType.ForStatement:
+                    return this.emitForStatement(<ForStatement>ast);
+                case NodeType.ForInStatement:
+                    return this.emitForInStatement(<ForInStatement>ast);
+                case NodeType.WhileStatement:
+                    return this.emitWhileStatement(<WhileStatement>ast);
+                case NodeType.WithStatement:
+                    return this.emitWithStatement(<WithStatement>ast);
+                case NodeType.CastExpression:
+                    return this.emitCastExpression(<CastExpression>ast);
+                case NodeType.ObjectLiteralExpression:
+                    return this.emitObjectLiteralExpression(<ObjectLiteralExpression>ast);
+                case NodeType.SimplePropertyAssignment:
+                    return this.emitSimplePropertyAssignment(<SimplePropertyAssignment>ast);
+                case NodeType.FunctionPropertyAssignment:
+                    return this.emitFunctionPropertyAssignment(<FunctionPropertyAssignment>ast);
+                case NodeType.EmptyStatement:
+                    return this.writeToOutputWithSourceMapRecord(";", ast);
+                case NodeType.TryStatement:
+                    return this.emitTryStatement(<TryStatement>ast);
+                case NodeType.CatchClause:
+                    return this.emitCatchClause(<CatchClause>ast);
+                case NodeType.FinallyClause:
+                    return this.emitFinallyClause(<FinallyClause>ast);
+                case NodeType.LabeledStatement:
+                    return this.emitLabeledStatement(<LabeledStatement>ast);
+                case NodeType.DoStatement:
+                    return this.emitDoStatement(<DoStatement>ast);
+                case NodeType.TypeOfExpression:
+                    return this.emitTypeOfExpression(<TypeOfExpression>ast);
+                case NodeType.DeleteExpression:
+                    return this.emitDeleteExpression(<DeleteExpression>ast);
+                case NodeType.VoidExpression:
+                    return this.emitVoidExpression(<VoidExpression>ast);
+                case NodeType.DebuggerStatement:
+                    return this.emitDebuggerStatement(<DebuggerStatement>ast);
+            }
         }
     }
 

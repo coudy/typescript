@@ -135,10 +135,6 @@ module TypeScript {
             }
         }
 
-        public shouldEmit(emitter: Emitter): boolean {
-            return true;
-        }
-
         public getFlags(): ASTFlags {
             return this._flags;
         }
@@ -153,16 +149,6 @@ module TypeScript {
         }
 
         public _isDeclaration() { return false; }
-
-        public emit(emitter: Emitter) {
-            emitter.emitComments(this, true);
-            this.emitWorker(emitter);
-            emitter.emitComments(this, false);
-        }
-
-        public emitWorker(emitter: Emitter) {
-            throw Errors.abstract();
-        }
 
         public docComments(): Comment[] {
             if (!this._isDeclaration() || !this.preComments() || this.preComments().length === 0) {
@@ -217,10 +203,6 @@ module TypeScript {
             return NodeType.List;
         }
 
-        public emit(emitter: Emitter) {
-            emitter.emitList(this);
-        }
-
         public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    astArrayStructuralEquals(this.members, ast.members, includingPosition);
@@ -256,10 +238,6 @@ module TypeScript {
 
         public setModuleFlags(flags: ModuleFlags): void {
             this._moduleFlags = flags;
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitScript(this);
         }
 
         public structuralEquals(ast: Script, includingPosition: boolean): boolean {
@@ -300,14 +278,6 @@ module TypeScript {
             return false;
         }
 
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitImportDeclaration(this);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitImportDeclaration(this);
-        }
-
         public getAliasName(aliasAST: AST = this.moduleReference): string {
             if (aliasAST.nodeType() == NodeType.TypeRef) {
                 aliasAST = (<TypeReference>aliasAST).term;
@@ -343,10 +313,6 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition);
         }
-
-        public emit(emitter: Emitter) {
-            emitter.setExportAssignmentIdentifier(this.identifier.text());
-        }
     }
 
     export class ClassDeclaration extends AST {
@@ -379,14 +345,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ClassDeclaration;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitClassDeclaration(this);
-        }
-
-        public emit(emitter: Emitter): void {
-            emitter.emitClassDeclaration(this);
         }
 
         public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
@@ -430,14 +388,6 @@ module TypeScript {
             this._varFlags = flags;
         }
 
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitInterfaceDeclaration(this);
-        }
-
-        public emit(emitter: Emitter): void {
-            emitter.emitInterfaceDeclaration(this);
-        }
-
         public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this._varFlags === ast._varFlags &&
@@ -462,7 +412,6 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.typeNames, ast.typeNames, includingPosition);
         }
-
     }
 
     export class Identifier extends AST {
@@ -504,10 +453,6 @@ module TypeScript {
             return NodeType.Name;
         }
 
-        public emit(emitter: Emitter) {
-            emitter.emitName(this, true);
-        }
-
         public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._text === ast._text;
@@ -523,10 +468,6 @@ module TypeScript {
             return this._nodeType;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitLiteralExpression(this);
-        }
-
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
@@ -537,10 +478,6 @@ module TypeScript {
             return NodeType.ThisExpression;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitThisExpression(this);
-        }
-
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
@@ -549,10 +486,6 @@ module TypeScript {
     export class SuperExpression extends AST {
         public nodeType(): NodeType {
             return NodeType.SuperExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitSuperExpression(this);
         }
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
@@ -572,10 +505,6 @@ module TypeScript {
             return NodeType.ParenthesizedExpression;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitParenthesizedExpression(this);
-        }
-
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.expression, ast.expression, includingPosition);
@@ -590,10 +519,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ArrayLiteralExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitArrayLiteralExpression(this);
         }
 
         public structuralEquals(ast: ArrayLiteralExpression, includingPosition: boolean): boolean {
@@ -612,10 +537,6 @@ module TypeScript {
             return this._nodeType;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitPostfixUnaryExpression(this);
-        }
-
         public structuralEquals(ast: PostfixUnaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.operand, ast.operand, includingPosition);
@@ -630,10 +551,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return this._nodeType;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitPrefixUnaryExpression(this);
         }
 
         public structuralEquals(ast: PrefixUnaryExpression, includingPosition: boolean): boolean {
@@ -667,10 +584,6 @@ module TypeScript {
             return NodeType.InvocationExpression;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitInvocationExpression(this);
-        }
-
         public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
@@ -688,10 +601,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ElementAccessExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitElementAccessExpression(this);
         }
 
         public structuralEquals(ast: ElementAccessExpression, includingPosition: boolean): boolean {
@@ -713,10 +622,6 @@ module TypeScript {
             return NodeType.MemberAccessExpression;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitMemberAccessExpression(this);
-        }
-
         public structuralEquals(ast: MemberAccessExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
@@ -734,10 +639,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.QualifiedName;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitQualifiedName(this);
         }
 
         public structuralEquals(ast: QualifiedName, includingPosition: boolean): boolean {
@@ -801,10 +702,6 @@ module TypeScript {
             throw Errors.invalidOperation();
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitBinaryExpression(this);
-        }
-
         public structuralEquals(ast: BinaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.left, ast.left, includingPosition) &&
@@ -822,10 +719,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ConditionalExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitConditionalExpression(this);
         }
 
         public structuralEquals(ast: ConditionalExpression, includingPosition: boolean): boolean {
@@ -850,10 +743,6 @@ module TypeScript {
             return NodeType.NumericLiteral;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitNumericLiteral(this);
-        }
-
         public structuralEquals(ast: NumericLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    (this.value === ast.value || (isNaN(this.value) && isNaN(ast.value))) &&
@@ -868,10 +757,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.RegularExpressionLiteral;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitRegularExpressionLiteral(this);
         }
 
         public structuralEquals(ast: RegularExpressionLiteral, includingPosition: boolean): boolean {
@@ -892,10 +777,6 @@ module TypeScript {
             return NodeType.StringLiteral;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitStringLiteral(this);
-        }
-
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._text === ast._text;
@@ -914,10 +795,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.VariableDeclarator;
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitVariableDeclarator(this);
         }
 
         public _isDeclaration() { return true; }
@@ -951,14 +828,6 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.EqualsValueClause;
         }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitEqualsValueClause(this);
-        }
     }
 
     export class Parameter extends AST {
@@ -988,10 +857,6 @@ module TypeScript {
 
         public isOptionalArg(): boolean { return this.isOptional || this.equalsValueClause !== null; }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitParameter(this);
-        }
-
         public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this.isOptional === ast.isOptional &&
@@ -1020,10 +885,6 @@ module TypeScript {
                 this.hint === ast.hint &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                 structuralEquals(this.block, ast.block, includingPosition);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitSimpleArrowFunctionExpression(this);
         }
 
         public getNameText() {
@@ -1059,10 +920,6 @@ module TypeScript {
                 structuralEquals(this.parameterList, ast.parameterList, includingPosition);
         }
 
-        public emit(emitter: Emitter) {
-            emitter.emitParenthesizedArrowFunctionExpression(this);
-        }
-
         public getNameText() {
             return this.hint;
         }
@@ -1081,10 +938,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.IndexSignature;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return false;
         }
     }
 
@@ -1128,14 +981,6 @@ module TypeScript {
                    structuralEquals(this.block, ast.block, includingPosition) &&
                    structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
                    structuralEquals(this.parameterList, ast.parameterList, includingPosition);
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitFunctionDeclaration(this);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitFunctionDeclaration(this);
         }
 
         public getNameText() {
@@ -1182,14 +1027,6 @@ module TypeScript {
                 structuralEquals(this.name, ast.name, includingPosition) &&
                 structuralEquals(this.members, ast.members, includingPosition);
         }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitModuleDeclaration(this);
-        }
-
-        public emit(emitter: Emitter) {
-            return emitter.emitModuleDeclaration(this);
-        }
     }
 
     export class ArrayType extends AST {
@@ -1204,10 +1041,6 @@ module TypeScript {
 
         public _isDeclaration() {
             return true;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return false;
         }
 
         public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
@@ -1230,10 +1063,6 @@ module TypeScript {
             return true;
         }
 
-        public shouldEmit(emitter: Emitter): boolean {
-            return false;
-        }
-
         public structuralEquals(ast: ObjectType, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.typeMembers, ast.typeMembers, includingPosition);
@@ -1248,10 +1077,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.VariableDeclaration;
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitVariableDeclaration(this);
         }
 
         public structuralEquals(ast: VariableDeclaration, includingPosition: boolean): boolean {
@@ -1272,14 +1097,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitVariableStatement(this);
-        }
-
-        public emitWorker(emitter: Emitter) {
-            return emitter.emitVariableStatement(this);
         }
 
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
@@ -1304,10 +1121,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitBlock(this);
-        }
-
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.statements, ast.statements, includingPosition);
@@ -1325,10 +1138,6 @@ module TypeScript {
             return NodeType.GenericType;
         }
 
-        public emit(emitter: Emitter): void {
-            emitter.emitGenericType(this);
-        }
-
         public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.name, ast.name, includingPosition) &&
@@ -1344,10 +1153,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.TypeQuery;
-        }
-
-        public emit(emitter: Emitter) {
-            throw Errors.invalidOperation("Should not emit a type query.");
         }
 
         public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
@@ -1370,10 +1175,6 @@ module TypeScript {
             return NodeType.TypeRef;
         }
 
-        public emit(emitter: Emitter) {
-            throw Errors.invalidOperation("Should not emit a type reference.");
-        }
-
         public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.term, ast.term, includingPosition);
@@ -1388,18 +1189,11 @@ module TypeScript {
         public nodeType(): NodeType {
             return this._nodeType;
         }
-
-        public emit(emitter: Emitter) {
-            throw Errors.invalidOperation("Should not emit a builtin type.");
-        }
     }
 
     export class OmittedExpression extends AST {
         public nodeType(): NodeType {
             return NodeType.OmittedExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -1456,10 +1250,6 @@ module TypeScript {
             return NodeType.ElseClause;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitElseClause(this);
-        }
-
         public structuralEquals(ast: ElseClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.statement, ast.statement, includingPosition);
@@ -1484,10 +1274,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitIfStatement(this);
-        }
-
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.condition, ast.condition, includingPosition) &&
@@ -1508,10 +1294,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitExpressionStatement(this);
         }
 
         public structuralEquals(ast: ExpressionStatement, includingPosition: boolean): boolean {
@@ -1542,14 +1324,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ConstructorDeclaration;
-        }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitConstructorDeclaration(this);
-        }
-
-        public emit(emitter: Emitter) {
-            emitter.emitConstructorDeclaration(this);
         }
     }
 
@@ -1614,10 +1388,6 @@ module TypeScript {
         public _isDeclaration() {
             return true;
         }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitGetAccessor(this);
-        }
     }
 
     export class SetAccessor extends AST {
@@ -1646,10 +1416,6 @@ module TypeScript {
 
         public _isDeclaration() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitSetAccessor(this);
         }
     }
 
@@ -1706,10 +1472,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitThrowStatement(this);
-        }
-
         public structuralEquals(ast: ThrowStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
@@ -1730,10 +1492,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitReturnStatement(this);
-        }
-
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
@@ -1751,10 +1509,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ObjectCreationExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitObjectCreationExpression(this);
         }
 
         public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
@@ -1779,10 +1533,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitSwitchStatement(this);
-        }
-
         public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.switchClauses, ast.switchClauses, includingPosition) &&
@@ -1801,10 +1551,6 @@ module TypeScript {
             return NodeType.CaseSwitchClause;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitCaseSwitchClause(this);
-        }
-
         public structuralEquals(ast: CaseSwitchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
@@ -1820,10 +1566,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.DefaultSwitchClause;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDefaultSwitchClause(this);
         }
 
         public structuralEquals(ast: DefaultSwitchClause, includingPosition: boolean): boolean {
@@ -1845,10 +1587,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitBreakStatement(this);
-        }
-
         public structuralEquals(ast: BreakStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
@@ -1865,10 +1603,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitContinueStatement(this);
         }
 
         public structuralEquals(ast: ContinueStatement, includingPosition: boolean): boolean {
@@ -1898,10 +1632,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitForStatement(this);
-        }
-
         public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.initializer, ast.initializer, includingPosition) &&
@@ -1928,10 +1658,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitForInStatement(this);
-        }
-
         public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.variableDeclaration, ast.variableDeclaration, includingPosition) &&
@@ -1955,10 +1681,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitWhileStatement(this);
-        }
-
         public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.condition, ast.condition, includingPosition) &&
@@ -1979,10 +1701,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitWithStatement(this);
         }
 
         public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
@@ -2016,14 +1734,6 @@ module TypeScript {
         public _isDeclaration(): boolean {
             return true;
         }
-
-        public shouldEmit(emitter: Emitter): boolean {
-            return emitter.shouldEmitEnumDeclaration(this);
-        }
-
-        public emit(emitter: Emitter): void {
-            emitter.emitEnumDeclaration(this);
-        }
     }
 
     export class EnumElement extends AST {
@@ -2042,10 +1752,6 @@ module TypeScript {
         public _isDeclaration(): boolean {
             return true;
         }
-
-        public emit(emitter: Emitter): void {
-            emitter.emitEnumElement(this);
-        }
     }
 
     export class CastExpression extends AST {
@@ -2057,10 +1763,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.CastExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitCastExpression(this);
         }
 
         public structuralEquals(ast: CastExpression, includingPosition: boolean): boolean {
@@ -2078,10 +1780,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ObjectLiteralExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitObjectLiteralExpression(this);
         }
 
         public structuralEquals(ast: ObjectLiteralExpression, includingPosition: boolean): boolean {
@@ -2105,10 +1803,6 @@ module TypeScript {
         public _isDeclaration() {
             return true;
         }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitSimplePropertyAssignment(this);
-        }
     }
 
     export class FunctionPropertyAssignment extends AST {
@@ -2131,10 +1825,6 @@ module TypeScript {
 
         public _isDeclaration() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitFunctionPropertyAssignment(this);
         }
     }
 
@@ -2160,10 +1850,6 @@ module TypeScript {
             return NodeType.FunctionExpression;
         }
 
-        public emit(emitter: Emitter) {
-            emitter.emitFunctionExpression(this);
-        }
-
         public getNameText() {
             return this.name ? this.name.text() : this.hint;
         }
@@ -2176,10 +1862,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.writeToOutputWithSourceMapRecord(";", this);
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -2203,10 +1885,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitTryStatement(this);
-        }
-
         public structuralEquals(ast: TryStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.block, ast.block, includingPosition) &&
@@ -2227,10 +1905,6 @@ module TypeScript {
             return NodeType.CatchClause;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitCatchClause(this);
-        }
-
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.identifier, ast.identifier, includingPosition) &&
@@ -2247,10 +1921,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.FinallyClause;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitFinallyClause(this);
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -2272,10 +1942,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitLabeledStatement(this);
         }
 
         public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
@@ -2300,10 +1966,6 @@ module TypeScript {
             return true;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDoStatement(this);
-        }
-
         public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.statement, ast.statement, includingPosition) &&
@@ -2319,10 +1981,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.TypeOfExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitTypeOfExpression(this);
         }
 
         public structuralEquals(ast: TypeOfExpression, includingPosition: boolean): boolean {
@@ -2341,10 +1999,6 @@ module TypeScript {
             return NodeType.DeleteExpression;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDeleteExpression(this);
-        }
-
         public structuralEquals(ast: DeleteExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
@@ -2361,10 +2015,6 @@ module TypeScript {
             return NodeType.VoidExpression;
         }
 
-        public emitWorker(emitter: Emitter) {
-            emitter.emitVoidExpression(this);
-        }
-
         public structuralEquals(ast: VoidExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
@@ -2378,10 +2028,6 @@ module TypeScript {
 
         public isStatement() {
             return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitDebuggerStatement(this);
         }
     }
 
