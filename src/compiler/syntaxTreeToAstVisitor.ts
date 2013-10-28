@@ -800,8 +800,12 @@ module TypeScript {
             this.setSpan(result, start, node);
 
             if (init) {
-                if (init.value.nodeType() === NodeType.ArrowFunctionExpression) {
-                    var arrowFunction = <ArrowFunctionExpression>init.value;
+                if (init.value.nodeType() === NodeType.SimpleArrowFunctionExpression) {
+                    var simpleArrowFunction = <SimpleArrowFunctionExpression>init.value;
+                    simpleArrowFunction.hint = name.text();
+                }
+                else if (init.value.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
+                    var arrowFunction = <ParenthesizedArrowFunctionExpression>init.value;
                     arrowFunction.hint = name.text();
                 }
                 else if (init.value.nodeType() === NodeType.FunctionExpression) {
@@ -942,27 +946,21 @@ module TypeScript {
             }
         }
 
-        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): ArrowFunctionExpression {
+        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): SimpleArrowFunctionExpression {
             var start = this.position;
 
-            var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
-            this.movePast(node.identifier);
+            var identifier = node.identifier.accept(this);
             this.movePast(node.equalsGreaterThanToken);
-
-            var parameter = new Parameter(identifier, null, null, false, /*isRest:*/ false);
-            this.setSpanExplicit(parameter, identifier.minChar, identifier.limChar);
-
-            var parameters = new ASTList(this.fileName, [parameter]);
 
             var statements = this.getArrowFunctionStatements(node.body);
 
-            var result = new ArrowFunctionExpression(null, parameters, null, statements);
+            var result = new SimpleArrowFunctionExpression(identifier, statements);
             this.setSpan(result, start, node);
 
             return result;
         }
 
-        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): ArrowFunctionExpression {
+        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): ParenthesizedArrowFunctionExpression {
             var start = this.position;
 
             var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
@@ -972,7 +970,7 @@ module TypeScript {
 
             var block = this.getArrowFunctionStatements(node.body);
 
-            var result = new ArrowFunctionExpression(typeParameters, parameters, returnType, block);
+            var result = new ParenthesizedArrowFunctionExpression(typeParameters, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -1327,7 +1325,8 @@ module TypeScript {
             this.setSpan(result, start, node);
 
             if (right.nodeType() === NodeType.FunctionDeclaration ||
-                right.nodeType() === NodeType.ArrowFunctionExpression) {
+                right.nodeType() === NodeType.SimpleArrowFunctionExpression ||
+                right.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
                 var id = left.nodeType() === NodeType.MemberAccessExpression ? (<MemberAccessExpression>left).name : left;
                 var idHint: string = id.nodeType() === NodeType.Name ? id.actualText : null;
 
@@ -1941,7 +1940,8 @@ module TypeScript {
             result.setPostComments(postComments);
 
             if (expression.nodeType() === NodeType.FunctionDeclaration ||
-                expression.nodeType() === NodeType.ArrowFunctionExpression ||
+                expression.nodeType() === NodeType.SimpleArrowFunctionExpression ||
+                expression.nodeType() === NodeType.ParenthesizedArrowFunctionExpression ||
                 expression.nodeType() === NodeType.FunctionExpression) {
                 var funcDecl = <FunctionDeclaration>expression;
                     funcDecl.hint = propertyName.valueText();
@@ -2385,8 +2385,8 @@ module TypeScript {
             return result;
         }
 
-        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): ArrowFunctionExpression {
-            var result: ArrowFunctionExpression = this.getAndMovePastAST(node);
+        public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): SimpleArrowFunctionExpression {
+            var result: SimpleArrowFunctionExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitSimpleArrowFunctionExpression(node);
                 this.setAST(node, result);
@@ -2395,8 +2395,8 @@ module TypeScript {
             return result;
         }
 
-        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): ArrowFunctionExpression {
-            var result: ArrowFunctionExpression = this.getAndMovePastAST(node);
+        public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): ParenthesizedArrowFunctionExpression {
+            var result: ParenthesizedArrowFunctionExpression = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitParenthesizedArrowFunctionExpression(node);
                 this.setAST(node, result);

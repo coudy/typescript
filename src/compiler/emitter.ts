@@ -625,20 +625,20 @@ module TypeScript {
             this.recordSourceMappingEnd(callNode);
         }
 
-        private emitFunctionParameters(parameters: ASTList): void {
+        private emitFunctionParameters(parameters: IParameters): void {
             var argsLen = 0;
 
             if (parameters) {
-                this.emitComments(parameters, true);
+                this.emitComments(parameters.ast, true);
 
                 var tempContainer = this.setContainer(EmitContainer.Args);
-                argsLen = parameters.members.length;
+                argsLen = parameters.length;
                 var printLen = argsLen;
-                if (lastParameterIsRest(parameters)) {
+                if (parameters.lastParameterIsRest()) {
                     printLen--;
                 }
                 for (var i = 0; i < printLen; i++) {
-                    var arg = <Parameter>parameters.members[i];
+                    var arg = parameters.astAt(i);
                     arg.emit(this);
 
                     if (i < (printLen - 1)) {
@@ -647,7 +647,7 @@ module TypeScript {
                 }
                 this.setContainer(tempContainer);
 
-                this.emitComments(parameters, false);
+                this.emitComments(parameters.ast, false);
             }
         }
 
@@ -676,10 +676,11 @@ module TypeScript {
             }
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcDecl.parameterList);
+            this.emitFunctionParameters(Parameters.fromParameterList(funcDecl.parameterList));
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, funcDecl.parameterList, funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl,
+                Parameters.fromParameterList(funcDecl.parameterList), funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -691,7 +692,7 @@ module TypeScript {
             this.popDecl(pullDecl);
         }
 
-        private emitFunctionBodyStatements(name: string, funcDecl: AST, parameterList: ASTList, block: Block): void {
+        private emitFunctionBodyStatements(name: string, funcDecl: AST, parameterList: IParameters, block: Block): void {
             this.writeLineToOutput(" {");
             if (name) {
                 this.recordSourceMappingNameStart(name);
@@ -721,34 +722,37 @@ module TypeScript {
             }
         }
 
-        private emitDefaultValueAssignments(parameters: ASTList): void {
-            var n = parameters.members.length;
-            if (lastParameterIsRest(parameters)) {
+        private emitDefaultValueAssignments(parameters: IParameters): void {
+            var n = parameters.length;
+            if (parameters.lastParameterIsRest()) {
                 n--;
             }
 
             for (var i = 0; i < n; i++) {
-                var arg = <Parameter>parameters.members[i];
-                if (arg.equalsValueClause) {
+                var arg = parameters.astAt(i);
+                var id = parameters.identifierAt(i);
+                var equalsValueClause = parameters.initializerAt(i);
+                if (equalsValueClause) {
                     this.emitIndent();
                     this.recordSourceMappingStart(arg);
-                    this.writeToOutput("if (typeof " + arg.id.text() + " === \"undefined\") { ");//
-                    this.writeToOutputWithSourceMapRecord(arg.id.text(), arg.id);
-                    this.emitJavascript(arg.equalsValueClause, false);
+                    this.writeToOutput("if (typeof " + id.text() + " === \"undefined\") { ");//
+                    this.writeToOutputWithSourceMapRecord(id.text(), id);
+                    this.emitJavascript(equalsValueClause, false);
                     this.writeLineToOutput("; }");
                     this.recordSourceMappingEnd(arg);
                 }
             }
         }
 
-        private emitRestParameterInitializer(parameters: ASTList): void {
-            if (lastParameterIsRest(parameters)) {
-                var n = parameters.members.length;
-                var lastArg = <Parameter>parameters.members[n - 1];
+        private emitRestParameterInitializer(parameters: IParameters): void {
+            if (parameters.lastParameterIsRest()) {
+                var n = parameters.length;
+                var lastArg = parameters.astAt(n - 1);
+                var id = parameters.identifierAt(n - 1);
                 this.emitIndent();
                 this.recordSourceMappingStart(lastArg);
                 this.writeToOutput("var ");
-                this.writeToOutputWithSourceMapRecord(lastArg.id.text(), lastArg.id);
+                this.writeToOutputWithSourceMapRecord(id.text(), id);
                 this.writeLineToOutput(" = [];");
                 this.recordSourceMappingEnd(lastArg);
                 this.emitIndent();
@@ -762,7 +766,7 @@ module TypeScript {
                 this.indenter.increaseIndent();
                 this.emitIndent();
 
-                this.writeToOutputWithSourceMapRecord(lastArg.id.text() + "[_i] = arguments[_i + " + (n - 1) + "];", lastArg);
+                this.writeToOutputWithSourceMapRecord(id.text() + "[_i] = arguments[_i + " + (n - 1) + "];", lastArg);
                 this.writeLineToOutput("");
                 this.indenter.decreaseIndent();
                 this.emitIndent();
@@ -1160,13 +1164,21 @@ module TypeScript {
             this.recordSourceMappingEnd(expression);
         }
 
-        public emitArrowFunctionExpression(arrowFunction: ArrowFunctionExpression): void {
+        public emitSimpleArrowFunctionExpression(arrowFunction: SimpleArrowFunctionExpression): void {
+            this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(),
+                Parameters.fromIdentifier(arrowFunction.identifier), arrowFunction.block);
+        }
+
+        public emitParenthesizedArrowFunctionExpression(arrowFunction: ParenthesizedArrowFunctionExpression): void {
+            this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(),
+                Parameters.fromParameterList(arrowFunction.parameterList), arrowFunction.block);
+        }
+
+        private emitAnyArrowFunctionExpression(arrowFunction: AST, funcName: string, parameters: IParameters, block: Block): void {
             var savedInArrowFunction = this.inArrowFunction;
             this.inArrowFunction = true;
 
             var temp = this.setContainer(EmitContainer.Function);
-
-            var funcName = arrowFunction.getNameText();
 
             this.recordSourceMappingStart(arrowFunction);
 
@@ -1179,10 +1191,10 @@ module TypeScript {
             this.recordSourceMappingStart(arrowFunction);
             this.writeToOutput("function ");
             this.writeToOutput("(");
-            this.emitFunctionParameters(arrowFunction.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(arrowFunction.getNameText(), arrowFunction, arrowFunction.parameterList, arrowFunction.block);
+            this.emitFunctionBodyStatements(funcName, arrowFunction, parameters, block);
 
             this.recordSourceMappingEnd(arrowFunction);
 
@@ -1213,14 +1225,15 @@ module TypeScript {
             this.writeToOutput("function ");
             this.writeToOutput(this.thisClassNode.identifier.text());
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcDecl.parameterList);
+            var parameters = Parameters.fromParameterList(funcDecl.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeLineToOutput(") {");
 
             this.recordSourceMappingNameStart("constructor");
             this.indenter.increaseIndent();
 
-            this.emitDefaultValueAssignments(funcDecl.parameterList);
-            this.emitRestParameterInitializer(funcDecl.parameterList);
+            this.emitDefaultValueAssignments(parameters);
+            this.emitRestParameterInitializer(parameters);
 
             if (this.shouldCaptureThis(funcDecl)) {
                 this.writeCaptureThisStatement(funcDecl);
@@ -1267,7 +1280,7 @@ module TypeScript {
             this.writeToOutput("(");
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(null, accessor, accessor.parameterList, accessor.block);
+            this.emitFunctionBodyStatements(null, accessor, Parameters.fromParameterList(accessor.parameterList), accessor.block);
 
             this.recordSourceMappingEnd(accessor);
 
@@ -1299,10 +1312,12 @@ module TypeScript {
             this.recordSourceMappingNameStart(accessor.propertyName.text());
             this.writeToOutput(accessor.propertyName.text());
             this.writeToOutput("(");
-            this.emitFunctionParameters(accessor.parameterList);
+
+            var parameters = Parameters.fromParameterList(accessor.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(null, accessor, accessor.parameterList, accessor.block);
+            this.emitFunctionBodyStatements(null, accessor, parameters, accessor.block);
 
             this.recordSourceMappingEnd(accessor);
 
@@ -1338,10 +1353,12 @@ module TypeScript {
             }
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcDecl.parameterList);
+
+            var parameters = Parameters.fromParameterList(funcDecl.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, funcDecl.parameterList, funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -2141,10 +2158,12 @@ module TypeScript {
             this.writeToOutput("function ");
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(parameterList);
+
+            var parameters = Parameters.fromParameterList(parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(null, funcDecl, parameterList, block);
+            this.emitFunctionBodyStatements(null, funcDecl, parameters, block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -2347,10 +2366,12 @@ module TypeScript {
             this.writeToOutput("function ");
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcDecl.parameterList);
+
+            var parameters = Parameters.fromParameterList(funcDecl.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.propertyName.text(), funcDecl, funcDecl.parameterList, funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.propertyName.text(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -2639,10 +2660,12 @@ module TypeScript {
             //this.recordSourceMappingEnd(funcProp.propertyName);
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(funcProp.parameterList);
+
+            var parameters = Parameters.fromParameterList(funcProp.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcProp.propertyName.text(), funcProp, funcProp.parameterList, funcProp.block);
+            this.emitFunctionBodyStatements(funcProp.propertyName.text(), funcProp, parameters, funcProp.block);
 
             this.recordSourceMappingEnd(funcProp);
 
@@ -2676,7 +2699,7 @@ module TypeScript {
         }
 
         public emitExpressionStatement(statement: ExpressionStatement): void {
-            var isArrowExpression = statement.expression.nodeType() === NodeType.ArrowFunctionExpression;
+            var isArrowExpression = statement.expression.nodeType() === NodeType.SimpleArrowFunctionExpression || statement.expression.nodeType() === NodeType.ParenthesizedArrowFunctionExpression;
 
             this.recordSourceMappingStart(statement);
             if (isArrowExpression) {

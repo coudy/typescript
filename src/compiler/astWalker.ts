@@ -161,10 +161,15 @@ module TypeScript {
         walker.walk(preAst.block);
     }
 
-    function walkArrowFunctionExpressionChildren(preAst: ArrowFunctionExpression, walker: AstWalker): void {
+    function walkParenthesizedArrowFunctionExpressionChildren(preAst: ParenthesizedArrowFunctionExpression, walker: AstWalker): void {
         walker.walk(preAst.typeParameters);
         walker.walk(preAst.parameterList);
         walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.block);
+    }
+
+    function walkSimpleArrowFunctionExpressionChildren(preAst: SimpleArrowFunctionExpression, walker: AstWalker): void {
+        walker.walk(preAst.identifier);
         walker.walk(preAst.block);
     }
 
@@ -376,7 +381,8 @@ module TypeScript {
     childrenWalkers[NodeType.ArgumentList] = walkArgumentListChildren;
     childrenWalkers[NodeType.ArrayLiteralExpression] = walkArrayLiteralExpressionChildren;
     childrenWalkers[NodeType.ArrayType] = walkArrayTypeChildren;
-    childrenWalkers[NodeType.ArrowFunctionExpression] = walkArrowFunctionExpressionChildren;
+    childrenWalkers[NodeType.SimpleArrowFunctionExpression] = walkSimpleArrowFunctionExpressionChildren;
+    childrenWalkers[NodeType.ParenthesizedArrowFunctionExpression] = walkParenthesizedArrowFunctionExpressionChildren;
     childrenWalkers[NodeType.AssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.BitwiseAndExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.BitwiseExclusiveOrExpression] = walkBinaryExpressionChildren;

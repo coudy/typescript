@@ -999,7 +999,39 @@ module TypeScript {
         }
     }
 
-    export class ArrowFunctionExpression extends AST {
+    export class SimpleArrowFunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(public identifier: Identifier,
+                    public block: Block) {
+            super();
+            identifier && (identifier.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.SimpleArrowFunctionExpression;
+        }
+
+        public structuralEquals(ast: SimpleArrowFunctionExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this.hint === ast.hint &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.block, ast.block, includingPosition);
+        }
+
+        public emit(emitter: Emitter) {
+            emitter.emitSimpleArrowFunctionExpression(this);
+        }
+
+        public getNameText() {
+            return this.hint;
+        }
+    }
+
+    export class ParenthesizedArrowFunctionExpression extends AST {
         public hint: string = null;
 
         constructor(public typeParameters: ASTList,
@@ -1016,10 +1048,10 @@ module TypeScript {
         public _isDeclaration() { return true; }
 
         public nodeType(): NodeType {
-            return NodeType.ArrowFunctionExpression;
+            return NodeType.ParenthesizedArrowFunctionExpression;
         }
 
-        public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
+        public structuralEquals(ast: ParenthesizedArrowFunctionExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this.hint === ast.hint &&
                 structuralEquals(this.block, ast.block, includingPosition) &&
@@ -1028,7 +1060,7 @@ module TypeScript {
         }
 
         public emit(emitter: Emitter) {
-            emitter.emitArrowFunctionExpression(this);
+            emitter.emitParenthesizedArrowFunctionExpression(this);
         }
 
         public getNameText() {
@@ -2878,5 +2910,41 @@ module TypeScript {
         }
 
         return false;
+    }
+
+    export interface IParameters {
+        length: number;
+        lastParameterIsRest(): boolean;
+        ast: AST;
+        astAt(index: number): AST;
+        identifierAt(index: number): Identifier;
+        typeAt(index: number): TypeReference;
+        initializerAt(index: number): EqualsValueClause;
+    }
+
+    export module Parameters {
+        export function fromIdentifier(id: Identifier): IParameters {
+            return {
+                length: 1,
+                lastParameterIsRest: () => false,
+                ast: id,
+                astAt: (index: number) => id,
+                identifierAt: (index: number) => id,
+                typeAt: (index: number): TypeReference => null,
+                initializerAt: (index: number): EqualsValueClause => null
+            }
+        }
+
+        export function fromParameterList(list: ASTList): IParameters {
+            return {
+                length: list.members.length,
+                lastParameterIsRest: () => lastParameterIsRest(list),
+                ast: list,
+                astAt: (index: number) => list.members[index],
+                identifierAt: (index: number) => (<Parameter>list.members[index]).id,
+                typeAt: (index: number) => (<Parameter>list.members[index]).typeExpr,
+                initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause
+            }
+        }
     }
 }

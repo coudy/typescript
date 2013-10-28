@@ -603,7 +603,8 @@ module TypeScript {
 
                 switch (current.nodeType()) {
                     case NodeType.FunctionExpression:
-                    case NodeType.ArrowFunctionExpression:
+                    case NodeType.SimpleArrowFunctionExpression:
+                    case NodeType.ParenthesizedArrowFunctionExpression:
                         resolver.resolveAST(current, /*inContextuallyTypedAssignment*/ true, resolutionContext);
                         break;
 

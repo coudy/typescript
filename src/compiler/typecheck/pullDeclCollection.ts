@@ -536,7 +536,8 @@ module TypeScript {
 
         var declFlags = PullElementFlags.None;
 
-        if (functionExpressionDeclAST.nodeType() === NodeType.ArrowFunctionExpression) {
+        if (functionExpressionDeclAST.nodeType() === NodeType.SimpleArrowFunctionExpression ||
+            functionExpressionDeclAST.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
             declFlags |= PullElementFlags.ArrowFunction;
         }
 
@@ -550,11 +551,32 @@ module TypeScript {
 
         var name = id ? id.text() : "";
         var displayNameText = displayName ? displayName.text() : "";
-        var decl = new PullFunctionExpressionDecl(name, declFlags, parent, span, displayNameText);
+        var decl: PullDecl = new PullFunctionExpressionDecl(name, declFlags, parent, span, displayNameText);
         context.semanticInfoChain.setDeclForAST(functionExpressionDeclAST, decl);
         context.semanticInfoChain.setASTForDecl(decl, functionExpressionDeclAST);
 
         context.pushParent(decl);
+
+        if (functionExpressionDeclAST.nodeType() === NodeType.SimpleArrowFunctionExpression) {
+            var simpleArrow = <SimpleArrowFunctionExpression>functionExpressionDeclAST;
+            var declFlags = PullElementFlags.Public;
+
+            var parent = context.getParent();
+
+            if (hasFlag(parent.flags, PullElementFlags.DeclaredInAWithBlock)) {
+                declFlags |= PullElementFlags.DeclaredInAWithBlock;
+            }
+
+            var span = TextSpan.fromBounds(simpleArrow.identifier.minChar, simpleArrow.identifier.limChar);
+
+            var decl: PullDecl = new NormalPullDecl(simpleArrow.identifier.valueText(), simpleArrow.identifier.text(), PullElementKind.Parameter, declFlags, parent, span);
+
+            context.semanticInfoChain.setASTForDecl(decl, simpleArrow.identifier);
+            context.semanticInfoChain.setDeclForAST(simpleArrow.identifier, decl);
+
+            // Record this decl in its parent in the declGroup with the corresponding name
+            parent.addVariableDeclToGroup(decl);
+        }
     }
 
     function createMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: DeclCollectionContext): void {
@@ -912,8 +934,8 @@ module TypeScript {
                     createFunctionDeclaration(funcDecl, context);
                 }
                 break;
-            case NodeType.ArrowFunctionExpression:
-                var arrowFunction = <ArrowFunctionExpression>ast;
+            case NodeType.SimpleArrowFunctionExpression:
+            case NodeType.ParenthesizedArrowFunctionExpression:
                 createAnyFunctionExpressionDeclaration(ast, /*id*/null, context);
                 break;
             case NodeType.ImportDeclaration:

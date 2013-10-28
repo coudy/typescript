@@ -1033,7 +1033,8 @@ module Services {
 
                 if (node.nodeType() === TypeScript.NodeType.ConstructorDeclaration ||
                     node.nodeType() === TypeScript.NodeType.FunctionDeclaration ||
-                    node.nodeType() === TypeScript.NodeType.ArrowFunctionExpression ||
+                    node.nodeType() === TypeScript.NodeType.ParenthesizedArrowFunctionExpression ||
+                    node.nodeType() === TypeScript.NodeType.SimpleArrowFunctionExpression ||
                     node.nodeType() === TypeScript.NodeType.MemberFunctionDeclaration ||
                     TypeScript.isNameOfFunction(node) ||
                     TypeScript.isNameOfMemberFunction(node)) {
@@ -1808,7 +1809,8 @@ module Services {
                 case TypeScript.NodeType.ConstructorDeclaration:
                 case TypeScript.NodeType.FunctionDeclaration:
                 case TypeScript.NodeType.VariableDeclarator:
-                case TypeScript.NodeType.ArrowFunctionExpression:
+                case TypeScript.NodeType.ParenthesizedArrowFunctionExpression:
+                case TypeScript.NodeType.SimpleArrowFunctionExpression:
                     return true;
             }
         }
