@@ -532,7 +532,7 @@ module TypeScript {
         public emitObjectCreationExpression(objectCreationExpression: ObjectCreationExpression) {
             this.recordSourceMappingStart(objectCreationExpression);
             this.writeToOutput("new ");
-            var target = objectCreationExpression.target;
+            var target = objectCreationExpression.expression;
             var args = objectCreationExpression.arguments;
 
             target.emit(this);
@@ -589,7 +589,7 @@ module TypeScript {
 
         public emitInvocationExpression(callNode: InvocationExpression) {
             this.recordSourceMappingStart(callNode);
-            var target = callNode.target;
+            var target = callNode.expression;
             var args = callNode.arguments;
 
             if (target.nodeType() === NodeType.MemberAccessExpression && (<MemberAccessExpression>target).expression.nodeType() === NodeType.SuperExpression) {
@@ -603,7 +603,7 @@ module TypeScript {
                     this.emitCommaSeparatedList(args);
                 }
             } else {
-                if (callNode.target.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
+                if (callNode.expression.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                     this.writeToOutput("_super.call");
                 }
                 else {
@@ -611,7 +611,7 @@ module TypeScript {
                 }
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
-                if (callNode.target.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
+                if (callNode.expression.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                     this.writeToOutput("this");
                     if (args && args.members.length) {
                         this.writeToOutput(", ");

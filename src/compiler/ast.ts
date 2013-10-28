@@ -710,22 +710,13 @@ module TypeScript {
         }
     }
 
-    export interface ICallExpression extends IASTSpan {
-        target: AST;
-        typeArguments: ASTList;
-        arguments: ASTList;
-        closeParenSpan: ASTSpan;
-        callResolutionData: PullAdditionalCallResolutionData;
-    }
-
     export class ObjectCreationExpression extends AST implements ICallExpression {
-        callResolutionData: PullAdditionalCallResolutionData = null;
-        constructor(public target: AST,
+        constructor(public expression: AST,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
                     public closeParenSpan: ASTSpan) {
-                        super();
-            target && (target.parent = this);
+            super();
+            expression && (expression.parent = this);
             typeArguments && (typeArguments.parent = this);
             arguments && (arguments.parent = this);
         }
@@ -740,20 +731,19 @@ module TypeScript {
 
         public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.target, ast.target, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
                 structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
                 structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
     }
 
     export class InvocationExpression extends AST implements ICallExpression {
-        callResolutionData: PullAdditionalCallResolutionData = null;
-        constructor(public target: AST,
+        constructor(public expression: AST,
                     public typeArguments: ASTList,
                     public arguments: ASTList,
                     public closeParenSpan: ASTSpan) {
-                        super();
-            target && (target.parent = this);
+            super();
+            expression && (expression.parent = this);
             typeArguments && (typeArguments.parent = this);
             arguments && (arguments.parent = this);
         }
@@ -768,7 +758,7 @@ module TypeScript {
 
         public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.target, ast.target, includingPosition) &&
+                   structuralEquals(this.expression, ast.expression, includingPosition) &&
                    structuralEquals(this.typeArguments, ast.typeArguments, includingPosition) &&
                    structuralEquals(this.arguments, ast.arguments, includingPosition);
         }
@@ -1704,6 +1694,13 @@ module TypeScript {
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
+    }
+
+    export interface ICallExpression extends IASTSpan {
+        expression: AST;
+        typeArguments: ASTList;
+        arguments: ASTList;
+        closeParenSpan: ASTSpan;
     }
 
     export class SwitchStatement extends AST {
@@ -2763,7 +2760,7 @@ module TypeScript {
 
         if (current && current.parent) {
             if (current.parent.nodeType() === NodeType.InvocationExpression || current.parent.nodeType() === NodeType.ObjectCreationExpression) {
-                return current === (<InvocationExpression>current.parent).target;
+                return current === (<InvocationExpression>current.parent).expression;
             }
         }
 

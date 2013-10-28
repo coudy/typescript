@@ -133,14 +133,13 @@ module TypeScript {
     }
 
     function walkInvocationExpressionChildren(preAst: InvocationExpression, walker: AstWalker): void {
-        walker.walk(preAst.target);
+        walker.walk(preAst.expression);
         walker.walk(preAst.typeArguments);
         walker.walk(preAst.arguments);
     }
 
     function walkObjectCreationExpressionChildren(preAst: ObjectCreationExpression, walker: AstWalker): void {
-        walker.walk(preAst.target);
-
+        walker.walk(preAst.expression);
         walker.walk(preAst.typeArguments);
         walker.walk(preAst.arguments);
     }

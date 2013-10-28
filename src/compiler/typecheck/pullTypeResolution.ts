@@ -6570,7 +6570,7 @@ module TypeScript {
                     case NodeType.InvocationExpression:
                         var invocationExpression = <InvocationExpression>current;
                         if (previous === invocationExpression.arguments &&
-                            invocationExpression.target.nodeType() === NodeType.SuperExpression) {
+                            invocationExpression.expression.nodeType() === NodeType.SuperExpression) {
                                 return true;
                         }
                         break;
@@ -7666,7 +7666,7 @@ module TypeScript {
 
         private typeCheckInvocationExpression(callEx: InvocationExpression, context: PullTypeResolutionContext) {
             this.setTypeChecked(callEx, context);
-            var targetSymbol = this.resolveAST(callEx.target, /*isContextuallyTyped:*/ false, context);
+            var targetSymbol = this.resolveAST(callEx.expression, /*isContextuallyTyped:*/ false, context);
 
             if (callEx.arguments) {
                 var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
@@ -7697,7 +7697,7 @@ module TypeScript {
 
         private computeInvocationExpressionSymbol(callEx: InvocationExpression, context: PullTypeResolutionContext, additionalResults: PullAdditionalCallResolutionData): PullSymbol {
             // resolve the target
-            var targetSymbol = this.resolveAST(callEx.target, /*isContextuallyTyped:*/ false, context);
+            var targetSymbol = this.resolveAST(callEx.expression, /*isContextuallyTyped:*/ false, context);
             var targetAST = this.getCallTargetErrorSpanAST(callEx);
 
             var targetTypeSymbol = targetSymbol.type;
@@ -7725,7 +7725,7 @@ module TypeScript {
 
             var isSuperCall = false;
 
-            if (callEx.target.nodeType() === NodeType.SuperExpression) {
+            if (callEx.expression.nodeType() === NodeType.SuperExpression) {
 
                 isSuperCall = true;
 
@@ -8074,7 +8074,7 @@ module TypeScript {
 
         private typeCheckObjectCreationExpression(callEx: ObjectCreationExpression, context: PullTypeResolutionContext) {
             this.setTypeChecked(callEx, context);
-            this.resolveAST(callEx.target, /*isContextuallyTyped:*/ false, context);
+            this.resolveAST(callEx.expression, /*isContextuallyTyped:*/ false, context);
             var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
             if (callEx.arguments) {
                 var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
@@ -8114,7 +8114,7 @@ module TypeScript {
             var returnType: PullTypeSymbol = null;
 
             // resolve the target
-            var targetSymbol = this.resolveAST(callEx.target, /*isContextuallyTyped:*/ false, context);
+            var targetSymbol = this.resolveAST(callEx.expression, /*isContextuallyTyped:*/ false, context);
             var targetTypeSymbol = targetSymbol.isType() ? <PullTypeSymbol>targetSymbol : targetSymbol.type;
 
             var targetAST = this.getCallTargetErrorSpanAST(callEx);
@@ -10023,7 +10023,7 @@ module TypeScript {
         }
 
         private getCallTargetErrorSpanAST(callEx: ICallExpression): AST {
-            return (callEx.target.nodeType() === NodeType.MemberAccessExpression) ? (<MemberAccessExpression>callEx.target).name : callEx.target;
+            return (callEx.expression.nodeType() === NodeType.MemberAccessExpression) ? (<MemberAccessExpression>callEx.expression).name : callEx.expression;
         }
 
         private overloadHasCorrectArity(signature: PullSignatureSymbol, args: ASTList): boolean {
@@ -11453,7 +11453,7 @@ module TypeScript {
         private isSuperInvocationExpression(ast: AST): boolean {
             if (ast.nodeType() === NodeType.InvocationExpression) {
                 var invocationExpression = <InvocationExpression>ast;
-                if (invocationExpression.target.nodeType() === NodeType.SuperExpression) {
+                if (invocationExpression.expression.nodeType() === NodeType.SuperExpression) {
                     return true;
                 }
             }
