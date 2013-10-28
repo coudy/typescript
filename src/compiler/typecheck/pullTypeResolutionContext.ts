@@ -175,11 +175,12 @@ module TypeScript {
     export class PullContextualTypeContext {
         public provisionallyTypedSymbols: PullSymbol[] = [];
         public hasProvisionalErrors = false;
-        private astSymbolMap: PullSymbol[] = []
+        private astSymbolMap: PullSymbol[] = [];
 
         constructor(public contextualType: PullTypeSymbol,
-                    public provisional: boolean,
-                    public substitutions: PullTypeSymbol[]) { }
+            public provisional: boolean,
+            public isInferentiallyTyping: boolean,
+            public substitutions: PullTypeSymbol[]) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -232,11 +233,35 @@ module TypeScript {
                 this.fileName === ast.fileName();
         }
 
-        public pushContextualType(type: PullTypeSymbol, provisional: boolean, substitutions: PullTypeSymbol[]) {
-            this.contextStack.push(new PullContextualTypeContext(type, provisional, substitutions));
+        private _pushAnyContextualType(type: PullTypeSymbol, provisional: boolean, isInferentiallyTyping: boolean, substitutions: PullTypeSymbol[]) {
+            this.contextStack.push(new PullContextualTypeContext(type, provisional, isInferentiallyTyping, substitutions));
         }
 
-        public popContextualType(): PullContextualTypeContext {
+        // Use this to push any kind of contextual type if it is NOT propagated inward from a parent
+        // contextual type. This corresponds to the first series of bullets in Section 4.19 of the spec.
+        public pushNewContextualType(type: PullTypeSymbol) {
+            this._pushAnyContextualType(type, this.inProvisionalResolution(), /*isInferentiallyTyping*/ false, null);
+        }
+
+        // Use this when propagating a contextual type from a parent contextual type to a subexpression.
+        // This corresponds to the second series of bullets in section 4.19 of the spec.
+        public propagateContextualType(type: PullTypeSymbol) {
+            this._pushAnyContextualType(type, this.inProvisionalResolution(), this.isInferentiallyTyping(), null);
+        }
+
+        // Use this if you are trying to infer type arguments.
+        // substitutions is information about what you have inferred so far.
+        public pushInferentialType(type: PullTypeSymbol, substitutions: PullTypeSymbol[]) {
+            this._pushAnyContextualType(type, /*provisional*/ true, /*isInferentiallyTyping*/ true, substitutions);
+        }
+
+        // Use this if you are trying to choose an overload and are trying a contextual type.
+        public pushProvisionalType(type: PullTypeSymbol) {
+            this._pushAnyContextualType(type, /*provisional*/ true, /*isInferentiallyTyping*/ false, null);
+        }
+
+        // Use this to pop any kind of contextual type
+        public popAnyContextualType(): PullContextualTypeContext {
             var tc = this.contextStack.pop();
 
             tc.invalidateProvisionallyTypedSymbols();
@@ -290,10 +315,14 @@ module TypeScript {
 
                 var substitution = this.findSubstitution(type);
 
-                return substitution ? substitution : type;
+                return substitution || type;
             }
 
             return null;
+        }
+
+        public isInferentiallyTyping(): boolean {
+            return this.contextStack.length > 0 && this.contextStack[this.contextStack.length - 1].isInferentiallyTyping;
         }
 
         public inProvisionalResolution() {
@@ -317,7 +346,7 @@ module TypeScript {
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
             var substitution: PullTypeSymbol = this.findSubstitution(type);
 
-            symbol.type = substitution ? substitution : type;
+            symbol.type = substitution || type;
 
             if (this.contextStack.length && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length - 1].recordProvisionallyTypedSymbol(symbol);

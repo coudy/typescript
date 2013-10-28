@@ -2057,13 +2057,13 @@ module TypeScript {
             var canTypeCheckAST = this.canTypeCheckAST(argDeclAST, context);
             if (equalsValueClause && (canTypeCheckAST || !contextualType)) {
                 if (contextualType) {
-                    context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                    context.propagateContextualType(contextualType);
                 }
 
                 var initExprSymbol = this.resolveAST(equalsValueClause, contextualType != null, context);
 
                 if (contextualType) {
-                    context.popContextualType();
+                    context.popAnyContextualType();
                 }
 
                 if (!initExprSymbol || !initExprSymbol.type) {
@@ -2704,7 +2704,7 @@ module TypeScript {
 
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.kind() === SyntaxKind.EnumElement;
             if (typeExprSymbol) {
-                context.pushContextualType(typeExprSymbol, context.inProvisionalResolution(), null);
+                context.pushNewContextualType(typeExprSymbol);
             }
 
             var enclosingDecl = this.getEnclosingDeclForAST(varDeclOrParameter);
@@ -2718,7 +2718,7 @@ module TypeScript {
             var initExprSymbol = this.resolveAST(init, typeExprSymbol != null, context);
 
             if (typeExprSymbol) {
-                context.popContextualType();
+                context.popAnyContextualType();
             }
 
             if (!initExprSymbol) {
@@ -4056,9 +4056,9 @@ module TypeScript {
             var isGetter = funcDeclAst.kind() == SyntaxKind.GetAccessor;
             if (isGetter) {
                 var getterFunctionDeclarationAst = <GetAccessor>funcDeclAst;
-                context.pushContextualType(getterSymbol.type, context.inProvisionalResolution(), null);
+                context.pushNewContextualType(getterSymbol.type);
                 this.typeCheckGetAccessorDeclaration(getterFunctionDeclarationAst, context);
-                context.popContextualType();
+                context.popAnyContextualType();
             } else {
                 var setterFunctionDeclarationAst = <SetAccessor>funcDeclAst;
                 this.typeCheckSetAccessorDeclaration(setterFunctionDeclarationAst, context);
@@ -4890,7 +4890,7 @@ module TypeScript {
                     var returnTypeAnnotationSymbol = this.resolveTypeReference(typeAnnotation, context);
                     if (returnTypeAnnotationSymbol) {
                         isContextuallyTyped = true;
-                        context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
+                        context.pushNewContextualType(returnTypeAnnotationSymbol);
                     }
                 }
                 else {
@@ -4905,7 +4905,7 @@ module TypeScript {
                         var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
                         if (currentContextualTypeReturnTypeSymbol) {
                             isContextuallyTyped = true;
-                            context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
+                            context.propagateContextualType(currentContextualTypeReturnTypeSymbol);
                         }
                     }
                 }
@@ -4913,7 +4913,7 @@ module TypeScript {
 
             var result = this.resolveAST(expression, isContextuallyTyped, context).type;
             if (isContextuallyTyped) {
-                context.popContextualType();
+                context.popAnyContextualType();
             }
 
             return result;
@@ -6612,10 +6612,9 @@ module TypeScript {
                     var returnType = assigningFunctionSignature.returnType;
 
                     if (returnType) {
-                        context.pushContextualType(returnType, context.inProvisionalResolution(), null);
-                        //signature.setReturnType(returnType);
+                        context.propagateContextualType(returnType);
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, block, bodyExpression, signature, true, functionDecl, context);
-                        context.popContextualType();
+                        context.popAnyContextualType();
                     }
                     else {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
@@ -6690,8 +6689,8 @@ module TypeScript {
                 }
             }
 
-                // Make sure there is no contextual type on the stack when resolving the block
-            context.pushContextualType(null, context.inProvisionalResolution(), null);
+            // Make sure there is no contextual type on the stack when resolving the block
+            context.pushNewContextualType(null);
             if (block) {
                 this.resolveAST(block, /*isContextuallyTyped:*/ false, context);
             }
@@ -6699,7 +6698,8 @@ module TypeScript {
                 var bodyExpressionType = this.resolveReturnExpression(bodyExpression, functionDecl, context);
                 this.typeCheckReturnExpression(bodyExpression, bodyExpressionType, functionDecl, context);
             }
-            context.popContextualType();
+
+            context.popAnyContextualType();
 
             var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
@@ -7214,7 +7214,7 @@ module TypeScript {
                         this.resolveDeclaredSymbol(assigningSymbol, pullTypeContext);
 
                         var contextualMemberType = assigningSymbol.kind === PullElementKind.IndexSignature ? (<PullSignatureSymbol>assigningSymbol).returnType : assigningSymbol.type;
-                        pullTypeContext.pushContextualType(contextualMemberType, pullTypeContext.inProvisionalResolution(), null);
+                        pullTypeContext.propagateContextualType(contextualMemberType);
 
                         acceptedContextualType = true;
 
@@ -7242,7 +7242,7 @@ module TypeScript {
                 }
 
                 if (acceptedContextualType) {
-                    pullTypeContext.popContextualType();
+                    pullTypeContext.popAnyContextualType();
                 }
 
                 var isAccessor = propertyAssignment.kind() === SyntaxKind.SetAccessor || propertyAssignment.kind() === SyntaxKind.GetAccessor;
@@ -7427,7 +7427,7 @@ module TypeScript {
             // Resolve element types
             if (elements) {
                 if (contextualElementType) {
-                    context.pushContextualType(contextualElementType, context.inProvisionalResolution(), null);
+                    context.propagateContextualType(contextualElementType);
                 }
 
                 for (var i = 0, n = elements.nonSeparatorCount(); i < n; i++) {
@@ -7435,7 +7435,7 @@ module TypeScript {
                 }
 
                 if (contextualElementType) {
-                    context.popContextualType();
+                    context.popAnyContextualType();
                 }
             }
 
@@ -7728,9 +7728,9 @@ module TypeScript {
                 // the two operand types.
                 var leftType = this.resolveAST(binex.left, /*isContextuallyTyped:*/ false, context).type;
 
-                context.pushContextualType(leftType, context.inProvisionalResolution(), null);
+                context.pushNewContextualType(leftType);
                 var rightType = this.resolveAST(binex.right, /*isContextuallyTyped:*/  true, context).type;
-                context.popContextualType();
+                context.popAnyContextualType();
 
                 return this.bestCommonTypeOfTwoTypes(leftType, rightType, context);
             }
@@ -7895,13 +7895,13 @@ module TypeScript {
                     // Actual parameters context type symbols will be undefined if the call target resolves to any or error types.
                     var contextualType = callResolutionData.actualParametersContextTypeSymbols ? callResolutionData.actualParametersContextTypeSymbols[i] : null;
                     if (contextualType) {
-                        context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                        context.pushNewContextualType(contextualType);
                     }
 
                     this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                     if (contextualType) {
-                        context.popContextualType();
+                        context.popAnyContextualType();
                         contextualType = null;
                     }
                 }
@@ -8225,14 +8225,14 @@ module TypeScript {
                     }
 
                     if (contextualType) {
-                        context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                        context.pushNewContextualType(contextualType);
                         actualParametersContextTypeSymbols[i] = contextualType;
                     }
 
                     this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                     if (contextualType) {
-                        context.popContextualType();
+                        context.popAnyContextualType();
                         contextualType = null;
                     }
                 }
@@ -8304,13 +8304,13 @@ module TypeScript {
                     // Actual parameters context type symbols will be undefined if the call target resolves to any or error types.
                     var contextualType = callResolutionData.actualParametersContextTypeSymbols ? callResolutionData.actualParametersContextTypeSymbols[i] : null;
                     if (contextualType) {
-                        context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                        context.pushNewContextualType(contextualType);
                     }
 
                     this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                     if (contextualType) {
-                        context.popContextualType();
+                        context.popAnyContextualType();
                         contextualType = null;
                     }
                 }
@@ -8614,14 +8614,14 @@ module TypeScript {
                         }
 
                         if (contextualType) {
-                            context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
+                            context.pushNewContextualType(contextualType);
                             actualParametersContextTypeSymbols[i] = contextualType;
                         }
 
                         this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                         if (contextualType) {
-                            context.popContextualType();
+                            context.popAnyContextualType();
                             contextualType = null;
                         }
                     }
@@ -8752,9 +8752,9 @@ module TypeScript {
             //
             // The type of the result is T.
 
-            context.pushContextualType(typeAssertionType, context.inProvisionalResolution(), null);
+            context.pushNewContextualType(typeAssertionType);
             var exprType = this.resolveAST(assertionExpression.expression, /*isContextuallyTyped:*/ true, context).type;
-            context.popContextualType();
+            context.popAnyContextualType();
 
             // TODO: why are we resolving these symbols here?
             this.resolveDeclaredSymbol(typeAssertionType, context);
@@ -8789,9 +8789,9 @@ module TypeScript {
             var leftExpr = this.resolveAST(binaryExpression.left, /*isContextuallyTyped:*/ false, context);
             var leftType = leftExpr.type;
 
-            context.pushContextualType(leftType, context.inProvisionalResolution(), /*substitutions*/null);
+            context.pushNewContextualType(leftType);
             var rightType = this.resolveAST(binaryExpression.right, true, context).type;
-            context.popContextualType();
+            context.popAnyContextualType();
 
             rightType = this.getInstanceTypeForAssignment(binaryExpression.left, rightType, context);
 
@@ -10497,14 +10497,14 @@ module TypeScript {
                 return OverloadApplicabilityStatus.AssignableWithNoProvisionalErrors;
             }
 
-            context.pushContextualType(paramType, true, null);
+            context.pushProvisionalType(paramType);
 
             var argSym = this.resolveAnyFunctionExpression(arg, typeParameters, parameters, returnTypeAnnotation, block, bodyExpression,
             /*isContextuallyTyped*/ true, context);
 
             var applicabilityStatus = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, arg, context);
 
-            context.popContextualType();
+            context.popAnyContextualType();
 
             return applicabilityStatus;
         }
@@ -10521,12 +10521,12 @@ module TypeScript {
                 return OverloadApplicabilityStatus.AssignableWithNoProvisionalErrors;
             }
 
-            context.pushContextualType(paramType, true, null);
+            context.pushProvisionalType(paramType);
             var argSym = this.resolveObjectLiteralExpression(arg, /*isContextuallyTyped*/ true, context);
 
             var applicabilityStatus = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, arg, context);
 
-            context.popContextualType();
+            context.popAnyContextualType();
 
             return applicabilityStatus;
         }
@@ -10537,12 +10537,12 @@ module TypeScript {
                 return OverloadApplicabilityStatus.AssignableWithNoProvisionalErrors;
             }
 
-            context.pushContextualType(paramType, true, null);
+            context.pushProvisionalType(paramType);
             var argSym = this.resolveArrayLiteralExpression(arg, /*isContextuallyTyped*/ true, context);
 
             var applicabilityStatus = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, arg, context);
 
-            context.popContextualType();
+            context.popAnyContextualType();
 
             return applicabilityStatus;
         }
@@ -10636,19 +10636,19 @@ module TypeScript {
                         argContext.resetRelationshipCache();
                         var substitutions = inferenceCandidates[j];
 
-                        context.pushContextualType(parameterType, true, substitutions);
+                        context.pushInferentialType(parameterType, substitutions);
 
                         this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
 
-                        cxt = context.popContextualType();
+                        cxt = context.popAnyContextualType();
                     }
                 }
                 else {
-                    context.pushContextualType(parameterType, true, []);
+                    context.pushInferentialType(parameterType, []);
 
                     this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
 
-                    cxt = context.popContextualType();
+                    cxt = context.popAnyContextualType();
                 }
             }
 
