@@ -7305,13 +7305,18 @@ module TypeScript {
                 stringIndexerSignature = indexSignatures.stringSignature;
                 numericIndexerSignature = indexSignatures.numericSignature;
 
-                // Start collecting the types of all the members so we can stamp the object literal with the proper index signatures
+                // Start collecting the types of all the members so we can stamp the object
+                // literal with the proper index signatures
+                // October 16, 2013: Section 4.12.2: Where a contextual type would be included
+                // in a candidate set for a best common type(such as when inferentially typing
+                // an object or array literal), an inferential type is not.
+                var inInferentialTyping = context.isInferentiallyTyping();
                 if (stringIndexerSignature) {
-                    allMemberTypes = [stringIndexerSignature.returnType];
+                    allMemberTypes = inInferentialTyping ? [] : [stringIndexerSignature.returnType];
                 }
 
                 if (numericIndexerSignature) {
-                    allNumericMemberTypes = [numericIndexerSignature.returnType];
+                    allNumericMemberTypes = inInferentialTyping ? [] : [numericIndexerSignature.returnType];
                 }
             }
 
@@ -7444,7 +7449,10 @@ module TypeScript {
                 elementType = elementTypes[0];
             }
             var collection: IPullTypeCollection;
-            if (contextualElementType) {
+            // October 16, 2013: Section 4.12.2: Where a contextual type would be included
+            // in a candidate set for a best common type(such as when inferentially typing
+            // an object or array literal), an inferential type is not.
+            if (contextualElementType && !context.isInferentiallyTyping()) {
                 if (!elementType) { // we have an empty array
                     elementType = contextualElementType;
                 }
@@ -7720,7 +7728,9 @@ module TypeScript {
                 var leftType = this.resolveAST(binex.left, isContextuallyTyped, context).type;
                 var rightType = this.resolveAST(binex.right, isContextuallyTyped, context).type;
 
-                return this.bestCommonTypeOfThreeTypes(contextualType, leftType, rightType, context);
+                return context.isInferentiallyTyping() ?
+                    this.bestCommonTypeOfTwoTypes(leftType, rightType, context):
+                    this.bestCommonTypeOfThreeTypes(contextualType, leftType, rightType, context);
             }
             else {
                 // If the || expression is not contextually typed, the right operand is contextually 
@@ -7729,7 +7739,7 @@ module TypeScript {
                 var leftType = this.resolveAST(binex.left, /*isContextuallyTyped:*/ false, context).type;
 
                 context.pushNewContextualType(leftType);
-                var rightType = this.resolveAST(binex.right, /*isContextuallyTyped:*/  true, context).type;
+                var rightType = this.resolveAST(binex.right, /*isContextuallyTyped:*/ true, context).type;
                 context.popAnyContextualType();
 
                 return this.bestCommonTypeOfTwoTypes(leftType, rightType, context);
@@ -7749,7 +7759,7 @@ module TypeScript {
         }
 
         private computeTypeOfConditionalExpression(leftType: PullTypeSymbol, rightType: PullTypeSymbol, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullTypeSymbol {
-            if (isContextuallyTyped) {
+            if (isContextuallyTyped && !context.isInferentiallyTyping()) {
                 // October 11, 2013
                 // If the conditional expression is contextually typed (section 4.19), Expr1 and Expr2 
                 // are contextually typed by the same type and the result is of the best common type 
@@ -8890,15 +8900,8 @@ module TypeScript {
                 if (candidateType == otherType) {
                     continue;
                 }
-                // The following two conditionals are wrong but are necessary pending fixes to
-                // type argument inference
-                if (candidateType.isTypeParameter() && !otherType.isTypeParameter()) {
-                    return false;
-                }
-                else if (!candidateType.isTypeParameter() && otherType.isTypeParameter()) {
-                    continue;
-                }
-                else if (!this.sourceIsSubtypeOfTarget(otherType, candidateType, /*ast*/ null, context)) {
+
+                if (!this.sourceIsSubtypeOfTarget(otherType, candidateType, /*ast*/ null, context)) {
                     return false;
                 }
             }
@@ -10628,43 +10631,25 @@ module TypeScript {
                     parameterType = parameters[i].type;
                 }
 
-                var inferenceCandidates = argContext.getInferenceCandidates();
+                var fixedTypeParameterSubstitutions = argContext.getFixedTypeParameterSubstitutions();
+                argContext.resetRelationshipCache();
 
-                if (inferenceCandidates.length) {
-                    for (var j = 0; j < inferenceCandidates.length; j++) {
+                context.pushInferentialType(parameterType, fixedTypeParameterSubstitutions);
 
-                        argContext.resetRelationshipCache();
-                        var substitutions = inferenceCandidates[j];
+                this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
 
-                        context.pushInferentialType(parameterType, substitutions);
-
-                        this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
-
-                        cxt = context.popAnyContextualType();
-                    }
-                }
-                else {
-                    context.pushInferentialType(parameterType, []);
-
-                    this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
-
-                    cxt = context.popAnyContextualType();
-                }
+                context.popAnyContextualType();
             }
 
             var inferenceResults = argContext.inferArgumentTypes(this, context);
-
-            if (inferenceResults.unfit) {
-                return null;
-            }
 
             var resultTypes: PullTypeSymbol[] = [];
 
             // match inferred types in-order to type parameters
             for (var i = 0; i < typeParameters.length; i++) {
-                for (var j = 0; j < inferenceResults.results.length; j++) {
-                    if ((inferenceResults.results[j].param == typeParameters[i]) && inferenceResults.results[j].type) {
-                        resultTypes[resultTypes.length] = inferenceResults.results[j].type;
+                for (var j = 0; j < inferenceResults.length; j++) {
+                    if ((inferenceResults[j].param == typeParameters[i]) && inferenceResults[j].type) {
+                        resultTypes[resultTypes.length] = inferenceResults[j].type;
                         break;
                     }
                 }
@@ -10750,7 +10735,11 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
-                argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
+                var typeParameter = <PullTypeParameterSymbol>parameterType;
+                argContext.addCandidateForInference(typeParameter, expressionType);
+                if (shouldFix) {
+                    argContext.tryToFixTypeParameter(typeParameter, this, context);
+                }
                 return;
             }
 
@@ -10806,8 +10795,8 @@ module TypeScript {
             // Section 3.8.7 - Recursive Types
             // Likewise, when making type inferences(section 3.8.6) from a type S to a type T, 
             // if either type originates in an infinitely expanding type reference, then
-            // •	if S and T are type references to the same named type, inferences are made from each type argument in S to each type argument in T,
-            // •	otherwise, no inferences are made.
+            //     if S and T are type references to the same named type, inferences are made from each type argument in S to each type argument in T,
+            //     otherwise, no inferences are made.
             var expressionTypeNamedTypeReference = PullHelpers.getRootType(expressionType);
             var parameterTypeNamedTypeReference = PullHelpers.getRootType(parameterType);
             if (expressionTypeNamedTypeReference != parameterTypeNamedTypeReference) {
@@ -10871,7 +10860,10 @@ module TypeScript {
                     for (var i = 0; i < objectTypeArguments.length; i++) {
                         // PULLREVIEW: This may lead to duplicate inferences for type argument parameters, if the two are the same
                         // (which could occur via mutually recursive method calls within a generic class declaration)
-                        argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i], shouldFix);
+                        argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i]);
+                        if (shouldFix) {
+                            argContext.tryToFixTypeParameter(parameterTypeParameters[i], this, context);
+                        }
                     }
                 }
                 else if (parameterType == this.semanticInfoChain.anyTypeSymbol) {

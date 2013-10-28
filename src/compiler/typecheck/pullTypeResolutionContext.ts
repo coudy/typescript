@@ -6,13 +6,36 @@
 module TypeScript {
     export class CandidateInferenceInfo {
         public typeParameter: PullTypeParameterSymbol = null;
-        public isFixed = false;
+        public _inferredTypeAfterFixing: PullTypeSymbol = null;
         public inferenceCandidates: PullTypeSymbol[] = [];
 
         public addCandidate(candidate: PullTypeSymbol) {
-            if (!this.isFixed) {
+            if (!this._inferredTypeAfterFixing) {
                 this.inferenceCandidates[this.inferenceCandidates.length] = candidate;
             }
+        }
+
+        public isFixed() {
+            return !!this._inferredTypeAfterFixing;
+        }
+
+        // TODO: We need the context because the sourceIsRelatableToTarget needs the context.
+        // Investigate removing this dependency
+        public tryToFix(resolver: PullTypeResolver, context: PullTypeResolutionContext) {
+            if (this._inferredTypeAfterFixing) {
+                // Already fixed
+                return;
+            }
+
+            // Take BCT of the candidate types
+            var collection = {
+                getLength: () => { return this.inferenceCandidates.length; },
+                getTypeAtIndex: (index: number) => {
+                    return this.inferenceCandidates[index].type;
+                }
+            };
+
+            this._inferredTypeAfterFixing = resolver.widenType(resolver.findBestCommonType(collection, context, new TypeComparisonInfo()));
         }
     }
 
@@ -69,18 +92,11 @@ module TypeScript {
             return this.candidateCache[param.pullSymbolID];
         }
 
-        public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol, fix: boolean) {
+        public addCandidateForInference(param: PullTypeParameterSymbol, candidate: PullTypeSymbol) {
             var info = this.getInferenceInfo(param);
 
-            if (info) {
-
-                if (candidate) {
-                    info.addCandidate(candidate);
-                }
-
-                if (!info.isFixed) {
-                    info.isFixed = fix;
-                }
+            if (info && candidate && info.inferenceCandidates.indexOf(candidate) < 0) {
+                info.addCandidate(candidate);
             }
         }
 
@@ -107,68 +123,52 @@ module TypeScript {
             return null;
         }
 
-        public getInferenceCandidates(): PullTypeSymbol[][] {
-            var inferenceCandidates: PullTypeSymbol[][] = [];
-
-            for (var infoKey in this.candidateCache) {
-                if (this.candidateCache.hasOwnProperty(infoKey)) {
-                    var info = this.candidateCache[infoKey];
-
-                    for (var i = 0; i < info.inferenceCandidates.length; i++) {
-                        var val: PullTypeSymbol[] = [];
-                        val[info.typeParameter.pullSymbolID] = info.inferenceCandidates[i];
-                        inferenceCandidates.push(val);
-                    }
-                }
-            }
-
-            return inferenceCandidates;
+        public tryToFixTypeParameter(typeParameter: PullTypeParameterSymbol, resolver: PullTypeResolver, context: PullTypeResolutionContext) {
+            var candidateInfo = this.candidateCache[typeParameter.pullSymbolID];
+            candidateInfo && candidateInfo.tryToFix(resolver, context);
         }
 
-        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[]; unfit: boolean; } {
-            var collection: IPullTypeCollection;
+        public getFixedTypeParameterSubstitutions(): PullTypeSymbol[] {
+            var fixedTypeParametersToTypesMap: PullTypeSymbol[] = [];
 
-            var bestCommonType: PullTypeSymbol;
+            for (var infoKey in this.candidateCache) {
+                if (this.candidateCache.hasOwnProperty(infoKey)) {
+                    var info = this.candidateCache[infoKey];
+                    // We only want to substitute types for *fixed* type parameters
+                    // TODO: We fix type parameters too late. Therefore, sometimes we want the
+                    // inferred type of a type parameter that hasn't yet been fixed. For now,
+                    // we fall back on the first inference candidate (which might be null).
+                    // This means that in the common case with one candidate, we will have the
+                    // right type if the type parameter appears in a lambda parameter.
+                    fixedTypeParametersToTypesMap[info.typeParameter.pullSymbolID] = info._inferredTypeAfterFixing ||
+                        info.inferenceCandidates[0];
+                }
+            }
 
+            return fixedTypeParametersToTypesMap;
+        }
+
+        public inferArgumentTypes(resolver: PullTypeResolver, context: PullTypeResolutionContext): { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[] {
             var results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[] = [];
-
-            var unfit = false;
 
             for (var infoKey in this.candidateCache) {
                 if (this.candidateCache.hasOwnProperty(infoKey)) {
                     var info = this.candidateCache[infoKey];
 
-                    if (!info.inferenceCandidates.length) {
-                        results[results.length] = { param: info.typeParameter, type: null };
-                        continue;
-                    }
+                    info.tryToFix(resolver, context);
 
-                    collection = {
-                        getLength: () => { return info.inferenceCandidates.length; },
-                        getTypeAtIndex: (index: number) => {
-                            return info.inferenceCandidates[index].type;
-                        }
-                    };
-
-                    bestCommonType = resolver.widenType(resolver.findBestCommonType(collection, context, new TypeComparisonInfo()));
-
-                    if (!bestCommonType) {
-                        unfit = true;
-                    }
-                    else {
-                        // is there already a substitution for this type?
-                        for (var i = 0; i < results.length; i++) {
-                            if (results[i].type == info.typeParameter) {
-                                results[i].type = bestCommonType;
-                            }
+                    // is there already a substitution for this type?
+                    for (var i = 0; i < results.length; i++) {
+                        if (results[i].type == info.typeParameter) {
+                            results[i].type = info._inferredTypeAfterFixing;
                         }
                     }
 
-                    results[results.length] = { param: info.typeParameter, type: bestCommonType };
+                    results[results.length] = { param: info.typeParameter, type: info._inferredTypeAfterFixing };
                 }
             }
 
-            return { results: results, unfit: unfit };
+            return results;
         }
     }
 
@@ -281,21 +281,15 @@ module TypeScript {
         }
 
         public findSubstitution(type: PullTypeSymbol) {
-            var substitution: PullTypeSymbol = null;
-
             if (this.contextStack.length) {
                 for (var i = this.contextStack.length - 1; i >= 0; i--) {
                     if (this.contextStack[i].substitutions) {
-                        substitution = this.contextStack[i].substitutions[type.pullSymbolID];
-
-                        if (substitution) {
-                            break;
-                        }
+                        return this.contextStack[i].substitutions[type.pullSymbolID];
                     }
                 }
             }
 
-            return substitution;
+            return null;
         }
 
         public getContextualType(): PullTypeSymbol {
