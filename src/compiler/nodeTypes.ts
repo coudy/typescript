@@ -38,6 +38,7 @@ module TypeScript {
         StringType,
         VoidType,
         TypeParameter,
+        Constraint,
         GenericType,
         TypeRef,
         TypeQuery,

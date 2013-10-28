@@ -1468,7 +1468,7 @@ module TypeScript {
 
             var identifier = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
-            var constraint = node.constraint ? node.constraint.accept(this) : null;
+            var constraint: Constraint = node.constraint ? node.constraint.accept(this) : null;
 
             var result = new TypeParameter(identifier, constraint);
             this.setSpan(result, start, node);
@@ -1476,9 +1476,15 @@ module TypeScript {
             return result;
         }
 
-        public visitConstraint(node: ConstraintSyntax): TypeReference {
+        public visitConstraint(node: ConstraintSyntax): Constraint {
+            var start = this.position;
             this.movePast(node.extendsKeyword);
-            return this.visitType(node.type);
+            var type = this.visitType(node.type);
+
+            var result = new Constraint(type);
+            this.setSpan(result, start, node);
+
+            return result;
         }
 
         public visitIfStatement(node: IfStatementSyntax): IfStatement {

@@ -2877,7 +2877,7 @@ module TypeScript {
 
             if (typeParameterAST.constraint) {
                 var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
-                var constraintTypeSymbol = this.resolveTypeReference(typeParameterAST.constraint, context);
+                var constraintTypeSymbol = this.resolveTypeReference(typeParameterAST.constraint.type, context);
 
                 if (constraintTypeSymbol) {
                     typeParameterSymbol.setConstraint(constraintTypeSymbol);
@@ -2897,7 +2897,10 @@ module TypeScript {
             this.setTypeChecked(typeParameterAST, context);
 
             var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
-            this.resolveTypeReference(typeParameterAST.constraint, context);
+
+            if (typeParameterAST.constraint) {
+                this.resolveTypeReference(typeParameterAST.constraint.type, context);
+            }
         }
 
         private resolveFunctionBodyReturnTypes(
