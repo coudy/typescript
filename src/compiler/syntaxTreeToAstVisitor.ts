@@ -1220,28 +1220,33 @@ module TypeScript {
             return result;
         }
 
-        private convertArgumentListArguments(node: ArgumentListSyntax) {
+        private convertArgumentListArguments(node: ArgumentListSyntax): { argumentList: ArgumentList; closeParenSpan: ASTSpan } {
             if (node === null) {
                 return null;
             }
 
             var start = this.position;
 
+            var typeArguments: ASTList = node.typeArgumentList ? node.typeArgumentList.accept(this) : null;
+
             this.movePast(node.openParenToken);
 
-            var result = this.visitSeparatedSyntaxList(node.arguments);
+            var arguments = this.visitSeparatedSyntaxList(node.arguments);
 
             if (node.arguments.fullWidth() === 0 && node.closeParenToken.fullWidth() === 0) {
                 // If the argument list was empty, and closing paren is missing, set the argument ofsets to be the open paren trivia
                 var openParenTokenEnd = start + node.openParenToken.leadingTriviaWidth() + node.openParenToken.width();
-                this.setSpanExplicit(result, openParenTokenEnd, openParenTokenEnd + node.openParenToken.trailingTriviaWidth());
+                this.setSpanExplicit(arguments, openParenTokenEnd, openParenTokenEnd + node.openParenToken.trailingTriviaWidth());
             }
 
             var closeParenPos = this.position;
             this.movePast(node.closeParenToken);
             var closeParenSpan = new ASTSpan();
             this.setTokenSpan(closeParenSpan, closeParenPos, node.closeParenToken);
-            
+
+            var result = new ArgumentList(typeArguments, arguments);
+            this.setSpan(result, start, node);
+
             return {
                 argumentList: result,
                 closeParenSpan: closeParenSpan
@@ -1252,16 +1257,10 @@ module TypeScript {
             var start = this.position;
 
             var expression = node.expression.accept(this);
-            var typeArguments = node.argumentList.typeArgumentList !== null
-                ? node.argumentList.typeArgumentList.accept(this)
-                : null;
             var argumentList = this.convertArgumentListArguments(node.argumentList);
 
             var result = new InvocationExpression(
-                                expression,
-                                typeArguments,
-                                argumentList ? argumentList.argumentList : null,
-                                argumentList ? argumentList.closeParenSpan : null);
+                expression, argumentList.argumentList, argumentList.closeParenSpan);
             this.setSpan(result, start, node);
 
             return result;
@@ -1716,14 +1715,10 @@ module TypeScript {
 
             this.movePast(node.newKeyword);
             var expression = node.expression.accept(this);
-            var typeArgumentList = node.argumentList === null || node.argumentList.typeArgumentList === null ? null : node.argumentList.typeArgumentList.accept(this);
             var argumentList = this.convertArgumentListArguments(node.argumentList);
 
-            var result = new ObjectCreationExpression(
-                                expression,
-                                typeArgumentList,
-                                argumentList ? argumentList.argumentList : null,
-                                argumentList ? argumentList.closeParenSpan : null);
+            var result = new ObjectCreationExpression(expression,
+                argumentList ? argumentList.argumentList : null, argumentList ? argumentList.closeParenSpan : null);
             this.setSpan(result, start, node);
 
             return result;

@@ -21,6 +21,7 @@ module TypeScript {
         None,
         List,
         Script,
+        ArgumentList,
 
         // Literals
         TrueLiteral,

@@ -533,7 +533,7 @@ module TypeScript {
             this.recordSourceMappingStart(objectCreationExpression);
             this.writeToOutput("new ");
             var target = objectCreationExpression.expression;
-            var args = objectCreationExpression.arguments;
+            var args = objectCreationExpression.argumentList ? objectCreationExpression.argumentList.arguments : null;
 
             target.emit(this);
             this.recordSourceMappingStart(args);
@@ -590,7 +590,7 @@ module TypeScript {
         public emitInvocationExpression(callNode: InvocationExpression) {
             this.recordSourceMappingStart(callNode);
             var target = callNode.expression;
-            var args = callNode.arguments;
+            var args = callNode.argumentList.arguments;
 
             if (target.nodeType() === NodeType.MemberAccessExpression && (<MemberAccessExpression>target).expression.nodeType() === NodeType.SuperExpression) {
                 target.emit(this);

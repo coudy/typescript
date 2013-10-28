@@ -498,15 +498,15 @@ module Services {
             var callExpression = <TypeScript.InvocationExpression>node;
             var isNew = (callExpression.nodeType() === TypeScript.NodeType.ObjectCreationExpression);
 
-            if (isNew && callExpression.arguments === null) {
+            if (isNew && callExpression.argumentList === null) {
                 this.logger.log("No signature help for a object creation expression without arguments");
                 return null;
             }
 
-            TypeScript.Debug.assert(callExpression.arguments !== null, "Expected call expression to have arguments, but it did not");
+            TypeScript.Debug.assert(callExpression.argumentList.arguments !== null, "Expected call expression to have arguments, but it did not");
 
-            var argumentsStart = callExpression.target.limChar + callExpression.target.trailingTriviaWidth;
-            var argumentsEnd = callExpression.arguments.limChar + callExpression.arguments.trailingTriviaWidth
+            var argumentsStart = callExpression.expression.limChar + callExpression.expression.trailingTriviaWidth;
+            var argumentsEnd = callExpression.argumentList.arguments.limChar + callExpression.argumentList.arguments.trailingTriviaWidth
 
             if (position <= argumentsStart || position > argumentsEnd) {
                 this.logger.log("Outside argument list");
