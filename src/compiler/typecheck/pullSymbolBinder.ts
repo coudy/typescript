@@ -1573,7 +1573,7 @@ module TypeScript {
         private bindMethodDeclarationToPullSymbol(methodDeclaration: PullDecl) {
             var declKind = methodDeclaration.kind;
             var declFlags = methodDeclaration.flags;
-            var methodAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(methodDeclaration);
+            var methodAST = this.semanticInfoChain.getASTForDecl(methodDeclaration);
 
             var isPrivate = (declFlags & PullElementFlags.Private) !== 0;
             var isStatic = (declFlags & PullElementFlags.Static) !== 0;
@@ -1621,7 +1621,12 @@ module TypeScript {
             methodDeclaration.setSymbol(methodSymbol);
             methodSymbol.addDeclaration(methodDeclaration);
             methodTypeSymbol.addDeclaration(methodDeclaration);
-            this.semanticInfoChain.setSymbolForAST(methodAST.name, methodSymbol);
+
+            var nameAST = methodAST.nodeType() === NodeType.FunctionDeclaration
+                ? (<FunctionDeclaration>methodAST).name
+                : (<MemberFunctionDeclaration>methodAST).propertyName;
+
+            this.semanticInfoChain.setSymbolForAST(nameAST, methodSymbol);
             this.semanticInfoChain.setSymbolForAST(methodAST, methodSymbol);
 
             if (isOptional) {
@@ -1636,7 +1641,10 @@ module TypeScript {
 
             var signature = isSignature ? new PullSignatureSymbol(sigKind) : new PullDefinitionSignatureSymbol(sigKind);
 
-            if (lastParameterIsRest(methodAST.parameterList)) {
+            var parameterList = methodAST.nodeType() === NodeType.FunctionDeclaration
+                ? (<FunctionDeclaration>methodAST).parameterList
+                : (<MemberFunctionDeclaration>methodAST).parameterList;
+            if (lastParameterIsRest(parameterList)) {
                 signature.hasVarArgs = true;
             }
 

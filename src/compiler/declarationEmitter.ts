@@ -514,7 +514,7 @@ module TypeScript {
             this.emitDeclarationComments(funcDecl);
 
             this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
-            var id = funcDecl.name.text();
+            var id = funcDecl.propertyName.text();
             this.declFile.Write(id);
             this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
 

@@ -582,74 +582,6 @@ module TypeScript {
         }
     }
 
-    export class GetAccessor extends AST {
-        private _functionFlags: FunctionFlags = FunctionFlags.None;
-
-        constructor(public propertyName: Identifier,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.GetAccessor;
-        }
-
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitGetAccessor(this);
-        }
-    }
-
-    export class SetAccessor extends AST {
-        private _functionFlags: FunctionFlags = FunctionFlags.None;
-
-        constructor(public propertyName: Identifier,
-                    public parameterList: ASTList,
-                    public block: Block) {
-            super();
-            propertyName && (propertyName.parent = this);
-            parameterList && (parameterList.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.SetAccessor;
-        }
-
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter): void {
-            emitter.emitSetAccessor(this);
-        }
-    }
-
     export class ArrayLiteralExpression extends AST {
         constructor(public expressions: ASTList) {
             super();
@@ -1137,38 +1069,6 @@ module TypeScript {
         }
     }
 
-    export class MemberFunctionDeclaration extends AST {
-        private _functionFlags = FunctionFlags.None;
-
-        constructor(public name: Identifier,
-                    public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-            super();
-            name && (name.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public _isDeclaration() { return true; }
-
-        public nodeType(): NodeType {
-            return NodeType.MemberFunctionDeclaration;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
-    }
-
     export class IndexSignature extends AST {
         constructor(
             public parameterList: ASTList,
@@ -1608,6 +1508,106 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class MemberFunctionDeclaration extends AST {
+        private _functionFlags = FunctionFlags.None;
+
+        constructor(public propertyName: Identifier,
+                    public typeParameters: ASTList,
+                    public parameterList: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
+            super();
+            propertyName && (propertyName.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public _isDeclaration() { return true; }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberFunctionDeclaration;
+        }
+
+        public getFunctionFlags(): FunctionFlags {
+            return this._functionFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setFunctionFlags(flags: FunctionFlags): void {
+            this._functionFlags = flags;
+        }
+    }
+
+    export class GetAccessor extends AST {
+        private _functionFlags: FunctionFlags = FunctionFlags.None;
+
+        constructor(public propertyName: Identifier,
+            public parameterList: ASTList,
+            public returnTypeAnnotation: TypeReference,
+            public block: Block) {
+            super();
+            propertyName && (propertyName.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.GetAccessor;
+        }
+
+        public setFunctionFlags(flags: FunctionFlags): void {
+            this._functionFlags = flags;
+        }
+
+        public getFunctionFlags(): FunctionFlags {
+            return this._functionFlags;
+        }
+
+        public _isDeclaration() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitGetAccessor(this);
+        }
+    }
+
+    export class SetAccessor extends AST {
+        private _functionFlags: FunctionFlags = FunctionFlags.None;
+
+        constructor(public propertyName: Identifier,
+            public parameterList: ASTList,
+            public block: Block) {
+            super();
+            propertyName && (propertyName.parent = this);
+            parameterList && (parameterList.parent = this);
+            block && (block.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SetAccessor;
+        }
+
+        public setFunctionFlags(flags: FunctionFlags): void {
+            this._functionFlags = flags;
+        }
+
+        public getFunctionFlags(): FunctionFlags {
+            return this._functionFlags;
+        }
+
+        public _isDeclaration() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter): void {
+            emitter.emitSetAccessor(this);
+        }
     }
 
     export class MemberVariableDeclaration extends AST {
@@ -2807,7 +2807,7 @@ module TypeScript {
             case NodeType.FunctionDeclaration:
                 return (<FunctionDeclaration>ast.parent).name === ast;
             case NodeType.MemberFunctionDeclaration:
-                return (<MemberFunctionDeclaration>ast.parent).name === ast;
+                return (<MemberFunctionDeclaration>ast.parent).propertyName === ast;
             case NodeType.Parameter:
                 return (<Parameter>ast.parent).id === ast;
             case NodeType.TypeParameter:
@@ -2842,7 +2842,7 @@ module TypeScript {
             && ast.parent
             && ast.nodeType() === NodeType.Name
             && ast.parent.nodeType() === NodeType.MemberFunctionDeclaration
-            && (<MemberFunctionDeclaration>ast.parent).name === ast;
+            && (<MemberFunctionDeclaration>ast.parent).propertyName === ast;
     }
 
     export function isNameOfMemberAccessExpression(ast: AST) {

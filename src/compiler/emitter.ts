@@ -2325,7 +2325,7 @@ module TypeScript {
             this.emitIndent();
             this.recordSourceMappingStart(funcDecl);
             this.emitComments(funcDecl, true);
-            var functionName = funcDecl.name.text();
+            var functionName = funcDecl.propertyName.text();
 
             this.writeToOutput(classDecl.identifier.text());
 
@@ -2333,7 +2333,7 @@ module TypeScript {
                 this.writeToOutput(".prototype");
             }
 
-            if (isQuoted(functionName) || funcDecl.name.isStringOrNumericLiteral) {
+            if (isQuoted(functionName) || funcDecl.propertyName.isStringOrNumericLiteral) {
                 this.writeToOutput("[" + functionName + "] = ");
             }
             else {
@@ -2350,7 +2350,7 @@ module TypeScript {
             this.emitFunctionParameters(funcDecl.parameterList);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.name.text(), funcDecl, funcDecl.parameterList, funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.propertyName.text(), funcDecl, funcDecl.parameterList, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 

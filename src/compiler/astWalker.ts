@@ -169,7 +169,7 @@ module TypeScript {
     }
 
     function walkMemberFunctionDeclarationChildren(preAst: MemberFunctionDeclaration, walker: AstWalker): void {
-        walker.walk(preAst.name);
+        walker.walk(preAst.propertyName);
         walker.walk(preAst.typeParameters);
         walker.walk(preAst.parameterList);
         walker.walk(preAst.returnTypeAnnotation);
