@@ -710,30 +710,6 @@ module TypeScript {
         }
     }
 
-    export class ObjectCreationExpression extends AST implements ICallExpression {
-        constructor(public expression: AST,
-                    public argumentList: ArgumentList,
-                    public closeParenSpan: ASTSpan) {
-            super();
-            expression && (expression.parent = this);
-            argumentList && (argumentList.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ObjectCreationExpression;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitObjectCreationExpression(this);
-        }
-
-        public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition) &&
-                structuralEquals(this.argumentList, ast.argumentList, includingPosition);
-        }
-    }
-
     export class ArgumentList extends AST {
         constructor(public typeArguments: ASTList, public arguments: ASTList) {
             super();
@@ -1391,30 +1367,6 @@ module TypeScript {
         }
     }
 
-    export class ThrowStatement extends AST {
-        constructor(public expression: AST) {
-            super();
-            expression && (expression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ThrowStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitThrowStatement(this);
-        }
-
-        public structuralEquals(ast: ThrowStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-            structuralEquals(this.expression, ast.expression, includingPosition);
-        }
-    }
-
     export class ExpressionStatement extends AST {
         constructor(public expression: AST) {
             super();
@@ -1563,30 +1515,6 @@ module TypeScript {
         }
     }
 
-    export class ReturnStatement extends AST {
-        constructor(public expression: AST) {
-            super();
-            expression && (expression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ReturnStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitReturnStatement(this);
-        }
-
-        public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.expression, ast.expression, includingPosition);
-        }
-    }
-
     export class TypeParameter extends AST {
         constructor(public name: Identifier, public constraint: TypeReference) {
             super();
@@ -1706,6 +1634,78 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class ThrowStatement extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ThrowStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitThrowStatement(this);
+        }
+
+        public structuralEquals(ast: ThrowStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+    }
+
+    export class ReturnStatement extends AST {
+        constructor(public expression: AST) {
+            super();
+            expression && (expression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ReturnStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitReturnStatement(this);
+        }
+
+        public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+    }
+
+    export class ObjectCreationExpression extends AST implements ICallExpression {
+        constructor(public expression: AST,
+            public argumentList: ArgumentList,
+            public closeParenSpan: ASTSpan) {
+            super();
+            expression && (expression.parent = this);
+            argumentList && (argumentList.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ObjectCreationExpression;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitObjectCreationExpression(this);
+        }
+
+        public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.argumentList, ast.argumentList, includingPosition);
+        }
     }
 
     export class SwitchStatement extends AST {
