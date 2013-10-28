@@ -2833,7 +2833,7 @@ module TypeScript {
             for (var i = declPath.length - 1; i >= 0; i--) {
                 var decl = declPath[i];
                 var declKind = decl.kind;
-                if (declKind === PullElementKind.FunctionExpression && hasFlag(decl.flags, PullElementFlags.FatArrow)) {
+                if (declKind === PullElementKind.FunctionExpression && hasFlag(decl.flags, PullElementFlags.ArrowFunction)) {
                     continue;
                 }
 
@@ -6627,7 +6627,7 @@ module TypeScript {
             if (decl.kind === PullElementKind.Function) {
                 return true;
             }
-            else if (decl.kind === PullElementKind.FunctionExpression && !hasFlag(decl.flags, PullElementFlags.FatArrow)) {
+            else if (decl.kind === PullElementKind.FunctionExpression && !hasFlag(decl.flags, PullElementFlags.ArrowFunction)) {
                 return true;
             }
 
@@ -6724,7 +6724,7 @@ module TypeScript {
                     if (declFlags & PullElementFlags.Static) {
                         isStaticContext = true;
                     }
-                    else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.FatArrow)) {
+                    else if (declKind === PullElementKind.FunctionExpression && !hasFlag(declFlags, PullElementFlags.ArrowFunction)) {
                         return null;
                     }
                     else if (declKind === PullElementKind.Function) {
@@ -11550,20 +11550,20 @@ module TypeScript {
             // work back up the decl path, until you can find a class
             // PULLTODO: Obviously not completely correct, but this sufficiently unblocks testing of the pull model
             if (declPath.length) {
-                var inFatArrow = false;
+                var inArrowFunction = false;
                 for (var i = declPath.length - 1; i >= 0; i--) {
                     var decl = declPath[i];
                     var declKind = decl.kind;
                     var declFlags = decl.flags;
 
                     if (declKind === PullElementKind.FunctionExpression &&
-                        hasFlag(declFlags, PullElementFlags.FatArrow)) {
+                        hasFlag(declFlags, PullElementFlags.ArrowFunction)) {
 
-                        inFatArrow = true;
+                        inArrowFunction = true;
                         continue;
                     }
 
-                    if (inFatArrow) {
+                    if (inArrowFunction) {
                         if (declKind === PullElementKind.Function ||
                             declKind === PullElementKind.Method ||
                             declKind === PullElementKind.ConstructorMethod ||

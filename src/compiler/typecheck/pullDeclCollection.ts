@@ -537,7 +537,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
 
         if (functionExpressionDeclAST.nodeType() === NodeType.ArrowFunctionExpression) {
-            declFlags |= PullElementFlags.FatArrow;
+            declFlags |= PullElementFlags.ArrowFunction;
         }
 
         var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
