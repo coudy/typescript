@@ -1282,39 +1282,6 @@ module TypeScript {
         }
     }
 
-    export class TypeParameter extends AST {
-        constructor(public name: Identifier, public constraint: Constraint) {
-            super();
-            name && (name.parent = this);
-            constraint && (constraint.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.TypeParameter;
-        }
-
-        public _isDeclaration() {
-            return true;
-        }
-
-        public structuralEquals(ast: TypeParameter, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.name, ast.name, includingPosition) &&
-                   structuralEquals(this.constraint, ast.constraint, includingPosition);
-        }
-    }
-
-    export class Constraint extends AST {
-        constructor(public type: TypeReference) {
-            super();
-            type && (type.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.Constraint;
-        }
-    }
-
     export class GenericType extends AST {
         constructor(public name: AST, public typeArguments: ASTList) {
             super();
@@ -1412,6 +1379,39 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class TypeParameter extends AST {
+        constructor(public name: Identifier, public constraint: Constraint) {
+            super();
+            name && (name.parent = this);
+            constraint && (constraint.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TypeParameter;
+        }
+
+        public _isDeclaration() {
+            return true;
+        }
+
+        public structuralEquals(ast: TypeParameter, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.name, ast.name, includingPosition) &&
+                structuralEquals(this.constraint, ast.constraint, includingPosition);
+        }
+    }
+
+    export class Constraint extends AST {
+        constructor(public type: TypeReference) {
+            super();
+            type && (type.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.Constraint;
+        }
     }
 
     export class ElseClause extends AST {
