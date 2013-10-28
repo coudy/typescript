@@ -2876,7 +2876,6 @@ module TypeScript {
             typeParameterSymbol.startResolving();
 
             if (typeParameterAST.constraint) {
-                var enclosingDecl = this.getEnclosingDecl(typeParameterDecl);
                 var constraintTypeSymbol = this.resolveTypeReference(typeParameterAST.constraint.type, context);
 
                 if (constraintTypeSymbol) {
@@ -2896,11 +2895,15 @@ module TypeScript {
         private typeCheckTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext) {
             this.setTypeChecked(typeParameterAST, context);
 
-            var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
+            this.resolveAST(typeParameterAST.constraint, /*isContextuallyTyped:*/ false, context);
+        }
 
-            if (typeParameterAST.constraint) {
-                this.resolveTypeReference(typeParameterAST.constraint.type, context);
+        private resolveConstraint(constraint: Constraint, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(constraint, context)) {
+                this.setTypeChecked(constraint, context);
             }
+
+            return this.resolveTypeReference(constraint.type, context);
         }
 
         private resolveFunctionBodyReturnTypes(
@@ -5200,6 +5203,9 @@ module TypeScript {
 
                 case NodeType.TypeParameter:
                     return this.resolveTypeParameterDeclaration(<TypeParameter>ast, context);
+
+                case NodeType.Constraint:
+                    return this.resolveConstraint(<Constraint>ast, context);
 
                 case NodeType.ImportDeclaration:
                     return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
