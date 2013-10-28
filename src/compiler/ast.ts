@@ -1636,6 +1636,21 @@ module TypeScript {
         closeParenSpan: ASTSpan;
     }
 
+    export class IndexMemberDeclaration extends AST {
+        constructor(public indexSignature: IndexSignature) {
+            super();
+            indexSignature && (indexSignature.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.IndexMemberDeclaration;
+        }
+
+        public isDeclaration(): boolean {
+            return true;
+        }
+    }
+
     export class ThrowStatement extends AST {
         constructor(public expression: AST) {
             super();

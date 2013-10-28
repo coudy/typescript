@@ -184,6 +184,10 @@ module TypeScript {
         walker.walk(preAst.block);
     }
 
+    function walkIndexMemberDeclarationChildren(preAst: IndexMemberDeclaration, walker: AstWalker): void {
+        walker.walk(preAst.indexSignature);
+    }
+
     function walkIndexSignatureChildren(preAst: IndexSignature, walker: AstWalker): void {
         walker.walk(preAst.parameterList);
         walker.walk(preAst.returnTypeAnnotation);
@@ -419,6 +423,7 @@ module TypeScript {
     childrenWalkers[NodeType.IfStatement] = walkIfStatementChildren;
     childrenWalkers[NodeType.ImplementsHeritageClause] = walkHeritageClauseChildren;
     childrenWalkers[NodeType.ImportDeclaration] = walkImportDeclChildren;
+    childrenWalkers[NodeType.IndexMemberDeclaration] = walkIndexMemberDeclarationChildren;
     childrenWalkers[NodeType.IndexSignature] = walkIndexSignatureChildren;
     childrenWalkers[NodeType.InExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.InstanceOfExpression] = walkBinaryExpressionChildren;

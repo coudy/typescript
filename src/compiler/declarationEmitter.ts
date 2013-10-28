@@ -83,8 +83,10 @@ module TypeScript {
                     return this.emitDeclarationsForGetAccessor(<GetAccessor>ast);
                 case NodeType.SetAccessor:
                     return this.emitDeclarationsForSetAccessor(<SetAccessor>ast);
+                case NodeType.IndexMemberDeclaration:
+                    return this.emitIndexMemberDeclaration(<IndexMemberDeclaration>ast);
                 case NodeType.IndexSignature:
-                    return this.emitDeclarationsForIndexSignature(<IndexSignature>ast);
+                    return this.emitIndexSignature(<IndexSignature>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.MemberFunctionDeclaration:
@@ -604,7 +606,11 @@ module TypeScript {
             this.declFile.WriteLine(";");
         }
 
-        private emitDeclarationsForIndexSignature(funcDecl: IndexSignature) {
+        private emitIndexMemberDeclaration(funcDecl: IndexMemberDeclaration) {
+            this.emitDeclarationsForAST(funcDecl.indexSignature);
+        }
+
+        private emitIndexSignature(funcDecl: IndexSignature) {
             if (!this.canEmitDeclarations(ToDeclFlags(FunctionFlags.None), funcDecl)) {
                 return;
             }

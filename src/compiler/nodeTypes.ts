@@ -64,6 +64,7 @@ module TypeScript {
         MemberVariableDeclaration,
         MemberFunctionDeclaration,
         IndexSignature,
+        IndexMemberDeclaration,
 
         // Expressions
         Name,

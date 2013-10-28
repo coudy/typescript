@@ -3434,6 +3434,14 @@ module TypeScript {
             return funcSymbol;
         }
 
+        private resolveIndexMemberDeclaration(ast: IndexMemberDeclaration, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(ast, context)) {
+                this.setTypeChecked(ast, context);
+            }
+
+            return this.resolveIndexSignature(ast.indexSignature, context);
+        }
+
         private resolveIndexSignature(funcDeclAST: IndexSignature, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
@@ -5224,6 +5232,9 @@ module TypeScript {
                 case NodeType.GetAccessor:
                 case NodeType.SetAccessor:
                     return this.resolveAccessorDeclaration(ast, context);
+
+                case NodeType.IndexMemberDeclaration:
+                    return this.resolveIndexMemberDeclaration(<IndexMemberDeclaration>ast, context);
 
                 case NodeType.IndexSignature:
                     return this.resolveIndexSignature(<IndexSignature>ast, context);

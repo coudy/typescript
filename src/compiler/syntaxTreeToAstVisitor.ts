@@ -1549,14 +1549,16 @@ module TypeScript {
             return result;
         }
 
-        public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): IndexSignature {
+        public visitIndexMemberDeclaration(node: IndexMemberDeclarationSyntax): IndexMemberDeclaration {
             var start = this.position;
 
             this.moveTo(node, node.indexSignature);
-            var result: IndexSignature = node.indexSignature.accept(this);
-            // this.setCommentsAndSpan(result, start, node);
+            var indexSignature: IndexSignature = node.indexSignature.accept(this);
 
             this.movePast(node.semicolonToken);
+
+            var result = new IndexMemberDeclaration(indexSignature);
+            this.setSpan(result, start, node);
 
             return result;
         }
