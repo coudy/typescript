@@ -4510,10 +4510,10 @@ module TypeScript {
             if (this.canTypeCheckAST(ast, context)) {
                 this.setTypeChecked(ast, context);
 
-                this.resolveAST(ast.init, /*isContextuallyTyped:*/ false, context);
-                this.resolveAST(ast.cond, /*isContextuallyTyped:*/ false, context);
-                this.resolveAST(ast.incr, /*isContextuallyTyped:*/ false, context);
-                this.resolveAST(ast.body, /*isContextuallyTyped:*/ false, context);
+                this.resolveAST(ast.initializer, /*isContextuallyTyped:*/ false, context);
+                this.resolveAST(ast.condition, /*isContextuallyTyped:*/ false, context);
+                this.resolveAST(ast.incrementor, /*isContextuallyTyped:*/ false, context);
+                this.resolveAST(ast.statement, /*isContextuallyTyped:*/ false, context);
             }
 
             return this.semanticInfoChain.voidTypeSymbol;

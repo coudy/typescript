@@ -1635,39 +1635,6 @@ module TypeScript {
         }
     }
 
-    export class ForStatement extends AST {
-        constructor(public init: AST,
-                    public cond: AST,
-                    public incr: AST,
-                    public body: AST) {
-            super();
-            init && (init.parent = this);
-            cond && (cond.parent = this);
-            incr && (incr.parent = this);
-            body && (body.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ForStatement;
-        }
-
-        public isStatement() {
-            return true;
-        }
-
-        public emitWorker(emitter: Emitter) {
-            emitter.emitForStatement(this);
-        }
-
-        public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.init, ast.init, includingPosition) &&
-                   structuralEquals(this.cond, ast.cond, includingPosition) &&
-                   structuralEquals(this.incr, ast.incr, includingPosition) &&
-                   structuralEquals(this.body, ast.body, includingPosition);
-        }
-    }
-
     export class SwitchStatement extends AST {
         constructor(public expression: AST, public caseList: ASTList, public statement: ASTSpan) {
             super();
@@ -1848,6 +1815,39 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+    }
+
+    export class ForStatement extends AST {
+        constructor(public initializer: AST,
+            public condition: AST,
+            public incrementor: AST,
+            public statement: AST) {
+            super();
+                initializer && (initializer.parent = this);
+                condition && (condition.parent = this);
+                incrementor && (incrementor.parent = this);
+                statement && (statement.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ForStatement;
+        }
+
+        public isStatement() {
+            return true;
+        }
+
+        public emitWorker(emitter: Emitter) {
+            emitter.emitForStatement(this);
+        }
+
+        public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.initializer, ast.initializer, includingPosition) &&
+                structuralEquals(this.condition, ast.condition, includingPosition) &&
+                structuralEquals(this.incrementor, ast.incrementor, includingPosition) &&
+                structuralEquals(this.statement, ast.statement, includingPosition);
         }
     }
 

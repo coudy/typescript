@@ -2823,24 +2823,24 @@ module TypeScript {
         public emitForStatement(statement: ForStatement): void {
             this.recordSourceMappingStart(statement);
             this.writeToOutput("for (");
-            if (statement.init) {
-                if (statement.init.nodeType() !== NodeType.List) {
-                    statement.init.emit(this);
+            if (statement.initializer) {
+                if (statement.initializer.nodeType() !== NodeType.List) {
+                    statement.initializer.emit(this);
                 }
                 else {
-                    this.emitCommaSeparatedList(<ASTList>statement.init);
+                    this.emitCommaSeparatedList(<ASTList>statement.initializer);
                 }
             }
 
             this.writeToOutput("; ");
-            this.emitJavascript(statement.cond, false);
+            this.emitJavascript(statement.condition, false);
             this.writeToOutput(";");
-            if (statement.incr) {
+            if (statement.incrementor) {
                 this.writeToOutput(" ");
-                this.emitJavascript(statement.incr, false);
+                this.emitJavascript(statement.incrementor, false);
             }
             this.writeToOutput(")");
-            this.emitBlockOrStatement(statement.body);
+            this.emitBlockOrStatement(statement.statement);
             this.recordSourceMappingEnd(statement);
         }
 

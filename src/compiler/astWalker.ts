@@ -215,10 +215,10 @@ module TypeScript {
     }
 
     function walkForStatementChildren(preAst: ForStatement, walker: AstWalker): void {
-        walker.walk(preAst.init);
-        walker.walk(preAst.cond);
-        walker.walk(preAst.incr);
-        walker.walk(preAst.body);
+        walker.walk(preAst.initializer);
+        walker.walk(preAst.condition);
+        walker.walk(preAst.incrementor);
+        walker.walk(preAst.statement);
     }
 
     function walkForInStatementChildren(preAst: ForInStatement, walker: AstWalker): void {
