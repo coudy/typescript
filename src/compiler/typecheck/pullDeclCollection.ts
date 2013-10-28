@@ -395,8 +395,9 @@ module TypeScript {
         var span = TextSpan.fromBounds(memberDecl.minChar, memberDecl.limChar);
         var parent = context.getParent();
 
-        var decl = new NormalPullDecl(memberDecl.id.valueText(), memberDecl.id.text(), declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(memberDecl.variableDeclarator.id.valueText(), memberDecl.variableDeclarator.id.text(), declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(memberDecl, decl);
+        context.semanticInfoChain.setDeclForAST(memberDecl.variableDeclarator, decl);
         context.semanticInfoChain.setASTForDecl(decl, memberDecl);
 
         // Note: it is intentional that a var decl does not get added to hte context stack.  A var
@@ -439,6 +440,11 @@ module TypeScript {
     }
 
     function preCollectVarDecls(ast: AST, context: DeclCollectionContext): void {
+        if (ast.parent.nodeType() === NodeType.MemberVariableDeclaration) {
+            // Already handled this node.
+            return;
+        }
+
         var varDecl = <VariableDeclarator>ast;
 
         if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property)) {

@@ -1661,15 +1661,10 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.variableDeclarator);
-            this.moveTo(node.variableDeclarator, node.variableDeclarator.identifier);
-
-            var name = this.identifierFromToken(node.variableDeclarator.identifier, /*isOptional:*/ false);
-            this.movePast(node.variableDeclarator.identifier);
-            var typeExpr = node.variableDeclarator.typeAnnotation ? node.variableDeclarator.typeAnnotation.accept(this) : null;
-            var init: EqualsValueClause = node.variableDeclarator.equalsValueClause ? node.variableDeclarator.equalsValueClause.accept(this) : null;
+            var variableDeclarator: VariableDeclarator = node.variableDeclarator.accept(this);
             this.movePast(node.semicolonToken);
 
-            var result = new MemberVariableDeclaration(name, typeExpr, init);
+            var result = new MemberVariableDeclaration(variableDeclarator);
             this.setCommentsAndSpan(result, start, node);
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {

@@ -970,32 +970,6 @@ module TypeScript {
         }
     }
 
-    export class MemberVariableDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public id: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause) {
-            super();
-            id && (id.parent = this);
-            typeExpr && (typeExpr.parent = this);
-            equalsValueClause && (equalsValueClause.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.MemberVariableDeclaration;
-        }
-
-        public _isDeclaration() { return true; }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-    }
-
     export class VariableDeclarator extends AST {
         private _varFlags = VariableFlags.None;
 
@@ -1634,6 +1608,30 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class MemberVariableDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public variableDeclarator: VariableDeclarator) {
+            super();
+            variableDeclarator && (variableDeclarator.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberVariableDeclaration;
+        }
+
+        public _isDeclaration() { return true; }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
     }
 
     export class IndexMemberDeclaration extends AST {

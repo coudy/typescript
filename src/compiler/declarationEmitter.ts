@@ -365,7 +365,7 @@ module TypeScript {
             if (this.canEmitDeclarations(ToDeclFlags(varDecl.getVarFlags()), varDecl)) {
                 this.emitDeclarationComments(varDecl);
                 this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
-                this.declFile.Write(varDecl.id.text());
+                this.declFile.Write(varDecl.variableDeclarator.id.text());
 
                 if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);

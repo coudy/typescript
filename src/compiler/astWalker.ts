@@ -211,9 +211,7 @@ module TypeScript {
     }
 
     function walkMemberVariableDeclarationChildren(preAst: MemberVariableDeclaration, walker: AstWalker): void {
-        walker.walk(preAst.id);
-        walker.walk(preAst.typeExpr);
-        walker.walk(preAst.equalsValueClause);
+        walker.walk(preAst.variableDeclarator);
     }
 
     function walkReturnStatementChildren(preAst: ReturnStatement, walker: AstWalker): void {

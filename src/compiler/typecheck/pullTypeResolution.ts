@@ -2338,13 +2338,11 @@ module TypeScript {
         }
 
         private resolveMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext): PullSymbol {
-
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
+                varDecl, varDecl.variableDeclarator.id, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
-
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
                 varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
@@ -2631,7 +2629,7 @@ module TypeScript {
             context: PullTypeResolutionContext) {
 
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
+                varDecl, varDecl.variableDeclarator.id, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(
@@ -11523,7 +11521,7 @@ module TypeScript {
 
                             if (ast.nodeType() === NodeType.MemberVariableDeclaration) {
                                 var variableDeclarator = <MemberVariableDeclaration>ast;
-                                if (variableDeclarator.equalsValueClause) {
+                                if (variableDeclarator.variableDeclarator.equalsValueClause) {
                                     return true;
                                 }
                             }

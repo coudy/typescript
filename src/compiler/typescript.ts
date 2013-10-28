@@ -616,9 +616,9 @@ module TypeScript {
 
                     case NodeType.MemberVariableDeclaration:
                         var memberVariable = <MemberVariableDeclaration> current;
-                        inContextuallyTypedAssignment = memberVariable.typeExpr !== null;
+                        inContextuallyTypedAssignment = memberVariable.variableDeclarator.typeExpr !== null;
 
-                        this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, memberVariable, memberVariable.equalsValueClause);
+                        this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, memberVariable, memberVariable.variableDeclarator.equalsValueClause);
                         break;
 
                     case NodeType.VariableDeclarator:

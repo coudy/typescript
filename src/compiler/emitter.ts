@@ -1443,7 +1443,7 @@ module TypeScript {
         }
 
         private emitMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
-            Debug.assert(!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.equalsValueClause);
+            Debug.assert(!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.variableDeclarator.equalsValueClause);
 
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             this.pushDecl(pullDecl);
@@ -1451,8 +1451,8 @@ module TypeScript {
             this.emitComments(varDecl, true);
             this.recordSourceMappingStart(varDecl);
 
-            var varDeclName = varDecl.id.text();
-            var quotedOrNumber = isQuoted(varDeclName) || varDecl.id.isStringOrNumericLiteral;
+            var varDeclName = varDecl.variableDeclarator.id.text();
+            var quotedOrNumber = isQuoted(varDeclName) || varDecl.variableDeclarator.id.isStringOrNumericLiteral;
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
             var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1465,18 +1465,18 @@ module TypeScript {
                 this.writeToOutput("this.");
             }
 
-            this.writeToOutputWithSourceMapRecord(varDecl.id.text(), varDecl.id);
+            this.writeToOutputWithSourceMapRecord(varDecl.variableDeclarator.id.text(), varDecl.variableDeclarator.id);
 
             if (quotedOrNumber) {
                 this.writeToOutput("]");
             }
 
-            if (varDecl.equalsValueClause) {
+            if (varDecl.variableDeclarator.equalsValueClause) {
                 // Ensure we have a fresh var list count when recursing into the variable 
                 // initializer.  We don't want our current list of variables to affect how we
                 // emit nested variable lists.
                 var prevVariableDeclaration = this.currentVariableDeclaration;
-                varDecl.equalsValueClause.emit(this);
+                varDecl.variableDeclarator.equalsValueClause.emit(this);
                 this.currentVariableDeclaration = prevVariableDeclaration;
             }
 
@@ -1833,7 +1833,7 @@ module TypeScript {
             for (var i = 0, n = this.thisClassNode.classElements.members.length; i < n; i++) {
                 if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>this.thisClassNode.classElements.members[i];
-                    if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.equalsValueClause) {
+                    if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
                         this.emitIndent();
                         this.emitMemberVariableDeclaration(varDecl);
                         this.writeLineToOutput("");
@@ -2294,21 +2294,21 @@ module TypeScript {
                 if (memberDecl.nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>memberDecl;
 
-                    if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.equalsValueClause) {
+                    if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, varDecl);
 
                         this.emitIndent();
                         this.recordSourceMappingStart(varDecl);
 
-                        var varDeclName = varDecl.id.text();
-                        if (isQuoted(varDeclName) || varDecl.id.isStringOrNumericLiteral) {
+                        var varDeclName = varDecl.variableDeclarator.id.text();
+                        if (isQuoted(varDeclName) || varDecl.variableDeclarator.id.isStringOrNumericLiteral) {
                             this.writeToOutput(classDecl.identifier.text() + "[" + varDeclName + "]");
                         }
                         else {
                             this.writeToOutput(classDecl.identifier.text() + "." + varDeclName);
                         }
 
-                        varDecl.equalsValueClause.emit(this);
+                        varDecl.variableDeclarator.equalsValueClause.emit(this);
 
                         this.recordSourceMappingEnd(varDecl);
                         this.writeLineToOutput(";");

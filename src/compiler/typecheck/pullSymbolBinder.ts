@@ -1218,7 +1218,11 @@ module TypeScript {
         private bindPropertyDeclarationToPullSymbol(propertyDeclaration: PullDecl) {
             var declFlags = propertyDeclaration.flags;
             var declKind = propertyDeclaration.kind;
-            var propDeclAST = <VariableDeclarator>this.semanticInfoChain.getASTForDecl(propertyDeclaration);
+
+            var ast = this.semanticInfoChain.getASTForDecl(propertyDeclaration);
+            var propDeclAST = ast.nodeType() === NodeType.MemberVariableDeclaration
+                ? (<MemberVariableDeclaration>ast).variableDeclarator
+                : <VariableDeclarator>ast;
 
             var isStatic = false;
             var isOptional = false;
