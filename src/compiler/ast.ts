@@ -606,15 +606,11 @@ module TypeScript {
         private _functionFlags = FunctionFlags.None;
 
         constructor(public name: Identifier,
-                    public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
+                    public callSignature: CallSignature,
                     public block: Block) {
             super();
             name && (name.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
 
@@ -633,12 +629,11 @@ module TypeScript {
 
         public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   this._functionFlags === ast._functionFlags &&
-                   this.hint === ast.hint &&
-                   structuralEquals(this.name, ast.name, includingPosition) &&
-                   structuralEquals(this.block, ast.block, includingPosition) &&
-                   structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                   structuralEquals(this.parameterList, ast.parameterList, includingPosition);
+                this._functionFlags === ast._functionFlags &&
+                this.hint === ast.hint &&
+                structuralEquals(this.name, ast.name, includingPosition) &&
+                structuralEquals(this.block, ast.block, includingPosition) &&
+                structuralEquals(this.callSignature, ast.callSignature, includingPosition);
         }
 
         public getNameText() {
@@ -790,14 +785,9 @@ module TypeScript {
     export class ParenthesizedArrowFunctionExpression extends AST {
         public hint: string = null;
 
-        constructor(public typeParameters: ASTList,
-            public parameterList: ASTList,
-            public returnTypeAnnotation: TypeReference,
-            public block: Block) {
+        constructor(public callSignature: CallSignature, public block: Block) {
             super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
 
@@ -809,8 +799,7 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 this.hint === ast.hint &&
                 structuralEquals(this.block, ast.block, includingPosition) &&
-                structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                structuralEquals(this.parameterList, ast.parameterList, includingPosition);
+                structuralEquals(this.callSignature, ast.callSignature, includingPosition);
         }
 
         public getNameText() {
@@ -1104,11 +1093,9 @@ module TypeScript {
     }
 
     export class ConstructSignature extends AST {
-        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+        constructor(public callSignature: CallSignature) {
             super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
         }
 
         nodeType(): NodeType {
@@ -1117,12 +1104,10 @@ module TypeScript {
     }
 
     export class MethodSignature extends AST {
-        constructor(public propertyName: Identifier, public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+        constructor(public propertyName: Identifier, public callSignature: CallSignature) {
             super();
             propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
         }
 
         nodeType(): NodeType {
@@ -1277,16 +1262,10 @@ module TypeScript {
     export class MemberFunctionDeclaration extends AST {
         private _functionFlags = FunctionFlags.None;
 
-        constructor(public propertyName: Identifier,
-                    public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
+        constructor(public propertyName: Identifier, public callSignature: CallSignature, public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
 
@@ -1689,16 +1668,10 @@ module TypeScript {
     }
 
     export class FunctionPropertyAssignment extends AST {
-        constructor(public propertyName: Identifier,
-            public typeParameters: ASTList,
-            public parameterList: ASTList,
-            public returnTypeAnnotation: TypeReference,
-            public block: Block) {
+        constructor(public propertyName: Identifier, public callSignature: CallSignature, public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
 
@@ -1710,16 +1683,10 @@ module TypeScript {
     export class FunctionExpression extends AST {
         public hint: string = null;
 
-        constructor(public identifier: Identifier,
-                    public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
+        constructor(public identifier: Identifier, public callSignature: CallSignature, public block: Block) {
             super();
             identifier && (identifier.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
 
@@ -2564,5 +2531,71 @@ module TypeScript {
         }
 
         throw Errors.invalidOperation();
+    }
+
+    export function getParameterList(ast: AST): ASTList {
+        if (ast) {
+            switch (ast.nodeType()) {
+                case NodeType.ConstructorDeclaration:
+                    return (<ConstructorDeclaration>ast).parameterList;
+                case NodeType.FunctionDeclaration:
+                    return getParameterList((<FunctionDeclaration>ast).callSignature);
+                case NodeType.ParenthesizedArrowFunctionExpression:
+                    return getParameterList((<ParenthesizedArrowFunctionExpression>ast).callSignature);
+                case NodeType.ConstructSignature:
+                    return getParameterList((<ConstructSignature>ast).callSignature);
+                case NodeType.MemberFunctionDeclaration:
+                    return getParameterList((<MemberFunctionDeclaration>ast).callSignature);
+                case NodeType.FunctionPropertyAssignment:
+                    return getParameterList((<FunctionPropertyAssignment>ast).callSignature);
+                case NodeType.FunctionExpression:
+                    return getParameterList((<FunctionExpression>ast).callSignature);
+                case NodeType.MethodSignature:
+                    return getParameterList((<MethodSignature>ast).callSignature);
+                case NodeType.ConstructorType:
+                    return (<ConstructorType>ast).parameterList;
+                case NodeType.FunctionType:
+                    return (<FunctionType>ast).parameterList;
+                case NodeType.CallSignature:
+                    return (<CallSignature>ast).parameterList;
+                case NodeType.GetAccessor:
+                    return (<GetAccessor>ast).parameterList;
+                case NodeType.SetAccessor:
+                    return (<SetAccessor>ast).parameterList;
+            }
+        }
+
+        return null;
+    }
+
+    export function getTypeAnnotation(ast: AST): TypeReference {
+        if (ast) {
+            switch (ast.nodeType()) {
+                case NodeType.FunctionDeclaration:
+                    return getTypeAnnotation((<FunctionDeclaration>ast).callSignature);
+                case NodeType.ParenthesizedArrowFunctionExpression:
+                    return getTypeAnnotation((<ParenthesizedArrowFunctionExpression>ast).callSignature);
+                case NodeType.ConstructSignature:
+                    return getTypeAnnotation((<ConstructSignature>ast).callSignature);
+                case NodeType.MemberFunctionDeclaration:
+                    return getTypeAnnotation((<MemberFunctionDeclaration>ast).callSignature);
+                case NodeType.FunctionPropertyAssignment:
+                    return getTypeAnnotation((<FunctionPropertyAssignment>ast).callSignature);
+                case NodeType.FunctionExpression:
+                    return getTypeAnnotation((<FunctionExpression>ast).callSignature);
+                case NodeType.MethodSignature:
+                    return getTypeAnnotation((<MethodSignature>ast).callSignature);
+                case NodeType.ConstructorType:
+                    return (<ConstructorType>ast).type;
+                case NodeType.FunctionType:
+                    return (<FunctionType>ast).type;
+                case NodeType.CallSignature:
+                    return (<CallSignature>ast).typeAnnotation;
+                case NodeType.GetAccessor:
+                    return (<GetAccessor>ast).typeAnnotation;
+            }
+        }
+
+        return null;
     }
 }

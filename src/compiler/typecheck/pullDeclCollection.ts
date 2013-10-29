@@ -624,11 +624,24 @@ module TypeScript {
     }
 
     // call signatures
-    function createCallSignatureDeclaration(callSignatureDeclAST: CallSignature, context: DeclCollectionContext): void {
+    function createCallSignatureDeclaration(callSignature: CallSignature, context: DeclCollectionContext): void {
+        var isChildOfObjectType = callSignature.parent && callSignature.parent.parent &&
+            callSignature.parent.nodeType() === NodeType.List &&
+            callSignature.parent.parent.nodeType() === NodeType.ObjectType;
+
+        if (!isChildOfObjectType) {
+            // This was a call signature that was part of some other entity (like a function 
+            // declaration or construct signature).  Those are already handled specially and
+            // we don't want to end up making another call signature for them.  We only want
+            // to make an actual call signature if we're a standalone call signature in an 
+            // object/interface type.
+            return;
+        }
+
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.CallSignature;
 
-        var span = TextSpan.fromBounds(callSignatureDeclAST.minChar, callSignatureDeclAST.limChar);
+        var span = TextSpan.fromBounds(callSignature.minChar, callSignature.limChar);
 
         var parent = context.getParent();
 
@@ -637,8 +650,8 @@ module TypeScript {
         }
 
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfoChain.setDeclForAST(callSignatureDeclAST, decl);
-        context.semanticInfoChain.setASTForDecl(decl, callSignatureDeclAST);
+        context.semanticInfoChain.setDeclForAST(callSignature, decl);
+        context.semanticInfoChain.setASTForDecl(decl, callSignature);
 
         context.pushParent(decl);
     }

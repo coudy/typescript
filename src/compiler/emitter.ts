@@ -676,11 +676,11 @@ module TypeScript {
             }
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(Parameters.fromParameterList(funcDecl.parameterList));
+            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl,
-                Parameters.fromParameterList(funcDecl.parameterList), funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -1171,7 +1171,7 @@ module TypeScript {
 
         public emitParenthesizedArrowFunctionExpression(arrowFunction: ParenthesizedArrowFunctionExpression): void {
             this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(),
-                Parameters.fromParameterList(arrowFunction.parameterList), arrowFunction.block);
+                Parameters.fromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.block);
         }
 
         private emitAnyArrowFunctionExpression(arrowFunction: AST, funcName: string, parameters: IParameters, block: Block): void {
@@ -1354,7 +1354,7 @@ module TypeScript {
 
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(funcDecl.parameterList);
+            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -2366,7 +2366,7 @@ module TypeScript {
 
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(funcDecl.parameterList);
+            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -2660,7 +2660,7 @@ module TypeScript {
 
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(funcProp.parameterList);
+            var parameters = Parameters.fromParameterList(funcProp.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 

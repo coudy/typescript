@@ -63,9 +63,7 @@ module TypeScript {
 
     function walkFunctionPropertyAssignmentChildren(preAst: FunctionPropertyAssignment, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -155,9 +153,7 @@ module TypeScript {
 
     function walkFunctionExpressionChildren(preAst: FunctionExpression, walker: AstWalker): void {
         walker.walk(preAst.identifier);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -168,9 +164,7 @@ module TypeScript {
     }
 
     function walkParenthesizedArrowFunctionExpressionChildren(preAst: ParenthesizedArrowFunctionExpression, walker: AstWalker): void {
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -181,17 +175,13 @@ module TypeScript {
 
     function walkMemberFunctionDeclarationChildren(preAst: MemberFunctionDeclaration, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
     function walkFuncDeclChildren(preAst: FunctionDeclaration, walker: AstWalker): void {
         walker.walk(preAst.name);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -226,9 +216,7 @@ module TypeScript {
     }
 
     function walkConstructSignatureChildren(preAst: ConstructSignature, walker: AstWalker): void {
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
     }
 
     function walkParameterChildren(preAst: Parameter, walker: AstWalker): void {
@@ -254,9 +242,7 @@ module TypeScript {
 
     function walkMethodSignatureChildren(preAst: MethodSignature, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
     }
 
     function walkReturnStatementChildren(preAst: ReturnStatement, walker: AstWalker): void {

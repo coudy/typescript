@@ -540,18 +540,12 @@ module TypeScript {
 
             this.movePast(node.identifier);
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-
-            var returnType = node.callSignature.typeAnnotation
-                ? node.callSignature.typeAnnotation.accept(this)
-                : null;
-
-            var block = node.block ? node.block.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block = node.block ? this.visitBlock(node.block) : null;
 
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new FunctionDeclaration(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
@@ -963,14 +957,12 @@ module TypeScript {
         public visitParenthesizedArrowFunctionExpression(node: ParenthesizedArrowFunctionExpressionSyntax): ParenthesizedArrowFunctionExpression {
             var start = this.position;
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
             this.movePast(node.equalsGreaterThanToken);
 
             var block = this.getArrowFunctionStatements(node.body);
 
-            var result = new ParenthesizedArrowFunctionExpression(typeParameters, parameters, returnType, block);
+            var result = new ParenthesizedArrowFunctionExpression(callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -1350,11 +1342,9 @@ module TypeScript {
             var start = this.position;
 
             this.movePast(node.newKeyword);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
 
-            var result = new ConstructSignature(typeParameters, parameters, returnType);
+            var result = new ConstructSignature(callSignature);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -1367,11 +1357,9 @@ module TypeScript {
             this.movePast(node.propertyName);
             this.movePast(node.questionToken);
 
-            var typeParameters = node.callSignature.typeParameterList ? node.callSignature.typeParameterList.accept(this) : null;
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
 
-            var result = new MethodSignature(name, typeParameters, parameters, returnType);
+            var result = new MethodSignature(name, callSignature);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -1556,16 +1544,11 @@ module TypeScript {
             
             this.movePast(node.propertyName);
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation
-                ? node.callSignature.typeAnnotation.accept(this)
-                : null;
-
-            var block = node.block ? node.block.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block = node.block ? this.visitBlock(node.block) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new MemberFunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new MemberFunctionDeclaration(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
@@ -1934,14 +1917,10 @@ module TypeScript {
             var start = this.position;
 
             var propertyName: Identifier = node.propertyName.accept(this);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            var block = node.block.accept(this);
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block = this.visitBlock(node.block);
 
-            var result = new FunctionPropertyAssignment(
-                propertyName, typeParameters, parameters, returnType, block);
-
+            var result = new FunctionPropertyAssignment(propertyName, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -1953,15 +1932,11 @@ module TypeScript {
             this.movePast(node.functionKeyword);
             var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation
-                ? node.callSignature.typeAnnotation.accept(this)
-                : null;
 
-            var block = node.block ? node.block.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block: Block = node.block ? node.block.accept(this) : null;
 
-            var result = new FunctionExpression(name, typeParameters, parameters, returnType, block);
+            var result = new FunctionExpression(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;

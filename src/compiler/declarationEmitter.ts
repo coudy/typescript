@@ -536,11 +536,11 @@ module TypeScript {
             this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
             var id = funcDecl.propertyName.text();
             this.declFile.Write(id);
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
 
-            this.emitParameterList(funcDecl.getFunctionFlags(), Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(funcDecl.getFunctionFlags(), Parameters.fromParameterList(funcDecl.callSignature.parameterList));
 
             this.declFile.Write(")");
 
@@ -592,10 +592,10 @@ module TypeScript {
             this.declFile.Write("new");
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -629,10 +629,10 @@ module TypeScript {
             }
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -700,10 +700,10 @@ module TypeScript {
             }
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(functionFlags, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(functionFlags, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
