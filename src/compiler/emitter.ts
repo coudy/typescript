@@ -1169,7 +1169,7 @@ module TypeScript {
         }
 
         public emitConstructor(funcDecl: ConstructorDeclaration) {
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
+            if (!funcDecl.block) {
                 return;
             }
             var temp = this.setContainer(EmitContainer.Constructor);
@@ -2983,7 +2983,7 @@ module TypeScript {
         }
 
         public emitConstructorDeclaration(declaration: ConstructorDeclaration): void {
-            if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
+            if (declaration.block) {
                 this.emitConstructor(declaration);
             }
             else {

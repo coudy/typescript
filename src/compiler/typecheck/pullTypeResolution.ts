@@ -3104,7 +3104,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, funcDeclAST.getFunctionFlags(), null, Parameters.fromParameterList(funcDeclAST.parameterList), null, funcDeclAST.block, context);
+                funcDeclAST, FunctionFlags.None, null, Parameters.fromParameterList(funcDeclAST.parameterList), null, funcDeclAST.block, context);
 
             this.typeCheckCallBacks.push(context => {
                 // Function or constructor

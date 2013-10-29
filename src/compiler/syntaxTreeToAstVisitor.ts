@@ -1480,10 +1480,6 @@ module TypeScript {
             var result = new ConstructorDeclaration(parameters, block);
             this.setCommentsAndSpan(result, start, node);
 
-            if (node.semicolonToken) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
-            }
-
             return result;
         }
 

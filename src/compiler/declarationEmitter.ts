@@ -462,7 +462,7 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
-            this.emitParameterList(funcDecl.getFunctionFlags(), Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
             this.declFile.WriteLine(";");
         }

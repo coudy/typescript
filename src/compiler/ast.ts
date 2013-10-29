@@ -944,7 +944,7 @@ module TypeScript {
 
     export class MemberAccessExpression extends AST {
         constructor(public expression: AST,
-            public name: Identifier) {
+                    public name: Identifier) {
             super();
             expression && (expression.parent = this);
             name && (name.parent = this);
@@ -979,7 +979,7 @@ module TypeScript {
 
     export class ElementAccessExpression extends AST {
         constructor(public expression: AST,
-            public argumentExpression: AST) {
+                    public argumentExpression: AST) {
             super();
             expression && (expression.parent = this);
             argumentExpression && (argumentExpression.parent = this);
@@ -1210,21 +1210,10 @@ module TypeScript {
     }
 
     export class ConstructorDeclaration extends AST {
-        private _functionFlags = FunctionFlags.None;
-
         constructor(public parameterList: ASTList, public block: Block) {
             super();
             parameterList && (parameterList.parent = this);
             block && (block.parent = this);
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
         }
 
         public nodeType(): NodeType {
