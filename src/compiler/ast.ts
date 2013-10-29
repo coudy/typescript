@@ -105,10 +105,6 @@ module TypeScript {
             throw Errors.abstract();
         }
 
-        public isStatement() {
-            return false;
-        }
-
         public preComments(): Comment[] {
             return this._preComments;
         }
@@ -1095,10 +1091,6 @@ module TypeScript {
             return NodeType.VariableStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.declaration, ast.declaration, includingPosition);
@@ -1115,10 +1107,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.Block;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
@@ -1270,10 +1258,6 @@ module TypeScript {
             return NodeType.IfStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.condition, ast.condition, includingPosition) &&
@@ -1290,10 +1274,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ExpressionStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: ExpressionStatement, includingPosition: boolean): boolean {
@@ -1468,10 +1448,6 @@ module TypeScript {
             return NodeType.ThrowStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: ThrowStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
@@ -1486,10 +1462,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ReturnStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
@@ -1527,10 +1499,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.SwitchStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
@@ -1583,10 +1551,6 @@ module TypeScript {
             return NodeType.BreakStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: BreakStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
@@ -1599,10 +1563,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ContinueStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: ContinueStatement, includingPosition: boolean): boolean {
@@ -1628,10 +1588,6 @@ module TypeScript {
             return NodeType.ForStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.initializer, ast.initializer, includingPosition) &&
@@ -1654,10 +1610,6 @@ module TypeScript {
             return NodeType.ForInStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.variableDeclaration, ast.variableDeclaration, includingPosition) &&
@@ -1677,10 +1629,6 @@ module TypeScript {
             return NodeType.WhileStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.condition, ast.condition, includingPosition) &&
@@ -1697,10 +1645,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.WithStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
@@ -1860,10 +1804,6 @@ module TypeScript {
             return NodeType.EmptyStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
@@ -1879,10 +1819,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.TryStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: TryStatement, includingPosition: boolean): boolean {
@@ -1940,10 +1876,6 @@ module TypeScript {
             return NodeType.LabeledStatement;
         }
 
-        public isStatement() {
-            return true;
-        }
-
         public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
@@ -1960,10 +1892,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.DoStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
 
         public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
@@ -2024,10 +1952,6 @@ module TypeScript {
     export class DebuggerStatement extends AST {
         public nodeType(): NodeType {
             return NodeType.DebuggerStatement;
-        }
-
-        public isStatement() {
-            return true;
         }
     }
 
