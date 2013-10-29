@@ -654,7 +654,7 @@ module TypeScript {
     }
 
     // construct signatures
-    function createConstructSignatureDeclaration(constructSignatureDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createConstructSignatureDeclaration(constructSignatureDeclAST: ConstructSignature, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.ConstructSignature;
 
@@ -919,13 +919,13 @@ module TypeScript {
             case NodeType.CallSignature:
                 createCallSignatureDeclaration(<CallSignature>ast, context);
                 break;
+            case NodeType.ConstructSignature:
+                createConstructSignatureDeclaration(<ConstructSignature>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
-                if (hasFlag(functionFlags, FunctionFlags.ConstructMember)) {
-                    createConstructSignatureDeclaration(funcDecl, context);
-                }
-                else if (hasFlag(functionFlags, FunctionFlags.Method)) {
+                if (hasFlag(functionFlags, FunctionFlags.Method)) {
                     createAnyMemberFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.block,  context);
                 }
                 else {

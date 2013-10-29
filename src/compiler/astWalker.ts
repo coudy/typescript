@@ -225,6 +225,12 @@ module TypeScript {
         walker.walk(preAst.returnTypeAnnotation);
     }
 
+    function walkConstructSignatureChildren(preAst: ConstructSignature, walker: AstWalker): void {
+        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.parameterList);
+        walker.walk(preAst.returnTypeAnnotation);
+    }
+
     function walkParameterChildren(preAst: Parameter, walker: AstWalker): void {
         walker.walk(preAst.id);
         walker.walk(preAst.typeExpr);
@@ -418,6 +424,7 @@ module TypeScript {
     childrenWalkers[NodeType.ConditionalExpression] = walkTrinaryExpressionChildren;
     childrenWalkers[NodeType.Constraint] = walkConstraintChildren;
     childrenWalkers[NodeType.ConstructorDeclaration] = walkConstructorDeclarationChildren;
+    childrenWalkers[NodeType.ConstructSignature] = walkConstructSignatureChildren;
     childrenWalkers[NodeType.ContinueStatement] = null;
     childrenWalkers[NodeType.ConstructorType] = walkConstructorTypeChildren;
     childrenWalkers[NodeType.DebuggerStatement] = null;

@@ -46,6 +46,7 @@ module TypeScript {
         FunctionType,
         ConstructorType,
         CallSignature,
+        ConstructSignature,
 
         // Declarations
         FunctionDeclaration,

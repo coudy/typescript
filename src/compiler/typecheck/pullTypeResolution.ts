@@ -3151,6 +3151,11 @@ module TypeScript {
                 null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
+        private typeCheckConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): void {
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Method | FunctionFlags.Signature,
+                null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+        }
+
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
             flags: FunctionFlags,
@@ -3190,8 +3195,7 @@ module TypeScript {
             var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
 
             // If this is a function and it has returnType annotation, check if block contains non void return expression
-            if (!hasFlag(flags, FunctionFlags.ConstructMember)
-                && block && returnTypeAnnotation != null && !hasReturn) {
+            if (funcDeclAST.nodeType() !== NodeType.ConstructSignature && block && returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
 
                 if (!isVoidOrAny && !(block.statements.members.length > 0 && block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
@@ -3306,7 +3310,7 @@ module TypeScript {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Cannot_resolve_return_type_reference));
                 }
                 else {
-                    var isConstructor = funcDeclAST.nodeType() === NodeType.ConstructorDeclaration || hasFlag(flags, FunctionFlags.ConstructMember);
+                    var isConstructor = funcDeclAST.nodeType() === NodeType.ConstructorDeclaration || funcDeclAST.nodeType() === NodeType.ConstructSignature;
                     if (isConstructor && returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Constructors_cannot_have_a_return_type_of_void));
                     }
@@ -3330,6 +3334,11 @@ module TypeScript {
         }
 
         private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature | FunctionFlags.Method, null,
+                funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+        }
+
+        private resolveConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature | FunctionFlags.Method, null,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
@@ -3610,7 +3619,7 @@ module TypeScript {
 
             var hadError = false;
 
-            var isConstructor = hasFlag(flags, FunctionFlags.ConstructMember);
+            var isConstructor = funcDeclAST.nodeType() === NodeType.ConstructSignature;
 
             if (signature) {
                 if (signature.isResolved) {
@@ -5280,6 +5289,9 @@ module TypeScript {
                 case NodeType.CallSignature:
                     return this.resolveCallSignature(<CallSignature>ast, context);
 
+                case NodeType.ConstructSignature:
+                    return this.resolveConstructSignature(<CallSignature>ast, context);
+
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, context);
 
@@ -5579,6 +5591,10 @@ module TypeScript {
                 
                 case NodeType.CallSignature:
                     this.typeCheckCallSignature(<CallSignature>ast, context);
+                    break;
+
+                case NodeType.ConstructSignature:
+                    this.typeCheckConstructSignature(<ConstructSignature>ast, context);
                     break;
 
                 case NodeType.FunctionDeclaration:

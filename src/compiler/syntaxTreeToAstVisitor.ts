@@ -1346,7 +1346,7 @@ module TypeScript {
             return result;
         }
 
-        public visitConstructSignature(node: ConstructSignatureSyntax): FunctionDeclaration {
+        public visitConstructSignature(node: ConstructSignatureSyntax): ConstructSignature {
             var start = this.position;
 
             this.movePast(node.newKeyword);
@@ -1354,11 +1354,8 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var result = new FunctionDeclaration(null, typeParameters, parameters, returnType, null);
+            var result = new ConstructSignature(typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
-
-            result.hint = "_construct";
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.ConstructMember | FunctionFlags.Method | FunctionFlags.Signature);
 
             return result;
         }
@@ -2537,8 +2534,8 @@ module TypeScript {
             return result;
         }
 
-        public visitConstructSignature(node: ConstructSignatureSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitConstructSignature(node: ConstructSignatureSyntax): ConstructSignature {
+            var result: ConstructSignature = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitConstructSignature(node);
                 this.setAST(node, result);
