@@ -931,6 +931,20 @@ module TypeScript {
         }
     }
 
+    export class MethodSignature extends AST {
+        constructor(public propertyName: Identifier, public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+            super();
+            propertyName && (propertyName.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.MethodSignature;
+        }
+    }
+
     export class FunctionType extends AST {
         constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
             super();
@@ -2499,6 +2513,7 @@ module TypeScript {
             case NodeType.FunctionExpression:
             case NodeType.CallSignature:
             case NodeType.ConstructSignature:
+            case NodeType.MethodSignature:
                 return true;
             default:
                 return false;

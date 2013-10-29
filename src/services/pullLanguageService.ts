@@ -115,8 +115,8 @@ module Services {
                 // The compiler shares class method type parameter symbols.  So if we get one, 
                 // scope our search down to the method ast so we don't find other hits elsewhere.
                 while (ast) {
-                    if (ast.nodeType() === TypeScript.NodeType.FunctionDeclaration &&
-                        TypeScript.hasFlag((<TypeScript.FunctionDeclaration>ast).getFunctionFlags(), TypeScript.FunctionFlags.Method)) {
+                    if (ast.nodeType() === TypeScript.NodeType.FunctionDeclaration ||
+                        ast.nodeType() === TypeScript.NodeType.MemberFunctionDeclaration) {
                         return ast;
                     }
 

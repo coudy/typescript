@@ -3147,13 +3147,18 @@ module TypeScript {
         }
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Method | FunctionFlags.Signature,
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
                 null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
         private typeCheckConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Method | FunctionFlags.Signature,
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
                 null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+        }
+
+        private typeCheckMethodSignature(funcDecl: MethodSignature, context: PullTypeResolutionContext): void {
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
+                funcDecl.propertyName, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
         private typeCheckFunctionDeclaration(
@@ -3334,12 +3339,17 @@ module TypeScript {
         }
 
         private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature | FunctionFlags.Method, null,
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, null,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
         private resolveConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature | FunctionFlags.Method, null,
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, null,
+                funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+        }
+
+        private resolveMethodSignature(funcDecl: MethodSignature, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, funcDecl.propertyName,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
@@ -5292,6 +5302,9 @@ module TypeScript {
                 case NodeType.ConstructSignature:
                     return this.resolveConstructSignature(<CallSignature>ast, context);
 
+                case NodeType.MethodSignature:
+                    return this.resolveMethodSignature(<MethodSignature>ast, context);
+
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, context);
 
@@ -5595,6 +5608,10 @@ module TypeScript {
 
                 case NodeType.ConstructSignature:
                     this.typeCheckConstructSignature(<ConstructSignature>ast, context);
+                    break;
+
+                case NodeType.MethodSignature:
+                    this.typeCheckMethodSignature(<MethodSignature>ast, context);
                     break;
 
                 case NodeType.FunctionDeclaration:
@@ -12331,6 +12348,7 @@ module TypeScript {
                 case NodeType.InterfaceDeclaration:
                 case NodeType.ModuleDeclaration:
                 case NodeType.FunctionDeclaration:
+                case NodeType.MethodSignature:
                 case NodeType.MemberAccessExpression:
                 case NodeType.Parameter:
                     return false;

@@ -247,6 +247,13 @@ module TypeScript {
         walker.walk(preAst.variableDeclarator);
     }
 
+    function walkMethodSignatureChildren(preAst: MethodSignature, walker: AstWalker): void {
+        walker.walk(preAst.propertyName);
+        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.parameterList);
+        walker.walk(preAst.returnTypeAnnotation);
+    }
+
     function walkReturnStatementChildren(preAst: ReturnStatement, walker: AstWalker): void {
         walker.walk(preAst.expression);
     }
@@ -478,6 +485,7 @@ module TypeScript {
     childrenWalkers[NodeType.MemberAccessExpression] = walkMemberAccessExpressionChildren;
     childrenWalkers[NodeType.MemberFunctionDeclaration] = walkMemberFunctionDeclarationChildren;
     childrenWalkers[NodeType.MemberVariableDeclaration] = walkMemberVariableDeclarationChildren;
+    childrenWalkers[NodeType.MethodSignature] = walkMethodSignatureChildren;
     childrenWalkers[NodeType.ModuleDeclaration] = walkModuleDeclChildren;
     childrenWalkers[NodeType.ModuloAssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.ModuloExpression] = walkBinaryExpressionChildren;

@@ -580,13 +580,9 @@ module TypeScript {
     }
 
     function createMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: DeclCollectionContext): void {
-        createAnyMemberFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName, funcDecl.block, context);
-    }
-
-    // methods
-    function createAnyMemberFunctionDeclaration(memberFunctionDeclAST: AST, flags: FunctionFlags, name: Identifier, block: Block, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
+        var flags = funcDecl.getFunctionFlags();
 
         if (hasFlag(flags, FunctionFlags.Static)) {
             declFlags |= PullElementFlags.Static;
@@ -599,20 +595,20 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (!block) {
+        if (!funcDecl.block) {
             declFlags |= PullElementFlags.Signature;
         }
 
-        if (hasFlag(name.getFlags(), ASTFlags.OptionalName)) {
+        if (hasFlag(funcDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = TextSpan.fromBounds(memberFunctionDeclAST.minChar, memberFunctionDeclAST.limChar);
+        var span = TextSpan.fromBounds(funcDecl.minChar, funcDecl.limChar);
         var parent = context.getParent();
 
-        var decl = new NormalPullDecl(name.valueText(), name.text(), declType, declFlags, parent, span);
-        context.semanticInfoChain.setDeclForAST(memberFunctionDeclAST, decl);
-        context.semanticInfoChain.setASTForDecl(decl, memberFunctionDeclAST);
+        var decl = new NormalPullDecl(funcDecl.propertyName.valueText(), funcDecl.propertyName.text(), declType, declFlags, parent, span);
+        context.semanticInfoChain.setDeclForAST(funcDecl, decl);
+        context.semanticInfoChain.setASTForDecl(decl, funcDecl);
 
         context.pushParent(decl);
     }
@@ -649,6 +645,27 @@ module TypeScript {
         var decl = new NormalPullDecl("", "", declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(callSignatureDeclAST, decl);
         context.semanticInfoChain.setASTForDecl(decl, callSignatureDeclAST);
+
+        context.pushParent(decl);
+    }
+
+    function createMethodSignatureDeclaration(method: MethodSignature, context: DeclCollectionContext): void {
+        var declFlags = PullElementFlags.None;
+        var declType = PullElementKind.Method;
+
+        declFlags |= PullElementFlags.Public;
+        declFlags |= PullElementFlags.Signature;
+
+        if (hasFlag(method.propertyName.getFlags(), ASTFlags.OptionalName)) {
+            declFlags |= PullElementFlags.Optional;
+        }
+
+        var span = TextSpan.fromBounds(method.minChar, method.limChar);
+        var parent = context.getParent();
+
+        var decl = new NormalPullDecl(method.propertyName.valueText(), method.propertyName.text(), declType, declFlags, parent, span);
+        context.semanticInfoChain.setDeclForAST(method, decl);
+        context.semanticInfoChain.setASTForDecl(decl, method);
 
         context.pushParent(decl);
     }
@@ -922,15 +939,11 @@ module TypeScript {
             case NodeType.ConstructSignature:
                 createConstructSignatureDeclaration(<ConstructSignature>ast, context);
                 break;
+            case NodeType.MethodSignature:
+                createMethodSignatureDeclaration(<MethodSignature>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
-                var funcDecl = <FunctionDeclaration>ast;
-                var functionFlags = funcDecl.getFunctionFlags();
-                if (hasFlag(functionFlags, FunctionFlags.Method)) {
-                    createAnyMemberFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.block,  context);
-                }
-                else {
-                    createFunctionDeclaration(funcDecl, context);
-                }
+                createFunctionDeclaration(<FunctionDeclaration>ast, context);
                 break;
             case NodeType.SimpleArrowFunctionExpression:
             case NodeType.ParenthesizedArrowFunctionExpression:

@@ -91,6 +91,8 @@ module TypeScript {
                     return this.emitCallSignature(<CallSignature>ast);
                 case NodeType.ConstructSignature:
                     return this.emitConstructSignature(<ConstructSignature>ast);
+                case NodeType.MethodSignature:
+                    return this.emitMethodSignature(<MethodSignature>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.MemberFunctionDeclaration:
@@ -574,6 +576,43 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("new");
+
+            var funcSignature = funcPullDecl.getSignatureSymbol();
+            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+
+            this.declFile.Write("(");
+            this.emitParameterList(FunctionFlags.None, funcDecl.parameterList);
+            this.declFile.Write(")");
+
+            var returnType = funcSignature.returnType;
+            this.declFile.Write(": ");
+            if (returnType) {
+                this.emitTypeSignature(returnType);
+            }
+            else {
+                this.declFile.Write("any");
+            }
+
+            this.declFile.WriteLine(";");
+        }
+
+        private emitMethodSignature(funcDecl: MethodSignature) {
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+
+            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
+
+            var start = new Date().getTime();
+            var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
+
+            TypeScript.declarationEmitFunctionDeclarationGetSymbolTime += new Date().getTime() - start;
+
+            this.emitDeclarationComments(funcDecl);
+
+            this.emitIndent();
+            this.declFile.Write(funcDecl.propertyName.text());
+            if (hasFlag(funcDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
+                this.declFile.Write("? ");
+            }
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitTypeParameters(funcDecl.typeParameters, funcSignature);

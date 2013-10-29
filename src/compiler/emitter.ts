@@ -1384,11 +1384,10 @@ module TypeScript {
 
             var funcName = funcDecl.getNameText();
 
-            if (((temp !== EmitContainer.Constructor) ||
-                ((funcDecl.getFunctionFlags() & FunctionFlags.Method) === FunctionFlags.None))) {
+            //if (temp !== EmitContainer.Constructor) {
                 this.recordSourceMappingStart(funcDecl);
                 this.emitInnerFunction(funcDecl, funcDecl.name !== null);
-            }
+            //}
             this.setContainer(temp);
             this.inArrowFunction = savedInArrowFunction;
 

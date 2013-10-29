@@ -1360,7 +1360,7 @@ module TypeScript {
             return result;
         }
 
-        public visitMethodSignature(node: MethodSignatureSyntax): FunctionDeclaration {
+        public visitMethodSignature(node: MethodSignatureSyntax): MethodSignature {
             var start = this.position;
 
             var name = this.identifierFromToken(node.propertyName, !!node.questionToken);
@@ -1371,10 +1371,8 @@ module TypeScript {
             var parameters = node.callSignature.parameterList.accept(this);
             var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
-            var result = new FunctionDeclaration(name, typeParameters, parameters, returnType, null);
+            var result = new MethodSignature(name, typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
-
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Method | FunctionFlags.Signature);
 
             return result;
         }
@@ -2544,8 +2542,8 @@ module TypeScript {
             return result;
         }
 
-        public visitMethodSignature(node: MethodSignatureSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitMethodSignature(node: MethodSignatureSyntax): MethodSignature {
+            var result: MethodSignature = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitMethodSignature(node);
                 this.setAST(node, result);

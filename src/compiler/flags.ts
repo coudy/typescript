@@ -62,8 +62,7 @@ module TypeScript {
         Public = 1 << 2,
         Ambient = 1 << 3,
         Static = 1 << 4,
-        Signature = 1 << 7,
-        Method = 1 << 8,
+        Signature = 1 << 5,
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
