@@ -545,7 +545,7 @@ module TypeScript {
             this.emitDeclarationComments(funcDecl);
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.typeParameterList, funcSignature);
 
             this.emitIndent();
             this.declFile.Write("(");

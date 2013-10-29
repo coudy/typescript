@@ -205,9 +205,9 @@ module TypeScript {
     }
 
     function walkCallSignatureChildren(preAst: CallSignature, walker: AstWalker): void {
-        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.typeParameterList);
         walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.typeAnnotation);
     }
 
     function walkConstraintChildren(preAst: Constraint, walker: AstWalker): void {

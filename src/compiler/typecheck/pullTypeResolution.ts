@@ -3136,7 +3136,7 @@ module TypeScript {
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
             this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
-                null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+                null, funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
         }
 
         private typeCheckConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): void {
@@ -3315,7 +3315,7 @@ module TypeScript {
 
         private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, null,
-                funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+                funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
         }
 
         private resolveConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): PullSymbol {
@@ -5245,7 +5245,7 @@ module TypeScript {
                     return this.resolveCallSignature(<CallSignature>ast, context);
 
                 case NodeType.ConstructSignature:
-                    return this.resolveConstructSignature(<CallSignature>ast, context);
+                    return this.resolveConstructSignature(<ConstructSignature>ast, context);
 
                 case NodeType.MethodSignature:
                     return this.resolveMethodSignature(<MethodSignature>ast, context);

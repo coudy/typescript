@@ -905,19 +905,6 @@ module TypeScript {
         }
     }
 
-    export class CallSignature extends AST {
-        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
-            super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-
-        nodeType(): NodeType {
-            return NodeType.CallSignature;
-        }
-    }
-
     export class ConstructSignature extends AST {
         constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
             super();
@@ -1202,6 +1189,19 @@ module TypeScript {
         closeParenSpan: ASTSpan;
     }
 
+    export class CallSignature extends AST {
+        constructor(public typeParameterList: ASTList, public parameterList: ASTList, public typeAnnotation: TypeReference) {
+            super();
+            typeParameterList && (typeParameterList.parent = this);
+            parameterList && (parameterList.parent = this);
+            typeAnnotation && (typeAnnotation.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.CallSignature;
+        }
+    }
+
     export class TypeParameter extends AST {
         constructor(public name: Identifier, public constraint: Constraint) {
             super();
@@ -1249,8 +1249,8 @@ module TypeScript {
 
     export class IfStatement extends AST {
         constructor(public condition: AST,
-            public statement: AST,
-            public elseClause: ElseClause) {
+                    public statement: AST,
+                    public elseClause: ElseClause) {
             super();
             condition && (condition.parent = this);
             statement && (statement.parent = this);
