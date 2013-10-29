@@ -609,87 +609,6 @@ module TypeScript {
         }
     }
 
-    export class BinaryExpression extends AST {
-        constructor(private _nodeType: NodeType, public left: AST, public right: AST) {
-            super();
-            left && (left.parent = this);
-            right && (right.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return this._nodeType;
-        }
-
-        public static getTextForBinaryToken(nodeType: NodeType): string {
-            switch (nodeType) {
-                case NodeType.CommaExpression: return ",";
-                case NodeType.AssignmentExpression: return "=";
-                case NodeType.AddAssignmentExpression: return "+=";
-                case NodeType.SubtractAssignmentExpression: return "-=";
-                case NodeType.MultiplyAssignmentExpression: return "*=";
-                case NodeType.DivideAssignmentExpression: return "/=";
-                case NodeType.ModuloAssignmentExpression: return "%=";
-                case NodeType.AndAssignmentExpression: return "&=";
-                case NodeType.ExclusiveOrAssignmentExpression: return "^=";
-                case NodeType.OrAssignmentExpression: return "|=";
-                case NodeType.LeftShiftAssignmentExpression: return "<<=";
-                case NodeType.SignedRightShiftAssignmentExpression: return ">>=";
-                case NodeType.UnsignedRightShiftAssignmentExpression: return ">>>=";
-                case NodeType.LogicalOrExpression: return "||";
-                case NodeType.LogicalAndExpression: return "&&";
-                case NodeType.BitwiseOrExpression: return "|";
-                case NodeType.BitwiseExclusiveOrExpression: return "^";
-                case NodeType.BitwiseAndExpression: return "&";
-                case NodeType.EqualsWithTypeConversionExpression: return "==";
-                case NodeType.NotEqualsWithTypeConversionExpression: return "!=";
-                case NodeType.EqualsExpression: return "===";
-                case NodeType.NotEqualsExpression: return "!==";
-                case NodeType.LessThanExpression: return "<";
-                case NodeType.GreaterThanExpression: return ">";
-                case NodeType.LessThanOrEqualExpression: return "<=";
-                case NodeType.GreaterThanOrEqualExpression: return ">=";
-                case NodeType.InstanceOfExpression: return "instanceof";
-                case NodeType.InExpression: return "in";
-                case NodeType.LeftShiftExpression: return "<<";
-                case NodeType.SignedRightShiftExpression: return ">>";
-                case NodeType.UnsignedRightShiftExpression: return ">>>";
-                case NodeType.MultiplyExpression: return "*";
-                case NodeType.DivideExpression: return "/";
-                case NodeType.ModuloExpression: return "%";
-                case NodeType.AddExpression: return "+";
-                case NodeType.SubtractExpression: return "-";
-            }
-
-            throw Errors.invalidOperation();
-        }
-
-        public structuralEquals(ast: BinaryExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.left, ast.left, includingPosition) &&
-                   structuralEquals(this.right, ast.right, includingPosition);
-        }
-    }
-
-    export class ConditionalExpression extends AST {
-        constructor(public condition: AST, public whenTrue: AST, public whenFalse: AST) {
-            super();
-            condition && (condition.parent = this);
-            whenTrue && (whenTrue.parent = this);
-            whenFalse && (whenFalse.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ConditionalExpression;
-        }
-
-        public structuralEquals(ast: ConditionalExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.condition, ast.condition, includingPosition) &&
-                   structuralEquals(this.whenTrue, ast.whenTrue, includingPosition) &&
-                   structuralEquals(this.whenFalse, ast.whenFalse, includingPosition);
-        }
-    }
-
     export class NumericLiteral extends AST {
         constructor(public value: number,
                     private _text: string,
@@ -886,33 +805,6 @@ module TypeScript {
 
         nodeType(): NodeType {
             return NodeType.ConstructorType;
-        }
-    }
-
-    export class ConstructSignature extends AST {
-        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
-            super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-
-        nodeType(): NodeType {
-            return NodeType.ConstructSignature;
-        }
-    }
-
-    export class MethodSignature extends AST {
-        constructor(public propertyName: Identifier, public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
-            super();
-            propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-
-        nodeType(): NodeType {
-            return NodeType.MethodSignature;
         }
     }
 
@@ -1171,6 +1063,71 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class BinaryExpression extends AST {
+        constructor(private _nodeType: NodeType, public left: AST, public right: AST) {
+            super();
+            left && (left.parent = this);
+            right && (right.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public structuralEquals(ast: BinaryExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.left, ast.left, includingPosition) &&
+                structuralEquals(this.right, ast.right, includingPosition);
+        }
+    }
+
+    export class ConditionalExpression extends AST {
+        constructor(public condition: AST, public whenTrue: AST, public whenFalse: AST) {
+            super();
+            condition && (condition.parent = this);
+            whenTrue && (whenTrue.parent = this);
+            whenFalse && (whenFalse.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ConditionalExpression;
+        }
+
+        public structuralEquals(ast: ConditionalExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.condition, ast.condition, includingPosition) &&
+                structuralEquals(this.whenTrue, ast.whenTrue, includingPosition) &&
+                structuralEquals(this.whenFalse, ast.whenFalse, includingPosition);
+        }
+    }
+
+    export class ConstructSignature extends AST {
+        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+            super();
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.ConstructSignature;
+        }
+    }
+
+    export class MethodSignature extends AST {
+        constructor(public propertyName: Identifier, public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+            super();
+            propertyName && (propertyName.parent = this);
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.MethodSignature;
+        }
     }
 
     export class IndexSignature extends AST {
@@ -2564,5 +2521,48 @@ module TypeScript {
         }
 
         return docComments.reverse();
+    }
+
+    export function getTextForBinaryToken(nodeType: NodeType): string {
+        switch (nodeType) {
+            case NodeType.CommaExpression: return ",";
+            case NodeType.AssignmentExpression: return "=";
+            case NodeType.AddAssignmentExpression: return "+=";
+            case NodeType.SubtractAssignmentExpression: return "-=";
+            case NodeType.MultiplyAssignmentExpression: return "*=";
+            case NodeType.DivideAssignmentExpression: return "/=";
+            case NodeType.ModuloAssignmentExpression: return "%=";
+            case NodeType.AndAssignmentExpression: return "&=";
+            case NodeType.ExclusiveOrAssignmentExpression: return "^=";
+            case NodeType.OrAssignmentExpression: return "|=";
+            case NodeType.LeftShiftAssignmentExpression: return "<<=";
+            case NodeType.SignedRightShiftAssignmentExpression: return ">>=";
+            case NodeType.UnsignedRightShiftAssignmentExpression: return ">>>=";
+            case NodeType.LogicalOrExpression: return "||";
+            case NodeType.LogicalAndExpression: return "&&";
+            case NodeType.BitwiseOrExpression: return "|";
+            case NodeType.BitwiseExclusiveOrExpression: return "^";
+            case NodeType.BitwiseAndExpression: return "&";
+            case NodeType.EqualsWithTypeConversionExpression: return "==";
+            case NodeType.NotEqualsWithTypeConversionExpression: return "!=";
+            case NodeType.EqualsExpression: return "===";
+            case NodeType.NotEqualsExpression: return "!==";
+            case NodeType.LessThanExpression: return "<";
+            case NodeType.GreaterThanExpression: return ">";
+            case NodeType.LessThanOrEqualExpression: return "<=";
+            case NodeType.GreaterThanOrEqualExpression: return ">=";
+            case NodeType.InstanceOfExpression: return "instanceof";
+            case NodeType.InExpression: return "in";
+            case NodeType.LeftShiftExpression: return "<<";
+            case NodeType.SignedRightShiftExpression: return ">>";
+            case NodeType.UnsignedRightShiftExpression: return ">>>";
+            case NodeType.MultiplyExpression: return "*";
+            case NodeType.DivideExpression: return "/";
+            case NodeType.ModuloExpression: return "%";
+            case NodeType.AddExpression: return "+";
+            case NodeType.SubtractExpression: return "-";
+        }
+
+        throw Errors.invalidOperation();
     }
 }

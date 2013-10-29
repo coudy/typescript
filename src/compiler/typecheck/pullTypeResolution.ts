@@ -4260,7 +4260,7 @@ module TypeScript {
             if (!this.sourceIsAssignableToTarget(leftType, rightType, context, comparisonInfo) &&
                 !this.sourceIsAssignableToTarget(rightType, leftType, context, comparisonInfo)) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(binex,
-                    DiagnosticCode.Operator_0_cannot_be_applied_to_types_1_and_2, [BinaryExpression.getTextForBinaryToken(binex.nodeType()), leftType.toString(), rightType.toString()]));
+                    DiagnosticCode.Operator_0_cannot_be_applied_to_types_1_and_2, [getTextForBinaryToken(binex.nodeType()), leftType.toString(), rightType.toString()]));
             }
         }
 

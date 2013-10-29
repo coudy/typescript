@@ -2610,7 +2610,7 @@ module TypeScript {
                 default:
                     {
                         this.emit(expression.left);
-                        var binOp = BinaryExpression.getTextForBinaryToken(expression.nodeType());
+                        var binOp = getTextForBinaryToken(expression.nodeType());
                         if (binOp === "instanceof") {
                             this.writeToOutput(" instanceof ");
                         }
