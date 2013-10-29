@@ -2255,6 +2255,10 @@ module TypeScript {
                 return knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID);
             }
 
+            if (this.isArrayNamedTypeReference()) {
+                return this.getElementType()._wrapsSomeNestedTypeRecurse(typeBeingWrapped, isCheckingNestedType, knownWrapMap);
+            }
+
             // if we encounter a type parameter or primitive, nothing is being wrapped
             if (this.isPrimitive() || this.isTypeParameter()) {
                 return false;
