@@ -72,7 +72,7 @@ class UnitTestRunner extends RunnerBase {
                     Harness: Harness,
                     IO: TypeScript.IO,
                     Exec: Exec,
-                    Services: Services,
+                    Services: TypeScript.Services,
                     // Formatting: Formatting,
                     Diff: Diff,
                     FourSlash: FourSlash

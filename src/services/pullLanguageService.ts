@@ -4,12 +4,12 @@
 
 ///<reference path='typescriptServices.ts' />
 
-module Services {
+module TypeScript.Services {
     export class LanguageService implements ILanguageService {
         private logger: TypeScript.ILogger;
         private compiler: LanguageServiceCompiler;
         private _syntaxTreeCache: SyntaxTreeCache;
-        private formattingRulesProvider: TypeScript.Formatting.RulesProvider;
+        private formattingRulesProvider: TypeScript.Services.Formatting.RulesProvider;
 
         private activeCompletionSession: CompletionSession = null;
 
@@ -1692,7 +1692,7 @@ module Services {
             fileName = TypeScript.switchToForwardSlashes(fileName);
 
             var syntaxtree = this.getSyntaxTree(fileName);
-            return Services.Breakpoints.getBreakpointLocation(syntaxtree, pos);
+            return TypeScript.Services.Breakpoints.getBreakpointLocation(syntaxtree, pos);
         }
 
         public getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[] {
@@ -1737,7 +1737,7 @@ module Services {
         private getFormattingManager(fileName: string, options: FormatCodeOptions) {
             // Ensure rules are initialized and up to date wrt to formatting options
             if (this.formattingRulesProvider == null) {
-                this.formattingRulesProvider = new TypeScript.Formatting.RulesProvider(this.logger);
+                this.formattingRulesProvider = new TypeScript.Services.Formatting.RulesProvider(this.logger);
             }
 
             this.formattingRulesProvider.ensureUpToDate(options);
@@ -1748,9 +1748,9 @@ module Services {
             // Convert IScriptSnapshot to ITextSnapshot
             var scriptSnapshot = this.compiler.getScriptSnapshot(fileName);
             var scriptText = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting.TextSnapshot(scriptText);
+            var textSnapshot = new TypeScript.Services.Formatting.TextSnapshot(scriptText);
 
-            var manager = new TypeScript.Formatting.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
+            var manager = new TypeScript.Services.Formatting.FormattingManager(syntaxTree, textSnapshot, this.formattingRulesProvider, options);
 
             return manager;
         }
@@ -1772,10 +1772,10 @@ module Services {
 
             var scriptSnapshot = this.compiler.getScriptSnapshot(fileName);
             var scriptText = TypeScript.SimpleText.fromScriptSnapshot(scriptSnapshot);
-            var textSnapshot = new TypeScript.Formatting.TextSnapshot(scriptText);
+            var textSnapshot = new TypeScript.Services.Formatting.TextSnapshot(scriptText);
             var options = new FormattingOptions(!editorOptions.ConvertTabsToSpaces, editorOptions.TabSize, editorOptions.IndentSize, editorOptions.NewLineCharacter)
 
-            return TypeScript.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
+            return TypeScript.Services.Formatting.SingleTokenIndenter.getIndentationAmount(position, syntaxTree.sourceUnit(), textSnapshot, options);
         }
 
         // Given a script name and position in the script, return a pair of text range if the 

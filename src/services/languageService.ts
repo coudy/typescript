@@ -16,7 +16,7 @@
 ///<reference path='typescriptServices.ts' />
 ///<reference path='diagnosticServices.ts' />
 
-module Services {
+module TypeScript.Services {
 
     //
     // Public interface of the host of a language service instance.
@@ -29,7 +29,7 @@ module Services {
         getScriptIsOpen(fileName: string): boolean;
         getScriptByteOrderMark(fileName: string): TypeScript.ByteOrderMark;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
-        getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
+        getDiagnosticsObject(): TypeScript.Services.ILanguageServicesDiagnostics;
         getLocalizedDiagnosticMessages(): any;
     }
 
@@ -67,7 +67,7 @@ module Services {
 
         getOutliningRegions(fileName: string): TypeScript.TextSpan[];
         getBraceMatchingAtPosition(fileName: string, position: number): TypeScript.TextSpan[];
-        getIndentationAtPosition(fileName: string, position: number, options: Services.EditorOptions): number;
+        getIndentationAtPosition(fileName: string, position: number, options: TypeScript.Services.EditorOptions): number;
 
         getFormattingEditsForRange(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];
         getFormattingEditsForDocument(fileName: string, minChar: number, limChar: number, options: FormatCodeOptions): TextEdit[];

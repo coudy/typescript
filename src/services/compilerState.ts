@@ -14,7 +14,7 @@
 //
 ///<reference path='typescriptServices.ts' />
 
-module Services {
+module TypeScript.Services {
     // Information about a specific host file.
     class HostFileInformation {
         private _sourceText: TypeScript.IScriptSnapshot;

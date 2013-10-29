@@ -15,7 +15,7 @@
 
 ///<reference path='typescriptServices.ts' />
 
-module Services {
+module TypeScript.Services {
 
     export interface IScriptSnapshotShim {
         // Get's a portion of the script snapshot specified by [start, end).  
@@ -52,7 +52,7 @@ module Services {
         fileExists(path: string): boolean;
         directoryExists(path: string): boolean;
         getParentDirectory(path: string): string;
-        getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
+        getDiagnosticsObject(): TypeScript.Services.ILanguageServicesDiagnostics;
         getLocalizedDiagnosticMessages(): string;
     }
 
@@ -78,7 +78,7 @@ module Services {
     }
 
     export interface ILanguageServiceShim extends IShim {
-        languageService: Services.ILanguageService;
+        languageService: TypeScript.Services.ILanguageService;
 
         dispose(dummy: any): void;
 
@@ -172,7 +172,7 @@ module Services {
         }
     }
 
-    export class LanguageServiceShimHostAdapter implements Services.ILanguageServiceHost {
+    export class LanguageServiceShimHostAdapter implements TypeScript.Services.ILanguageServiceHost {
         constructor(private shimHost: ILanguageServiceShimHost) {
         }
 
@@ -288,7 +288,7 @@ module Services {
             return JSON.stringify({ result: result });
         }
         catch (err) {
-            Services.logInternalError(logger, err);
+            TypeScript.Services.logInternalError(logger, err);
             err.description = actionDescription;
             return JSON.stringify({ error: err });
         }
@@ -299,13 +299,13 @@ module Services {
 
         constructor(factory: IShimFactory,
                     private host: ILanguageServiceShimHost,
-                    public languageService: Services.ILanguageService) {
+                    public languageService: TypeScript.Services.ILanguageService) {
             super(factory);
             this.logger = this.host;
         }
 
         public forwardJSONCall(actionDescription: string, action: () =>any): string {
-            return Services.forwardJSONCall(this.logger, actionDescription, action);
+            return TypeScript.Services.forwardJSONCall(this.logger, actionDescription, action);
         }
 
         // DISPOSE
@@ -461,7 +461,7 @@ module Services {
             return this.forwardJSONCall(
                 "getIndentationAtPosition(\"" + fileName + "\", " + position + ")",
                 () => {
-                    var localOptions: Services.EditorOptions = JSON.parse(options);
+                    var localOptions: TypeScript.Services.EditorOptions = JSON.parse(options);
                     var columnOffset = this.languageService.getIndentationAtPosition(fileName, position, localOptions);
                     return { value: columnOffset };
                 });
@@ -525,7 +525,7 @@ module Services {
             return this.forwardJSONCall(
                 "getFormattingEditsForRange(\"" + fileName + "\", " + minChar + ", " + limChar + ")",
                 () => {
-                    var localOptions: Services.FormatCodeOptions = JSON.parse(options);
+                    var localOptions: TypeScript.Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsForRange(fileName, minChar, limChar, localOptions);
                     return edits;
                 });
@@ -536,7 +536,7 @@ module Services {
             return this.forwardJSONCall(
                 "getFormattingEditsForDocument(\"" + fileName + "\", " + minChar + ", " + limChar + ")",
                 () => {
-                    var localOptions: Services.FormatCodeOptions = JSON.parse(options);
+                    var localOptions: TypeScript.Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsForDocument(fileName, minChar, limChar, localOptions);
                     return edits;
                 });
@@ -547,7 +547,7 @@ module Services {
             return this.forwardJSONCall(
                 "getFormattingEditsOnPaste(\"" + fileName + "\", " + minChar + ", " + limChar + ")",
                 () => {
-                    var localOptions: Services.FormatCodeOptions = JSON.parse(options);
+                    var localOptions: TypeScript.Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsOnPaste(fileName, minChar, limChar, localOptions);
                     return edits;
                 });
@@ -558,7 +558,7 @@ module Services {
             return this.forwardJSONCall(
                 "getFormattingEditsAfterKeystroke(\"" + fileName + "\", " + position + ", \"" + key + "\")",
                 () => {
-                    var localOptions: Services.FormatCodeOptions = JSON.parse(options);
+                    var localOptions: TypeScript.Services.FormatCodeOptions = JSON.parse(options);
                     var edits = this.languageService.getFormattingEditsAfterKeystroke(fileName, position, key, localOptions);
                     return edits;
                 });
@@ -609,7 +609,7 @@ module Services {
                 });
         }
 
-        private _navigateToItemsToString(items: Services.NavigateToItem[]): any {
+        private _navigateToItemsToString(items: TypeScript.Services.NavigateToItem[]): any {
             var result: {
                 name: string;
                 kind: string;
@@ -643,11 +643,11 @@ module Services {
     }
 
     export class ClassifierShim extends ShimBase {
-        public classifier: Services.Classifier;
+        public classifier: TypeScript.Services.Classifier;
 
-        constructor(factory: IShimFactory, public host: Services.IClassifierHost) {
+        constructor(factory: IShimFactory, public host: TypeScript.Services.IClassifierHost) {
             super(factory);
-            this.classifier = new Services.Classifier(this.host);
+            this.classifier = new TypeScript.Services.Classifier(this.host);
         }
 
         /// COLORIZATION
@@ -666,16 +666,16 @@ module Services {
 
     export class CoreServicesShim extends ShimBase {
         public logger: TypeScript.ILogger;
-        public services: Services.CoreServices;
+        public services: TypeScript.Services.CoreServices;
 
-        constructor(factory: IShimFactory, public host: Services.ICoreServicesHost) {
+        constructor(factory: IShimFactory, public host: TypeScript.Services.ICoreServicesHost) {
             super(factory);
             this.logger = this.host.logger;
-            this.services = new Services.CoreServices(this.host);
+            this.services = new TypeScript.Services.CoreServices(this.host);
         }
 
         private forwardJSONCall(actionDescription: string, action: () =>any): any {
-            return Services.forwardJSONCall(this.logger, actionDescription, action);
+            return TypeScript.Services.forwardJSONCall(this.logger, actionDescription, action);
         }
 
         ///

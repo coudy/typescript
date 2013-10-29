@@ -133,7 +133,7 @@ module FourSlash {
     export class TestState {
         // Language service instance
         public languageServiceShimHost: Harness.TypeScriptLS = null;
-        private languageService: Services.ILanguageService = null;
+        private languageService: TypeScript.Services.ILanguageService = null;
 
         // A reference to the language service's compiler state's compiler instance
         private compiler: () => { getSyntaxTree(fileName: string): TypeScript.SyntaxTree; getScript(fileName: string): TypeScript.Script; };
@@ -148,7 +148,7 @@ module FourSlash {
         // Whether or not we should format on keystrokes
         public enableFormatting = true;
 
-        public formatCodeOptions: Services.FormatCodeOptions = null;
+        public formatCodeOptions: TypeScript.Services.FormatCodeOptions = null;
 
         public editValidation = IncrementalEditValidation.Complete;
         public typingFidelity = TypingFidelity.Low;
@@ -203,7 +203,7 @@ module FourSlash {
             var compilerState = (<any>this.languageService).compiler;
             this.compiler = () => compilerState.compiler;
 
-            this.formatCodeOptions = new Services.FormatCodeOptions();
+            this.formatCodeOptions = new TypeScript.Services.FormatCodeOptions();
 
             this.testData.files.forEach(file => {
                 var filename = file.fileName.replace(TypeScript.IO.dirName(file.fileName), '').substr(1);
@@ -739,7 +739,7 @@ module FourSlash {
             return help.formal[activeFormal];
         }
 
-        private getActiveParameter(): { parameter: Services.FormalParameterInfo; typeParameter: Services.FormalTypeParameterInfo; } {
+        private getActiveParameter(): { parameter: TypeScript.Services.FormalParameterInfo; typeParameter: TypeScript.Services.FormalTypeParameterInfo; } {
             var currentSig = this.getActiveSignatureHelp();
             var help = this.languageService.getSignatureAtPosition(this.activeFile.fileName, this.currentCaretPosition);
 
@@ -1092,7 +1092,7 @@ module FourSlash {
             };
         }
 
-        private applyEdits(fileName: string, edits: Services.TextEdit[], isFormattingEdit = false): number {
+        private applyEdits(fileName: string, edits: TypeScript.Services.TextEdit[], isFormattingEdit = false): number {
             // We get back a set of edits, but langSvc.editScript only accepts one at a time. Use this to keep track
             // of the incremental offest from each edit to the next. Assumption is that these edit ranges don't overlap
             var runningOffset = 0;
@@ -1395,7 +1395,7 @@ module FourSlash {
             }
 
             for (i = 0; i < positions.length; i++) {
-                var nameOf = (type: Services.TypeInfo) => type ? type.fullSymbolName : '(none)';
+                var nameOf = (type: TypeScript.Services.TypeInfo) => type ? type.fullSymbolName : '(none)';
 
                 var pullName: string, refName: string;
                 var anyFailed = false;
@@ -1447,7 +1447,7 @@ module FourSlash {
 
             var items = this.languageService.getNavigateToItems(searchValue);
             var actual = 0;
-            var item: Services.NavigateToItem = null;
+            var item: TypeScript.Services.NavigateToItem = null;
 
             // Count only the match that match the same MatchKind
             for (var i = 0; i < items.length; ++i) {
@@ -1629,7 +1629,7 @@ module FourSlash {
             return result;
         }
 
-        private assertItemInCompletionList(items: Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
+        private assertItemInCompletionList(items: TypeScript.Services.CompletionEntry[], name: string, type?: string, docComment?: string, fullSymbolName?: string, kind?: string) {
             this.scenarioActions.push('<ShowCompletionList />');
             this.scenarioActions.push('<VerifyCompletionContainsItem ItemName="' + name  + '"/>');
 

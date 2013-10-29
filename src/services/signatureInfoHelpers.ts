@@ -3,7 +3,7 @@
 
 ///<reference path='typescriptServices.ts' />
 
-module Services {
+module TypeScript.Services {
 
     export interface IPartiallyWrittenTypeArgumentListInformation {
         genericIdentifer: TypeScript.PositionedToken;

@@ -1500,7 +1500,7 @@ module Harness {
         }
     }
 
-    class ScriptSnapshotShim implements Services.IScriptSnapshotShim {
+    class ScriptSnapshotShim implements TypeScript.Services.IScriptSnapshotShim {
         private lineMap: TypeScript.LineMap = null;
         private textSnapshot: string;
         private version: number;
@@ -1536,8 +1536,8 @@ module Harness {
         }
     }
 
-    export class TypeScriptLS implements Services.ILanguageServiceShimHost {
-        private ls: Services.ILanguageServiceShim = null;
+    export class TypeScriptLS implements TypeScript.Services.ILanguageServiceShimHost {
+        private ls: TypeScript.Services.ILanguageServiceShim = null;
 
         private fileNameToScript = new TypeScript.StringHashTable<ScriptInfo>();
 
@@ -1605,7 +1605,7 @@ module Harness {
             return JSON.stringify(this.fileNameToScript.getAllKeys());
         }
 
-        public getScriptSnapshot(fileName: string): Services.IScriptSnapshotShim {
+        public getScriptSnapshot(fileName: string): TypeScript.Services.IScriptSnapshotShim {
             return new ScriptSnapshotShim(this.getScriptInfo(fileName));
         }
 
@@ -1621,7 +1621,7 @@ module Harness {
             return this.getScriptInfo(fileName).byteOrderMark;
         }
 
-        public getDiagnosticsObject(): Services.ILanguageServicesDiagnostics {
+        public getDiagnosticsObject(): TypeScript.Services.ILanguageServicesDiagnostics {
             return new LanguageServicesDiagnostics("");
         }
 
@@ -1653,8 +1653,8 @@ module Harness {
         /** Return a new instance of the language service shim, up-to-date wrt to typecheck.
          *  To access the non-shim (i.e. actual) language service, use the "ls.languageService" property.
          */
-        public getLanguageService(): Services.ILanguageServiceShim {
-            var ls = new Services.TypeScriptServicesFactory().createLanguageServiceShim(this);
+        public getLanguageService(): TypeScript.Services.ILanguageServiceShim {
+            var ls = new TypeScript.Services.TypeScriptServicesFactory().createLanguageServiceShim(this);
             this.ls = ls;
             return ls;
         }
@@ -1706,7 +1706,7 @@ module Harness {
         }
 
         /** Verify that applying edits to sourceFileName result in the content of the file baselineFileName */
-        public checkEdits(sourceFileName: string, baselineFileName: string, edits: Services.TextEdit[]) {
+        public checkEdits(sourceFileName: string, baselineFileName: string, edits: TypeScript.Services.TextEdit[]) {
             var script = readFile(sourceFileName);
             var formattedScript = this.applyEdits(script.contents, edits);
             var baseline = readFile(baselineFileName).contents;
@@ -1717,7 +1717,7 @@ module Harness {
 
 
         /** Apply an array of text edits to a string, and return the resulting string. */
-        public applyEdits(content: string, edits: Services.TextEdit[]): string {
+        public applyEdits(content: string, edits: TypeScript.Services.TextEdit[]): string {
             var result = content;
             edits = this.normalizeEdits(edits);
 
@@ -1732,11 +1732,11 @@ module Harness {
         }
 
         /** Normalize an array of edits by removing overlapping entries and sorting entries on the minChar position. */
-        private normalizeEdits(edits: Services.TextEdit[]): Services.TextEdit[] {
-            var result: Services.TextEdit[] = [];
+        private normalizeEdits(edits: TypeScript.Services.TextEdit[]): TypeScript.Services.TextEdit[] {
+            var result: TypeScript.Services.TextEdit[] = [];
 
-            function mapEdits(edits: Services.TextEdit[]): { edit: Services.TextEdit; index: number; }[] {
-                var result: { edit: Services.TextEdit; index: number; }[] = [];
+            function mapEdits(edits: TypeScript.Services.TextEdit[]): { edit: TypeScript.Services.TextEdit; index: number; }[] {
+                var result: { edit: TypeScript.Services.TextEdit; index: number; }[] = [];
                 for (var i = 0; i < edits.length; i++) {
                     result.push({ edit: edits[i], index: i });
                 }
@@ -1788,7 +1788,7 @@ module Harness {
         }
     }
 
-    export class LanguageServicesDiagnostics implements Services.ILanguageServicesDiagnostics {
+    export class LanguageServicesDiagnostics implements TypeScript.Services.ILanguageServicesDiagnostics {
 
         constructor(private destination: string) { }
 
