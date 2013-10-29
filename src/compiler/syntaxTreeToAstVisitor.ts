@@ -1189,7 +1189,19 @@ module TypeScript {
             return result;
         }
 
-        private convertArgumentListArguments(node: ArgumentListSyntax): { argumentList: ArgumentList; closeParenSpan: ASTSpan } {
+        public visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpression {
+            var start = this.position;
+
+            var expression = node.expression.accept(this);
+            var argumentList = this.visitArgumentList(node.argumentList);
+
+            var result = new InvocationExpression(expression, argumentList);
+            this.setSpan(result, start, node);
+
+            return result;
+        }
+
+        public visitArgumentList(node: ArgumentListSyntax): ArgumentList {
             if (node === null) {
                 return null;
             }
@@ -1213,32 +1225,10 @@ module TypeScript {
             var closeParenSpan = new ASTSpan();
             this.setTokenSpan(closeParenSpan, closeParenPos, node.closeParenToken);
 
-            var result = new ArgumentList(typeArguments, arguments);
-            this.setSpan(result, start, node);
-
-            return {
-                argumentList: result,
-                closeParenSpan: closeParenSpan
-            };
-        }
-
-        public visitInvocationExpression(node: InvocationExpressionSyntax): InvocationExpression {
-            var start = this.position;
-
-            var expression = node.expression.accept(this);
-            var argumentList = this.convertArgumentListArguments(node.argumentList);
-
-            var result = new InvocationExpression(
-                expression, argumentList.argumentList, argumentList.closeParenSpan);
+            var result = new ArgumentList(typeArguments, arguments, closeParenSpan);
             this.setSpan(result, start, node);
 
             return result;
-        }
-
-        public visitArgumentList(node: ArgumentListSyntax): ASTList {
-            // Processing argument lists should be handled from inside visitInvocationExpression or 
-            // visitObjectCreationExpression.
-            throw Errors.invalidOperation();
         }
 
         private getBinaryExpressionNodeType(node: BinaryExpressionSyntax): NodeType {
@@ -1655,10 +1645,9 @@ module TypeScript {
 
             this.movePast(node.newKeyword);
             var expression = node.expression.accept(this);
-            var argumentList = this.convertArgumentListArguments(node.argumentList);
+            var argumentList = this.visitArgumentList(node.argumentList);
 
-            var result = new ObjectCreationExpression(expression,
-                argumentList ? argumentList.argumentList : null, argumentList ? argumentList.closeParenSpan : null);
+            var result = new ObjectCreationExpression(expression, argumentList);
             this.setSpan(result, start, node);
 
             return result;
@@ -2092,12 +2081,8 @@ module TypeScript {
                         applyDelta((<Block>cur).closeBraceToken, delta);
                         break; 
 
-                    case NodeType.ObjectCreationExpression:
-                        applyDelta((<ObjectCreationExpression>cur).closeParenSpan, delta);
-                        break;
-
-                    case NodeType.InvocationExpression:
-                        applyDelta((<InvocationExpression>cur).closeParenSpan, delta);
+                    case NodeType.ArgumentList:
+                        applyDelta((<ArgumentList>cur).closeParenToken, delta);
                         break;
 
                     case NodeType.ModuleDeclaration:

@@ -533,14 +533,15 @@ module TypeScript {
             this.recordSourceMappingStart(objectCreationExpression);
             this.writeToOutput("new ");
             var target = objectCreationExpression.expression;
-            var args = objectCreationExpression.argumentList ? objectCreationExpression.argumentList.arguments : null;
 
             this.emit(target);
-            this.recordSourceMappingStart(args);
-            this.writeToOutput("(");
-            this.emitCommaSeparatedList(args);
-            this.writeToOutputWithSourceMapRecord(")", objectCreationExpression.closeParenSpan);
-            this.recordSourceMappingEnd(args);
+            if (objectCreationExpression.argumentList) {
+                this.recordSourceMappingStart(objectCreationExpression.argumentList);
+                this.writeToOutput("(");
+                this.emitCommaSeparatedList(objectCreationExpression.argumentList.arguments);
+                this.writeToOutputWithSourceMapRecord(")", objectCreationExpression.argumentList.closeParenToken);
+                this.recordSourceMappingEnd(objectCreationExpression.argumentList);
+            }
 
             this.recordSourceMappingEnd(objectCreationExpression);
         }
@@ -620,7 +621,7 @@ module TypeScript {
                 this.emitCommaSeparatedList(args);
             }
 
-            this.writeToOutputWithSourceMapRecord(")", callNode.closeParenSpan);
+            this.writeToOutputWithSourceMapRecord(")", callNode.argumentList.closeParenToken);
             this.recordSourceMappingEnd(args);
             this.recordSourceMappingEnd(callNode);
         }

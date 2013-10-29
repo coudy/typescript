@@ -742,7 +742,6 @@ module TypeScript {
     export interface ICallExpression extends IASTSpan {
         expression: AST;
         argumentList: ArgumentList;
-        closeParenSpan: ASTSpan;
     }
 
     export class SimpleArrowFunctionExpression extends AST {
@@ -999,8 +998,7 @@ module TypeScript {
 
     export class InvocationExpression extends AST implements ICallExpression {
         constructor(public expression: AST,
-            public argumentList: ArgumentList,
-            public closeParenSpan: ASTSpan) {
+                    public argumentList: ArgumentList) {
             super();
             expression && (expression.parent = this);
             argumentList && (argumentList.parent = this);
@@ -1018,7 +1016,7 @@ module TypeScript {
     }
 
     export class ArgumentList extends AST {
-        constructor(public typeArgumentList: ASTList, public arguments: ASTList) {
+        constructor(public typeArgumentList: ASTList, public arguments: ASTList, public closeParenToken: ASTSpan) {
             super();
             typeArgumentList && (typeArgumentList.parent = this);
             arguments && (arguments.parent = this);
@@ -1377,8 +1375,7 @@ module TypeScript {
 
     export class ObjectCreationExpression extends AST implements ICallExpression {
         constructor(public expression: AST,
-                    public argumentList: ArgumentList,
-                    public closeParenSpan: ASTSpan) {
+                    public argumentList: ArgumentList) {
             super();
             expression && (expression.parent = this);
             argumentList && (argumentList.parent = this);
