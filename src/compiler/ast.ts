@@ -876,20 +876,6 @@ module TypeScript {
         }
     }
 
-    export class IndexSignature extends AST {
-        constructor(
-            public parameterList: ASTList,
-            public returnTypeAnnotation: TypeReference) {
-            super();
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.IndexSignature;
-        }
-    }
-
     export class ConstructorType extends AST {
         constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
             super();
@@ -1185,6 +1171,19 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class IndexSignature extends AST {
+        constructor(public parameter: Parameter,
+                    public typeAnnotation: TypeReference) {
+            super();
+            parameter && (parameter.parent = this);
+            typeAnnotation && (typeAnnotation.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.IndexSignature;
+        }
     }
 
     export class PropertySignature extends AST {
@@ -2467,6 +2466,7 @@ module TypeScript {
         identifierAt(index: number): Identifier;
         typeAt(index: number): TypeReference;
         initializerAt(index: number): EqualsValueClause;
+        isOptionalAt(index: number): boolean;
     }
 
     export module Parameters {
@@ -2478,7 +2478,21 @@ module TypeScript {
                 astAt: (index: number) => id,
                 identifierAt: (index: number) => id,
                 typeAt: (index: number): TypeReference => null,
-                initializerAt: (index: number): EqualsValueClause => null
+                initializerAt: (index: number): EqualsValueClause => null,
+                isOptionalAt: (index:number) => false,
+            }
+        }
+
+        export function fromParameter(parameter: Parameter): IParameters {
+            return {
+                length: 1,
+                lastParameterIsRest: () => parameter.isRest,
+                ast: parameter,
+                astAt: (index: number) => parameter,
+                identifierAt: (index: number) => parameter.id,
+                typeAt: (index: number) => parameter.typeExpr,
+                initializerAt: (index: number) => parameter.equalsValueClause,
+                isOptionalAt: (index: number) => parameter.isOptionalArg(),
             }
         }
 
@@ -2490,7 +2504,8 @@ module TypeScript {
                 astAt: (index: number) => list.members[index],
                 identifierAt: (index: number) => (<Parameter>list.members[index]).id,
                 typeAt: (index: number) => (<Parameter>list.members[index]).typeExpr,
-                initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause
+                initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause,
+                isOptionalAt: (index: number) => (<Parameter>list.members[index]).isOptionalArg(),
             }
         }
     }

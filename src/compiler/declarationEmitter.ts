@@ -407,12 +407,12 @@ module TypeScript {
             }
         }
 
-        private emitArgDecl(argDecl: Parameter, functionFlags: FunctionFlags) {
+        private emitArgDecl(argDecl: AST, id: Identifier, isOptional: boolean, functionFlags: FunctionFlags) {
             this.indenter.increaseIndent();
 
             this.emitDeclarationComments(argDecl, false);
-            this.declFile.Write(argDecl.id.text());
-            if (argDecl.isOptionalArg()) {
+            this.declFile.Write(id.text());
+            if (isOptional) {
                 this.declFile.Write("?");
             }
 
@@ -462,36 +462,35 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
-            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
+            this.emitParameterList(funcDecl.getFunctionFlags(), Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
             this.declFile.WriteLine(";");
         }
 
-        private emitParameterList(flags: FunctionFlags, parameterList: ASTList): void {
-            var hasLastParameterRestParameter = lastParameterIsRest(parameterList);
-            var argsLen = parameterList.members.length;
+        private emitParameterList(flags: FunctionFlags, parameterList: IParameters): void {
+            var hasLastParameterRestParameter = parameterList.lastParameterIsRest();
+            var argsLen = parameterList.length;
             if (hasLastParameterRestParameter) {
                 argsLen--;
             }
 
             for (var i = 0; i < argsLen; i++) {
-                var argDecl = <Parameter>parameterList.members[i];
-                this.emitArgDecl(argDecl, flags);
+                this.emitArgDecl(parameterList.astAt(i), parameterList.identifierAt(i), parameterList.isOptionalAt(i), flags);
                 if (i < (argsLen - 1)) {
                     this.declFile.Write(", ");
                 }
             }
 
             if (hasLastParameterRestParameter) {
-                var lastArg = <Parameter>parameterList.members[parameterList.members.length - 1];
-                if (parameterList.members.length > 1) {
+                if (parameterList.length > 1) {
                     this.declFile.Write(", ...");
                 }
                 else {
                     this.declFile.Write("...");
                 }
 
-                this.emitArgDecl(lastArg, flags);
+                var index = parameterList.length - 1;
+                this.emitArgDecl(parameterList.astAt(index), parameterList.identifierAt(index), parameterList.isOptionalAt(index), flags);
             }
         }
 
@@ -541,7 +540,7 @@ module TypeScript {
 
             this.declFile.Write("(");
 
-            this.emitParameterList(funcDecl.getFunctionFlags(), funcDecl.parameterList);
+            this.emitParameterList(funcDecl.getFunctionFlags(), Parameters.fromParameterList(funcDecl.parameterList));
 
             this.declFile.Write(")");
 
@@ -564,7 +563,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("(");
-            this.emitParameterList(FunctionFlags.None, funcDecl.parameterList);
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -596,7 +595,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(FunctionFlags.None, funcDecl.parameterList);
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -633,7 +632,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(FunctionFlags.None, funcDecl.parameterList);
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -704,7 +703,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(functionFlags, funcDecl.parameterList);
+            this.emitParameterList(functionFlags, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
 
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(functionFlags))) {
@@ -734,7 +733,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("[");
-            this.emitParameterList(FunctionFlags.None, funcDecl.parameterList);
+            this.emitParameterList(FunctionFlags.None, Parameters.fromParameter(funcDecl.parameter));
             this.declFile.Write("]");
 
             if (this.canEmitTypeAnnotationSignature(ToDeclFlags(FunctionFlags.None))) {

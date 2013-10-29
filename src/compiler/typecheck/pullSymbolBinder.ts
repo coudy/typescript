@@ -1904,7 +1904,7 @@ module TypeScript {
             indexSignatureDeclaration.setSignatureSymbol(indexSignature);
 
             var funcDecl = <IndexSignature>this.semanticInfoChain.getASTForDecl(indexSignatureDeclaration);
-            this.bindParameterSymbols(funcDecl, Parameters.fromParameterList(funcDecl.parameterList), null, indexSignature);
+            this.bindParameterSymbols(funcDecl, Parameters.fromParameter(funcDecl.parameter), null, indexSignature);
 
             this.semanticInfoChain.setSymbolForAST(this.semanticInfoChain.getASTForDecl(indexSignatureDeclaration), indexSignature);
 

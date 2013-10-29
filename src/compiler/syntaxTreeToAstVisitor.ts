@@ -1387,12 +1387,8 @@ module TypeScript {
             this.movePast(node.closeBracketToken);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var parameters = new ASTList(this.fileName, [parameter]);
-
-            var result = new IndexSignature(parameters, returnType);
+            var result = new IndexSignature(parameter, returnType);
             this.setCommentsAndSpan(result, start, node);
-
-            // result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.IndexerMember | FunctionFlags.Method | FunctionFlags.Signature);
 
             return result;
         }
