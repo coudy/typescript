@@ -52,7 +52,6 @@ module TypeScript {
         Public = 1 << 2,
         Ambient = 1 << 3,
         Static = 1 << 4,
-        Property = 1 << 8,
     }
 
     export enum FunctionFlags {

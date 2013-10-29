@@ -356,7 +356,7 @@ module TypeScript {
     }
 
     // interface properties
-    function createPropertySignature(propertyDecl: VariableDeclarator, context: DeclCollectionContext): void {
+    function createPropertySignature(propertyDecl: PropertySignature, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Public;
         var parent = context.getParent();
         var declType = PullElementKind.Property;
@@ -446,13 +446,7 @@ module TypeScript {
         }
 
         var varDecl = <VariableDeclarator>ast;
-
-        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Property)) {
-            createPropertySignature(varDecl, context);
-        }
-        else {
-            createVariableDeclaration(varDecl, context);
-        }
+        createVariableDeclaration(varDecl, context);
     }
 
     // function type expressions
@@ -905,6 +899,9 @@ module TypeScript {
                 break;
             case NodeType.MemberVariableDeclaration:
                 createMemberVariableDeclaration(<MemberVariableDeclaration>ast, context);
+                break;
+            case NodeType.PropertySignature:
+                createPropertySignature(<PropertySignature>ast, context);
                 break;
             case NodeType.VariableDeclarator:
                 preCollectVarDecls(ast, context);

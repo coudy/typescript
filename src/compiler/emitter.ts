@@ -1527,7 +1527,7 @@ module TypeScript {
 
                 if (parentIsModule) {
                     // module
-                    if (!hasFlag(pullDecl.flags, PullElementFlags.Exported) && !varDecl.isProperty()) {
+                    if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)/* && !varDecl.isProperty() */) {
                         this.emitVarDeclVar();
                     }
                     else {

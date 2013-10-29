@@ -73,6 +73,8 @@ module TypeScript {
             switch (ast.nodeType()) {
                 case NodeType.VariableStatement:
                     return this.emitDeclarationsForVariableStatement(<VariableStatement>ast);
+                case NodeType.PropertySignature:
+                    return this.emitPropertySignature(<PropertySignature>ast);
                 case NodeType.VariableDeclarator:
                     return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
                 case NodeType.MemberVariableDeclaration:
@@ -330,6 +332,19 @@ module TypeScript {
 
             this.declFile.Write(": ");
             this.emitTypeSignature(type);
+        }
+
+        private emitPropertySignature(varDecl: PropertySignature): void {
+            this.emitDeclarationComments(varDecl);
+            this.emitIndent();
+            this.declFile.Write(varDecl.id.text());
+            if (hasFlag(varDecl.id.getFlags(), ASTFlags.OptionalName)) {
+                this.declFile.Write("?");
+            }
+
+            this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
+
+            this.declFile.WriteLine(";");
         }
 
         private emitDeclarationsForVariableDeclarator(varDecl: VariableDeclarator, isFirstVarInList: boolean, isLastVarInList: boolean) {

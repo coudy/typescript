@@ -1244,7 +1244,7 @@ module TypeScript {
             var parent = this.getParent(propertyDeclaration, true);
 
             if (parent.isClass() && isStatic) {
-                parent = parent.getConstructorMethod().type;           
+                parent = parent.getConstructorMethod().type;
             }
 
             propertySymbol = parent.findMember(declName, false);

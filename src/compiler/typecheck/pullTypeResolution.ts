@@ -2347,6 +2347,11 @@ module TypeScript {
                 varDecl, varDecl.variableDeclarator.id, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
+        private resolvePropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveVariableDeclaratorOrParameterOrEnumElement(
+                varDecl, varDecl.id, varDecl.typeExpr, null, context);
+        }
+
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
                 varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
@@ -2629,10 +2634,12 @@ module TypeScript {
             return widenedInitTypeSymbol;
         }
 
-        private typeCheckVariableDeclarator(
-            varDecl: VariableDeclarator,
-            context: PullTypeResolutionContext) {
+        private typeCheckPropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext) {
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
+                varDecl, varDecl.id, varDecl.typeExpr, null, context);
+        }
 
+        private typeCheckVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
                 varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
@@ -5184,6 +5191,9 @@ module TypeScript {
                 case NodeType.VariableDeclarator:
                     return this.resolveVariableDeclarator(<VariableDeclarator>ast, context);
 
+                case NodeType.PropertySignature:
+                    return this.resolvePropertySignature(<PropertySignature>ast, context);
+
                 case NodeType.Parameter:
                     return this.resolveParameter(<Parameter>ast, context);
 
@@ -5481,6 +5491,10 @@ module TypeScript {
 
                 case NodeType.VariableDeclarator:
                     this.typeCheckVariableDeclarator(<VariableDeclarator>ast, context);
+                    return;
+
+                case NodeType.PropertySignature:
+                    this.typeCheckPropertySignature(<PropertySignature>ast, context);
                     return;
 
                 case NodeType.Parameter:

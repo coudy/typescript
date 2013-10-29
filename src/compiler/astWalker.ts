@@ -237,6 +237,11 @@ module TypeScript {
         walker.walk(preAst.equalsValueClause);
     }
 
+    function walkPropertySignatureChildren(preAst: PropertySignature, walker: AstWalker): void {
+        walker.walk(preAst.id);
+        walker.walk(preAst.typeExpr);
+    }
+
     function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: AstWalker): void {
         walker.walk(preAst.id);
         walker.walk(preAst.typeExpr);
@@ -511,6 +516,7 @@ module TypeScript {
     childrenWalkers[NodeType.PostIncrementExpression] = walkPostfixUnaryExpressionChildren;
     childrenWalkers[NodeType.PreDecrementExpression] = walkPrefixUnaryExpressionChildren;
     childrenWalkers[NodeType.PreIncrementExpression] = walkPrefixUnaryExpressionChildren;
+    childrenWalkers[NodeType.PropertySignature] = walkPropertySignatureChildren;
     childrenWalkers[NodeType.QualifiedName] = walkQualifiedNameChildren;
     childrenWalkers[NodeType.RegularExpressionLiteral] = null;
     childrenWalkers[NodeType.ReturnStatement] = walkReturnStatementChildren;

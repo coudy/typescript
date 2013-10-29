@@ -767,8 +767,6 @@ module TypeScript {
             this._varFlags = flags;
         }
 
-        public isProperty() { return hasFlag(this.getVarFlags(), VariableFlags.Property); }
-
         public structuralEquals(ast: VariableDeclarator, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this._varFlags === ast._varFlags &&
@@ -1187,6 +1185,18 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class PropertySignature extends AST {
+        constructor(public id: Identifier, public typeExpr: TypeReference) {
+            super();
+            id && (id.parent = this);
+            typeExpr && (typeExpr.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.PropertySignature;
+        }
     }
 
     export class CallSignature extends AST {
@@ -2514,6 +2524,7 @@ module TypeScript {
             case NodeType.CallSignature:
             case NodeType.ConstructSignature:
             case NodeType.MethodSignature:
+            case NodeType.PropertySignature:
                 return true;
             default:
                 return false;

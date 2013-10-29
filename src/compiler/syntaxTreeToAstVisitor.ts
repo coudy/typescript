@@ -1397,7 +1397,7 @@ module TypeScript {
             return result;
         }
 
-        public visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
+        public visitPropertySignature(node: PropertySignatureSyntax): PropertySignature {
             var start = this.position;
 
             var name = this.identifierFromToken(node.propertyName, !!node.questionToken);
@@ -1405,10 +1405,8 @@ module TypeScript {
             this.movePast(node.questionToken);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var result = new VariableDeclarator(name, typeExpr, null);
+            var result = new PropertySignature(name, typeExpr);
             this.setCommentsAndSpan(result, start, node);
-
-            result.setVarFlags(result.getVarFlags() | VariableFlags.Property);
 
             return result;
         }
@@ -2562,8 +2560,8 @@ module TypeScript {
             return result;
         }
 
-        public visitPropertySignature(node: PropertySignatureSyntax): VariableDeclarator {
-            var result: VariableDeclarator = this.getAndMovePastAST(node);
+        public visitPropertySignature(node: PropertySignatureSyntax): PropertySignature {
+            var result: PropertySignature = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitPropertySignature(node);
                 this.setAST(node, result);
