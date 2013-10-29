@@ -24,7 +24,7 @@ module Services {
             private host: ILanguageServiceHost,
             public version: number,
             public isOpen: boolean,
-            public byteOrderMark: ByteOrderMark) {
+            public byteOrderMark: TypeScript.ByteOrderMark) {
             this._sourceText = null;
         }
         
@@ -93,7 +93,7 @@ module Services {
             return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).isOpen;
         }
 
-        public getByteOrderMark(fileName: string): ByteOrderMark {
+        public getByteOrderMark(fileName: string): TypeScript.ByteOrderMark {
             return this._fileNameToEntry.lookup(TypeScript.switchToForwardSlashes(fileName)).byteOrderMark;
         }
 

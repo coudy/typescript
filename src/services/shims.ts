@@ -226,7 +226,7 @@ module Services {
             return this.shimHost.getScriptIsOpen(fileName);
         }
 
-        public getScriptByteOrderMark(fileName: string): ByteOrderMark {
+        public getScriptByteOrderMark(fileName: string): TypeScript.ByteOrderMark {
             return this.shimHost.getScriptByteOrderMark(fileName);
         }
 

@@ -43,7 +43,7 @@ class UnitTestRunner extends RunnerBase {
         var harnessCompiler = Harness.Compiler.getCompiler(Harness.Compiler.CompilerInstance.DesignTime);
 
         var toBeAdded = this.tests.map(test => {
-            return { unitName: test, content: IO.readFile(test, /*codepage:*/ null).contents }
+            return { unitName: test, content: TypeScript.IO.readFile(test, /*codepage:*/ null).contents }
         });
         harnessCompiler.addInputFiles(toBeAdded);
         harnessCompiler.compile({ noResolve: true });
@@ -70,7 +70,7 @@ class UnitTestRunner extends RunnerBase {
                     it: it,
                     assert: Harness.Assert,
                     Harness: Harness,
-                    IO: IO,
+                    IO: TypeScript.IO,
                     Exec: Exec,
                     Services: Services,
                     // Formatting: Formatting,

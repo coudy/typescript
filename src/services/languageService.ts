@@ -27,7 +27,7 @@ module Services {
         getScriptFileNames(): string[];
         getScriptVersion(fileName: string): number;
         getScriptIsOpen(fileName: string): boolean;
-        getScriptByteOrderMark(fileName: string): ByteOrderMark;
+        getScriptByteOrderMark(fileName: string): TypeScript.ByteOrderMark;
         getScriptSnapshot(fileName: string): TypeScript.IScriptSnapshot;
         getDiagnosticsObject(): Services.ILanguageServicesDiagnostics;
         getLocalizedDiagnosticMessages(): any;
