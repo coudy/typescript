@@ -72,7 +72,7 @@ module TypeScript {
     function walkGetAccessorChildren(preAst: GetAccessor, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
         walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.typeAnnotation);
         walker.walk(preAst.block);
     }
 

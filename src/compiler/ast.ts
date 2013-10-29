@@ -1342,13 +1342,13 @@ module TypeScript {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
         constructor(public propertyName: Identifier,
-            public parameterList: ASTList,
-            public returnTypeAnnotation: TypeReference,
-            public block: Block) {
+                    public parameterList: ASTList,
+                    public typeAnnotation: TypeReference,
+                    public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            typeAnnotation && (typeAnnotation.parent = this);
             block && (block.parent = this);
         }
 
@@ -1369,8 +1369,8 @@ module TypeScript {
         private _functionFlags: FunctionFlags = FunctionFlags.None;
 
         constructor(public propertyName: Identifier,
-            public parameterList: ASTList,
-            public block: Block) {
+                    public parameterList: ASTList,
+                    public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             parameterList && (parameterList.parent = this);
@@ -1457,8 +1457,8 @@ module TypeScript {
 
     export class ObjectCreationExpression extends AST implements ICallExpression {
         constructor(public expression: AST,
-            public argumentList: ArgumentList,
-            public closeParenSpan: ASTSpan) {
+                    public argumentList: ArgumentList,
+                    public closeParenSpan: ASTSpan) {
             super();
             expression && (expression.parent = this);
             argumentList && (argumentList.parent = this);
@@ -1711,7 +1711,7 @@ module TypeScript {
 
     export class SimplePropertyAssignment extends AST {
         constructor(public propertyName: Identifier,
-            public expression: AST) {
+                    public expression: AST) {
             super();
             propertyName && (propertyName.parent = this);
             expression && (expression.parent = this);

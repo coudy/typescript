@@ -3778,8 +3778,8 @@ module TypeScript {
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
-            if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.returnTypeAnnotation) {
-                return this.resolveTypeReference(getterFunctionDeclarationAst.returnTypeAnnotation, context);
+            if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.typeAnnotation) {
+                return this.resolveTypeReference(getterFunctionDeclarationAst.typeAnnotation, context);
             }
 
             return null;
@@ -3841,10 +3841,9 @@ module TypeScript {
                     this.resolveGetAccessorDeclaration(
                         getterFunctionDeclarationAst,
                         getterFunctionDeclarationAst.parameterList,
-                        getterFunctionDeclarationAst.returnTypeAnnotation,
+                        getterFunctionDeclarationAst.typeAnnotation,
                         getterFunctionDeclarationAst.block,
-                        setterAnnotatedType,
-                        context);
+                        setterAnnotatedType, context);
                 }
 
                 if (hasSetter) {
@@ -3932,7 +3931,7 @@ module TypeScript {
                     getterFunctionDeclarationAst.getFunctionFlags(),
                     getterFunctionDeclarationAst.propertyName,
                     getterFunctionDeclarationAst.parameterList,
-                    getterFunctionDeclarationAst.returnTypeAnnotation,
+                    getterFunctionDeclarationAst.typeAnnotation,
                     getterFunctionDeclarationAst.block,
                     context);
                 context.popContextualType();
@@ -4033,7 +4032,7 @@ module TypeScript {
                 // There exists: 
                 //     return type annotaion for the getter &&
                 //     parameter type annotation for the setter
-                if (getterAST.returnTypeAnnotation && PullTypeResolver.hasSetAccessorParameterTypeAnnotation(setterAST)) {
+                if (getterAST.typeAnnotation && PullTypeResolver.hasSetAccessorParameterTypeAnnotation(setterAST)) {
                     var setterSig = setter.type.getCallSignatures()[0];
                     var setterParameters = setterSig.parameters;
 
