@@ -1744,13 +1744,13 @@ module TypeScript {
     export class FunctionExpression extends AST {
         public hint: string = null;
 
-        constructor(public name: Identifier,
-            public typeParameters: ASTList,
-            public parameterList: ASTList,
-            public returnTypeAnnotation: TypeReference,
-            public block: Block) {
+        constructor(public identifier: Identifier,
+                    public typeParameters: ASTList,
+                    public parameterList: ASTList,
+                    public returnTypeAnnotation: TypeReference,
+                    public block: Block) {
             super();
-            name && (name.parent = this);
+            identifier && (identifier.parent = this);
             typeParameters && (typeParameters.parent = this);
             parameterList && (parameterList.parent = this);
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
@@ -1762,7 +1762,7 @@ module TypeScript {
         }
 
         public getNameText() {
-            return this.name ? this.name.text() : this.hint;
+            return this.identifier ? this.identifier.text() : this.hint;
         }
     }
 

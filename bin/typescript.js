@@ -31374,10 +31374,6 @@ var TypeScript;
             return !TypeScript.hasFlag(flags, 32 /* Signature */) && !TypeScript.hasFlag(flags, 8 /* Ambient */);
         };
 
-        Emitter.prototype.shouldEmitConstructorDeclaration = function (declaration) {
-            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
-        };
-
         Emitter.prototype.emitConstructorDeclaration = function (declaration) {
             if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
                 this.emitConstructor(declaration);
@@ -31491,21 +31487,14 @@ var TypeScript;
                     return this.shouldEmitClassDeclaration(ast);
                 case 29 /* InterfaceDeclaration */:
                     return this.shouldEmitInterfaceDeclaration(ast);
-                case 45 /* IndexSignature */:
-                    return false;
                 case 26 /* FunctionDeclaration */:
                     return this.shouldEmitFunctionDeclaration(ast);
                 case 34 /* ModuleDeclaration */:
                     return this.shouldEmitModuleDeclaration(ast);
-                case 33 /* ArrayType */:
-                case 32 /* ObjectType */:
-                    return false;
                 case 126 /* VariableStatement */:
                     return this.shouldEmitVariableStatement(ast);
                 case 50 /* OmittedExpression */:
                     return false;
-                case 27 /* ConstructorDeclaration */:
-                    return this.shouldEmitConstructorDeclaration(ast);
                 case 41 /* EnumDeclaration */:
                     return this.shouldEmitEnumDeclaration(ast);
             }
@@ -31547,16 +31536,6 @@ var TypeScript;
                     return this.emitVariableDeclaration(ast);
                 case 17 /* GenericType */:
                     return this.emitGenericType(ast);
-                case 19 /* TypeQuery */:
-                    throw TypeScript.Errors.invalidOperation("Should not emit a type query.");
-                case 18 /* TypeRef */:
-                    throw TypeScript.Errors.invalidOperation("Should not emit a type reference.");
-                case 10 /* AnyType */:
-                case 11 /* BooleanType */:
-                case 12 /* NumberType */:
-                case 13 /* StringType */:
-                case 14 /* VoidType */:
-                    throw TypeScript.Errors.invalidOperation("Should not emit a builtin type.");
                 case 27 /* ConstructorDeclaration */:
                     return this.emitConstructorDeclaration(ast);
                 case 41 /* EnumDeclaration */:
@@ -39271,9 +39250,6 @@ var TypeScript;
 
             if (term.nodeType() === 47 /* Name */) {
                 typeDeclSymbol = this.resolveTypeNameExpression(term, context);
-            } else if (term.nodeType() === 26 /* FunctionDeclaration */) {
-                var functionDeclaration = term;
-                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionDeclaration, functionDeclaration.typeParameters, functionDeclaration.parameterList, functionDeclaration.returnTypeAnnotation, context);
             } else if (term.nodeType() === 21 /* FunctionType */) {
                 var functionType = term;
                 typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameters, functionType.parameterList, functionType.returnTypeAnnotation, context);
@@ -39595,10 +39571,6 @@ var TypeScript;
             }
 
             return widenedInitTypeSymbol;
-        };
-
-        PullTypeResolver.prototype.typeCheckMemberVariableDeclaration = function (varDecl, context) {
-            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, varDecl.variableDeclarator.id, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.typeCheckVariableDeclarator = function (varDecl, context) {
@@ -40005,10 +39977,6 @@ var TypeScript;
             this.typeCheckFunctionDeclaration(funcDecl, 32 /* Signature */, null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         };
 
-        PullTypeResolver.prototype.typeCheckMethodSignature = function (funcDecl, context) {
-            this.typeCheckFunctionDeclaration(funcDecl, 32 /* Signature */, funcDecl.propertyName, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
-        };
-
         PullTypeResolver.prototype.typeCheckFunctionDeclaration = function (funcDeclAST, flags, name, typeParameters, parameters, returnTypeAnnotation, block, context) {
             var _this = this;
             this.setTypeChecked(funcDeclAST, context);
@@ -40142,10 +40110,6 @@ var TypeScript;
 
         PullTypeResolver.prototype.resolveMemberFunctionDeclaration = function (funcDecl, context) {
             return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
-        };
-
-        PullTypeResolver.prototype.typeCheckMemberFunctionDeclaration = function (memberFuncDecl, context) {
-            this.typeCheckFunctionDeclaration(memberFuncDecl, memberFuncDecl.getFunctionFlags(), memberFuncDecl.propertyName, memberFuncDecl.typeParameters, memberFuncDecl.parameterList, memberFuncDecl.returnTypeAnnotation, memberFuncDecl.block, context);
         };
 
         PullTypeResolver.prototype.resolveCallSignature = function (funcDecl, context) {
@@ -41487,35 +41451,6 @@ var TypeScript;
             }
         };
 
-        PullTypeResolver.prototype.resolveCaseSwitchClause = function (ast, context) {
-            if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckCaseSwitchClause(ast, context);
-            }
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        };
-
-        PullTypeResolver.prototype.resolveDefaultSwitchClause = function (ast, context) {
-            if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckDefaultSwitchClause(ast, context);
-            }
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        };
-
-        PullTypeResolver.prototype.typeCheckCaseSwitchClause = function (ast, context) {
-            this.setTypeChecked(ast, context);
-
-            this.resolveAST(ast.expression, false, context);
-            this.resolveAST(ast.statements, false, context);
-        };
-
-        PullTypeResolver.prototype.typeCheckDefaultSwitchClause = function (ast, context) {
-            this.setTypeChecked(ast, context);
-
-            this.resolveAST(ast.statements, false, context);
-        };
-
         PullTypeResolver.prototype.resolveLabeledStatement = function (ast, context) {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckLabeledStatement(ast, context);
@@ -41994,12 +41929,6 @@ var TypeScript;
                 case 111 /* BreakStatement */:
                     return this.resolveBreakStatement(ast, context);
 
-                case 129 /* CaseSwitchClause */:
-                    return this.resolveCaseSwitchClause(ast, context);
-
-                case 130 /* DefaultSwitchClause */:
-                    return this.resolveDefaultSwitchClause(ast, context);
-
                 case 121 /* LabeledStatement */:
                     return this.resolveLabeledStatement(ast, context);
             }
@@ -42034,20 +41963,12 @@ var TypeScript;
                     this.typeCheckEnumElement(ast, context);
                     return;
 
-                case 43 /* MemberVariableDeclaration */:
-                    this.typeCheckMemberVariableDeclaration(ast, context);
-                    return;
-
                 case 36 /* VariableDeclarator */:
                     this.typeCheckVariableDeclarator(ast, context);
                     return;
 
                 case 38 /* Parameter */:
                     this.typeCheckParameter(ast, context);
-                    return;
-
-                case 15 /* TypeParameter */:
-                    this.typeCheckTypeParameterDeclaration(ast, context);
                     return;
 
                 case 35 /* ImportDeclaration */:
@@ -42078,15 +41999,6 @@ var TypeScript;
                     this.resolveQualifiedName(ast, context);
                     return;
 
-                case 27 /* ConstructorDeclaration */:
-                    this.typeCheckConstructorDeclaration(ast, context);
-                    return;
-
-                case 30 /* GetAccessor */:
-                case 31 /* SetAccessor */:
-                    this.typeCheckAccessorDeclaration(ast, context);
-                    return;
-
                 case 109 /* FunctionExpression */:
                     this.typeCheckFunctionExpression(ast, context);
                     break;
@@ -42103,18 +42015,9 @@ var TypeScript;
                     this.typeCheckConstructSignature(ast, context);
                     break;
 
-                case 25 /* MethodSignature */:
-                    this.typeCheckMethodSignature(ast, context);
-                    break;
-
                 case 26 /* FunctionDeclaration */: {
                     var funcDecl = ast;
                     this.typeCheckFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
-                    return;
-                }
-
-                case 44 /* MemberFunctionDeclaration */: {
-                    this.typeCheckMemberFunctionDeclaration(ast, context);
                     return;
                 }
 
@@ -43136,21 +43039,6 @@ var TypeScript;
             }
 
             return false;
-        };
-
-        PullTypeResolver.prototype.getEnclosingClassMemberDeclaration = function (enclosingDecl) {
-            var declPath = enclosingDecl.getParentPath();
-
-            for (var i = declPath.length - 1; i > 0; i--) {
-                var decl = declPath[i];
-                var parentDecl = declPath[i - 1];
-
-                if (parentDecl.kind === 8 /* Class */) {
-                    return decl;
-                }
-            }
-
-            return null;
         };
 
         PullTypeResolver.prototype.resolveSuperExpression = function (ast, context) {

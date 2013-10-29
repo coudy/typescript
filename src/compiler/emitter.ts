@@ -1346,10 +1346,10 @@ module TypeScript {
             this.writeToOutput("function ");
 
             //var id = funcDecl.getNameText();
-            if (funcDecl.name) {
-                this.recordSourceMappingStart(funcDecl.name);
-                this.writeToOutput(funcDecl.name.text());
-                this.recordSourceMappingEnd(funcDecl.name);
+            if (funcDecl.identifier) {
+                this.recordSourceMappingStart(funcDecl.identifier);
+                this.writeToOutput(funcDecl.identifier.text());
+                this.recordSourceMappingEnd(funcDecl.identifier);
             }
 
             this.writeToOutput("(");

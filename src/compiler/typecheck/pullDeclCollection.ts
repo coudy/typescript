@@ -750,7 +750,7 @@ module TypeScript {
     }
 
     function createFunctionExpressionDeclaration(expression: FunctionExpression, context: DeclCollectionContext): void {
-        createAnyFunctionExpressionDeclaration(expression, expression.name, context);
+        createAnyFunctionExpressionDeclaration(expression, expression.identifier, context);
     }
 
     function createSetAccessorDeclaration(setAccessorDeclAST: SetAccessor, context: DeclCollectionContext): void {

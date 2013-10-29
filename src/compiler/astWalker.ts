@@ -154,7 +154,7 @@ module TypeScript {
     }
 
     function walkFunctionExpressionChildren(preAst: FunctionExpression, walker: AstWalker): void {
-        walker.walk(preAst.name);
+        walker.walk(preAst.identifier);
         walker.walk(preAst.typeParameters);
         walker.walk(preAst.parameterList);
         walker.walk(preAst.returnTypeAnnotation);
