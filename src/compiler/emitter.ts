@@ -651,47 +651,6 @@ module TypeScript {
             }
         }
 
-        public emitInnerFunction(funcDecl: FunctionDeclaration, printName: boolean, includePreComments = true) {
-            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-            this.pushDecl(pullDecl);
-
-            if (includePreComments) {
-                this.emitComments(funcDecl, true);
-            }
-
-            this.recordSourceMappingStart(funcDecl);
-            this.writeToOutput("function ");
-
-            if (printName) {
-                var id = funcDecl.getNameText();
-                if (id) {
-                    if (funcDecl.name) {
-                        this.recordSourceMappingStart(funcDecl.name);
-                    }
-                    this.writeToOutput(id);
-                    if (funcDecl.name) {
-                        this.recordSourceMappingEnd(funcDecl.name);
-                    }
-                }
-            }
-
-            this.writeToOutput("(");
-            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
-            this.emitFunctionParameters(parameters);
-            this.writeToOutput(")");
-
-            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, parameters, funcDecl.block);
-
-            this.recordSourceMappingEnd(funcDecl);
-
-            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
-            this.recordSourceMappingEnd(funcDecl);
-
-            this.emitComments(funcDecl, false);
-
-            this.popDecl(pullDecl);
-        }
-
         private emitFunctionBodyStatements(name: string, funcDecl: AST, parameterList: IParameters, block: Block): void {
             this.writeLineToOutput(" {");
             if (name) {
@@ -1165,12 +1124,12 @@ module TypeScript {
         }
 
         public emitSimpleArrowFunctionExpression(arrowFunction: SimpleArrowFunctionExpression): void {
-            this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(),
+            this.emitAnyArrowFunctionExpression(arrowFunction, null /*arrowFunction.getNameText()*/,
                 Parameters.fromIdentifier(arrowFunction.identifier), arrowFunction.block);
         }
 
         public emitParenthesizedArrowFunctionExpression(arrowFunction: ParenthesizedArrowFunctionExpression): void {
-            this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(),
+            this.emitAnyArrowFunctionExpression(arrowFunction, null /* arrowFunction.getNameText() */,
                 Parameters.fromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.block);
         }
 
@@ -1335,7 +1294,7 @@ module TypeScript {
 
             var temp = this.setContainer(EmitContainer.Function);
 
-            var funcName = funcDecl.getNameText();
+            var funcName = funcDecl.identifier ? funcDecl.identifier.text() : null;//.getNameText();
 
             this.recordSourceMappingStart(funcDecl);
 
@@ -1358,7 +1317,7 @@ module TypeScript {
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, parameters, funcDecl.block);
+            this.emitFunctionBodyStatements(funcName, funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -1382,12 +1341,48 @@ module TypeScript {
 
             var temp = this.setContainer(EmitContainer.Function);
 
-            var funcName = funcDecl.getNameText();
+            var funcName = funcDecl.name.text();
 
-            //if (temp !== EmitContainer.Constructor) {
-                this.recordSourceMappingStart(funcDecl);
-                this.emitInnerFunction(funcDecl, funcDecl.name !== null);
-            //}
+            this.recordSourceMappingStart(funcDecl);
+
+            var printName = funcDecl.name !== null
+            var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+            this.pushDecl(pullDecl);
+
+            this.emitComments(funcDecl, true);
+
+            this.recordSourceMappingStart(funcDecl);
+            this.writeToOutput("function ");
+
+            if (printName) {
+                var id = funcDecl.name.text();
+                if (id) {
+                    if (funcDecl.name) {
+                        this.recordSourceMappingStart(funcDecl.name);
+                    }
+                    this.writeToOutput(id);
+                    if (funcDecl.name) {
+                        this.recordSourceMappingEnd(funcDecl.name);
+                    }
+                }
+            }
+
+            this.writeToOutput("(");
+            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            this.emitFunctionParameters(parameters);
+            this.writeToOutput(")");
+
+            this.emitFunctionBodyStatements(funcDecl.name.text(), funcDecl, parameters, funcDecl.block);
+
+            this.recordSourceMappingEnd(funcDecl);
+
+            // The extra call is to make sure the caller's funcDecl end is recorded, since caller wont be able to record it
+            this.recordSourceMappingEnd(funcDecl);
+
+            this.emitComments(funcDecl, false);
+
+            this.popDecl(pullDecl);
+
             this.setContainer(temp);
             this.inArrowFunction = savedInArrowFunction;
 

@@ -602,7 +602,6 @@ module TypeScript {
     }
 
     export class FunctionDeclaration extends AST {
-        public hint: string = null;
         private _functionFlags = FunctionFlags.None;
 
         constructor(public name: Identifier,
@@ -630,19 +629,9 @@ module TypeScript {
         public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 this._functionFlags === ast._functionFlags &&
-                this.hint === ast.hint &&
                 structuralEquals(this.name, ast.name, includingPosition) &&
                 structuralEquals(this.block, ast.block, includingPosition) &&
                 structuralEquals(this.callSignature, ast.callSignature, includingPosition);
-        }
-
-        public getNameText() {
-            if (this.name) {
-                return this.name.text();
-            }
-            else {
-                return this.hint;
-            }
         }
     }
 
@@ -757,10 +746,8 @@ module TypeScript {
     }
 
     export class SimpleArrowFunctionExpression extends AST {
-        public hint: string = null;
-
         constructor(public identifier: Identifier,
-            public block: Block) {
+                    public block: Block) {
             super();
             identifier && (identifier.parent = this);
             block && (block.parent = this);
@@ -772,19 +759,12 @@ module TypeScript {
 
         public structuralEquals(ast: SimpleArrowFunctionExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this.hint === ast.hint &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                 structuralEquals(this.block, ast.block, includingPosition);
-        }
-
-        public getNameText() {
-            return this.hint;
         }
     }
 
     export class ParenthesizedArrowFunctionExpression extends AST {
-        public hint: string = null;
-
         constructor(public callSignature: CallSignature, public block: Block) {
             super();
             callSignature && (callSignature.parent = this);
@@ -797,13 +777,8 @@ module TypeScript {
 
         public structuralEquals(ast: ParenthesizedArrowFunctionExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this.hint === ast.hint &&
                 structuralEquals(this.block, ast.block, includingPosition) &&
                 structuralEquals(this.callSignature, ast.callSignature, includingPosition);
-        }
-
-        public getNameText() {
-            return this.hint;
         }
     }
 
@@ -1681,8 +1656,6 @@ module TypeScript {
     }
 
     export class FunctionExpression extends AST {
-        public hint: string = null;
-
         constructor(public identifier: Identifier, public callSignature: CallSignature, public block: Block) {
             super();
             identifier && (identifier.parent = this);
@@ -1692,10 +1665,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.FunctionExpression;
-        }
-
-        public getNameText() {
-            return this.identifier ? this.identifier.text() : this.hint;
         }
     }
 

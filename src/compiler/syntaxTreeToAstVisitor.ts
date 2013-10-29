@@ -793,21 +793,6 @@ module TypeScript {
             var result = new VariableDeclarator(name, typeExpr, init);
             this.setSpan(result, start, node);
 
-            if (init) {
-                if (init.value.nodeType() === NodeType.SimpleArrowFunctionExpression) {
-                    var simpleArrowFunction = <SimpleArrowFunctionExpression>init.value;
-                    simpleArrowFunction.hint = name.text();
-                }
-                else if (init.value.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
-                    var arrowFunction = <ParenthesizedArrowFunctionExpression>init.value;
-                    arrowFunction.hint = name.text();
-                }
-                else if (init.value.nodeType() === NodeType.FunctionExpression) {
-                    var expression = <FunctionExpression>init.value;
-                    expression.hint = name.text();
-                }
-            }
-
             return result;
         }
 
@@ -1309,16 +1294,6 @@ module TypeScript {
 
             var result = new BinaryExpression(nodeType, left, right);
             this.setSpan(result, start, node);
-
-            if (right.nodeType() === NodeType.FunctionDeclaration ||
-                right.nodeType() === NodeType.SimpleArrowFunctionExpression ||
-                right.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
-                var id = left.nodeType() === NodeType.MemberAccessExpression ? (<MemberAccessExpression>left).name : left;
-                var idHint: string = id.nodeType() === NodeType.Name ? id.actualText : null;
-
-                var funcDecl = <FunctionDeclaration>right;
-                funcDecl.hint = idHint;
-            }
 
             return result;
         }
@@ -1901,14 +1876,6 @@ module TypeScript {
 
             result.setPreComments(preComments);
             result.setPostComments(postComments);
-
-            if (expression.nodeType() === NodeType.FunctionDeclaration ||
-                expression.nodeType() === NodeType.SimpleArrowFunctionExpression ||
-                expression.nodeType() === NodeType.ParenthesizedArrowFunctionExpression ||
-                expression.nodeType() === NodeType.FunctionExpression) {
-                var funcDecl = <FunctionDeclaration>expression;
-                    funcDecl.hint = propertyName.valueText();
-            }
 
             return result;
         }

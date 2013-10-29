@@ -676,7 +676,7 @@ module TypeScript {
 
             this.emitDeclarationComments(funcDecl);
 
-            var id = funcDecl.getNameText();
+            var id = funcDecl.name.text();
             if (!isInterfaceMember) {
                 this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
                 if (id !== "" || !funcDecl.name || funcDecl.name.text().length > 0) {
