@@ -2986,10 +2986,6 @@ module TypeScript {
                    !hasFlag(flags, FunctionFlags.Ambient);
         }
 
-        public shouldEmitConstructorDeclaration(declaration: ConstructorDeclaration): boolean {
-            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
-        }
-
         public emitConstructorDeclaration(declaration: ConstructorDeclaration): void {
             if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
                 this.emitConstructor(declaration);
@@ -3109,21 +3105,14 @@ module TypeScript {
                     return this.shouldEmitClassDeclaration(<ClassDeclaration>ast);
                 case NodeType.InterfaceDeclaration:
                     return this.shouldEmitInterfaceDeclaration(<InterfaceDeclaration>ast);
-                case NodeType.IndexSignature:
-                    return false;
                 case NodeType.FunctionDeclaration:
                     return this.shouldEmitFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.ModuleDeclaration:
                     return this.shouldEmitModuleDeclaration(<ModuleDeclaration>ast);
-                case NodeType.ArrayType:
-                case NodeType.ObjectType:
-                    return false;
                 case NodeType.VariableStatement:
                     return this.shouldEmitVariableStatement(<VariableStatement>ast);
                 case NodeType.OmittedExpression:
                     return false;
-                case NodeType.ConstructorDeclaration:
-                    return this.shouldEmitConstructorDeclaration(<ConstructorDeclaration>ast);
                 case NodeType.EnumDeclaration:
                     return this.shouldEmitEnumDeclaration(<EnumDeclaration>ast);
             }
@@ -3165,16 +3154,6 @@ module TypeScript {
                     return this.emitVariableDeclaration(<VariableDeclaration>ast);
                 case NodeType.GenericType:
                     return this.emitGenericType(<GenericType>ast);
-                case NodeType.TypeQuery:
-                    throw Errors.invalidOperation("Should not emit a type query.");
-                case NodeType.TypeRef:
-                    throw Errors.invalidOperation("Should not emit a type reference.");
-                case NodeType.AnyType:
-                case NodeType.BooleanType:
-                case NodeType.NumberType:
-                case NodeType.StringType:
-                case NodeType.VoidType:
-                    throw Errors.invalidOperation("Should not emit a builtin type.");
                 case NodeType.ConstructorDeclaration:
                     return this.emitConstructorDeclaration(<ConstructorDeclaration>ast);
                 case NodeType.EnumDeclaration:
