@@ -48,7 +48,7 @@ module TypeScript {
     }
 
     function walkArgumentListChildren(preAst: ArgumentList, walker: AstWalker): void {
-        walker.walk(preAst.typeArguments);
+        walker.walk(preAst.typeArgumentList);
         walker.walk(preAst.arguments);
     }
 

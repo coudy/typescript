@@ -520,18 +520,6 @@ module TypeScript {
         }
     }
 
-    export class ArgumentList extends AST {
-        constructor(public typeArguments: ASTList, public arguments: ASTList) {
-            super();
-            typeArguments && (typeArguments.parent = this);
-            arguments && (arguments.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ArgumentList;
-        }
-    }
-
     export class InvocationExpression extends AST implements ICallExpression {
         constructor(public expression: AST,
                     public argumentList: ArgumentList,
@@ -1063,6 +1051,18 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class ArgumentList extends AST {
+        constructor(public typeArgumentList: ASTList, public arguments: ASTList) {
+            super();
+            typeArgumentList && (typeArgumentList.parent = this);
+            arguments && (arguments.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ArgumentList;
+        }
     }
 
     export class BinaryExpression extends AST {

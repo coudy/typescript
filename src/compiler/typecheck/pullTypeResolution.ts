@@ -6528,7 +6528,7 @@ module TypeScript {
 
                     case NodeType.ArgumentList:
                         var argumentList = <ArgumentList>current;
-                        return argumentList.typeArguments === previous;
+                        return argumentList.typeArgumentList === previous;
                 }
 
                 previous = current;
@@ -7709,7 +7709,7 @@ module TypeScript {
                 // resolve any arguments.
                 this.resolveAST(callEx.argumentList.arguments, /*isContextuallyTyped:*/ false, context);
 
-                if (callEx.argumentList.typeArguments && callEx.argumentList.typeArguments.members.length) {
+                if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.members.length) {
                     // Can't invoke 'any' generically.
                     if (targetTypeSymbol === this.semanticInfoChain.anyTypeSymbol) {
                         this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments),
@@ -7761,14 +7761,14 @@ module TypeScript {
             var diagnostics: Diagnostic[] = [];
 
             // resolve the type arguments, specializing if necessary
-            if (callEx.argumentList.typeArguments) {
+            if (callEx.argumentList.typeArgumentList) {
 
                 // specialize the type arguments
                 typeArgs = [];
 
-                if (callEx.argumentList.typeArguments && callEx.argumentList.typeArguments.members.length) {
-                    for (var i = 0; i < callEx.argumentList.typeArguments.members.length; i++) {
-                        typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.argumentList.typeArguments.members[i], context);
+                if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.members.length) {
+                    for (var i = 0; i < callEx.argumentList.typeArgumentList.members.length; i++) {
+                        typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.argumentList.typeArgumentList.members[i], context);
                     }
                 }
             }
@@ -7900,7 +7900,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    if (!(callEx.argumentList.typeArguments && callEx.argumentList.typeArguments.members.length)) {
+                    if (!(callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.members.length)) {
                         resolvedSignatures[resolvedSignatures.length] = signatures[i];
                     }
                 }
@@ -7925,7 +7925,7 @@ module TypeScript {
                 if (!couldNotFindGenericOverload) {
                     // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                     if (this.cachedFunctionInterfaceType() && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), context)) {
-                        if (callEx.argumentList.typeArguments) {
+                        if (callEx.argumentList.typeArgumentList) {
                             this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
                                 additionalResults, context);
                         }
@@ -7949,7 +7949,7 @@ module TypeScript {
                 return this.getNewErrorTypeSymbol();
             }
 
-            var signature = this.resolveOverloads(callEx, signatures, callEx.argumentList.typeArguments != null, context, diagnostics);
+            var signature = this.resolveOverloads(callEx, signatures, callEx.argumentList.typeArgumentList != null, context, diagnostics);
             var useBeforeResolutionSignatures = signature == null;
 
             if (!signature) {
@@ -7973,12 +7973,12 @@ module TypeScript {
                 signature = signatures[0];
             }
 
-            if (!signature.isGeneric() && callEx.argumentList.typeArguments) {
+            if (!signature.isGeneric() && callEx.argumentList.typeArgumentList) {
                 this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
                     additionalResults, context);
             }
-            else if (signature.isGeneric() && callEx.argumentList.typeArguments && signature.getTypeParameters() && (callEx.argumentList.typeArguments.members.length != signature.getTypeParameters().length)) {
-                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.argumentList.typeArguments.members.length]),
+            else if (signature.isGeneric() && callEx.argumentList.typeArgumentList && signature.getTypeParameters() && (callEx.argumentList.typeArgumentList.members.length != signature.getTypeParameters().length)) {
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.argumentList.typeArgumentList.members.length]),
                     additionalResults, context);
             }
 
@@ -8154,13 +8154,13 @@ module TypeScript {
 
             if (constructSignatures.length) {
                 // resolve the type arguments, specializing if necessary
-                if (callEx.argumentList && callEx.argumentList.typeArguments) {
+                if (callEx.argumentList && callEx.argumentList.typeArgumentList) {
                     // specialize the type arguments
                     typeArgs = [];
 
-                    if (callEx.argumentList.typeArguments && callEx.argumentList.typeArguments.members.length) {
-                        for (var i = 0; i < callEx.argumentList.typeArguments.members.length; i++) {
-                            typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.argumentList.typeArguments.members[i], context);
+                    if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.members.length) {
+                        for (var i = 0; i < callEx.argumentList.typeArgumentList.members.length; i++) {
+                            typeArgs[i] = this.resolveTypeReference(<TypeReference>callEx.argumentList.typeArgumentList.members[i], context);
                         }
                     }
                 }
@@ -8286,7 +8286,7 @@ module TypeScript {
                             }
                         }
                         else {
-                            if (!(callEx.argumentList && callEx.argumentList.typeArguments && callEx.argumentList.typeArguments.members.length)) {
+                            if (!(callEx.argumentList && callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.members.length)) {
                                 resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
                             }
                         }
@@ -8296,7 +8296,7 @@ module TypeScript {
                     constructSignatures = resolvedSignatures;
                 }
 
-                var signature = this.resolveOverloads(callEx, constructSignatures, callEx.argumentList && callEx.argumentList.typeArguments != null, context, diagnostics);
+                var signature = this.resolveOverloads(callEx, constructSignatures, callEx.argumentList && callEx.argumentList.typeArgumentList != null, context, diagnostics);
 
                 // Store any additional resolution results if needed before we return
                 additionalResults.targetSymbol = targetSymbol;
