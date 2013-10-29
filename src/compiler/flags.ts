@@ -64,7 +64,6 @@ module TypeScript {
         Static = 1 << 4,
         Signature = 1 << 7,
         Method = 1 << 8,
-        CallSignature = 1 << 9,
         ConstructMember = 1 << 10,
     }
 

@@ -204,6 +204,12 @@ module TypeScript {
         walker.walk(preAst.returnTypeAnnotation);
     }
 
+    function walkCallSignatureChildren(preAst: CallSignature, walker: AstWalker): void {
+        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.parameterList);
+        walker.walk(preAst.returnTypeAnnotation);
+    }
+
     function walkConstraintChildren(preAst: Constraint, walker: AstWalker): void {
         walker.walk(preAst.type);
     }
@@ -403,6 +409,7 @@ module TypeScript {
     childrenWalkers[NodeType.Block] = walkBlockChildren;
     childrenWalkers[NodeType.BooleanType] = null;
     childrenWalkers[NodeType.BreakStatement] = null;
+    childrenWalkers[NodeType.CallSignature] = walkCallSignatureChildren;
     childrenWalkers[NodeType.CaseSwitchClause] = walkCaseSwitchClauseChildren;
     childrenWalkers[NodeType.CastExpression] = walkCastExpressionChildren;
     childrenWalkers[NodeType.CatchClause] = walkCatchClauseChildren;

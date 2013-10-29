@@ -1857,7 +1857,7 @@ module TypeScript {
 
         private bindCallSignatureDeclarationToPullSymbol(callSignatureDeclaration: PullDecl) {
             var parent = this.getParent(callSignatureDeclaration, true);
-            var callSignatureAST = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(callSignatureDeclaration);
+            var callSignatureAST = <CallSignature>this.semanticInfoChain.getASTForDecl(callSignatureDeclaration);
 
             var callSignature = new PullSignatureSymbol(PullElementKind.CallSignature);
 
@@ -1889,7 +1889,7 @@ module TypeScript {
             callSignature.addDeclaration(callSignatureDeclaration);
             callSignatureDeclaration.setSignatureSymbol(callSignature);
 
-            var funcDecl = <FunctionDeclaration>this.semanticInfoChain.getASTForDecl(callSignatureDeclaration);
+            var funcDecl = <CallSignature>this.semanticInfoChain.getASTForDecl(callSignatureDeclaration);
             this.bindParameterSymbols(funcDecl, Parameters.fromParameterList(funcDecl.parameterList), null, callSignature);
 
             this.semanticInfoChain.setSymbolForAST(this.semanticInfoChain.getASTForDecl(callSignatureDeclaration), callSignature);

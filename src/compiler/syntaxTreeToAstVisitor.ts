@@ -1432,18 +1432,15 @@ module TypeScript {
             return result;
         }
 
-        public visitCallSignature(node: CallSignatureSyntax): FunctionDeclaration {
+        public visitCallSignature(node: CallSignatureSyntax): CallSignature {
             var start = this.position;
 
             var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var result = new FunctionDeclaration(null, typeParameters, parameters, returnType, null);
+            var result = new CallSignature(typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
-
-            result.hint = "_call";
-            result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.CallSignature | FunctionFlags.Method | FunctionFlags.Signature);
 
             return result;
         }
@@ -2580,8 +2577,8 @@ module TypeScript {
             return result;
         }
 
-        public visitCallSignature(node: CallSignatureSyntax): FunctionDeclaration {
-            var result: FunctionDeclaration = this.getAndMovePastAST(node);
+        public visitCallSignature(node: CallSignatureSyntax): CallSignature {
+            var result: CallSignature = this.getAndMovePastAST(node);
             if (!result) {
                 result = super.visitCallSignature(node);
                 this.setAST(node, result);

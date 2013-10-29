@@ -3146,6 +3146,11 @@ module TypeScript {
             this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
         }
 
+        private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Method | FunctionFlags.Signature,
+                null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+        }
+
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
             flags: FunctionFlags,
@@ -3322,6 +3327,11 @@ module TypeScript {
                 this.typeCheckFunctionDeclaration(memberFuncDecl, memberFuncDecl.getFunctionFlags(), memberFuncDecl.propertyName,
                 memberFuncDecl.typeParameters, memberFuncDecl.parameterList, memberFuncDecl.returnTypeAnnotation,
                 memberFuncDecl.block, context);
+        }
+
+        private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature | FunctionFlags.Method, null,
+                funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
@@ -5267,6 +5277,9 @@ module TypeScript {
                 case NodeType.MemberFunctionDeclaration:
                     return this.resolveMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
 
+                case NodeType.CallSignature:
+                    return this.resolveCallSignature(<CallSignature>ast, context);
+
                 case NodeType.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, context);
 
@@ -5564,6 +5577,10 @@ module TypeScript {
                     this.typeCheckIndexSignature(<IndexSignature>ast, context);
                     break;
                 
+                case NodeType.CallSignature:
+                    this.typeCheckCallSignature(<CallSignature>ast, context);
+                    break;
+
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;

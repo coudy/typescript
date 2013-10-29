@@ -45,6 +45,7 @@ module TypeScript {
         QualifiedName,
         FunctionType,
         ConstructorType,
+        CallSignature,
 
         // Declarations
         FunctionDeclaration,

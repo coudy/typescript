@@ -87,6 +87,8 @@ module TypeScript {
                     return this.emitIndexMemberDeclaration(<IndexMemberDeclaration>ast);
                 case NodeType.IndexSignature:
                     return this.emitIndexSignature(<IndexSignature>ast);
+                case NodeType.CallSignature:
+                    return this.emitCallSignature(<CallSignature>ast);
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.MemberFunctionDeclaration:
@@ -528,6 +530,31 @@ module TypeScript {
                 var returnType = funcSignature.returnType;
                 this.declFile.Write(": ");
                 this.emitTypeSignature(returnType);
+            }
+
+            this.declFile.WriteLine(";");
+        }
+
+        private emitCallSignature(funcDecl: CallSignature): void {
+            var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+
+            this.emitDeclarationComments(funcDecl);
+
+            var funcSignature = funcPullDecl.getSignatureSymbol();
+            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+
+            this.emitIndent();
+            this.declFile.Write("(");
+            this.emitParameterList(FunctionFlags.None, funcDecl.parameterList);
+            this.declFile.Write(")");
+
+            var returnType = funcSignature.returnType;
+            this.declFile.Write(": ");
+            if (returnType) {
+                this.emitTypeSignature(returnType);
+            }
+            else {
+                this.declFile.Write("any");
             }
 
             this.declFile.WriteLine(";");

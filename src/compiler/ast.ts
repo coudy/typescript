@@ -905,6 +905,19 @@ module TypeScript {
         }
     }
 
+    export class CallSignature extends AST {
+        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+            super();
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.CallSignature;
+        }
+    }
+
     export class FunctionType extends AST {
         constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
             super();
@@ -2471,6 +2484,7 @@ module TypeScript {
             case NodeType.SimplePropertyAssignment:
             case NodeType.FunctionPropertyAssignment:
             case NodeType.FunctionExpression:
+            case NodeType.CallSignature:
                 return true;
             default:
                 return false;
