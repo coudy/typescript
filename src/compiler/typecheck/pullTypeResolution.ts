@@ -2230,6 +2230,9 @@ module TypeScript {
             else if (term.nodeType() === NodeType.FunctionDeclaration) {
                 typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>term, context);
             }
+            else if (term.nodeType() === NodeType.FunctionType) {
+                typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>term, context);
+            }
             else if (term.nodeType() === NodeType.ObjectType) {
                 typeDeclSymbol = this.resolveObjectTypeTypeReference(<ObjectType>term, context);
             }

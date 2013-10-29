@@ -43,6 +43,7 @@ module TypeScript {
         TypeRef,
         TypeQuery,
         QualifiedName,
+        FunctionType,
 
         // Declarations
         FunctionDeclaration,

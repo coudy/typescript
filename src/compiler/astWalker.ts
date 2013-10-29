@@ -161,6 +161,12 @@ module TypeScript {
         walker.walk(preAst.block);
     }
 
+    function walkFunctionTypeChildren(preAst: FunctionType, walker: AstWalker): void {
+        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.parameterList);
+        walker.walk(preAst.returnTypeAnnotation);
+    }
+
     function walkParenthesizedArrowFunctionExpressionChildren(preAst: ParenthesizedArrowFunctionExpression, walker: AstWalker): void {
         walker.walk(preAst.typeParameters);
         walker.walk(preAst.parameterList);
@@ -425,6 +431,7 @@ module TypeScript {
     childrenWalkers[NodeType.FunctionDeclaration] = walkFuncDeclChildren;
     childrenWalkers[NodeType.FunctionExpression] = walkFunctionExpressionChildren;
     childrenWalkers[NodeType.FunctionPropertyAssignment] = walkFunctionPropertyAssignmentChildren;
+    childrenWalkers[NodeType.FunctionType] = walkFunctionTypeChildren;
     childrenWalkers[NodeType.GenericType] = walkGenericTypeChildren;
     childrenWalkers[NodeType.GetAccessor] = walkGetAccessorChildren;
     childrenWalkers[NodeType.GreaterThanExpression] = walkBinaryExpressionChildren;

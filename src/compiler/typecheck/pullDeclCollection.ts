@@ -456,7 +456,7 @@ module TypeScript {
     }
 
     // function type expressions
-    function createFunctionTypeDeclaration(functionTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createFunctionTypeDeclaration(functionTypeDeclAST: FunctionType, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.FunctionType;
 
@@ -910,6 +910,9 @@ module TypeScript {
             case NodeType.IndexSignature:
                 createIndexSignatureDeclaration(<IndexSignature>ast, context);
                 break;
+            case NodeType.FunctionType:
+                createFunctionTypeDeclaration(<FunctionType>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
@@ -923,9 +926,6 @@ module TypeScript {
                 }
                 else if (hasFlag(functionFlags, FunctionFlags.CallSignature)) {
                     createCallSignatureDeclaration(funcDecl, context);
-                }
-                else if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
-                    createFunctionTypeDeclaration(funcDecl, context);
                 }
                 else if (hasFlag(functionFlags, FunctionFlags.Method)) {
                     createAnyMemberFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.block,  context);

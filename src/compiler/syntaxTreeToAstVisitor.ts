@@ -1059,11 +1059,11 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
-            var funcDecl = new FunctionDeclaration(null, typeParameters, parameters, returnType, null);
+            var funcDecl = new FunctionType(typeParameters, parameters, returnType);
             this.setSpan(funcDecl, start, node);
 
-            funcDecl.setFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature);
-            funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
+            //funcDecl.setFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature);
+            //funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
 
             return new TypeReference(funcDecl);
         }
