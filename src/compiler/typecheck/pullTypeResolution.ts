@@ -2229,11 +2229,11 @@ module TypeScript {
             // a function
             else if (term.nodeType() === NodeType.FunctionType) {
                 var functionType = <FunctionType>term;
-                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameters, functionType.parameterList, functionType.returnTypeAnnotation, context);
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameterList, functionType.parameterList, functionType.type, context);
             }
             else if (term.nodeType() === NodeType.ConstructorType) {
                 var constructorType = <ConstructorType>term;
-                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(constructorType, constructorType.typeParameters, constructorType.parameterList, constructorType.returnTypeAnnotation, context);
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(constructorType, constructorType.typeParameterList, constructorType.parameterList, constructorType.type, context);
             }
             else if (term.nodeType() === NodeType.ObjectType) {
                 typeDeclSymbol = this.resolveObjectTypeTypeReference(<ObjectType>term, context);
@@ -6070,9 +6070,9 @@ module TypeScript {
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
 
-            if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
-                for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                    typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArguments.members[i], context);
+            if (genericTypeAST.typeArgumentList && genericTypeAST.typeArgumentList.members.length) {
+                for (var i = 0; i < genericTypeAST.typeArgumentList.members.length; i++) {
+                    typeArgs[i] = this.resolveTypeReference(<TypeReference>genericTypeAST.typeArgumentList.members[i], context);
 
                     if (typeArgs[i].isError()) {
                         typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
@@ -6526,7 +6526,7 @@ module TypeScript {
                 switch (current.nodeType()) {
                     case NodeType.GenericType:
                         var genericType = <GenericType>current;
-                        if (genericType.typeArguments === previous) {
+                        if (genericType.typeArgumentList === previous) {
                             return true;
                         }
                         break;

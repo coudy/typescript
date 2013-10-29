@@ -2147,7 +2147,7 @@ module TypeScript {
                 // Apply delta to all custom span fields
                 switch (cur.nodeType()) {
                     case NodeType.Block:
-                        applyDelta((<Block>cur).closeBraceSpan, delta);
+                        applyDelta((<Block>cur).closeBraceToken, delta);
                         break; 
 
                     case NodeType.ObjectCreationExpression:

@@ -126,7 +126,7 @@ module TypeScript {
 
     function walkGenericTypeChildren(preAst: GenericType, walker: AstWalker): void {
         walker.walk(preAst.name);
-        walker.walk(preAst.typeArguments);
+        walker.walk(preAst.typeArgumentList);
     }
 
     function walkTypeReferenceChildren(preAst: TypeReference, walker: AstWalker): void {
@@ -162,9 +162,9 @@ module TypeScript {
     }
 
     function walkFunctionTypeChildren(preAst: FunctionType, walker: AstWalker): void {
-        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.typeParameterList);
         walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.type);
     }
 
     function walkParenthesizedArrowFunctionExpressionChildren(preAst: ParenthesizedArrowFunctionExpression, walker: AstWalker): void {
@@ -220,9 +220,9 @@ module TypeScript {
     }
 
     function walkConstructorTypeChildren(preAst: FunctionType, walker: AstWalker): void {
-        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.typeParameterList);
         walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.type);
     }
 
     function walkConstructSignatureChildren(preAst: ConstructSignature, walker: AstWalker): void {

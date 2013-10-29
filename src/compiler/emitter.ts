@@ -715,7 +715,7 @@ module TypeScript {
 
             this.indenter.decreaseIndent();
             this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", block.closeBraceSpan);
+            this.writeToOutputWithSourceMapRecord("}", block.closeBraceToken);
 
             if (name) {
                 this.recordSourceMappingNameEnd();
@@ -1244,7 +1244,7 @@ module TypeScript {
 
             this.indenter.decreaseIndent();
             this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceSpan);
+            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceToken);
 
             this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl);

@@ -504,25 +504,6 @@ module TypeScript {
         }
     }
 
-    export class QualifiedName extends AST {
-        constructor(public left: AST,
-                    public right: Identifier) {
-            super();
-            left && (left.parent = this);
-            right && (right.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.QualifiedName;
-        }
-
-        public structuralEquals(ast: QualifiedName, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.left, ast.left, includingPosition) &&
-                structuralEquals(this.right, ast.right, includingPosition);
-        }
-    }
-
     export class NumericLiteral extends AST {
         constructor(public value: number,
                     private _text: string,
@@ -620,89 +601,6 @@ module TypeScript {
         }
     }
 
-    export class SimpleArrowFunctionExpression extends AST {
-        public hint: string = null;
-
-        constructor(public identifier: Identifier,
-                    public block: Block) {
-            super();
-            identifier && (identifier.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.SimpleArrowFunctionExpression;
-        }
-
-        public structuralEquals(ast: SimpleArrowFunctionExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this.hint === ast.hint &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                structuralEquals(this.block, ast.block, includingPosition);
-        }
-
-        public getNameText() {
-            return this.hint;
-        }
-    }
-
-    export class ParenthesizedArrowFunctionExpression extends AST {
-        public hint: string = null;
-
-        constructor(public typeParameters: ASTList,
-                    public parameterList: ASTList,
-                    public returnTypeAnnotation: TypeReference,
-                    public block: Block) {
-            super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ParenthesizedArrowFunctionExpression;
-        }
-
-        public structuralEquals(ast: ParenthesizedArrowFunctionExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this.hint === ast.hint &&
-                structuralEquals(this.block, ast.block, includingPosition) &&
-                structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
-                structuralEquals(this.parameterList, ast.parameterList, includingPosition);
-        }
-
-        public getNameText() {
-            return this.hint;
-        }
-    }
-
-    export class ConstructorType extends AST {
-        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
-            super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-
-        nodeType(): NodeType {
-            return NodeType.ConstructorType;
-        }
-    }
-
-    export class FunctionType extends AST {
-        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
-            super();
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-
-        nodeType(): NodeType {
-            return NodeType.FunctionType;
-        }
-    }
-
     export class FunctionDeclaration extends AST {
         public hint: string = null;
         private _functionFlags = FunctionFlags.None;
@@ -785,38 +683,6 @@ module TypeScript {
         }
     }
 
-    export class ArrayType extends AST {
-        constructor(public type: AST) {
-            super();
-            type && (type.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ArrayType;
-        }
-
-        public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.type, ast.type, includingPosition);
-        }
-    }
-
-    export class ObjectType extends AST {
-        constructor(public typeMembers: ASTList) {
-            super();
-            typeMembers && (typeMembers.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ObjectType;
-        }
-
-        public structuralEquals(ast: ObjectType, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.typeMembers, ast.typeMembers, includingPosition);
-        }
-    }
-
     export class VariableDeclaration extends AST {
         constructor(public declarators: ASTList) {
             super();
@@ -846,58 +712,6 @@ module TypeScript {
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    structuralEquals(this.declaration, ast.declaration, includingPosition);
-        }
-    }
-
-    export class Block extends AST {
-        public closeBraceLeadingComments: Comment[] = null;
-
-        constructor(public statements: ASTList, public closeBraceSpan: IASTSpan) {
-            super();
-            statements && (statements.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.Block;
-        }
-
-        public structuralEquals(ast: Block, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.statements, ast.statements, includingPosition);
-        }
-    }
-
-    export class GenericType extends AST {
-        constructor(public name: AST, public typeArguments: ASTList) {
-            super();
-            name && (name.parent = this);
-            typeArguments && (typeArguments.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.GenericType;
-        }
-
-        public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   structuralEquals(this.name, ast.name, includingPosition) &&
-                   structuralEquals(this.typeArguments, ast.typeArguments, includingPosition);
-        }
-    }
-
-    export class TypeQuery extends AST {
-        constructor(public name: AST) {
-            super();
-            name && (name.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.TypeQuery;
-        }
-
-        public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.name, ast.name, includingPosition);
         }
     }
 
@@ -945,6 +759,192 @@ module TypeScript {
         expression: AST;
         argumentList: ArgumentList;
         closeParenSpan: ASTSpan;
+    }
+
+    export class SimpleArrowFunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(public identifier: Identifier,
+            public block: Block) {
+            super();
+            identifier && (identifier.parent = this);
+            block && (block.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SimpleArrowFunctionExpression;
+        }
+
+        public structuralEquals(ast: SimpleArrowFunctionExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this.hint === ast.hint &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.block, ast.block, includingPosition);
+        }
+
+        public getNameText() {
+            return this.hint;
+        }
+    }
+
+    export class ParenthesizedArrowFunctionExpression extends AST {
+        public hint: string = null;
+
+        constructor(public typeParameters: ASTList,
+            public parameterList: ASTList,
+            public returnTypeAnnotation: TypeReference,
+            public block: Block) {
+            super();
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            block && (block.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ParenthesizedArrowFunctionExpression;
+        }
+
+        public structuralEquals(ast: ParenthesizedArrowFunctionExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this.hint === ast.hint &&
+                structuralEquals(this.block, ast.block, includingPosition) &&
+                structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) &&
+                structuralEquals(this.parameterList, ast.parameterList, includingPosition);
+        }
+
+        public getNameText() {
+            return this.hint;
+        }
+    }
+
+    export class QualifiedName extends AST {
+        constructor(public left: AST,
+            public right: Identifier) {
+            super();
+            left && (left.parent = this);
+            right && (right.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.QualifiedName;
+        }
+
+        public structuralEquals(ast: QualifiedName, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.left, ast.left, includingPosition) &&
+                structuralEquals(this.right, ast.right, includingPosition);
+        }
+    }
+
+    export class ConstructorType extends AST {
+        constructor(public typeParameterList: ASTList, public parameterList: ASTList, public type: TypeReference) {
+            super();
+            typeParameterList && (typeParameterList.parent = this);
+            parameterList && (parameterList.parent = this);
+            type && (type.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.ConstructorType;
+        }
+    }
+
+    export class FunctionType extends AST {
+        constructor(public typeParameterList: ASTList, public parameterList: ASTList, public type: TypeReference) {
+            super();
+            typeParameterList && (typeParameterList.parent = this);
+            parameterList && (parameterList.parent = this);
+            type && (type.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.FunctionType;
+        }
+    }
+
+    export class ObjectType extends AST {
+        constructor(public typeMembers: ASTList) {
+            super();
+            typeMembers && (typeMembers.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ObjectType;
+        }
+
+        public structuralEquals(ast: ObjectType, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.typeMembers, ast.typeMembers, includingPosition);
+        }
+    }
+
+    export class ArrayType extends AST {
+        constructor(public type: AST) {
+            super();
+            type && (type.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ArrayType;
+        }
+
+        public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.type, ast.type, includingPosition);
+        }
+    }
+
+    export class GenericType extends AST {
+        constructor(public name: AST, public typeArgumentList: ASTList) {
+            super();
+            name && (name.parent = this);
+            typeArgumentList && (typeArgumentList.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.GenericType;
+        }
+
+        public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.name, ast.name, includingPosition) &&
+                structuralEquals(this.typeArgumentList, ast.typeArgumentList, includingPosition);
+        }
+    }
+
+    export class TypeQuery extends AST {
+        constructor(public name: AST) {
+            super();
+            name && (name.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TypeQuery;
+        }
+
+        public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.name, ast.name, includingPosition);
+        }
+    }
+
+    export class Block extends AST {
+        public closeBraceLeadingComments: Comment[] = null;
+
+        constructor(public statements: ASTList, public closeBraceToken: IASTSpan) {
+            super();
+            statements && (statements.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.Block;
+        }
+
+        public structuralEquals(ast: Block, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.statements, ast.statements, includingPosition);
+        }
     }
 
     export class Parameter extends AST {
