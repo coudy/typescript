@@ -27803,9 +27803,7 @@ var TypeScript;
 
     function walkFunctionPropertyAssignmentChildren(preAst, walker) {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -27866,7 +27864,7 @@ var TypeScript;
 
     function walkGenericTypeChildren(preAst, walker) {
         walker.walk(preAst.name);
-        walker.walk(preAst.typeArguments);
+        walker.walk(preAst.typeArgumentList);
     }
 
     function walkTypeReferenceChildren(preAst, walker) {
@@ -27895,22 +27893,18 @@ var TypeScript;
 
     function walkFunctionExpressionChildren(preAst, walker) {
         walker.walk(preAst.identifier);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
     function walkFunctionTypeChildren(preAst, walker) {
-        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.typeParameterList);
         walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.type);
     }
 
     function walkParenthesizedArrowFunctionExpressionChildren(preAst, walker) {
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -27921,17 +27915,13 @@ var TypeScript;
 
     function walkMemberFunctionDeclarationChildren(preAst, walker) {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
     function walkFuncDeclChildren(preAst, walker) {
         walker.walk(preAst.name);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 
@@ -27960,15 +27950,13 @@ var TypeScript;
     }
 
     function walkConstructorTypeChildren(preAst, walker) {
-        walker.walk(preAst.typeParameters);
+        walker.walk(preAst.typeParameterList);
         walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.type);
     }
 
     function walkConstructSignatureChildren(preAst, walker) {
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
     }
 
     function walkParameterChildren(preAst, walker) {
@@ -27994,9 +27982,7 @@ var TypeScript;
 
     function walkMethodSignatureChildren(preAst, walker) {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeParameters);
-        walker.walk(preAst.parameterList);
-        walker.walk(preAst.returnTypeAnnotation);
+        walker.walk(preAst.callSignature);
     }
 
     function walkReturnStatementChildren(preAst, walker) {
@@ -29306,10 +29292,11 @@ var TypeScript;
             }
 
             this.writeToOutput("(");
-            this.emitFunctionParameters(TypeScript.Parameters.fromParameterList(funcDecl.parameterList));
+            var parameters = TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.getNameText(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 
@@ -29343,7 +29330,7 @@ var TypeScript;
 
             this.indenter.decreaseIndent();
             this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", block.closeBraceSpan);
+            this.writeToOutputWithSourceMapRecord("}", block.closeBraceToken);
 
             if (name) {
                 this.recordSourceMappingNameEnd();
@@ -29766,7 +29753,7 @@ var TypeScript;
         };
 
         Emitter.prototype.emitParenthesizedArrowFunctionExpression = function (arrowFunction) {
-            this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(), TypeScript.Parameters.fromParameterList(arrowFunction.parameterList), arrowFunction.block);
+            this.emitAnyArrowFunctionExpression(arrowFunction, arrowFunction.getNameText(), TypeScript.Parameters.fromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.block);
         };
 
         Emitter.prototype.emitAnyArrowFunctionExpression = function (arrowFunction, funcName, parameters, block) {
@@ -29837,7 +29824,7 @@ var TypeScript;
 
             this.indenter.decreaseIndent();
             this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceSpan);
+            this.writeToOutputWithSourceMapRecord("}", funcDecl.block.closeBraceToken);
 
             this.recordSourceMappingNameEnd();
             this.recordSourceMappingEnd(funcDecl);
@@ -29943,7 +29930,7 @@ var TypeScript;
 
             this.writeToOutput("(");
 
-            var parameters = TypeScript.Parameters.fromParameterList(funcDecl.parameterList);
+            var parameters = TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -30869,7 +30856,7 @@ var TypeScript;
 
             this.writeToOutput("(");
 
-            var parameters = TypeScript.Parameters.fromParameterList(funcDecl.parameterList);
+            var parameters = TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -31149,7 +31136,7 @@ var TypeScript;
 
             this.writeToOutput("(");
 
-            var parameters = TypeScript.Parameters.fromParameterList(funcProp.parameterList);
+            var parameters = TypeScript.Parameters.fromParameterList(funcProp.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -32981,11 +32968,11 @@ var TypeScript;
             this.emitDeclFlags(TypeScript.ToDeclFlags(functionFlags), funcPullDecl, "function");
             var id = funcDecl.propertyName.text();
             this.declFile.Write(id);
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
 
-            this.emitParameterList(funcDecl.getFunctionFlags(), TypeScript.Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(funcDecl.getFunctionFlags(), TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList));
 
             this.declFile.Write(")");
 
@@ -33036,10 +33023,10 @@ var TypeScript;
             this.declFile.Write("new");
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(0 /* None */, TypeScript.Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(0 /* None */, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -33072,10 +33059,10 @@ var TypeScript;
             }
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(0 /* None */, TypeScript.Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(0 /* None */, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -33137,10 +33124,10 @@ var TypeScript;
             }
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
-            this.emitTypeParameters(funcDecl.typeParameters, funcSignature);
+            this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(functionFlags, TypeScript.Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameterList(functionFlags, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             if (this.canEmitTypeAnnotationSignature(TypeScript.ToDeclFlags(functionFlags))) {
@@ -39195,19 +39182,19 @@ var TypeScript;
 
             if (nodeType == 27 /* FunctionDeclaration */) {
                 var functionDeclaration = enclosingAST;
-                return !TypeScript.hasFlag(someFunctionDecl.kind == 65536 /* Method */ ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, 8 /* Ambient */) && functionDeclaration.block && TypeScript.lastParameterIsRest(functionDeclaration.parameterList);
+                return !TypeScript.hasFlag(someFunctionDecl.kind == 65536 /* Method */ ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, 8 /* Ambient */) && functionDeclaration.block && TypeScript.lastParameterIsRest(functionDeclaration.callSignature.parameterList);
             } else if (nodeType === 45 /* MemberFunctionDeclaration */) {
                 var memberFunction = enclosingAST;
-                return !TypeScript.hasFlag(someFunctionDecl.kind == 65536 /* Method */ ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, 8 /* Ambient */) && memberFunction.block && TypeScript.lastParameterIsRest(memberFunction.parameterList);
+                return !TypeScript.hasFlag(someFunctionDecl.kind == 65536 /* Method */ ? someFunctionDecl.getParentDecl().flags : someFunctionDecl.flags, 8 /* Ambient */) && memberFunction.block && TypeScript.lastParameterIsRest(memberFunction.callSignature.parameterList);
             } else if (nodeType == 28 /* ConstructorDeclaration */) {
                 var constructorDeclaration = enclosingAST;
                 return !TypeScript.hasFlag(someFunctionDecl.getParentDecl().flags, 8 /* Ambient */) && constructorDeclaration.block && TypeScript.lastParameterIsRest(constructorDeclaration.parameterList);
             } else if (nodeType == 109 /* ParenthesizedArrowFunctionExpression */) {
                 var arrowFunctionExpression = enclosingAST;
-                return TypeScript.lastParameterIsRest(arrowFunctionExpression.parameterList);
+                return TypeScript.lastParameterIsRest(arrowFunctionExpression.callSignature.parameterList);
             } else if (nodeType === 110 /* FunctionExpression */) {
                 var functionExpression = enclosingAST;
-                return TypeScript.lastParameterIsRest(functionExpression.parameterList);
+                return TypeScript.lastParameterIsRest(functionExpression.callSignature.parameterList);
             }
 
             return false;
@@ -39357,10 +39344,10 @@ var TypeScript;
                 typeDeclSymbol = this.resolveTypeNameExpression(term, context);
             } else if (term.nodeType() === 21 /* FunctionType */) {
                 var functionType = term;
-                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameters, functionType.parameterList, functionType.returnTypeAnnotation, context);
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameterList, functionType.parameterList, functionType.type, context);
             } else if (term.nodeType() === 22 /* ConstructorType */) {
                 var constructorType = term;
-                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(constructorType, constructorType.typeParameters, constructorType.parameterList, constructorType.returnTypeAnnotation, context);
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(constructorType, constructorType.typeParameterList, constructorType.parameterList, constructorType.type, context);
             } else if (term.nodeType() === 33 /* ObjectType */) {
                 typeDeclSymbol = this.resolveObjectTypeTypeReference(term, context);
             } else if (term.nodeType() === 17 /* GenericType */) {
@@ -40083,7 +40070,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.typeCheckFunctionExpression = function (funcDecl, context) {
-            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.typeParameters, funcDecl.returnTypeAnnotation, funcDecl.block, context);
+            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
         };
 
         PullTypeResolver.prototype.typeCheckCallSignature = function (funcDecl, context) {
@@ -40091,7 +40078,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.typeCheckConstructSignature = function (funcDecl, context) {
-            this.typeCheckFunctionDeclaration(funcDecl, 32 /* Signature */, null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+            this.typeCheckFunctionDeclaration(funcDecl, 32 /* Signature */, null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         };
 
         PullTypeResolver.prototype.typeCheckFunctionDeclaration = function (funcDeclAST, flags, name, typeParameters, parameters, returnTypeAnnotation, block, context) {
@@ -40226,7 +40213,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveMemberFunctionDeclaration = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
+            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
         };
 
         PullTypeResolver.prototype.resolveCallSignature = function (funcDecl, context) {
@@ -40234,19 +40221,19 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveConstructSignature = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, 32 /* Signature */, null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+            return this.resolveFunctionDeclaration(funcDecl, 32 /* Signature */, null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         };
 
         PullTypeResolver.prototype.resolveMethodSignature = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, 32 /* Signature */, funcDecl.propertyName, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
+            return this.resolveFunctionDeclaration(funcDecl, 32 /* Signature */, funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         };
 
         PullTypeResolver.prototype.resolveAnyFunctionDeclaration = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
+            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
         };
 
         PullTypeResolver.prototype.resolveFunctionExpression = function (funcDecl, isContextuallyTyped, context) {
-            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.typeParameters, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), funcDecl.returnTypeAnnotation, funcDecl.block, isContextuallyTyped, context);
+            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), funcDecl.callSignature.typeAnnotation, funcDecl.block, isContextuallyTyped, context);
         };
 
         PullTypeResolver.prototype.resolveSimpleArrowFunctionExpression = function (funcDecl, isContextuallyTyped, context) {
@@ -40254,7 +40241,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveParenthesizedArrowFunctionExpression = function (funcDecl, isContextuallyTyped, context) {
-            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.typeParameters, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), funcDecl.returnTypeAnnotation, funcDecl.block, isContextuallyTyped, context);
+            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), funcDecl.callSignature.typeAnnotation, funcDecl.block, isContextuallyTyped, context);
         };
 
         PullTypeResolver.prototype.getEnclosingClassDeclaration = function (ast) {
@@ -41424,12 +41411,12 @@ var TypeScript;
                 }
 
                 var isContextuallyTyped = false;
-                var enclosingDeclAST;
 
                 if (enclosingDecl.kind & 1032192 /* SomeFunction */) {
-                    enclosingDeclAST = this.getASTForDecl(enclosingDecl);
-                    if (enclosingDeclAST.returnTypeAnnotation) {
-                        var returnTypeAnnotationSymbol = this.resolveTypeReference(enclosingDeclAST.returnTypeAnnotation, context);
+                    var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
+                    var typeAnnotation = TypeScript.getTypeAnnotation(enclosingDeclAST);
+                    if (typeAnnotation) {
+                        var returnTypeAnnotationSymbol = this.resolveTypeReference(typeAnnotation, context);
                         if (returnTypeAnnotationSymbol) {
                             isContextuallyTyped = true;
                             context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
@@ -41482,8 +41469,8 @@ var TypeScript;
 
                     if (enclosingDecl.kind & 1032192 /* SomeFunction */) {
                         var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
-
-                        if (enclosingDeclAST.returnTypeAnnotation || enclosingDecl.kind == 262144 /* GetAccessor */) {
+                        var typeAnnotation = TypeScript.getTypeAnnotation(enclosingDeclAST);
+                        if (typeAnnotation || enclosingDecl.kind == 262144 /* GetAccessor */) {
                             var signatureSymbol = enclosingDecl.getSignatureSymbol();
                             var sigReturnType = signatureSymbol.returnType;
 
@@ -42141,7 +42128,7 @@ var TypeScript;
 
                 case 27 /* FunctionDeclaration */: {
                     var funcDecl = ast;
-                    this.typeCheckFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
+                    this.typeCheckFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
                     return;
                 }
 
@@ -42315,18 +42302,21 @@ var TypeScript;
                 var enclosingFunctionAST = this.semanticInfoChain.getASTForDecl(nameParentDecl);
                 var currentParameterIndex = this.getCurrentParameterIndexForFunction(nameAST, enclosingFunctionAST);
 
+                var parameterList = TypeScript.getParameterList(enclosingFunctionAST);
+
                 if (currentParameterIndex >= 0) {
                     var foundMatchingParameter = false;
-                    if (enclosingFunctionAST.parameterList) {
+                    if (parameterList) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
-                            var candidateParameter = enclosingFunctionAST.parameterList.members[i];
+                            var candidateParameter = parameterList.members[i];
                             if (candidateParameter && candidateParameter.identifier.valueText() === id) {
                                 foundMatchingParameter = true;
                             }
                         }
                     }
+
                     if (!foundMatchingParameter) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, TypeScript.DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it, [enclosingFunctionAST.parameterList.members[currentParameterIndex].identifier.text(), nameAST.text()]));
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, TypeScript.DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it, [parameterList.members[currentParameterIndex].identifier.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
                 }
@@ -42361,15 +42351,15 @@ var TypeScript;
             return nameSymbol;
         };
 
-        PullTypeResolver.prototype.getCurrentParameterIndexForFunction = function (ast, funcDecl) {
-            var parameterList = funcDecl.parameterList;
+        PullTypeResolver.prototype.getCurrentParameterIndexForFunction = function (parameter, funcDecl) {
+            var parameterList = TypeScript.getParameterList(funcDecl);
             if (parameterList) {
-                while (ast) {
-                    if (ast.parent === parameterList) {
-                        return parameterList.members.indexOf(ast);
+                while (parameter) {
+                    if (parameter.parent === parameterList) {
+                        return parameterList.members.indexOf(parameter);
                     }
 
-                    ast = ast.parent;
+                    parameter = parameter.parent;
                 }
             }
 
@@ -42595,9 +42585,9 @@ var TypeScript;
 
             var typeArgs = [];
 
-            if (genericTypeAST.typeArguments && genericTypeAST.typeArguments.members.length) {
-                for (var i = 0; i < genericTypeAST.typeArguments.members.length; i++) {
-                    typeArgs[i] = this.resolveTypeReference(genericTypeAST.typeArguments.members[i], context);
+            if (genericTypeAST.typeArgumentList && genericTypeAST.typeArgumentList.members.length) {
+                for (var i = 0; i < genericTypeAST.typeArgumentList.members.length; i++) {
+                    typeArgs[i] = this.resolveTypeReference(genericTypeAST.typeArgumentList.members[i], context);
 
                     if (typeArgs[i].isError()) {
                         typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
@@ -42908,7 +42898,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.typeCheckParenthesizedArrowFunctionExpression = function (arrowFunction, context) {
-            return this.typeCheckAnyFunctionExpression(arrowFunction, arrowFunction.typeParameters, arrowFunction.returnTypeAnnotation, arrowFunction.block, context);
+            return this.typeCheckAnyFunctionExpression(arrowFunction, arrowFunction.callSignature.typeParameterList, arrowFunction.callSignature.typeAnnotation, arrowFunction.block, context);
         };
 
         PullTypeResolver.prototype.typeCheckAnyFunctionExpression = function (funcDeclAST, typeParameters, returnTypeAnnotation, block, context) {
@@ -42971,7 +42961,7 @@ var TypeScript;
                 switch (current.nodeType()) {
                     case 17 /* GenericType */:
                         var genericType = current;
-                        if (genericType.typeArguments === previous) {
+                        if (genericType.typeArgumentList === previous) {
                             return true;
                         }
                         break;
@@ -43246,11 +43236,11 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveFunctionPropertyAssignment = function (funcProp, isContextuallyTyped, context) {
-            return this.resolveAnyFunctionExpression(funcProp, funcProp.typeParameters, TypeScript.Parameters.fromParameterList(funcProp.parameterList), funcProp.returnTypeAnnotation, funcProp.block, isContextuallyTyped, context);
+            return this.resolveAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcProp.callSignature.parameterList), funcProp.callSignature.typeAnnotation, funcProp.block, isContextuallyTyped, context);
         };
 
         PullTypeResolver.prototype.typeCheckFunctionPropertyAssignment = function (funcProp, isContextuallyTyped, context) {
-            this.typeCheckAnyFunctionExpression(funcProp, funcProp.typeParameters, funcProp.returnTypeAnnotation, funcProp.block, context);
+            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, funcProp.callSignature.typeAnnotation, funcProp.block, context);
         };
 
         PullTypeResolver.prototype.resolveObjectLiteralExpression = function (expressionAST, isContextuallyTyped, context, additionalResults) {
@@ -44556,7 +44546,7 @@ var TypeScript;
             var typeConstraint = null;
 
             var signatureAST = this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, signatureAST.parameterList, new TypeComparisonInfo(), context);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, TypeScript.getParameterList(signatureAST), new TypeComparisonInfo(), context);
 
             var functionTypeA = signatureA.functionType;
             var functionTypeB = signatureB.functionType;
@@ -45892,10 +45882,10 @@ var TypeScript;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, null, TypeScript.Parameters.fromIdentifier(simpleArrowFunction.identifier), null, simpleArrowFunction.block, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 109 /* ParenthesizedArrowFunctionExpression */) {
                 var arrowFunction = arg;
-                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, arrowFunction.typeParameters, TypeScript.Parameters.fromParameterList(arrowFunction.parameterList), arrowFunction.returnTypeAnnotation, arrowFunction.block, argIndex, context, comparisonInfo);
+                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, arrowFunction.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.callSignature.typeAnnotation, arrowFunction.block, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 110 /* FunctionExpression */) {
                 var functionExpression = arg;
-                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, functionExpression.typeParameters, TypeScript.Parameters.fromParameterList(functionExpression.parameterList), functionExpression.returnTypeAnnotation, functionExpression.block, argIndex, context, comparisonInfo);
+                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, functionExpression.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(functionExpression.callSignature.parameterList), functionExpression.callSignature.typeAnnotation, functionExpression.block, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 50 /* ObjectLiteralExpression */) {
                 return this.overloadIsApplicableForObjectLiteralArgument(paramType, arg, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 49 /* ArrayLiteralExpression */) {
@@ -48761,11 +48751,17 @@ var TypeScript;
         context.pushParent(decl);
     }
 
-    function createCallSignatureDeclaration(callSignatureDeclAST, context) {
+    function createCallSignatureDeclaration(callSignature, context) {
+        var isChildOfObjectType = callSignature.parent && callSignature.parent.parent && callSignature.parent.nodeType() === 1 /* List */ && callSignature.parent.parent.nodeType() === 33 /* ObjectType */;
+
+        if (!isChildOfObjectType) {
+            return;
+        }
+
         var declFlags = 2048 /* Signature */;
         var declType = 1048576 /* CallSignature */;
 
-        var span = TypeScript.TextSpan.fromBounds(callSignatureDeclAST.minChar, callSignatureDeclAST.limChar);
+        var span = TypeScript.TextSpan.fromBounds(callSignature.minChar, callSignature.limChar);
 
         var parent = context.getParent();
 
@@ -48774,8 +48770,8 @@ var TypeScript;
         }
 
         var decl = new TypeScript.NormalPullDecl("", "", declType, declFlags, parent, span);
-        context.semanticInfoChain.setDeclForAST(callSignatureDeclAST, decl);
-        context.semanticInfoChain.setASTForDecl(decl, callSignatureDeclAST);
+        context.semanticInfoChain.setDeclForAST(callSignature, decl);
+        context.semanticInfoChain.setASTForDecl(decl, callSignature);
 
         context.pushParent(decl);
     }
@@ -50368,12 +50364,12 @@ var TypeScript;
             signature.addDeclaration(functionDeclaration);
             functionDeclaration.setSignatureSymbol(signature);
 
-            if (TypeScript.lastParameterIsRest(funcDeclAST.parameterList)) {
+            if (TypeScript.lastParameterIsRest(funcDeclAST.callSignature.parameterList)) {
                 signature.hasVarArgs = true;
             }
 
             var funcDecl = this.semanticInfoChain.getASTForDecl(functionDeclaration);
-            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), functionTypeSymbol, signature);
+            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), functionTypeSymbol, signature);
 
             var typeParameters = functionDeclaration.getTypeParameters();
             var typeParameter;
@@ -50410,7 +50406,7 @@ var TypeScript;
             var declFlags = functionExpressionDeclaration.flags;
             var ast = this.semanticInfoChain.getASTForDecl(functionExpressionDeclaration);
 
-            var parameters = ast.nodeType() === 108 /* SimpleArrowFunctionExpression */ ? TypeScript.Parameters.fromIdentifier(ast.identifier) : TypeScript.Parameters.fromParameterList(ast.parameterList);
+            var parameters = ast.nodeType() === 108 /* SimpleArrowFunctionExpression */ ? TypeScript.Parameters.fromIdentifier(ast.identifier) : TypeScript.Parameters.fromParameterList(ast.callSignature.parameterList);
             var funcExpAST = ast;
 
             var functionName = declKind == 131072 /* FunctionExpression */ ? functionExpressionDeclaration.getFunctionExpressionName() : functionExpressionDeclaration.name;
@@ -50502,8 +50498,7 @@ var TypeScript;
             signature.addDeclaration(functionTypeDeclaration);
             functionTypeDeclaration.setSignatureSymbol(signature);
 
-            var funcDecl = this.semanticInfoChain.getASTForDecl(functionTypeDeclaration);
-            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), functionTypeSymbol, signature);
+            this.bindParameterSymbols(funcTypeAST, TypeScript.Parameters.fromParameterList(funcTypeAST.parameterList), functionTypeSymbol, signature);
 
             functionTypeSymbol.addCallSignature(signature);
         };
@@ -50574,7 +50569,7 @@ var TypeScript;
 
             var signature = isSignature ? new TypeScript.PullSignatureSymbol(sigKind) : new TypeScript.PullDefinitionSignatureSymbol(sigKind);
 
-            var parameterList = methodAST.nodeType() === 27 /* FunctionDeclaration */ ? methodAST.parameterList : methodAST.parameterList;
+            var parameterList = methodAST.nodeType() === 27 /* FunctionDeclaration */ ? methodAST.callSignature.parameterList : methodAST.callSignature.parameterList;
             if (TypeScript.lastParameterIsRest(parameterList)) {
                 signature.hasVarArgs = true;
             }
@@ -50605,7 +50600,7 @@ var TypeScript;
             methodDeclaration.setSignatureSymbol(signature);
 
             var funcDecl = this.semanticInfoChain.getASTForDecl(methodDeclaration);
-            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), methodTypeSymbol, signature);
+            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), methodTypeSymbol, signature);
 
             methodTypeSymbol.addCallSignature(signature);
 
@@ -50731,7 +50726,7 @@ var TypeScript;
 
             var constructSignature = new TypeScript.PullSignatureSymbol(2097152 /* ConstructSignature */);
 
-            if (TypeScript.lastParameterIsRest(constructorAST.parameterList)) {
+            if (TypeScript.lastParameterIsRest(constructorAST.callSignature.parameterList)) {
                 constructSignature.hasVarArgs = true;
             }
 
@@ -50758,7 +50753,7 @@ var TypeScript;
             constructSignatureDeclaration.setSignatureSymbol(constructSignature);
 
             var funcDecl = this.semanticInfoChain.getASTForDecl(constructSignatureDeclaration);
-            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), null, constructSignature);
+            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), null, constructSignature);
 
             this.semanticInfoChain.setSymbolForAST(this.semanticInfoChain.getASTForDecl(constructSignatureDeclaration), constructSignature);
 
@@ -50904,8 +50899,7 @@ var TypeScript;
             signature.addDeclaration(getAccessorDeclaration);
             getAccessorDeclaration.setSignatureSymbol(signature);
 
-            var funcDecl = this.semanticInfoChain.getASTForDecl(getAccessorDeclaration);
-            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), getterTypeSymbol, signature);
+            this.bindParameterSymbols(funcDeclAST, TypeScript.Parameters.fromParameterList(funcDeclAST.parameterList), getterTypeSymbol, signature);
 
             getterTypeSymbol.addCallSignature(signature);
         };
@@ -50993,8 +50987,7 @@ var TypeScript;
             signature.addDeclaration(setAccessorDeclaration);
             setAccessorDeclaration.setSignatureSymbol(signature);
 
-            var funcDecl = this.semanticInfoChain.getASTForDecl(setAccessorDeclaration);
-            this.bindParameterSymbols(funcDecl, TypeScript.Parameters.fromParameterList(funcDecl.parameterList), setterTypeSymbol, signature);
+            this.bindParameterSymbols(funcDeclAST, TypeScript.Parameters.fromParameterList(funcDeclAST.parameterList), setterTypeSymbol, signature);
 
             setterTypeSymbol.addCallSignature(signature);
         };
@@ -51882,9 +51875,9 @@ var TypeScript;
                             var contextualType = null;
 
                             if (enclosingDecl && (enclosingDecl.kind & 1032192 /* SomeFunction */)) {
-                                var functionDeclaration = enclosingDeclAST;
-                                if (functionDeclaration.returnTypeAnnotation) {
-                                    var returnTypeSymbol = resolver.resolveTypeReference(functionDeclaration.returnTypeAnnotation, resolutionContext);
+                                var typeAnnotation = TypeScript.getTypeAnnotation(enclosingDeclAST);
+                                if (typeAnnotation) {
+                                    var returnTypeSymbol = resolver.resolveTypeReference(typeAnnotation, resolutionContext);
                                     if (returnTypeSymbol) {
                                         inContextuallyTypedAssignment = true;
                                         contextualType = returnTypeSymbol;
@@ -53656,16 +53649,12 @@ var TypeScript;
 
             this.movePast(node.identifier);
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-
-            var block = node.block ? node.block.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block = node.block ? this.visitBlock(node.block) : null;
 
             this.movePast(node.semicolonToken);
 
-            var result = new TypeScript.FunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new TypeScript.FunctionDeclaration(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             if (node.semicolonToken) {
@@ -54053,14 +54042,12 @@ var TypeScript;
         SyntaxTreeToAstVisitor.prototype.visitParenthesizedArrowFunctionExpression = function (node) {
             var start = this.position;
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
             this.movePast(node.equalsGreaterThanToken);
 
             var block = this.getArrowFunctionStatements(node.body);
 
-            var result = new TypeScript.ParenthesizedArrowFunctionExpression(typeParameters, parameters, returnType, block);
+            var result = new TypeScript.ParenthesizedArrowFunctionExpression(callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -54459,11 +54446,9 @@ var TypeScript;
             var start = this.position;
 
             this.movePast(node.newKeyword);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
 
-            var result = new TypeScript.ConstructSignature(typeParameters, parameters, returnType);
+            var result = new TypeScript.ConstructSignature(callSignature);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -54476,11 +54461,9 @@ var TypeScript;
             this.movePast(node.propertyName);
             this.movePast(node.questionToken);
 
-            var typeParameters = node.callSignature.typeParameterList ? node.callSignature.typeParameterList.accept(this) : null;
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
 
-            var result = new TypeScript.MethodSignature(name, typeParameters, parameters, returnType);
+            var result = new TypeScript.MethodSignature(name, callSignature);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -54663,14 +54646,11 @@ var TypeScript;
 
             this.movePast(node.propertyName);
 
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-
-            var block = node.block ? node.block.accept(this) : null;
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block = node.block ? this.visitBlock(node.block) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new TypeScript.MemberFunctionDeclaration(name, typeParameters, parameters, returnType, block);
+            var result = new TypeScript.MemberFunctionDeclaration(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
@@ -55028,13 +55008,10 @@ var TypeScript;
             var start = this.position;
 
             var propertyName = node.propertyName.accept(this);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
-            var block = node.block.accept(this);
+            var callSignature = this.visitCallSignature(node.callSignature);
+            var block = this.visitBlock(node.block);
 
-            var result = new TypeScript.FunctionPropertyAssignment(propertyName, typeParameters, parameters, returnType, block);
-
+            var result = new TypeScript.FunctionPropertyAssignment(propertyName, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -55046,13 +55023,11 @@ var TypeScript;
             this.movePast(node.functionKeyword);
             var name = node.identifier === null ? null : this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
-            var typeParameters = node.callSignature.typeParameterList === null ? null : node.callSignature.typeParameterList.accept(this);
-            var parameters = node.callSignature.parameterList.accept(this);
-            var returnType = node.callSignature.typeAnnotation ? node.callSignature.typeAnnotation.accept(this) : null;
 
+            var callSignature = this.visitCallSignature(node.callSignature);
             var block = node.block ? node.block.accept(this) : null;
 
-            var result = new TypeScript.FunctionExpression(name, typeParameters, parameters, returnType, block);
+            var result = new TypeScript.FunctionExpression(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -55242,7 +55217,7 @@ var TypeScript;
 
                 switch (cur.nodeType()) {
                     case 111 /* Block */:
-                        applyDelta(cur.closeBraceSpan, delta);
+                        applyDelta(cur.closeBraceToken, delta);
                         break;
 
                     case 65 /* ObjectCreationExpression */:
@@ -56497,26 +56472,6 @@ var TypeScript;
     })(AST);
     TypeScript.PrefixUnaryExpression = PrefixUnaryExpression;
 
-    var QualifiedName = (function (_super) {
-        __extends(QualifiedName, _super);
-        function QualifiedName(left, right) {
-            _super.call(this);
-            this.left = left;
-            this.right = right;
-            left && (left.parent = this);
-            right && (right.parent = this);
-        }
-        QualifiedName.prototype.nodeType = function () {
-            return 20 /* QualifiedName */;
-        };
-
-        QualifiedName.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.left, ast.left, includingPosition) && structuralEquals(this.right, ast.right, includingPosition);
-        };
-        return QualifiedName;
-    })(AST);
-    TypeScript.QualifiedName = QualifiedName;
-
     var NumericLiteral = (function (_super) {
         __extends(NumericLiteral, _super);
         function NumericLiteral(value, _text, _valueText) {
@@ -56630,111 +56585,17 @@ var TypeScript;
     })(AST);
     TypeScript.EqualsValueClause = EqualsValueClause;
 
-    var SimpleArrowFunctionExpression = (function (_super) {
-        __extends(SimpleArrowFunctionExpression, _super);
-        function SimpleArrowFunctionExpression(identifier, block) {
-            _super.call(this);
-            this.identifier = identifier;
-            this.block = block;
-            this.hint = null;
-            identifier && (identifier.parent = this);
-            block && (block.parent = this);
-        }
-        SimpleArrowFunctionExpression.prototype.nodeType = function () {
-            return 108 /* SimpleArrowFunctionExpression */;
-        };
-
-        SimpleArrowFunctionExpression.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this.hint === ast.hint && structuralEquals(this.identifier, ast.identifier, includingPosition) && structuralEquals(this.block, ast.block, includingPosition);
-        };
-
-        SimpleArrowFunctionExpression.prototype.getNameText = function () {
-            return this.hint;
-        };
-        return SimpleArrowFunctionExpression;
-    })(AST);
-    TypeScript.SimpleArrowFunctionExpression = SimpleArrowFunctionExpression;
-
-    var ParenthesizedArrowFunctionExpression = (function (_super) {
-        __extends(ParenthesizedArrowFunctionExpression, _super);
-        function ParenthesizedArrowFunctionExpression(typeParameters, parameterList, returnTypeAnnotation, block) {
-            _super.call(this);
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
-            this.block = block;
-            this.hint = null;
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-            block && (block.parent = this);
-        }
-        ParenthesizedArrowFunctionExpression.prototype.nodeType = function () {
-            return 109 /* ParenthesizedArrowFunctionExpression */;
-        };
-
-        ParenthesizedArrowFunctionExpression.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this.hint === ast.hint && structuralEquals(this.block, ast.block, includingPosition) && structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) && structuralEquals(this.parameterList, ast.parameterList, includingPosition);
-        };
-
-        ParenthesizedArrowFunctionExpression.prototype.getNameText = function () {
-            return this.hint;
-        };
-        return ParenthesizedArrowFunctionExpression;
-    })(AST);
-    TypeScript.ParenthesizedArrowFunctionExpression = ParenthesizedArrowFunctionExpression;
-
-    var ConstructorType = (function (_super) {
-        __extends(ConstructorType, _super);
-        function ConstructorType(typeParameters, parameterList, returnTypeAnnotation) {
-            _super.call(this);
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-        ConstructorType.prototype.nodeType = function () {
-            return 22 /* ConstructorType */;
-        };
-        return ConstructorType;
-    })(AST);
-    TypeScript.ConstructorType = ConstructorType;
-
-    var FunctionType = (function (_super) {
-        __extends(FunctionType, _super);
-        function FunctionType(typeParameters, parameterList, returnTypeAnnotation) {
-            _super.call(this);
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
-        }
-        FunctionType.prototype.nodeType = function () {
-            return 21 /* FunctionType */;
-        };
-        return FunctionType;
-    })(AST);
-    TypeScript.FunctionType = FunctionType;
-
     var FunctionDeclaration = (function (_super) {
         __extends(FunctionDeclaration, _super);
-        function FunctionDeclaration(name, typeParameters, parameterList, returnTypeAnnotation, block) {
+        function FunctionDeclaration(name, callSignature, block) {
             _super.call(this);
             this.name = name;
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
+            this.callSignature = callSignature;
             this.block = block;
             this.hint = null;
             this._functionFlags = 0 /* None */;
             name && (name.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
         FunctionDeclaration.prototype.nodeType = function () {
@@ -56750,7 +56611,7 @@ var TypeScript;
         };
 
         FunctionDeclaration.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this._functionFlags === ast._functionFlags && this.hint === ast.hint && structuralEquals(this.name, ast.name, includingPosition) && structuralEquals(this.block, ast.block, includingPosition) && structuralEquals(this.typeParameters, ast.typeParameters, includingPosition) && structuralEquals(this.parameterList, ast.parameterList, includingPosition);
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this._functionFlags === ast._functionFlags && this.hint === ast.hint && structuralEquals(this.name, ast.name, includingPosition) && structuralEquals(this.block, ast.block, includingPosition) && structuralEquals(this.callSignature, ast.callSignature, includingPosition);
         };
 
         FunctionDeclaration.prototype.getNameText = function () {
@@ -56794,42 +56655,6 @@ var TypeScript;
     })(AST);
     TypeScript.ModuleDeclaration = ModuleDeclaration;
 
-    var ArrayType = (function (_super) {
-        __extends(ArrayType, _super);
-        function ArrayType(type) {
-            _super.call(this);
-            this.type = type;
-            type && (type.parent = this);
-        }
-        ArrayType.prototype.nodeType = function () {
-            return 34 /* ArrayType */;
-        };
-
-        ArrayType.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.type, ast.type, includingPosition);
-        };
-        return ArrayType;
-    })(AST);
-    TypeScript.ArrayType = ArrayType;
-
-    var ObjectType = (function (_super) {
-        __extends(ObjectType, _super);
-        function ObjectType(typeMembers) {
-            _super.call(this);
-            this.typeMembers = typeMembers;
-            typeMembers && (typeMembers.parent = this);
-        }
-        ObjectType.prototype.nodeType = function () {
-            return 33 /* ObjectType */;
-        };
-
-        ObjectType.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.typeMembers, ast.typeMembers, includingPosition);
-        };
-        return ObjectType;
-    })(AST);
-    TypeScript.ObjectType = ObjectType;
-
     var VariableDeclaration = (function (_super) {
         __extends(VariableDeclaration, _super);
         function VariableDeclaration(declarators) {
@@ -56865,64 +56690,6 @@ var TypeScript;
         return VariableStatement;
     })(AST);
     TypeScript.VariableStatement = VariableStatement;
-
-    var Block = (function (_super) {
-        __extends(Block, _super);
-        function Block(statements, closeBraceSpan) {
-            _super.call(this);
-            this.statements = statements;
-            this.closeBraceSpan = closeBraceSpan;
-            this.closeBraceLeadingComments = null;
-            statements && (statements.parent = this);
-        }
-        Block.prototype.nodeType = function () {
-            return 111 /* Block */;
-        };
-
-        Block.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.statements, ast.statements, includingPosition);
-        };
-        return Block;
-    })(AST);
-    TypeScript.Block = Block;
-
-    var GenericType = (function (_super) {
-        __extends(GenericType, _super);
-        function GenericType(name, typeArguments) {
-            _super.call(this);
-            this.name = name;
-            this.typeArguments = typeArguments;
-            name && (name.parent = this);
-            typeArguments && (typeArguments.parent = this);
-        }
-        GenericType.prototype.nodeType = function () {
-            return 17 /* GenericType */;
-        };
-
-        GenericType.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.name, ast.name, includingPosition) && structuralEquals(this.typeArguments, ast.typeArguments, includingPosition);
-        };
-        return GenericType;
-    })(AST);
-    TypeScript.GenericType = GenericType;
-
-    var TypeQuery = (function (_super) {
-        __extends(TypeQuery, _super);
-        function TypeQuery(name) {
-            _super.call(this);
-            this.name = name;
-            name && (name.parent = this);
-        }
-        TypeQuery.prototype.nodeType = function () {
-            return 19 /* TypeQuery */;
-        };
-
-        TypeQuery.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.name, ast.name, includingPosition);
-        };
-        return TypeQuery;
-    })(AST);
-    TypeScript.TypeQuery = TypeQuery;
 
     var TypeReference = (function (_super) {
         __extends(TypeReference, _super);
@@ -56974,6 +56741,206 @@ var TypeScript;
         return OmittedExpression;
     })(AST);
     TypeScript.OmittedExpression = OmittedExpression;
+
+    var SimpleArrowFunctionExpression = (function (_super) {
+        __extends(SimpleArrowFunctionExpression, _super);
+        function SimpleArrowFunctionExpression(identifier, block) {
+            _super.call(this);
+            this.identifier = identifier;
+            this.block = block;
+            this.hint = null;
+            identifier && (identifier.parent = this);
+            block && (block.parent = this);
+        }
+        SimpleArrowFunctionExpression.prototype.nodeType = function () {
+            return 108 /* SimpleArrowFunctionExpression */;
+        };
+
+        SimpleArrowFunctionExpression.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this.hint === ast.hint && structuralEquals(this.identifier, ast.identifier, includingPosition) && structuralEquals(this.block, ast.block, includingPosition);
+        };
+
+        SimpleArrowFunctionExpression.prototype.getNameText = function () {
+            return this.hint;
+        };
+        return SimpleArrowFunctionExpression;
+    })(AST);
+    TypeScript.SimpleArrowFunctionExpression = SimpleArrowFunctionExpression;
+
+    var ParenthesizedArrowFunctionExpression = (function (_super) {
+        __extends(ParenthesizedArrowFunctionExpression, _super);
+        function ParenthesizedArrowFunctionExpression(callSignature, block) {
+            _super.call(this);
+            this.callSignature = callSignature;
+            this.block = block;
+            this.hint = null;
+            callSignature && (callSignature.parent = this);
+            block && (block.parent = this);
+        }
+        ParenthesizedArrowFunctionExpression.prototype.nodeType = function () {
+            return 109 /* ParenthesizedArrowFunctionExpression */;
+        };
+
+        ParenthesizedArrowFunctionExpression.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && this.hint === ast.hint && structuralEquals(this.block, ast.block, includingPosition) && structuralEquals(this.callSignature, ast.callSignature, includingPosition);
+        };
+
+        ParenthesizedArrowFunctionExpression.prototype.getNameText = function () {
+            return this.hint;
+        };
+        return ParenthesizedArrowFunctionExpression;
+    })(AST);
+    TypeScript.ParenthesizedArrowFunctionExpression = ParenthesizedArrowFunctionExpression;
+
+    var QualifiedName = (function (_super) {
+        __extends(QualifiedName, _super);
+        function QualifiedName(left, right) {
+            _super.call(this);
+            this.left = left;
+            this.right = right;
+            left && (left.parent = this);
+            right && (right.parent = this);
+        }
+        QualifiedName.prototype.nodeType = function () {
+            return 20 /* QualifiedName */;
+        };
+
+        QualifiedName.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.left, ast.left, includingPosition) && structuralEquals(this.right, ast.right, includingPosition);
+        };
+        return QualifiedName;
+    })(AST);
+    TypeScript.QualifiedName = QualifiedName;
+
+    var ConstructorType = (function (_super) {
+        __extends(ConstructorType, _super);
+        function ConstructorType(typeParameterList, parameterList, type) {
+            _super.call(this);
+            this.typeParameterList = typeParameterList;
+            this.parameterList = parameterList;
+            this.type = type;
+            typeParameterList && (typeParameterList.parent = this);
+            parameterList && (parameterList.parent = this);
+            type && (type.parent = this);
+        }
+        ConstructorType.prototype.nodeType = function () {
+            return 22 /* ConstructorType */;
+        };
+        return ConstructorType;
+    })(AST);
+    TypeScript.ConstructorType = ConstructorType;
+
+    var FunctionType = (function (_super) {
+        __extends(FunctionType, _super);
+        function FunctionType(typeParameterList, parameterList, type) {
+            _super.call(this);
+            this.typeParameterList = typeParameterList;
+            this.parameterList = parameterList;
+            this.type = type;
+            typeParameterList && (typeParameterList.parent = this);
+            parameterList && (parameterList.parent = this);
+            type && (type.parent = this);
+        }
+        FunctionType.prototype.nodeType = function () {
+            return 21 /* FunctionType */;
+        };
+        return FunctionType;
+    })(AST);
+    TypeScript.FunctionType = FunctionType;
+
+    var ObjectType = (function (_super) {
+        __extends(ObjectType, _super);
+        function ObjectType(typeMembers) {
+            _super.call(this);
+            this.typeMembers = typeMembers;
+            typeMembers && (typeMembers.parent = this);
+        }
+        ObjectType.prototype.nodeType = function () {
+            return 33 /* ObjectType */;
+        };
+
+        ObjectType.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.typeMembers, ast.typeMembers, includingPosition);
+        };
+        return ObjectType;
+    })(AST);
+    TypeScript.ObjectType = ObjectType;
+
+    var ArrayType = (function (_super) {
+        __extends(ArrayType, _super);
+        function ArrayType(type) {
+            _super.call(this);
+            this.type = type;
+            type && (type.parent = this);
+        }
+        ArrayType.prototype.nodeType = function () {
+            return 34 /* ArrayType */;
+        };
+
+        ArrayType.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.type, ast.type, includingPosition);
+        };
+        return ArrayType;
+    })(AST);
+    TypeScript.ArrayType = ArrayType;
+
+    var GenericType = (function (_super) {
+        __extends(GenericType, _super);
+        function GenericType(name, typeArgumentList) {
+            _super.call(this);
+            this.name = name;
+            this.typeArgumentList = typeArgumentList;
+            name && (name.parent = this);
+            typeArgumentList && (typeArgumentList.parent = this);
+        }
+        GenericType.prototype.nodeType = function () {
+            return 17 /* GenericType */;
+        };
+
+        GenericType.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.name, ast.name, includingPosition) && structuralEquals(this.typeArgumentList, ast.typeArgumentList, includingPosition);
+        };
+        return GenericType;
+    })(AST);
+    TypeScript.GenericType = GenericType;
+
+    var TypeQuery = (function (_super) {
+        __extends(TypeQuery, _super);
+        function TypeQuery(name) {
+            _super.call(this);
+            this.name = name;
+            name && (name.parent = this);
+        }
+        TypeQuery.prototype.nodeType = function () {
+            return 19 /* TypeQuery */;
+        };
+
+        TypeQuery.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.name, ast.name, includingPosition);
+        };
+        return TypeQuery;
+    })(AST);
+    TypeScript.TypeQuery = TypeQuery;
+
+    var Block = (function (_super) {
+        __extends(Block, _super);
+        function Block(statements, closeBraceToken) {
+            _super.call(this);
+            this.statements = statements;
+            this.closeBraceToken = closeBraceToken;
+            this.closeBraceLeadingComments = null;
+            statements && (statements.parent = this);
+        }
+        Block.prototype.nodeType = function () {
+            return 111 /* Block */;
+        };
+
+        Block.prototype.structuralEquals = function (ast, includingPosition) {
+            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.statements, ast.statements, includingPosition);
+        };
+        return Block;
+    })(AST);
+    TypeScript.Block = Block;
 
     var Parameter = (function (_super) {
         __extends(Parameter, _super);
@@ -57153,14 +57120,10 @@ var TypeScript;
 
     var ConstructSignature = (function (_super) {
         __extends(ConstructSignature, _super);
-        function ConstructSignature(typeParameters, parameterList, returnTypeAnnotation) {
+        function ConstructSignature(callSignature) {
             _super.call(this);
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            this.callSignature = callSignature;
+            callSignature && (callSignature.parent = this);
         }
         ConstructSignature.prototype.nodeType = function () {
             return 24 /* ConstructSignature */;
@@ -57171,16 +57134,12 @@ var TypeScript;
 
     var MethodSignature = (function (_super) {
         __extends(MethodSignature, _super);
-        function MethodSignature(propertyName, typeParameters, parameterList, returnTypeAnnotation) {
+        function MethodSignature(propertyName, callSignature) {
             _super.call(this);
             this.propertyName = propertyName;
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
+            this.callSignature = callSignature;
             propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
         }
         MethodSignature.prototype.nodeType = function () {
             return 25 /* MethodSignature */;
@@ -57358,18 +57317,14 @@ var TypeScript;
 
     var MemberFunctionDeclaration = (function (_super) {
         __extends(MemberFunctionDeclaration, _super);
-        function MemberFunctionDeclaration(propertyName, typeParameters, parameterList, returnTypeAnnotation, block) {
+        function MemberFunctionDeclaration(propertyName, callSignature, block) {
             _super.call(this);
             this.propertyName = propertyName;
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
+            this.callSignature = callSignature;
             this.block = block;
             this._functionFlags = 0 /* None */;
             propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
         MemberFunctionDeclaration.prototype.nodeType = function () {
@@ -57818,17 +57773,13 @@ var TypeScript;
 
     var FunctionPropertyAssignment = (function (_super) {
         __extends(FunctionPropertyAssignment, _super);
-        function FunctionPropertyAssignment(propertyName, typeParameters, parameterList, returnTypeAnnotation, block) {
+        function FunctionPropertyAssignment(propertyName, callSignature, block) {
             _super.call(this);
             this.propertyName = propertyName;
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
+            this.callSignature = callSignature;
             this.block = block;
             propertyName && (propertyName.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
         FunctionPropertyAssignment.prototype.nodeType = function () {
@@ -57840,18 +57791,14 @@ var TypeScript;
 
     var FunctionExpression = (function (_super) {
         __extends(FunctionExpression, _super);
-        function FunctionExpression(identifier, typeParameters, parameterList, returnTypeAnnotation, block) {
+        function FunctionExpression(identifier, callSignature, block) {
             _super.call(this);
             this.identifier = identifier;
-            this.typeParameters = typeParameters;
-            this.parameterList = parameterList;
-            this.returnTypeAnnotation = returnTypeAnnotation;
+            this.callSignature = callSignature;
             this.block = block;
             this.hint = null;
             identifier && (identifier.parent = this);
-            typeParameters && (typeParameters.parent = this);
-            parameterList && (parameterList.parent = this);
-            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
         FunctionExpression.prototype.nodeType = function () {
@@ -58729,6 +58676,74 @@ var TypeScript;
         throw TypeScript.Errors.invalidOperation();
     }
     TypeScript.getTextForBinaryToken = getTextForBinaryToken;
+
+    function getParameterList(ast) {
+        if (ast) {
+            switch (ast.nodeType()) {
+                case 28 /* ConstructorDeclaration */:
+                    return ast.parameterList;
+                case 27 /* FunctionDeclaration */:
+                    return getParameterList(ast.callSignature);
+                case 109 /* ParenthesizedArrowFunctionExpression */:
+                    return getParameterList(ast.callSignature);
+                case 24 /* ConstructSignature */:
+                    return getParameterList(ast.callSignature);
+                case 45 /* MemberFunctionDeclaration */:
+                    return getParameterList(ast.callSignature);
+                case 41 /* FunctionPropertyAssignment */:
+                    return getParameterList(ast.callSignature);
+                case 110 /* FunctionExpression */:
+                    return getParameterList(ast.callSignature);
+                case 25 /* MethodSignature */:
+                    return getParameterList(ast.callSignature);
+                case 22 /* ConstructorType */:
+                    return ast.parameterList;
+                case 21 /* FunctionType */:
+                    return ast.parameterList;
+                case 23 /* CallSignature */:
+                    return ast.parameterList;
+                case 31 /* GetAccessor */:
+                    return ast.parameterList;
+                case 32 /* SetAccessor */:
+                    return ast.parameterList;
+            }
+        }
+
+        return null;
+    }
+    TypeScript.getParameterList = getParameterList;
+
+    function getTypeAnnotation(ast) {
+        if (ast) {
+            switch (ast.nodeType()) {
+                case 27 /* FunctionDeclaration */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 109 /* ParenthesizedArrowFunctionExpression */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 24 /* ConstructSignature */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 45 /* MemberFunctionDeclaration */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 41 /* FunctionPropertyAssignment */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 110 /* FunctionExpression */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 25 /* MethodSignature */:
+                    return getTypeAnnotation(ast.callSignature);
+                case 22 /* ConstructorType */:
+                    return ast.type;
+                case 21 /* FunctionType */:
+                    return ast.type;
+                case 23 /* CallSignature */:
+                    return ast.typeAnnotation;
+                case 31 /* GetAccessor */:
+                    return ast.typeAnnotation;
+            }
+        }
+
+        return null;
+    }
+    TypeScript.getTypeAnnotation = getTypeAnnotation;
 })(TypeScript || (TypeScript = {}));
 if (!String.prototype.trim) {
     String.prototype.trim = function () {
