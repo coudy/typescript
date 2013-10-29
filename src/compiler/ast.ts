@@ -892,6 +892,19 @@ module TypeScript {
         }
     }
 
+    export class ConstructorType extends AST {
+        constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
+            super();
+            typeParameters && (typeParameters.parent = this);
+            parameterList && (parameterList.parent = this);
+            returnTypeAnnotation && (returnTypeAnnotation.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.ConstructorType;
+        }
+    }
+
     export class FunctionType extends AST {
         constructor(public typeParameters: ASTList, public parameterList: ASTList, public returnTypeAnnotation: TypeReference) {
             super();

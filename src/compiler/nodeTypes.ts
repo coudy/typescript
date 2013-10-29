@@ -44,6 +44,7 @@ module TypeScript {
         TypeQuery,
         QualifiedName,
         FunctionType,
+        ConstructorType,
 
         // Declarations
         FunctionDeclaration,

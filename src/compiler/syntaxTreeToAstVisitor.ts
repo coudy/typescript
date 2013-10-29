@@ -1041,13 +1041,13 @@ module TypeScript {
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
-            var funcDecl = new FunctionDeclaration(null, typeParameters, parameters, returnType, null);
+            var funcDecl = new ConstructorType(typeParameters, parameters, returnType);
             this.setSpan(funcDecl, start, node);
 
-            funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature | FunctionFlags.ConstructMember);
+            //funcDecl.setFunctionFlags(funcDecl.getFunctionFlags() | FunctionFlags.Signature | FunctionFlags.ConstructMember);
 
-            funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
-            funcDecl.hint = "_construct";
+            //funcDecl.setFlags(funcDecl.getFlags() | ASTFlags.TypeReference);
+            //funcDecl.hint = "_construct";
 
             return new TypeReference(funcDecl);
         }
@@ -1072,8 +1072,6 @@ module TypeScript {
             var start = this.position;
 
             var objectType = this.visitObjectTypeWorker(node);
-            objectType.setFlags(objectType.getFlags() | ASTFlags.TypeReference);
-
             return new TypeReference(objectType);
         }
 
@@ -1105,8 +1103,6 @@ module TypeScript {
             this.setSpan(arrayType, start, node);
 
             var result = new TypeReference(arrayType);
-            result.setFlags(result.getFlags() | ASTFlags.TypeReference);
-
             return result;
         }
 
@@ -1118,8 +1114,6 @@ module TypeScript {
 
             var genericType = new GenericType(underlying, typeArguments);
             this.setSpan(genericType, start, node);
-
-            genericType.setFlags(genericType.getFlags() | ASTFlags.TypeReference);
 
             return new TypeReference(genericType);
         }

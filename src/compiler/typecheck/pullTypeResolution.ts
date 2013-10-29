@@ -1828,7 +1828,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private resolveFunctionTypeSignature(funcDeclAST: FunctionDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveAnyFunctionTypeSignature(funcDeclAST: AST, typeParameters: ASTList, parameterList: ASTList, returnTypeAnnotation: TypeReference, context: PullTypeResolutionContext): PullTypeSymbol {
             var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             Debug.assert(functionDecl);
 
@@ -1838,20 +1838,20 @@ module TypeScript {
                 ? funcDeclSymbol.getConstructSignatures()[0] : funcDeclSymbol.getCallSignatures()[0];
 
             // resolve the return type annotation
-            if (funcDeclAST.returnTypeAnnotation) {
-                signature.returnType = this.resolveTypeReference(funcDeclAST.returnTypeAnnotation, context);
+            if (returnTypeAnnotation) {
+                signature.returnType = this.resolveTypeReference(returnTypeAnnotation, context);
             }
 
-            if (funcDeclAST.typeParameters) {
-                for (var i = 0; i < funcDeclAST.typeParameters.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>funcDeclAST.typeParameters.members[i], context);
+            if (typeParameters) {
+                for (var i = 0; i < typeParameters.members.length; i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.members[i], context);
                 }
             }
 
             // link parameters and resolve their annotations
-            if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
-                    this.resolveFunctionTypeSignatureParameter(<Parameter>funcDeclAST.parameterList.members[i], signature, functionDecl, context);
+            if (parameterList) {
+                for (var i = 0; i < parameterList.members.length; i++) {
+                    this.resolveFunctionTypeSignatureParameter(<Parameter>parameterList.members[i], signature, functionDecl, context);
                 }
             }
 
@@ -2228,10 +2228,16 @@ module TypeScript {
             }
             // a function
             else if (term.nodeType() === NodeType.FunctionDeclaration) {
-                typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>term, context);
+                var functionDeclaration = <FunctionDeclaration>term;
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionDeclaration, functionDeclaration.typeParameters, functionDeclaration.parameterList, functionDeclaration.returnTypeAnnotation, context);
             }
             else if (term.nodeType() === NodeType.FunctionType) {
-                typeDeclSymbol = this.resolveFunctionTypeSignature(<FunctionDeclaration>term, context);
+                var functionType = <FunctionType>term;
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameters, functionType.parameterList, functionType.returnTypeAnnotation, context);
+            }
+            else if (term.nodeType() === NodeType.ConstructorType) {
+                var constructorType = <ConstructorType>term;
+                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(constructorType, constructorType.typeParameters, constructorType.parameterList, constructorType.returnTypeAnnotation, context);
             }
             else if (term.nodeType() === NodeType.ObjectType) {
                 typeDeclSymbol = this.resolveObjectTypeTypeReference(<ObjectType>term, context);

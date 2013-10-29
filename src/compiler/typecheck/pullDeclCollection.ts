@@ -476,7 +476,7 @@ module TypeScript {
     }
 
     // constructor types
-    function createConstructorTypeDeclaration(constructorTypeDeclAST: FunctionDeclaration, context: DeclCollectionContext): void {
+    function createConstructorTypeDeclaration(constructorTypeDeclAST: ConstructorType, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.ConstructorType;
 
@@ -913,16 +913,14 @@ module TypeScript {
             case NodeType.FunctionType:
                 createFunctionTypeDeclaration(<FunctionType>ast, context);
                 break;
+            case NodeType.ConstructorType:
+                createConstructorTypeDeclaration(<ConstructorType>ast, context);
+                break;
             case NodeType.FunctionDeclaration:
                 var funcDecl = <FunctionDeclaration>ast;
                 var functionFlags = funcDecl.getFunctionFlags();
                 if (hasFlag(functionFlags, FunctionFlags.ConstructMember)) {
-                    if (hasFlag(funcDecl.getFlags(), ASTFlags.TypeReference)) {
-                        createConstructorTypeDeclaration(funcDecl, context);
-                    }
-                    else {
-                        createConstructSignatureDeclaration(funcDecl, context);
-                    }
+                    createConstructSignatureDeclaration(funcDecl, context);
                 }
                 else if (hasFlag(functionFlags, FunctionFlags.CallSignature)) {
                     createCallSignatureDeclaration(funcDecl, context);
