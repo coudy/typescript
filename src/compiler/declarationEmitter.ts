@@ -290,7 +290,7 @@ module TypeScript {
                 return;
             }
 
-            var declComments = <Comment[]>astOrSymbol.docComments();
+            var declComments: Comment[] = astOrSymbol.docComments ? astOrSymbol.docComments() : docComments(astOrSymbol);
             this.writeDeclarationComments(declComments, endLine);
         }
 
@@ -659,10 +659,10 @@ module TypeScript {
 
             var comments: Comment[] = [];
             if (accessors.getter) {
-                comments = comments.concat(accessors.getter.docComments());
+                comments = comments.concat(docComments(accessors.getter));
             }
             if (accessors.setter) {
-                comments = comments.concat(accessors.setter.docComments());
+                comments = comments.concat(docComments(accessors.setter));
             }
 
             this.writeDeclarationComments(comments);
@@ -893,7 +893,7 @@ module TypeScript {
                         moduleDecl.members.members.length === 1 &&
                         moduleDecl.members.members[0].nodeType() === NodeType.ModuleDeclaration &&
                         hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported) &&
-                        (moduleDecl.docComments() === null || moduleDecl.docComments().length === 0)
+                        (docComments(moduleDecl) === null || docComments(moduleDecl).length === 0)
 
                         // Module to look up is the single module element of the current module
                         ; moduleDecl = <ModuleDeclaration>moduleDecl.members.members[0]) {

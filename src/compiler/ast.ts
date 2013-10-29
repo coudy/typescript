@@ -144,31 +144,6 @@ module TypeScript {
             return this.limChar - this.minChar;
         }
 
-        public _isDeclaration() { return false; }
-
-        public docComments(): Comment[] {
-            if (!this._isDeclaration() || !this.preComments() || this.preComments().length === 0) {
-                return [];
-            }
-
-            if (!this._docComments) {
-                var preComments = this.preComments();
-                var preCommentsLength = preComments.length;
-                var docComments = new Array<Comment>();
-                for (var i = preCommentsLength - 1; i >= 0; i--) {
-                    if (preComments[i].isDocComment()) {
-                        docComments.push(preComments[i]);
-                        continue;
-                    }
-                    break;
-                }
-
-                this._docComments = docComments.reverse();
-            }
-
-            return this._docComments;
-        }
-
         public structuralEquals(ast: AST, includingPosition: boolean): boolean {
             if (includingPosition) {
                 if (this.minChar !== ast.minChar || this.limChar !== ast.limChar) {
@@ -254,8 +229,6 @@ module TypeScript {
             return NodeType.ImportDeclaration;
         }
 
-        public _isDeclaration() { return true; }
-
         public getVarFlags(): VariableFlags {
             return this._varFlags;
         }
@@ -326,10 +299,6 @@ module TypeScript {
                 classElements && (classElements.parent = this);
         }
 
-        public _isDeclaration() {
-            return true;
-        }
-
         public getVarFlags(): VariableFlags {
             return this._varFlags;
         }
@@ -369,10 +338,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.InterfaceDeclaration;
-        }
-
-        public _isDeclaration() {
-            return true;
         }
 
         public getVarFlags(): VariableFlags {
@@ -793,8 +758,6 @@ module TypeScript {
             return NodeType.VariableDeclarator;
         }
 
-        public _isDeclaration() { return true; }
-
         public getVarFlags(): VariableFlags {
             return this._varFlags;
         }
@@ -836,8 +799,6 @@ module TypeScript {
             equalsValueClause && (equalsValueClause.parent = this);
         }
 
-        public _isDeclaration() { return true; }
-
         public getVarFlags(): VariableFlags {
             return this._varFlags;
         }
@@ -870,8 +831,6 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public _isDeclaration() { return true; }
-
         public nodeType(): NodeType {
             return NodeType.SimpleArrowFunctionExpression;
         }
@@ -902,8 +861,6 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public _isDeclaration() { return true; }
-
         public nodeType(): NodeType {
             return NodeType.ParenthesizedArrowFunctionExpression;
         }
@@ -930,8 +887,6 @@ module TypeScript {
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
         }
 
-        public _isDeclaration() { return true; }
-
         public nodeType(): NodeType {
             return NodeType.IndexSignature;
         }
@@ -953,8 +908,6 @@ module TypeScript {
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
             block && (block.parent = this);
         }
-
-        public _isDeclaration() { return true; }
 
         public nodeType(): NodeType {
             return NodeType.FunctionDeclaration;
@@ -1000,10 +953,6 @@ module TypeScript {
             members && (members.parent = this);
         }
 
-        public _isDeclaration() {
-            return true;
-        }
-
         public nodeType(): NodeType {
             return NodeType.ModuleDeclaration;
         }
@@ -1035,10 +984,6 @@ module TypeScript {
             return NodeType.ArrayType;
         }
 
-        public _isDeclaration() {
-            return true;
-        }
-
         public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.type, ast.type, includingPosition);
@@ -1053,10 +998,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ObjectType;
-        }
-
-        public _isDeclaration() {
-            return true;
         }
 
         public structuralEquals(ast: ObjectType, includingPosition: boolean): boolean {
@@ -1206,10 +1147,6 @@ module TypeScript {
             return NodeType.TypeParameter;
         }
 
-        public _isDeclaration() {
-            return true;
-        }
-
         public structuralEquals(ast: TypeParameter, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.name, ast.name, includingPosition) &&
@@ -1291,8 +1228,6 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public _isDeclaration() { return true; }
-
         public getFunctionFlags(): FunctionFlags {
             return this._functionFlags;
         }
@@ -1322,8 +1257,6 @@ module TypeScript {
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
             block && (block.parent = this);
         }
-
-        public _isDeclaration() { return true; }
 
         public nodeType(): NodeType {
             return NodeType.MemberFunctionDeclaration;
@@ -1364,10 +1297,6 @@ module TypeScript {
         public getFunctionFlags(): FunctionFlags {
             return this._functionFlags;
         }
-
-        public _isDeclaration() {
-            return true;
-        }
     }
 
     export class SetAccessor extends AST {
@@ -1393,10 +1322,6 @@ module TypeScript {
         public getFunctionFlags(): FunctionFlags {
             return this._functionFlags;
         }
-
-        public _isDeclaration() {
-            return true;
-        }
     }
 
     export class MemberVariableDeclaration extends AST {
@@ -1410,8 +1335,6 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.MemberVariableDeclaration;
         }
-
-        public _isDeclaration() { return true; }
 
         public getVarFlags(): VariableFlags {
             return this._varFlags;
@@ -1431,10 +1354,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.IndexMemberDeclaration;
-        }
-
-        public isDeclaration(): boolean {
-            return true;
         }
     }
 
@@ -1674,10 +1593,6 @@ module TypeScript {
         public setModuleFlags(flags: ModuleFlags): void {
             this._moduleFlags = flags;
         }
-
-        public _isDeclaration(): boolean {
-            return true;
-        }
     }
 
     export class EnumElement extends AST {
@@ -1691,10 +1606,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.EnumElement;
-        }
-
-        public _isDeclaration(): boolean {
-            return true;
         }
     }
 
@@ -1743,10 +1654,6 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.SimplePropertyAssignment;
         }
-
-        public _isDeclaration() {
-            return true;
-        }
     }
 
     export class FunctionPropertyAssignment extends AST {
@@ -1766,10 +1673,6 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.FunctionPropertyAssignment;
         }
-
-        public _isDeclaration() {
-            return true;
-        }
     }
 
     export class FunctionExpression extends AST {
@@ -1787,8 +1690,6 @@ module TypeScript {
             returnTypeAnnotation && (returnTypeAnnotation.parent = this);
             block && (block.parent = this);
         }
-
-        public _isDeclaration() { return true; }
 
         public nodeType(): NodeType {
             return NodeType.FunctionExpression;
@@ -2439,7 +2340,7 @@ module TypeScript {
     }
 
     export function isDeclarationASTOrDeclarationNameAST(ast: AST) {
-        return isNameOfSomeDeclaration(ast) || ast._isDeclaration();
+        return isNameOfSomeDeclaration(ast) || isDeclarationAST(ast);
     }
 
     export function isNameOfFunction(ast: AST) {
@@ -2516,5 +2417,57 @@ module TypeScript {
                 initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause
             }
         }
+    }
+
+    export function isDeclarationAST(ast: AST): boolean {
+        switch (ast.nodeType()) {
+            case NodeType.ImportDeclaration:
+            case NodeType.ClassDeclaration:
+            case NodeType.InterfaceDeclaration:
+            case NodeType.VariableDeclarator:
+            case NodeType.Parameter:
+            case NodeType.SimpleArrowFunctionExpression:
+            case NodeType.ParenthesizedArrowFunctionExpression:
+            case NodeType.IndexSignature:
+            case NodeType.FunctionDeclaration:
+            case NodeType.ModuleDeclaration:
+            case NodeType.ArrayType:
+            case NodeType.ObjectType:
+            case NodeType.TypeParameter:
+            case NodeType.ConstructorDeclaration:
+            case NodeType.MemberFunctionDeclaration:
+            case NodeType.GetAccessor:
+            case NodeType.SetAccessor:
+            case NodeType.MemberVariableDeclaration:
+            case NodeType.IndexMemberDeclaration:
+            case NodeType.EnumDeclaration:
+            case NodeType.EnumElement:
+            case NodeType.SimplePropertyAssignment:
+            case NodeType.FunctionPropertyAssignment:
+            case NodeType.FunctionExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    export function docComments(ast: AST): Comment[] {
+        if (!isDeclarationAST(ast) || !ast.preComments() || ast.preComments().length === 0) {
+            return [];
+        }
+
+        var preComments = ast.preComments();
+        var preCommentsLength = preComments.length;
+        var docComments = new Array<Comment>();
+        for (var i = preCommentsLength - 1; i >= 0; i--) {
+            if (preComments[i].isDocComment()) {
+                docComments.push(preComments[i]);
+                continue;
+            }
+
+            break;
+        }
+
+        return docComments.reverse();
     }
 }
