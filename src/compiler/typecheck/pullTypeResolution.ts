@@ -1894,7 +1894,7 @@ module TypeScript {
                     // if the noImplicitAny flag is set to be true, report an error 
                     if (this.compilationSettings.noImplicitAny()) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
-                            [argDeclAST.id.text()]));
+                            [argDeclAST.identifier.text()]));
                     }
                 }
             }
@@ -2344,23 +2344,22 @@ module TypeScript {
 
         private resolveMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.variableDeclarator.id, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private resolvePropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, null, context);
+                varDecl, varDecl.propertyName, varDecl.typeExpr, null, context);
         }
 
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
+                varDecl, varDecl.identifier, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
 
         private resolveParameter(parameter: Parameter, context: PullTypeResolutionContext): PullSymbol {
-
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.id, parameter.typeExpr, parameter.equalsValueClause, context);
+                parameter, parameter.identifier, parameter.typeExpr, parameter.equalsValueClause, context);
         }
 
         private getEnumTypeSymbol(enumElement: EnumElement, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2636,20 +2635,22 @@ module TypeScript {
 
         private typeCheckPropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, null, context);
+                varDecl, varDecl.propertyName, varDecl.typeExpr, null, context);
+        }
+
+        private typeCheckMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext) {
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
+                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.id, varDecl.typeExpr, varDecl.equalsValueClause, context);
+                varDecl, varDecl.identifier, varDecl.typeExpr, varDecl.equalsValueClause, context);
         }
 
-        private typeCheckParameter(
-            parameter: Parameter,
-            context: PullTypeResolutionContext) {
-
+        private typeCheckParameter(parameter: Parameter, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.id, parameter.typeExpr, parameter.equalsValueClause, context);
+                parameter, parameter.identifier, parameter.typeExpr, parameter.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclaratorOrParameterOrEnumElement(
@@ -5484,6 +5485,10 @@ module TypeScript {
                     this.typeCheckEnumElement(<EnumElement>ast, context);
                     return;
 
+                case NodeType.MemberVariableDeclaration:
+                    this.typeCheckMemberVariableDeclaration(<MemberVariableDeclaration>ast, context);
+                    return;
+
                 case NodeType.VariableDeclarator:
                     this.typeCheckVariableDeclarator(<VariableDeclarator>ast, context);
                     return;
@@ -5748,7 +5753,7 @@ module TypeScript {
                     if (enclosingFunctionAST.parameterList) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
                             var candidateParameter = <Parameter>enclosingFunctionAST.parameterList.members[i];
-                            if (candidateParameter && candidateParameter.id.valueText() === id) {
+                            if (candidateParameter && candidateParameter.identifier.valueText() === id) {
                                 foundMatchingParameter = true;
                             }
                         }
@@ -5757,7 +5762,7 @@ module TypeScript {
                         // We didn't find a matching parameter to the left, so error
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
                             DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
-                            [(<Parameter>enclosingFunctionAST.parameterList.members[currentParameterIndex]).id.text(), nameAST.text()]));
+                            [(<Parameter>enclosingFunctionAST.parameterList.members[currentParameterIndex]).identifier.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
                 }

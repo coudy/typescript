@@ -488,22 +488,6 @@ module TypeScript {
         }
     }
 
-    export class PostfixUnaryExpression extends AST {
-        constructor(private _nodeType: NodeType, public operand: AST) {
-            super();
-            operand && (operand.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return this._nodeType;
-        }
-
-        public structuralEquals(ast: PostfixUnaryExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.operand, ast.operand, includingPosition);
-        }
-    }
-
     export class PrefixUnaryExpression extends AST {
         constructor(private _nodeType: NodeType, public operand: AST) {
             super();
@@ -517,64 +501,6 @@ module TypeScript {
         public structuralEquals(ast: PrefixUnaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.operand, ast.operand, includingPosition);
-        }
-    }
-
-    export class InvocationExpression extends AST implements ICallExpression {
-        constructor(public expression: AST,
-                    public argumentList: ArgumentList,
-                    public closeParenSpan: ASTSpan) {
-            super();
-            expression && (expression.parent = this);
-            argumentList && (argumentList.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.InvocationExpression;
-        }
-
-        public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition) &&
-                structuralEquals(this.argumentList, ast.argumentList, includingPosition);
-        }
-    }
-
-    export class ElementAccessExpression extends AST {
-        constructor(public expression: AST,
-                    public argumentExpression: AST) {
-            super();
-            expression && (expression.parent = this);
-            argumentExpression && (argumentExpression.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ElementAccessExpression;
-        }
-
-        public structuralEquals(ast: ElementAccessExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition) &&
-                structuralEquals(this.argumentExpression, ast.argumentExpression, includingPosition);
-        }
-    }
-
-    export class MemberAccessExpression extends AST {
-        constructor(public expression: AST,
-                    public name: Identifier) {
-            super();
-            expression && (expression.parent = this);
-            name && (name.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.MemberAccessExpression;
-        }
-
-        public structuralEquals(ast: MemberAccessExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.expression, ast.expression, includingPosition) &&
-                structuralEquals(this.name, ast.name, includingPosition);
         }
     }
 
@@ -654,9 +580,9 @@ module TypeScript {
     export class VariableDeclarator extends AST {
         private _varFlags = VariableFlags.None;
 
-        constructor(public id: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause) {
+        constructor(public identifier: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause) {
             super();
-            id && (id.parent = this);
+            identifier && (identifier.parent = this);
             typeExpr && (typeExpr.parent = this);
             equalsValueClause && (equalsValueClause.parent = this);
         }
@@ -679,7 +605,7 @@ module TypeScript {
                 this._varFlags === ast._varFlags &&
                 structuralEquals(this.equalsValueClause, ast.equalsValueClause, includingPosition) &&
                 structuralEquals(this.typeExpr, ast.typeExpr, includingPosition) &&
-                structuralEquals(this.id, ast.id, includingPosition);
+                structuralEquals(this.identifier, ast.identifier, includingPosition);
         }
     }
 
@@ -691,38 +617,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.EqualsValueClause;
-        }
-    }
-
-    export class Parameter extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public id: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause, public isOptional: boolean, public isRest: boolean) {
-            super();
-            id && (id.parent = this);
-            typeExpr && (typeExpr.parent = this);
-            equalsValueClause && (equalsValueClause.parent = this);
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.Parameter;
-        }
-
-        public isOptionalArg(): boolean { return this.isOptional || this.equalsValueClause !== null; }
-
-        public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this.isOptional === ast.isOptional &&
-                this.isRest === ast.isRest;
         }
     }
 
@@ -1053,6 +947,112 @@ module TypeScript {
         closeParenSpan: ASTSpan;
     }
 
+    export class Parameter extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public identifier: Identifier, public typeExpr: TypeReference, public equalsValueClause: EqualsValueClause, public isOptional: boolean, public isRest: boolean) {
+            super();
+            identifier && (identifier.parent = this);
+            typeExpr && (typeExpr.parent = this);
+            equalsValueClause && (equalsValueClause.parent = this);
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.Parameter;
+        }
+
+        public isOptionalArg(): boolean { return this.isOptional || this.equalsValueClause !== null; }
+
+        public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this.isOptional === ast.isOptional &&
+                this.isRest === ast.isRest;
+        }
+    }
+
+    export class MemberAccessExpression extends AST {
+        constructor(public expression: AST,
+            public name: Identifier) {
+            super();
+            expression && (expression.parent = this);
+            name && (name.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.MemberAccessExpression;
+        }
+
+        public structuralEquals(ast: MemberAccessExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.name, ast.name, includingPosition);
+        }
+    }
+
+    export class PostfixUnaryExpression extends AST {
+        constructor(private _nodeType: NodeType, public operand: AST) {
+            super();
+            operand && (operand.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public structuralEquals(ast: PostfixUnaryExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.operand, ast.operand, includingPosition);
+        }
+    }
+
+    export class ElementAccessExpression extends AST {
+        constructor(public expression: AST,
+            public argumentExpression: AST) {
+            super();
+            expression && (expression.parent = this);
+            argumentExpression && (argumentExpression.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ElementAccessExpression;
+        }
+
+        public structuralEquals(ast: ElementAccessExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.argumentExpression, ast.argumentExpression, includingPosition);
+        }
+    }
+
+    export class InvocationExpression extends AST implements ICallExpression {
+        constructor(public expression: AST,
+            public argumentList: ArgumentList,
+            public closeParenSpan: ASTSpan) {
+            super();
+            expression && (expression.parent = this);
+            argumentList && (argumentList.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.InvocationExpression;
+        }
+
+        public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.expression, ast.expression, includingPosition) &&
+                structuralEquals(this.argumentList, ast.argumentList, includingPosition);
+        }
+    }
+
     export class ArgumentList extends AST {
         constructor(public typeArgumentList: ASTList, public arguments: ASTList) {
             super();
@@ -1144,9 +1144,9 @@ module TypeScript {
     }
 
     export class PropertySignature extends AST {
-        constructor(public id: Identifier, public typeExpr: TypeReference) {
+        constructor(public propertyName: Identifier, public typeExpr: TypeReference) {
             super();
-            id && (id.parent = this);
+            propertyName && (propertyName.parent = this);
             typeExpr && (typeExpr.parent = this);
         }
 
@@ -2349,13 +2349,13 @@ module TypeScript {
             case NodeType.ModuleDeclaration:
                 return (<ModuleDeclaration>ast.parent).name === ast;
             case NodeType.VariableDeclarator:
-                return (<VariableDeclarator>ast.parent).id === ast;
+                return (<VariableDeclarator>ast.parent).identifier === ast;
             case NodeType.FunctionDeclaration:
                 return (<FunctionDeclaration>ast.parent).name === ast;
             case NodeType.MemberFunctionDeclaration:
                 return (<MemberFunctionDeclaration>ast.parent).propertyName === ast;
             case NodeType.Parameter:
-                return (<Parameter>ast.parent).id === ast;
+                return (<Parameter>ast.parent).identifier === ast;
             case NodeType.TypeParameter:
                 return (<TypeParameter>ast.parent).name === ast;
             case NodeType.SimplePropertyAssignment:
@@ -2446,7 +2446,7 @@ module TypeScript {
                 lastParameterIsRest: () => parameter.isRest,
                 ast: parameter,
                 astAt: (index: number) => parameter,
-                identifierAt: (index: number) => parameter.id,
+                identifierAt: (index: number) => parameter.identifier,
                 typeAt: (index: number) => parameter.typeExpr,
                 initializerAt: (index: number) => parameter.equalsValueClause,
                 isOptionalAt: (index: number) => parameter.isOptionalArg(),
@@ -2459,7 +2459,7 @@ module TypeScript {
                 lastParameterIsRest: () => lastParameterIsRest(list),
                 ast: list,
                 astAt: (index: number) => list.members[index],
-                identifierAt: (index: number) => (<Parameter>list.members[index]).id,
+                identifierAt: (index: number) => (<Parameter>list.members[index]).identifier,
                 typeAt: (index: number) => (<Parameter>list.members[index]).typeExpr,
                 initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause,
                 isOptionalAt: (index: number) => (<Parameter>list.members[index]).isOptionalArg(),

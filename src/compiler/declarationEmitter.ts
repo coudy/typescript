@@ -337,8 +337,8 @@ module TypeScript {
         private emitPropertySignature(varDecl: PropertySignature): void {
             this.emitDeclarationComments(varDecl);
             this.emitIndent();
-            this.declFile.Write(varDecl.id.text());
-            if (hasFlag(varDecl.id.getFlags(), ASTFlags.OptionalName)) {
+            this.declFile.Write(varDecl.propertyName.text());
+            if (hasFlag(varDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
                 this.declFile.Write("?");
             }
 
@@ -358,12 +358,12 @@ module TypeScript {
                         this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
                     }
 
-                    this.declFile.Write(varDecl.id.text());
+                    this.declFile.Write(varDecl.identifier.text());
                 }
                 else {
                     this.emitIndent();
-                    this.declFile.Write(varDecl.id.text());
-                    if (hasFlag(varDecl.id.getFlags(), ASTFlags.OptionalName)) {
+                    this.declFile.Write(varDecl.identifier.text());
+                    if (hasFlag(varDecl.identifier.getFlags(), ASTFlags.OptionalName)) {
                         this.declFile.Write("?");
                     }
                 }
@@ -386,7 +386,7 @@ module TypeScript {
             if (this.canEmitDeclarations(ToDeclFlags(varDecl.getVarFlags()), varDecl)) {
                 this.emitDeclarationComments(varDecl);
                 this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
-                this.declFile.Write(varDecl.variableDeclarator.id.text());
+                this.declFile.Write(varDecl.variableDeclarator.identifier.text());
 
                 if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
@@ -825,7 +825,7 @@ module TypeScript {
                         var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
                         this.emitDeclarationComments(parameter);
                         this.emitDeclFlags(ToDeclFlags(parameter.getVarFlags()), funcPullDecl, "var");
-                        this.declFile.Write(parameter.id.text());
+                        this.declFile.Write(parameter.identifier.text());
 
                         if (this.canEmitTypeAnnotationSignature(ToDeclFlags(parameter.getVarFlags()))) {
                             this.emitTypeOfVariableDeclaratorOrParameter(parameter);

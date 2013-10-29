@@ -979,7 +979,7 @@ module TypeScript {
                 variableSymbol.addDeclaration(variableDeclaration);
                 variableDeclaration.setSymbol(variableSymbol);
 
-                this.semanticInfoChain.setSymbolForAST(varDeclAST.id, variableSymbol);
+                this.semanticInfoChain.setSymbolForAST(varDeclAST.identifier, variableSymbol);
                 this.semanticInfoChain.setSymbolForAST(varDeclAST, variableSymbol);
             }
             else if (!parentHadSymbol) {
@@ -1220,9 +1220,11 @@ module TypeScript {
             var declKind = propertyDeclaration.kind;
 
             var ast = this.semanticInfoChain.getASTForDecl(propertyDeclaration);
-            var propDeclAST = ast.nodeType() === NodeType.MemberVariableDeclaration
-                ? (<MemberVariableDeclaration>ast).variableDeclarator
-                : <VariableDeclarator>ast;
+            var astName = ast.nodeType() === NodeType.MemberVariableDeclaration
+                ? (<MemberVariableDeclaration>ast).variableDeclarator.identifier
+                : ast.nodeType() === NodeType.PropertySignature
+                    ? (<PropertySignature>ast).propertyName
+                    : (<VariableDeclarator>ast).identifier;
 
             var isStatic = false;
             var isOptional = false;
@@ -1267,8 +1269,8 @@ module TypeScript {
             propertySymbol.addDeclaration(propertyDeclaration);
             propertyDeclaration.setSymbol(propertySymbol);
 
-            this.semanticInfoChain.setSymbolForAST(propDeclAST.id, propertySymbol);
-            this.semanticInfoChain.setSymbolForAST(propDeclAST, propertySymbol);
+            this.semanticInfoChain.setSymbolForAST(astName, propertySymbol);
+            this.semanticInfoChain.setSymbolForAST(ast, propertySymbol);
 
             if (isOptional) {
                 propertySymbol.isOptional = true;

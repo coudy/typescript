@@ -1410,7 +1410,7 @@ module TypeScript {
             if (varDecl.equalsValueClause) {
                 this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
-                this.writeToOutputWithSourceMapRecord(varDecl.id.text(), varDecl.id);
+                this.writeToOutputWithSourceMapRecord(varDecl.identifier.text(), varDecl.identifier);
                 this.emitJavascript(varDecl.equalsValueClause, false);
                 this.recordSourceMappingEnd(varDecl);
                 this.emitComments(varDecl, false);
@@ -1467,8 +1467,8 @@ module TypeScript {
             this.emitComments(varDecl, true);
             this.recordSourceMappingStart(varDecl);
 
-            var varDeclName = varDecl.variableDeclarator.id.text();
-            var quotedOrNumber = isQuoted(varDeclName) || varDecl.variableDeclarator.id.isStringOrNumericLiteral;
+            var varDeclName = varDecl.variableDeclarator.identifier.text();
+            var quotedOrNumber = isQuoted(varDeclName) || varDecl.variableDeclarator.identifier.isStringOrNumericLiteral;
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
             var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1481,7 +1481,7 @@ module TypeScript {
                 this.writeToOutput("this.");
             }
 
-            this.writeToOutputWithSourceMapRecord(varDecl.variableDeclarator.id.text(), varDecl.variableDeclarator.id);
+            this.writeToOutputWithSourceMapRecord(varDecl.variableDeclarator.identifier.text(), varDecl.variableDeclarator.identifier);
 
             if (quotedOrNumber) {
                 this.writeToOutput("]");
@@ -1518,7 +1518,7 @@ module TypeScript {
                 this.recordSourceMappingStart(this.currentVariableDeclaration);
                 this.recordSourceMappingStart(varDecl);
 
-                var varDeclName = varDecl.id.text();
+                var varDeclName = varDecl.identifier.text();
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1543,7 +1543,7 @@ module TypeScript {
                     this.emitVarDeclVar();
                 }
 
-                this.writeToOutputWithSourceMapRecord(varDecl.id.text(), varDecl.id);
+                this.writeToOutputWithSourceMapRecord(varDecl.identifier.text(), varDecl.identifier);
 
                 if (varDecl.equalsValueClause) {
                     // Ensure we have a fresh var list count when recursing into the variable 
@@ -1837,9 +1837,9 @@ module TypeScript {
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         this.emitIndent();
                         this.recordSourceMappingStart(parameter);
-                        this.writeToOutputWithSourceMapRecord("this." + parameter.id.text(), parameter.id);
+                        this.writeToOutputWithSourceMapRecord("this." + parameter.identifier.text(), parameter.identifier);
                         this.writeToOutput(" = ");
-                        this.writeToOutputWithSourceMapRecord(parameter.id.text(), parameter.id);
+                        this.writeToOutputWithSourceMapRecord(parameter.identifier.text(), parameter.identifier);
                         this.writeLineToOutput(";");
                         this.recordSourceMappingEnd(parameter);
                     }
@@ -2318,8 +2318,8 @@ module TypeScript {
                         this.emitIndent();
                         this.recordSourceMappingStart(varDecl);
 
-                        var varDeclName = varDecl.variableDeclarator.id.text();
-                        if (isQuoted(varDeclName) || varDecl.variableDeclarator.id.isStringOrNumericLiteral) {
+                        var varDeclName = varDecl.variableDeclarator.identifier.text();
+                        if (isQuoted(varDeclName) || varDecl.variableDeclarator.identifier.isStringOrNumericLiteral) {
                             this.writeToOutput(classDecl.identifier.text() + "[" + varDeclName + "]");
                         }
                         else {
@@ -2978,7 +2978,7 @@ module TypeScript {
         }
 
         public emitParameter(parameter: Parameter): void {
-            this.writeToOutputWithSourceMapRecord(parameter.id.text(), parameter);
+            this.writeToOutputWithSourceMapRecord(parameter.identifier.text(), parameter);
         }
 
         private isNonAmbientAndNotSignature(flags: FunctionFlags): boolean {

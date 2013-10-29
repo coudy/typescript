@@ -232,18 +232,18 @@ module TypeScript {
     }
 
     function walkParameterChildren(preAst: Parameter, walker: AstWalker): void {
-        walker.walk(preAst.id);
+        walker.walk(preAst.identifier);
         walker.walk(preAst.typeExpr);
         walker.walk(preAst.equalsValueClause);
     }
 
     function walkPropertySignatureChildren(preAst: PropertySignature, walker: AstWalker): void {
-        walker.walk(preAst.id);
+        walker.walk(preAst.propertyName);
         walker.walk(preAst.typeExpr);
     }
 
     function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: AstWalker): void {
-        walker.walk(preAst.id);
+        walker.walk(preAst.identifier);
         walker.walk(preAst.typeExpr);
         walker.walk(preAst.equalsValueClause);
     }
