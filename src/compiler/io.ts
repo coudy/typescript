@@ -16,8 +16,6 @@
 ///<reference path='enumerator.ts' />
 ///<reference path='process.ts' />
 ///<reference path='core\references.ts' />
-// Declare dependencies needed for all supported hosts
-declare function setTimeout(callback: () => void, ms?: number): any;
 
 module TypeScript {
 
