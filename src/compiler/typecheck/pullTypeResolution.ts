@@ -2227,10 +2227,6 @@ module TypeScript {
                 typeDeclSymbol = this.resolveTypeNameExpression(<Identifier>term, context);
             }
             // a function
-            else if (term.nodeType() === NodeType.FunctionDeclaration) {
-                var functionDeclaration = <FunctionDeclaration>term;
-                typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionDeclaration, functionDeclaration.typeParameters, functionDeclaration.parameterList, functionDeclaration.returnTypeAnnotation, context);
-            }
             else if (term.nodeType() === NodeType.FunctionType) {
                 var functionType = <FunctionType>term;
                 typeDeclSymbol = this.resolveAnyFunctionTypeSignature(functionType, functionType.typeParameters, functionType.parameterList, functionType.returnTypeAnnotation, context);
@@ -2631,14 +2627,6 @@ module TypeScript {
             }
 
             return widenedInitTypeSymbol;
-        }
-
-        private typeCheckMemberVariableDeclaration(
-            varDecl: MemberVariableDeclaration,
-            context: PullTypeResolutionContext) {
-
-            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.variableDeclarator.id, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(
@@ -3156,11 +3144,6 @@ module TypeScript {
                 null, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
         }
 
-        private typeCheckMethodSignature(funcDecl: MethodSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
-                funcDecl.propertyName, funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, null, context);
-        }
-
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
             flags: FunctionFlags,
@@ -3328,14 +3311,6 @@ module TypeScript {
         private resolveMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName,
                 funcDecl.typeParameters, funcDecl.parameterList, funcDecl.returnTypeAnnotation, funcDecl.block, context);
-        }
-
-        private typeCheckMemberFunctionDeclaration(
-            memberFuncDecl: MemberFunctionDeclaration,
-            context: PullTypeResolutionContext) {
-                this.typeCheckFunctionDeclaration(memberFuncDecl, memberFuncDecl.getFunctionFlags(), memberFuncDecl.propertyName,
-                memberFuncDecl.typeParameters, memberFuncDecl.parameterList, memberFuncDecl.returnTypeAnnotation,
-                memberFuncDecl.block, context);
         }
 
         private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
@@ -4938,35 +4913,6 @@ module TypeScript {
             }
         }
 
-        private resolveCaseSwitchClause(ast: CaseSwitchClause, context: PullTypeResolutionContext): PullSymbol {
-            if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckCaseSwitchClause(ast, context);
-            }
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        }
-
-        private resolveDefaultSwitchClause(ast: DefaultSwitchClause, context: PullTypeResolutionContext): PullSymbol {
-            if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckDefaultSwitchClause(ast, context);
-            }
-
-            return this.semanticInfoChain.voidTypeSymbol;
-        }
-
-        private typeCheckCaseSwitchClause(ast: CaseSwitchClause, context: PullTypeResolutionContext) {
-            this.setTypeChecked(ast, context);
-
-            this.resolveAST(ast.expression, /*isContextuallyTyped*/ false, context);
-            this.resolveAST(ast.statements, /*isContextuallyTyped*/ false, context);
-        }
-
-        private typeCheckDefaultSwitchClause(ast: DefaultSwitchClause, context: PullTypeResolutionContext) {
-            this.setTypeChecked(ast, context);
-
-            this.resolveAST(ast.statements, /*isContextuallyTyped*/ false, context);
-        }
-
         private resolveLabeledStatement(ast: LabeledStatement, context: PullTypeResolutionContext): PullSymbol {
             if (this.canTypeCheckAST(ast, context)) {
                 this.typeCheckLabeledStatement(ast, context);
@@ -5500,12 +5446,6 @@ module TypeScript {
                 case NodeType.BreakStatement:
                     return this.resolveBreakStatement(<BreakStatement>ast, context);
 
-                case NodeType.CaseSwitchClause:
-                    return this.resolveCaseSwitchClause(<CaseSwitchClause>ast, context);
-
-                case NodeType.DefaultSwitchClause:
-                    return this.resolveDefaultSwitchClause(<DefaultSwitchClause>ast, context);
-
                 case NodeType.LabeledStatement:
                     return this.resolveLabeledStatement(<LabeledStatement>ast, context);
             }
@@ -5540,20 +5480,12 @@ module TypeScript {
                     this.typeCheckEnumElement(<EnumElement>ast, context);
                     return;
 
-                case NodeType.MemberVariableDeclaration:
-                    this.typeCheckMemberVariableDeclaration(<MemberVariableDeclaration>ast, context);
-                    return;
-
                 case NodeType.VariableDeclarator:
                     this.typeCheckVariableDeclarator(<VariableDeclarator>ast, context);
                     return;
 
                 case NodeType.Parameter:
                     this.typeCheckParameter(<Parameter>ast, context);
-                    return;
-
-                case NodeType.TypeParameter:
-                    this.typeCheckTypeParameterDeclaration(<TypeParameter>ast, context);
                     return;
 
                 case NodeType.ImportDeclaration:
@@ -5585,15 +5517,6 @@ module TypeScript {
                     this.resolveQualifiedName(<QualifiedName>ast, context);
                     return;
 
-                case NodeType.ConstructorDeclaration:
-                    this.typeCheckConstructorDeclaration(<ConstructorDeclaration>ast, context);
-                    return;
-
-                case NodeType.GetAccessor:
-                case NodeType.SetAccessor:
-                    this.typeCheckAccessorDeclaration(ast, context);
-                    return;
-
                 case NodeType.FunctionExpression:
                     this.typeCheckFunctionExpression(<FunctionExpression>ast, context);
                     break;
@@ -5610,10 +5533,6 @@ module TypeScript {
                     this.typeCheckConstructSignature(<ConstructSignature>ast, context);
                     break;
 
-                case NodeType.MethodSignature:
-                    this.typeCheckMethodSignature(<MethodSignature>ast, context);
-                    break;
-
                 case NodeType.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
@@ -5621,12 +5540,6 @@ module TypeScript {
                             funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
                             funcDecl.typeParameters, funcDecl.parameterList,
                             funcDecl.returnTypeAnnotation, funcDecl.block, context);
-                        return;
-                    }
-
-                case NodeType.MemberFunctionDeclaration:
-                    {
-                        this.typeCheckMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
                         return;
                     }
 
@@ -6843,21 +6756,6 @@ module TypeScript {
             }
 
             return false;
-        }
-
-        private getEnclosingClassMemberDeclaration(enclosingDecl: PullDecl) {
-            var declPath = enclosingDecl.getParentPath();
-
-            for (var i = declPath.length - 1; i > 0; i--) {
-                var decl = declPath[i];
-                var parentDecl = declPath[i - 1];
-
-                if (parentDecl.kind === PullElementKind.Class) {
-                    return decl;
-                }
-            }
-
-            return null;
         }
 
         private resolveSuperExpression(ast: AST, context: PullTypeResolutionContext): PullSymbol {
