@@ -118,7 +118,7 @@ module TypeScript {
     }
 
     function walkTypeParameterChildren(preAst: TypeParameter, walker: AstWalker): void {
-        walker.walk(preAst.name);
+        walker.walk(preAst.identifier);
         walker.walk(preAst.constraint);
     }
 
@@ -180,7 +180,7 @@ module TypeScript {
     }
 
     function walkFuncDeclChildren(preAst: FunctionDeclaration, walker: AstWalker): void {
-        walker.walk(preAst.name);
+        walker.walk(preAst.identifier);
         walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
@@ -221,18 +221,18 @@ module TypeScript {
 
     function walkParameterChildren(preAst: Parameter, walker: AstWalker): void {
         walker.walk(preAst.identifier);
-        walker.walk(preAst.typeExpr);
+        walker.walk(preAst.typeAnnotation);
         walker.walk(preAst.equalsValueClause);
     }
 
     function walkPropertySignatureChildren(preAst: PropertySignature, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
-        walker.walk(preAst.typeExpr);
+        walker.walk(preAst.typeAnnotation);
     }
 
     function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: AstWalker): void {
         walker.walk(preAst.identifier);
-        walker.walk(preAst.typeExpr);
+        walker.walk(preAst.typeAnnotation);
         walker.walk(preAst.equalsValueClause);
     }
 

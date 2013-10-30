@@ -676,10 +676,10 @@ module TypeScript {
 
             this.emitDeclarationComments(funcDecl);
 
-            var id = funcDecl.name.text();
+            var id = funcDecl.identifier.text();
             if (!isInterfaceMember) {
                 this.emitDeclFlags(ToDeclFlags(functionFlags), funcPullDecl, "function");
-                if (id !== "" || !funcDecl.name || funcDecl.name.text().length > 0) {
+                if (id !== "" || !funcDecl.identifier || funcDecl.identifier.text().length > 0) {
                     this.declFile.Write(id);
                 }
                 else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
@@ -693,7 +693,7 @@ module TypeScript {
                 }
                 else if (funcPullDecl.kind !== PullElementKind.CallSignature) {
                     this.declFile.Write(id);
-                    if (hasFlag(funcDecl.name.getFlags(), ASTFlags.OptionalName)) {
+                    if (hasFlag(funcDecl.identifier.getFlags(), ASTFlags.OptionalName)) {
                         this.declFile.Write("? ");
                     }
                 }

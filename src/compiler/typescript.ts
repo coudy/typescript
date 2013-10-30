@@ -617,14 +617,14 @@ module TypeScript {
 
                     case NodeType.MemberVariableDeclaration:
                         var memberVariable = <MemberVariableDeclaration> current;
-                        inContextuallyTypedAssignment = memberVariable.variableDeclarator.typeExpr !== null;
+                        inContextuallyTypedAssignment = memberVariable.variableDeclarator.typeAnnotation !== null;
 
                         this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, memberVariable, memberVariable.variableDeclarator.equalsValueClause);
                         break;
 
                     case NodeType.VariableDeclarator:
-                        var variableDeclarator = <VariableDeclarator> current;
-                        inContextuallyTypedAssignment = variableDeclarator.typeExpr !== null;
+                        var variableDeclarator = <VariableDeclarator>current;
+                        inContextuallyTypedAssignment = variableDeclarator.typeAnnotation !== null;
 
                         this.extractResolutionContextForVariable(inContextuallyTypedAssignment, propagateContextualTypes, resolver, resolutionContext, enclosingDecl, variableDeclarator, variableDeclarator.equalsValueClause);
                         break;

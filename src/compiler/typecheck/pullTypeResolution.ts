@@ -1869,8 +1869,8 @@ module TypeScript {
             var paramDecl = this.semanticInfoChain.getDeclForAST(argDeclAST);
             var paramSymbol = paramDecl.getSymbol();
 
-            if (argDeclAST.typeExpr) {
-                var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeExpr, context);
+            if (argDeclAST.typeAnnotation) {
+                var typeRef = this.resolveTypeReference(<TypeReference>argDeclAST.typeAnnotation, context);
 
                 if (paramSymbol.isVarArg && !typeRef.isArrayNamedTypeReference()) {
                     var diagnostic = context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Rest_parameters_must_be_array_types));
@@ -2344,22 +2344,22 @@ module TypeScript {
 
         private resolveMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private resolvePropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.propertyName, varDecl.typeExpr, null, context);
+                varDecl, varDecl.propertyName, varDecl.typeAnnotation, null, context);
         }
 
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.identifier, varDecl.typeExpr, varDecl.equalsValueClause, context);
+                varDecl, varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
         }
 
         private resolveParameter(parameter: Parameter, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.identifier, parameter.typeExpr, parameter.equalsValueClause, context);
+                parameter, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
         }
 
         private getEnumTypeSymbol(enumElement: EnumElement, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2635,22 +2635,22 @@ module TypeScript {
 
         private typeCheckPropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.propertyName, varDecl.typeExpr, null, context);
+                varDecl, varDecl.propertyName, varDecl.typeAnnotation, null, context);
         }
 
         private typeCheckMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeExpr, varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.identifier, varDecl.typeExpr, varDecl.equalsValueClause, context);
+                varDecl, varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
         }
 
         private typeCheckParameter(parameter: Parameter, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.identifier, parameter.typeExpr, parameter.equalsValueClause, context);
+                parameter, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclaratorOrParameterOrEnumElement(
@@ -3337,7 +3337,7 @@ module TypeScript {
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
+            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.identifier,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
         }
 
@@ -3797,7 +3797,7 @@ module TypeScript {
                 setterFunctionDeclarationAst.parameterList &&
                 setterFunctionDeclarationAst.parameterList.members.length > 0) {
                 var parameter = <Parameter>setterFunctionDeclarationAst.parameterList.members[0];
-                return this.resolveTypeReference(parameter.typeExpr, context);
+                return this.resolveTypeReference(parameter.typeAnnotation, context);
             }
 
             return null;
@@ -4106,7 +4106,7 @@ module TypeScript {
         }
 
         static hasSetAccessorParameterTypeAnnotation(setAccessor: SetAccessor) {
-            return setAccessor.parameterList && setAccessor.parameterList.members.length > 0 && (<Parameter>setAccessor.parameterList.members[0]).typeExpr != null;
+            return setAccessor.parameterList && setAccessor.parameterList.members.length > 0 && (<Parameter>setAccessor.parameterList.members[0]).typeAnnotation != null;
         }
 
         private resolveSetAccessorDeclaration(funcDeclAST: AST, parameterList: ASTList, context: PullTypeResolutionContext): PullSymbol {
@@ -4575,7 +4575,7 @@ module TypeScript {
                 var declaration = <VariableDeclaration>forInStatement.variableDeclaration;
                 var varDecl = <VariableDeclarator>declaration.declarators.members[0];
 
-                if (varDecl.typeExpr) {
+                if (varDecl.typeAnnotation) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(lval, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_use_a_type_annotation));
                 }
 
@@ -5550,7 +5550,7 @@ module TypeScript {
                     {
                         var funcDecl = <FunctionDeclaration>ast;
                         this.typeCheckFunctionDeclaration(
-                            funcDecl, funcDecl.getFunctionFlags(), funcDecl.name,
+                            funcDecl, funcDecl.getFunctionFlags(), funcDecl.identifier,
                             funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList,
                             funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
                         return;

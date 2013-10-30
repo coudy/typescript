@@ -1342,11 +1342,11 @@ module TypeScript {
 
             var temp = this.setContainer(EmitContainer.Function);
 
-            var funcName = funcDecl.name.text();
+            var funcName = funcDecl.identifier.text();
 
             this.recordSourceMappingStart(funcDecl);
 
-            var printName = funcDecl.name !== null
+            var printName = funcDecl.identifier !== null
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             this.pushDecl(pullDecl);
 
@@ -1356,14 +1356,14 @@ module TypeScript {
             this.writeToOutput("function ");
 
             if (printName) {
-                var id = funcDecl.name.text();
+                var id = funcDecl.identifier.text();
                 if (id) {
-                    if (funcDecl.name) {
-                        this.recordSourceMappingStart(funcDecl.name);
+                    if (funcDecl.identifier) {
+                        this.recordSourceMappingStart(funcDecl.identifier);
                     }
                     this.writeToOutput(id);
-                    if (funcDecl.name) {
-                        this.recordSourceMappingEnd(funcDecl.name);
+                    if (funcDecl.identifier) {
+                        this.recordSourceMappingEnd(funcDecl.identifier);
                     }
                 }
             }
@@ -1373,7 +1373,7 @@ module TypeScript {
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(funcDecl.name.text(), funcDecl, parameters, funcDecl.block);
+            this.emitFunctionBodyStatements(funcDecl.identifier.text(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
 

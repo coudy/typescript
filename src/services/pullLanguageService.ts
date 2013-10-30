@@ -360,7 +360,7 @@ module Services {
                         return (<TypeScript.ModuleDeclaration>parent).name === current;
 
                     case TypeScript.NodeType.FunctionDeclaration:
-                        return (<TypeScript.FunctionDeclaration>parent).name === current;
+                        return (<TypeScript.FunctionDeclaration>parent).identifier === current;
 
                     case TypeScript.NodeType.ImportDeclaration:
                         return (<TypeScript.ImportDeclaration>parent).identifier === current;
