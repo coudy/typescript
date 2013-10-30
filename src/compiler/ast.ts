@@ -827,8 +827,6 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.Parameter;
         }
-
-        public isOptionalArg(): boolean { return this.questionToken !== null || this.equalsValueClause !== null; }
     }
 
     export class MemberAccessExpression extends AST {

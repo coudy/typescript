@@ -332,8 +332,12 @@ module TypeScript {
                 identifierAt: (index: number) => parameter.identifier,
                 typeAt: (index: number) => parameter.typeAnnotation,
                 initializerAt: (index: number) => parameter.equalsValueClause,
-                isOptionalAt: (index: number) => parameter.isOptionalArg(),
+                isOptionalAt: (index: number) => parameterIsOptional(parameter),
             }
+        }
+
+        function parameterIsOptional(parameter: Parameter): boolean {
+            return parameter.questionToken !== null || parameter.equalsValueClause !== null;
         }
 
         export function fromParameterList(list: ASTList): IParameters {
@@ -345,7 +349,7 @@ module TypeScript {
                 identifierAt: (index: number) => (<Parameter>list.members[index]).identifier,
                 typeAt: (index: number) => (<Parameter>list.members[index]).typeAnnotation,
                 initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause,
-                isOptionalAt: (index: number) => (<Parameter>list.members[index]).isOptionalArg(),
+                isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.members[index]),
             }
         }
     }
