@@ -252,6 +252,7 @@
                                         {
                                             "kind": "Parameter",
                                             "fullWidth": 16,
+                                            "modifiers": [],
                                             "identifier": {
                                                 "kind": "IdentifierName",
                                                 "width": 8,
@@ -536,6 +537,7 @@
                                     "parameter": {
                                         "kind": "Parameter",
                                         "fullWidth": 13,
+                                        "modifiers": [],
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 5,
@@ -982,6 +984,7 @@
                                                     "value": "...",
                                                     "valueText": "..."
                                                 },
+                                                "modifiers": [],
                                                 "identifier": {
                                                     "kind": "IdentifierName",
                                                     "width": 4,
@@ -5333,6 +5336,7 @@
                                                                                         {
                                                                                             "kind": "Parameter",
                                                                                             "fullWidth": 1,
+                                                                                            "modifiers": [],
                                                                                             "identifier": {
                                                                                                 "kind": "IdentifierName",
                                                                                                 "width": 1,
@@ -8841,6 +8845,7 @@
                                             {
                                                 "kind": "Parameter",
                                                 "fullWidth": 9,
+                                                "modifiers": [],
                                                 "identifier": {
                                                     "kind": "IdentifierName",
                                                     "width": 1,
@@ -17383,6 +17388,7 @@
                                     {
                                         "kind": "Parameter",
                                         "fullWidth": 10,
+                                        "modifiers": [],
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 3,
@@ -18326,21 +18332,23 @@
                                 {
                                     "kind": "Parameter",
                                     "fullWidth": 21,
-                                    "publicOrPrivateKeyword": {
-                                        "kind": "PrivateKeyword",
-                                        "width": 7,
-                                        "fullWidth": 8,
-                                        "text": "private",
-                                        "value": "private",
-                                        "valueText": "private",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
+                                    "modifiers": [
+                                        {
+                                            "kind": "PrivateKeyword",
+                                            "width": 7,
+                                            "fullWidth": 8,
+                                            "text": "private",
+                                            "value": "private",
+                                            "valueText": "private",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        }
+                                    ],
                                     "identifier": {
                                         "kind": "IdentifierName",
                                         "width": 5,
@@ -18393,21 +18401,23 @@
                                 {
                                     "kind": "Parameter",
                                     "fullWidth": 19,
-                                    "publicOrPrivateKeyword": {
-                                        "kind": "PublicKeyword",
-                                        "width": 6,
-                                        "fullWidth": 7,
-                                        "text": "public",
-                                        "value": "public",
-                                        "valueText": "public",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
+                                    "modifiers": [
+                                        {
+                                            "kind": "PublicKeyword",
+                                            "width": 6,
+                                            "fullWidth": 7,
+                                            "text": "public",
+                                            "value": "public",
+                                            "valueText": "public",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        }
+                                    ],
                                     "identifier": {
                                         "kind": "IdentifierName",
                                         "width": 4,
@@ -18556,6 +18566,7 @@
                                     {
                                         "kind": "Parameter",
                                         "fullWidth": 13,
+                                        "modifiers": [],
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 5,
@@ -18668,6 +18679,7 @@
                                     {
                                         "kind": "Parameter",
                                         "fullWidth": 13,
+                                        "modifiers": [],
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 5,
@@ -18727,6 +18739,7 @@
                                             "value": "...",
                                             "valueText": "..."
                                         },
+                                        "modifiers": [],
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 4,
@@ -18890,6 +18903,7 @@
                                     {
                                         "kind": "Parameter",
                                         "fullWidth": 24,
+                                        "modifiers": [],
                                         "identifier": {
                                             "kind": "IdentifierName",
                                             "width": 5,

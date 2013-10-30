@@ -91,21 +91,23 @@
                             "parameter": {
                                 "kind": "Parameter",
                                 "fullWidth": 8,
-                                "publicOrPrivateKeyword": {
-                                    "kind": "PublicKeyword",
-                                    "width": 6,
-                                    "fullWidth": 7,
-                                    "text": "public",
-                                    "value": "public",
-                                    "valueText": "public",
-                                    "hasTrailingTrivia": true,
-                                    "trailingTrivia": [
-                                        {
-                                            "kind": "WhitespaceTrivia",
-                                            "text": " "
-                                        }
-                                    ]
-                                },
+                                "modifiers": [
+                                    {
+                                        "kind": "PublicKeyword",
+                                        "width": 6,
+                                        "fullWidth": 7,
+                                        "text": "public",
+                                        "value": "public",
+                                        "valueText": "public",
+                                        "hasTrailingTrivia": true,
+                                        "trailingTrivia": [
+                                            {
+                                                "kind": "WhitespaceTrivia",
+                                                "text": " "
+                                            }
+                                        ]
+                                    }
+                                ],
                                 "identifier": {
                                     "kind": "IdentifierName",
                                     "width": 1,

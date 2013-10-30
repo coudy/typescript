@@ -1067,21 +1067,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var modifiers: number[];
-
-            if (node.publicOrPrivateKeyword) {
-                modifiers = [];
-                if (node.publicOrPrivateKeyword.tokenKind === SyntaxKind.PublicKeyword) {
-                    modifiers.push(PullElementFlags.Public);
-                }
-                else {
-                    modifiers.push(PullElementFlags.Private);
-                }
-            }
-            else {
-                modifiers = sentinelEmptyArray;
-            }
-
+            var modifiers = this.visitModifiers(node.modifiers);
 
             var result = new Parameter(node.dotDotDotToken ? new ASTSpan() : null, modifiers, identifier, node.questionToken ? new ASTSpan() : null, typeExpr, init);
             this.setCommentsAndSpan(result, start, node);

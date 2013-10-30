@@ -6,12 +6,9 @@
     },
     "diagnostics": [
         {
-            "start": 48,
-            "length": 6,
-            "diagnosticCode": "Unexpected token; '{0}' expected.",
-            "arguments": [
-                "parameter"
-            ]
+            "start": 54,
+            "length": 1,
+            "diagnosticCode": "Identifier expected."
         }
     ],
     "sourceUnit": {
@@ -143,26 +140,32 @@
                             "openParenToken": {
                                 "kind": "OpenParenToken",
                                 "width": 1,
-                                "fullWidth": 7,
                                 "text": "(",
                                 "value": "(",
-                                "valueText": "(",
-                                "hasTrailingTrivia": true,
-                                "hasTrailingSkippedText": true,
-                                "trailingTrivia": [
-                                    {
-                                        "kind": "SkippedTokenTrivia",
-                                        "skippedToken": {
+                                "valueText": "("
+                            },
+                            "parameters": [
+                                {
+                                    "kind": "Parameter",
+                                    "fullWidth": 6,
+                                    "isIncrementallyUnusable": true,
+                                    "parsedInStrictMode": true,
+                                    "modifiers": [
+                                        {
                                             "kind": "StaticKeyword",
                                             "width": 6,
                                             "text": "static",
                                             "value": "static",
                                             "valueText": "static"
                                         }
+                                    ],
+                                    "identifier": {
+                                        "kind": "IdentifierName",
+                                        "width": 0,
+                                        "text": ""
                                     }
-                                ]
-                            },
-                            "parameters": [],
+                                }
+                            ],
                             "closeParenToken": {
                                 "kind": "CloseParenToken",
                                 "width": 1,

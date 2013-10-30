@@ -125,21 +125,23 @@
                                     "kind": "Parameter",
                                     "fullWidth": 7,
                                     "isIncrementallyUnusable": true,
-                                    "publicOrPrivateKeyword": {
-                                        "kind": "PublicKeyword",
-                                        "width": 6,
-                                        "fullWidth": 7,
-                                        "text": "public",
-                                        "value": "public",
-                                        "valueText": "public",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
+                                    "modifiers": [
+                                        {
+                                            "kind": "PublicKeyword",
+                                            "width": 6,
+                                            "fullWidth": 7,
+                                            "text": "public",
+                                            "value": "public",
+                                            "valueText": "public",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        }
+                                    ],
                                     "identifier": {
                                         "kind": "IdentifierName",
                                         "width": 0,
@@ -161,6 +163,7 @@
                                         "value": "...",
                                         "valueText": "..."
                                     },
+                                    "modifiers": [],
                                     "identifier": {
                                         "kind": "IdentifierName",
                                         "width": 4,

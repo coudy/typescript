@@ -6,9 +6,9 @@
     },
     "diagnostics": [
         {
-            "start": 21,
-            "length": 16,
-            "diagnosticCode": "'set' accessor parameter cannot have accessibility modifier."
+            "start": 22,
+            "length": 6,
+            "diagnosticCode": "Parameter property declarations can only be used in constructors."
         }
     ],
     "sourceUnit": {
@@ -114,21 +114,23 @@
                                 {
                                     "kind": "Parameter",
                                     "fullWidth": 16,
-                                    "publicOrPrivateKeyword": {
-                                        "kind": "PublicKeyword",
-                                        "width": 6,
-                                        "fullWidth": 7,
-                                        "text": "public",
-                                        "value": "public",
-                                        "valueText": "public",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
-                                    },
+                                    "modifiers": [
+                                        {
+                                            "kind": "PublicKeyword",
+                                            "width": 6,
+                                            "fullWidth": 7,
+                                            "text": "public",
+                                            "value": "public",
+                                            "valueText": "public",
+                                            "hasTrailingTrivia": true,
+                                            "trailingTrivia": [
+                                                {
+                                                    "kind": "WhitespaceTrivia",
+                                                    "text": " "
+                                                }
+                                            ]
+                                        }
+                                    ],
                                     "identifier": {
                                         "kind": "IdentifierName",
                                         "width": 1,
