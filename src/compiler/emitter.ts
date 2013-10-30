@@ -476,59 +476,22 @@ module TypeScript {
         }
 
         public emitObjectLiteralExpression(objectLiteral: ObjectLiteralExpression) {
-            var useNewLines = !this.isOnSingleLine(objectLiteral);
-
             this.recordSourceMappingStart(objectLiteral);
 
+            // Try to preserve the newlines between elements that the user had.
             this.writeToOutput("{");
-            var list = objectLiteral.propertyAssignments;
-            if (list.members.length > 0) {
-                if (useNewLines) {
-                    this.writeLineToOutput("");
-                }
-                else {
-                    this.writeToOutput(" ");
-                }
-
-                this.indenter.increaseIndent();
-                this.emitCommaSeparatedList(list, useNewLines);
-                this.indenter.decreaseIndent();
-                if (useNewLines) {
-                    this.emitIndent();
-                }
-                else {
-                    this.writeToOutput(" ");
-                }
-            }
+            this.emitCommaSeparatedList(objectLiteral, objectLiteral.propertyAssignments, /*buffer:*/ " ", /*preserveNewLines:*/ true);
             this.writeToOutput("}");
 
             this.recordSourceMappingEnd(objectLiteral);
         }
 
-        private isOnSingleLine(ast: AST): boolean {
-            var lineMap = this.document.lineMap();
-            return lineMap.getLineNumberFromPosition(ast.minChar) === lineMap.getLineNumberFromPosition(ast.limChar);
-        }
-
         public emitArrayLiteralExpression(arrayLiteral: ArrayLiteralExpression) {
-            var useNewLines = !this.isOnSingleLine(arrayLiteral);
-
             this.recordSourceMappingStart(arrayLiteral);
-
+            
+            // Try to preserve the newlines between elements that the user had.
             this.writeToOutput("[");
-            var list = arrayLiteral.expressions;
-            if (list.members.length > 0) {
-                if (useNewLines) {
-                    this.writeLineToOutput("");
-                }
-
-                this.indenter.increaseIndent();
-                this.emitCommaSeparatedList(list, useNewLines);
-                this.indenter.decreaseIndent();
-                if (useNewLines) {
-                    this.emitIndent();
-                }
-            }
+            this.emitCommaSeparatedList(arrayLiteral, arrayLiteral.expressions, /*buffer:*/ "", /*preserveNewLines:*/ true);
             this.writeToOutput("]");
 
             this.recordSourceMappingEnd(arrayLiteral);
@@ -543,7 +506,7 @@ module TypeScript {
             if (objectCreationExpression.argumentList) {
                 this.recordSourceMappingStart(objectCreationExpression.argumentList);
                 this.writeToOutput("(");
-                this.emitCommaSeparatedList(objectCreationExpression.argumentList.arguments);
+                this.emitCommaSeparatedList(objectCreationExpression.argumentList, objectCreationExpression.argumentList.arguments, /*buffer:*/ "", /*preserveNewLines:*/ false);
                 this.writeToOutputWithSourceMapRecord(")", objectCreationExpression.argumentList.closeParenToken);
                 this.recordSourceMappingEnd(objectCreationExpression.argumentList);
             }
@@ -606,7 +569,7 @@ module TypeScript {
                 this.emitThis();
                 if (args && args.members.length > 0) {
                     this.writeToOutput(", ");
-                    this.emitCommaSeparatedList(args);
+                    this.emitCommaSeparatedList(callNode.argumentList, args, /*buffer:*/ "", /*preserveNewLines:*/ false);
                 }
             } else {
                 if (callNode.expression.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
@@ -623,7 +586,7 @@ module TypeScript {
                         this.writeToOutput(", ");
                     }
                 }
-                this.emitCommaSeparatedList(args);
+                this.emitCommaSeparatedList(callNode.argumentList, args, /*buffer:*/ "", /*preserveNewLines:*/ false);
             }
 
             this.writeToOutputWithSourceMapRecord(")", callNode.argumentList.closeParenToken);
@@ -1858,26 +1821,69 @@ module TypeScript {
             }
         }
 
-        public emitCommaSeparatedList(list: ASTList, startLine: boolean = false): void {
-            if (list === null) {
+        private isOnSameLine(pos1: number, pos2: number): boolean {
+            var lineMap = this.document.lineMap();
+            return lineMap.getLineNumberFromPosition(pos1) === lineMap.getLineNumberFromPosition(pos2);
+        }
+
+        private emitCommaSeparatedList(parent: AST, list: ASTList, buffer: string, preserveNewLines: boolean): void {
+            if (list === null || list.members.length === 0) {
                 return;
             }
+
+            // If the first element isn't on hte same line as the parent node, then we need to 
+            // start with a newline.
+            var startLine = preserveNewLines && !this.isOnSameLine(parent.limChar, list.members[0].limChar);
+
+            if (preserveNewLines) {
+                // Any elements on a new line will have to be indented.
+                this.indenter.increaseIndent();
+            }
+
+            // If we're starting on a newline, then emit an actual newline. Otherwise write out
+            // the buffer character before hte first element.
+            if (startLine) {
+                this.writeLineToOutput("");
+            }
             else {
-                // this.emitComments(ast, true);
-                // this.emitComments(ast, false);
+                this.writeToOutput(buffer);
+            }
 
-                for (var i = 0, n = list.members.length; i < n; i++) {
-                    var emitNode = list.members[i];
-                    this.emitJavascript(emitNode, startLine);
+            for (var i = 0, n = list.members.length; i < n; i++) {
+                var emitNode = list.members[i];
 
-                    if (i < (n - 1)) {
-                        this.writeToOutput(startLine ? "," : ", ");
-                    }
+                // Write out the element, emitting an indent if we're on a new line.
+                this.emitJavascript(emitNode, startLine);
 
+                if (i < (n - 1)) {
+                    // If the next element start on a different line than this element ended on, 
+                    // then we want to start on a newline.  Emit the comma with a newline.  
+                    // Otherwise, emit the comma with the space.
+                    startLine = preserveNewLines && !this.isOnSameLine(emitNode.limChar, list.members[i + 1].minChar);
                     if (startLine) {
-                        this.writeLineToOutput("");
+                        this.writeLineToOutput(",");
+                    }
+                    else {
+                        this.writeToOutput(", ");
                     }
                 }
+            }
+
+            if (preserveNewLines) {
+                // We're done with all the elements.  Return the indent back to where it was.
+                this.indenter.decreaseIndent();
+            }
+
+            // If the last element isn't on the same line as the parent, then emit a newline
+            // after the last element and emit our indent so the list's terminator will be
+            // on the right line.  Otherwise, emit the buffer string between the last value
+            // and the terminator.
+            if (preserveNewLines && !this.isOnSameLine(parent.limChar, ArrayUtilities.last(list.members).limChar)) {
+                this.writeLineToOutput("");
+                this.emitIndent();
+            }
+            else {
+                this.writeToOutput(buffer);
             }
         }
 
