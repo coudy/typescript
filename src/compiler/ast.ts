@@ -80,8 +80,6 @@ module TypeScript {
         public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
         public trailingTriviaWidth = 0;
 
-        private _flags = ASTFlags.None;
-
         public typeCheckPhase = -1;
 
         private _astID: number = astID++;
@@ -131,15 +129,6 @@ module TypeScript {
             }
         }
 
-        public getFlags(): ASTFlags {
-            return this._flags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setFlags(flags: ASTFlags): void {
-            this._flags = flags;
-        }
-
         public getLength(): number {
             return this.limChar - this.minChar;
         }
@@ -151,9 +140,8 @@ module TypeScript {
                 }
             }
 
-            return this._flags === ast._flags &&
-                commentArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
-                commentArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition);
+            return commentArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
+                   commentArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition);
         }
     }
 

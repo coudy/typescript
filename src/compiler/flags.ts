@@ -20,10 +20,6 @@ module TypeScript {
         return (val & flag) !== 0;
     }
 
-    export enum ASTFlags {
-        None = 0,
-    }
-
     export enum TypeRelationshipFlags {
         SuccessfulComparison = 0,
         RequiredPropertyIsMissing = 1 << 1,
