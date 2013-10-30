@@ -972,7 +972,7 @@ module TypeScript {
                 }
             }
 
-            var members = ast.members.members;
+            var members = ast.moduleElements.members;
 
             var instanceSymbol = containerSymbol.getInstanceSymbol();
 
@@ -1002,7 +1002,7 @@ module TypeScript {
         private typeCheckModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST(ast.members, false, context);
+            this.resolveAST(ast.moduleElements, false, context);
             var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.validateVariableDeclarationGroups(containerDecl, context);
 

@@ -21,7 +21,7 @@ module TypeScript {
     }
 
     export function moduleIsElided(declaration: ModuleDeclaration): boolean {
-        return scriptOrModuleIsElided(declaration.getModuleFlags(), declaration.members);
+        return scriptOrModuleIsElided(declaration.getModuleFlags(), declaration.moduleElements);
     }
 
     function scriptOrModuleIsElided(moduleFlags: ModuleFlags, moduleMembers: ASTList): boolean {

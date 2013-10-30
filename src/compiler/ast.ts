@@ -217,164 +217,6 @@ module TypeScript {
         }
     }
 
-    export class ImportDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-        constructor(public identifier: Identifier, public moduleReference: AST) {
-            super();
-            identifier && (identifier.parent = this);
-            moduleReference && (moduleReference.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ImportDeclaration;
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public isExternalImportDeclaration() {
-            if (this.moduleReference.nodeType() == NodeType.Name) {
-                var text = (<Identifier>this.moduleReference).text();
-                return isQuoted(text);
-            }
-
-            return false;
-        }
-
-        public getAliasName(aliasAST: AST = this.moduleReference): string {
-            if (aliasAST.nodeType() == NodeType.TypeRef) {
-                aliasAST = (<TypeReference>aliasAST).term;
-            }
-
-            if (aliasAST.nodeType() === NodeType.Name) {
-                return (<Identifier>aliasAST).text();
-            } else {
-                var dotExpr = <QualifiedName>aliasAST;
-                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
-            }
-        }
-
-        public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                structuralEquals(this.moduleReference, ast.moduleReference, includingPosition);
-        }
-    }
-
-    export class ExportAssignment extends AST {
-        constructor(public identifier: Identifier) {
-            super();
-            identifier && (identifier.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ExportAssignment;
-        }
-
-        public structuralEquals(ast: ExportAssignment, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition);
-        }
-    }
-
-    export class ClassDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public identifier: Identifier,
-            public typeParameterList: ASTList,
-            public heritageClauses: ASTList,
-            public classElements: ASTList,
-            public endingToken: ASTSpan) {
-            super();
-                identifier && (identifier.parent = this);
-                typeParameterList && (typeParameterList.parent = this);
-                heritageClauses && (heritageClauses.parent = this);
-                classElements && (classElements.parent = this);
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ClassDeclaration;
-        }
-
-        public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                structuralEquals(this.classElements, ast.classElements, includingPosition) &&
-                structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
-                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
-        }
-    }
-
-    export class InterfaceDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public identifier: Identifier,
-            public typeParameterList: ASTList,
-            public heritageClauses: ASTList,
-            public body: ObjectType) {
-            super();
-                identifier && (identifier.parent = this);
-                typeParameterList && (typeParameterList.parent = this);
-                body && (body.parent = this);
-            heritageClauses && (heritageClauses.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.InterfaceDeclaration;
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
-        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                structuralEquals(this.body, ast.body, includingPosition) &&
-                structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
-                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
-        }
-    }
-
-    export class HeritageClause extends AST {
-        constructor(private _nodeType: NodeType, public typeNames: ASTList) {
-            super();
-            typeNames && (typeNames.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return this._nodeType;
-        }
-
-        public structuralEquals(ast: HeritageClause, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.typeNames, ast.typeNames, includingPosition);
-        }
-    }
-
     export class Identifier extends AST {
         // 'actualText' is the text that the user has entered for the identifier. the text might 
         // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
@@ -508,38 +350,6 @@ module TypeScript {
         }
     }
 
-    export class ModuleDeclaration extends AST {
-        private _moduleFlags = ModuleFlags.None;
-
-        constructor(public name: Identifier,
-                    public members: ASTList,
-                    public endingToken: ASTSpan) {
-            super();
-            name && (name.parent = this);
-            members && (members.parent = this);
-        }
-
-        public nodeType(): NodeType {
-            return NodeType.ModuleDeclaration;
-        }
-
-        public getModuleFlags(): ModuleFlags {
-            return this._moduleFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setModuleFlags(flags: ModuleFlags): void {
-            this._moduleFlags = flags;
-        }
-
-        public structuralEquals(ast: ModuleDeclaration, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this._moduleFlags === ast._moduleFlags &&
-                structuralEquals(this.name, ast.name, includingPosition) &&
-                structuralEquals(this.members, ast.members, includingPosition);
-        }
-    }
-
     export class TypeReference extends AST {
         constructor(public term: AST) {
             super();
@@ -567,6 +377,194 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return this._nodeType;
+        }
+    }
+
+    export class ImportDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+        constructor(public identifier: Identifier, public moduleReference: AST) {
+            super();
+            identifier && (identifier.parent = this);
+            moduleReference && (moduleReference.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ImportDeclaration;
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public isExternalImportDeclaration() {
+            if (this.moduleReference.nodeType() == NodeType.Name) {
+                var text = (<Identifier>this.moduleReference).text();
+                return isQuoted(text);
+            }
+
+            return false;
+        }
+
+        public getAliasName(aliasAST: AST = this.moduleReference): string {
+            if (aliasAST.nodeType() == NodeType.TypeRef) {
+                aliasAST = (<TypeReference>aliasAST).term;
+            }
+
+            if (aliasAST.nodeType() === NodeType.Name) {
+                return (<Identifier>aliasAST).text();
+            } else {
+                var dotExpr = <QualifiedName>aliasAST;
+                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
+            }
+        }
+
+        public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.moduleReference, ast.moduleReference, includingPosition);
+        }
+    }
+
+    export class ExportAssignment extends AST {
+        constructor(public identifier: Identifier) {
+            super();
+            identifier && (identifier.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ExportAssignment;
+        }
+
+        public structuralEquals(ast: ExportAssignment, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition);
+        }
+    }
+
+    export class ClassDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public identifier: Identifier,
+            public typeParameterList: ASTList,
+            public heritageClauses: ASTList,
+            public classElements: ASTList,
+            public closeBraceToken: ASTSpan) {
+            super();
+            identifier && (identifier.parent = this);
+            typeParameterList && (typeParameterList.parent = this);
+            heritageClauses && (heritageClauses.parent = this);
+            classElements && (classElements.parent = this);
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ClassDeclaration;
+        }
+
+        public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.classElements, ast.classElements, includingPosition) &&
+                structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
+                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
+        }
+    }
+
+    export class InterfaceDeclaration extends AST {
+        private _varFlags = VariableFlags.None;
+
+        constructor(public identifier: Identifier,
+            public typeParameterList: ASTList,
+            public heritageClauses: ASTList,
+            public body: ObjectType) {
+            super();
+            identifier && (identifier.parent = this);
+            typeParameterList && (typeParameterList.parent = this);
+            body && (body.parent = this);
+            heritageClauses && (heritageClauses.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.InterfaceDeclaration;
+        }
+
+        public getVarFlags(): VariableFlags {
+            return this._varFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setVarFlags(flags: VariableFlags): void {
+            this._varFlags = flags;
+        }
+
+        public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._varFlags === ast._varFlags &&
+                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
+                structuralEquals(this.body, ast.body, includingPosition) &&
+                structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
+                structuralEquals(this.heritageClauses, ast.heritageClauses, includingPosition);
+        }
+    }
+
+    export class HeritageClause extends AST {
+        constructor(private _nodeType: NodeType, public typeNames: ASTList) {
+            super();
+            typeNames && (typeNames.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return this._nodeType;
+        }
+
+        public structuralEquals(ast: HeritageClause, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                structuralEquals(this.typeNames, ast.typeNames, includingPosition);
+        }
+    }
+
+    export class ModuleDeclaration extends AST {
+        private _moduleFlags = ModuleFlags.None;
+
+        constructor(public name: Identifier, public moduleElements: ASTList, public endingToken: ASTSpan) {
+            super();
+            name && (name.parent = this);
+            moduleElements && (moduleElements.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ModuleDeclaration;
+        }
+
+        public getModuleFlags(): ModuleFlags {
+            return this._moduleFlags;
+        }
+
+        // Must only be called from SyntaxTreeVisitor
+        public setModuleFlags(flags: ModuleFlags): void {
+            this._moduleFlags = flags;
+        }
+
+        public structuralEquals(ast: ModuleDeclaration, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                this._moduleFlags === ast._moduleFlags &&
+                structuralEquals(this.name, ast.name, includingPosition) &&
+                structuralEquals(this.moduleElements, ast.moduleElements, includingPosition);
         }
     }
 

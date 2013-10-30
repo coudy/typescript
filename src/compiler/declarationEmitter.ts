@@ -1004,13 +1004,13 @@ module TypeScript {
                     for (;
                         // Till the module has single module element with exported flag and without doc comments,
                         //  we traverse the module element so we can create a dotted module name.
-                        moduleDecl.members.members.length === 1 &&
-                        moduleDecl.members.members[0].nodeType() === NodeType.ModuleDeclaration &&
-                        hasFlag((<ModuleDeclaration>moduleDecl.members.members[0]).getModuleFlags(), ModuleFlags.Exported) &&
+                        moduleDecl.moduleElements.members.length === 1 &&
+                        moduleDecl.moduleElements.members[0].nodeType() === NodeType.ModuleDeclaration &&
+                        hasFlag((<ModuleDeclaration>moduleDecl.moduleElements.members[0]).getModuleFlags(), ModuleFlags.Exported) &&
                         (docComments(moduleDecl) === null || docComments(moduleDecl).length === 0)
 
                         // Module to look up is the single module element of the current module
-                        ; moduleDecl = <ModuleDeclaration>moduleDecl.members.members[0]) {
+                        ; moduleDecl = <ModuleDeclaration>moduleDecl.moduleElements.members[0]) {
 
                         // construct dotted name
                         moduleName += moduleDecl.name.text() + ".";
@@ -1029,7 +1029,7 @@ module TypeScript {
 
             this.pushDeclarationContainer(moduleDecl);
 
-            this.emitDeclarationsForList(moduleDecl.members);
+            this.emitDeclarationsForList(moduleDecl.moduleElements);
 
             if (!isExternalModule) {
                 this.indenter.decreaseIndent();

@@ -23,7 +23,7 @@ module TypeScript {
         while (ast) {
             if (ast.nodeType() === NodeType.ModuleDeclaration) {
                 var moduleDecl = <ModuleDeclaration>ast;
-                return ArrayUtilities.any(moduleDecl.members.members, m => m.nodeType() === NodeType.ExportAssignment);
+                return ArrayUtilities.any(moduleDecl.moduleElements.members, m => m.nodeType() === NodeType.ExportAssignment);
             }
 
             ast = ast.parent;
@@ -157,7 +157,7 @@ module TypeScript {
         context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
 
         // If we contain any code that requires initialization, then mark us as an initialized.
-        if (containsExecutableCode(moduleDecl.members)) {
+        if (containsExecutableCode(moduleDecl.moduleElements)) {
             decl.setFlags(declFlags | getInitializationFlag(decl));
 
             // create the value decl
@@ -187,7 +187,7 @@ module TypeScript {
 
                 // If we have a module in us, and it contains executable code, then we
                 // contain executable code.
-                if (containsExecutableCode(moduleDecl.members)) {
+                if (containsExecutableCode(moduleDecl.moduleElements)) {
                     return true;
                 }
             }

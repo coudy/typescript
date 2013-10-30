@@ -352,9 +352,9 @@ module TypeScript {
         walker.walk(preAst.type);
     }
 
-    function walkModuleDeclChildren(preAst: ModuleDeclaration, walker: AstWalker): void {
+    function walkModuleDeclarationChildren(preAst: ModuleDeclaration, walker: AstWalker): void {
         walker.walk(preAst.name);
-        walker.walk(preAst.members);
+        walker.walk(preAst.moduleElements);
     }
 
     function walkEnumDeclarationChildren(preAst: EnumDeclaration, walker: AstWalker): void {
@@ -477,7 +477,7 @@ module TypeScript {
     childrenWalkers[NodeType.MemberFunctionDeclaration] = walkMemberFunctionDeclarationChildren;
     childrenWalkers[NodeType.MemberVariableDeclaration] = walkMemberVariableDeclarationChildren;
     childrenWalkers[NodeType.MethodSignature] = walkMethodSignatureChildren;
-    childrenWalkers[NodeType.ModuleDeclaration] = walkModuleDeclChildren;
+    childrenWalkers[NodeType.ModuleDeclaration] = walkModuleDeclarationChildren;
     childrenWalkers[NodeType.ModuloAssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.ModuloExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.MultiplyAssignmentExpression] = walkBinaryExpressionChildren;

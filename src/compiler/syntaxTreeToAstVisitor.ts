@@ -2086,7 +2086,7 @@ module TypeScript {
                         break;
 
                     case NodeType.ClassDeclaration:
-                        applyDelta((<ClassDeclaration>cur).endingToken, delta);
+                        applyDelta((<ClassDeclaration>cur).closeBraceToken, delta);
                         break;
 
                     case NodeType.DoStatement:

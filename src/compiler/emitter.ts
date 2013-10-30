@@ -1004,7 +1004,7 @@ module TypeScript {
                 this.writeCaptureThisStatement(moduleDecl);
             }
 
-            this.emitList(moduleDecl.members);
+            this.emitList(moduleDecl.moduleElements);
             this.moduleName = moduleDecl.name.text();
             if (!isExternalModule || this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
@@ -1983,7 +1983,7 @@ module TypeScript {
                 if (firstElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleDeclaration = <ModuleDeclaration>firstElement;
                     if (hasFlag(moduleDeclaration.getModuleFlags(), ModuleFlags.IsExternalModule)) {
-                        firstElement = moduleDeclaration.members.members[0];
+                        firstElement = moduleDeclaration.moduleElements.members[0];
                     }
                 }
 
@@ -2237,11 +2237,11 @@ module TypeScript {
             this.emitClassMembers(classDecl);
 
             this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("return " + className + ";", classDecl.endingToken);
+            this.writeToOutputWithSourceMapRecord("return " + className + ";", classDecl.closeBraceToken);
             this.writeLineToOutput("");
             this.indenter.decreaseIndent();
             this.emitIndent();
-            this.writeToOutputWithSourceMapRecord("}", classDecl.endingToken);
+            this.writeToOutputWithSourceMapRecord("}", classDecl.closeBraceToken);
             this.recordSourceMappingNameEnd();
             this.recordSourceMappingStart(classDecl);
             this.writeToOutput(")(");
@@ -2383,7 +2383,7 @@ module TypeScript {
 
                 if (moduleElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleAST = <ModuleDeclaration>moduleElement;
-                    if (!hasFlag(moduleAST.getModuleFlags(), ModuleFlags.Ambient) && this.requiresExtendsBlock(moduleAST.members)) {
+                    if (!hasFlag(moduleAST.getModuleFlags(), ModuleFlags.Ambient) && this.requiresExtendsBlock(moduleAST.moduleElements)) {
                         return true;
                     }
                 }
