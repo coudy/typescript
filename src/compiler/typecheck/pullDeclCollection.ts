@@ -409,11 +409,12 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
 
-        if ((hasModifier(varDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(varDecl, context)) && !containingModuleHasExportAssignment(varDecl)) {
+        var modifiers = getVariableDeclaratorModifiers(varDecl);
+        if ((hasModifier(modifiers, PullElementFlags.Exported) || isParsingAmbientModule(varDecl, context)) && !containingModuleHasExportAssignment(varDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasModifier(varDecl.modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(varDecl, context) || context.isDeclareFile) {
+        if (hasModifier(modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(varDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 

@@ -523,7 +523,7 @@ module TypeScript {
     }
 
     export class VariableStatement extends AST {
-        constructor(public declaration: VariableDeclaration) {
+        constructor(public modifiers: PullElementFlags[], public declaration: VariableDeclaration) {
             super();
             declaration && (declaration.parent = this);
         }
@@ -555,7 +555,7 @@ module TypeScript {
     }
 
     export class VariableDeclarator extends AST {
-        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
+        constructor(public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);

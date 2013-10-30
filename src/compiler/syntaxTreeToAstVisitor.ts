@@ -721,11 +721,9 @@ module TypeScript {
                 if (i === 0) {
                     varDecl.setPreComments(this.mergeComments(preComments, varDecl.preComments()));
                 }
-
-                varDecl.modifiers = modifiers;
             }
 
-            var result = new VariableStatement(declaration);
+            var result = new VariableStatement(modifiers, declaration);
             this.setSpan(result, start, node);
 
             return result;
@@ -761,7 +759,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var result = new VariableDeclarator(sentinelEmptyArray, name, typeExpr, init);
+            var result = new VariableDeclarator(name, typeExpr, init);
             this.setSpan(result, start, node);
 
             return result;

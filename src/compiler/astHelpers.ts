@@ -518,4 +518,16 @@ module TypeScript {
 
         return null;
     }
+
+    export function getVariableDeclaratorModifiers(variableDeclarator: VariableDeclarator): PullElementFlags[] {
+        if (variableDeclarator && variableDeclarator.parent && variableDeclarator.parent.parent && variableDeclarator.parent.parent.parent &&
+            variableDeclarator.parent.nodeType() === NodeType.List &&
+            variableDeclarator.parent.parent.nodeType() === NodeType.VariableDeclaration &&
+            variableDeclarator.parent.parent.parent.nodeType() === NodeType.VariableStatement) {
+
+            return (<VariableStatement>variableDeclarator.parent.parent.parent).modifiers;
+        }
+
+        return sentinelEmptyArray;
+    }
 }

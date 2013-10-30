@@ -2344,22 +2344,22 @@ module TypeScript {
 
         private resolveMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private resolvePropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.propertyName, varDecl.typeAnnotation, null, context);
+                varDecl, sentinelEmptyArray, varDecl.propertyName, varDecl.typeAnnotation, null, context);
         }
 
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
+                varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
         }
 
         private resolveParameter(parameter: Parameter, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
+                parameter, parameter.modifiers, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
         }
 
         private getEnumTypeSymbol(enumElement: EnumElement, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -2373,12 +2373,12 @@ module TypeScript {
 
         private resolveEnumElement(enumElement: EnumElement, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                enumElement, enumElement.propertyName, null, enumElement.equalsValueClause, context);
+                enumElement, sentinelEmptyArray, enumElement.propertyName, null, enumElement.equalsValueClause, context);
         }
 
         private typeCheckEnumElement(enumElement: EnumElement, context: PullTypeResolutionContext): void {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                enumElement, enumElement.propertyName, null, enumElement.equalsValueClause, context);
+                enumElement, sentinelEmptyArray, enumElement.propertyName, null, enumElement.equalsValueClause, context);
         }
 
         private resolveEqualsValueClause(clause: EqualsValueClause, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
@@ -2391,6 +2391,7 @@ module TypeScript {
 
         private resolveVariableDeclaratorOrParameterOrEnumElement(
             varDeclOrParameter: AST,
+            modifiers: PullElementFlags[],
             name: Identifier,
             typeExpr: TypeReference,
             init: EqualsValueClause,
@@ -2466,7 +2467,7 @@ module TypeScript {
 
             if (this.canTypeCheckAST(varDeclOrParameter, context)) {
                 this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                    varDeclOrParameter, name, typeExpr, init, context);
+                    varDeclOrParameter, modifiers, name, typeExpr, init, context);
             }
 
             return declSymbol;
@@ -2635,26 +2636,27 @@ module TypeScript {
 
         private typeCheckPropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.propertyName, varDecl.typeAnnotation, null, context);
+                varDecl, sentinelEmptyArray, varDecl.propertyName, varDecl.typeAnnotation, null, context);
         }
 
         private typeCheckMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
+                varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
         }
 
         private typeCheckParameter(parameter: Parameter, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                parameter, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
+                parameter, parameter.modifiers, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclaratorOrParameterOrEnumElement(
             varDeclOrParameter: AST,
+            modifiers: PullElementFlags[],
             name: Identifier,
             typeExpr: TypeReference,
             init: EqualsValueClause,
@@ -2763,7 +2765,7 @@ module TypeScript {
                     }
                     // varDecl is delcared in ambient declaration but it is not private; so report an error
                     else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                        !TypeScript.hasModifier((<any>varDeclOrParameter).modifiers, PullElementFlags.Private)) {
+                        !TypeScript.hasModifier(modifiers, PullElementFlags.Private)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
                     }

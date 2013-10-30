@@ -3066,7 +3066,7 @@ module TypeScript {
         }
 
         private isNotAmbientOrHasInitializer(varDecl: VariableDeclarator): boolean {
-            return !hasModifier(varDecl.modifiers, PullElementFlags.Ambient) || varDecl.equalsValueClause !== null;
+            return !hasModifier(getVariableDeclaratorModifiers(varDecl), PullElementFlags.Ambient) || varDecl.equalsValueClause !== null;
         }
 
         public shouldEmitVariableStatement(statement: VariableStatement): boolean {

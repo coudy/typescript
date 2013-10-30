@@ -76,7 +76,7 @@ module TypeScript {
                 case NodeType.PropertySignature:
                     return this.emitPropertySignature(<PropertySignature>ast);
                 case NodeType.VariableDeclarator:
-                    return this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>ast, true, true);
+                    return this.emitVariableDeclarator(<VariableDeclarator>ast, true, true);
                 case NodeType.MemberVariableDeclaration:
                     return this.emitDeclarationsForMemberVariableDeclaration(<MemberVariableDeclaration>ast);
                 case NodeType.ConstructorDeclaration:
@@ -341,7 +341,7 @@ module TypeScript {
             this.declFile.WriteLine(";");
         }
 
-        private emitDeclarationsForVariableDeclarator(varDecl: VariableDeclarator, isFirstVarInList: boolean, isLastVarInList: boolean) {
+        private emitVariableDeclarator(varDecl: VariableDeclarator, isFirstVarInList: boolean, isLastVarInList: boolean) {
             if (this.canEmitDeclarations(varDecl)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
@@ -359,7 +359,7 @@ module TypeScript {
                     this.declFile.Write(varDecl.identifier.text());
                 }
 
-                if (!hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
+                if (!hasModifier(getVariableDeclaratorModifiers(varDecl), PullElementFlags.Private)) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
 
@@ -414,7 +414,7 @@ module TypeScript {
         private emitDeclarationsForVariableDeclaration(variableDeclaration: VariableDeclaration) {
             var varListCount = variableDeclaration.declarators.members.length;
             for (var i = 0; i < varListCount; i++) {
-                this.emitDeclarationsForVariableDeclarator(<VariableDeclarator>variableDeclaration.declarators.members[i], i == 0, i == varListCount - 1);
+                this.emitVariableDeclarator(<VariableDeclarator>variableDeclaration.declarators.members[i], i == 0, i == varListCount - 1);
             }
         }
 
