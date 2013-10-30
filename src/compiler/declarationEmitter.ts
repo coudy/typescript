@@ -148,17 +148,17 @@ module TypeScript {
             var pullFlags = pullDecl.flags;
 
             // Static/public/private/global declare
-            if (hasFlag(pullFlags, DeclFlags.Static)) {
-                if (hasFlag(pullFlags, DeclFlags.Private)) {
+            if (hasFlag(pullFlags, PullElementFlags.Static)) {
+                if (hasFlag(pullFlags, PullElementFlags.Private)) {
                     result += "private ";
                 }
                 result += "static ";
             }
             else {
-                if (hasFlag(pullFlags, DeclFlags.Private)) {
+                if (hasFlag(pullFlags, PullElementFlags.Private)) {
                     result += "private ";
                 }
-                else if (hasFlag(pullFlags, DeclFlags.Public)) {
+                else if (hasFlag(pullFlags, PullElementFlags.Public)) {
                     result += "public ";
                 }
                 else {
@@ -191,11 +191,6 @@ module TypeScript {
 
         private emitDeclFlags(pullDecl: PullDecl, typeString: string) {
             this.declFile.Write(this.getDeclFlagsString(pullDecl, typeString));
-        }
-
-        private canEmitTypeAnnotationSignature(declFlag: DeclFlags) {
-            // Private declaration, shouldnt emit type any time.
-            return !hasFlag(declFlag, DeclFlags.Private);
         }
 
         private pushDeclarationContainer(ast: AST) {
@@ -367,7 +362,7 @@ module TypeScript {
                     }
                 }
 
-                if (this.canEmitTypeAnnotationSignature(ModifiersToDeclFlags(varDecl.modifiers))) {
+                if (!hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
 
@@ -407,7 +402,7 @@ module TypeScript {
 
                 this.declFile.Write(varDecl.variableDeclarator.identifier.text());
 
-                if (this.canEmitTypeAnnotationSignature(ModifiersToDeclFlags(varDecl.modifiers))) {
+                if (!hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
 
@@ -841,7 +836,7 @@ module TypeScript {
                         this.emitClassElementModifiers(parameter.modifiers);
                         this.declFile.Write(parameter.identifier.text());
 
-                        if (this.canEmitTypeAnnotationSignature(ModifiersToDeclFlags(parameter.modifiers))) {
+                        if (!hasModifier(parameter.modifiers, PullElementFlags.Private)) {
                             this.emitTypeOfVariableDeclaratorOrParameter(parameter);
                         }
                         this.declFile.WriteLine(";");

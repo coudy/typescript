@@ -26,41 +26,6 @@ module TypeScript {
         OptionalName = 1 << 2,
     }
 
-    export enum DeclFlags {
-        None = 0,
-        Exported = 1,
-        Private = 1 << 1,
-        Public = 1 << 2,
-        Ambient = 1 << 3,
-        Static = 1 << 4,
-    }
-
-    export function ModifiersToDeclFlags(modifiers: PullElementFlags[]): DeclFlags {
-        var flags = DeclFlags.None;
-
-        for (var i = 0, n = modifiers.length; i < n; i++) {
-            switch (modifiers[i]) {
-                case PullElementFlags.Exported:
-                    flags |= DeclFlags.Exported;
-                    continue;
-                case PullElementFlags.Ambient:
-                    flags |= DeclFlags.Ambient;
-                    continue;
-                case PullElementFlags.Public:
-                    flags |= DeclFlags.Public;
-                    continue;
-                case PullElementFlags.Private:
-                    flags |= DeclFlags.Private;
-                    continue;
-                case PullElementFlags.Static:
-                    flags |= DeclFlags.Static;
-                    continue;
-            }
-        }
-
-        return flags;
-    }
-
     export enum TypeRelationshipFlags {
         SuccessfulComparison = 0,
         RequiredPropertyIsMissing = 1 << 1,
