@@ -547,11 +547,22 @@ module TypeScript {
                     }
                 }
 
-                // next, overwrite any entries that should be re-directed to new type parameters
+                var oldMap = typeParameterArgumentMap;
+
                 var outerTypeMap = (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap;
+                var innerSubstitution: PullTypeSymbol = null;
+                var outerSubstitution: PullTypeSymbol = null;
+
                 for (var typeParameterID in outerTypeMap) {
                     if (outerTypeMap.hasOwnProperty(typeParameterID)) {
-                        if (typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID]) {
+
+                        outerSubstitution = outerTypeMap[typeParameterID];
+                        innerSubstitution = typeParameterArgumentMap[outerSubstitution.pullSymbolID];
+                        
+                        if (innerSubstitution &&
+                            (!outerSubstitution.isTypeParameter() ||
+                            !outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] ||
+                            (outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] == outerSubstitution))) {
                             initializationMap[typeParameterID] = typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID];
                         }
                     }
