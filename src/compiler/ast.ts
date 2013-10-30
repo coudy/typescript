@@ -536,9 +536,7 @@ module TypeScript {
     }
 
     export class FunctionDeclaration extends AST {
-        private _functionFlags = FunctionFlags.None;
-
-        constructor(public identifier: Identifier, public callSignature: CallSignature, public block: Block) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public callSignature: CallSignature, public block: Block) {
             super();
             identifier && (identifier.parent = this);
             callSignature && (callSignature.parent = this);
@@ -549,18 +547,8 @@ module TypeScript {
             return NodeType.FunctionDeclaration;
         }
 
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
-
         public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this._functionFlags === ast._functionFlags &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                 structuralEquals(this.block, ast.block, includingPosition) &&
                 structuralEquals(this.callSignature, ast.callSignature, includingPosition);
@@ -1162,9 +1150,7 @@ module TypeScript {
     }
 
     export class MemberFunctionDeclaration extends AST {
-        private _functionFlags = FunctionFlags.None;
-
-        constructor(public propertyName: Identifier, public callSignature: CallSignature, public block: Block) {
+        constructor(public modifiers: PullElementFlags[], public propertyName: Identifier, public callSignature: CallSignature, public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             callSignature && (callSignature.parent = this);
@@ -1174,21 +1160,11 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.MemberFunctionDeclaration;
         }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
     }
 
     export class GetAccessor extends AST {
-        private _functionFlags: FunctionFlags = FunctionFlags.None;
-
-        constructor(public propertyName: Identifier,
+        constructor(public modifiers: PullElementFlags[],
+                    public propertyName: Identifier,
                     public parameterList: ASTList,
                     public typeAnnotation: TypeReference,
                     public block: Block) {
@@ -1202,20 +1178,11 @@ module TypeScript {
         public nodeType(): NodeType {
             return NodeType.GetAccessor;
         }
-
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
-        }
     }
 
     export class SetAccessor extends AST {
-        private _functionFlags: FunctionFlags = FunctionFlags.None;
-
-        constructor(public propertyName: Identifier,
+        constructor(public modifiers: PullElementFlags[],
+                    public propertyName: Identifier,
                     public parameterList: ASTList,
                     public block: Block) {
             super();
@@ -1226,14 +1193,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.SetAccessor;
-        }
-
-        public setFunctionFlags(flags: FunctionFlags): void {
-            this._functionFlags = flags;
-        }
-
-        public getFunctionFlags(): FunctionFlags {
-            return this._functionFlags;
         }
     }
 

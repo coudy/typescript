@@ -3104,7 +3104,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, FunctionFlags.None, null, Parameters.fromParameterList(funcDeclAST.parameterList), null, funcDeclAST.block, context);
+                funcDeclAST, /*isStatic:*/ false, null, Parameters.fromParameterList(funcDeclAST.parameterList), null, funcDeclAST.block, context);
 
             this.typeCheckCallBacks.push(context => {
                 // Function or constructor
@@ -3143,18 +3143,18 @@ module TypeScript {
         }
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.None,
+            this.typeCheckFunctionDeclaration(funcDecl, /*isStatic:*/ false,
                 null, funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
         }
 
         private typeCheckConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.None,
+            this.typeCheckFunctionDeclaration(funcDecl, /*isStatic:*/ false,
                 null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         }
 
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
-            flags: FunctionFlags,
+            isStatic: boolean,
             name: Identifier,
             typeParameters: ASTList,
             parameters: ASTList,
@@ -3181,7 +3181,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, flags, typeParameters, Parameters.fromParameterList(parameters), returnTypeAnnotation, block, context);
+                funcDeclAST, isStatic, typeParameters, Parameters.fromParameterList(parameters), returnTypeAnnotation, block, context);
 
             var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
@@ -3225,7 +3225,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, FunctionFlags.None, null, Parameters.fromParameter(funcDeclAST.parameter), funcDeclAST.typeAnnotation, null, context);
+                funcDeclAST, /*isStatic:*/ false, null, Parameters.fromParameter(funcDeclAST.parameter), funcDeclAST.typeAnnotation, null, context);
 
             var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
@@ -3312,27 +3312,27 @@ module TypeScript {
         }
 
         private resolveMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.propertyName,
+            return this.resolveFunctionDeclaration(funcDecl, hasModifier(funcDecl.modifiers, PullElementFlags.Static), funcDecl.propertyName,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
         }
 
         private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.None, null,
+            return this.resolveFunctionDeclaration(funcDecl, /*isStatic:*/ false, null,
                 funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
         }
 
         private resolveConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.None, null,
+            return this.resolveFunctionDeclaration(funcDecl, /*isStatic:*/ false, null,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         }
 
         private resolveMethodSignature(funcDecl: MethodSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.None, funcDecl.propertyName,
+            return this.resolveFunctionDeclaration(funcDecl, /*isStatic:*/ false, funcDecl.propertyName,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         }
 
         private resolveAnyFunctionDeclaration(funcDecl: FunctionDeclaration, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, funcDecl.getFunctionFlags(), funcDecl.identifier,
+            return this.resolveFunctionDeclaration(funcDecl, hasModifier(funcDecl.modifiers, PullElementFlags.Static), funcDecl.identifier,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
         }
 
@@ -3591,7 +3591,7 @@ module TypeScript {
         }
 
 
-        private resolveFunctionDeclaration(funcDeclAST: AST, flags: FunctionFlags, name: Identifier, typeParameters: ASTList, parameterList: ASTList, returnTypeAnnotation: TypeReference, block: Block, context: PullTypeResolutionContext): PullSymbol {
+        private resolveFunctionDeclaration(funcDeclAST: AST, isStatic: boolean, name: Identifier, typeParameters: ASTList, parameterList: ASTList, returnTypeAnnotation: TypeReference, block: Block, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
@@ -3606,7 +3606,7 @@ module TypeScript {
                 if (signature.isResolved) {
                     if (this.canTypeCheckAST(funcDeclAST, context)) {
                         this.typeCheckFunctionDeclaration(
-                            funcDeclAST, flags, name,
+                            funcDeclAST, isStatic, name,
                             typeParameters, parameterList, returnTypeAnnotation, block, context);
                     }
                     return funcSymbol;
@@ -3757,7 +3757,7 @@ module TypeScript {
 
             if (this.canTypeCheckAST(funcDeclAST, context)) {
                 this.typeCheckFunctionDeclaration(
-                    funcDeclAST, flags, name,
+                    funcDeclAST, isStatic, name,
                     typeParameters, parameterList, returnTypeAnnotation,
                     block, context);
             }
@@ -3918,24 +3918,11 @@ module TypeScript {
             if (isGetter) {
                 var getterFunctionDeclarationAst = <GetAccessor>funcDeclAst;
                 context.pushContextualType(getterSymbol.type, context.inProvisionalResolution(), null);
-                this.typeCheckGetAccessorDeclaration(
-                    getterFunctionDeclarationAst,
-                    getterFunctionDeclarationAst.getFunctionFlags(),
-                    getterFunctionDeclarationAst.propertyName,
-                    getterFunctionDeclarationAst.parameterList,
-                    getterFunctionDeclarationAst.typeAnnotation,
-                    getterFunctionDeclarationAst.block,
-                    context);
+                this.typeCheckGetAccessorDeclaration(getterFunctionDeclarationAst, context);
                 context.popContextualType();
             } else {
                 var setterFunctionDeclarationAst = <SetAccessor>funcDeclAst;
-                this.typeCheckSetAccessorDeclaration(
-                    setterFunctionDeclarationAst,
-                    setterFunctionDeclarationAst.getFunctionFlags(),
-                    setterFunctionDeclarationAst.propertyName,
-                    setterFunctionDeclarationAst.parameterList,
-                    setterFunctionDeclarationAst.block,
-                    context);
+                this.typeCheckSetAccessorDeclaration(setterFunctionDeclarationAst, context);
             }
         }
 
@@ -4041,34 +4028,28 @@ module TypeScript {
         }
 
         private typeCheckGetAccessorDeclaration(
-            funcDeclAST: AST,
-            flags: FunctionFlags,
-            name: Identifier,
-            parameters: ASTList,
-            returnTypeAnnotation: TypeReference,
-            block: Block,
-            context: PullTypeResolutionContext) {
+            funcDeclAST: GetAccessor, context: PullTypeResolutionContext) {
             // Accessors are handled only by resolve/typeCheckAccessorDeclaration, 
             // hence the resolve/typeCheckGetAccessorDeclaration is helper and need not set setTypeChecked flag
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
-            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, funcDeclAST.typeAnnotation, context);
 
-            this.resolveAST(block, /*isContextuallyTyped*/ false, context);
+            this.resolveAST(funcDeclAST.block, /*isContextuallyTyped*/ false, context);
 
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
             var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
-            var funcNameAST = name;
+            var funcNameAST = funcDeclAST.propertyName;
 
             // If there is no return statement report error: 
             //      signature is doesnt have the return statement flag &&
             //      accessor body has atleast one statement and it isnt throw statement
             if (!hasReturn &&
-                !(block.statements.members.length > 0 && block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcNameAST, DiagnosticCode.Getters_must_return_a_value));
             }
 
@@ -4078,7 +4059,7 @@ module TypeScript {
             if (setter) {
                 var setterDecl = setter.getDeclarations()[0];
                 var setterIsPrivate = hasFlag(setterDecl.flags, PullElementFlags.Private);
-                var getterIsPrivate = hasFlag(flags, FunctionFlags.Private);
+                var getterIsPrivate = hasModifier(funcDeclAST.modifiers, PullElementFlags.Private);
 
                 if (getterIsPrivate != setterIsPrivate) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcNameAST, DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility));
@@ -4088,8 +4069,8 @@ module TypeScript {
             }
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, flags, /*typeParameters:*/null,
-                Parameters.fromParameterList(parameters), returnTypeAnnotation, block, context);
+                funcDeclAST, hasModifier(funcDeclAST.modifiers, PullElementFlags.Static), /*typeParameters:*/null,
+                Parameters.fromParameterList(funcDeclAST.parameterList), funcDeclAST.typeAnnotation, funcDeclAST.block, context);
         }
 
         static hasSetAccessorParameterTypeAnnotation(setAccessor: SetAccessor) {
@@ -4146,20 +4127,20 @@ module TypeScript {
             return setterSymbol;
         }
 
-        private typeCheckSetAccessorDeclaration(funcDeclAST: AST, flags: FunctionFlags, name: Identifier, parameterList: ASTList, block: Block, context: PullTypeResolutionContext) {
+        private typeCheckSetAccessorDeclaration(funcDeclAST: SetAccessor, context: PullTypeResolutionContext) {
             // Accessors are handled only by resolve/typeCheckAccessorDeclaration, 
             // hence the resolve/typeCheckSetAccessorDeclaration is helper and need not set setTypeChecked flag
 
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
-            if (parameterList) {
-                for (var i = 0; i < parameterList.members.length; i++) {
-                    this.resolveParameter(<Parameter>parameterList.members[i], context);
+            if (funcDeclAST.parameterList) {
+                for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
+                    this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context);
                 }
             }
 
-            this.resolveAST(block, false, context);
+            this.resolveAST(funcDeclAST.block, false, context);
 
             this.validateVariableDeclarationGroups(funcDecl, context);
 
@@ -4167,14 +4148,14 @@ module TypeScript {
 
             var getter = accessorSymbol.getGetter();
 
-            var funcNameAST = name;
+            var funcNameAST = funcDeclAST.propertyName;
 
             // Setter with return value is checked in typeCheckReturnExpression
 
             if (getter) {
                 var getterDecl = getter.getDeclarations()[0];
                 var getterIsPrivate = hasFlag(getterDecl.flags, PullElementFlags.Private);
-                var setterIsPrivate = hasFlag(flags, FunctionFlags.Private);
+                var setterIsPrivate = hasModifier(funcDeclAST.modifiers, PullElementFlags.Private);
 
                 if (getterIsPrivate != setterIsPrivate) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcNameAST, DiagnosticCode.Getter_and_setter_accessors_do_not_agree_in_visibility));
@@ -4196,7 +4177,8 @@ module TypeScript {
             }
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, flags, null, Parameters.fromParameterList(parameterList), null, block, context);
+                funcDeclAST, hasModifier(funcDeclAST.modifiers, PullElementFlags.Static), null,
+                Parameters.fromParameterList(funcDeclAST.parameterList), null, funcDeclAST.block, context);
         }
 
         private resolveList(list: ASTList, context: PullTypeResolutionContext): PullSymbol {
@@ -5537,7 +5519,7 @@ module TypeScript {
                     {
                         var funcDecl = <FunctionDeclaration>ast;
                         this.typeCheckFunctionDeclaration(
-                            funcDecl, funcDecl.getFunctionFlags(), funcDecl.identifier,
+                            funcDecl, hasModifier(funcDecl.modifiers, PullElementFlags.Static), funcDecl.identifier,
                             funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList,
                             funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
                         return;
@@ -11063,7 +11045,7 @@ module TypeScript {
 
         private checkFunctionTypePrivacy(
             funcDeclAST: AST,
-            flags: FunctionFlags,
+            isStatic: boolean,
             typeParameters: ASTList,
             parameters: IParameters,
             returnTypeAnnotation: TypeReference,
@@ -11098,8 +11080,8 @@ module TypeScript {
                     }
                 }
                 else if (functionSymbol.kind == PullElementKind.Method &&
-                    !hasFlag(flags, FunctionFlags.Static) &&
-                    !functionSymbol.getContainer().isNamedTypeSymbol()) {
+                         !isStatic &&
+                         !functionSymbol.getContainer().isNamedTypeSymbol()) {
                     // method of the unnmaed type
                     return;
                 }
@@ -11113,7 +11095,7 @@ module TypeScript {
                     var typeParameter = this.resolveTypeParameterDeclaration(typeParameterAST, context);
                     this.checkSymbolPrivacy(functionSymbol, typeParameter, (symbol: PullSymbol) =>
                         this.functionTypeArgumentArgumentTypePrivacyErrorReporter(
-                            funcDeclAST, flags, typeParameterAST, typeParameter, symbol, context));
+                            funcDeclAST, isStatic, typeParameterAST, typeParameter, symbol, context));
                 }
             }
 
@@ -11123,7 +11105,7 @@ module TypeScript {
                 for (var i = 0; i < funcParams.length; i++) {
                     this.checkSymbolPrivacy(functionSymbol, funcParams[i].type, (symbol: PullSymbol) =>
                         this.functionArgumentTypePrivacyErrorReporter(
-                            funcDeclAST, flags, parameters, i, funcParams[i], symbol, context));
+                            funcDeclAST, isStatic, parameters, i, funcParams[i], symbol, context));
                 }
             }
 
@@ -11131,13 +11113,13 @@ module TypeScript {
             if (!isSetter) {
                 this.checkSymbolPrivacy(functionSymbol, functionSignature.returnType, (symbol: PullSymbol) =>
                     this.functionReturnTypePrivacyErrorReporter(
-                        funcDeclAST, flags, returnTypeAnnotation, block, functionSignature.returnType, symbol, context));
+                        funcDeclAST, isStatic, returnTypeAnnotation, block, functionSignature.returnType, symbol, context));
             }
         }
 
         private functionTypeArgumentArgumentTypePrivacyErrorReporter(
             declAST: AST,
-            flags: FunctionFlags,
+            isStatic: boolean,
             typeParameterAST: TypeParameter,
             typeParameter: PullTypeSymbol,
             symbol: PullSymbol,
@@ -11147,7 +11129,6 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
 
-            var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
@@ -11206,7 +11187,7 @@ module TypeScript {
 
         private functionArgumentTypePrivacyErrorReporter(
             declAST: AST,
-            flags: FunctionFlags,
+            isStatic: boolean,
             parameters: IParameters,
             argIndex: number,
             paramSymbol: PullSymbol,
@@ -11219,7 +11200,6 @@ module TypeScript {
 
             var isGetter = declAST.nodeType() === NodeType.GetAccessor;
             var isSetter = declAST.nodeType() === NodeType.SetAccessor;
-            var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();
@@ -11302,7 +11282,7 @@ module TypeScript {
 
         private functionReturnTypePrivacyErrorReporter(
             declAST: AST,
-            flags: FunctionFlags,
+            isStatic: boolean,
             returnTypeAnnotation: TypeReference,
             block: Block,
             funcReturnType: PullTypeSymbol,
@@ -11314,7 +11294,6 @@ module TypeScript {
 
             var isGetter = declAST.nodeType() === NodeType.GetAccessor;
             var isSetter = declAST.nodeType() === NodeType.SetAccessor;
-            var isStatic = hasFlag(flags, FunctionFlags.Static);
             var isMethod = decl.kind === PullElementKind.Method;
             var isMethodOfClass = false;
             var declParent = decl.getParentDecl();

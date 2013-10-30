@@ -494,11 +494,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Function;
 
-        if ((hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Exported) || isParsingAmbientModule(funcDeclAST, context)) && !containingModuleHasExportAssignment(funcDeclAST)) {
+        if ((hasModifier(funcDeclAST.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(funcDeclAST, context)) && !containingModuleHasExportAssignment(funcDeclAST)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(funcDeclAST.getFunctionFlags(), FunctionFlags.Ambient) || isParsingAmbientModule(funcDeclAST, context) || context.isDeclareFile) {
+        if (hasModifier(funcDeclAST.modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(funcDeclAST, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -576,13 +576,12 @@ module TypeScript {
     function createMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Method;
-        var flags = funcDecl.getFunctionFlags();
 
-        if (hasFlag(flags, FunctionFlags.Static)) {
+        if (hasModifier(funcDecl.modifiers, PullElementFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(flags, FunctionFlags.Private)) {
+        if (hasModifier(funcDecl.modifiers, PullElementFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
@@ -730,11 +729,11 @@ module TypeScript {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.GetAccessor;
 
-        if (hasFlag(getAccessorDeclAST.getFunctionFlags(), FunctionFlags.Static)) {
+        if (hasModifier(getAccessorDeclAST.modifiers, PullElementFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(getAccessorDeclAST.getFunctionFlags(), FunctionFlags.Private)) {
+        if (hasModifier(getAccessorDeclAST.modifiers, PullElementFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
@@ -764,11 +763,11 @@ module TypeScript {
         var declFlags = PullElementFlags.Public;
         var declType = PullElementKind.SetAccessor;
 
-        if (hasFlag(setAccessorDeclAST.getFunctionFlags(), FunctionFlags.Static)) {
+        if (hasModifier(setAccessorDeclAST.modifiers, PullElementFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
-        if (hasFlag(setAccessorDeclAST.getFunctionFlags(), FunctionFlags.Private)) {
+        if (hasModifier(setAccessorDeclAST.modifiers, PullElementFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {

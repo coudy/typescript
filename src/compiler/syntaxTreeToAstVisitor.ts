@@ -562,19 +562,8 @@ module TypeScript {
 
             this.movePast(node.semicolonToken);
 
-            var result = new FunctionDeclaration(name, callSignature, block);
+            var result = new FunctionDeclaration(this.visitModifiers(node.modifiers), name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
-
-            var flags = result.getFunctionFlags();
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                flags = flags | FunctionFlags.Exported;
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
-                flags = flags | FunctionFlags.Ambient;
-            }
-
-            result.setFunctionFlags(flags);
 
             return result;
         }
@@ -1516,23 +1505,8 @@ module TypeScript {
             var block = node.block ? this.visitBlock(node.block) : null;
             this.movePast(node.semicolonToken);
 
-            var result = new MemberFunctionDeclaration(name, callSignature, block);
+            var result = new MemberFunctionDeclaration(this.visitModifiers(node.modifiers), name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
-
-            var flags = result.getFunctionFlags();
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                flags = flags | FunctionFlags.Private;
-            }
-            else {
-                flags = flags | FunctionFlags.Public;
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                flags = flags | FunctionFlags.Static;
-            }
-
-            result.setFunctionFlags(flags);
 
             return result;
         }
@@ -1547,19 +1521,8 @@ module TypeScript {
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new GetAccessor(name, parameters, returnType, block);
+            var result = new GetAccessor(this.visitModifiers(node.modifiers), name, parameters, returnType, block);
             this.setCommentsAndSpan(result, start, node);
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Private);
-            }
-            else {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Public);
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Static);
-            }
 
             return result;
         }
@@ -1573,19 +1536,8 @@ module TypeScript {
             var parameters = node.parameterList.accept(this);
 
             var block = node.block ? node.block.accept(this) : null;
-            var result = new SetAccessor(name, parameters, block);
+            var result = new SetAccessor(this.visitModifiers(node.modifiers), name, parameters, block);
             this.setCommentsAndSpan(result, start, node);
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Private);
-            }
-            else {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Public);
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Static);
-            }
 
             return result;
         }

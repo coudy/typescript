@@ -1387,7 +1387,6 @@ module TypeScript {
             this.setContainer(temp);
             this.inArrowFunction = savedInArrowFunction;
 
-            var functionFlags = funcDecl.getFunctionFlags();
             if (funcDecl.block) {
                 var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
                 if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && pullFunctionDecl && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
@@ -2277,21 +2276,20 @@ module TypeScript {
                     this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
                     var getter = <GetAccessor>memberDecl;
                     this.emitAccessorMemberDeclaration(getter, getter.propertyName, classDecl.identifier.text(),
-                        !hasFlag(getter.getFunctionFlags(), FunctionFlags.Static));
+                        !hasModifier(getter.modifiers, PullElementFlags.Static));
                     lastEmittedMember = memberDecl;
                 }
                 else if (memberDecl.nodeType() === NodeType.SetAccessor) {
                     this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
                     var setter = <SetAccessor>memberDecl;
                     this.emitAccessorMemberDeclaration(setter, setter.propertyName, classDecl.identifier.text(),
-                        !hasFlag(setter.getFunctionFlags(), FunctionFlags.Static));
+                        !hasModifier(setter.modifiers, PullElementFlags.Static));
                     lastEmittedMember = memberDecl;
                 }
                 else if (memberDecl.nodeType() === NodeType.MemberFunctionDeclaration) {
 
                     var memberFunction = <MemberFunctionDeclaration>memberDecl;
 
-                    var functionFlags = memberFunction.getFunctionFlags();
                     if (memberFunction.block) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
 
@@ -2334,8 +2332,6 @@ module TypeScript {
         }
 
         private emitClassMemberFunctionDeclaration(classDecl: ClassDeclaration, funcDecl: MemberFunctionDeclaration): void {
-            var functionFlags = funcDecl.getFunctionFlags();
-
             this.emitIndent();
             this.recordSourceMappingStart(funcDecl);
             this.emitComments(funcDecl, true);
@@ -2343,7 +2339,7 @@ module TypeScript {
 
             this.writeToOutput(classDecl.identifier.text());
 
-            if (!hasFlag(functionFlags, FunctionFlags.Static)) {
+            if (!hasModifier(funcDecl.modifiers, PullElementFlags.Static)) {
                 this.writeToOutput(".prototype");
             }
 
@@ -2977,10 +2973,6 @@ module TypeScript {
             this.writeToOutputWithSourceMapRecord(parameter.identifier.text(), parameter);
         }
 
-        private isNonAmbient(flags: FunctionFlags): boolean {
-            return !hasFlag(flags, FunctionFlags.Ambient);
-        }
-
         public emitConstructorDeclaration(declaration: ConstructorDeclaration): void {
             if (declaration.block) {
                 this.emitConstructor(declaration);
@@ -2991,11 +2983,11 @@ module TypeScript {
         }
 
         public shouldEmitFunctionDeclaration(declaration: FunctionDeclaration): boolean {
-            return declaration.preComments() !== null || (this.isNonAmbient(declaration.getFunctionFlags()) && declaration.block !== null);
+            return declaration.preComments() !== null || (!hasModifier(declaration.modifiers, PullElementFlags.Ambient) && declaration.block !== null);
         }
 
         public emitFunctionDeclaration(declaration: FunctionDeclaration): void {
-            if (this.isNonAmbient(declaration.getFunctionFlags()) && declaration.block !== null) {
+            if (!hasModifier(declaration.modifiers, PullElementFlags.Ambient) && declaration.block !== null) {
                 this.emitFunction(declaration);
             }
             else {
