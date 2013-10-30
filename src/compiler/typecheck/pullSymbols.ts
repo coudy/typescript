@@ -1608,7 +1608,7 @@ module TypeScript {
         private addUnhiddenSignaturesFromBaseType(derivedTypeSignatures: PullSignatureSymbol[], baseTypeSignatures: PullSignatureSymbol[], signaturesBeingAggregated: PullSignatureSymbol[]) {
             // If there are no derived type signatures, none of the base signatures will be hidden.
             if (!derivedTypeSignatures) {
-                signaturesBeingAggregated = signaturesBeingAggregated.concat(baseTypeSignatures);
+                signaturesBeingAggregated.push.apply(signaturesBeingAggregated, baseTypeSignatures);
                 return;
             }
 
