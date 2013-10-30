@@ -8941,12 +8941,16 @@ module TypeScript {
                 return false;
             }
 
-            var s1Params = s1.parameters;
-            var s2Params = s2.parameters;
-
-            if (s1Params.length != s2Params.length) {
+            if (s1.parameters.length != s2.parameters.length) {
                 return false;
             }
+
+            // Ensure that both signatures are resolved
+            this.resolveDeclaredSymbol(s1);
+            this.resolveDeclaredSymbol(s2);
+
+            var s1Params = s1.parameters;
+            var s2Params = s2.parameters;
 
             if (includingReturnType && !this.typesAreIdentical(s1.returnType, s2.returnType)) {
                 return false;
