@@ -389,21 +389,41 @@ module TypeScript {
             var closeBraceSpan = new ASTSpan();
             this.setTokenSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
-            var result = new ClassDeclaration(name, typeParameters, heritageClauses, members, closeBraceSpan);
+            var modifiers = this.visitModifiers(node.modifiers);
+            var result = new ClassDeclaration(modifiers, name, typeParameters, heritageClauses, members, closeBraceSpan);
             this.setCommentsAndSpan(result, start, node);
 
-            var flags = result.getVarFlags();
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                flags = flags | VariableFlags.Exported;
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
-                flags = flags | VariableFlags.Ambient;
-            }
-
-            result.setVarFlags(flags);
-
             return result;
+        }
+
+        private visitModifiers(modifiers: ISyntaxList): PullElementFlags[]{
+            var result: PullElementFlags[] = null;
+            if (SyntaxUtilities.containsToken(modifiers, SyntaxKind.ExportKeyword)) {
+                result = result || [];
+                result.push(PullElementFlags.Exported);
+            }
+
+            if (SyntaxUtilities.containsToken(modifiers, SyntaxKind.DeclareKeyword)) {
+                result = result || [];
+                result.push(PullElementFlags.Ambient);
+            }
+
+            if (SyntaxUtilities.containsToken(modifiers, SyntaxKind.StaticKeyword)) {
+                result = result || [];
+                result.push(PullElementFlags.Static);
+            }
+
+            if (SyntaxUtilities.containsToken(modifiers, SyntaxKind.PublicKeyword)) {
+                result = result || [];
+                result.push(PullElementFlags.Public);
+            }
+
+            if (SyntaxUtilities.containsToken(modifiers, SyntaxKind.PrivateKeyword)) {
+                result = result || [];
+                result.push(PullElementFlags.Private);
+            }
+
+            return result || sentinelEmptyArray;
         }
 
         public visitInterfaceDeclaration(node: InterfaceDeclarationSyntax): InterfaceDeclaration {
@@ -417,12 +437,9 @@ module TypeScript {
 
             var body = this.visitObjectTypeWorker(node.body);
 
-            var result = new InterfaceDeclaration(name, typeParameters, heritageClauses, body);
+            var modifiers = this.visitModifiers(node.modifiers);
+            var result = new InterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, body);
             this.setCommentsAndSpan(result, start, node);
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                result.setVarFlags(result.getVarFlags() | VariableFlags.Exported);
-            }
 
             return result;
         }
@@ -696,14 +713,9 @@ module TypeScript {
             var alias = node.moduleReference.accept(this);
             this.movePast(node.semicolonToken);
 
-            var result = new ImportDeclaration(name, alias);
+            var modifiers = this.visitModifiers(node.modifiers);
+            var result = new ImportDeclaration(modifiers, name, alias);
             this.setCommentsAndSpan(result, start, node);
-
-            var flags = result.getVarFlags();
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                flags = flags | VariableFlags.Exported;
-            }
-            result.setVarFlags(flags);
 
             return result;
         }
@@ -735,6 +747,7 @@ module TypeScript {
             var declaration = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
 
+            var modifiers = this.visitModifiers(node.modifiers);
             for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
                 var varDecl = <VariableDeclarator>declaration.declarators.members[i];
 
@@ -742,16 +755,7 @@ module TypeScript {
                     varDecl.setPreComments(this.mergeComments(preComments, varDecl.preComments()));
                 }
 
-                var flags = varDecl.getVarFlags();
-                if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                    flags = flags | VariableFlags.Exported;
-                }
-
-                if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
-                    flags = flags | VariableFlags.Ambient;
-                }
-
-                varDecl.setVarFlags(flags);
+                varDecl.modifiers = modifiers;
             }
 
             var result = new VariableStatement(declaration);
@@ -790,7 +794,7 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var result = new VariableDeclarator(name, typeExpr, init);
+            var result = new VariableDeclarator(sentinelEmptyArray, name, typeExpr, init);
             this.setSpan(result, start, node);
 
             return result;
@@ -1130,17 +1134,24 @@ module TypeScript {
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
             var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
-            var result = new Parameter(identifier, typeExpr, init, !!node.questionToken, node.dotDotDotToken !== null);
-            this.setCommentsAndSpan(result, start, node);
+            var modifiers: number[];
 
             if (node.publicOrPrivateKeyword) {
+                modifiers = [];
                 if (node.publicOrPrivateKeyword.tokenKind === SyntaxKind.PublicKeyword) {
-                    result.setVarFlags(result.getVarFlags() | VariableFlags.Public);
+                    modifiers.push(PullElementFlags.Public);
                 }
-                else if (node.publicOrPrivateKeyword.tokenKind === SyntaxKind.PrivateKeyword) {
-                    result.setVarFlags(result.getVarFlags() | VariableFlags.Private);
+                else {
+                    modifiers.push(PullElementFlags.Private);
                 }
             }
+            else {
+                modifiers = sentinelEmptyArray;
+            }
+
+
+            var result = new Parameter(modifiers, identifier, typeExpr, init, !!node.questionToken, node.dotDotDotToken !== null);
+            this.setCommentsAndSpan(result, start, node);
 
             if (node.equalsValueClause || node.dotDotDotToken) {
                 result.setFlags(result.getFlags() | ASTFlags.OptionalName);
@@ -1593,19 +1604,9 @@ module TypeScript {
             var variableDeclarator: VariableDeclarator = node.variableDeclarator.accept(this);
             this.movePast(node.semicolonToken);
 
-            var result = new MemberVariableDeclaration(variableDeclarator);
+            var modifiers = this.visitModifiers(node.modifiers);
+            var result = new MemberVariableDeclaration(modifiers, variableDeclarator);
             this.setCommentsAndSpan(result, start, node);
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.StaticKeyword)) {
-                result.setVarFlags(result.getVarFlags() | VariableFlags.Static);
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
-                result.setVarFlags(result.getVarFlags() | VariableFlags.Private);
-            }
-            else {
-                result.setVarFlags(result.getVarFlags() | VariableFlags.Public);
-            }
 
             return result;
         }

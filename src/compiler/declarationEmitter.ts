@@ -348,14 +348,14 @@ module TypeScript {
         }
 
         private emitDeclarationsForVariableDeclarator(varDecl: VariableDeclarator, isFirstVarInList: boolean, isLastVarInList: boolean) {
-            if (this.canEmitDeclarations(ToDeclFlags(varDecl.getVarFlags()), varDecl)) {
+            if (this.canEmitDeclarations(ModifiersToDeclFlags(varDecl.modifiers), varDecl)) {
                 var interfaceMember = (this.getAstDeclarationContainer().nodeType() === NodeType.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
                 if (!interfaceMember) {
                     // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
                     // If it is var list of form  var a = varList count will be 0
                     if (isFirstVarInList) {
-                        this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
+                        this.emitDeclFlags(ModifiersToDeclFlags(varDecl.modifiers), this.semanticInfoChain.getDeclForAST(varDecl), "var");
                     }
 
                     this.declFile.Write(varDecl.identifier.text());
@@ -368,7 +368,7 @@ module TypeScript {
                     }
                 }
 
-                if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
+                if (this.canEmitTypeAnnotationSignature(ModifiersToDeclFlags(varDecl.modifiers))) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
 
@@ -383,12 +383,28 @@ module TypeScript {
         }
 
         private emitDeclarationsForMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
-            if (this.canEmitDeclarations(ToDeclFlags(varDecl.getVarFlags()), varDecl)) {
+            if (this.canEmitDeclarations(ModifiersToDeclFlags(varDecl.modifiers), varDecl)) {
                 this.emitDeclarationComments(varDecl);
-                this.emitDeclFlags(ToDeclFlags(varDecl.getVarFlags()), this.semanticInfoChain.getDeclForAST(varDecl), "var");
+
+                this.declFile.Write(this.getIndentString());
+                if (hasModifier(varDecl.modifiers, PullElementFlags.Static)) {
+                    if (hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
+                        this.declFile.Write("private ");
+                    }
+                    this.declFile.Write("static ");
+                }
+                else {
+                    if (hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
+                        this.declFile.Write("private ");
+                    }
+                    else {
+                        this.declFile.Write("public ");
+                    }
+                }
+
                 this.declFile.Write(varDecl.variableDeclarator.identifier.text());
 
-                if (this.canEmitTypeAnnotationSignature(ToDeclFlags(varDecl.getVarFlags()))) {
+                if (this.canEmitTypeAnnotationSignature(ModifiersToDeclFlags(varDecl.modifiers))) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
 
@@ -824,10 +840,10 @@ module TypeScript {
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
                         this.emitDeclarationComments(parameter);
-                        this.emitDeclFlags(ToDeclFlags(parameter.getVarFlags()), funcPullDecl, "var");
+                        this.emitDeclFlags(ModifiersToDeclFlags(parameter.modifiers), funcPullDecl, "var");
                         this.declFile.Write(parameter.identifier.text());
 
-                        if (this.canEmitTypeAnnotationSignature(ToDeclFlags(parameter.getVarFlags()))) {
+                        if (this.canEmitTypeAnnotationSignature(ModifiersToDeclFlags(parameter.modifiers))) {
                             this.emitTypeOfVariableDeclaratorOrParameter(parameter);
                         }
                         this.declFile.WriteLine(";");
@@ -837,14 +853,14 @@ module TypeScript {
         }
 
         private emitDeclarationsForClassDeclaration(classDecl: ClassDeclaration) {
-            if (!this.canEmitDeclarations(ToDeclFlags(classDecl.getVarFlags()), classDecl)) {
+            if (!this.canEmitDeclarations(ModifiersToDeclFlags(classDecl.modifiers), classDecl)) {
                 return;
             }
 
             var className = classDecl.identifier.text();
             this.emitDeclarationComments(classDecl);
             var classPullDecl = this.semanticInfoChain.getDeclForAST(classDecl);
-            this.emitDeclFlags(ToDeclFlags(classDecl.getVarFlags()), classPullDecl, "class");
+            this.emitDeclFlags(ModifiersToDeclFlags(classDecl.modifiers), classPullDecl, "class");
             this.declFile.Write(className);
             this.pushDeclarationContainer(classDecl);
             this.emitTypeParameters(classDecl.typeParameterList);
@@ -912,14 +928,14 @@ module TypeScript {
         }
 
         private emitDeclarationsForInterfaceDeclaration(interfaceDecl: InterfaceDeclaration) {
-            if (!this.canEmitDeclarations(ToDeclFlags(interfaceDecl.getVarFlags()), interfaceDecl)) {
+            if (!this.canEmitDeclarations(ModifiersToDeclFlags(interfaceDecl.modifiers), interfaceDecl)) {
                 return;
             }
 
             var interfaceName = interfaceDecl.identifier.text();
             this.emitDeclarationComments(interfaceDecl);
             var interfacePullDecl = this.semanticInfoChain.getDeclForAST(interfaceDecl);
-            this.emitDeclFlags(ToDeclFlags(interfaceDecl.getVarFlags()), interfacePullDecl, "interface");
+            this.emitDeclFlags(ModifiersToDeclFlags(interfaceDecl.modifiers), interfacePullDecl, "interface");
             this.declFile.Write(interfaceName);
             this.pushDeclarationContainer(interfaceDecl);
             this.emitTypeParameters(interfaceDecl.typeParameterList);
@@ -940,7 +956,7 @@ module TypeScript {
         private emitDeclarationsForImportDeclaration(importDeclAST: ImportDeclaration) {
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-            var isExportedImportDecl = hasFlag(importDeclAST.getVarFlags(), VariableFlags.Exported);
+            var isExportedImportDecl = hasModifier(importDeclAST.modifiers, PullElementFlags.Exported);
 
             if (isExportedImportDecl || importSymbol.typeUsedExternally() || PullContainerSymbol.usedAsSymbol(importSymbol.getContainer(), importSymbol)) {
                 this.emitDeclarationComments(importDeclAST);

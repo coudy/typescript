@@ -381,8 +381,7 @@ module TypeScript {
     }
 
     export class ImportDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-        constructor(public identifier: Identifier, public moduleReference: AST) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public moduleReference: AST) {
             super();
             identifier && (identifier.parent = this);
             moduleReference && (moduleReference.parent = this);
@@ -390,15 +389,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.ImportDeclaration;
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
         }
 
         public isExternalImportDeclaration() {
@@ -425,7 +415,6 @@ module TypeScript {
 
         public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                 structuralEquals(this.moduleReference, ast.moduleReference, includingPosition);
         }
@@ -448,27 +437,17 @@ module TypeScript {
     }
 
     export class ClassDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public identifier: Identifier,
-            public typeParameterList: ASTList,
-            public heritageClauses: ASTList,
-            public classElements: ASTList,
-            public closeBraceToken: ASTSpan) {
+        constructor(public modifiers: PullElementFlags[],
+                    public identifier: Identifier,
+                    public typeParameterList: ASTList,
+                    public heritageClauses: ASTList,
+                    public classElements: ASTList,
+                    public closeBraceToken: ASTSpan) {
             super();
             identifier && (identifier.parent = this);
             typeParameterList && (typeParameterList.parent = this);
             heritageClauses && (heritageClauses.parent = this);
             classElements && (classElements.parent = this);
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
         }
 
         public nodeType(): NodeType {
@@ -477,7 +456,6 @@ module TypeScript {
 
         public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                 structuralEquals(this.classElements, ast.classElements, includingPosition) &&
                 structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
@@ -486,12 +464,11 @@ module TypeScript {
     }
 
     export class InterfaceDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public identifier: Identifier,
-            public typeParameterList: ASTList,
-            public heritageClauses: ASTList,
-            public body: ObjectType) {
+        constructor(public modifiers: PullElementFlags[],
+                    public identifier: Identifier,
+                    public typeParameterList: ASTList,
+                    public heritageClauses: ASTList,
+                    public body: ObjectType) {
             super();
             identifier && (identifier.parent = this);
             typeParameterList && (typeParameterList.parent = this);
@@ -503,18 +480,8 @@ module TypeScript {
             return NodeType.InterfaceDeclaration;
         }
 
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
         public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&
                 structuralEquals(this.body, ast.body, includingPosition) &&
                 structuralEquals(this.typeParameterList, ast.typeParameterList, includingPosition) &&
@@ -633,9 +600,7 @@ module TypeScript {
     }
 
     export class VariableDeclarator extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -646,18 +611,8 @@ module TypeScript {
             return NodeType.VariableDeclarator;
         }
 
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
-        }
-
         public structuralEquals(ast: VariableDeclarator, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this._varFlags === ast._varFlags &&
                 structuralEquals(this.equalsValueClause, ast.equalsValueClause, includingPosition) &&
                 structuralEquals(this.typeAnnotation, ast.typeAnnotation, includingPosition) &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition);
@@ -907,22 +862,11 @@ module TypeScript {
     }
 
     export class Parameter extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause, public isOptional: boolean, public isRest: boolean) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause, public isOptional: boolean, public isRest: boolean) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
             equalsValueClause && (equalsValueClause.parent = this);
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
         }
 
         public nodeType(): NodeType {
@@ -1294,24 +1238,13 @@ module TypeScript {
     }
 
     export class MemberVariableDeclaration extends AST {
-        private _varFlags = VariableFlags.None;
-
-        constructor(public variableDeclarator: VariableDeclarator) {
+        constructor(public modifiers: PullElementFlags[], public variableDeclarator: VariableDeclarator) {
             super();
             variableDeclarator && (variableDeclarator.parent = this);
         }
 
         public nodeType(): NodeType {
             return NodeType.MemberVariableDeclaration;
-        }
-
-        public getVarFlags(): VariableFlags {
-            return this._varFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setVarFlags(flags: VariableFlags): void {
-            this._varFlags = flags;
         }
     }
 

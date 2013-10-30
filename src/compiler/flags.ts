@@ -45,14 +45,14 @@ module TypeScript {
         IsExternalModule = 1 << 8,
     }
 
-    export enum VariableFlags {
-        None = 0,
-        Exported = 1,
-        Private = 1 << 1,
-        Public = 1 << 2,
-        Ambient = 1 << 3,
-        Static = 1 << 4,
-    }
+    //export enum VariableFlags {
+    //    None = 0,
+    //    Exported = 1,
+    //    Private = 1 << 1,
+    //    Public = 1 << 2,
+    //    Ambient = 1 << 3,
+    //    Static = 1 << 4,
+    //}
 
     export enum FunctionFlags {
         None = 0,
@@ -65,10 +65,35 @@ module TypeScript {
     }
 
     export function ToDeclFlags(functionFlags: FunctionFlags) : DeclFlags;
-    export function ToDeclFlags(varFlags: VariableFlags) : DeclFlags;
     export function ToDeclFlags(moduleFlags: ModuleFlags): DeclFlags;
     export function ToDeclFlags(fncOrVarOrModuleFlags: any) {
         return <DeclFlags>fncOrVarOrModuleFlags;
+    }
+
+    export function ModifiersToDeclFlags(modifiers: PullElementFlags[]): DeclFlags {
+        var flags = DeclFlags.None;
+
+        for (var i = 0, n = modifiers.length; i < n; i++) {
+            switch (modifiers[i]) {
+                case PullElementFlags.Exported:
+                    flags |= DeclFlags.Exported;
+                    continue;
+                case PullElementFlags.Ambient:
+                    flags |= DeclFlags.Ambient;
+                    continue;
+                case PullElementFlags.Public:
+                    flags |= DeclFlags.Public;
+                    continue;
+                case PullElementFlags.Private:
+                    flags |= DeclFlags.Private;
+                    continue;
+                case PullElementFlags.Static:
+                    flags |= DeclFlags.Static;
+                    continue;
+            }
+        }
+
+        return flags;
     }
 
     export enum TypeRelationshipFlags {

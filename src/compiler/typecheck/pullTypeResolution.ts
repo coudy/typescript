@@ -2763,7 +2763,7 @@ module TypeScript {
                     }
                     // varDecl is delcared in ambient declaration but it is not private; so report an error
                     else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                        !TypeScript.hasFlag((<any>varDeclOrParameter).getVarFlags(), VariableFlags.Private)) {
+                        !TypeScript.hasModifier((<any>varDeclOrParameter).modifiers, PullElementFlags.Private)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
                     }
@@ -6763,7 +6763,7 @@ module TypeScript {
 
         private inStaticMemberVariableDeclaration(ast: AST): boolean {
             while (ast) {
-                if (ast.nodeType() === NodeType.MemberVariableDeclaration && hasFlag((<MemberVariableDeclaration>ast).getVarFlags(), VariableFlags.Static)) {
+                if (ast.nodeType() === NodeType.MemberVariableDeclaration && hasModifier((<MemberVariableDeclaration>ast).modifiers, PullElementFlags.Static)) {
                     return true;
                 }
 

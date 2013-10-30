@@ -54,7 +54,7 @@ module TypeScript {
 
         var parent = context.getParent();
 
-        if (hasFlag(importDecl.getVarFlags(), VariableFlags.Exported) && !containingModuleHasExportAssignment(ast)) {
+        if (hasModifier(importDecl.modifiers, PullElementFlags.Exported) && !containingModuleHasExportAssignment(ast)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -205,11 +205,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var constructorDeclKind = PullElementKind.Variable;
 
-        if ((hasFlag(classDecl.getVarFlags(), VariableFlags.Exported) || isParsingAmbientModule(classDecl, context)) && !containingModuleHasExportAssignment(classDecl)) {
+        if ((hasModifier(classDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(classDecl, context)) && !containingModuleHasExportAssignment(classDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(classDecl.getVarFlags(), VariableFlags.Ambient) || isParsingAmbientModule(classDecl, context) || context.isDeclareFile) {
+        if (hasModifier(classDecl.modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(classDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -256,7 +256,7 @@ module TypeScript {
     function preCollectInterfaceDecls(interfaceDecl: InterfaceDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
 
-        if ((hasFlag(interfaceDecl.getVarFlags(), VariableFlags.Exported) || isParsingAmbientModule(interfaceDecl, context)) && !containingModuleHasExportAssignment(interfaceDecl)) {
+        if ((hasModifier(interfaceDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(interfaceDecl, context)) && !containingModuleHasExportAssignment(interfaceDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
@@ -273,7 +273,7 @@ module TypeScript {
     function preCollectParameterDecl(argDecl: Parameter, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
 
-        if (hasFlag(argDecl.getVarFlags(), VariableFlags.Private)) {
+        if (hasModifier(argDecl.modifiers, PullElementFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
@@ -304,7 +304,7 @@ module TypeScript {
         }
 
         // if it's a property type, we'll need to add it to the parent's parent as well
-        var isPublicOrPrivate = hasFlag(argDecl.getVarFlags(), VariableFlags.Public | VariableFlags.Private);
+        var isPublicOrPrivate = hasModifier(argDecl.modifiers, PullElementFlags.Public | PullElementFlags.Private);
         var isInConstructor = parent.kind === PullElementKind.ConstructorMethod;
         if (isPublicOrPrivate && isInConstructor) {
             var parentsParent = context.parentChain[context.parentChain.length - 2];
@@ -381,14 +381,14 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Property;
 
-        if (hasFlag(memberDecl.getVarFlags(), VariableFlags.Private)) {
+        if (hasModifier(memberDecl.modifiers, PullElementFlags.Private)) {
             declFlags |= PullElementFlags.Private;
         }
         else {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (hasFlag(memberDecl.getVarFlags(), VariableFlags.Static)) {
+        if (hasModifier(memberDecl.modifiers, PullElementFlags.Static)) {
             declFlags |= PullElementFlags.Static;
         }
 
@@ -409,11 +409,11 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.Variable;
 
-        if ((hasFlag(varDecl.getVarFlags(), VariableFlags.Exported) || isParsingAmbientModule(varDecl, context)) && !containingModuleHasExportAssignment(varDecl)) {
+        if ((hasModifier(varDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(varDecl, context)) && !containingModuleHasExportAssignment(varDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || isParsingAmbientModule(varDecl, context) || context.isDeclareFile) {
+        if (hasModifier(varDecl.modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(varDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 

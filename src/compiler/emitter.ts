@@ -1455,7 +1455,7 @@ module TypeScript {
         }
 
         private emitMemberVariableDeclaration(varDecl: MemberVariableDeclaration) {
-            Debug.assert(!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.variableDeclarator.equalsValueClause);
+            Debug.assert(!hasModifier(varDecl.modifiers, PullElementFlags.Static) && varDecl.variableDeclarator.equalsValueClause);
 
             var pullDecl = this.semanticInfoChain.getDeclForAST(varDecl);
             this.pushDecl(pullDecl);
@@ -1845,7 +1845,7 @@ module TypeScript {
             for (var i = 0, n = this.thisClassNode.classElements.members.length; i < n; i++) {
                 if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>this.thisClassNode.classElements.members[i];
-                    if (!hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
+                    if (!hasModifier(varDecl.modifiers, PullElementFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
                         this.emitIndent();
                         this.emitMemberVariableDeclaration(varDecl);
                         this.writeLineToOutput("");
@@ -2308,7 +2308,7 @@ module TypeScript {
                 if (memberDecl.nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>memberDecl;
 
-                    if (hasFlag(varDecl.getVarFlags(), VariableFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
+                    if (hasModifier(varDecl.modifiers, PullElementFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, varDecl);
 
                         this.emitIndent();
@@ -2390,7 +2390,7 @@ module TypeScript {
                 else if (moduleElement.nodeType() === NodeType.ClassDeclaration) {
                     var classDeclaration = <ClassDeclaration>moduleElement;
 
-                    if (!hasFlag(classDeclaration.getVarFlags(), VariableFlags.Ambient) && getExtendsHeritageClause(classDeclaration.heritageClauses) !== null) {
+                    if (!hasModifier(classDeclaration.modifiers, PullElementFlags.Ambient) && getExtendsHeritageClause(classDeclaration.heritageClauses) !== null) {
                         return true;
                     }
                 }
@@ -3041,11 +3041,11 @@ module TypeScript {
         }
 
         public shouldEmitClassDeclaration(declaration: ClassDeclaration): boolean {
-            return declaration.preComments() !== null || !hasFlag(declaration.getVarFlags(), VariableFlags.Ambient);
+            return declaration.preComments() !== null || !hasModifier(declaration.modifiers, PullElementFlags.Ambient);
         }
 
         public emitClassDeclaration(declaration: ClassDeclaration): void {
-            if (!hasFlag(declaration.getVarFlags(), VariableFlags.Ambient)) {
+            if (!hasModifier(declaration.modifiers, PullElementFlags.Ambient)) {
                 this.emitClass(declaration);
             }
             else {
@@ -3066,7 +3066,7 @@ module TypeScript {
         }
 
         private isNotAmbientOrHasInitializer(varDecl: VariableDeclarator): boolean {
-            return !hasFlag(varDecl.getVarFlags(), VariableFlags.Ambient) || varDecl.equalsValueClause !== null;
+            return !hasModifier(varDecl.modifiers, PullElementFlags.Ambient) || varDecl.equalsValueClause !== null;
         }
 
         public shouldEmitVariableStatement(statement: VariableStatement): boolean {
