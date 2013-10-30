@@ -476,7 +476,7 @@ module TypeScript {
         }
 
         public emitObjectLiteralExpression(objectLiteral: ObjectLiteralExpression) {
-            var useNewLines = !hasFlag(objectLiteral.getFlags(), ASTFlags.SingleLine);
+            var useNewLines = !objectLiteral.isOnSingleLine;
 
             this.recordSourceMappingStart(objectLiteral);
 
@@ -506,7 +506,7 @@ module TypeScript {
         }
 
         public emitArrayLiteralExpression(arrayLiteral: ArrayLiteralExpression) {
-            var useNewLines = !hasFlag(arrayLiteral.getFlags(), ASTFlags.SingleLine);
+            var useNewLines = !arrayLiteral.isOnSingleLine;
 
             this.recordSourceMappingStart(arrayLiteral);
 

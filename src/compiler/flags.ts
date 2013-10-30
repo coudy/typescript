@@ -22,7 +22,6 @@ module TypeScript {
 
     export enum ASTFlags {
         None = 0,
-        SingleLine = 1 << 1,
         OptionalName = 1 << 2,
     }
 

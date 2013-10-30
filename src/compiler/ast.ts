@@ -614,7 +614,7 @@ module TypeScript {
     }
 
     export class ArrayLiteralExpression extends AST {
-        constructor(public expressions: ASTList) {
+        constructor(public expressions: ASTList, public isOnSingleLine: boolean) {
             super();
             expressions && (expressions.parent = this);
         }
@@ -1457,7 +1457,7 @@ module TypeScript {
     }
 
     export class ObjectLiteralExpression extends AST {
-        constructor(public propertyAssignments: ASTList) {
+        constructor(public propertyAssignments: ASTList, public isOnSingleLine: boolean) {
             super();
             propertyAssignments && (propertyAssignments.parent = this);
         }
