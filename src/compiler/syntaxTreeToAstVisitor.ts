@@ -565,10 +565,6 @@ module TypeScript {
             var result = new FunctionDeclaration(name, callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
-            if (node.semicolonToken) {
-                result.setFunctionFlags(result.getFunctionFlags() | FunctionFlags.Signature);
-            }
-
             var flags = result.getFunctionFlags();
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
                 flags = flags | FunctionFlags.Exported;
@@ -1524,9 +1520,6 @@ module TypeScript {
             this.setCommentsAndSpan(result, start, node);
 
             var flags = result.getFunctionFlags();
-            if (node.semicolonToken) {
-                flags = flags | FunctionFlags.Signature;
-            }
 
             if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.PrivateKeyword)) {
                 flags = flags | FunctionFlags.Private;

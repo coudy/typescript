@@ -1334,7 +1334,7 @@ module TypeScript {
         }
 
         public emitFunction(funcDecl: FunctionDeclaration) {
-            if (hasFlag(funcDecl.getFunctionFlags(), FunctionFlags.Signature) /*|| funcDecl.isOverload*/) {
+            if (funcDecl.block === null) {
                 return;
             }
             var savedInArrowFunction = this.inArrowFunction;
@@ -1388,7 +1388,7 @@ module TypeScript {
             this.inArrowFunction = savedInArrowFunction;
 
             var functionFlags = funcDecl.getFunctionFlags();
-            if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
+            if (funcDecl.block) {
                 var pullFunctionDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
                 if ((this.emitState.container === EmitContainer.Module || this.emitState.container === EmitContainer.DynamicModule) && pullFunctionDecl && hasFlag(pullFunctionDecl.flags, PullElementFlags.Exported)) {
                     this.writeLineToOutput("");
@@ -2292,7 +2292,7 @@ module TypeScript {
                     var memberFunction = <MemberFunctionDeclaration>memberDecl;
 
                     var functionFlags = memberFunction.getFunctionFlags();
-                    if (!hasFlag(functionFlags, FunctionFlags.Signature)) {
+                    if (memberFunction.block) {
                         this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
 
                         this.emitClassMemberFunctionDeclaration(classDecl, memberFunction);
@@ -2977,9 +2977,8 @@ module TypeScript {
             this.writeToOutputWithSourceMapRecord(parameter.identifier.text(), parameter);
         }
 
-        private isNonAmbientAndNotSignature(flags: FunctionFlags): boolean {
-            return !hasFlag(flags, FunctionFlags.Signature) &&
-                   !hasFlag(flags, FunctionFlags.Ambient);
+        private isNonAmbient(flags: FunctionFlags): boolean {
+            return !hasFlag(flags, FunctionFlags.Ambient);
         }
 
         public emitConstructorDeclaration(declaration: ConstructorDeclaration): void {
@@ -2992,11 +2991,11 @@ module TypeScript {
         }
 
         public shouldEmitFunctionDeclaration(declaration: FunctionDeclaration): boolean {
-            return declaration.preComments() !== null || this.isNonAmbientAndNotSignature(declaration.getFunctionFlags());
+            return declaration.preComments() !== null || (this.isNonAmbient(declaration.getFunctionFlags()) && declaration.block !== null);
         }
 
         public emitFunctionDeclaration(declaration: FunctionDeclaration): void {
-            if (this.isNonAmbientAndNotSignature(declaration.getFunctionFlags())) {
+            if (this.isNonAmbient(declaration.getFunctionFlags()) && declaration.block !== null) {
                 this.emitFunction(declaration);
             }
             else {

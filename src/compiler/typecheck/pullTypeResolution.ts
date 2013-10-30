@@ -3143,12 +3143,12 @@ module TypeScript {
         }
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.None,
                 null, funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
         }
 
         private typeCheckConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.Signature,
+            this.typeCheckFunctionDeclaration(funcDecl, FunctionFlags.None,
                 null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         }
 
@@ -3177,9 +3177,7 @@ module TypeScript {
             this.resolveAST(block, false, context);
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
-            this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                funcDeclAST, flags, returnTypeAnnotation, context);
-
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
@@ -3223,9 +3221,7 @@ module TypeScript {
 
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
-            this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                funcDeclAST, FunctionFlags.None, funcDeclAST.typeAnnotation, context);
-
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, funcDeclAST.typeAnnotation, context);
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
@@ -3288,7 +3284,6 @@ module TypeScript {
 
         private resolveReturnTypeAnnotationOfFunctionDeclaration(
             funcDeclAST: AST,
-            flags: FunctionFlags,
             returnTypeAnnotation: TypeReference,
             context: PullTypeResolutionContext): PullTypeSymbol {
 
@@ -3322,17 +3317,17 @@ module TypeScript {
         }
 
         private resolveCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, null,
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.None, null,
                 funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
         }
 
         private resolveConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, null,
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.None, null,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         }
 
         private resolveMethodSignature(funcDecl: MethodSignature, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.Signature, funcDecl.propertyName,
+            return this.resolveFunctionDeclaration(funcDecl, FunctionFlags.None, funcDecl.propertyName,
                 funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
         }
 
@@ -3540,9 +3535,7 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (funcDeclAST.typeAnnotation) {
-
-                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                        funcDeclAST, FunctionFlags.None, funcDeclAST.typeAnnotation, context);
+                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, funcDeclAST.typeAnnotation, context);
 
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
@@ -3695,9 +3688,7 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (returnTypeAnnotation) {
-
-                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                        funcDeclAST, flags, returnTypeAnnotation, context);
+                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
 
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
@@ -3712,7 +3703,7 @@ module TypeScript {
                 //     - if it's a definition sigature, take the best common type of all return expressions
                 //     - if it's a constructor, we set the return type link during binding
                 else if (funcDecl.kind !== PullElementKind.ConstructSignature) {
-                    if (hasFlag(flags, FunctionFlags.Signature)) {
+                    if (hasFlag(funcDecl.flags, PullElementFlags.Signature)) {
                         signature.returnType = this.semanticInfoChain.anyTypeSymbol;
                         var parentDeclFlags = TypeScript.PullElementFlags.None;
                         if (TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.Method) ||
@@ -3739,15 +3730,13 @@ module TypeScript {
                     else {
                         this.resolveFunctionBodyReturnTypes(funcDeclAST, block, signature, false, funcDecl, context);
                     }
-                    }
+                }
                 else if (funcDecl.kind === PullElementKind.ConstructSignature) {
-                    if (hasFlag(flags, FunctionFlags.Signature)) {
-                        signature.returnType = this.semanticInfoChain.anyTypeSymbol;
+                    signature.returnType = this.semanticInfoChain.anyTypeSymbol;
 
-                        // if the noImplicitAny flag is set to be true, report an error
-                        if (this.compilationSettings.noImplicitAny()) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type));
-                        }
+                    // if the noImplicitAny flag is set to be true, report an error
+                    if (this.compilationSettings.noImplicitAny()) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode.Constructor_signature_which_lacks_return_type_annotation_implicitly_has_an_any_return_type));
                     }
                 }
 
@@ -3985,8 +3974,7 @@ module TypeScript {
 
                 // resolve the return type annotation
                 if (returnTypeAnnotation) {
-                    var returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                        funcDeclAST, FunctionFlags.None, returnTypeAnnotation, context);
+                    var returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
 
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
@@ -4065,8 +4053,7 @@ module TypeScript {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
-            this.resolveReturnTypeAnnotationOfFunctionDeclaration(
-                funcDeclAST, flags, returnTypeAnnotation, context);
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
 
             this.resolveAST(block, /*isContextuallyTyped*/ false, context);
 
