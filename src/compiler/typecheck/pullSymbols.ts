@@ -1111,7 +1111,6 @@ module TypeScript {
         private _callSignatures: PullSignatureSymbol[] = null;
         private _allCallSignatures: PullSignatureSymbol[] = null;
         private _constructSignatures: PullSignatureSymbol[] = null;
-        private _allConstructSignatures: PullSignatureSymbol[] = null;
         private _indexSignatures: PullSignatureSymbol[] = null;
         private _allIndexSignatures: PullSignatureSymbol[] = null;
 
@@ -1605,6 +1604,14 @@ module TypeScript {
 
         // This method can be called to get unhidden (not shadowed by a signature in derived class)
         // signatures from a set of base class signatures. Can be used for signatures of any kind.
+        // October 16, 2013: Section 7.1:
+        // A call signature declaration hides a base type call signature that is identical when
+        // return types are ignored.
+        // A construct signature declaration hides a base type construct signature that is
+        // identical when return types are ignored.
+        // A string index signature declaration hides a base type string index signature.
+        // A numeric index signature declaration hides a base type numeric index signature.
+        
         private addUnhiddenSignaturesFromBaseType(derivedTypeSignatures: PullSignatureSymbol[], baseTypeSignatures: PullSignatureSymbol[], signaturesBeingAggregated: PullSignatureSymbol[]) {
             // If there are no derived type signatures, none of the base signatures will be hidden.
             if (!derivedTypeSignatures) {
@@ -1625,7 +1632,9 @@ module TypeScript {
             }
         }
 
-        public hasOwnCallSignatures(): boolean { return !!this._callSignatures; }
+        public hasOwnCallSignatures(): boolean {
+            return this._callSignatures !== null;
+        }
 
         public getCallSignatures(): PullSignatureSymbol[] {
             if (this._allCallSignatures) {
@@ -1658,13 +1667,11 @@ module TypeScript {
             return signatures;
         }
 
-        public hasOwnConstructSignatures(): boolean { return !!this._constructSignatures; }
+        public hasOwnConstructSignatures(): boolean {
+            return this._constructSignatures !== null;
+        }
 
         public getConstructSignatures(): PullSignatureSymbol[]{
-            if (this._allConstructSignatures) {
-                return this._allConstructSignatures;
-            }
-
             var signatures: PullSignatureSymbol[] = [];
 
             if (this._constructSignatures) {
@@ -1674,7 +1681,7 @@ module TypeScript {
             // If it's a constructor type, we don't inherit construct signatures
             // (E.g., we'd be looking at the statics on a class, where we want
             // to inherit members, but not construct signatures
-            if (this._extendedTypes && (this.kind == PullElementKind.Interface)) {
+            if (this._extendedTypes && this.kind === PullElementKind.Interface) {
                 for (var i = 0; i < this._extendedTypes.length; i++) {
                     if (this._extendedTypes[i].hasBase(this)) {
                         continue;
@@ -1690,7 +1697,9 @@ module TypeScript {
             return signatures;
         }
 
-        public hasOwnIndexSignatures(): boolean { return !!this._indexSignatures; }
+        public hasOwnIndexSignatures(): boolean {
+            return this._indexSignatures !== null;
+        }
 
         public getIndexSignatures(): PullSignatureSymbol[] {
             if (this._allIndexSignatures) {
