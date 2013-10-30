@@ -326,7 +326,7 @@ module TypeScript {
         export function fromParameter(parameter: Parameter): IParameters {
             return {
                 length: 1,
-                lastParameterIsRest: () => parameter.isRest,
+                lastParameterIsRest: () => parameter.dotDotDotToken !== null,
                 ast: parameter,
                 astAt: (index: number) => parameter,
                 identifierAt: (index: number) => parameter.identifier,

@@ -189,7 +189,7 @@ module TypeScript {
     }
 
     export function lastParameterIsRest(parameters: ASTList): boolean {
-        return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).isRest;
+        return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).dotDotDotToken !== null;
     }
 
     export class Emitter {

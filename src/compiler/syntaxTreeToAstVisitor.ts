@@ -1108,7 +1108,7 @@ module TypeScript {
             }
 
 
-            var result = new Parameter(modifiers, identifier, node.questionToken ? new ASTSpan() : null, typeExpr, init, node.dotDotDotToken !== null);
+            var result = new Parameter(node.dotDotDotToken ? new ASTSpan() : null, modifiers, identifier, node.questionToken ? new ASTSpan() : null, typeExpr, init);
             this.setCommentsAndSpan(result, start, node);
 
             return result;

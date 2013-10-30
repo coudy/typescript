@@ -280,7 +280,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (argDecl.questionToken !== null || argDecl.equalsValueClause !== null || argDecl.isRest) {
+        if (argDecl.questionToken !== null || argDecl.equalsValueClause !== null || argDecl.dotDotDotToken !== null) {
             declFlags |= PullElementFlags.Optional;
         }
 

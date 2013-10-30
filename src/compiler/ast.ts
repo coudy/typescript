@@ -817,7 +817,7 @@ module TypeScript {
     }
 
     export class Parameter extends AST {
-        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause, public isRest: boolean) {
+        constructor(public dotDotDotToken: ASTSpan, public modifiers: PullElementFlags[], public identifier: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -829,11 +829,6 @@ module TypeScript {
         }
 
         public isOptionalArg(): boolean { return this.questionToken !== null || this.equalsValueClause !== null; }
-
-        public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                this.isRest === ast.isRest;
-        }
     }
 
     export class MemberAccessExpression extends AST {
