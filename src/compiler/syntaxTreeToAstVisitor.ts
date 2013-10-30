@@ -322,21 +322,20 @@ module TypeScript {
 
             var isExternalModule = false;
             var amdDependencies: string[] = [];
-            var moduleFlags = ModuleFlags.None;
+            var modifiers: PullElementFlags[] = [];
             if (this.hasTopLevelImportOrExport(node)) {
                 isExternalModule = true;
 
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName, correctedFileName, /*isStringOrNumericLiteral:*/ false);
-                var topLevelMod = new ModuleDeclaration(id, bod, null, /*isExternalModule:*/ true);
-                this.setSpanExplicit(topLevelMod, start, this.position);
 
-                moduleFlags = ModuleFlags.Exported;
+                modifiers.push(PullElementFlags.Exported);
                 if (isDTSFile(this.fileName)) {
-                    moduleFlags |= ModuleFlags.Ambient;
+                    modifiers.push(PullElementFlags.Ambient);
                 }
 
-                topLevelMod.setModuleFlags(moduleFlags);
+                var topLevelMod = new ModuleDeclaration(modifiers, id, bod, null, /*isExternalModule:*/ true);
+                this.setSpanExplicit(topLevelMod, start, this.position);
 
                 var leadingComments = this.getLeadingComments(node);
                 for (var i = 0, n = leadingComments.length; i < n; i++) {
@@ -351,10 +350,8 @@ module TypeScript {
                 this.setSpanExplicit(bod, start, this.position);
             }
 
-            var result = new Script(bod, this.fileName, isExternalModule, amdDependencies);
+            var result = new Script(modifiers, bod, this.fileName, isExternalModule, amdDependencies);
             this.setSpanExplicit(result, start, start + node.fullWidth());
-
-            result.setModuleFlags(moduleFlags);
 
             return result;
         }
@@ -520,7 +517,18 @@ module TypeScript {
             for (var i = names.length - 1; i >= 0; i--) {
                 var innerName = names[i];
 
-                var result = new ModuleDeclaration(innerName, members, closeBraceSpan, /*isExternalModule:*/ false);
+                var modifiers: PullElementFlags[] = null;
+
+                if (i > 0) {
+                    // All inner modules are exported.
+                    modifiers = [];
+                    modifiers.push(PullElementFlags.Exported);
+                }
+                else {
+                    modifiers = this.visitModifiers(node.modifiers);
+                }
+
+                var result = new ModuleDeclaration(modifiers, innerName, members, closeBraceSpan, /*isExternalModule:*/ false);
                 this.setSpan(result, start, node);
 
                 result.setPreComments(preComments);
@@ -529,20 +537,9 @@ module TypeScript {
                 preComments = null;
                 postComments = null;
 
-                // mark the inner module declarations as exported
-                // outer module is exported if export key word or parsing ambient module
-                if (i || SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                    result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Exported);
-                }
-
                 // REVIEW: will also possibly need to re-parent comments as well
 
                 members = new ASTList(this.fileName, [result]);
-            }
-
-            // mark ambient if declare keyword or parsing ambient module or parsing declare file
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
-                result.setModuleFlags(result.getModuleFlags() | ModuleFlags.Ambient);
             }
 
             this.setSpan(result, start, node);
@@ -602,19 +599,8 @@ module TypeScript {
 
             this.movePast(node.closeBraceToken);
 
-            var result = new EnumDeclaration(identifier, new ASTList(this.fileName, enumElements));
+            var result = new EnumDeclaration(this.visitModifiers(node.modifiers), identifier, new ASTList(this.fileName, enumElements));
             this.setCommentsAndSpan(result, start, node);
-
-            var flags = ModuleFlags.None;
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.ExportKeyword)) {
-                flags = flags | ModuleFlags.Exported;
-            }
-
-            if (SyntaxUtilities.containsToken(node.modifiers, SyntaxKind.DeclareKeyword)) {
-                flags = flags | ModuleFlags.Ambient;
-            }
-
-            result.setModuleFlags(flags);
 
             return result;
         }

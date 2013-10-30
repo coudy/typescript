@@ -17,15 +17,15 @@
 
 module TypeScript {
     export function scriptIsElided(script: Script): boolean {
-        return scriptOrModuleIsElided(script.getModuleFlags(), script.moduleElements);
+        return scriptOrModuleIsElided(script.modifiers, script.moduleElements);
     }
 
     export function moduleIsElided(declaration: ModuleDeclaration): boolean {
-        return scriptOrModuleIsElided(declaration.getModuleFlags(), declaration.moduleElements);
+        return scriptOrModuleIsElided(declaration.modifiers, declaration.moduleElements);
     }
 
-    function scriptOrModuleIsElided(moduleFlags: ModuleFlags, moduleMembers: ASTList): boolean {
-        if (hasFlag(moduleFlags, ModuleFlags.Ambient)) {
+    function scriptOrModuleIsElided(modifiers: PullElementFlags[], moduleMembers: ASTList): boolean {
+        if (hasModifier(modifiers, PullElementFlags.Ambient)) {
             return true;
         }
 
@@ -53,7 +53,7 @@ module TypeScript {
     }
 
     export function enumIsElided(declaration: EnumDeclaration): boolean {
-        if (hasFlag(declaration.getModuleFlags(), ModuleFlags.Ambient)) {
+        if (hasModifier(declaration.modifiers, PullElementFlags.Ambient)) {
             return true;
         }
 

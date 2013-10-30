@@ -1020,7 +1020,7 @@ module TypeScript {
                         //  we traverse the module element so we can create a dotted module name.
                         moduleDecl.moduleElements.members.length === 1 &&
                         moduleDecl.moduleElements.members[0].nodeType() === NodeType.ModuleDeclaration &&
-                        hasFlag((<ModuleDeclaration>moduleDecl.moduleElements.members[0]).getModuleFlags(), ModuleFlags.Exported) &&
+                        hasModifier((<ModuleDeclaration>moduleDecl.moduleElements.members[0]).modifiers, PullElementFlags.Exported) &&
                         (docComments(moduleDecl) === null || docComments(moduleDecl).length === 0)
 
                         // Module to look up is the single module element of the current module

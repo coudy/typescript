@@ -181,9 +181,8 @@ module TypeScript {
     }
 
     export class Script extends AST {
-        private _moduleFlags = ModuleFlags.None;
-
-        constructor(public moduleElements: ASTList,
+        constructor(public modifiers: PullElementFlags[],
+                    public moduleElements: ASTList,
                     private _fileName: string,
                     public isExternalModule: boolean,
                     public amdDependencies: string[]) {
@@ -201,14 +200,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.Script;
-        }
-
-        public getModuleFlags(): ModuleFlags {
-            return this._moduleFlags;
-        }
-
-        public setModuleFlags(flags: ModuleFlags): void {
-            this._moduleFlags = flags;
         }
 
         public structuralEquals(ast: Script, includingPosition: boolean): boolean {
@@ -506,9 +497,7 @@ module TypeScript {
     }
 
     export class ModuleDeclaration extends AST {
-        private _moduleFlags = ModuleFlags.None;
-
-        constructor(public name: Identifier, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
+        constructor(public modifiers: PullElementFlags[], public name: Identifier, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
             super();
             name && (name.parent = this);
             moduleElements && (moduleElements.parent = this);
@@ -518,18 +507,8 @@ module TypeScript {
             return NodeType.ModuleDeclaration;
         }
 
-        public getModuleFlags(): ModuleFlags {
-            return this._moduleFlags;
-        }
-
-        // Must only be called from SyntaxTreeVisitor
-        public setModuleFlags(flags: ModuleFlags): void {
-            this._moduleFlags = flags;
-        }
-
         public structuralEquals(ast: ModuleDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this._moduleFlags === ast._moduleFlags &&
                 structuralEquals(this.name, ast.name, includingPosition) &&
                 structuralEquals(this.moduleElements, ast.moduleElements, includingPosition);
         }
@@ -1434,9 +1413,7 @@ module TypeScript {
     }
 
     export class EnumDeclaration extends AST {
-        private _moduleFlags: ModuleFlags = ModuleFlags.None;
-
-        constructor(public identifier: Identifier, public enumElements: ASTList) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public enumElements: ASTList) {
             super();
             identifier && (identifier.parent = this);
             enumElements && (enumElements.parent = this);
@@ -1444,14 +1421,6 @@ module TypeScript {
 
         public nodeType(): NodeType {
             return NodeType.EnumDeclaration;
-        }
-
-        public getModuleFlags(): ModuleFlags {
-            return this._moduleFlags;
-        }
-
-        public setModuleFlags(flags: ModuleFlags): void {
-            this._moduleFlags = flags;
         }
     }
 

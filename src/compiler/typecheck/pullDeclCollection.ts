@@ -36,7 +36,7 @@ module TypeScript {
         ast = ast.parent;
         while (ast) {
             if (ast.nodeType() === NodeType.ModuleDeclaration) {
-                if (hasFlag((<ModuleDeclaration>ast).getModuleFlags(), ModuleFlags.Ambient)) {
+                if (hasModifier((<ModuleDeclaration>ast).modifiers, PullElementFlags.Ambient)) {
                     return true;
                 }
             }
@@ -86,11 +86,11 @@ module TypeScript {
         var enumName = enumDecl.identifier.valueText();
         var kind: PullElementKind = PullElementKind.Container;
 
-        if ((hasFlag(enumDecl.getModuleFlags(), ModuleFlags.Exported) || isParsingAmbientModule(enumDecl, context)) && !containingModuleHasExportAssignment(enumDecl)) {
+        if ((hasModifier(enumDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(enumDecl, context)) && !containingModuleHasExportAssignment(enumDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(enumDecl.getModuleFlags(), ModuleFlags.Ambient) || isParsingAmbientModule(enumDecl, context) || context.isDeclareFile) {
+        if (hasModifier(enumDecl.modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(enumDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 
@@ -140,11 +140,11 @@ module TypeScript {
         var modName = (<Identifier>moduleDecl.name).valueText();
         var isDynamic = isQuoted(modName) || moduleDecl.isExternalModule;
 
-        if ((hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
+        if ((hasModifier(moduleDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
             declFlags |= PullElementFlags.Exported;
         }
 
-        if (hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Ambient) || isParsingAmbientModule(moduleDecl, context) || context.isDeclareFile) {
+        if (hasModifier(moduleDecl.modifiers, PullElementFlags.Ambient) || isParsingAmbientModule(moduleDecl, context) || context.isDeclareFile) {
             declFlags |= PullElementFlags.Ambient;
         }
 

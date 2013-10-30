@@ -35,21 +35,6 @@ module TypeScript {
         Static = 1 << 4,
     }
 
-    export enum ModuleFlags {
-        None = 0,
-        Exported = 1,
-        Private = 1 << 1,
-        Public = 1 << 2,
-        Ambient = 1 << 3,
-        Static = 1 << 4,
-        // IsExternalModule = 1 << 8,
-    }
-
-    export function ToDeclFlags(moduleFlags: ModuleFlags): DeclFlags;
-    export function ToDeclFlags(fncOrVarOrModuleFlags: any) {
-        return <DeclFlags>fncOrVarOrModuleFlags;
-    }
-
     export function ModifiersToDeclFlags(modifiers: PullElementFlags[]): DeclFlags {
         var flags = DeclFlags.None;
 

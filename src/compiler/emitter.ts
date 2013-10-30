@@ -2382,7 +2382,8 @@ module TypeScript {
 
                 if (moduleElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleAST = <ModuleDeclaration>moduleElement;
-                    if (!hasFlag(moduleAST.getModuleFlags(), ModuleFlags.Ambient) && this.requiresExtendsBlock(moduleAST.moduleElements)) {
+
+                    if (!hasModifier(moduleAST.modifiers, PullElementFlags.Ambient) && this.requiresExtendsBlock(moduleAST.moduleElements)) {
                         return true;
                     }
                 }
