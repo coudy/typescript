@@ -138,7 +138,7 @@ module TypeScript {
     function preCollectModuleDecls(moduleDecl: ModuleDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
         var modName = (<Identifier>moduleDecl.name).valueText();
-        var isDynamic = isQuoted(modName) || hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
+        var isDynamic = isQuoted(modName) || moduleDecl.isExternalModule;
 
         if ((hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
             declFlags |= PullElementFlags.Exported;

@@ -328,10 +328,10 @@ module TypeScript {
 
                 var correctedFileName = switchToForwardSlashes(this.fileName);
                 var id: Identifier = new Identifier(correctedFileName, correctedFileName, /*isStringOrNumericLiteral:*/ false);
-                var topLevelMod = new ModuleDeclaration(id, bod, null);
+                var topLevelMod = new ModuleDeclaration(id, bod, null, /*isExternalModule:*/ true);
                 this.setSpanExplicit(topLevelMod, start, this.position);
 
-                moduleFlags = ModuleFlags.IsExternalModule | ModuleFlags.Exported;
+                moduleFlags = ModuleFlags.Exported;
                 if (isDTSFile(this.fileName)) {
                     moduleFlags |= ModuleFlags.Ambient;
                 }
@@ -520,7 +520,7 @@ module TypeScript {
             for (var i = names.length - 1; i >= 0; i--) {
                 var innerName = names[i];
 
-                var result = new ModuleDeclaration(innerName, members, closeBraceSpan);
+                var result = new ModuleDeclaration(innerName, members, closeBraceSpan, /*isExternalModule:*/ false);
                 this.setSpan(result, start, node);
 
                 result.setPreComments(preComments);

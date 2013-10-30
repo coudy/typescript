@@ -960,7 +960,7 @@ module TypeScript {
                 this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
             }
 
-            var isExternalModule = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
+            var isExternalModule = moduleDecl.isExternalModule;
             var temp = this.setContainer(EmitContainer.Module);
             var isExported = hasFlag(pullDecl.flags, PullElementFlags.Exported);
 
@@ -1981,7 +1981,7 @@ module TypeScript {
                 var firstElement = list.members[0];
                 if (firstElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleDeclaration = <ModuleDeclaration>firstElement;
-                    if (hasFlag(moduleDeclaration.getModuleFlags(), ModuleFlags.IsExternalModule)) {
+                    if (moduleDeclaration.isExternalModule) {
                         firstElement = moduleDeclaration.moduleElements.members[0];
                     }
                 }
@@ -2011,7 +2011,10 @@ module TypeScript {
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script);
 
-            var isNonElidedExternalModule = hasFlag(script.getModuleFlags(), ModuleFlags.IsExternalModule) && !scriptIsElided(script);
+            var isExternalModule = script.moduleElements.members.length === 1 &&
+                script.moduleElements.members[0].nodeType() === NodeType.ModuleDeclaration &&
+                (<ModuleDeclaration>script.moduleElements.members[0]).isExternalModule;
+            var isNonElidedExternalModule = isExternalModule && !scriptIsElided(script);
             if (isNonElidedExternalModule) {
                 this.recordSourceMappingStart(script);
 

@@ -508,7 +508,7 @@ module TypeScript {
     export class ModuleDeclaration extends AST {
         private _moduleFlags = ModuleFlags.None;
 
-        constructor(public name: Identifier, public moduleElements: ASTList, public endingToken: ASTSpan) {
+        constructor(public name: Identifier, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
             super();
             name && (name.parent = this);
             moduleElements && (moduleElements.parent = this);

@@ -165,8 +165,7 @@ module TypeScript {
                     var emitDeclare = !hasFlag(pullFlags, PullElementFlags.Exported);
 
                     var container = this.getAstDeclarationContainer();
-                    var isExternalModule = container.nodeType() === NodeType.ModuleDeclaration &&
-                        hasFlag((<ModuleDeclaration>container).getModuleFlags(), ModuleFlags.IsExternalModule);
+                    var isExternalModule = container.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>container).isExternalModule;
 
                     // Emit export only for global export statements. 
                     // The container for this would be dynamic module which is whole file
@@ -1004,7 +1003,7 @@ module TypeScript {
         }
 
         private emitDeclarationsForModuleDeclaration(moduleDecl: ModuleDeclaration) {
-            var isExternalModule = hasFlag(moduleDecl.getModuleFlags(), ModuleFlags.IsExternalModule);
+            var isExternalModule = moduleDecl.isExternalModule;
             if (!isExternalModule && !this.canEmitDeclarations(moduleDecl)) {
                 return;
             }

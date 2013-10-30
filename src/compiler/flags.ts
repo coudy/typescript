@@ -42,7 +42,7 @@ module TypeScript {
         Public = 1 << 2,
         Ambient = 1 << 3,
         Static = 1 << 4,
-        IsExternalModule = 1 << 8,
+        // IsExternalModule = 1 << 8,
     }
 
     export function ToDeclFlags(moduleFlags: ModuleFlags): DeclFlags;
