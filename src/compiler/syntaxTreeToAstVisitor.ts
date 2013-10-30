@@ -704,27 +704,15 @@ module TypeScript {
         public visitVariableStatement(node: VariableStatementSyntax): VariableStatement {
             var start = this.position;
 
-            var preComments: Comment[] = null;
-            if (node.modifiers.childCount() > 0) {
-                preComments = this.convertTokenLeadingComments(node.modifiers.firstToken(), start);
-            }
-
             this.moveTo(node, node.variableDeclaration);
 
             var declaration = node.variableDeclaration.accept(this);
             this.movePast(node.semicolonToken);
 
             var modifiers = this.visitModifiers(node.modifiers);
-            for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
-                var varDecl = <VariableDeclarator>declaration.declarators.members[i];
-
-                if (i === 0) {
-                    varDecl.setPreComments(this.mergeComments(preComments, varDecl.preComments()));
-                }
-            }
 
             var result = new VariableStatement(modifiers, declaration);
-            this.setSpan(result, start, node);
+            this.setCommentsAndSpan(result, start, node);
 
             return result;
         }
@@ -732,19 +720,8 @@ module TypeScript {
         public visitVariableDeclaration(node: VariableDeclarationSyntax): VariableDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.lastToken(), start);
-
             this.moveTo(node, node.variableDeclarators);
             var variableDecls = this.visitSeparatedSyntaxList(node.variableDeclarators);
-
-            for (var i = 0; i < variableDecls.members.length; i++) {
-                if (i === 0) {
-                    variableDecls.members[i].setPreComments(preComments);
-                    variableDecls.members[i].setPostComments(postComments);
-                }
-            }
 
             var result = new VariableDeclaration(variableDecls);
             this.setSpan(result, start, node);

@@ -3065,23 +3065,23 @@ module TypeScript {
             return <VariableDeclarator>statement.declaration.declarators.members[0];
         }
 
-        private isNotAmbientOrHasInitializer(varDecl: VariableDeclarator): boolean {
-            return !hasModifier(getVariableDeclaratorModifiers(varDecl), PullElementFlags.Ambient) || varDecl.equalsValueClause !== null;
+        private isNotAmbientOrHasInitializer(variableStatement: VariableStatement): boolean {
+            return !hasModifier(variableStatement.modifiers, PullElementFlags.Ambient) || this.firstVariableDeclarator(variableStatement).equalsValueClause !== null;
         }
 
         public shouldEmitVariableStatement(statement: VariableStatement): boolean {
-            var varDecl = this.firstVariableDeclarator(statement);
-            return varDecl.preComments() !== null || this.isNotAmbientOrHasInitializer(varDecl);
+            return statement.preComments() !== null || this.isNotAmbientOrHasInitializer(statement);
         }
 
         public emitVariableStatement(statement: VariableStatement): void {
-            var varDecl = this.firstVariableDeclarator(statement);
-            if (this.isNotAmbientOrHasInitializer(varDecl)) {
+            if (this.isNotAmbientOrHasInitializer(statement)) {
+                this.emitComments(statement, true);
                 this.emit(statement.declaration);
                 this.writeToOutput(";");
+                this.emitComments(statement, false);
             }
             else {
-                this.emitComments(varDecl, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
+                this.emitComments(statement, /*pre:*/ true, /*onlyPinnedOrTripleSlashComments:*/ true);
             }
         }
 
@@ -3158,6 +3158,8 @@ module TypeScript {
                     return this.emitEnumElement(<EnumElement>ast);
                 case NodeType.FunctionExpression:
                     return this.emitFunctionExpression(<FunctionExpression>ast);
+                case NodeType.VariableStatement:
+                    return this.emitVariableStatement(<VariableStatement>ast);
             }
 
             this.emitComments(ast, true);
@@ -3250,8 +3252,6 @@ module TypeScript {
                     return this.emitEqualsValueClause(<EqualsValueClause>ast);
                 case NodeType.Parameter:
                     return this.emitParameter(<Parameter>ast);
-                case NodeType.VariableStatement:
-                    return this.emitVariableStatement(<VariableStatement>ast);
                 case NodeType.Block:
                     return this.emitBlock(<Block>ast);
                 case NodeType.ElseClause:
