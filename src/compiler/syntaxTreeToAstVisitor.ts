@@ -821,17 +821,7 @@ module TypeScript {
             var closeStart = this.position + node.closeBracketToken.leadingTriviaWidth();
             this.movePast(node.closeBracketToken);
 
-            var isOnSingleLine = false;
-            if (!node.openBracketToken.hasTrailingNewLine()) {
-                var childCount = node.expressions.childCount();
-                if (childCount === 0 ||
-                    !node.expressions.childAt(childCount - 1).lastToken().hasTrailingNewLine()) {
-
-                    isOnSingleLine = true;
-                }
-            }
-
-            var result = new ArrayLiteralExpression(expressions, isOnSingleLine);
+            var result = new ArrayLiteralExpression(expressions);
             this.setSpan(result, start, node);
 
             return result;
@@ -1759,17 +1749,7 @@ module TypeScript {
             var closeStart = this.position + node.closeBraceToken.leadingTriviaWidth();
             this.movePast(node.closeBraceToken);
 
-            var isOnSingleLine = false;
-            if (!node.openBraceToken.hasTrailingNewLine()) {
-                var childCount = node.propertyAssignments.childCount();
-                if (childCount === 0 ||
-                    !node.propertyAssignments.childAt(childCount - 1).lastToken().hasTrailingNewLine()) {
-
-                    isOnSingleLine = true;
-                }
-            }
-
-            var result = new ObjectLiteralExpression(propertyAssignments, isOnSingleLine);
+            var result = new ObjectLiteralExpression(propertyAssignments);
             this.setCommentsAndSpan(result, start, node);
 
             return result;

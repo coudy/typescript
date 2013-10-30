@@ -476,7 +476,7 @@ module TypeScript {
         }
 
         public emitObjectLiteralExpression(objectLiteral: ObjectLiteralExpression) {
-            var useNewLines = !objectLiteral.isOnSingleLine;
+            var useNewLines = !this.isOnSingleLine(objectLiteral);
 
             this.recordSourceMappingStart(objectLiteral);
 
@@ -505,8 +505,13 @@ module TypeScript {
             this.recordSourceMappingEnd(objectLiteral);
         }
 
+        private isOnSingleLine(ast: AST): boolean {
+            var lineMap = this.document.lineMap();
+            return lineMap.getLineNumberFromPosition(ast.minChar) === lineMap.getLineNumberFromPosition(ast.limChar);
+        }
+
         public emitArrayLiteralExpression(arrayLiteral: ArrayLiteralExpression) {
-            var useNewLines = !arrayLiteral.isOnSingleLine;
+            var useNewLines = !this.isOnSingleLine(arrayLiteral);
 
             this.recordSourceMappingStart(arrayLiteral);
 
