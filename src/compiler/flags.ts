@@ -22,7 +22,6 @@ module TypeScript {
 
     export enum ASTFlags {
         None = 0,
-        OptionalName = 1 << 2,
     }
 
     export enum TypeRelationshipFlags {

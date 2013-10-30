@@ -67,7 +67,7 @@ module TypeScript {
             span.limChar = end;
         }
 
-        public identifierFromToken(token: ISyntaxToken, isOptional: boolean, stringLiteralIsTextOfIdentifier?: boolean): Identifier {
+        public identifierFromToken(token: ISyntaxToken, stringLiteralIsTextOfIdentifier?: boolean): Identifier {
             var result: Identifier = null;
 
             switch (token.tokenKind) {
@@ -87,10 +87,6 @@ module TypeScript {
 
                 default:
                     throw Errors.invalidOperation();
-            }
-
-            if (isOptional) {
-                result.setFlags(result.getFlags() | ASTFlags.OptionalName);
             }
 
             var start = this.position + token.leadingTriviaWidth();
@@ -471,7 +467,7 @@ module TypeScript {
             var result: Identifier[] = [];
 
             if (node.stringLiteral !== null) {
-                result.push(this.identifierFromToken(node.stringLiteral, /*isOptional:*/false, true));
+                result.push(this.identifierFromToken(node.stringLiteral, true));
                 this.movePast(node.stringLiteral);
             }
             else {
@@ -1112,12 +1108,8 @@ module TypeScript {
             }
 
 
-            var result = new Parameter(modifiers, identifier, typeExpr, init, !!node.questionToken, node.dotDotDotToken !== null);
+            var result = new Parameter(modifiers, identifier, node.questionToken ? new ASTSpan() : null, typeExpr, init, node.dotDotDotToken !== null);
             this.setCommentsAndSpan(result, start, node);
-
-            if (node.equalsValueClause || node.dotDotDotToken) {
-                result.setFlags(result.getFlags() | ASTFlags.OptionalName);
-            }
 
             return result;
         }
@@ -1297,7 +1289,7 @@ module TypeScript {
 
             var callSignature = this.visitCallSignature(node.callSignature);
 
-            var result = new MethodSignature(name, callSignature);
+            var result = new MethodSignature(name, node.questionToken ? new ASTSpan() : null, callSignature);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -1327,7 +1319,7 @@ module TypeScript {
             this.movePast(node.questionToken);
             var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
-            var result = new PropertySignature(name, typeExpr);
+            var result = new PropertySignature(name, node.questionToken ? new ASTSpan() : null, typeExpr);
             this.setCommentsAndSpan(result, start, node);
 
             return result;

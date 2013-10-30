@@ -829,7 +829,7 @@ module TypeScript {
     }
 
     export class Parameter extends AST {
-        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause, public isOptional: boolean, public isRest: boolean) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause, public isRest: boolean) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -840,11 +840,10 @@ module TypeScript {
             return NodeType.Parameter;
         }
 
-        public isOptionalArg(): boolean { return this.isOptional || this.equalsValueClause !== null; }
+        public isOptionalArg(): boolean { return this.questionToken !== null || this.equalsValueClause !== null; }
 
         public structuralEquals(ast: Parameter, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                this.isOptional === ast.isOptional &&
                 this.isRest === ast.isRest;
         }
     }
@@ -984,7 +983,7 @@ module TypeScript {
     }
 
     export class MethodSignature extends AST {
-        constructor(public propertyName: Identifier, public callSignature: CallSignature) {
+        constructor(public propertyName: Identifier, public questionToken: ASTSpan, public callSignature: CallSignature) {
             super();
             propertyName && (propertyName.parent = this);
             callSignature && (callSignature.parent = this);
@@ -1009,7 +1008,7 @@ module TypeScript {
     }
 
     export class PropertySignature extends AST {
-        constructor(public propertyName: Identifier, public typeAnnotation: TypeReference) {
+        constructor(public propertyName: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeReference) {
             super();
             propertyName && (propertyName.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);

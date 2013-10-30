@@ -280,7 +280,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        if (hasFlag(argDecl.getFlags(), ASTFlags.OptionalName) || hasFlag(argDecl.identifier.getFlags(), ASTFlags.OptionalName)) {
+        if (argDecl.questionToken !== null || argDecl.equalsValueClause !== null || argDecl.isRest) {
             declFlags |= PullElementFlags.Optional;
         }
 
@@ -361,7 +361,7 @@ module TypeScript {
         var parent = context.getParent();
         var declType = PullElementKind.Property;
 
-        if (hasFlag(propertyDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
+        if (propertyDecl.questionToken !== null) {
             declFlags |= PullElementFlags.Optional;
         }
 
@@ -592,10 +592,6 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        if (hasFlag(funcDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
-            declFlags |= PullElementFlags.Optional;
-        }
-
         var span = TextSpan.fromBounds(funcDecl.minChar, funcDecl.limChar);
         var parent = context.getParent();
 
@@ -662,7 +658,7 @@ module TypeScript {
         declFlags |= PullElementFlags.Public;
         declFlags |= PullElementFlags.Signature;
 
-        if (hasFlag(method.propertyName.getFlags(), ASTFlags.OptionalName)) {
+        if (method.questionToken !== null) {
             declFlags |= PullElementFlags.Optional;
         }
 

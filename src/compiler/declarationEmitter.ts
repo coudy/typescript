@@ -332,7 +332,7 @@ module TypeScript {
             this.emitDeclarationComments(varDecl);
             this.emitIndent();
             this.declFile.Write(varDecl.propertyName.text());
-            if (hasFlag(varDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
+            if (varDecl.questionToken) {
                 this.declFile.Write("?");
             }
 
@@ -357,9 +357,6 @@ module TypeScript {
                 else {
                     this.emitIndent();
                     this.declFile.Write(varDecl.identifier.text());
-                    if (hasFlag(varDecl.identifier.getFlags(), ASTFlags.OptionalName)) {
-                        this.declFile.Write("?");
-                    }
                 }
 
                 if (!hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
@@ -635,7 +632,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write(funcDecl.propertyName.text());
-            if (hasFlag(funcDecl.propertyName.getFlags(), ASTFlags.OptionalName)) {
+            if (funcDecl.questionToken) {
                 this.declFile.Write("? ");
             }
 
@@ -703,9 +700,6 @@ module TypeScript {
                 }
                 else if (funcPullDecl.kind !== PullElementKind.CallSignature) {
                     this.declFile.Write(id);
-                    if (hasFlag(funcDecl.identifier.getFlags(), ASTFlags.OptionalName)) {
-                        this.declFile.Write("? ");
-                    }
                 }
             }
 
