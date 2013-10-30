@@ -1302,7 +1302,80 @@ var TypeScript;
         Hash.FNV_BASE = 2166136261;
         Hash.FNV_PRIME = 16777619;
 
-        Hash.primes = [3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919, 1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591, 17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437, 187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263, 1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369];
+        Hash.primes = [
+            3,
+            7,
+            11,
+            17,
+            23,
+            29,
+            37,
+            47,
+            59,
+            71,
+            89,
+            107,
+            131,
+            163,
+            197,
+            239,
+            293,
+            353,
+            431,
+            521,
+            631,
+            761,
+            919,
+            1103,
+            1327,
+            1597,
+            1931,
+            2333,
+            2801,
+            3371,
+            4049,
+            4861,
+            5839,
+            7013,
+            8419,
+            10103,
+            12143,
+            14591,
+            17519,
+            21023,
+            25229,
+            30293,
+            36353,
+            43627,
+            52361,
+            62851,
+            75431,
+            90523,
+            108631,
+            130363,
+            156437,
+            187751,
+            225307,
+            270371,
+            324449,
+            389357,
+            467237,
+            560689,
+            672827,
+            807403,
+            968897,
+            1162687,
+            1395263,
+            1674319,
+            2009191,
+            2411033,
+            2893249,
+            3471899,
+            4166287,
+            4999559,
+            5999471,
+            7199369
+        ];
         return Hash;
     })();
     TypeScript.Hash = Hash;
@@ -29528,57 +29601,20 @@ var TypeScript;
         };
 
         Emitter.prototype.emitObjectLiteralExpression = function (objectLiteral) {
-            var useNewLines = !this.isOnSingleLine(objectLiteral);
-
             this.recordSourceMappingStart(objectLiteral);
 
             this.writeToOutput("{");
-            var list = objectLiteral.propertyAssignments;
-            if (list.members.length > 0) {
-                if (useNewLines) {
-                    this.writeLineToOutput("");
-                } else {
-                    this.writeToOutput(" ");
-                }
-
-                this.indenter.increaseIndent();
-                this.emitCommaSeparatedList(list, useNewLines);
-                this.indenter.decreaseIndent();
-                if (useNewLines) {
-                    this.emitIndent();
-                } else {
-                    this.writeToOutput(" ");
-                }
-            }
+            this.emitCommaSeparatedList(objectLiteral, objectLiteral.propertyAssignments, " ", true);
             this.writeToOutput("}");
 
             this.recordSourceMappingEnd(objectLiteral);
         };
 
-        Emitter.prototype.isOnSingleLine = function (ast) {
-            var lineMap = this.document.lineMap();
-            return lineMap.getLineNumberFromPosition(ast.minChar) === lineMap.getLineNumberFromPosition(ast.limChar);
-        };
-
         Emitter.prototype.emitArrayLiteralExpression = function (arrayLiteral) {
-            var useNewLines = !this.isOnSingleLine(arrayLiteral);
-
             this.recordSourceMappingStart(arrayLiteral);
 
             this.writeToOutput("[");
-            var list = arrayLiteral.expressions;
-            if (list.members.length > 0) {
-                if (useNewLines) {
-                    this.writeLineToOutput("");
-                }
-
-                this.indenter.increaseIndent();
-                this.emitCommaSeparatedList(list, useNewLines);
-                this.indenter.decreaseIndent();
-                if (useNewLines) {
-                    this.emitIndent();
-                }
-            }
+            this.emitCommaSeparatedList(arrayLiteral, arrayLiteral.expressions, "", true);
             this.writeToOutput("]");
 
             this.recordSourceMappingEnd(arrayLiteral);
@@ -29593,7 +29629,7 @@ var TypeScript;
             if (objectCreationExpression.argumentList) {
                 this.recordSourceMappingStart(objectCreationExpression.argumentList);
                 this.writeToOutput("(");
-                this.emitCommaSeparatedList(objectCreationExpression.argumentList.arguments);
+                this.emitCommaSeparatedList(objectCreationExpression.argumentList, objectCreationExpression.argumentList.arguments, "", false);
                 this.writeToOutputWithSourceMapRecord(")", objectCreationExpression.argumentList.closeParenToken);
                 this.recordSourceMappingEnd(objectCreationExpression.argumentList);
             }
@@ -29654,7 +29690,7 @@ var TypeScript;
                 this.emitThis();
                 if (args && args.members.length > 0) {
                     this.writeToOutput(", ");
-                    this.emitCommaSeparatedList(args);
+                    this.emitCommaSeparatedList(callNode.argumentList, args, "", false);
                 }
             } else {
                 if (callNode.expression.nodeType() === 58 /* SuperExpression */ && this.emitState.container === 4 /* Constructor */) {
@@ -29670,7 +29706,7 @@ var TypeScript;
                         this.writeToOutput(", ");
                     }
                 }
-                this.emitCommaSeparatedList(args);
+                this.emitCommaSeparatedList(callNode.argumentList, args, "", false);
             }
 
             this.writeToOutputWithSourceMapRecord(")", callNode.argumentList.closeParenToken);
@@ -30814,23 +30850,52 @@ var TypeScript;
             }
         };
 
-        Emitter.prototype.emitCommaSeparatedList = function (list, startLine) {
-            if (typeof startLine === "undefined") { startLine = false; }
-            if (list === null) {
+        Emitter.prototype.isOnSameLine = function (pos1, pos2) {
+            var lineMap = this.document.lineMap();
+            return lineMap.getLineNumberFromPosition(pos1) === lineMap.getLineNumberFromPosition(pos2);
+        };
+
+        Emitter.prototype.emitCommaSeparatedList = function (parent, list, buffer, preserveNewLines) {
+            if (list === null || list.members.length === 0) {
                 return;
+            }
+
+            var startLine = preserveNewLines && !this.isOnSameLine(parent.limChar, list.members[0].limChar);
+
+            if (preserveNewLines) {
+                this.indenter.increaseIndent();
+            }
+
+            if (startLine) {
+                this.writeLineToOutput("");
             } else {
-                for (var i = 0, n = list.members.length; i < n; i++) {
-                    var emitNode = list.members[i];
-                    this.emitJavascript(emitNode, startLine);
+                this.writeToOutput(buffer);
+            }
 
-                    if (i < (n - 1)) {
-                        this.writeToOutput(startLine ? "," : ", ");
-                    }
+            for (var i = 0, n = list.members.length; i < n; i++) {
+                var emitNode = list.members[i];
 
+                this.emitJavascript(emitNode, startLine);
+
+                if (i < (n - 1)) {
+                    startLine = preserveNewLines && !this.isOnSameLine(emitNode.limChar, list.members[i + 1].minChar);
                     if (startLine) {
-                        this.writeLineToOutput("");
+                        this.writeLineToOutput(",");
+                    } else {
+                        this.writeToOutput(", ");
                     }
                 }
+            }
+
+            if (preserveNewLines) {
+                this.indenter.decreaseIndent();
+            }
+
+            if (preserveNewLines && !this.isOnSameLine(parent.limChar, TypeScript.ArrayUtilities.last(list.members).limChar)) {
+                this.writeLineToOutput("");
+                this.emitIndent();
+            } else {
+                this.writeToOutput(buffer);
             }
         };
 
