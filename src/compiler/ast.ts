@@ -329,23 +329,14 @@ module TypeScript {
         }
     }
 
-    export class TypeReference extends AST {
-        constructor(public term: AST) {
+    export class TypeAnnotation extends AST {
+        constructor(public type: AST) {
             super();
-            term && (term.parent = this);
-            Debug.assert(term !== null && term !== undefined);
-            this.minChar = term.minChar;
-            this.limChar = term.limChar;
-            this.trailingTriviaWidth = term.trailingTriviaWidth;
+            type && (type.parent = this);
         }
 
         public nodeType(): NodeType {
-            return NodeType.TypeRef;
-        }
-
-        public structuralEquals(ast: TypeReference, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.term, ast.term, includingPosition);
+            return NodeType.TypeAnnotation;
         }
     }
 
@@ -380,9 +371,9 @@ module TypeScript {
         }
 
         public getAliasName(aliasAST: AST = this.moduleReference): string {
-            if (aliasAST.nodeType() == NodeType.TypeRef) {
-                aliasAST = (<TypeReference>aliasAST).term;
-            }
+            //if (aliasAST.nodeType() == NodeType.TypeRef) {
+            //    aliasAST = (<TypeReference>aliasAST).term;
+            //}
 
             if (aliasAST.nodeType() === NodeType.Name) {
                 return (<Identifier>aliasAST).text();
@@ -566,7 +557,7 @@ module TypeScript {
     }
 
     export class VariableDeclarator extends AST {
-        constructor(public identifier: Identifier, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
+        constructor(public identifier: Identifier, public typeAnnotation: TypeAnnotation, public equalsValueClause: EqualsValueClause) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -729,7 +720,7 @@ module TypeScript {
     }
 
     export class ConstructorType extends AST {
-        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public type: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public type: AST) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
@@ -742,7 +733,7 @@ module TypeScript {
     }
 
     export class FunctionType extends AST {
-        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public type: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public type: AST) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
@@ -850,7 +841,7 @@ module TypeScript {
     }
 
     export class Parameter extends AST {
-        constructor(public dotDotDotToken: ASTSpan, public modifiers: PullElementFlags[], public identifier: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeReference, public equalsValueClause: EqualsValueClause) {
+        constructor(public dotDotDotToken: ASTSpan, public modifiers: PullElementFlags[], public identifier: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeAnnotation, public equalsValueClause: EqualsValueClause) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -1010,7 +1001,7 @@ module TypeScript {
 
     export class IndexSignature extends AST {
         constructor(public parameter: Parameter,
-                    public typeAnnotation: TypeReference) {
+                    public typeAnnotation: TypeAnnotation) {
             super();
             parameter && (parameter.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -1022,7 +1013,7 @@ module TypeScript {
     }
 
     export class PropertySignature extends AST {
-        constructor(public propertyName: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeReference) {
+        constructor(public propertyName: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeAnnotation) {
             super();
             propertyName && (propertyName.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -1034,7 +1025,7 @@ module TypeScript {
     }
 
     export class CallSignature extends AST {
-        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public typeAnnotation: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public typeAnnotation: TypeAnnotation) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
@@ -1065,7 +1056,7 @@ module TypeScript {
     }
 
     export class Constraint extends AST {
-        constructor(public type: TypeReference) {
+        constructor(public type: AST) {
             super();
             type && (type.parent = this);
         }
@@ -1158,7 +1149,7 @@ module TypeScript {
         constructor(public modifiers: PullElementFlags[],
                     public propertyName: Identifier,
                     public parameterList: ParameterList,
-                    public typeAnnotation: TypeReference,
+                    public typeAnnotation: TypeAnnotation,
                     public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
@@ -1450,7 +1441,7 @@ module TypeScript {
     }
 
     export class CastExpression extends AST {
-        constructor(public type: TypeReference, public expression: AST) {
+        constructor(public type: AST, public expression: AST) {
             super();
             type && (type.parent = this);
             expression && (expression.parent = this);
@@ -1553,7 +1544,7 @@ module TypeScript {
     }
 
     export class CatchClause extends AST {
-        constructor(public identifier: Identifier, public typeAnnotation: TypeReference, public block: Block) {
+        constructor(public identifier: Identifier, public typeAnnotation: TypeAnnotation, public block: Block) {
             super();
             identifier && (identifier.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
