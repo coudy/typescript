@@ -1883,25 +1883,22 @@ module TypeScript {
             return !!(baseType.kind & (PullElementKind.Interface | PullElementKind.Class));
         }
 
-        public findMember(name: string, lookInParent = true): PullSymbol {
+        public findMember(name: string, lookInParent: boolean): PullSymbol {
             var memberSymbol: PullSymbol = null;
 
             if (this._memberNameCache) {
                 memberSymbol = this._memberNameCache[name];
             }
 
-            if (!lookInParent) {
-                return memberSymbol;
-            }
-            else if (memberSymbol) {
+            if (memberSymbol || !lookInParent) {
                 return memberSymbol;
             }
 
             // check parents
-            if (!memberSymbol && this._extendedTypes) {
+            if (this._extendedTypes) {
 
                 for (var i = 0; i < this._extendedTypes.length; i++) {
-                    memberSymbol = this._extendedTypes[i].findMember(name);
+                    memberSymbol = this._extendedTypes[i].findMember(name, lookInParent);
 
                     if (memberSymbol) {
                         return memberSymbol;
@@ -1947,11 +1944,6 @@ module TypeScript {
         public getAllMembers(searchDeclKind: PullElementKind, memberVisiblity: GetAllMembersVisiblity): PullSymbol[] {
 
             var allMembers: PullSymbol[] = [];
-
-            var i = 0;
-            var j = 0;
-            var m = 0;
-            var n = 0;
 
             // Add members
             if (this._members != sentinelEmptyArray) {
@@ -2659,7 +2651,7 @@ module TypeScript {
 
         public findMember(name: string): PullSymbol {
             if (this._assignedType) {
-                return this._assignedType.findMember(name);
+                return this._assignedType.findMember(name, /*lookInParent*/ true);
             }
 
             return null;

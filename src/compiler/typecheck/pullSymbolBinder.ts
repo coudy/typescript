@@ -97,7 +97,7 @@ module TypeScript {
                 var prevIsExported = !prevSymbol; // We didn't find it as a local, so it must be exported if it exists
                 if (!prevSymbol) {
                     if (lookingForValue) {
-                        prevSymbol = parent.findMember(name, false);
+                        prevSymbol = parent.findMember(name, /*lookInParent*/ false);
                     }
                     else if (lookingForType) {
                         prevSymbol = parent.findNestedType(name, searchKind);
@@ -228,7 +228,7 @@ module TypeScript {
                 if (parentInstanceSymbol) {
                     if (isExported) {
                         // We search twice because export visibility does not need to agree
-                        variableSymbol = parentInstanceSymbol.findMember(enumName, false);
+                        variableSymbol = parentInstanceSymbol.findMember(enumName, /*lookInParent*/ false);
 
                         if (!variableSymbol) {
                             variableSymbol = parentInstanceSymbol.findContainedNonMember(enumName);
@@ -238,7 +238,7 @@ module TypeScript {
                         variableSymbol = parentInstanceSymbol.findContainedNonMember(enumName);
 
                         if (!variableSymbol) {
-                            variableSymbol = parentInstanceSymbol.findMember(enumName, false);
+                            variableSymbol = parentInstanceSymbol.findMember(enumName, /*lookInParent*/ false);
                         }
                     }
 
@@ -445,7 +445,7 @@ module TypeScript {
                 if (parentInstanceSymbol) {
                     if (isExported) {
                         // We search twice because export visibility does not need to agree
-                        variableSymbol = parentInstanceSymbol.findMember(modName, false);
+                        variableSymbol = parentInstanceSymbol.findMember(modName, /*lookInParent*/ false);
 
                         if (!variableSymbol) {
                             variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
@@ -455,7 +455,7 @@ module TypeScript {
                         variableSymbol = parentInstanceSymbol.findContainedNonMember(modName);
 
                         if (!variableSymbol) {
-                            variableSymbol = parentInstanceSymbol.findMember(modName, false);
+                            variableSymbol = parentInstanceSymbol.findMember(modName, /*lookInParent*/ false);
                         }
                     }
 
@@ -1189,7 +1189,7 @@ module TypeScript {
 
             var parent = this.getParent(propertyDeclaration, true);
 
-            var propertySymbol = parent.findMember(declName, false);
+            var propertySymbol = parent.findMember(declName, /*lookInParent*/ false);
 
             if (propertySymbol) {
                 this.semanticInfoChain.addDiagnostic(
@@ -1249,7 +1249,7 @@ module TypeScript {
                 parent = parent.getConstructorMethod().type;
             }
 
-            propertySymbol = parent.findMember(declName, false);
+            propertySymbol = parent.findMember(declName, /*lookInParent*/ false);
 
             if (propertySymbol) {
                 this.semanticInfoChain.addDiagnostic(
@@ -1601,7 +1601,7 @@ module TypeScript {
                 parent = parent.getConstructorMethod().type;
             }
 
-            methodSymbol = parent.findMember(methodName, false);
+            methodSymbol = parent.findMember(methodName, /*lookInParent*/ false);
 
             if (methodSymbol &&
                 (methodSymbol.kind !== PullElementKind.Method ||
@@ -1948,7 +1948,7 @@ module TypeScript {
                 parent = parent.getConstructorMethod().type;
             }
 
-            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
+            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, /*lookInParent*/ false);
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {
@@ -2044,7 +2044,7 @@ module TypeScript {
                 parent = parent.getConstructorMethod().type;
             }
 
-            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, false);
+            accessorSymbol = <PullAccessorSymbol>parent.findMember(funcName, /*lookInParent*/ false);
 
             if (accessorSymbol) {
                 if (!accessorSymbol.isAccessor()) {

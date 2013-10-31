@@ -277,7 +277,7 @@ module TypeScript {
             var member: PullSymbol = null;
 
             if (declSearchKind & PullElementKind.SomeValue) {
-                member = parent.findMember(symbolName);
+                member = parent.findMember(symbolName, /*lookInParent*/ true);
             }
             else if (declSearchKind & PullElementKind.SomeType) {
                 member = parent.findNestedType(symbolName);
@@ -303,7 +303,7 @@ module TypeScript {
                 parent = containerType;
 
                 if (declSearchKind & PullElementKind.SomeValue) {
-                    member = parent.findMember(symbolName);
+                    member = parent.findMember(symbolName, /*lookInParent*/ true);
                 }
                 else if (declSearchKind & PullElementKind.SomeType) {
                     member = parent.findNestedType(symbolName);
@@ -6899,7 +6899,7 @@ module TypeScript {
 
                 if (!isUsingExistingSymbol && !isAccessor) {
                     // Make sure this was not defined before
-                    if (objectLiteralTypeSymbol.findMember(memberSymbol.name)) {
+                    if (objectLiteralTypeSymbol.findMember(memberSymbol.name, /*lookInParent*/ true)) {
                         pullTypeContext.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(propertyAssignment, DiagnosticCode.Duplicate_identifier_0, [assignmentText.actualText]));
                     }
 
@@ -11662,7 +11662,7 @@ module TypeScript {
             // Check members
             for (var i = 0; i < typeMembers.length; i++) {
                 var propName = typeMembers[i].name;
-                var extendedTypeProp = extendedType.findMember(propName);
+                var extendedTypeProp = extendedType.findMember(propName, /*lookInParent*/ true);
                 if (extendedTypeProp) {
                     this.resolveDeclaredSymbol(extendedTypeProp, context);
                     foundError1 = !this.typeCheckIfTypeMemberPropertyOkToOverride(typeSymbol, extendedType, typeMembers[i], extendedTypeProp, enclosingDecl, comparisonInfo);
@@ -11704,7 +11704,7 @@ module TypeScript {
                     // Verify that all the overriden members of the constructor type are compatible
                     for (var i = 0; i < typeConstructorTypeMembers.length; i++) {
                         var propName = typeConstructorTypeMembers[i].name;
-                        var extendedConstructorTypeProp = extendedConstructorType.findMember(propName);
+                        var extendedConstructorTypeProp = extendedConstructorType.findMember(propName, /*lookInParent*/ true);
                         if (extendedConstructorTypeProp) {
                             if (!extendedConstructorTypeProp.isResolved) {
                                 this.resolveDeclaredSymbol(extendedConstructorTypeProp, context);
@@ -11897,12 +11897,28 @@ module TypeScript {
                     }
                 }
             }
-            else {
-                if (implementsClause) {
-                    // Unnecessary to report this.  The parser already did.
-                    // context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(implementsClause, DiagnosticCode.An_interface_cannot_implement_another_type));
-                }
-                if (extendsClause && extendsClause.typeNames.members.length > 1 && !typeSymbol.hasBaseTypeConflict()) {
+            else if (extendsClause && !typeSymbol.hasBaseTypeConflict() && typeSymbol.getExtendedTypes().length > 1) {
+                // October 16, 2013: Section 7.1:
+                // Inherited properties with the same name must be identical (section 3.8.2).
+
+                // If it is an interface it can extend multiple base types. We need to check for clashes
+                // between inherited properties with the same name, per the spec. Note that we only do this
+                // once per symbol, not once per declaration. We use the first declaration that has an
+                // extends clause. Here is an example:
+                // interface A {
+                //    m: string;
+                // }
+                // interface B {
+                //    m: number;
+                // }
+                // interface C extends A {}
+                // interface C extends B {}
+                // Here, we only report the error on the first C, because it is the first declaration
+                // that has an extends clause. Since an interface cannot have an implements clause
+                // (by the grammar) we only have to check that it has a heritage clause.
+                var firstInterfaceASTWithExtendsClause = ArrayUtilities.firstOrDefault(typeSymbol.getDeclarations(), decl => 
+                    (<InterfaceDeclaration>decl.ast()).heritageClauses !== null).ast();
+                if (classOrInterface === firstInterfaceASTWithExtendsClause) {
                     this.checkPropertyTypeIdentityBetweenBases(classOrInterface, name, typeSymbol, context);
                 }
             }
@@ -11914,25 +11930,37 @@ module TypeScript {
             typeSymbol: PullTypeSymbol,
             context: PullTypeResolutionContext): void {
 
-            // Check that all the extended base types have compatible members (members of the same name must have identical types)
-            var allMembers = typeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.externallyVisible);
-            var membersBag = createIntrinsicsObject<PullSymbol>();
-            for (var i = 0; i < allMembers.length; i++) {
-                var member = allMembers[i];
-                var memberName = member.name;
-                // Error if there is already a member in the bag with that name, and it doesn't have the same type
-                if (membersBag[memberName]) {
-                    var prevMember = membersBag[memberName];
-                    if (!this.typesAreIdentical(member.type, prevMember.type)) {
-                        var prevContainerName = prevMember.getContainer().getScopedName();
-                        var curContainerName = member.getContainer().getScopedName();
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name,
-                            DiagnosticCode.Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_Types_of_property_3_of_types_1_and_2_are_not_identical,
-                            [typeSymbol.getDisplayName(), prevContainerName, curContainerName, memberName]));
+            // October 16, 2013: Section 7.1:
+            // Inherited properties with the same name must be identical (section 3.8.2).
+            // The membersBag will map each member name to its type and which base type we got it from
+            var membersBag = createIntrinsicsObject<{ type: PullTypeSymbol; baseOrigin: PullTypeSymbol; }>();
+            var baseTypes = typeSymbol.getExtendedTypes();
+            for (var i = 0; i < baseTypes.length; i++) {
+                var baseMembers = baseTypes[i].getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.all);
+                for (var j = 0; j < baseMembers.length; j++) {
+                    var member = baseMembers[j];
+                    var memberName = member.name;
+                    // Skip the member if it is shadowed in the derived type
+                    if (typeSymbol.findMember(memberName, /*lookInParent*/ false)) {
+                        continue;
                     }
-                }
-                else {
-                    membersBag[memberName] = member;
+
+                    // Error if there is already a member in the bag with that name, and it doesn't have the same type
+                    if (membersBag[memberName]) {
+                        var prevMember = membersBag[memberName];
+                        if (prevMember.baseOrigin !== baseTypes[i] && !this.typesAreIdentical(member.type, prevMember.type)) {
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name,
+                                DiagnosticCode.Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_Types_of_property_3_of_types_1_and_2_are_not_identical,
+                                [typeSymbol.getDisplayName(), prevMember.baseOrigin.getScopedName(), baseTypes[i].getScopedName(), memberName]));
+                            return; // Only report first offense
+                        }
+                    }
+                    else {
+                        membersBag[memberName] = {
+                            type: member.type,
+                            baseOrigin: baseTypes[i]
+                        };
+                    }
                 }
             }
         }
