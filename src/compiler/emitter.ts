@@ -514,23 +514,14 @@ module TypeScript {
             this.recordSourceMappingEnd(objectCreationExpression);
         }
 
-        public getConstantDecl(dotExpr: MemberAccessExpression): EnumElement {
+        public getConstantDecl(dotExpr: MemberAccessExpression): PullEnumElementDecl {
             var pullSymbol = this.semanticInfoChain.getSymbolForAST(dotExpr);
-            if (pullSymbol && pullSymbol.anyDeclHasFlag(PullElementFlags.Constant)) {
+            if (pullSymbol && pullSymbol.kind === PullElementKind.EnumMember) {
                 var pullDecls = pullSymbol.getDeclarations();
                 if (pullDecls.length === 1) {
                     var pullDecl = pullDecls[0];
-                    var ast = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    if (ast && ast.nodeType() === NodeType.EnumElement) {
-                        var varDecl = <EnumElement>ast;
-                        // If the enum member declaration is in an ambient context, don't propagate the constant because 
-                        // the ambient enum member may have been generated based on a computed value - unless it is
-                        // explicitly initialized in the ambient enum to an integer constant.
-                        var memberIsAmbient = hasFlag(pullDecl.getParentDecl().flags, PullElementFlags.Ambient);
-                        var memberIsInitialized = varDecl.equalsValueClause !== null;
-                        if (!memberIsAmbient || memberIsInitialized) {
-                            return varDecl;
-                        }
+                    if (pullDecl.kind === PullElementKind.EnumMember) {
+                        return <PullEnumElementDecl>pullDecl;
                     }
                 }
             }
@@ -1054,6 +1045,9 @@ module TypeScript {
 
         public emitEnumElement(varDecl: EnumElement): void {
             // <EnumName>[<EnumName>["<MemberName>"] = <MemberValue>] = "<MemberName>";
+            var pullDecl = <PullEnumElementDecl>this.semanticInfoChain.getDeclForAST(varDecl);
+            Debug.assert(pullDecl && pullDecl.kind === PullElementKind.EnumMember);
+
             this.emitComments(varDecl, true);
             this.recordSourceMappingStart(varDecl);
             var name = varDecl.propertyName.text();
@@ -1068,9 +1062,9 @@ module TypeScript {
             if (varDecl.equalsValueClause) {
                 this.emit(varDecl.equalsValueClause);
             }
-            else if (varDecl.constantValue !== null) {
+            else if (pullDecl.constantValue !== null) {
                 this.writeToOutput(' = ');
-                this.writeToOutput(varDecl.constantValue.toString());
+                this.writeToOutput(pullDecl.constantValue.toString());
             }
             else {
                 this.writeToOutput(' = null');

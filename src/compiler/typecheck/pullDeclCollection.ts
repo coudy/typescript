@@ -8,7 +8,7 @@ module TypeScript {
         public isDeclareFile = false;
         public parentChain: PullDecl[] = [];
 
-        constructor(public semanticInfoChain: SemanticInfoChain) {
+        constructor(public semanticInfoChain: SemanticInfoChain, public propagateEnumConstants: boolean) {
         }
 
         public getParent() { return this.parentChain ? this.parentChain[this.parentChain.length - 1] : null; }
@@ -116,17 +116,11 @@ module TypeScript {
     }
 
     function createEnumElementDecls(propertyDecl: EnumElement, context: DeclCollectionContext): void {
-        var declFlags = PullElementFlags.Public;
         var parent = context.getParent();
-        var declType = PullElementKind.EnumMember;
-
-        if (propertyDecl.constantValue !== null) {
-            declFlags |= PullElementFlags.Constant;
-        }
 
         var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
 
-        var decl = new NormalPullDecl(propertyDecl.propertyName.valueText(), propertyDecl.propertyName.text(), declType, declFlags, parent, span);
+        var decl = new PullEnumElementDecl(propertyDecl.propertyName.valueText(), propertyDecl.propertyName.text(), parent, span);
         context.semanticInfoChain.setDeclForAST(propertyDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, propertyDecl);
 
@@ -1010,16 +1004,140 @@ module TypeScript {
     function postCollectDecls(ast: AST, context: DeclCollectionContext) {
         var currentDecl = context.getParent();
 
+        if (ast.nodeType() === NodeType.EnumDeclaration) {
+            // Now that we've created all the child decls for the enum elements, determine what 
+            // (if any) their constant values should be.
+            computeEnumElementConstantValues(<EnumDeclaration>ast, currentDecl, context);
+        }
+
         // Don't pop the topmost decl.  We return that out at the end.
         if (ast.nodeType() !== NodeType.Script && currentDecl.ast() === ast) {
             context.popParent();
         }
     }
 
-    export module DeclarationCreator {
-        export function create(script: Script, semanticInfoChain: SemanticInfoChain): PullDecl {
-            var declCollectionContext = new DeclCollectionContext(semanticInfoChain);
+    function computeEnumElementConstantValues(ast: EnumDeclaration, enumDecl: PullDecl, context: DeclCollectionContext): void {
+        Debug.assert(enumDecl.kind === PullElementKind.Enum);
 
+        // If this is a non ambient enum, then it starts with a constant section of enum elements.
+        // Thus, elements without an initializer in these sections will be assumed to have a 
+        // constant value.
+        //
+        // However, if this an enum in an ambient context, then non initialized elements are 
+        // thought to have a computed value and are not in a constant section.
+        var isAmbientEnum = hasFlag(enumDecl.flags, PullElementFlags.Ambient);
+        var inConstantSection = !isAmbientEnum;
+        var currentConstantValue = 0;
+        var enumMemberDecls = <PullEnumElementDecl[]>enumDecl.getChildDecls();
+
+        for (var i = 0, n = ast.enumElements.members.length; i < n; i++) {
+            var enumElement = <EnumElement>ast.enumElements.members[i];
+            var enumElementDecl = ArrayUtilities.first(enumMemberDecls, d =>
+                context.semanticInfoChain.getASTForDecl(d) === enumElement);
+
+            Debug.assert(enumElementDecl.kind === PullElementKind.EnumMember);
+
+            if (enumElement.equalsValueClause === null) {
+                // Didn't have an initializer.  If we're in a constant section, then this appears
+                // to have the value of the current constant.  If we're in a non-constant section
+                // then this gets no value.
+                if (inConstantSection) {
+                    enumElementDecl.constantValue = currentConstantValue;
+                    currentConstantValue++;
+                }
+            }
+            else {
+                // Enum element had an initializer.  If it's a constant, then then enum gets that 
+                // value, and we transition to (or stay in) a constant section (as long as we're
+                // not in an ambient context.
+                //
+                // If it's not a constant, then we transition to a non-constant section.
+                enumElementDecl.constantValue = computeEnumElementConstantValue(enumElement.equalsValueClause.value, enumMemberDecls, context);
+                if (enumElementDecl.constantValue !== null && !isAmbientEnum) {
+                    // This enum element had a constant value.  We're now in a constant section.
+                    // Any successive enum elements should get their values from this constant
+                    // value onwards.
+                    inConstantSection = true;
+                    currentConstantValue = enumElementDecl.constantValue + 1;
+                }
+                else {
+                    // Didn't get a constant value.  We're not in a constant section.
+                    inConstantSection = false;
+                }
+            }
+
+            Debug.assert(enumElementDecl.constantValue !== undefined);
+        }
+    }
+
+    function computeEnumElementConstantValue(expression: AST, enumMemberDecls: PullEnumElementDecl[], context: DeclCollectionContext): number {
+        Debug.assert(expression);
+
+        if (isIntegerLiteralAST(expression)) {
+            // Always produce a value for an integer literal.
+            var token: NumericLiteral;
+            switch (expression.nodeType()) {
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
+                    token = <NumericLiteral>(<PrefixUnaryExpression>expression).operand;
+                    break;
+                default:
+                    token = <NumericLiteral>expression;
+            }
+
+            var value = token.value;
+            return value && expression.nodeType() === NodeType.NegateExpression ? -value : value;
+        }
+        else if (context.propagateEnumConstants) {
+            // It wasn't a numeric literal.  However, the experimental switch to be more aggressive
+            // about propogating enum constants is enabled.  See if we can still figure out the
+            // constant value for this enum element.
+            switch (expression.nodeType()) {
+                case NodeType.Name:
+                    // If it's a name, see if we already had an enum value named this.  If so,
+                    // return that value.  Note, only search backward in the enum for a match.
+                    var name = <Identifier>expression;
+                    var matchingEnumElement = ArrayUtilities.firstOrDefault(enumMemberDecls, d => d.name === name.valueText());
+
+                    return matchingEnumElement ? matchingEnumElement.constantValue : null;
+
+                case NodeType.LeftShiftExpression:
+                    // Handle the common case of a left shifted value.
+                    var binaryExpression = <BinaryExpression>expression;
+                    var left = computeEnumElementConstantValue(binaryExpression.left, enumMemberDecls, context);
+                    var right = computeEnumElementConstantValue(binaryExpression.right, enumMemberDecls, context);
+                    if (left === null || right === null) {
+                        return null;
+                    }
+
+                    return left << right;
+
+                case NodeType.BitwiseOrExpression:
+                    // Handle the common case of an or'ed value.
+                    var binaryExpression = <BinaryExpression>expression;
+                    var left = computeEnumElementConstantValue(binaryExpression.left, enumMemberDecls, context);
+                    var right = computeEnumElementConstantValue(binaryExpression.right, enumMemberDecls, context);
+                    if (left === null || right === null) {
+                        return null;
+                    }
+
+                    return left | right;
+            }
+
+            // TODO: add more cases.
+            return null;
+        }
+        else {
+            // Wasn't an integer literal, and we're not aggressively propagating constants.
+            // There is no constant value for this expression.
+            return null;
+        }
+    }
+
+    export module DeclarationCreator {
+        export function create(script: Script, semanticInfoChain: SemanticInfoChain, compilationSettings: ImmutableCompilationSettings): PullDecl {
+            var declCollectionContext = new DeclCollectionContext(semanticInfoChain, compilationSettings.propagateEnumConstants());
+            
             // create decls
             getAstWalkerFactory().simpleWalk(script, preCollectDecls, postCollectDecls, declCollectionContext);
 

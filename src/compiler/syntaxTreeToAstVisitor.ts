@@ -570,104 +570,28 @@ module TypeScript {
 
             this.movePast(node.openBraceToken);
 
-            var enumElements: EnumElement[] = [];
-            for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
-                if (i % 2 === 1) {
-                    this.movePast(node.enumElements.childAt(i));
-                }
-                else {
-                    var enumElementSyntax = <EnumElementSyntax>node.enumElements.childAt(i);
-                    var enumElementFullStart = this.position;
-                    var memberStart = this.position + enumElementSyntax.leadingTriviaWidth();
-
-                    var memberName = this.identifierFromToken(enumElementSyntax.propertyName, /*isOptional:*/ false);
-                    this.movePast(enumElementSyntax.propertyName);
-
-                    var value: EqualsValueClause = enumElementSyntax.equalsValueClause !== null ? enumElementSyntax.equalsValueClause.accept(this) : null;
-
-                    var enumElement = new EnumElement(memberName, value);
-                    this.setCommentsAndSpan(enumElement, enumElementFullStart, enumElementSyntax);
-                    enumElement.constantValue = this.determineConstantValue(enumElementSyntax.equalsValueClause, enumElements);
-
-                    enumElements.push(enumElement);
-                }
-            }
+            var enumElements = this.visitSeparatedSyntaxList(node.enumElements);
 
             this.movePast(node.closeBraceToken);
 
-            var result = new EnumDeclaration(this.visitModifiers(node.modifiers), identifier, new ASTList(this.fileName, enumElements));
+            var result = new EnumDeclaration(this.visitModifiers(node.modifiers), identifier, enumElements);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
         }
 
-        public visitEnumElement(node: EnumElementSyntax): void {
-            // Processing enum elements should be handled from inside visitEnumDeclaration.
-            throw Errors.invalidOperation();
-        }
+        public visitEnumElement(node: EnumElementSyntax): EnumElement {
+            var start = this.position;
 
-        private determineConstantValue(equalsValue: EqualsValueClauseSyntax, declarators: EnumElement[]): number {
-            var value = equalsValue === null ? null : equalsValue.value;
+            var memberName = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
+            this.movePast(node.propertyName);
 
-            if (value === null) {
-                // If they provided no value, then our constant value is 0 if we're the first 
-                // element, or one greater than the last constant value.
-                if (declarators.length === 0) {
-                    return 0;
-                }
-                else {
-                    var lastConstantValue = ArrayUtilities.last(declarators).constantValue;
-                    return lastConstantValue !== null ? lastConstantValue + 1 : null;
-                }
-            }
-            else {
-                return this.computeConstantValue(value, declarators);
-            }
-        }
+            var value = node.equalsValueClause !== null ? this.visitEqualsValueClause(node.equalsValueClause) : null;
 
-        private computeConstantValue(expression: IExpressionSyntax, declarators: EnumElement[]): number {
-            if (Syntax.isIntegerLiteral(expression)) {
-                // Always produce a value for an integer literal.
-                var token: ISyntaxToken;
-                switch (expression.kind()) {
-                    case SyntaxKind.PlusExpression:
-                    case SyntaxKind.NegateExpression:
-                        token = <ISyntaxToken>(<PrefixUnaryExpressionSyntax>expression).operand;
-                        break;
-                    default:
-                        token = <ISyntaxToken>expression;
-                }
+            var result = new EnumElement(memberName, value);
+            this.setCommentsAndSpan(result, start, node);
 
-                var value = token.value();
-                return value && expression.kind() === SyntaxKind.NegateExpression ? -value : value;
-            }
-            else if (this.compilationSettings.propagateEnumConstants()) {
-                switch (expression.kind()) {
-                    case SyntaxKind.IdentifierName:
-                        // If it's a name, see if we already had an enum value named this.  If so,
-                        // return that value.
-                        var variableDeclarator = ArrayUtilities.firstOrDefault(declarators, d => d.propertyName.valueText() === (<ISyntaxToken>expression).valueText());
-                        return variableDeclarator ? variableDeclarator.constantValue : null;
-
-                    case SyntaxKind.LeftShiftExpression:
-                        // Handle the common case of a left shifted value.
-                        var binaryExpression = <BinaryExpressionSyntax>expression;
-                        return this.computeConstantValue(binaryExpression.left, declarators) << this.computeConstantValue(binaryExpression.right, declarators);
-
-                    case SyntaxKind.BitwiseOrExpression:
-                        // Handle the common case of an or'ed value.
-                        var binaryExpression = <BinaryExpressionSyntax>expression;
-                        return this.computeConstantValue(binaryExpression.left, declarators) | this.computeConstantValue(binaryExpression.right, declarators);
-                }
-
-                // TODO: add more cases.
-                return null;
-            }
-            else {
-                // Wasn't an integer literal, and we're not aggressively propagating constants.
-                // There is no constant value for this expression.
-                return null;
-            }
+            return result;
         }
 
         public visitImportDeclaration(node: ImportDeclarationSyntax): ImportDeclaration {
@@ -742,7 +666,7 @@ module TypeScript {
             return result;
         }
 
-        public visitEqualsValueClause(node: EqualsValueClauseSyntax): AST {
+        public visitEqualsValueClause(node: EqualsValueClauseSyntax): EqualsValueClause {
             var start = this.position;
             var afterEqualsComments = this.convertTokenTrailingComments(node.equalsToken,
                 this.position + node.equalsToken.leadingTriviaWidth() + node.equalsToken.width());

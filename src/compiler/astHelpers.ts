@@ -542,4 +542,26 @@ module TypeScript {
         var variableStatement = getVariableStatement(variableDeclarator);
         return variableStatement ? variableStatement.modifiers : sentinelEmptyArray;
     }
+
+    export function isIntegerLiteralAST(expression: AST): boolean {
+        if (expression) {
+            switch (expression.nodeType()) {
+                case NodeType.PlusExpression:
+                case NodeType.NegateExpression:
+                    // Note: if there is a + or - sign, we can only allow a normal integer following
+                    // (and not a hex integer).  i.e. -0xA is a legal expression, but it is not a 
+                    // *literal*.
+                    expression = (<PrefixUnaryExpression>expression).operand;
+                    return expression.nodeType() === NodeType.NumericLiteral && IntegerUtilities.isInteger((<NumericLiteral>expression).text());
+
+                case NodeType.NumericLiteral:
+                    // If it doesn't have a + or -, then either an integer literal or a hex literal
+                    // is acceptable.
+                    var text = (<NumericLiteral>expression).text();
+                    return IntegerUtilities.isInteger(text) || IntegerUtilities.isHexInteger(text);
+            }
+        }
+
+        return false;
+    }
 }

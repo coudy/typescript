@@ -1405,8 +1405,6 @@ module TypeScript {
     }
 
     export class EnumElement extends AST {
-        public constantValue: number = null;
-
         constructor(public propertyName: Identifier, public equalsValueClause: EqualsValueClause) {
             super();
             propertyName && (propertyName.parent = this);
