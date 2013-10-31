@@ -188,6 +188,11 @@ module TypeScript {
             return null;
         }
 
+        public _getResolver(): PullTypeResolver {
+            Debug.assert(this._declarations && this._declarations.length > 0);
+            return this._declarations[0].semanticInfoChain().getResolver();
+        }
+
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
@@ -1128,7 +1133,7 @@ module TypeScript {
 
         // The instantiation cache we use in all other circumstances.  i.e. instantiating with
         // multiple types, or instantiating with object types.
-        private _complexSpecializationCache: IIndexable<PullTypeSymbol> = null;
+        private _complexInstantiationCache: IIndexable<PullTypeSymbol> = null;
 
 
         // GTODO
@@ -1153,7 +1158,7 @@ module TypeScript {
 
         public typeReference: PullTypeReferenceSymbol = null;
 
-        constructor(name: string, kind: PullElementKind, public _resolver: PullTypeResolver) {
+        constructor(name: string, kind: PullElementKind) {
             super(name, kind);
             this.type = this;
         }
@@ -1503,11 +1508,11 @@ module TypeScript {
                 this._simpleInstantiationCache[substitutingTypes[0].pullSymbolID] = specializedVersionOfThisType;
             }
             else {
-                if (!this._complexSpecializationCache) {
-                    this._complexSpecializationCache = createIntrinsicsObject<PullTypeSymbol>();
+                if (!this._complexInstantiationCache) {
+                    this._complexInstantiationCache = createIntrinsicsObject<PullTypeSymbol>();
                 }
 
-                this._complexSpecializationCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
+                this._complexInstantiationCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
             }
 
             if (!this._specializedVersionsOfThisType) {
@@ -1532,11 +1537,11 @@ module TypeScript {
                 return result ? result : null;
             }
             else {
-                if (!this._complexSpecializationCache) {
+                if (!this._complexInstantiationCache) {
                     return null;
                 }
 
-                var result = this._complexSpecializationCache[getIDForTypeSubstitutions(substitutingTypes)];
+                var result = this._complexInstantiationCache[getIDForTypeSubstitutions(substitutingTypes)];
                 return result ? result : null;
             }
         }
@@ -1619,12 +1624,13 @@ module TypeScript {
                 return;
             }
 
+            var resolver = this._getResolver();
             for (var i = 0; i < baseTypeSignatures.length; i++) {
                 var baseSignature = baseTypeSignatures[i];
                 // If it is different from every signature in the derived type (modulo
                 // return types, add it to the list)
                 var signatureIsHidden = ArrayUtilities.any(derivedTypeSignatures, sig => 
-                    this._resolver.signaturesAreIdentical(baseSignature, sig, /*includingReturnType*/ false));
+                    resolver.signaturesAreIdentical(baseSignature, sig, /*includingReturnType*/ false));
 
                 if (!signatureIsHidden) {
                     signaturesBeingAggregated.push(baseSignature);
@@ -2368,8 +2374,8 @@ module TypeScript {
     }
 
     export class PullPrimitiveTypeSymbol extends PullTypeSymbol {
-        constructor(name: string, resolver: PullTypeResolver) {
-            super(name, PullElementKind.Primitive, resolver);
+        constructor(name: string) {
+            super(name, PullElementKind.Primitive);
 
             this.isResolved = true;
         }
@@ -2386,8 +2392,8 @@ module TypeScript {
     }
 
     export class PullStringConstantTypeSymbol extends PullPrimitiveTypeSymbol {
-        constructor(name: string, resolver: PullTypeResolver) {
-            super(name, resolver);
+        constructor(name: string) {
+            super(name);
         }
 
         public isStringConstant() {
@@ -2397,8 +2403,8 @@ module TypeScript {
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
 
-        constructor(private anyType: PullTypeSymbol, name: string, resolver: PullTypeResolver) {
-            super(name, resolver);
+        constructor(private anyType: PullTypeSymbol, name: string) {
+            super(name);
 
             this.isResolved = true;
         }
@@ -2428,8 +2434,8 @@ module TypeScript {
         private assignedType: PullTypeSymbol = null;
         private assignedContainer: PullContainerSymbol = null;
 
-        constructor(name: string, kind: PullElementKind, resolver: PullTypeResolver) {
-            super(name, kind, resolver);
+        constructor(name: string, kind: PullElementKind) {
+            super(name, kind);
         }
 
         public isContainer() { return true; }
@@ -2504,17 +2510,17 @@ module TypeScript {
         private _typeUsedExternally = false;
         private retrievingExportAssignment = false;
 
-        constructor(name: string, resolver: PullTypeResolver) {
-            super(name, PullElementKind.TypeAlias, resolver);
+        constructor(name: string) {
+            super(name, PullElementKind.TypeAlias);
         }
 
         public typeUsedExternally(): boolean {
-            this._resolver.resolveDeclaredSymbol(this);
+            this._getResolver().resolveDeclaredSymbol(this);
             return this._typeUsedExternally;
         }
 
         public isUsedAsValue(): boolean {
-            this._resolver.resolveDeclaredSymbol(this);
+            this._getResolver().resolveDeclaredSymbol(this);
             return this._isUsedAsValue;
         }
 
@@ -2527,17 +2533,17 @@ module TypeScript {
         }
 
         public assignedValue(): PullSymbol {
-            this._resolver.resolveDeclaredSymbol(this);
+            this._getResolver().resolveDeclaredSymbol(this);
             return this._assignedValue;
         }
 
         public assignedType(): PullTypeSymbol {
-            this._resolver.resolveDeclaredSymbol(this);
+            this._getResolver().resolveDeclaredSymbol(this);
             return this._assignedType;
         }
 
         public assignedContainer(): PullContainerSymbol {
-            this._resolver.resolveDeclaredSymbol(this);
+            this._getResolver().resolveDeclaredSymbol(this);
             return this._assignedContainer;
         }
 
@@ -2691,8 +2697,8 @@ module TypeScript {
     export class PullTypeParameterSymbol extends PullTypeSymbol {
         private _constraint: PullTypeSymbol = null;
 
-        constructor(name: string, private _isFunctionTypeParameter: boolean, resolver: PullTypeResolver) {
-            super(name, PullElementKind.TypeParameter, resolver);
+        constructor(name: string, private _isFunctionTypeParameter: boolean) {
+            super(name, PullElementKind.TypeParameter);
         }
 
         public isTypeParameter() { return true; }

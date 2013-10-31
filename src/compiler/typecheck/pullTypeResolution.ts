@@ -240,7 +240,7 @@ module TypeScript {
         }
 
         public getNewErrorTypeSymbol(name: string = null): PullErrorTypeSymbol {
-            return new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, name, this);
+            return new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, name);
         }
 
         public getEnclosingDecl(decl: PullDecl): PullDecl {
@@ -1045,7 +1045,7 @@ module TypeScript {
             var typeParameterArgumentMap: PullTypeSymbol[] = [];
 
             for (var i = 0; i < typeParameters.length; i++) {
-                typeParameterArgumentMap[typeParameters[i].pullSymbolID] = typeArguments[i] || new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name, this);
+                typeParameterArgumentMap[typeParameters[i].pullSymbolID] = typeArguments[i] || new PullErrorTypeSymbol(this.semanticInfoChain.anyTypeSymbol, typeParameters[i].name);
             }
 
             return PullInstantiatedTypeReferenceSymbol.create(this, type, typeParameterArgumentMap);
@@ -2246,7 +2246,7 @@ module TypeScript {
             else if (term.nodeType() === NodeType.StringLiteral) {
                 var stringConstantAST = <StringLiteral>term;
                 var enclosingDecl = this.getEnclosingDeclForAST(term);
-                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text(), this);
+                typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text());
                 var decl = new PullSynthesizedDecl(stringConstantAST.text(), stringConstantAST.text(),
                     typeDeclSymbol.kind, null, enclosingDecl,
                     new TextSpan(stringConstantAST.minChar, stringConstantAST.getLength()),
@@ -5994,7 +5994,7 @@ module TypeScript {
             }
 
             if (!typeNameSymbol.isGeneric() && (typeNameSymbol.isClass() || typeNameSymbol.isInterface())) {
-                typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(this, typeNameSymbol);
+                typeNameSymbol = PullTypeReferenceSymbol.createTypeReference(typeNameSymbol);
             }
 
             return typeNameSymbol;
@@ -7017,7 +7017,7 @@ module TypeScript {
 
             if (!typeSymbol) {
                 // TODO: why don't se just use the normal symbol binder for this?
-                typeSymbol = new PullTypeSymbol("", PullElementKind.Interface, this);
+                typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
                 typeSymbol.addDeclaration(objectLitDecl);
                 this.setSymbolForAST(objectLitAST, typeSymbol, context);
                 objectLitDecl.setSymbol(typeSymbol);
