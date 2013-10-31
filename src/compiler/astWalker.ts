@@ -39,6 +39,10 @@ module TypeScript {
         walker.walk(preAst.expression);
     }
 
+    function walkTypeArgumentListChildren(preAst: TypeArgumentList, walker: AstWalker): void {
+        walker.walk(preAst.typeArguments);
+    }
+
     function walkTypeOfExpressionChildren(preAst: TypeOfExpression, walker: AstWalker): void {
         walker.walk(preAst.expression);
     }
@@ -521,6 +525,7 @@ module TypeScript {
     childrenWalkers[NodeType.ThrowStatement] = walkThrowStatementChildren;
     childrenWalkers[NodeType.TrueLiteral] = null;
     childrenWalkers[NodeType.TryStatement] = walkTryStatementChildren;
+    childrenWalkers[NodeType.TypeArgumentList] = walkTypeArgumentListChildren;
     childrenWalkers[NodeType.TypeOfExpression] = walkTypeOfExpressionChildren;
     childrenWalkers[NodeType.TypeParameter] = walkTypeParameterChildren;
     childrenWalkers[NodeType.TypeQuery] = walkTypeQueryChildren;

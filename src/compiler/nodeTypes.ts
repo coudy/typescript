@@ -40,6 +40,7 @@ module TypeScript {
         TypeParameter,
         Constraint,
         GenericType,
+        TypeArgumentList,
         TypeRef,
         TypeQuery,
         QualifiedName,

@@ -764,8 +764,19 @@ module TypeScript {
         }
     }
 
+    export class TypeArgumentList extends AST {
+        constructor(public typeArguments: ASTList) {
+            super();
+            typeArguments && (typeArguments.parent = this);
+        }
+
+        nodeType(): NodeType {
+            return NodeType.TypeArgumentList;
+        }
+    }
+
     export class GenericType extends AST {
-        constructor(public name: AST, public typeArgumentList: ASTList) {
+        constructor(public name: AST, public typeArgumentList: TypeArgumentList) {
             super();
             name && (name.parent = this);
             typeArgumentList && (typeArgumentList.parent = this);
@@ -903,7 +914,7 @@ module TypeScript {
     }
 
     export class ArgumentList extends AST {
-        constructor(public typeArgumentList: ASTList, public arguments: ASTList, public closeParenToken: ASTSpan) {
+        constructor(public typeArgumentList: TypeArgumentList, public arguments: ASTList, public closeParenToken: ASTSpan) {
             super();
             typeArgumentList && (typeArgumentList.parent = this);
             arguments && (arguments.parent = this);

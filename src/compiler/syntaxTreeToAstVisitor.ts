@@ -847,7 +847,11 @@ module TypeScript {
             return new TypeReference(term);
         }
 
-        public visitTypeArgumentList(node: TypeArgumentListSyntax): ASTList {
+        public visitTypeArgumentList(node: TypeArgumentListSyntax): TypeArgumentList {
+            if (node === null) {
+                return null;
+            }
+
             var array = new Array<any>(node.typeArguments.nonSeparatorCount());
 
             this.movePast(node.lessThanToken);
@@ -864,8 +868,11 @@ module TypeScript {
             }
             this.movePast(node.greaterThanToken);
             
-            var result = new ASTList(this.fileName, array);
-            this.setSpan(result, start, node.typeArguments);
+            var typeArguments = new ASTList(this.fileName, array);
+            this.setSpan(typeArguments, start, node.typeArguments);
+
+            var result = new TypeArgumentList(typeArguments);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -948,7 +955,7 @@ module TypeScript {
             var start = this.position;
 
             var underlying = this.visitType(node.name).term;
-            var typeArguments = node.typeArgumentList.accept(this);
+            var typeArguments = this.visitTypeArgumentList(node.typeArgumentList);
 
             var genericType = new GenericType(underlying, typeArguments);
             this.setSpan(genericType, start, node);
@@ -1058,7 +1065,7 @@ module TypeScript {
 
             var start = this.position;
 
-            var typeArguments: ASTList = node.typeArgumentList ? node.typeArgumentList.accept(this) : null;
+            var typeArguments = this.visitTypeArgumentList(node.typeArgumentList);
 
             this.movePast(node.openParenToken);
 
