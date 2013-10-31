@@ -554,7 +554,7 @@ module TypeScript {
                 var outerTypeMap = (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap;
                 var innerSubstitution: PullTypeSymbol = null;
                 var outerSubstitution: PullTypeSymbol = null;
-                var canCondenseTypeParameters = true;
+                var canCondenseTypeParametersToRootTypeParameters = true;
 
                 for (var typeParameterID in outerTypeMap) {
                     if (outerTypeMap.hasOwnProperty(typeParameterID)) {
@@ -562,6 +562,24 @@ module TypeScript {
                         outerSubstitution = outerTypeMap[typeParameterID];
                         innerSubstitution = typeParameterArgumentMap[outerSubstitution.pullSymbolID];
 
+                        // Consider the following case
+                        //
+                        // interface A<StringArgPos1, NumberArgPos2> {
+                        //    xPos1 : StringArgPos1
+                        //    yPos2 : NumberArgPos2
+                        //    zPos2Pos1 : A<NumberArgPos2, StringArgPos1>
+                        // }
+                        //   
+                        // In such a situation where we want to instantiate A (say, "A<string, number>"),
+                        // we need to be careful that in instantiating zPos2Pos1, we don't improperly 
+                        // condense NumberArgPos2 to StringArgPos1.  Because the type parameters of zPos2Pos1
+                        // are a re-ordering of the type parameters for A, re-specializing one will cause the other
+                        // to be respecialized in the instantiation map.  (So, in this case, zPos2Pos1 would end
+                        // up with a type of 'A<string, number>', when we wanted A<number, string>.
+                        //
+                        // We do the check below to prevent dependent type parameters from being re-instantiated up-front.
+                        // Instead, we preserve the instantiation info, and let substitution occur lazily.
+                       
                         if (innerSubstitution &&
                             (!outerSubstitution.isTypeParameter() ||
                             !outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] ||
@@ -569,17 +587,25 @@ module TypeScript {
 
                             initializationMap[typeParameterID] = typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID];
 
+                            // In cases where we're testing for infinitely expanding generic types, a non-type parameter value may
+                            // can be added to the substitution map.  In these cases, we do not want to re-map all type arguments
+                            // to the root's type parameters - doing so would prevent us from properly checking for wrapped nested
+                            // types later on (because the checks depend on wrapped instantiations *not* being an instantiation of
+                            // the root type.  See getGenerativeTypeClassification
                             if (!outerSubstitution.isTypeParameter()) {
-                                canCondenseTypeParameters = false;
+                                canCondenseTypeParametersToRootTypeParameters = false;
                             }
                         }
                         else {
-                            canCondenseTypeParameters = false;
+                            canCondenseTypeParametersToRootTypeParameters = false;
                         }
                     }
                 }
 
-                if (canCondenseTypeParameters && typeParameters.length) {
+                // If the type being instantiated has takes type parameters, rather than passing in the entire type substitution context,
+                // we limit the substitutions to those that affect the root named type.  This prevents us from over-instantiating types
+                // in a generic function signature
+                if (canCondenseTypeParametersToRootTypeParameters && typeParameters.length) {
                     var filteredInstantiationMap: PullTypeSymbol[] = [];
 
                     for (var i = 0; i < typeParameters.length; i++) {
