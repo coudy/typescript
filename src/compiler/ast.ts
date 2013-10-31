@@ -717,8 +717,19 @@ module TypeScript {
         }
     }
 
+    export class ParameterList extends AST {
+        constructor(public openParenTrailingComments: Comment[], public parameters: ASTList) {
+            super();
+            parameters && (parameters.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ParameterList;
+        }
+    }
+
     export class ConstructorType extends AST {
-        constructor(public typeParameterList: TypeParameterList, public parameterList: ASTList, public type: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public type: TypeReference) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
@@ -731,7 +742,7 @@ module TypeScript {
     }
 
     export class FunctionType extends AST {
-        constructor(public typeParameterList: TypeParameterList, public parameterList: ASTList, public type: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public type: TypeReference) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
@@ -1023,7 +1034,7 @@ module TypeScript {
     }
 
     export class CallSignature extends AST {
-        constructor(public typeParameterList: TypeParameterList, public parameterList: ASTList, public typeAnnotation: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ParameterList, public typeAnnotation: TypeReference) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
@@ -1119,7 +1130,7 @@ module TypeScript {
     }
 
     export class ConstructorDeclaration extends AST {
-        constructor(public parameterList: ASTList, public block: Block) {
+        constructor(public parameterList: ParameterList, public block: Block) {
             super();
             parameterList && (parameterList.parent = this);
             block && (block.parent = this);
@@ -1146,7 +1157,7 @@ module TypeScript {
     export class GetAccessor extends AST {
         constructor(public modifiers: PullElementFlags[],
                     public propertyName: Identifier,
-                    public parameterList: ASTList,
+                    public parameterList: ParameterList,
                     public typeAnnotation: TypeReference,
                     public block: Block) {
             super();
@@ -1164,7 +1175,7 @@ module TypeScript {
     export class SetAccessor extends AST {
         constructor(public modifiers: PullElementFlags[],
                     public propertyName: Identifier,
-                    public parameterList: ASTList,
+                    public parameterList: ParameterList,
                     public block: Block) {
             super();
             propertyName && (propertyName.parent = this);

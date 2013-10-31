@@ -340,16 +340,16 @@ module TypeScript {
             return parameter.questionToken !== null || parameter.equalsValueClause !== null;
         }
 
-        export function fromParameterList(list: ASTList): IParameters {
+        export function fromParameterList(list: ParameterList): IParameters {
             return {
-                length: list.members.length,
+                length: list.parameters.members.length,
                 lastParameterIsRest: () => lastParameterIsRest(list),
-                ast: list,
-                astAt: (index: number) => list.members[index],
-                identifierAt: (index: number) => (<Parameter>list.members[index]).identifier,
-                typeAt: (index: number) => (<Parameter>list.members[index]).typeAnnotation,
-                initializerAt: (index: number) => (<Parameter>list.members[index]).equalsValueClause,
-                isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.members[index]),
+                ast: list.parameters,
+                astAt: (index: number) => list.parameters.members[index],
+                identifierAt: (index: number) => (<Parameter>list.parameters.members[index]).identifier,
+                typeAt: (index: number) => (<Parameter>list.parameters.members[index]).typeAnnotation,
+                initializerAt: (index: number) => (<Parameter>list.parameters.members[index]).equalsValueClause,
+                isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.parameters.members[index]),
             }
         }
     }
@@ -460,7 +460,7 @@ module TypeScript {
         throw Errors.invalidOperation();
     }
 
-    export function getParameterList(ast: AST): ASTList {
+    export function getParameterList(ast: AST): ParameterList {
         if (ast) {
             switch (ast.nodeType()) {
                 case NodeType.ConstructorDeclaration:

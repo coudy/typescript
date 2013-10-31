@@ -1820,7 +1820,7 @@ module TypeScript {
             return this.semanticInfoChain.voidTypeSymbol;
         }
 
-        private resolveAnyFunctionTypeSignature(funcDeclAST: AST, typeParameters: TypeParameterList, parameterList: ASTList, returnTypeAnnotation: TypeReference, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveAnyFunctionTypeSignature(funcDeclAST: AST, typeParameters: TypeParameterList, parameterList: ParameterList, returnTypeAnnotation: TypeReference, context: PullTypeResolutionContext): PullTypeSymbol {
             var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             Debug.assert(functionDecl);
 
@@ -1842,8 +1842,8 @@ module TypeScript {
 
             // link parameters and resolve their annotations
             if (parameterList) {
-                for (var i = 0; i < parameterList.members.length; i++) {
-                    this.resolveFunctionTypeSignatureParameter(<Parameter>parameterList.members[i], signature, functionDecl, context);
+                for (var i = 0; i < parameterList.parameters.members.length; i++) {
+                    this.resolveFunctionTypeSignatureParameter(<Parameter>parameterList.parameters.members[i], signature, functionDecl, context);
                 }
             }
 
@@ -2347,6 +2347,10 @@ module TypeScript {
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
                 varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
+        }
+
+        private resolveParameterList(list: ParameterList, context: PullTypeResolutionContext): PullSymbol {
+            return this.resolveList(list.parameters, context);
         }
 
         private resolveParameter(parameter: Parameter, context: PullTypeResolutionContext): PullSymbol {
@@ -3070,8 +3074,8 @@ module TypeScript {
 
             // resolve parameter type annotations as necessary
             if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
-                    this.resolveAST(funcDeclAST.parameterList.members[i], /*isContextuallyTyped:*/ false, context);
+                for (var i = 0; i < funcDeclAST.parameterList.parameters.members.length; i++) {
+                    this.resolveAST(funcDeclAST.parameterList.parameters.members[i], /*isContextuallyTyped:*/ false, context);
                 }
             }
 
@@ -3151,7 +3155,7 @@ module TypeScript {
             isStatic: boolean,
             name: Identifier,
             typeParameters: TypeParameterList,
-            parameters: ASTList,
+            parameters: ParameterList,
             returnTypeAnnotation: TypeReference,
             block: Block,
             context: PullTypeResolutionContext) {
@@ -3419,9 +3423,9 @@ module TypeScript {
                     // TODO: why are we getting ourselves out of typecheck here?
                     context.inTypeCheck = false;
 
-                    for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
+                    for (var i = 0; i < funcDeclAST.parameterList.parameters.members.length; i++) {
                         // TODO: why are we calling resolveParameter instead of resolveAST.
-                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context);
+                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.members[i], context);
                     }
 
                     context.inTypeCheck = prevInTypeCheck;
@@ -3585,7 +3589,7 @@ module TypeScript {
         }
 
 
-        private resolveFunctionDeclaration(funcDeclAST: AST, isStatic: boolean, name: Identifier, typeParameters: TypeParameterList, parameterList: ASTList, returnTypeAnnotation: TypeReference, block: Block, context: PullTypeResolutionContext): PullSymbol {
+        private resolveFunctionDeclaration(funcDeclAST: AST, isStatic: boolean, name: Identifier, typeParameters: TypeParameterList, parameterList: ParameterList, returnTypeAnnotation: TypeReference, block: Block, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
@@ -3672,9 +3676,9 @@ module TypeScript {
                     // TODO: why are we setting inTypeCheck false here?
                     context.inTypeCheck = false;
 
-                    for (var i = 0; i < parameterList.members.length; i++) {
+                    for (var i = 0; i < parameterList.parameters.members.length; i++) {
                         // TODO: why are are calling resolveParameter directly here?
-                        this.resolveParameter(<Parameter>parameterList.members[i], context);
+                        this.resolveParameter(<Parameter>parameterList.parameters.members[i], context);
                     }
 
                     context.inTypeCheck = prevInTypeCheck;
@@ -3778,8 +3782,9 @@ module TypeScript {
 
             if (setterFunctionDeclarationAst &&
                 setterFunctionDeclarationAst.parameterList &&
-                setterFunctionDeclarationAst.parameterList.members.length > 0) {
-                var parameter = <Parameter>setterFunctionDeclarationAst.parameterList.members[0];
+                setterFunctionDeclarationAst.parameterList.parameters.members.length > 0) {
+
+                var parameter = <Parameter>setterFunctionDeclarationAst.parameterList.parameters.members[0];
                 return this.resolveTypeReference(parameter.typeAnnotation, context);
             }
 
@@ -3922,7 +3927,7 @@ module TypeScript {
 
         private resolveGetAccessorDeclaration(
             funcDeclAST: AST,
-            parameters: ASTList,
+            parameters: ParameterList,
             returnTypeAnnotation: TypeReference,
             block: Block,
             setterAnnotatedType: PullTypeSymbol,
@@ -4068,10 +4073,10 @@ module TypeScript {
         }
 
         static hasSetAccessorParameterTypeAnnotation(setAccessor: SetAccessor) {
-            return setAccessor.parameterList && setAccessor.parameterList.members.length > 0 && (<Parameter>setAccessor.parameterList.members[0]).typeAnnotation != null;
+            return setAccessor.parameterList && setAccessor.parameterList.parameters.members.length > 0 && (<Parameter>setAccessor.parameterList.parameters.members[0]).typeAnnotation != null;
         }
 
-        private resolveSetAccessorDeclaration(funcDeclAST: AST, parameterList: ASTList, context: PullTypeResolutionContext): PullSymbol {
+        private resolveSetAccessorDeclaration(funcDeclAST: AST, parameterList: ParameterList, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
@@ -4099,8 +4104,8 @@ module TypeScript {
 
                 // resolve parameter type annotations as necessary
                 if (parameterList) {
-                    for (var i = 0; i < parameterList.members.length; i++) {
-                        this.resolveParameter(<Parameter>parameterList.members[i], context);
+                    for (var i = 0; i < parameterList.parameters.members.length; i++) {
+                        this.resolveParameter(<Parameter>parameterList.parameters.members[i], context);
                     }
                 }
 
@@ -4129,8 +4134,8 @@ module TypeScript {
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.members.length; i++) {
-                    this.resolveParameter(<Parameter>funcDeclAST.parameterList.members[i], context);
+                for (var i = 0; i < funcDeclAST.parameterList.parameters.members.length; i++) {
+                    this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.members[i], context);
                 }
             }
 
@@ -5153,6 +5158,9 @@ module TypeScript {
                 case NodeType.PropertySignature:
                     return this.resolvePropertySignature(<PropertySignature>ast, context);
 
+                case NodeType.ParameterList:
+                    return this.resolveParameterList(<ParameterList>ast, context);
+
                 case NodeType.Parameter:
                     return this.resolveParameter(<Parameter>ast, context);
 
@@ -5716,7 +5724,7 @@ module TypeScript {
                     var foundMatchingParameter = false;
                     if (parameterList) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
-                            var candidateParameter = <Parameter>parameterList.members[i];
+                            var candidateParameter = <Parameter>parameterList.parameters.members[i];
                             if (candidateParameter && candidateParameter.identifier.valueText() === id) {
                                 foundMatchingParameter = true;
                             }
@@ -5727,7 +5735,7 @@ module TypeScript {
                         // We didn't find a matching parameter to the left, so error
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
                             DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
-                            [(<Parameter>parameterList.members[currentParameterIndex]).identifier.text(), nameAST.text()]));
+                            [(<Parameter>parameterList.parameters.members[currentParameterIndex]).identifier.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
                 }
@@ -5769,11 +5777,11 @@ module TypeScript {
         private getCurrentParameterIndexForFunction(parameter: AST, funcDecl: AST): number {
             var parameterList = getParameterList(funcDecl);
             if (parameterList) {
-                while (parameter) {
-                    if (parameter.parent === parameterList) {
+                while (parameter && parameter.parent) {
+                    if (parameter.parent.parent === parameterList) {
                         // We were contained in the parameter list.  Return which parameter index 
                         // we were at.
-                        return parameterList.members.indexOf(parameter);
+                        return parameterList.parameters.members.indexOf(parameter);
                     }
 
                     parameter = parameter.parent;
@@ -8417,7 +8425,7 @@ module TypeScript {
 
             // create a type argument list based on the parameters of signatureB
             var signatureAST = this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, getParameterList(signatureAST), new TypeComparisonInfo, context);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, getParameterList(signatureAST).parameters, new TypeComparisonInfo, context);
 
             var functionTypeA = signatureA.functionType;
             var functionTypeB = signatureB.functionType;

@@ -882,7 +882,7 @@ module TypeScript {
 
             this.movePast(node.newKeyword);
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
-            var parameters = node.parameterList.accept(this);
+            var parameters = this.visitParameterList(node.parameterList);
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
@@ -900,7 +900,7 @@ module TypeScript {
         public visitFunctionType(node: FunctionTypeSyntax): TypeReference {
             var start = this.position;
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
-            var parameters = node.parameterList.accept(this);
+            var parameters = this.visitParameterList(node.parameterList);
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
 
@@ -1217,16 +1217,28 @@ module TypeScript {
             return result;
         }
 
-        public visitParameterList(node: ParameterListSyntax): ASTList {
+        public visitParameterList(node: ParameterListSyntax): ParameterList {
+            if (!node) {
+                return null;
+            }
+
             var start = this.position;
 
             var openParenToken = node.openParenToken;
-            this.previousTokenTrailingComments = this.convertTokenTrailingComments(
-                openParenToken, start + openParenToken.leadingTriviaWidth() + openParenToken.width());
+
+            this.previousTokenTrailingComments = this.convertTokenTrailingComments(openParenToken, start + openParenToken.leadingTriviaWidth() + openParenToken.width());
+            var openParenTrailingComments: Comment[] = null;
+            if (node.parameters.childCount() === 0) {
+                openParenTrailingComments = this.previousTokenTrailingComments;
+                this.previousTokenTrailingComments = null;
+            }
 
             this.movePast(node.openParenToken);
-            var result = this.visitSeparatedSyntaxList(node.parameters);
+            var parameters = this.visitSeparatedSyntaxList(node.parameters);
             this.movePast(node.closeParenToken);
+
+            var result = new ParameterList(openParenTrailingComments, parameters);
+            this.setSpan(result, start, node);
 
             return result;
         }
@@ -1235,7 +1247,7 @@ module TypeScript {
             var start = this.position;
 
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
-            var parameters = node.parameterList.accept(this);
+            var parameters = this.visitParameterList(node.parameterList);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var result = new CallSignature(typeParameters, parameters, returnType);
@@ -1336,7 +1348,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.parameterList);
-            var parameters = node.parameterList.accept(this);
+            var parameters = this.visitParameterList(node.parameterList);
 
             var block = node.block ? node.block.accept(this) : null;
 
@@ -1386,7 +1398,7 @@ module TypeScript {
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             this.movePast(node.propertyName);
-            var parameters = node.parameterList.accept(this);
+            var parameters = this.visitParameterList(node.parameterList);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
             var block = node.block ? node.block.accept(this) : null;
@@ -1402,8 +1414,7 @@ module TypeScript {
             this.moveTo(node, node.propertyName);
             var name = this.identifierFromToken(node.propertyName, /*isOptional:*/ false);
             this.movePast(node.propertyName);
-            var parameters = node.parameterList.accept(this);
-
+            var parameters = this.visitParameterList(node.parameterList);
             var block = node.block ? node.block.accept(this) : null;
             var result = new SetAccessor(this.visitModifiers(node.modifiers), name, parameters, block);
             this.setCommentsAndSpan(result, start, node);

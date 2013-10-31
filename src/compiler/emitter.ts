@@ -188,8 +188,8 @@ module TypeScript {
         }
     }
 
-    export function lastParameterIsRest(parameters: ASTList): boolean {
-        return parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.members).dotDotDotToken !== null;
+    export function lastParameterIsRest(parameters: ParameterList): boolean {
+        return parameters.parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.parameters.members).dotDotDotToken !== null;
     }
 
     export class Emitter {
@@ -583,6 +583,13 @@ module TypeScript {
             this.writeToOutputWithSourceMapRecord(")", callNode.argumentList.closeParenToken);
             this.recordSourceMappingEnd(args);
             this.recordSourceMappingEnd(callNode);
+        }
+
+        private emitParameterList(list: ParameterList): void {
+            this.writeToOutput("(");
+            this.emitCommentsArray(list.openParenTrailingComments, /*trailing:*/ true);
+            this.emitFunctionParameters(Parameters.fromParameterList(list));
+            this.writeToOutput(")");
         }
 
         private emitFunctionParameters(parameters: IParameters): void {
@@ -1330,11 +1337,9 @@ module TypeScript {
                 }
             }
 
-            this.writeToOutput("(");
-            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
-            this.emitFunctionParameters(parameters);
-            this.writeToOutput(")");
+            this.emitParameterList(funcDecl.callSignature.parameterList);
 
+            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionBodyStatements(funcDecl.identifier.text(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);
@@ -1788,8 +1793,8 @@ module TypeScript {
             var constructorDecl = getLastConstructor(this.thisClassNode);
 
             if (constructorDecl && constructorDecl.parameterList) {
-                for (var i = 0, n = constructorDecl.parameterList.members.length; i < n; i++) {
-                    var parameter = <Parameter>constructorDecl.parameterList.members[i];
+                for (var i = 0, n = constructorDecl.parameterList.parameters.members.length; i < n; i++) {
+                    var parameter = <Parameter>constructorDecl.parameterList.parameters.members[i];
                     var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         this.emitIndent();
@@ -2152,7 +2157,7 @@ module TypeScript {
             this.recordSourceMappingEnd(funcDecl);
         }
 
-        private emitAccessorBody(funcDecl: AST, parameterList: ASTList, block: Block): void {
+        private emitAccessorBody(funcDecl: AST, parameterList: ParameterList, block: Block): void {
             var pullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
             this.pushDecl(pullDecl);
 
@@ -2364,12 +2369,9 @@ module TypeScript {
             this.recordSourceMappingStart(funcDecl);
             this.writeToOutput("function ");
 
-            this.writeToOutput("(");
+            this.emitParameterList(funcDecl.callSignature.parameterList);
 
             var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
-            this.emitFunctionParameters(parameters);
-            this.writeToOutput(")");
-
             this.emitFunctionBodyStatements(funcDecl.propertyName.text(), funcDecl, parameters, funcDecl.block);
 
             this.recordSourceMappingEnd(funcDecl);

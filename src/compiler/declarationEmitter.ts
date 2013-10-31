@@ -98,7 +98,7 @@ module TypeScript {
                 case NodeType.FunctionDeclaration:
                     return this.emitDeclarationsForFunctionDeclaration(<FunctionDeclaration>ast);
                 case NodeType.MemberFunctionDeclaration:
-                    return this.emitDeclarationsForMemberFunctionDeclaration(<MemberFunctionDeclaration>ast);
+                    return this.emitMemberFunctionDeclaration(<MemberFunctionDeclaration>ast);
                 case NodeType.ClassDeclaration:
                     return this.emitDeclarationsForClassDeclaration(<ClassDeclaration>ast);
                 case NodeType.InterfaceDeclaration:
@@ -473,12 +473,18 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
-            this.emitParameterList(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
             this.declFile.WriteLine(";");
         }
 
-        private emitParameterList(isPrivate: boolean, parameterList: IParameters): void {
+        private emitParameterList(isPrivate: boolean, parameterList: ParameterList): void {
+            this.declFile.Write("(");
+            this.emitParameters(isPrivate, Parameters.fromParameterList(parameterList));
+            this.declFile.Write(")");
+        }
+
+        private emitParameters(isPrivate: boolean, parameterList: IParameters): void {
             var hasLastParameterRestParameter = parameterList.lastParameterIsRest();
             var argsLen = parameterList.length;
             if (hasLastParameterRestParameter) {
@@ -505,7 +511,7 @@ module TypeScript {
             }
         }
 
-        private emitDeclarationsForMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration) {
+        private emitMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration) {
             var start = new Date().getTime();
             var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
@@ -548,9 +554,8 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             var isPrivate = hasModifier(funcDecl.modifiers, PullElementFlags.Private);
-            this.declFile.Write("(");
-            this.emitParameterList(isPrivate, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
-            this.declFile.Write(")");
+
+            this.emitParameterList(isPrivate, funcDecl.callSignature.parameterList);
 
             if (!isPrivate) {
                 var returnType = funcSignature.returnType;
@@ -571,7 +576,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("(");
-            this.emitParameterList(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -603,7 +608,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -640,7 +645,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -707,7 +712,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameterList(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -735,7 +740,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("[");
-            this.emitParameterList(/*isPrivate:*/ false, Parameters.fromParameter(funcDecl.parameter));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameter(funcDecl.parameter));
             this.declFile.Write("]");
 
             var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
@@ -815,13 +820,13 @@ module TypeScript {
 
         private emitClassMembersFromConstructorDefinition(funcDecl: ConstructorDeclaration) {
             if (funcDecl.parameterList) {
-                var argsLen = funcDecl.parameterList.members.length;
+                var argsLen = funcDecl.parameterList.parameters.members.length;
                 if (lastParameterIsRest(funcDecl.parameterList)) {
                     argsLen--;
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var parameter = <Parameter>funcDecl.parameterList.members[i];
+                    var parameter = <Parameter>funcDecl.parameterList.parameters.members[i];
                     var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);

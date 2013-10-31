@@ -233,6 +233,10 @@ module TypeScript {
         walker.walk(preAst.equalsValueClause);
     }
 
+    function walkParameterListChildren(preAst: ParameterList, walker: AstWalker): void {
+        walker.walk(preAst.parameters);
+    }
+
     function walkPropertySignatureChildren(preAst: PropertySignature, walker: AstWalker): void {
         walker.walk(preAst.propertyName);
         walker.walk(preAst.typeAnnotation);
@@ -504,6 +508,7 @@ module TypeScript {
     childrenWalkers[NodeType.OmittedExpression] = null;
     childrenWalkers[NodeType.OrAssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.Parameter] = walkParameterChildren;
+    childrenWalkers[NodeType.ParameterList] = walkParameterListChildren;
     childrenWalkers[NodeType.ParenthesizedExpression] = walkParenthesizedExpressionChildren;
     childrenWalkers[NodeType.PlusExpression] = walkPrefixUnaryExpressionChildren;
     childrenWalkers[NodeType.PostDecrementExpression] = walkPostfixUnaryExpressionChildren;
