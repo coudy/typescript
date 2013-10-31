@@ -731,10 +731,9 @@ module TypeScript {
             var expr = node.expression.accept(this);
             this.movePast(node.closeParenToken);
 
-            var result = new ParenthesizedExpression(expr);
+            var result = new ParenthesizedExpression(openParenTrailingComments, expr);
             this.setSpan(result, start, node);
 
-            result.openParenTrailingComments = openParenTrailingComments;
             return result;
         }
 
@@ -761,7 +760,7 @@ module TypeScript {
                     returnStatement.setPreComments(preComments);
                     expression.setPreComments(null);
                 }
-                
+
                 var statements = new ASTList(this.fileName, [returnStatement]);
 
                 var closeBraceSpan = new ASTSpan();
@@ -769,7 +768,7 @@ module TypeScript {
                 closeBraceSpan.limChar = expression.limChar;
                 closeBraceSpan.trailingTriviaWidth = expression.trailingTriviaWidth;
 
-                var block = new Block(statements, closeBraceSpan);
+                var block = new Block(statements, null, closeBraceSpan);
                 return block;
             }
         }
@@ -939,10 +938,8 @@ module TypeScript {
             var closeBraceSpan = new ASTSpan();
             this.setTokenSpan(closeBraceSpan, closeBracePosition, node.closeBraceToken);
 
-            var result = new Block(statements, closeBraceSpan);
+            var result = new Block(statements, closeBraceLeadingComments, closeBraceSpan);
             this.setSpan(result, start, node);
-
-            result.closeBraceLeadingComments = closeBraceLeadingComments;
 
             return result;
         }
