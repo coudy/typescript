@@ -566,7 +566,12 @@ module TypeScript {
                             (!outerSubstitution.isTypeParameter() ||
                             !outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] ||
                             (outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] == outerSubstitution))) {
+
                             initializationMap[typeParameterID] = typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID];
+
+                            if (!outerSubstitution.isTypeParameter()) {
+                                canCondenseTypeParameters = false;
+                            }
                         }
                         else {
                             canCondenseTypeParameters = false;
