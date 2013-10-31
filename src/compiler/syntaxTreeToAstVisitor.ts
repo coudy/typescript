@@ -1455,26 +1455,19 @@ module TypeScript {
             this.movePast(node.switchKeyword);
             this.movePast(node.openParenToken);
             var expression = node.expression.accept(this);
+            var closeParenStart = this.position + node.closeParenToken.leadingTriviaWidth();
             this.movePast(node.closeParenToken);
-            var closeParenPosition = this.position;
             this.movePast(node.openBraceToken);
 
-            var array = new Array<any>(node.switchClauses.childCount());
-
-            for (var i = 0, n = node.switchClauses.childCount(); i < n; i++) {
-                var switchClause = node.switchClauses.childAt(i);
-                var translated = switchClause.accept(this);
-
-                array[i] = translated;
-            }
+            var switchClauses = this.visitSyntaxList(node.switchClauses);
 
             var span = new ASTSpan();
-            span.minChar = start;
-            span.limChar = closeParenPosition;
+            span.minChar = closeParenStart;
+            span.limChar = closeParenStart + node.closeParenToken.width();
 
             this.movePast(node.closeBraceToken);
 
-            var result = new SwitchStatement(expression, new ASTList(this.fileName, array), span);
+            var result = new SwitchStatement(expression, span, switchClauses);
             this.setSpan(result, start, node);
 
             return result;
@@ -1885,7 +1878,7 @@ module TypeScript {
                         break;
 
                     case NodeType.SwitchStatement:
-                        applyDelta((<SwitchStatement>cur).statement, delta);
+                        applyDelta((<SwitchStatement>cur).closeParenToken, delta);
                         break;
                 }
             };

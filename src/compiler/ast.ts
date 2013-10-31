@@ -1229,7 +1229,7 @@ module TypeScript {
     }
 
     export class SwitchStatement extends AST {
-        constructor(public expression: AST, public switchClauses: ASTList, public statement: ASTSpan) {
+        constructor(public expression: AST, public closeParenToken: ASTSpan, public switchClauses: ASTList) {
             super();
             expression && (expression.parent = this);
             switchClauses && (switchClauses.parent = this);

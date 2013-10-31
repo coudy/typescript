@@ -2882,11 +2882,11 @@ module TypeScript {
 
         public emitSwitchStatement(statement: SwitchStatement): void {
             this.recordSourceMappingStart(statement);
-            this.recordSourceMappingStart(statement.statement);
             this.writeToOutput("switch (");
             this.emit(statement.expression);
+            this.recordSourceMappingStart(statement.closeParenToken);
             this.writeToOutput(")");
-            this.recordSourceMappingEnd(statement.statement);
+            this.recordSourceMappingEnd(statement.closeParenToken);
             this.writeLineToOutput(" {");
             this.indenter.increaseIndent();
             this.emitList(statement.switchClauses, /*useNewLineSeparator:*/ false);
