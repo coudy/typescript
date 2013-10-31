@@ -12,8 +12,6 @@ module TypeScript {
 
     // Type references and instantiated type references
     export class PullTypeReferenceSymbol extends PullTypeSymbol {
-        public _resolver: PullTypeResolver = null;
-
         public static createTypeReference(type: PullTypeSymbol): PullTypeReferenceSymbol {
 
             if (type.isTypeReference()) {
@@ -65,11 +63,7 @@ module TypeScript {
         }
 
         public _getResolver(): PullTypeResolver {
-            if (!this._resolver) {
-                this._resolver = this.referencedTypeSymbol._getResolver();
-            }
-
-            return this._resolver;
+            return this.referencedTypeSymbol._getResolver();
         }
 
         // type symbol shims
