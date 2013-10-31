@@ -126,6 +126,10 @@ module TypeScript {
         walker.walk(preAst.constraint);
     }
 
+    function walkTypeParameterListChildren(preAst: TypeParameterList, walker: AstWalker): void {
+        walker.walk(preAst.typeParameters);
+    }
+
     function walkGenericTypeChildren(preAst: GenericType, walker: AstWalker): void {
         walker.walk(preAst.name);
         walker.walk(preAst.typeArgumentList);
@@ -528,6 +532,7 @@ module TypeScript {
     childrenWalkers[NodeType.TypeArgumentList] = walkTypeArgumentListChildren;
     childrenWalkers[NodeType.TypeOfExpression] = walkTypeOfExpressionChildren;
     childrenWalkers[NodeType.TypeParameter] = walkTypeParameterChildren;
+    childrenWalkers[NodeType.TypeParameterList] = walkTypeParameterListChildren;
     childrenWalkers[NodeType.TypeQuery] = walkTypeQueryChildren;
     childrenWalkers[NodeType.TypeRef] = walkTypeReferenceChildren;
     childrenWalkers[NodeType.UnsignedRightShiftAssignmentExpression] = walkBinaryExpressionChildren;

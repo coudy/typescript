@@ -40,7 +40,6 @@ module TypeScript {
         TypeParameter,
         Constraint,
         GenericType,
-        TypeArgumentList,
         TypeRef,
         TypeQuery,
         QualifiedName,
@@ -50,6 +49,8 @@ module TypeScript {
         ConstructSignature,
         MethodSignature,
         PropertySignature,
+        TypeArgumentList,
+        TypeParameterList,
 
         // Declarations
         FunctionDeclaration,

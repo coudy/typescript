@@ -415,10 +415,21 @@ module TypeScript {
         }
     }
 
+    export class TypeParameterList extends AST {
+        constructor(public typeParameters: ASTList) {
+            super();
+            typeParameters && (typeParameters.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.TypeParameterList;
+        }
+    }
+
     export class ClassDeclaration extends AST {
         constructor(public modifiers: PullElementFlags[],
                     public identifier: Identifier,
-                    public typeParameterList: ASTList,
+                    public typeParameterList: TypeParameterList,
                     public heritageClauses: ASTList,
                     public classElements: ASTList,
                     public closeBraceToken: ASTSpan) {
@@ -445,7 +456,7 @@ module TypeScript {
     export class InterfaceDeclaration extends AST {
         constructor(public modifiers: PullElementFlags[],
                     public identifier: Identifier,
-                    public typeParameterList: ASTList,
+                    public typeParameterList: TypeParameterList,
                     public heritageClauses: ASTList,
                     public body: ObjectType) {
             super();
@@ -707,27 +718,27 @@ module TypeScript {
     }
 
     export class ConstructorType extends AST {
-        constructor(public typeParameterList: ASTList, public parameterList: ASTList, public type: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ASTList, public type: TypeReference) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
             type && (type.parent = this);
         }
 
-        nodeType(): NodeType {
+        public nodeType(): NodeType {
             return NodeType.ConstructorType;
         }
     }
 
     export class FunctionType extends AST {
-        constructor(public typeParameterList: ASTList, public parameterList: ASTList, public type: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ASTList, public type: TypeReference) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
             type && (type.parent = this);
         }
 
-        nodeType(): NodeType {
+        public nodeType(): NodeType {
             return NodeType.FunctionType;
         }
     }
@@ -770,7 +781,7 @@ module TypeScript {
             typeArguments && (typeArguments.parent = this);
         }
 
-        nodeType(): NodeType {
+        public nodeType(): NodeType {
             return NodeType.TypeArgumentList;
         }
     }
@@ -969,7 +980,7 @@ module TypeScript {
             callSignature && (callSignature.parent = this);
         }
 
-        nodeType(): NodeType {
+        public nodeType(): NodeType {
             return NodeType.ConstructSignature;
         }
     }
@@ -981,7 +992,7 @@ module TypeScript {
             callSignature && (callSignature.parent = this);
         }
 
-        nodeType(): NodeType {
+        public nodeType(): NodeType {
             return NodeType.MethodSignature;
         }
     }
@@ -1012,14 +1023,14 @@ module TypeScript {
     }
 
     export class CallSignature extends AST {
-        constructor(public typeParameterList: ASTList, public parameterList: ASTList, public typeAnnotation: TypeReference) {
+        constructor(public typeParameterList: TypeParameterList, public parameterList: ASTList, public typeAnnotation: TypeReference) {
             super();
             typeParameterList && (typeParameterList.parent = this);
             parameterList && (parameterList.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
         }
 
-        nodeType(): NodeType {
+        public nodeType(): NodeType {
             return NodeType.CallSignature;
         }
     }

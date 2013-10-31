@@ -372,7 +372,7 @@ module TypeScript {
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
 
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
 
             this.movePast(node.openBraceToken);
@@ -425,7 +425,7 @@ module TypeScript {
             this.moveTo(node, node.identifier);
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
 
             var body = this.visitObjectTypeWorker(node.body);
@@ -881,7 +881,7 @@ module TypeScript {
             var start = this.position;
 
             this.movePast(node.newKeyword);
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var parameters = node.parameterList.accept(this);
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
@@ -899,7 +899,7 @@ module TypeScript {
 
         public visitFunctionType(node: FunctionTypeSyntax): TypeReference {
             var start = this.position;
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var parameters = node.parameterList.accept(this);
             this.movePast(node.equalsGreaterThanToken);
             var returnType = node.type ? this.visitType(node.type) : null;
@@ -1234,7 +1234,7 @@ module TypeScript {
         public visitCallSignature(node: CallSignatureSyntax): CallSignature {
             var start = this.position;
 
-            var typeParameters = node.typeParameterList === null ? null : node.typeParameterList.accept(this);
+            var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var parameters = node.parameterList.accept(this);
             var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
 
@@ -1244,10 +1244,18 @@ module TypeScript {
             return result;
         }
 
-        public visitTypeParameterList(node: TypeParameterListSyntax): ASTList {
+        public visitTypeParameterList(node: TypeParameterListSyntax): TypeParameterList {
+            if (!node) {
+                return null;
+            }
+
+            var start = this.position;
             this.movePast(node.lessThanToken);
-            var result = this.visitSeparatedSyntaxList(node.typeParameters);
+            var typeParameters = this.visitSeparatedSyntaxList(node.typeParameters);
             this.movePast(node.greaterThanToken);
+
+            var result = new TypeParameterList(typeParameters);
+            this.setSpan(result, start, node);
 
             return result;
         }

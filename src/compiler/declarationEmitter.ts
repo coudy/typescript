@@ -881,8 +881,8 @@ module TypeScript {
             this.emitBaseList(clause.typeNames, clause.nodeType() === NodeType.ExtendsHeritageClause);
         }
 
-        private emitTypeParameters(typeParams: ASTList, funcSignature?: PullSignatureSymbol) {
-            if (!typeParams || !typeParams.members.length) {
+        private emitTypeParameters(typeParams: TypeParameterList, funcSignature?: PullSignatureSymbol) {
+            if (!typeParams || !typeParams.typeParameters.members.length) {
                 return;
             }
 
