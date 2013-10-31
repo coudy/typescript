@@ -554,7 +554,7 @@ module TypeScript {
                 var outerTypeMap = (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap;
                 var innerSubstitution: PullTypeSymbol = null;
                 var outerSubstitution: PullTypeSymbol = null;
-                var canCondenseTypeParametersToRootTypeParameters = true;
+                var canRelatePreInstantiatedTypeParametersToRootTypeParameters = true;
 
                 for (var typeParameterID in outerTypeMap) {
                     if (outerTypeMap.hasOwnProperty(typeParameterID)) {
@@ -593,11 +593,11 @@ module TypeScript {
                             // types later on (because the checks depend on wrapped instantiations *not* being an instantiation of
                             // the root type.  See getGenerativeTypeClassification
                             if (!outerSubstitution.isTypeParameter()) {
-                                canCondenseTypeParametersToRootTypeParameters = false;
+                                canRelatePreInstantiatedTypeParametersToRootTypeParameters = false;
                             }
                         }
                         else {
-                            canCondenseTypeParametersToRootTypeParameters = false;
+                            canRelatePreInstantiatedTypeParametersToRootTypeParameters = false;
                         }
                     }
                 }
@@ -605,21 +605,22 @@ module TypeScript {
                 // If the type being instantiated has takes type parameters, rather than passing in the entire type substitution context,
                 // we limit the substitutions to those that affect the root named type.  This prevents us from over-instantiating types
                 // in a generic function signature
-                if (canCondenseTypeParametersToRootTypeParameters && typeParameters.length) {
-                    var filteredInstantiationMap: PullTypeSymbol[] = [];
+                if (canRelatePreInstantiatedTypeParametersToRootTypeParameters && typeParameters.length) {
+                    typeParameterArgumentMap = [];
 
                     for (var i = 0; i < typeParameters.length; i++) {
-                        filteredInstantiationMap[typeParameters[i].pullSymbolID] = initializationMap[typeParameters[i].pullSymbolID];
+                        typeParameterArgumentMap[typeParameters[i].pullSymbolID] = initializationMap[typeParameters[i].pullSymbolID];
                     }
 
                     instantiateRoot = true;
-                    initializationMap = filteredInstantiationMap;
                 }
-
-                typeParameterArgumentMap = initializationMap;
+                else {
+                    typeParameterArgumentMap = initializationMap;
+                }
+                
             }
 
-            instantiation = new PullInstantiatedTypeReferenceSymbol(resolver, instantiateRoot ? rootType : type, typeParameterArgumentMap);
+            instantiation = new PullInstantiatedTypeReferenceSymbol(instantiateRoot ? rootType : type, typeParameterArgumentMap);
 
             if (!instantiateFunctionTypeParameters) {
                 rootType.addSpecialization(instantiation, reconstructedTypeArgumentList);
