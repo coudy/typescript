@@ -27406,7 +27406,7 @@ var TypeScript;
         NodeType[NodeType["TypeParameter"] = 15] = "TypeParameter";
         NodeType[NodeType["Constraint"] = 16] = "Constraint";
         NodeType[NodeType["GenericType"] = 17] = "GenericType";
-        NodeType[NodeType["TypeRef"] = 18] = "TypeRef";
+        NodeType[NodeType["TypeAnnotation"] = 18] = "TypeAnnotation";
         NodeType[NodeType["TypeQuery"] = 19] = "TypeQuery";
         NodeType[NodeType["QualifiedName"] = 20] = "QualifiedName";
         NodeType[NodeType["FunctionType"] = 21] = "FunctionType";
@@ -27803,7 +27803,7 @@ var TypeScript;
                 if (isInvalid1) {
                     walker.options.goChildren = false;
                 } else {
-                    var inclusive = forceInclusive || cur.nodeType() === 51 /* Name */ || cur.nodeType() === 63 /* MemberAccessExpression */ || cur.nodeType() === 20 /* QualifiedName */ || cur.nodeType() === 18 /* TypeRef */ || cur.nodeType() === 41 /* VariableDeclaration */ || cur.nodeType() === 40 /* VariableDeclarator */ || cur.nodeType() === 67 /* InvocationExpression */ || pos === script.limChar + script.trailingTriviaWidth;
+                    var inclusive = forceInclusive || cur.nodeType() === 51 /* Name */ || cur.nodeType() === 63 /* MemberAccessExpression */ || cur.nodeType() === 20 /* QualifiedName */ || cur.nodeType() === 41 /* VariableDeclaration */ || cur.nodeType() === 40 /* VariableDeclarator */ || cur.nodeType() === 67 /* InvocationExpression */ || pos === script.limChar + script.trailingTriviaWidth;
 
                     var minChar = cur.minChar;
                     var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
@@ -27996,7 +27996,7 @@ var TypeScript;
                     return parameter.identifier;
                 },
                 typeAt: function (index) {
-                    return parameter.typeAnnotation;
+                    return TypeScript.getType(parameter);
                 },
                 initializerAt: function (index) {
                     return parameter.equalsValueClause;
@@ -28026,7 +28026,7 @@ var TypeScript;
                     return list.parameters.members[index].identifier;
                 },
                 typeAt: function (index) {
-                    return list.parameters.members[index].typeAnnotation;
+                    return TypeScript.getType(list.parameters.members[index]);
                 },
                 initializerAt: function (index) {
                     return list.parameters.members[index].equalsValueClause;
@@ -28219,37 +28219,51 @@ var TypeScript;
     }
     TypeScript.getParameterList = getParameterList;
 
-    function getTypeAnnotation(ast) {
+    function getType(ast) {
         if (ast) {
             switch (ast.nodeType()) {
                 case 30 /* FunctionDeclaration */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
                 case 112 /* ParenthesizedArrowFunctionExpression */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
                 case 24 /* ConstructSignature */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
                 case 48 /* MemberFunctionDeclaration */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
                 case 44 /* FunctionPropertyAssignment */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
                 case 113 /* FunctionExpression */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
                 case 25 /* MethodSignature */:
-                    return getTypeAnnotation(ast.callSignature);
+                    return getType(ast.callSignature);
+                case 23 /* CallSignature */:
+                    return getType(ast.typeAnnotation);
+                case 49 /* IndexSignature */:
+                    return getType(ast.typeAnnotation);
+                case 26 /* PropertySignature */:
+                    return getType(ast.typeAnnotation);
+                case 34 /* GetAccessor */:
+                    return getType(ast.typeAnnotation);
+                case 42 /* Parameter */:
+                    return getType(ast.typeAnnotation);
+                case 47 /* MemberVariableDeclaration */:
+                    return getType(ast.variableDeclarator);
+                case 40 /* VariableDeclarator */:
+                    return getType(ast.typeAnnotation);
+                case 135 /* CatchClause */:
+                    return getType(ast.typeAnnotation);
                 case 22 /* ConstructorType */:
                     return ast.type;
                 case 21 /* FunctionType */:
                     return ast.type;
-                case 23 /* CallSignature */:
-                    return ast.typeAnnotation;
-                case 34 /* GetAccessor */:
-                    return ast.typeAnnotation;
+                case 18 /* TypeAnnotation */:
+                    return ast.type;
             }
         }
 
         return null;
     }
-    TypeScript.getTypeAnnotation = getTypeAnnotation;
+    TypeScript.getType = getType;
 
     function getVariableStatement(variableDeclarator) {
         if (variableDeclarator && variableDeclarator.parent && variableDeclarator.parent.parent && variableDeclarator.parent.parent.parent && variableDeclarator.parent.nodeType() === 1 /* List */ && variableDeclarator.parent.parent.nodeType() === 41 /* VariableDeclaration */ && variableDeclarator.parent.parent.parent.nodeType() === 130 /* VariableStatement */) {
@@ -28404,8 +28418,8 @@ var TypeScript;
         walker.walk(preAst.typeArgumentList);
     }
 
-    function walkTypeReferenceChildren(preAst, walker) {
-        walker.walk(preAst.term);
+    function walkTypeAnnotationChildren(preAst, walker) {
+        walker.walk(preAst.type);
     }
 
     function walkTypeQueryChildren(preAst, walker) {
@@ -28803,12 +28817,12 @@ var TypeScript;
     childrenWalkers[128 /* ThrowStatement */] = walkThrowStatementChildren;
     childrenWalkers[4 /* TrueLiteral */] = null;
     childrenWalkers[129 /* TryStatement */] = walkTryStatementChildren;
+    childrenWalkers[18 /* TypeAnnotation */] = walkTypeAnnotationChildren;
     childrenWalkers[28 /* TypeArgumentList */] = walkTypeArgumentListChildren;
     childrenWalkers[65 /* TypeOfExpression */] = walkTypeOfExpressionChildren;
     childrenWalkers[15 /* TypeParameter */] = walkTypeParameterChildren;
     childrenWalkers[29 /* TypeParameterList */] = walkTypeParameterListChildren;
     childrenWalkers[19 /* TypeQuery */] = walkTypeQueryChildren;
-    childrenWalkers[18 /* TypeRef */] = walkTypeReferenceChildren;
     childrenWalkers[80 /* UnsignedRightShiftAssignmentExpression */] = walkBinaryExpressionChildren;
     childrenWalkers[102 /* UnsignedRightShiftExpression */] = walkBinaryExpressionChildren;
     childrenWalkers[41 /* VariableDeclaration */] = walkVariableDeclarationChildren;
@@ -29481,7 +29495,7 @@ var TypeScript;
                     this.writeToOutput("var ");
                 }
                 this.writeToOutput(importDeclAST.identifier.text() + " = ");
-                var aliasAST = importDeclAST.moduleReference.nodeType() === 18 /* TypeRef */ ? importDeclAST.moduleReference.term : importDeclAST.moduleReference;
+                var aliasAST = importDeclAST.moduleReference;
 
                 if (isExternalModuleReference) {
                     this.writeToOutput("require(" + aliasAST.text() + ")");
@@ -31287,7 +31301,7 @@ var TypeScript;
             this.recordSourceMappingStart(classDecl);
             this.writeToOutput(")(");
             if (hasBaseClass) {
-                this.emitJavascript(baseTypeReference.term, false);
+                this.emitJavascript(baseTypeReference, false);
             }
             this.writeToOutput(");");
             this.recordSourceMappingEnd(classDecl);
@@ -39288,7 +39302,7 @@ var TypeScript;
             var importDecl = this.semanticInfoChain.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
-            var aliasExpr = importStatementAST.moduleReference.nodeType() == 18 /* TypeRef */ ? importStatementAST.moduleReference.term : importStatementAST.moduleReference;
+            var aliasExpr = importStatementAST.moduleReference;
             var declPath = enclosingDecl.getParentPath();
             var aliasedType = null;
 
@@ -39583,7 +39597,7 @@ var TypeScript;
             var paramSymbol = paramDecl.getSymbol();
 
             if (argDeclAST.typeAnnotation) {
-                var typeRef = this.resolveTypeReference(argDeclAST.typeAnnotation, context);
+                var typeRef = this.resolveTypeReference(TypeScript.getType(argDeclAST), context);
 
                 if (paramSymbol.isVarArg && !typeRef.isArrayNamedTypeReference()) {
                     var diagnostic = context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, TypeScript.DiagnosticCode.Rest_parameters_must_be_array_types));
@@ -39835,10 +39849,16 @@ var TypeScript;
             this.typeCheckMembersAgainstIndexer(objectTypeSymbol, objectTypeDecl, context);
         };
 
+        PullTypeResolver.prototype.resolveTypeAnnotation = function (typeAnnotation, context) {
+            return this.resolveTypeReference(typeAnnotation.type, context);
+        };
+
         PullTypeResolver.prototype.resolveTypeReference = function (typeRef, context) {
             if (typeRef === null) {
                 return null;
             }
+
+            TypeScript.Debug.assert(typeRef.nodeType() !== 18 /* TypeAnnotation */);
 
             var aliasType = null;
             var type = this.computeTypeReferenceSymbol(typeRef, context);
@@ -39880,7 +39900,7 @@ var TypeScript;
             return type;
         };
 
-        PullTypeResolver.prototype.computeTypeReferenceSymbolWorker = function (term, context) {
+        PullTypeResolver.prototype.computeTypeReferenceSymbol = function (term, context) {
             switch (term.nodeType()) {
                 case 10 /* AnyType */:
                     return this.semanticInfoChain.anyTypeSymbol;
@@ -39920,9 +39940,6 @@ var TypeScript;
                 var typeQuery = term;
 
                 var typeQueryTerm = typeQuery.name;
-                if (typeQueryTerm.nodeType() === 18 /* TypeRef */) {
-                    typeQueryTerm = typeQueryTerm.term;
-                }
 
                 var valueSymbol = this.resolveAST(typeQueryTerm, false, context);
 
@@ -39942,7 +39959,7 @@ var TypeScript;
                 }
             } else if (term.nodeType() === 37 /* ArrayType */) {
                 var arrayType = term;
-                var underlying = this.computeTypeReferenceSymbolWorker(arrayType.type, context);
+                var underlying = this.computeTypeReferenceSymbol(arrayType.type, context);
                 var arraySymbol = underlying.getArrayType();
 
                 if (!arraySymbol) {
@@ -39954,6 +39971,8 @@ var TypeScript;
                 }
 
                 typeDeclSymbol = arraySymbol;
+            } else {
+                throw TypeScript.Errors.invalidOperation("unknown type");
             }
 
             if (!typeDeclSymbol) {
@@ -39973,24 +39992,20 @@ var TypeScript;
             return typeDeclSymbol;
         };
 
-        PullTypeResolver.prototype.computeTypeReferenceSymbol = function (typeRef, context) {
-            return this.computeTypeReferenceSymbolWorker(typeRef.term, context);
-        };
-
         PullTypeResolver.prototype.genericTypeIsUsedWithoutRequiredTypeArguments = function (typeSymbol, term, context) {
             return typeSymbol.isNamedTypeSymbol() && typeSymbol.isGeneric() && !typeSymbol.isTypeParameter() && (typeSymbol.isResolved || typeSymbol.inResolution) && !typeSymbol.getIsSpecialized() && typeSymbol.getTypeParameters().length && typeSymbol.getTypeArguments() == null && this.isTypeRefWithoutTypeArgs(term);
         };
 
         PullTypeResolver.prototype.resolveMemberVariableDeclaration = function (varDecl, context) {
-            return this.resolveVariableDeclaratorOrParameterOrEnumElement(varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
+            return this.resolveVariableDeclaratorOrParameterOrEnumElement(varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, TypeScript.getType(varDecl.variableDeclarator), varDecl.variableDeclarator.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.resolvePropertySignature = function (varDecl, context) {
-            return this.resolveVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.sentinelEmptyArray, varDecl.propertyName, varDecl.typeAnnotation, null, context);
+            return this.resolveVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.sentinelEmptyArray, varDecl.propertyName, TypeScript.getType(varDecl), null, context);
         };
 
         PullTypeResolver.prototype.resolveVariableDeclarator = function (varDecl, context) {
-            return this.resolveVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.getVariableDeclaratorModifiers(varDecl), varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
+            return this.resolveVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.getVariableDeclaratorModifiers(varDecl), varDecl.identifier, TypeScript.getType(varDecl), varDecl.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.resolveParameterList = function (list, context) {
@@ -39998,7 +40013,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveParameter = function (parameter, context) {
-            return this.resolveVariableDeclaratorOrParameterOrEnumElement(parameter, parameter.modifiers, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
+            return this.resolveVariableDeclaratorOrParameterOrEnumElement(parameter, parameter.modifiers, parameter.identifier, TypeScript.getType(parameter), parameter.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.getEnumTypeSymbol = function (enumElement, context) {
@@ -40230,19 +40245,19 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.typeCheckPropertySignature = function (varDecl, context) {
-            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.sentinelEmptyArray, varDecl.propertyName, varDecl.typeAnnotation, null, context);
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.sentinelEmptyArray, varDecl.propertyName, TypeScript.getType(varDecl), null, context);
         };
 
         PullTypeResolver.prototype.typeCheckMemberVariableDeclaration = function (varDecl, context) {
-            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, varDecl.variableDeclarator.typeAnnotation, varDecl.variableDeclarator.equalsValueClause, context);
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, TypeScript.getType(varDecl), varDecl.variableDeclarator.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.typeCheckVariableDeclarator = function (varDecl, context) {
-            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.getVariableDeclaratorModifiers(varDecl), varDecl.identifier, varDecl.typeAnnotation, varDecl.equalsValueClause, context);
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(varDecl, TypeScript.getVariableDeclaratorModifiers(varDecl), varDecl.identifier, TypeScript.getType(varDecl), varDecl.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.typeCheckParameter = function (parameter, context) {
-            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(parameter, parameter.modifiers, parameter.identifier, parameter.typeAnnotation, parameter.equalsValueClause, context);
+            this.typeCheckVariableDeclaratorOrParameterOrEnumElement(parameter, parameter.modifiers, parameter.identifier, TypeScript.getType(parameter), parameter.equalsValueClause, context);
         };
 
         PullTypeResolver.prototype.typeCheckVariableDeclaratorOrParameterOrEnumElement = function (varDeclOrParameter, modifiers, name, typeExpr, init, context) {
@@ -40630,15 +40645,15 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.typeCheckFunctionExpression = function (funcDecl, context) {
-            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
+            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.getType(funcDecl), funcDecl.block, context);
         };
 
         PullTypeResolver.prototype.typeCheckCallSignature = function (funcDecl, context) {
-            this.typeCheckFunctionDeclaration(funcDecl, false, null, funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
+            this.typeCheckFunctionDeclaration(funcDecl, false, null, funcDecl.typeParameterList, funcDecl.parameterList, TypeScript.getType(funcDecl), null, context);
         };
 
         PullTypeResolver.prototype.typeCheckConstructSignature = function (funcDecl, context) {
-            this.typeCheckFunctionDeclaration(funcDecl, false, null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
+            this.typeCheckFunctionDeclaration(funcDecl, false, null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, TypeScript.getType(funcDecl), null, context);
         };
 
         PullTypeResolver.prototype.typeCheckFunctionDeclaration = function (funcDeclAST, isStatic, name, typeParameters, parameters, returnTypeAnnotation, block, context) {
@@ -40697,10 +40712,10 @@ var TypeScript;
 
             var enclosingDecl = this.getEnclosingDecl(funcDecl);
 
-            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, funcDeclAST.typeAnnotation, context);
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, TypeScript.getType(funcDeclAST), context);
             this.validateVariableDeclarationGroups(funcDecl, context);
 
-            this.checkFunctionTypePrivacy(funcDeclAST, false, null, TypeScript.Parameters.fromParameter(funcDeclAST.parameter), funcDeclAST.typeAnnotation, null, context);
+            this.checkFunctionTypePrivacy(funcDeclAST, false, null, TypeScript.Parameters.fromParameter(funcDeclAST.parameter), TypeScript.getType(funcDeclAST), null, context);
 
             var signature = funcDecl.getSignatureSymbol();
 
@@ -40771,27 +40786,27 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveMemberFunctionDeclaration = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, TypeScript.hasModifier(funcDecl.modifiers, 16 /* Static */), funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
+            return this.resolveFunctionDeclaration(funcDecl, TypeScript.hasModifier(funcDecl.modifiers, 16 /* Static */), funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, TypeScript.getType(funcDecl), funcDecl.block, context);
         };
 
         PullTypeResolver.prototype.resolveCallSignature = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, false, null, funcDecl.typeParameterList, funcDecl.parameterList, funcDecl.typeAnnotation, null, context);
+            return this.resolveFunctionDeclaration(funcDecl, false, null, funcDecl.typeParameterList, funcDecl.parameterList, TypeScript.getType(funcDecl), null, context);
         };
 
         PullTypeResolver.prototype.resolveConstructSignature = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, false, null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
+            return this.resolveFunctionDeclaration(funcDecl, false, null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, TypeScript.getType(funcDecl), null, context);
         };
 
         PullTypeResolver.prototype.resolveMethodSignature = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, false, funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, null, context);
+            return this.resolveFunctionDeclaration(funcDecl, false, funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, TypeScript.getType(funcDecl), null, context);
         };
 
         PullTypeResolver.prototype.resolveAnyFunctionDeclaration = function (funcDecl, context) {
-            return this.resolveFunctionDeclaration(funcDecl, TypeScript.hasModifier(funcDecl.modifiers, 16 /* Static */), funcDecl.identifier, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
+            return this.resolveFunctionDeclaration(funcDecl, TypeScript.hasModifier(funcDecl.modifiers, 16 /* Static */), funcDecl.identifier, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, TypeScript.getType(funcDecl), funcDecl.block, context);
         };
 
         PullTypeResolver.prototype.resolveFunctionExpression = function (funcDecl, isContextuallyTyped, context) {
-            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), funcDecl.callSignature.typeAnnotation, funcDecl.block, isContextuallyTyped, context);
+            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), TypeScript.getType(funcDecl), funcDecl.block, isContextuallyTyped, context);
         };
 
         PullTypeResolver.prototype.resolveSimpleArrowFunctionExpression = function (funcDecl, isContextuallyTyped, context) {
@@ -40799,7 +40814,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveParenthesizedArrowFunctionExpression = function (funcDecl, isContextuallyTyped, context) {
-            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), funcDecl.callSignature.typeAnnotation, funcDecl.block, isContextuallyTyped, context);
+            return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcDecl.callSignature.parameterList), TypeScript.getType(funcDecl), funcDecl.block, isContextuallyTyped, context);
         };
 
         PullTypeResolver.prototype.getEnclosingClassDeclaration = function (ast) {
@@ -40933,9 +40948,9 @@ var TypeScript;
 
                 if (signature.inResolution) {
                     if (funcDeclAST.typeAnnotation) {
-                        var returnTypeSymbol = this.resolveTypeReference(funcDeclAST.typeAnnotation, context);
+                        var returnTypeSymbol = this.resolveTypeReference(TypeScript.getType(funcDeclAST), context);
                         if (!returnTypeSymbol) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST.typeAnnotation, TypeScript.DiagnosticCode.Cannot_resolve_return_type_reference));
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(TypeScript.getType(funcDeclAST), TypeScript.DiagnosticCode.Cannot_resolve_return_type_reference));
                             signature.returnType = this.getNewErrorTypeSymbol();
                             hadError = true;
                         } else {
@@ -40969,7 +40984,7 @@ var TypeScript;
                 }
 
                 if (funcDeclAST.typeAnnotation) {
-                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, funcDeclAST.typeAnnotation, context);
+                    returnTypeSymbol = this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, TypeScript.getType(funcDeclAST), context);
 
                     if (!returnTypeSymbol) {
                         signature.returnType = this.getNewErrorTypeSymbol();
@@ -41159,7 +41174,7 @@ var TypeScript;
 
         PullTypeResolver.prototype.resolveGetterReturnTypeAnnotation = function (getterFunctionDeclarationAst, enclosingDecl, context) {
             if (getterFunctionDeclarationAst && getterFunctionDeclarationAst.typeAnnotation) {
-                return this.resolveTypeReference(getterFunctionDeclarationAst.typeAnnotation, context);
+                return this.resolveTypeReference(TypeScript.getType(getterFunctionDeclarationAst), context);
             }
 
             return null;
@@ -41168,7 +41183,7 @@ var TypeScript;
         PullTypeResolver.prototype.resolveSetterArgumentTypeAnnotation = function (setterFunctionDeclarationAst, enclosingDecl, context) {
             if (setterFunctionDeclarationAst && setterFunctionDeclarationAst.parameterList && setterFunctionDeclarationAst.parameterList.parameters.members.length > 0) {
                 var parameter = setterFunctionDeclarationAst.parameterList.parameters.members[0];
-                return this.resolveTypeReference(parameter.typeAnnotation, context);
+                return this.resolveTypeReference(TypeScript.getType(parameter), context);
             }
 
             return null;
@@ -41207,7 +41222,7 @@ var TypeScript;
                 accessorSymbol.startResolving();
 
                 if (hasGetter) {
-                    getterSymbol = this.resolveGetAccessorDeclaration(getterFunctionDeclarationAst, getterFunctionDeclarationAst.parameterList, getterFunctionDeclarationAst.typeAnnotation, getterFunctionDeclarationAst.block, setterAnnotatedType, context);
+                    getterSymbol = this.resolveGetAccessorDeclaration(getterFunctionDeclarationAst, getterFunctionDeclarationAst.parameterList, TypeScript.getType(getterFunctionDeclarationAst), getterFunctionDeclarationAst.block, setterAnnotatedType, context);
                 }
 
                 if (hasSetter) {
@@ -41361,7 +41376,7 @@ var TypeScript;
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
             var accessorSymbol = funcDecl.getSymbol();
 
-            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, funcDeclAST.typeAnnotation, context);
+            this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, TypeScript.getType(funcDeclAST), context);
 
             this.resolveAST(funcDeclAST.block, false, context);
 
@@ -41389,7 +41404,7 @@ var TypeScript;
                 this.checkIfGetterAndSetterTypeMatch(funcDeclAST, context);
             }
 
-            this.checkFunctionTypePrivacy(funcDeclAST, TypeScript.hasModifier(funcDeclAST.modifiers, 16 /* Static */), null, TypeScript.Parameters.fromParameterList(funcDeclAST.parameterList), funcDeclAST.typeAnnotation, funcDeclAST.block, context);
+            this.checkFunctionTypePrivacy(funcDeclAST, TypeScript.hasModifier(funcDeclAST.modifiers, 16 /* Static */), null, TypeScript.Parameters.fromParameterList(funcDeclAST.parameterList), TypeScript.getType(funcDeclAST), funcDeclAST.block, context);
         };
 
         PullTypeResolver.hasSetAccessorParameterTypeAnnotation = function (setAccessor) {
@@ -41970,7 +41985,7 @@ var TypeScript;
 
                 if (enclosingDecl.kind & 1032192 /* SomeFunction */) {
                     var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
-                    var typeAnnotation = TypeScript.getTypeAnnotation(enclosingDeclAST);
+                    var typeAnnotation = TypeScript.getType(enclosingDeclAST);
                     if (typeAnnotation) {
                         var returnTypeAnnotationSymbol = this.resolveTypeReference(typeAnnotation, context);
                         if (returnTypeAnnotationSymbol) {
@@ -42025,7 +42040,7 @@ var TypeScript;
 
                     if (enclosingDecl.kind & 1032192 /* SomeFunction */) {
                         var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
-                        var typeAnnotation = TypeScript.getTypeAnnotation(enclosingDeclAST);
+                        var typeAnnotation = TypeScript.getType(enclosingDeclAST);
                         if (typeAnnotation || enclosingDecl.kind == 262144 /* GetAccessor */) {
                             var signatureSymbol = enclosingDecl.getSignatureSymbol();
                             var sigReturnType = signatureSymbol.returnType;
@@ -42301,6 +42316,14 @@ var TypeScript;
             var nodeType = ast.nodeType();
 
             switch (nodeType) {
+                case 37 /* ArrayType */:
+                case 17 /* GenericType */:
+                case 36 /* ObjectType */:
+                case 19 /* TypeQuery */:
+                case 22 /* ConstructorType */:
+                case 21 /* FunctionType */:
+                    return this.resolveTypeReference(ast, context);
+
                 case 1 /* List */:
                     return this.resolveList(ast, context);
 
@@ -42429,8 +42452,8 @@ var TypeScript;
                 case 109 /* CastExpression */:
                     return this.resolveCastExpression(ast, context);
 
-                case 18 /* TypeRef */:
-                    return this.resolveTypeReference(ast, context);
+                case 18 /* TypeAnnotation */:
+                    return this.resolveTypeAnnotation(ast, context);
 
                 case 120 /* ExportAssignment */:
                     return this.resolveExportAssignmentStatement(ast, context);
@@ -42687,7 +42710,7 @@ var TypeScript;
 
                 case 30 /* FunctionDeclaration */: {
                     var funcDecl = ast;
-                    this.typeCheckFunctionDeclaration(funcDecl, TypeScript.hasModifier(funcDecl.modifiers, 16 /* Static */), funcDecl.identifier, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, funcDecl.callSignature.typeAnnotation, funcDecl.block, context);
+                    this.typeCheckFunctionDeclaration(funcDecl, TypeScript.hasModifier(funcDecl.modifiers, 16 /* Static */), funcDecl.identifier, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, TypeScript.getType(funcDecl), funcDecl.block, context);
                     return;
                 }
 
@@ -43457,7 +43480,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.typeCheckParenthesizedArrowFunctionExpression = function (arrowFunction, context) {
-            return this.typeCheckAnyFunctionExpression(arrowFunction, arrowFunction.callSignature.typeParameterList, arrowFunction.callSignature.typeAnnotation, arrowFunction.block, context);
+            return this.typeCheckAnyFunctionExpression(arrowFunction, arrowFunction.callSignature.typeParameterList, TypeScript.getType(arrowFunction), arrowFunction.block, context);
         };
 
         PullTypeResolver.prototype.typeCheckAnyFunctionExpression = function (funcDeclAST, typeParameters, returnTypeAnnotation, block, context) {
@@ -43795,11 +43818,11 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveFunctionPropertyAssignment = function (funcProp, isContextuallyTyped, context) {
-            return this.resolveAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcProp.callSignature.parameterList), funcProp.callSignature.typeAnnotation, funcProp.block, isContextuallyTyped, context);
+            return this.resolveAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(funcProp.callSignature.parameterList), TypeScript.getType(funcProp), funcProp.block, isContextuallyTyped, context);
         };
 
         PullTypeResolver.prototype.typeCheckFunctionPropertyAssignment = function (funcProp, isContextuallyTyped, context) {
-            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, funcProp.callSignature.typeAnnotation, funcProp.block, context);
+            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, TypeScript.getType(funcProp), funcProp.block, context);
         };
 
         PullTypeResolver.prototype.resolveObjectLiteralExpression = function (expressionAST, isContextuallyTyped, context, additionalResults) {
@@ -45158,7 +45181,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveCastExpression = function (assertionExpression, context) {
-            var typeAssertionType = this.resolveAST(assertionExpression.type, false, context).type;
+            var typeAssertionType = this.resolveTypeReference(assertionExpression.type, context).type;
 
             if (this.canTypeCheckAST(assertionExpression, context)) {
                 this.typeCheckCastExpression(assertionExpression, context, typeAssertionType);
@@ -46448,10 +46471,10 @@ var TypeScript;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, null, TypeScript.Parameters.fromIdentifier(simpleArrowFunction.identifier), null, simpleArrowFunction.block, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 112 /* ParenthesizedArrowFunctionExpression */) {
                 var arrowFunction = arg;
-                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, arrowFunction.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.callSignature.typeAnnotation, arrowFunction.block, argIndex, context, comparisonInfo);
+                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, arrowFunction.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(arrowFunction.callSignature.parameterList), TypeScript.getType(arrowFunction), arrowFunction.block, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 113 /* FunctionExpression */) {
                 var functionExpression = arg;
-                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, functionExpression.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(functionExpression.callSignature.parameterList), functionExpression.callSignature.typeAnnotation, functionExpression.block, argIndex, context, comparisonInfo);
+                return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType, arg, functionExpression.callSignature.typeParameterList, TypeScript.Parameters.fromParameterList(functionExpression.callSignature.parameterList), TypeScript.getType(functionExpression), functionExpression.block, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 53 /* ObjectLiteralExpression */) {
                 return this.overloadIsApplicableForObjectLiteralArgument(paramType, arg, argIndex, context, comparisonInfo);
             } else if (arg.nodeType() === 52 /* ArrayLiteralExpression */) {
@@ -47876,9 +47899,9 @@ var TypeScript;
                     }
                 }
                 return;
-            } else if (typeDeclIsClass && isExtendedType && baseDeclAST.term.nodeType() == 51 /* Name */) {
-                if (this.hasClassTypeSymbolConflictAsValue(baseDeclAST.term, baseType, enclosingDecl, context)) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, TypeScript.DiagnosticCode.Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1, [baseDeclAST.term.text(), baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+            } else if (typeDeclIsClass && isExtendedType && baseDeclAST.nodeType() == 51 /* Name */) {
+                if (this.hasClassTypeSymbolConflictAsValue(baseDeclAST, baseType, enclosingDecl, context)) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, TypeScript.DiagnosticCode.Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1, [baseDeclAST.text(), baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                 }
             }
 
@@ -48164,13 +48187,38 @@ var TypeScript;
     TypeScript.getPropertyAssignmentNameTextFromIdentifier = getPropertyAssignmentNameTextFromIdentifier;
 
     function isTypesOnlyLocation(ast) {
-        while (ast) {
-            switch (ast.nodeType()) {
+        while (ast && ast.parent) {
+            switch (ast.parent.nodeType()) {
+                case 18 /* TypeAnnotation */:
+                    return true;
                 case 19 /* TypeQuery */:
                     return false;
-                case 18 /* TypeRef */:
-                    return ast.parent.nodeType() !== 19 /* TypeQuery */;
-
+                case 22 /* ConstructorType */:
+                    var constructorType = ast.parent;
+                    if (constructorType.type === ast) {
+                        return true;
+                    }
+                    break;
+                case 21 /* FunctionType */:
+                    var functionType = ast.parent;
+                    if (functionType.type === ast) {
+                        return true;
+                    }
+                    break;
+                case 16 /* Constraint */:
+                    var constraint = ast.parent;
+                    if (constraint.type === ast) {
+                        return true;
+                    }
+                    break;
+                case 109 /* CastExpression */:
+                    var castExpression = ast.parent;
+                    return castExpression.type === ast;
+                case 137 /* ExtendsHeritageClause */:
+                case 138 /* ImplementsHeritageClause */:
+                    return true;
+                case 28 /* TypeArgumentList */:
+                    return true;
                 case 32 /* ClassDeclaration */:
                 case 33 /* InterfaceDeclaration */:
                 case 38 /* ModuleDeclaration */:
@@ -52549,7 +52597,7 @@ var TypeScript;
                             var contextualType = null;
 
                             if (enclosingDecl && (enclosingDecl.kind & 1032192 /* SomeFunction */)) {
-                                var typeAnnotation = TypeScript.getTypeAnnotation(enclosingDeclAST);
+                                var typeAnnotation = TypeScript.getType(enclosingDeclAST);
                                 if (typeAnnotation) {
                                     var returnTypeSymbol = resolver.resolveTypeReference(typeAnnotation, resolutionContext);
                                     if (returnTypeSymbol) {
@@ -52574,10 +52622,8 @@ var TypeScript;
 
                         break;
 
-                    case 18 /* TypeRef */:
-                        var typeExpressionNode = path[i + 1];
-
-                        if (typeExpressionNode && typeExpressionNode.nodeType() === 36 /* ObjectType */) {
+                    case 36 /* ObjectType */:
+                        if (TypeScript.isTypesOnlyLocation(current)) {
                             resolver.resolveAST(current, false, resolutionContext);
                         }
 
@@ -54214,7 +54260,7 @@ var TypeScript;
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
 
-            var body = this.visitObjectTypeWorker(node.body);
+            var body = this.visitObjectType(node.body);
 
             var modifiers = this.visitModifiers(node.modifiers);
             var result = new TypeScript.InterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, body);
@@ -54225,25 +54271,14 @@ var TypeScript;
 
         SyntaxTreeToAstVisitor.prototype.visitHeritageClause = function (node) {
             var start = this.position;
-            var array = new Array(node.typeNames.nonSeparatorCount());
 
             this.movePast(node.extendsOrImplementsKeyword);
-            for (var i = 0, n = node.typeNames.childCount(); i < n; i++) {
-                if (i % 2 === 1) {
-                    this.movePast(node.typeNames.childAt(i));
-                } else {
-                    var type = this.visitType(node.typeNames.childAt(i));
-                    array[i / 2] = type;
-                }
-            }
+            var typeNames = this.visitSeparatedSyntaxList(node.typeNames);
 
-            var result = new TypeScript.ASTList(this.fileName, array);
+            var result = new TypeScript.HeritageClause(node.extendsOrImplementsKeyword.tokenKind === 48 /* ExtendsKeyword */ ? 137 /* ExtendsHeritageClause */ : 138 /* ImplementsHeritageClause */, typeNames);
             this.setSpan(result, start, node);
 
-            var heritageClause = new TypeScript.HeritageClause(node.extendsOrImplementsKeyword.tokenKind === 48 /* ExtendsKeyword */ ? 137 /* ExtendsHeritageClause */ : 138 /* ImplementsHeritageClause */, result);
-            this.setSpan(heritageClause, start, node);
-
-            return heritageClause;
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.getModuleNames = function (node) {
@@ -54434,7 +54469,7 @@ var TypeScript;
             var start = this.position;
             var name = this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var typeExpr = this.visitTypeAnnotation(node.typeAnnotation);
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var result = new TypeScript.VariableDeclarator(name, typeExpr, init);
@@ -54586,11 +54621,7 @@ var TypeScript;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitType = function (type) {
-            if (type.isToken()) {
-                return new TypeScript.TypeReference(type.accept(this));
-            } else {
-                return type.accept(this);
-            }
+            return type ? type.accept(this) : null;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitTypeQuery = function (node) {
@@ -54598,23 +54629,23 @@ var TypeScript;
             this.movePast(node.typeOfKeyword);
             var name = node.name.accept(this);
 
-            var typeQuery = new TypeScript.TypeQuery(name);
-            this.setSpan(typeQuery, start, node);
+            var result = new TypeScript.TypeQuery(name);
+            this.setSpan(result, start, node);
 
-            return new TypeScript.TypeReference(typeQuery);
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitQualifiedName = function (node) {
             var start = this.position;
-            var left = this.visitType(node.left).term;
+            var left = this.visitType(node.left);
             this.movePast(node.dotToken);
             var right = this.identifierFromToken(node.right, false);
             this.movePast(node.right);
 
-            var term = new TypeScript.QualifiedName(left, right);
-            this.setSpan(term, start, node);
+            var result = new TypeScript.QualifiedName(left, right);
+            this.setSpan(result, start, node);
 
-            return new TypeScript.TypeReference(term);
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitTypeArgumentList = function (node) {
@@ -54622,23 +54653,10 @@ var TypeScript;
                 return null;
             }
 
-            var array = new Array(node.typeArguments.nonSeparatorCount());
-
-            this.movePast(node.lessThanToken);
-
             var start = this.position;
-
-            for (var i = 0, n = node.typeArguments.childCount(); i < n; i++) {
-                if (i % 2 === 1) {
-                    this.movePast(node.typeArguments.childAt(i));
-                } else {
-                    array[i / 2] = this.visitType(node.typeArguments.childAt(i));
-                }
-            }
+            this.movePast(node.lessThanToken);
+            var typeArguments = this.visitSeparatedSyntaxList(node.typeArguments);
             this.movePast(node.greaterThanToken);
-
-            var typeArguments = new TypeScript.ASTList(this.fileName, array);
-            this.setSpan(typeArguments, start, node.typeArguments);
 
             var result = new TypeScript.TypeArgumentList(typeArguments);
             this.setSpan(result, start, node);
@@ -54653,12 +54671,12 @@ var TypeScript;
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var parameters = this.visitParameterList(node.parameterList);
             this.movePast(node.equalsGreaterThanToken);
-            var returnType = node.type ? this.visitType(node.type) : null;
+            var returnType = this.visitType(node.type);
 
-            var funcDecl = new TypeScript.ConstructorType(typeParameters, parameters, returnType);
-            this.setSpan(funcDecl, start, node);
+            var result = new TypeScript.ConstructorType(typeParameters, parameters, returnType);
+            this.setSpan(result, start, node);
 
-            return new TypeScript.TypeReference(funcDecl);
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitFunctionType = function (node) {
@@ -54666,32 +54684,25 @@ var TypeScript;
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var parameters = this.visitParameterList(node.parameterList);
             this.movePast(node.equalsGreaterThanToken);
-            var returnType = node.type ? this.visitType(node.type) : null;
+            var returnType = this.visitType(node.type);
 
-            var funcDecl = new TypeScript.FunctionType(typeParameters, parameters, returnType);
-            this.setSpan(funcDecl, start, node);
+            var result = new TypeScript.FunctionType(typeParameters, parameters, returnType);
+            this.setSpan(result, start, node);
 
-            return new TypeScript.TypeReference(funcDecl);
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitObjectType = function (node) {
-            var start = this.position;
-
-            var objectType = this.visitObjectTypeWorker(node);
-            return new TypeScript.TypeReference(objectType);
-        };
-
-        SyntaxTreeToAstVisitor.prototype.visitObjectTypeWorker = function (node) {
             var start = this.position;
 
             this.movePast(node.openBraceToken);
             var typeMembers = this.visitSeparatedSyntaxList(node.typeMembers);
             this.movePast(node.closeBraceToken);
 
-            var objectType = new TypeScript.ObjectType(typeMembers);
-            this.setSpan(objectType, start, node);
+            var result = new TypeScript.ObjectType(typeMembers);
+            this.setSpan(result, start, node);
 
-            return objectType;
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitArrayType = function (node) {
@@ -54701,32 +54712,37 @@ var TypeScript;
             this.movePast(node.openBracketToken);
             this.movePast(node.closeBracketToken);
 
-            if (underlying.nodeType() === 18 /* TypeRef */) {
-                underlying = underlying.term;
-            }
+            var result = new TypeScript.ArrayType(underlying);
+            this.setSpan(result, start, node);
 
-            var arrayType = new TypeScript.ArrayType(underlying);
-            this.setSpan(arrayType, start, node);
-
-            var result = new TypeScript.TypeReference(arrayType);
             return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitGenericType = function (node) {
             var start = this.position;
 
-            var underlying = this.visitType(node.name).term;
+            var underlying = this.visitType(node.name);
             var typeArguments = this.visitTypeArgumentList(node.typeArgumentList);
 
-            var genericType = new TypeScript.GenericType(underlying, typeArguments);
-            this.setSpan(genericType, start, node);
+            var result = new TypeScript.GenericType(underlying, typeArguments);
+            this.setSpan(result, start, node);
 
-            return new TypeScript.TypeReference(genericType);
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitTypeAnnotation = function (node) {
+            if (!node) {
+                return null;
+            }
+
+            var start = this.position;
             this.movePast(node.colonToken);
-            return this.visitType(node.type);
+            var type = this.visitType(node.type);
+
+            var result = new TypeScript.TypeAnnotation(type);
+            this.setSpan(result, start, node);
+
+            return result;
         };
 
         SyntaxTreeToAstVisitor.prototype.visitBlock = function (node) {
@@ -54756,7 +54772,7 @@ var TypeScript;
             var identifier = this.identifierFromToken(node.identifier, !!node.questionToken);
             this.movePast(node.identifier);
             this.movePast(node.questionToken);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var typeExpr = this.visitTypeAnnotation(node.typeAnnotation);
             var init = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
             var modifiers = this.visitModifiers(node.modifiers);
@@ -54991,7 +55007,7 @@ var TypeScript;
             var parameter = node.parameter.accept(this);
 
             this.movePast(node.closeBracketToken);
-            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var returnType = this.visitTypeAnnotation(node.typeAnnotation);
 
             var result = new TypeScript.IndexSignature(parameter, returnType);
             this.setCommentsAndSpan(result, start, node);
@@ -55005,7 +55021,7 @@ var TypeScript;
             var name = this.identifierFromToken(node.propertyName, !!node.questionToken);
             this.movePast(node.propertyName);
             this.movePast(node.questionToken);
-            var typeExpr = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var typeExpr = this.visitTypeAnnotation(node.typeAnnotation);
 
             var result = new TypeScript.PropertySignature(name, node.questionToken ? new TypeScript.ASTSpan() : null, typeExpr);
             this.setCommentsAndSpan(result, start, node);
@@ -55044,7 +55060,7 @@ var TypeScript;
 
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var parameters = this.visitParameterList(node.parameterList);
-            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var returnType = this.visitTypeAnnotation(node.typeAnnotation);
 
             var result = new TypeScript.CallSignature(typeParameters, parameters, returnType);
             this.setCommentsAndSpan(result, start, node);
@@ -55194,7 +55210,7 @@ var TypeScript;
             var name = this.identifierFromToken(node.propertyName, false);
             this.movePast(node.propertyName);
             var parameters = this.visitParameterList(node.parameterList);
-            var returnType = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var returnType = this.visitTypeAnnotation(node.typeAnnotation);
 
             var block = node.block ? node.block.accept(this) : null;
             var result = new TypeScript.GetAccessor(this.visitModifiers(node.modifiers), name, parameters, returnType, block);
@@ -55538,7 +55554,7 @@ var TypeScript;
             this.movePast(node.openParenToken);
             var identifier = this.identifierFromToken(node.identifier, false);
             this.movePast(node.identifier);
-            var typeAnnotation = node.typeAnnotation ? node.typeAnnotation.accept(this) : null;
+            var typeAnnotation = this.visitTypeAnnotation(node.typeAnnotation);
             this.movePast(node.closeParenToken);
             var block = node.block.accept(this);
 
@@ -55939,7 +55955,6 @@ var TypeScript;
         };
 
         SyntaxTreeToIncrementalAstVisitor.prototype.visitObjectType = function (node) {
-            var start = this.position;
             var result = this.getAndMovePastAST(node);
             if (!result) {
                 result = _super.prototype.visitObjectType.call(this, node);
@@ -56772,27 +56787,19 @@ var TypeScript;
     })(AST);
     TypeScript.StringLiteral = StringLiteral;
 
-    var TypeReference = (function (_super) {
-        __extends(TypeReference, _super);
-        function TypeReference(term) {
+    var TypeAnnotation = (function (_super) {
+        __extends(TypeAnnotation, _super);
+        function TypeAnnotation(type) {
             _super.call(this);
-            this.term = term;
-            term && (term.parent = this);
-            TypeScript.Debug.assert(term !== null && term !== undefined);
-            this.minChar = term.minChar;
-            this.limChar = term.limChar;
-            this.trailingTriviaWidth = term.trailingTriviaWidth;
+            this.type = type;
+            type && (type.parent = this);
         }
-        TypeReference.prototype.nodeType = function () {
-            return 18 /* TypeRef */;
+        TypeAnnotation.prototype.nodeType = function () {
+            return 18 /* TypeAnnotation */;
         };
-
-        TypeReference.prototype.structuralEquals = function (ast, includingPosition) {
-            return _super.prototype.structuralEquals.call(this, ast, includingPosition) && structuralEquals(this.term, ast.term, includingPosition);
-        };
-        return TypeReference;
+        return TypeAnnotation;
     })(AST);
-    TypeScript.TypeReference = TypeReference;
+    TypeScript.TypeAnnotation = TypeAnnotation;
 
     var BuiltInType = (function (_super) {
         __extends(BuiltInType, _super);
@@ -56832,10 +56839,6 @@ var TypeScript;
 
         ImportDeclaration.prototype.getAliasName = function (aliasAST) {
             if (typeof aliasAST === "undefined") { aliasAST = this.moduleReference; }
-            if (aliasAST.nodeType() == 18 /* TypeRef */) {
-                aliasAST = aliasAST.term;
-            }
-
             if (aliasAST.nodeType() === 51 /* Name */) {
                 return aliasAST.text();
             } else {
