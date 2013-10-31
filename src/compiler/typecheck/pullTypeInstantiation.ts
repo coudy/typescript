@@ -534,6 +534,8 @@ module TypeScript {
                 }
             }
 
+            var instantiateRoot = isReferencedType;
+
             // if we're re-specializing a generic type (say, if a signature parameter gets specialized
             // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map.  This helps
             // us get the type argument list right when it's requested via getTypeArguments
@@ -552,26 +554,41 @@ module TypeScript {
                 var outerTypeMap = (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap;
                 var innerSubstitution: PullTypeSymbol = null;
                 var outerSubstitution: PullTypeSymbol = null;
+                var canCondenseTypeParameters = true;
 
                 for (var typeParameterID in outerTypeMap) {
                     if (outerTypeMap.hasOwnProperty(typeParameterID)) {
 
                         outerSubstitution = outerTypeMap[typeParameterID];
                         innerSubstitution = typeParameterArgumentMap[outerSubstitution.pullSymbolID];
-                        
+
                         if (innerSubstitution &&
                             (!outerSubstitution.isTypeParameter() ||
                             !outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] ||
                             (outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] == outerSubstitution))) {
                             initializationMap[typeParameterID] = typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID];
                         }
+                        else {
+                            canCondenseTypeParameters = false;
+                        }
                     }
+                }
+
+                if (canCondenseTypeParameters && typeParameters.length) {
+                    var filteredInstantiationMap: PullTypeSymbol[] = [];
+
+                    for (var i = 0; i < typeParameters.length; i++) {
+                        filteredInstantiationMap[typeParameters[i].pullSymbolID] = initializationMap[typeParameters[i].pullSymbolID];
+                    }
+
+                    instantiateRoot = true;
+                    initializationMap = filteredInstantiationMap;
                 }
 
                 typeParameterArgumentMap = initializationMap;
             }
 
-            instantiation = new PullInstantiatedTypeReferenceSymbol(isReferencedType ? rootType : type, typeParameterArgumentMap);
+            instantiation = new PullInstantiatedTypeReferenceSymbol(resolver, instantiateRoot ? rootType : type, typeParameterArgumentMap);
 
             if (!instantiateFunctionTypeParameters) {
                 rootType.addSpecialization(instantiation, reconstructedTypeArgumentList);
