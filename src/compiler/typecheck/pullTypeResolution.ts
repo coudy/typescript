@@ -1228,6 +1228,16 @@ module TypeScript {
 
                         // inherit parent's constructor signatures   
                         if (parentConstructor) {
+                            // There are cases where we need the parent's constructor resolved
+                            // when it is not already resolved. The common case is a class with
+                            // no explicit constructor inheriting an explicit constructor from
+                            // a base class.
+                            // class A extends B {}
+                            // class B { constructor(p: string) {} }
+                            // This should really be the responsibility of the symbol internally
+                            // when we call getConstructorMethod(). It fits into the larger notion
+                            // of making symbols resolve their own components when they are queried.
+                            this.resolveDeclaredSymbol(parentConstructor, context);
                             var parentConstructorType = parentConstructor.type;
                             var parentConstructSignatures = parentConstructorType.getConstructSignatures();
 
