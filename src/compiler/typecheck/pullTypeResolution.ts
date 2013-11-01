@@ -1429,14 +1429,17 @@ module TypeScript {
         }
 
         private getMemberSymbolOfKind(symbolName: string, kind: PullElementKind, pullTypeSymbol: PullTypeSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            var symbol = this.getMemberSymbol(symbolName, kind, pullTypeSymbol);
+            var memberSymbol = this.getMemberSymbol(symbolName, kind, pullTypeSymbol);
             // Verify that the symbol is actually of the given kind
-            return this.filterSymbol(symbol, kind, enclosingDecl, context);
+            return {
+                symbol: this.filterSymbol(memberSymbol, kind, enclosingDecl, context),
+                aliasSymbol: memberSymbol && memberSymbol.isAlias() ? <PullTypeAliasSymbol>memberSymbol : null
+            };
         }
 
         private resolveIdentifierOfInternalModuleReference(importDecl: PullDecl, identifier: Identifier, moduleSymbol: PullSymbol, enclosingDecl: PullDecl, context: PullTypeResolutionContext):
             {
-                valueSymbol: PullSymbol; typeSymbol: PullTypeSymbol; containerSymbol: PullContainerSymbol;
+                valueSymbol: PullSymbol; typeSymbol: PullTypeSymbol; containerSymbol: PullContainerSymbol; aliasSymbol: PullTypeAliasSymbol;
             } {
             var rhsName = identifier.valueText();
             if (rhsName.length === 0) {
@@ -1444,14 +1447,17 @@ module TypeScript {
             }
 
             var moduleTypeSymbol = <PullContainerSymbol>moduleSymbol.type;
-            var containerSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeContainer, moduleTypeSymbol, enclosingDecl, context);
+            var memberSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeContainer, moduleTypeSymbol, enclosingDecl, context);
+            var containerSymbol = memberSymbol.symbol;
             var valueSymbol: PullSymbol = null;
             var typeSymbol: PullSymbol = null;
+            var aliasSymbol: PullTypeAliasSymbol = null;
 
             var acceptableAlias = true;
 
             if (containerSymbol) {
                 acceptableAlias = (containerSymbol.kind & PullElementKind.AcceptableAlias) != 0;
+                aliasSymbol = memberSymbol.aliasSymbol;
             }
 
             if (!acceptableAlias && containerSymbol && containerSymbol.kind == PullElementKind.TypeAlias) {
@@ -1461,6 +1467,7 @@ module TypeScript {
                 var aliasedAssignedContainer = (<PullTypeAliasSymbol>containerSymbol).getExportAssignedContainerSymbol();
 
                 if (aliasedAssignedValue || aliasedAssignedType || aliasedAssignedContainer) {
+                    aliasSymbol = <PullTypeAliasSymbol>containerSymbol;
                     valueSymbol = aliasedAssignedValue;
                     typeSymbol = aliasedAssignedType;
                     containerSymbol = aliasedAssignedContainer;
@@ -1477,12 +1484,20 @@ module TypeScript {
             // if we haven't already gotten a value or type from the alias, look for them now
             if (!valueSymbol) {
                 if (moduleTypeSymbol.getInstanceSymbol()) {
-                    valueSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeValue, moduleTypeSymbol.getInstanceSymbol().type, enclosingDecl, context);
+                    memberSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeValue, moduleTypeSymbol.getInstanceSymbol().type, enclosingDecl, context);
+                    valueSymbol = memberSymbol.symbol;
+                    if (valueSymbol && memberSymbol.aliasSymbol) {
+                        aliasSymbol = memberSymbol.aliasSymbol;
+                    }
                 }
             }
 
             if (!typeSymbol) {
-                typeSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeType, moduleTypeSymbol, enclosingDecl, context);
+                memberSymbol = this.getMemberSymbolOfKind(rhsName, PullElementKind.SomeType, moduleTypeSymbol, enclosingDecl, context);
+                typeSymbol = memberSymbol.symbol;
+                if (typeSymbol && memberSymbol.aliasSymbol) {
+                    aliasSymbol = memberSymbol.aliasSymbol;
+                }
             }
 
             if (!valueSymbol && !typeSymbol && !containerSymbol) {
@@ -1497,7 +1512,8 @@ module TypeScript {
             return {
                 valueSymbol: valueSymbol,
                 typeSymbol: <PullTypeSymbol>typeSymbol,
-                containerSymbol: <PullContainerSymbol>containerSymbol
+                containerSymbol: <PullContainerSymbol>containerSymbol,
+                aliasSymbol: aliasSymbol
             };
         }
 
@@ -1512,7 +1528,8 @@ module TypeScript {
                 var moduleContainer = this.resolveModuleReference(importDecl, dottedNameAST.left, enclosingDecl, context, declPath);
                 if (moduleContainer) {
                     moduleName = dottedNameAST.right.valueText();
-                    moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context);
+                    // We dont care about setting alias symbol here, because it has to be exported member which would make the import statement to emit anyways
+                    moduleSymbol = this.getMemberSymbolOfKind(moduleName, PullElementKind.Container, moduleContainer.type, enclosingDecl, context).symbol;
                     if (!moduleSymbol) {
                         this.semanticInfoChain.addDiagnosticFromAST(dottedNameAST.right, DiagnosticCode.Could_not_find_module_0_in_module_1, [moduleName, moduleContainer.toString()]);
                     }
@@ -1558,6 +1575,7 @@ module TypeScript {
                 var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
                     aliasedType = moduleSymbol.type;
+                    this.semanticInfoChain.setAliasSymbolForAST(moduleReference, this.semanticInfoChain.getAliasSymbolForAST(aliasExpr));
                     if (aliasedType.anyDeclHasFlag(PullElementFlags.InitializedModule)) {
                         var moduleName = aliasExpr.nodeType() === NodeType.Name ? (<Identifier>aliasExpr).valueText() : (<StringLiteral>aliasExpr).valueText();
                         var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
@@ -1587,6 +1605,7 @@ module TypeScript {
                         importDeclSymbol.setAssignedValueSymbol(identifierResolution.valueSymbol);
                         importDeclSymbol.setAssignedTypeSymbol(identifierResolution.typeSymbol);
                         importDeclSymbol.setAssignedContainerSymbol(identifierResolution.containerSymbol);
+                        this.semanticInfoChain.setAliasSymbolForAST(moduleReference, identifierResolution.aliasSymbol);
                         if (identifierResolution.valueSymbol) {
                             importDeclSymbol.setIsUsedAsValue(true);
                         }
