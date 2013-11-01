@@ -330,6 +330,10 @@ module TypeScript {
         walker.walk(preAst.block);
     }
 
+    function walkExternalModuleReferenceChildren(preAst: ExternalModuleReference, walker: AstWalker): void {
+        walker.walk(preAst.stringLiteral);
+    }
+
     function walkFinallyClauseChildren(preAst: FinallyClause, walker: AstWalker): void {
         walker.walk(preAst.block);
     }
@@ -369,6 +373,10 @@ module TypeScript {
         walker.walk(preAst.moduleElements);
     }
 
+    function walkModuleNameModuleReferenceChildren(preAst: ModuleNameModuleReference, walker: AstWalker): void {
+        walker.walk(preAst.moduleName);
+    }
+
     function walkEnumDeclarationChildren(preAst: EnumDeclaration, walker: AstWalker): void {
         walker.walk(preAst.identifier);
         walker.walk(preAst.enumElements);
@@ -379,7 +387,7 @@ module TypeScript {
         walker.walk(preAst.equalsValueClause);
     }
 
-    function walkImportDeclChildren(preAst: ImportDeclaration, walker: AstWalker): void {
+    function walkImportDeclarationChildren(preAst: ImportDeclaration, walker: AstWalker): void {
         walker.walk(preAst.identifier);
         walker.walk(preAst.moduleReference);
     }
@@ -455,6 +463,7 @@ module TypeScript {
     childrenWalkers[NodeType.ExportAssignment] = walkExportAssignmentChildren;
     childrenWalkers[NodeType.ExpressionStatement] = walkExpressionStatementChildren;
     childrenWalkers[NodeType.ExtendsHeritageClause] = walkHeritageClauseChildren;
+    childrenWalkers[NodeType.ExternalModuleReference] = walkExternalModuleReferenceChildren;
     childrenWalkers[NodeType.FalseLiteral] = null;
     childrenWalkers[NodeType.FinallyClause] = walkFinallyClauseChildren;
     childrenWalkers[NodeType.ForInStatement] = walkForInStatementChildren;
@@ -469,7 +478,7 @@ module TypeScript {
     childrenWalkers[NodeType.GreaterThanOrEqualExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.IfStatement] = walkIfStatementChildren;
     childrenWalkers[NodeType.ImplementsHeritageClause] = walkHeritageClauseChildren;
-    childrenWalkers[NodeType.ImportDeclaration] = walkImportDeclChildren;
+    childrenWalkers[NodeType.ImportDeclaration] = walkImportDeclarationChildren;
     childrenWalkers[NodeType.IndexMemberDeclaration] = walkIndexMemberDeclarationChildren;
     childrenWalkers[NodeType.IndexSignature] = walkIndexSignatureChildren;
     childrenWalkers[NodeType.InExpression] = walkBinaryExpressionChildren;
@@ -490,6 +499,7 @@ module TypeScript {
     childrenWalkers[NodeType.MemberVariableDeclaration] = walkMemberVariableDeclarationChildren;
     childrenWalkers[NodeType.MethodSignature] = walkMethodSignatureChildren;
     childrenWalkers[NodeType.ModuleDeclaration] = walkModuleDeclarationChildren;
+    childrenWalkers[NodeType.ModuleNameModuleReference] = walkModuleNameModuleReferenceChildren;
     childrenWalkers[NodeType.ModuloAssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.ModuloExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.MultiplyAssignmentExpression] = walkBinaryExpressionChildren;

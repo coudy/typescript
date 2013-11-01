@@ -350,6 +350,28 @@ module TypeScript {
         }
     }
 
+    export class ExternalModuleReference extends AST {
+        constructor(public stringLiteral: StringLiteral) {
+            super();
+            stringLiteral && (stringLiteral.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ExternalModuleReference;
+        }
+    }
+
+    export class ModuleNameModuleReference extends AST {
+        constructor(public moduleName: AST) {
+            super();
+            moduleName && (moduleName.parent = this);
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.ModuleNameModuleReference;
+        }
+    }
+
     export class ImportDeclaration extends AST {
         constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public moduleReference: AST) {
             super();
@@ -362,25 +384,7 @@ module TypeScript {
         }
 
         public isExternalImportDeclaration() {
-            if (this.moduleReference.nodeType() == NodeType.Name) {
-                var text = (<Identifier>this.moduleReference).text();
-                return isQuoted(text);
-            }
-
-            return false;
-        }
-
-        public getAliasName(aliasAST: AST = this.moduleReference): string {
-            //if (aliasAST.nodeType() == NodeType.TypeRef) {
-            //    aliasAST = (<TypeReference>aliasAST).term;
-            //}
-
-            if (aliasAST.nodeType() === NodeType.Name) {
-                return (<Identifier>aliasAST).text();
-            } else {
-                var dotExpr = <QualifiedName>aliasAST;
-                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
-            }
+            return this.moduleReference.nodeType() === NodeType.ExternalModuleReference;
         }
 
         public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {

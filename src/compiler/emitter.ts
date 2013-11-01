@@ -311,9 +311,10 @@ module TypeScript {
                 var aliasAST = importDeclAST.moduleReference;
 
                 if (isExternalModuleReference) {
-                    this.writeToOutput("require(" + (<Identifier>aliasAST).text() + ")");
-                } else {
-                    this.emitJavascript(aliasAST, false);
+                    this.writeToOutput("require(" + (<ExternalModuleReference>aliasAST).stringLiteral.text() + ")");
+                }
+                else {
+                    this.emitJavascript((<ModuleNameModuleReference>aliasAST).moduleName, false);
                 }
 
                 this.recordSourceMappingEnd(importDeclAST);
@@ -745,7 +746,7 @@ module TypeScript {
                         }
 
                         importList += importStatementDecl.name;
-                        dependencyList += importStatementAST.getAliasName();
+                        dependencyList += (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.text();
                     }
                 }
             }

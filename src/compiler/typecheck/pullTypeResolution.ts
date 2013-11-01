@@ -1502,7 +1502,7 @@ module TypeScript {
         }
 
         private resolveModuleReference(importDecl: PullDecl, moduleNameExpr: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext, declPath: PullDecl[]) {
-            CompilerDiagnostics.assert(moduleNameExpr.nodeType() == NodeType.QualifiedName || moduleNameExpr.nodeType() == NodeType.Name, "resolving module reference should always be either name or member reference");
+            Debug.assert(moduleNameExpr.nodeType() == NodeType.QualifiedName || moduleNameExpr.nodeType() == NodeType.Name || moduleNameExpr.nodeType() === NodeType.StringLiteral, "resolving module reference should always be either name or member reference");
 
             var moduleSymbol: PullSymbol = null;
             var moduleName: string;
@@ -1518,14 +1518,18 @@ module TypeScript {
                     }
                 }
             }
-            else if ((<Identifier>moduleNameExpr).text().length > 0) {
-                moduleName = (<Identifier>moduleNameExpr).valueText();
-                moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
-                if (moduleSymbol) {
-                    // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
-                    this.setSymbolForAST(moduleNameExpr, moduleSymbol, null);
-                } else {
-                    this.semanticInfoChain.addDiagnosticFromAST(moduleNameExpr, DiagnosticCode.Unable_to_resolve_module_reference_0, [moduleName]);
+            else {
+                var valueText = moduleNameExpr.nodeType() === NodeType.Name ? (<Identifier>moduleNameExpr).valueText() : (<StringLiteral>moduleNameExpr).valueText();
+                var text = moduleNameExpr.nodeType() === NodeType.Name ? (<Identifier>moduleNameExpr).text() : (<StringLiteral>moduleNameExpr).text();
+
+                if (text.length > 0) {
+                    moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(valueText, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
+                    if (moduleSymbol) {
+                        // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
+                        this.setSymbolForAST(moduleNameExpr, moduleSymbol, null);
+                    } else {
+                        this.semanticInfoChain.addDiagnosticFromAST(moduleNameExpr, DiagnosticCode.Unable_to_resolve_module_reference_0, [valueText]);
+                    }
                 }
             }
 
@@ -1537,22 +1541,29 @@ module TypeScript {
             var importDecl = this.semanticInfoChain.getDeclForAST(importStatementAST);
             var enclosingDecl = this.getEnclosingDecl(importDecl);
 
-            var aliasExpr = importStatementAST.moduleReference;
+            var moduleReference = importStatementAST.moduleReference;
+
+            var aliasExpr = moduleReference.nodeType() === NodeType.ExternalModuleReference
+                ? (<ExternalModuleReference>moduleReference).stringLiteral
+                : (<ModuleNameModuleReference>moduleReference).moduleName;
+
             var declPath = enclosingDecl.getParentPath();
             var aliasedType: PullTypeSymbol = null;
 
-            if (aliasExpr.nodeType() == NodeType.Name) {
+            if (aliasExpr.nodeType() === NodeType.Name || aliasExpr.nodeType() === NodeType.StringLiteral) {
                 var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
                     aliasedType = moduleSymbol.type;
                     if (aliasedType.anyDeclHasFlag(PullElementFlags.InitializedModule)) {
-                        var moduleName = (<Identifier>aliasExpr).valueText();
+                        var moduleName = aliasExpr.nodeType() === NodeType.Name ? (<Identifier>aliasExpr).valueText() : (<StringLiteral>aliasExpr).valueText();
                         var valueSymbol = this.getSymbolFromDeclPath(moduleName, declPath, PullElementKind.SomeValue);
                         var instanceSymbol = (<PullContainerSymbol>aliasedType).getInstanceSymbol();
                         // If there is module and it is instantiated, value symbol needs to refer to the module instance symbol
                         if (valueSymbol && (instanceSymbol != valueSymbol || valueSymbol.type == aliasedType)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [(<Identifier>aliasExpr).text(), moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
-                        } else {
+                            var text = aliasExpr.nodeType() === NodeType.Name ? (<Identifier>aliasExpr).text() : (<StringLiteral>aliasExpr).text();
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [text, moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                        }
+                        else {
                             // Set value symbol, type and container setting will be taken care of later using aliasedType
                             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
                             importDeclSymbol.setAssignedValueSymbol(valueSymbol);
@@ -1561,7 +1572,8 @@ module TypeScript {
                 } else {
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
-            } else if (aliasExpr.nodeType() == NodeType.QualifiedName) {
+            }
+            else if (aliasExpr.nodeType() == NodeType.QualifiedName) {
                 var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
                 var dottedNameAST = <QualifiedName>aliasExpr;
                 var moduleSymbol = this.resolveModuleReference(importDecl, dottedNameAST.left, enclosingDecl, context, declPath);
@@ -1603,13 +1615,14 @@ module TypeScript {
             // reference
             if (importStatementAST.isExternalImportDeclaration()) {
                 // dynamic module name (string literal)
-                var modPath = (<Identifier>importStatementAST.moduleReference).valueText();
+                var modPath = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.valueText();
                 var declPath = enclosingDecl.getParentPath();
 
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
 
                 if (!aliasedType) {
-                    this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [(<Identifier>importStatementAST.moduleReference).text()]);
+                    var path = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.text();
+                    this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [path]);
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
             } else {
@@ -1660,7 +1673,7 @@ module TypeScript {
                         DiagnosticCode.Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set, null));
                 }
 
-                var modPath = (<Identifier>importStatementAST.moduleReference).valueText();
+                var modPath = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.valueText();
                 if (enclosingDecl.kind === PullElementKind.DynamicModule) {
                     var ast = this.getASTForDecl(enclosingDecl);
                     if (ast.nodeType() === NodeType.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {

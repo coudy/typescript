@@ -352,17 +352,27 @@ module TypeScript {
             return result;
         }
 
-        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): any {
+        public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): ExternalModuleReference {
+            var start = this.position;
+
             this.moveTo(node, node.stringLiteral);
-            var result = this.identifierFromToken(node.stringLiteral, /*isOptional:*/ false);
-            this.movePast(node.stringLiteral);
+            var stringLiteral: StringLiteral = node.stringLiteral.accept(this);
             this.movePast(node.closeParenToken);
+
+            var result = new ExternalModuleReference(stringLiteral);
+            this.setSpan(result, start, node);
 
             return result;
         }
 
-        public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): any {
-            return node.moduleName.accept(this);
+        public visitModuleNameModuleReference(node: ModuleNameModuleReferenceSyntax): ModuleNameModuleReference {
+            var start = this.position;
+            var moduleName: AST = node.moduleName.accept(this);
+
+            var result = new ModuleNameModuleReference(moduleName);
+            this.setSpan(result, start, node);
+
+            return result;
         }
 
         public visitClassDeclaration(node: ClassDeclarationSyntax): ClassDeclaration {
@@ -589,7 +599,7 @@ module TypeScript {
             var name = this.identifierFromToken(node.identifier, /*isOptional:*/ false);
             this.movePast(node.identifier);
             this.movePast(node.equalsToken);
-            var alias = node.moduleReference.accept(this);
+            var alias: AST = node.moduleReference.accept(this);
             this.movePast(node.semicolonToken);
 
             var modifiers = this.visitModifiers(node.modifiers);
