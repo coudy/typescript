@@ -251,7 +251,7 @@ module TypeScript {
         }
 
         public emitImportDeclaration(importDeclAST: ImportDeclaration) {
-            var isExternalModuleReference = importDeclAST.isExternalImportDeclaration();
+            var isExternalModuleReference = importDeclAST.moduleReference.nodeType() === NodeType.ExternalModuleReference;
             var importDecl = this.semanticInfoChain.getDeclForAST(importDeclAST);
             var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
             var isAmdCodeGen = this.emitOptions.compilationSettings().moduleGenTarget() == ModuleGenTarget.Asynchronous;
@@ -713,7 +713,7 @@ module TypeScript {
 
                 if (decl.kind & PullElementKind.TypeAlias) {
                     var importStatementAST = <ImportDeclaration>this.semanticInfoChain.getASTForDecl(decl);
-                    if (importStatementAST.isExternalImportDeclaration()) { // external module
+                    if (importStatementAST.moduleReference.nodeType() === NodeType.ExternalModuleReference) { // external module
                         var symbol = decl.getSymbol();
                         var typeSymbol = symbol && symbol.type;
                         if (typeSymbol && typeSymbol !== this.semanticInfoChain.anyTypeSymbol && !typeSymbol.isError()) {

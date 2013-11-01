@@ -958,7 +958,7 @@ module TypeScript {
                 }
                 this.declFile.Write("import ");
                 this.declFile.Write(importDeclAST.identifier.text() + " = ");
-                if (importDeclAST.isExternalImportDeclaration()) {
+                if (importDeclAST.moduleReference.nodeType() === NodeType.ExternalModuleReference) {
                     this.declFile.WriteLine("require(" + (<ExternalModuleReference>importDeclAST.moduleReference).stringLiteral.text() + ");");
                 }
                 else {

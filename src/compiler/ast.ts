@@ -383,10 +383,6 @@ module TypeScript {
             return NodeType.ImportDeclaration;
         }
 
-        public isExternalImportDeclaration() {
-            return this.moduleReference.nodeType() === NodeType.ExternalModuleReference;
-        }
-
         public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.identifier, ast.identifier, includingPosition) &&

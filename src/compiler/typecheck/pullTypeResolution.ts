@@ -1613,7 +1613,7 @@ module TypeScript {
 
             // the alias name may be a string literal, in which case we'll need to convert it to a type
             // reference
-            if (importStatementAST.isExternalImportDeclaration()) {
+            if (importStatementAST.moduleReference.nodeType() === NodeType.ExternalModuleReference) {
                 // dynamic module name (string literal)
                 var modPath = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.valueText();
                 var declPath = enclosingDecl.getParentPath();
@@ -1667,7 +1667,7 @@ module TypeScript {
             var enclosingDecl = this.getEnclosingDecl(importDecl);
             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
-            if (importStatementAST.isExternalImportDeclaration()) {
+            if (importStatementAST.moduleReference.nodeType() === NodeType.ExternalModuleReference) {
                 if (this.compilationSettings.noResolve()) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(importStatementAST,
                         DiagnosticCode.Import_declaration_cannot_refer_to_external_module_reference_when_noResolve_option_is_set, null));
@@ -1686,7 +1686,7 @@ module TypeScript {
             }
 
             var checkPrivacy: boolean;
-            if (importStatementAST.isExternalImportDeclaration()) {
+            if (importStatementAST.moduleReference.nodeType() === NodeType.ExternalModuleReference) {
                 var containerSymbol = importDeclSymbol.getExportAssignedContainerSymbol();
                 var container = containerSymbol ? containerSymbol.getContainer() : null;
                 if (container && container.kind == PullElementKind.DynamicModule) {
