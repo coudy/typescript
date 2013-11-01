@@ -4696,23 +4696,31 @@ module TypeScript {
             this.resolveAST(ast.block, /*isContextuallyTyped*/ false, context);
         }
 
-        private computeTypeOfReturnExpression(expression: AST, context: PullTypeResolutionContext): PullTypeSymbol {
-            var enclosingDecl = this.getEnclosingDeclForAST(expression);
+        private getEnclosingFunctionDeclaration(ast: AST): PullDecl {
+            var enclosingDecl = this.getEnclosingDeclForAST(ast);
 
             while (enclosingDecl) {
                 if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                    enclosingDecl.setFlag(PullElementFlags.HasReturnStatement);
-                    break;
+                    return enclosingDecl;
                 }
 
                 enclosingDecl = enclosingDecl.getParentDecl();
             }
 
+            return null;
+        }
+
+        private computeTypeOfReturnExpression(expression: AST, context: PullTypeResolutionContext, enclosingFunction?: PullDecl): PullTypeSymbol {
+            enclosingFunction = enclosingFunction || this.getEnclosingFunctionDeclaration(expression);
+            if (enclosingFunction) {
+                enclosingFunction.setFlag(PullElementFlags.HasReturnStatement);
+            }
+
             // push contextual type
             var isContextuallyTyped = false;
 
-            if (enclosingDecl && enclosingDecl.kind & PullElementKind.SomeFunction) {
-                var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
+            if (enclosingFunction) {
+                var enclosingDeclAST = this.getASTForDecl(enclosingFunction);
                 var typeAnnotation = getType(enclosingDeclAST);
                 if (typeAnnotation) {
                     // The containing function has a type annotation, propagate it as the contextual type
@@ -4749,25 +4757,18 @@ module TypeScript {
         }
 
         private resolveReturnStatement(returnAST: ReturnStatement, context: PullTypeResolutionContext): PullSymbol {
-            var enclosingDecl = this.getEnclosingDeclForAST(returnAST);
-            var parentDecl = enclosingDecl;
+            var enclosingFunction = this.getEnclosingFunctionDeclaration(returnAST);
+            if (enclosingFunction) {
+                enclosingFunction.setFlag(PullElementFlags.HasReturnStatement);
+            }
 
             var returnType = <PullTypeSymbol>this.getSymbolForAST(returnAST, context);
             var canTypeCheckAST = this.canTypeCheckAST(returnAST, context);
             if (!returnType || canTypeCheckAST) {
-                while (parentDecl) {
-                    if (parentDecl.kind & PullElementKind.SomeFunction) {
-                        parentDecl.setFlag(PullElementFlags.HasReturnStatement);
-                        break;
-                    }
-
-                    parentDecl = parentDecl.getParentDecl();
-                }
-
                 var returnExpr = returnAST.expression;
                 var resolvedReturnType: PullTypeSymbol = returnExpr === null
                     ? this.semanticInfoChain.voidTypeSymbol
-                    : this.computeTypeOfReturnExpression(returnExpr, context);
+                    : this.computeTypeOfReturnExpression(returnExpr, context, enclosingFunction);
 
                 if (!returnType) {
                     returnType = resolvedReturnType;
@@ -4777,8 +4778,8 @@ module TypeScript {
                 if (returnExpr && canTypeCheckAST) {
                     this.setTypeChecked(returnExpr, context);
                     // Return type of constructor signature must be assignable to the instance type of the class.
-                    if (parentDecl && parentDecl.kind === PullElementKind.ConstructorMethod) {
-                        var classDecl = parentDecl.getParentDecl();
+                    if (enclosingFunction && enclosingFunction.kind === PullElementKind.ConstructorMethod) {
+                        var classDecl = enclosingFunction.getParentDecl();
                         if (classDecl) {
                             var classSymbol = classDecl.getSymbol();
                             this.resolveDeclaredSymbol(classSymbol, context);
@@ -4791,15 +4792,15 @@ module TypeScript {
                         }
                     }
 
-                    if (enclosingDecl.kind === PullElementKind.SetAccessor) {
+                    if (enclosingFunction && enclosingFunction.kind === PullElementKind.SetAccessor) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnExpr, DiagnosticCode.Setters_cannot_return_a_value));
                     }
 
-                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                        var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
+                    if (enclosingFunction) {
+                        var enclosingDeclAST = this.getASTForDecl(enclosingFunction);
                         var typeAnnotation = getType(enclosingDeclAST);
-                        if (typeAnnotation || enclosingDecl.kind == PullElementKind.GetAccessor) {
-                            var signatureSymbol = enclosingDecl.getSignatureSymbol();
+                        if (typeAnnotation || enclosingFunction.kind === PullElementKind.GetAccessor) {
+                            var signatureSymbol = enclosingFunction.getSignatureSymbol();
                             var sigReturnType = signatureSymbol.returnType;
 
                             if (resolvedReturnType && sigReturnType) {
