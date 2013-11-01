@@ -747,12 +747,12 @@ module TypeScript {
             return result;
         }
 
-        private getArrowFunctionStatements(body: ISyntaxNodeOrToken): Block {
-            if (body.kind() === SyntaxKind.Block) {
-                return body.accept(this);
+        private getArrowFunctionStatements(blockSyntax: BlockSyntax, expressionSyntax: IExpressionSyntax): Block {
+            if (blockSyntax !== null) {
+                return blockSyntax.accept(this);
             }
             else {
-                var expression = body.accept(this);
+                var expression = expressionSyntax.accept(this);
                 var returnStatement = new ReturnStatement(expression);
 
                 // Copy any comments before the body of the arrow function to the return statement.
@@ -766,7 +766,8 @@ module TypeScript {
                 // proper semantics.  Also, we can no longer use this expression incrementally.
                 var preComments = expression.preComments();
                 if (preComments) {
-                    (<any>body)._ast = undefined;
+                    (<any>expressionSyntax)._ast = undefined;
+
                     returnStatement.setPreComments(preComments);
                     expression.setPreComments(null);
                 }
@@ -789,7 +790,7 @@ module TypeScript {
             var identifier = node.identifier.accept(this);
             this.movePast(node.equalsGreaterThanToken);
 
-            var statements = this.getArrowFunctionStatements(node.body);
+            var statements = this.getArrowFunctionStatements(node.block, node.expression);
 
             var result = new SimpleArrowFunctionExpression(identifier, statements);
             this.setSpan(result, start, node);
@@ -803,7 +804,7 @@ module TypeScript {
             var callSignature = this.visitCallSignature(node.callSignature);
             this.movePast(node.equalsGreaterThanToken);
 
-            var block = this.getArrowFunctionStatements(node.body);
+            var block = this.getArrowFunctionStatements(node.block, node.expression);
 
             var result = new ParenthesizedArrowFunctionExpression(callSignature, block);
             this.setCommentsAndSpan(result, start, node);
