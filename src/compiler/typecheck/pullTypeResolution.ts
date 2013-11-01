@@ -4696,9 +4696,57 @@ module TypeScript {
             this.resolveAST(ast.block, /*isContextuallyTyped*/ false, context);
         }
 
-        //private computeTypeOfReturnExpression(expression: AST, context: PullTypeResolutionContext): PullSymbol {
+        private computeTypeOfReturnExpression(expression: AST, context: PullTypeResolutionContext): PullTypeSymbol {
+            var enclosingDecl = this.getEnclosingDeclForAST(expression);
 
-        //}
+            while (enclosingDecl) {
+                if (enclosingDecl.kind & PullElementKind.SomeFunction) {
+                    enclosingDecl.setFlag(PullElementFlags.HasReturnStatement);
+                    break;
+                }
+
+                enclosingDecl = enclosingDecl.getParentDecl();
+            }
+
+            // push contextual type
+            var isContextuallyTyped = false;
+
+            if (enclosingDecl && enclosingDecl.kind & PullElementKind.SomeFunction) {
+                var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
+                var typeAnnotation = getType(enclosingDeclAST);
+                if (typeAnnotation) {
+                    // The containing function has a type annotation, propagate it as the contextual type
+                    var returnTypeAnnotationSymbol = this.resolveTypeReference(typeAnnotation, context);
+                    if (returnTypeAnnotationSymbol) {
+                        isContextuallyTyped = true;
+                        context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
+                    }
+                }
+                else {
+                    // No type annotation, check if there is a contextual type enforced on the function, and propagate that
+                    var currentContextualType = context.getContextualType();
+                    if (currentContextualType && currentContextualType.isFunction()) {
+                        var currentContextTypeDecls = currentContextualType.getDeclarations();
+                        var currentContextualTypeSignatureSymbol = currentContextTypeDecls && currentContextTypeDecls.length > 0
+                            ? currentContextTypeDecls[0].getSignatureSymbol()
+                            : currentContextualType.getCallSignatures()[0];
+
+                        var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
+                        if (currentContextualTypeReturnTypeSymbol) {
+                            isContextuallyTyped = true;
+                            context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
+                        }
+                    }
+                }
+            }
+
+            var result = this.resolveAST(expression, isContextuallyTyped, context).type;
+            if (isContextuallyTyped) {
+                context.popContextualType();
+            }
+
+            return result;
+        }
 
         private resolveReturnStatement(returnAST: ReturnStatement, context: PullTypeResolutionContext): PullSymbol {
             var enclosingDecl = this.getEnclosingDeclForAST(returnAST);
@@ -4716,47 +4764,10 @@ module TypeScript {
                     parentDecl = parentDecl.getParentDecl();
                 }
 
-                var resolvedReturnType: PullTypeSymbol = this.semanticInfoChain.voidTypeSymbol;
                 var returnExpr = returnAST.expression;
-                if (returnExpr) {
-                    // push contextual type
-                    var isContextuallyTyped = false;
-
-                    if (enclosingDecl.kind & PullElementKind.SomeFunction) {
-                        var enclosingDeclAST = this.getASTForDecl(enclosingDecl);
-                        var typeAnnotation = getType(enclosingDeclAST);
-                        if (typeAnnotation) {
-                            // The containing function has a type annotation, propagate it as the contextual type
-                            var returnTypeAnnotationSymbol = this.resolveTypeReference(typeAnnotation, context);
-                            if (returnTypeAnnotationSymbol) {
-                                isContextuallyTyped = true;
-                                context.pushContextualType(returnTypeAnnotationSymbol, context.inProvisionalResolution(), null);
-                            }
-                        }
-                        else {
-                            // No type annotation, check if there is a contextual type enforced on the function, and propagate that
-                            var currentContextualType = context.getContextualType();
-                            if (currentContextualType && currentContextualType.isFunction()) {
-                                var currentContextTypeDecls = currentContextualType.getDeclarations();
-                                var currentContextualTypeSignatureSymbol =
-                                    currentContextTypeDecls && currentContextTypeDecls.length > 0 ?
-                                    currentContextTypeDecls[0].getSignatureSymbol() :
-                                    currentContextualType.getCallSignatures()[0];
-
-                                var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
-                                if (currentContextualTypeReturnTypeSymbol) {
-                                    isContextuallyTyped = true;
-                                    context.pushContextualType(currentContextualTypeReturnTypeSymbol, context.inProvisionalResolution(), null);
-                                }
-                            }
-                        }
-                    }
-
-                    resolvedReturnType = this.resolveAST(returnAST.expression, isContextuallyTyped, context).type;
-                    if (isContextuallyTyped) {
-                        context.popContextualType();
-                    }
-                }
+                var resolvedReturnType: PullTypeSymbol = returnExpr === null
+                    ? this.semanticInfoChain.voidTypeSymbol
+                    : this.computeTypeOfReturnExpression(returnExpr, context);
 
                 if (!returnType) {
                     returnType = resolvedReturnType;
