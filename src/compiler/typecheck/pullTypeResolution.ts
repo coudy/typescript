@@ -7274,7 +7274,7 @@ module TypeScript {
             if (callEx.argumentExpression.nodeType() === NodeType.StringLiteral || callEx.argumentExpression.nodeType() === NodeType.NumericLiteral) {
                 var memberName = callEx.argumentExpression.nodeType() === NodeType.StringLiteral
                     ? stripStartAndEndQuotes((<StringLiteral>callEx.argumentExpression).text())
-                    : (<NumericLiteral>callEx.argumentExpression).value.toString();
+                    : (<NumericLiteral>callEx.argumentExpression).valueText();
 
                 var member = this.getMemberSymbol(memberName, PullElementKind.SomeValue, targetTypeSymbol);
 

@@ -214,7 +214,6 @@ module TypeScript {
         public text(): string {
             return this._text;
         }
-
         public valueText(): string {
             if (!this._valueText) {
                 // In the case where actualText is "__proto__", we substitute "#__proto__" as the _text
@@ -276,7 +275,7 @@ module TypeScript {
     }
 
     export class NumericLiteral extends AST {
-        constructor(public value: number,
+        constructor(private _value: number,
                     private _text: string,
                     private _valueText: string) {
             super();
@@ -284,6 +283,7 @@ module TypeScript {
 
         public text(): string { return this._text; }
         public valueText(): string { return this._valueText; }
+        public value(): any { return this._value; }
 
         public nodeType(): NodeType {
             return NodeType.NumericLiteral;
@@ -291,7 +291,7 @@ module TypeScript {
 
         public structuralEquals(ast: NumericLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
-                   (this.value === ast.value || (isNaN(this.value) && isNaN(ast.value))) &&
+                   (this._value === ast._value || (isNaN(this._value) && isNaN(ast._value))) &&
                    this._text === ast._text;
         }
     }
