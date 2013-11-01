@@ -642,38 +642,28 @@ module TypeScript {
     }
 
     export class SimpleArrowFunctionExpression extends AST {
-        constructor(public identifier: Identifier, public block: Block) {
+        constructor(public identifier: Identifier, public block: Block, public expression: AST) {
             super();
             identifier && (identifier.parent = this);
             block && (block.parent = this);
+            expression && (expression.parent = this);
         }
 
         public nodeType(): NodeType {
             return NodeType.SimpleArrowFunctionExpression;
         }
-
-        public structuralEquals(ast: SimpleArrowFunctionExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition) &&
-                structuralEquals(this.block, ast.block, includingPosition);
-        }
     }
 
     export class ParenthesizedArrowFunctionExpression extends AST {
-        constructor(public callSignature: CallSignature, public block: Block) {
+        constructor(public callSignature: CallSignature, public block: Block, public expression: AST) {
             super();
             callSignature && (callSignature.parent = this);
             block && (block.parent = this);
+            expression && (expression.parent = this);
         }
 
         public nodeType(): NodeType {
             return NodeType.ParenthesizedArrowFunctionExpression;
-        }
-
-        public structuralEquals(ast: ParenthesizedArrowFunctionExpression, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.block, ast.block, includingPosition) &&
-                structuralEquals(this.callSignature, ast.callSignature, includingPosition);
         }
     }
 

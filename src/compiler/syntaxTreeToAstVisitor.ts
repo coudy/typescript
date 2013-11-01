@@ -747,52 +747,16 @@ module TypeScript {
             return result;
         }
 
-        private getArrowFunctionStatements(blockSyntax: BlockSyntax, expressionSyntax: IExpressionSyntax): Block {
-            if (blockSyntax !== null) {
-                return blockSyntax.accept(this);
-            }
-            else {
-                var expression = expressionSyntax.accept(this);
-                var returnStatement = new ReturnStatement(expression);
-
-                // Copy any comments before the body of the arrow function to the return statement.
-                // This is necessary for emitting correctness so we don't emit something like this:
-                //
-                //      return
-                //          // foo
-                //          this.foo();
-                //
-                // Because of ASI, this gets parsed as "return;" which is *not* what we want for
-                // proper semantics.  Also, we can no longer use this expression incrementally.
-                var preComments = expression.preComments();
-                if (preComments) {
-                    (<any>expressionSyntax)._ast = undefined;
-
-                    returnStatement.setPreComments(preComments);
-                    expression.setPreComments(null);
-                }
-
-                var statements = new ASTList(this.fileName, [returnStatement]);
-
-                var closeBraceSpan = new ASTSpan();
-                closeBraceSpan.minChar = expression.minChar;
-                closeBraceSpan.limChar = expression.limChar;
-                closeBraceSpan.trailingTriviaWidth = expression.trailingTriviaWidth;
-
-                var block = new Block(statements, null, closeBraceSpan);
-                return block;
-            }
-        }
-
         public visitSimpleArrowFunctionExpression(node: SimpleArrowFunctionExpressionSyntax): SimpleArrowFunctionExpression {
             var start = this.position;
 
             var identifier = node.identifier.accept(this);
             this.movePast(node.equalsGreaterThanToken);
 
-            var statements = this.getArrowFunctionStatements(node.block, node.expression);
+            var block = node.block ? this.visitBlock(node.block) : null;
+            var expression: AST = node.expression ? node.expression.accept(this) : null;
 
-            var result = new SimpleArrowFunctionExpression(identifier, statements);
+            var result = new SimpleArrowFunctionExpression(identifier, block, expression);
             this.setSpan(result, start, node);
 
             return result;
@@ -804,9 +768,10 @@ module TypeScript {
             var callSignature = this.visitCallSignature(node.callSignature);
             this.movePast(node.equalsGreaterThanToken);
 
-            var block = this.getArrowFunctionStatements(node.block, node.expression);
+            var block = node.block ? this.visitBlock(node.block) : null;
+            var expression: AST = node.expression ? node.expression.accept(this) : null;
 
-            var result = new ParenthesizedArrowFunctionExpression(callSignature, block);
+            var result = new ParenthesizedArrowFunctionExpression(callSignature, block, expression);
             this.setCommentsAndSpan(result, start, node);
 
             return result;
@@ -938,6 +903,10 @@ module TypeScript {
         }
 
         public visitBlock(node: BlockSyntax): Block {
+            if (!node) {
+                return null;
+            }
+
             var start = this.position;
 
             this.movePast(node.openBraceToken);

@@ -174,11 +174,13 @@ module TypeScript {
     function walkParenthesizedArrowFunctionExpressionChildren(preAst: ParenthesizedArrowFunctionExpression, walker: AstWalker): void {
         walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
+        walker.walk(preAst.expression);
     }
 
     function walkSimpleArrowFunctionExpressionChildren(preAst: SimpleArrowFunctionExpression, walker: AstWalker): void {
         walker.walk(preAst.identifier);
         walker.walk(preAst.block);
+        walker.walk(preAst.expression);
     }
 
     function walkMemberFunctionDeclarationChildren(preAst: MemberFunctionDeclaration, walker: AstWalker): void {

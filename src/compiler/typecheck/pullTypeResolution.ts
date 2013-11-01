@@ -2795,9 +2795,13 @@ module TypeScript {
             if (classSymbol && !classSymbol.anyDeclHasFlag(PullElementFlags.Ambient)) {
                 if (superAST.nodeType() == NodeType.Parameter) {
                     var enclosingAST = this.getASTForDecl(enclosingDecl);
-                    var block = enclosingDecl.kind == PullElementKind.Method ? (<FunctionDeclaration>enclosingAST).block : (<ConstructorDeclaration>enclosingAST).block;
-                    if (!block) {
-                        return; // just a overload signature - no code gen
+                    if (enclosingAST.nodeType() !== NodeType.ParenthesizedArrowFunctionExpression &&
+                        enclosingAST.nodeType() !== NodeType.SimpleArrowFunctionExpression) {
+
+                        var block = enclosingDecl.kind == PullElementKind.Method ? (<FunctionDeclaration>enclosingAST).block : (<ConstructorDeclaration>enclosingAST).block;
+                        if (!block) {
+                            return; // just a overload signature - no code gen
+                        }
                     }
                 }
 
@@ -2903,13 +2907,14 @@ module TypeScript {
         private resolveFunctionBodyReturnTypes(
             funcDeclAST: AST,
             block: Block,
+            bodyExpression: AST,
             signature: PullSignatureSymbol,
             useContextualType: boolean,
             enclosingDecl: PullDecl,
             context: PullTypeResolutionContext) {
 
-            var returnStatements: {
-                returnStatement: ReturnStatement; enclosingDecl: PullDecl;
+            var returnStatementsExpressions: {
+                expression: AST; enclosingDecl: PullDecl;
             }[] = [];
 
             var enclosingDeclStack: PullDecl[] = [enclosingDecl];
@@ -2930,7 +2935,7 @@ module TypeScript {
                     case NodeType.ReturnStatement:
                         var returnStatement: ReturnStatement = <ReturnStatement>ast;
                         enclosingDecl.setFlag(PullElementFlags.HasReturnStatement);
-                        returnStatements[returnStatements.length] = { returnStatement: returnStatement, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1] };
+                        returnStatementsExpressions.push({ expression: returnStatement.expression, enclosingDecl: enclosingDeclStack[enclosingDeclStack.length - 1] });
                         go = false;
                         break;
 
@@ -2963,9 +2968,15 @@ module TypeScript {
                 return ast;
             };
 
-            getAstWalkerFactory().walk(block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
+            if (block) {
+                getAstWalkerFactory().walk(block, preFindReturnExpressionTypes, postFindReturnExpressionEnclosingDecls);
+            }
+            else {
+                returnStatementsExpressions.push({ expression: bodyExpression, enclosingDecl: enclosingDecl });
+                enclosingDecl.setFlag(PullElementFlags.HasReturnStatement);
+            }
 
-            if (!returnStatements.length) {
+            if (!returnStatementsExpressions.length) {
                 signature.returnType = this.semanticInfoChain.voidTypeSymbol;
             }
 
@@ -2973,8 +2984,8 @@ module TypeScript {
                 var returnExpressionSymbols: PullTypeSymbol[] = [];
                 var returnExpressions: AST[] = [];
 
-                for (var i = 0; i < returnStatements.length; i++) {
-                    var returnExpression = returnStatements[i].returnStatement.expression;
+                for (var i = 0; i < returnStatementsExpressions.length; i++) {
+                    var returnExpression = returnStatementsExpressions[i].expression;
                     if (returnExpression) {
                         var returnType = this.resolveAST(returnExpression, useContextualType, context).type;
 
@@ -2983,7 +2994,9 @@ module TypeScript {
                             return;
                         }
                         else {
-                            this.setSymbolForAST(returnStatements[i].returnStatement, returnType, context);
+                            if (returnExpression.parent.nodeType() === NodeType.ReturnStatement) {
+                                this.setSymbolForAST(returnExpression.parent, returnType, context);
+                            }
                         }
 
                         returnExpressionSymbols.push(returnType);
@@ -3128,7 +3141,7 @@ module TypeScript {
         }
 
         private typeCheckFunctionExpression(funcDecl: FunctionExpression, context: PullTypeResolutionContext): void {
-            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, getType(funcDecl), funcDecl.block, context);
+            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, getType(funcDecl), funcDecl.block, /*bodyExpression:*/ null, context);
         }
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
@@ -3327,20 +3340,20 @@ module TypeScript {
 
         private resolveFunctionExpression(funcDecl: FunctionExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList,
-                Parameters.fromParameterList(funcDecl.callSignature.parameterList), getType(funcDecl), funcDecl.block,
+                Parameters.fromParameterList(funcDecl.callSignature.parameterList), getType(funcDecl), funcDecl.block, /*bodyExpression:*/ null,
                 isContextuallyTyped, context);
         }
 
         private resolveSimpleArrowFunctionExpression(funcDecl: SimpleArrowFunctionExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAnyFunctionExpression(
-                funcDecl, null, Parameters.fromIdentifier(funcDecl.identifier), null, funcDecl.block,
+                funcDecl, null, Parameters.fromIdentifier(funcDecl.identifier), null, funcDecl.block, funcDecl.expression,
                 isContextuallyTyped, context);
         }
 
         private resolveParenthesizedArrowFunctionExpression(funcDecl: ParenthesizedArrowFunctionExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAnyFunctionExpression(
-                funcDecl, funcDecl.callSignature.typeParameterList, Parameters.fromParameterList(funcDecl.callSignature.parameterList), getType(funcDecl), funcDecl.block,
-                isContextuallyTyped, context);
+                funcDecl, funcDecl.callSignature.typeParameterList, Parameters.fromParameterList(funcDecl.callSignature.parameterList), getType(funcDecl),
+                funcDecl.block, funcDecl.expression, isContextuallyTyped, context);
         }
 
         private getEnclosingClassDeclaration(ast: AST): ClassDeclaration {
@@ -3717,7 +3730,7 @@ module TypeScript {
                         }
                     }
                     else {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, block, signature, false, funcDecl, context);
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, block, /*bodyExpression:*/ null, signature, false, funcDecl, context);
                     }
                 }
                 else if (funcDecl.kind === PullElementKind.ConstructSignature) {
@@ -3965,7 +3978,7 @@ module TypeScript {
                     // -- Use setterAnnotatedType if available
                     // • If neither accessor includes a type annotation, the inferred return type of the get accessor becomes the parameter type of the set accessor.
                     if (!setterAnnotatedType) {
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, block, signature, false, funcDecl, context);
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, block, /*bodyExpression:*/ null, signature, false, funcDecl, context);
                     }
                     else {
                         signature.returnType = setterAnnotatedType;
@@ -6308,6 +6321,7 @@ module TypeScript {
             parameters: IParameters,
             returnTypeAnnotation: AST,
             block: Block,
+            bodyExpression: AST,
             isContextuallyTyped: boolean,
             context: PullTypeResolutionContext): PullSymbol {
 
@@ -6394,7 +6408,7 @@ module TypeScript {
                     if (returnType) {
                         context.pushContextualType(returnType, context.inProvisionalResolution(), null);
                         //signature.setReturnType(returnType);
-                        this.resolveFunctionBodyReturnTypes(funcDeclAST, block, signature, true, functionDecl, context);
+                        this.resolveFunctionBodyReturnTypes(funcDeclAST, block, bodyExpression, signature, true, functionDecl, context);
                         context.popContextualType();
                     }
                     else {
@@ -6418,7 +6432,7 @@ module TypeScript {
                 }
                 else {
                     this.resolveFunctionBodyReturnTypes(
-                        funcDeclAST, block, signature, false, functionDecl, context);
+                        funcDeclAST, block, bodyExpression, signature, false, functionDecl, context);
                 }
             }
             // reset the type to the one we already had, 
@@ -6427,7 +6441,7 @@ module TypeScript {
             funcDeclSymbol.setResolved();
 
             if (this.canTypeCheckAST(funcDeclAST, context)) {
-                this.typeCheckAnyFunctionExpression(funcDeclAST, typeParameters, returnTypeAnnotation, block, context);
+                this.typeCheckAnyFunctionExpression(funcDeclAST, typeParameters, returnTypeAnnotation, block, bodyExpression, context);
             }
 
             return funcDeclSymbol;
@@ -6437,14 +6451,14 @@ module TypeScript {
             arrowFunction: SimpleArrowFunctionExpression, context: PullTypeResolutionContext): void {
 
             return this.typeCheckAnyFunctionExpression(
-                arrowFunction, null, null, arrowFunction.block, context);
+                arrowFunction, /*typeParameters:*/ null, /*returnTypeAnnotation:*/ null, arrowFunction.block, arrowFunction.expression, context);
         }
 
         private typeCheckParenthesizedArrowFunctionExpression(
             arrowFunction: ParenthesizedArrowFunctionExpression, context: PullTypeResolutionContext): void {
 
             return this.typeCheckAnyFunctionExpression(
-                arrowFunction, arrowFunction.callSignature.typeParameterList, getType(arrowFunction), arrowFunction.block, context);
+                arrowFunction, arrowFunction.callSignature.typeParameterList, getType(arrowFunction), arrowFunction.block, arrowFunction.expression, context);
         }
 
         private typeCheckAnyFunctionExpression(
@@ -6452,6 +6466,7 @@ module TypeScript {
             typeParameters: TypeParameterList,
             returnTypeAnnotation: AST,
             block: Block,
+            bodyExpression: AST,
             context: PullTypeResolutionContext) {
 
             this.setTypeChecked(funcDeclAST, context);
@@ -6469,9 +6484,15 @@ module TypeScript {
                 }
             }
 
-            // Make sure there is no contextual type on the stack when resolving the block
+                // Make sure there is no contextual type on the stack when resolving the block
             context.pushContextualType(null, context.inProvisionalResolution(), null);
-            this.resolveAST(block, /*isContextuallyTyped*/ false, context);
+            if (block) {
+                this.resolveAST(block, /*isContextuallyTyped:*/ false, context);
+            }
+            else {
+                var bodyExpressionType = this.resolveReturnExpression(bodyExpression, functionDecl, context);
+                this.typeCheckReturnExpression(bodyExpression, bodyExpressionType, functionDecl, context);
+            }
             context.popContextualType();
 
             var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
@@ -6876,11 +6897,11 @@ module TypeScript {
         private resolveFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveAnyFunctionExpression(
                 funcProp, funcProp.callSignature.typeParameterList, Parameters.fromParameterList(funcProp.callSignature.parameterList),
-                getType(funcProp), funcProp.block, isContextuallyTyped, context);
+                getType(funcProp), funcProp.block, /*bodyExpression:*/ null, isContextuallyTyped, context);
         }
 
         private typeCheckFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, isContextuallyTyped: boolean, context: PullTypeResolutionContext) {
-            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, getType(funcProp), funcProp.block, context);
+            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, getType(funcProp), funcProp.block, /*bodyExpression:*/ null, context);
         }
 
         public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
@@ -10114,20 +10135,20 @@ module TypeScript {
             else if (arg.nodeType() === NodeType.SimpleArrowFunctionExpression) {
                 var simpleArrowFunction = <SimpleArrowFunctionExpression>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
-                    arg, null, Parameters.fromIdentifier(simpleArrowFunction.identifier), null, simpleArrowFunction.block,
+                    arg, null, Parameters.fromIdentifier(simpleArrowFunction.identifier), null, simpleArrowFunction.block, simpleArrowFunction.expression,
                     argIndex, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
                 var arrowFunction = <ParenthesizedArrowFunctionExpression>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
                     arg, arrowFunction.callSignature.typeParameterList, Parameters.fromParameterList(arrowFunction.callSignature.parameterList),
-                    getType(arrowFunction), arrowFunction.block, argIndex, context, comparisonInfo);
+                    getType(arrowFunction), arrowFunction.block, arrowFunction.expression, argIndex, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.FunctionExpression) {
                 var functionExpression = <FunctionExpression>arg;
                 return this.overloadIsApplicableForAnyFunctionExpressionArgument(paramType,
                     arg, functionExpression.callSignature.typeParameterList, Parameters.fromParameterList(functionExpression.callSignature.parameterList),
-                    getType(functionExpression), functionExpression.block, argIndex, context, comparisonInfo);
+                    getType(functionExpression), functionExpression.block, /*bodyExpression:*/ null, argIndex, context, comparisonInfo);
             }
             else if (arg.nodeType() === NodeType.ObjectLiteralExpression) {
                 return this.overloadIsApplicableForObjectLiteralArgument(paramType, <ObjectLiteralExpression>arg, argIndex, context, comparisonInfo);
@@ -10147,6 +10168,7 @@ module TypeScript {
             parameters: IParameters,
             returnTypeAnnotation: AST,
             block: Block,
+            bodyExpression: AST,
             argIndex: number,
             context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
@@ -10157,7 +10179,7 @@ module TypeScript {
 
             context.pushContextualType(paramType, true, null);
 
-            var argSym = this.resolveAnyFunctionExpression(arg, typeParameters, parameters, returnTypeAnnotation, block,
+            var argSym = this.resolveAnyFunctionExpression(arg, typeParameters, parameters, returnTypeAnnotation, block, bodyExpression,
                 /*isContextuallyTyped*/ true, context);
 
             var applicabilityStatus = this.overloadIsApplicableForArgumentHelper(paramType, argSym.type, argIndex, comparisonInfo, context);
