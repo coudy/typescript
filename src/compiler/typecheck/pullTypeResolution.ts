@@ -1523,10 +1523,14 @@ module TypeScript {
                 var text = moduleNameExpr.nodeType() === NodeType.Name ? (<Identifier>moduleNameExpr).text() : (<StringLiteral>moduleNameExpr).text();
 
                 if (text.length > 0) {
-                    moduleSymbol = this.filterSymbol(this.getSymbolFromDeclPath(valueText, declPath, PullElementKind.Container), PullElementKind.Container, enclosingDecl, context);
+                    var resolvedModuleNameSymbol = this.getSymbolFromDeclPath(valueText, declPath, PullElementKind.Container);
+                    moduleSymbol = this.filterSymbol(resolvedModuleNameSymbol, PullElementKind.Container, enclosingDecl, context);
                     if (moduleSymbol) {
                         // Import declaration isn't contextual so set the symbol and diagnostic message irrespective of the context
-                        this.setSymbolForAST(moduleNameExpr, moduleSymbol, null);
+                        this.semanticInfoChain.setSymbolForAST(moduleNameExpr, moduleSymbol);
+                        if (resolvedModuleNameSymbol.isAlias()) {
+                            this.semanticInfoChain.setAliasSymbolForAST(moduleNameExpr, <PullTypeAliasSymbol>resolvedModuleNameSymbol);
+                        }
                     } else {
                         this.semanticInfoChain.addDiagnosticFromAST(moduleNameExpr, DiagnosticCode.Unable_to_resolve_module_reference_0, [valueText]);
                     }
