@@ -4710,8 +4710,7 @@ module TypeScript {
             return null;
         }
 
-        private computeTypeOfReturnExpression(expression: AST, context: PullTypeResolutionContext, enclosingFunction?: PullDecl): PullTypeSymbol {
-            enclosingFunction = enclosingFunction || this.getEnclosingFunctionDeclaration(expression);
+        private resolveReturnExpression(expression: AST, enclosingFunction: PullDecl, context: PullTypeResolutionContext): PullTypeSymbol {
             if (enclosingFunction) {
                 enclosingFunction.setFlag(PullElementFlags.HasReturnStatement);
             }
@@ -4756,6 +4755,70 @@ module TypeScript {
             return result;
         }
 
+        private typeCheckReturnExpression(expression: AST, expressionType: PullTypeSymbol, enclosingFunction: PullDecl, context: PullTypeResolutionContext): void {
+            // Return type of constructor signature must be assignable to the instance type of the class.
+            if (enclosingFunction && enclosingFunction.kind === PullElementKind.ConstructorMethod) {
+                var classDecl = enclosingFunction.getParentDecl();
+                if (classDecl) {
+                    var classSymbol = classDecl.getSymbol();
+                    this.resolveDeclaredSymbol(classSymbol, context);
+
+                    var comparisonInfo = new TypeComparisonInfo();
+                    var isAssignable = this.sourceIsAssignableToTarget(expressionType, classSymbol.type, context, comparisonInfo);
+                    if (!isAssignable) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(expression, DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class));
+                    }
+                }
+            }
+
+            if (enclosingFunction && enclosingFunction.kind === PullElementKind.SetAccessor) {
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(expression, DiagnosticCode.Setters_cannot_return_a_value));
+            }
+
+            if (enclosingFunction) {
+                var enclosingDeclAST = this.getASTForDecl(enclosingFunction);
+                var typeAnnotation = getType(enclosingDeclAST);
+                if (typeAnnotation || enclosingFunction.kind === PullElementKind.GetAccessor) {
+                    var signatureSymbol = enclosingFunction.getSignatureSymbol();
+                    var sigReturnType = signatureSymbol.returnType;
+
+                    if (expressionType && sigReturnType) {
+                        var comparisonInfo = new TypeComparisonInfo();
+                        var upperBound: PullTypeSymbol = null;
+
+                        if (expressionType.isTypeParameter()) {
+                            upperBound = (<PullTypeParameterSymbol>expressionType).getConstraint();
+
+                            if (upperBound) {
+                                expressionType = upperBound;
+                            }
+                        }
+
+                        if (sigReturnType.isTypeParameter()) {
+                            upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
+
+                            if (upperBound) {
+                                sigReturnType = upperBound;
+                            }
+                        }
+
+                        this.resolveDeclaredSymbol(expressionType, context);
+                        this.resolveDeclaredSymbol(sigReturnType, context);
+
+                        var isAssignable = this.sourceIsAssignableToTarget(expressionType, sigReturnType, context, comparisonInfo);
+
+                        if (!isAssignable) {
+                            if (comparisonInfo.message) {
+                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(expression, DiagnosticCode.Cannot_convert_0_to_1_NL_2, [expressionType.toString(), sigReturnType.toString(), comparisonInfo.message]));
+                            } else {
+                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(expression, DiagnosticCode.Cannot_convert_0_to_1, [expressionType.toString(), sigReturnType.toString()]));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private resolveReturnStatement(returnAST: ReturnStatement, context: PullTypeResolutionContext): PullSymbol {
             var enclosingFunction = this.getEnclosingFunctionDeclaration(returnAST);
             if (enclosingFunction) {
@@ -4766,9 +4829,10 @@ module TypeScript {
             var canTypeCheckAST = this.canTypeCheckAST(returnAST, context);
             if (!returnType || canTypeCheckAST) {
                 var returnExpr = returnAST.expression;
-                var resolvedReturnType: PullTypeSymbol = returnExpr === null
+
+                var resolvedReturnType = returnExpr === null
                     ? this.semanticInfoChain.voidTypeSymbol
-                    : this.computeTypeOfReturnExpression(returnExpr, context, enclosingFunction);
+                    : this.resolveReturnExpression(returnExpr, enclosingFunction, context);
 
                 if (!returnType) {
                     returnType = resolvedReturnType;
@@ -4777,67 +4841,7 @@ module TypeScript {
 
                 if (returnExpr && canTypeCheckAST) {
                     this.setTypeChecked(returnExpr, context);
-                    // Return type of constructor signature must be assignable to the instance type of the class.
-                    if (enclosingFunction && enclosingFunction.kind === PullElementKind.ConstructorMethod) {
-                        var classDecl = enclosingFunction.getParentDecl();
-                        if (classDecl) {
-                            var classSymbol = classDecl.getSymbol();
-                            this.resolveDeclaredSymbol(classSymbol, context);
-
-                            var comparisonInfo = new TypeComparisonInfo();
-                            var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, classSymbol.type, context, comparisonInfo);
-                            if (!isAssignable) {
-                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnExpr, DiagnosticCode.Return_type_of_constructor_signature_must_be_assignable_to_the_instance_type_of_the_class));
-                            }
-                        }
-                    }
-
-                    if (enclosingFunction && enclosingFunction.kind === PullElementKind.SetAccessor) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnExpr, DiagnosticCode.Setters_cannot_return_a_value));
-                    }
-
-                    if (enclosingFunction) {
-                        var enclosingDeclAST = this.getASTForDecl(enclosingFunction);
-                        var typeAnnotation = getType(enclosingDeclAST);
-                        if (typeAnnotation || enclosingFunction.kind === PullElementKind.GetAccessor) {
-                            var signatureSymbol = enclosingFunction.getSignatureSymbol();
-                            var sigReturnType = signatureSymbol.returnType;
-
-                            if (resolvedReturnType && sigReturnType) {
-                                var comparisonInfo = new TypeComparisonInfo();
-                                var upperBound: PullTypeSymbol = null;
-
-                                if (resolvedReturnType.isTypeParameter()) {
-                                    upperBound = (<PullTypeParameterSymbol>resolvedReturnType).getConstraint();
-
-                                    if (upperBound) {
-                                        resolvedReturnType = upperBound;
-                                    }
-                                }
-
-                                if (sigReturnType.isTypeParameter()) {
-                                    upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
-
-                                    if (upperBound) {
-                                        sigReturnType = upperBound;
-                                    }
-                                }
-
-                                this.resolveDeclaredSymbol(resolvedReturnType, context);
-                                this.resolveDeclaredSymbol(sigReturnType, context);
-
-                                var isAssignable = this.sourceIsAssignableToTarget(resolvedReturnType, sigReturnType, context, comparisonInfo);
-
-                                if (!isAssignable) {
-                                    if (comparisonInfo.message) {
-                                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnExpr, DiagnosticCode.Cannot_convert_0_to_1_NL_2, [resolvedReturnType.toString(), sigReturnType.toString(), comparisonInfo.message]));
-                                    } else {
-                                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnExpr, DiagnosticCode.Cannot_convert_0_to_1, [resolvedReturnType.toString(), sigReturnType.toString()]));
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    this.typeCheckReturnExpression(returnExpr, resolvedReturnType, enclosingFunction, context);
                 }
             }
 
