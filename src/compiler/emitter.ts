@@ -1788,10 +1788,10 @@ module TypeScript {
                 sourceMapping.start.emittedLine = this.emitState.line;
                 // REVIEW: check time consumed by this binary search (about two per leaf statement)
                 var lineMap = this.document.lineMap();
-                lineMap.fillLineAndCharacterFromPosition(ast.minChar, lineCol);
+                lineMap.fillLineAndCharacterFromPosition(ast.start(), lineCol);
                 sourceMapping.start.sourceColumn = lineCol.character;
                 sourceMapping.start.sourceLine = lineCol.line + 1;
-                lineMap.fillLineAndCharacterFromPosition(ast.limChar, lineCol);
+                lineMap.fillLineAndCharacterFromPosition(ast.end(), lineCol);
                 sourceMapping.end.sourceColumn = lineCol.character;
                 sourceMapping.end.sourceLine = lineCol.line + 1;
                 if (this.sourceMapper.currentNameIndex.length > 0) {
@@ -1875,7 +1875,7 @@ module TypeScript {
 
             // If the first element isn't on hte same line as the parent node, then we need to 
             // start with a newline.
-            var startLine = preserveNewLines && !this.isOnSameLine(parent.limChar, list.nonSeparatorAt(0).limChar);
+            var startLine = preserveNewLines && !this.isOnSameLine(parent.end(), list.nonSeparatorAt(0).end());
 
             if (preserveNewLines) {
                 // Any elements on a new line will have to be indented.
@@ -1901,7 +1901,7 @@ module TypeScript {
                     // If the next element start on a different line than this element ended on, 
                     // then we want to start on a newline.  Emit the comma with a newline.  
                     // Otherwise, emit the comma with the space.
-                    startLine = preserveNewLines && !this.isOnSameLine(emitNode.limChar, list.nonSeparatorAt(i + 1).minChar);
+                    startLine = preserveNewLines && !this.isOnSameLine(emitNode.end(), list.nonSeparatorAt(i + 1).start());
                     if (startLine) {
                         this.writeLineToOutput(",");
                     }
@@ -1920,7 +1920,7 @@ module TypeScript {
             // after the last element and emit our indent so the list's terminator will be
             // on the right line.  Otherwise, emit the buffer string between the last value
             // and the terminator.
-            if (preserveNewLines && !this.isOnSameLine(parent.limChar, list.nonSeparatorAt(list.nonSeparatorCount() - 1).limChar)) {
+            if (preserveNewLines && !this.isOnSameLine(parent.end(), list.nonSeparatorAt(list.nonSeparatorCount() - 1).end())) {
                 this.writeLineToOutput("");
                 this.emitIndent();
             }
@@ -1997,13 +1997,13 @@ module TypeScript {
                 return;
             }
 
-            if (node1.minChar === -1 || node1.limChar === -1 || node2.minChar === -1 || node2.limChar === -1) {
+            if (node1.start() === -1 || node1.end() === -1 || node2.start() === -1 || node2.end() === -1) {
                 return;
             }
 
             var lineMap = this.document.lineMap();
-            var node1EndLine = lineMap.getLineNumberFromPosition(node1.limChar);
-            var node2StartLine = lineMap.getLineNumberFromPosition(node2.minChar);
+            var node1EndLine = lineMap.getLineNumberFromPosition(node1.end());
+            var node2StartLine = lineMap.getLineNumberFromPosition(node2.start());
 
             if ((node2StartLine - node1EndLine) > 1) {
                 this.writeLineToOutput("", /*force:*/ true);
@@ -2025,8 +2025,8 @@ module TypeScript {
                     var comment = preComments[i];
 
                     if (lastComment) {
-                        var lastCommentLine = lineMap.getLineNumberFromPosition(lastComment.limChar);
-                        var commentLine = lineMap.getLineNumberFromPosition(comment.minChar);
+                        var lastCommentLine = lineMap.getLineNumberFromPosition(lastComment.end());
+                        var commentLine = lineMap.getLineNumberFromPosition(comment.start());
 
                         if (commentLine >= lastCommentLine + 2) {
                             // There was a blank line between the last comment and this comment.  This
@@ -2043,8 +2043,8 @@ module TypeScript {
                 // All comments look like they could have been part of the copyright header.  Make
                 // sure there is at least one blank line between it and the node.  If not, it's not
                 // a copyright header.
-                var lastCommentLine = lineMap.getLineNumberFromPosition(ArrayUtilities.last(copyrightComments).limChar);
-                var astLine = lineMap.getLineNumberFromPosition(this.copyrightElement.minChar);
+                var lastCommentLine = lineMap.getLineNumberFromPosition(ArrayUtilities.last(copyrightComments).end());
+                var astLine = lineMap.getLineNumberFromPosition(this.copyrightElement.start());
                 if (astLine >= lastCommentLine + 2) {
                     return copyrightComments;
                 }

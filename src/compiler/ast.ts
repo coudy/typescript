@@ -17,14 +17,30 @@
 
 module TypeScript {
     export interface IASTSpan {
-        minChar: number;
-        limChar: number;
+        _start: number;
+        _end: number;
+        _trailingTriviaWidth: number;
+
+        start(): number;
+        end(): number;
+        trailingTriviaWidth(): number;
     }
 
     export class ASTSpan implements IASTSpan {
-        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public trailingTriviaWidth = 0;
+        constructor(public _start: number, public _end: number, public _trailingTriviaWidth: number) {
+        }
+
+        public start(): number {
+            return this._start;
+        }
+
+        public end(): number {
+            return this._end;
+        }
+
+        public trailingTriviaWidth(): number {
+            return this._trailingTriviaWidth;
+        }
     }
 
     var astID = 0;
@@ -76,11 +92,10 @@ module TypeScript {
 
     export class AST implements IASTSpan {
         public parent: AST = null;
-        public minChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public limChar: number = -1;  // -1 = "undefined" or "compiler generated"
-        public trailingTriviaWidth = 0;
-
         public typeCheckPhase = -1;
+        public _start: number = -1;
+        public _end: number = -1;
+        public _trailingTriviaWidth: number = 0;
 
         private _astID: number = astID++;
 
@@ -93,6 +108,18 @@ module TypeScript {
 
         public astID(): number {
             return this._astID;
+        }
+
+        public start(): number {
+            return this._start;
+        }
+
+        public end(): number {
+            return this._end;
+        }
+
+        public trailingTriviaWidth(): number {
+            return this._trailingTriviaWidth;
         }
 
         public fileName(): string {
@@ -130,12 +157,12 @@ module TypeScript {
         }
 
         public getLength(): number {
-            return this.limChar - this.minChar;
+            return this.end() - this.start();
         }
 
         public structuralEquals(ast: AST, includingPosition: boolean): boolean {
             if (includingPosition) {
-                if (this.minChar !== ast.minChar || this.limChar !== ast.limChar) {
+                if (this.start() !== ast.start() || this.end() !== ast.end()) {
                     return false;
                 }
             }
@@ -239,7 +266,7 @@ module TypeScript {
                     private _fileName: string,
                     public isExternalModule: boolean,
                     public amdDependencies: string[]) {
-            super();
+                        super();
             moduleElements && (moduleElements.parent = this);
         }
 
@@ -1693,12 +1720,24 @@ module TypeScript {
     export class Comment {
         public text: string[] = null;
         private docCommentText: string = null;
-        public trailingTriviaWidth = 0;
+        public _trailingTriviaWidth = 0;
 
         constructor(private _trivia: ISyntaxTrivia,
                     public endsLine: boolean,
-                    public minChar: number,
-                    public limChar: number) {
+                    public _start: number,
+                    public _end: number) {
+        }
+
+        public start(): number {
+            return this._start;
+        }
+
+        public end(): number {
+            return this._end;
+        }
+
+        public trailingTriviaWidth(): number {
+            return this._trailingTriviaWidth;
         }
 
         public fullText(): string {
@@ -1711,7 +1750,7 @@ module TypeScript {
 
         public structuralEquals(ast: Comment, includingPosition: boolean): boolean {
             if (includingPosition) {
-                if (this.minChar !== ast.minChar || this.limChar !== ast.limChar) {
+                if (this.start() !== ast.start() || this.end() !== ast.end()) {
                     return false;
                 }
             }
@@ -1809,8 +1848,8 @@ module TypeScript {
                 }
 
                 return {
-                    minChar: nonSpaceIndex,
-                    limChar: line.charAt(line.length - 1) === "\r" ? line.length - 1 : line.length,
+                    start: nonSpaceIndex,
+                    end: line.charAt(line.length - 1) === "\r" ? line.length - 1 : line.length,
                     jsDocSpacesRemoved: jsDocSpacesRemoved
                 };
             }
@@ -1836,8 +1875,8 @@ module TypeScript {
                 }
 
                 var docCommentText = "";
-                var prevPos = cleanLinePos.minChar;
-                for (var i = line.indexOf("@", cleanLinePos.minChar); 0 <= i && i < cleanLinePos.limChar; i = line.indexOf("@", i + 1)) {
+                var prevPos = cleanLinePos.start;
+                for (var i = line.indexOf("@", cleanLinePos.start); 0 <= i && i < cleanLinePos.end; i = line.indexOf("@", i + 1)) {
                     // We have encoutered @. 
                     // If we were omitting param comment, we dont have to do anything
                     // other wise the content of the text till @ tag goes as doc comment
@@ -1863,7 +1902,7 @@ module TypeScript {
                 }
 
                 if (!inParamTag) {
-                    docCommentText += line.substring(prevPos, cleanLinePos.limChar);
+                    docCommentText += line.substring(prevPos, cleanLinePos.end);
                 }
 
                 // Add line to comment text if it is not only white space line

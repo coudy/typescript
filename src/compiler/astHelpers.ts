@@ -90,7 +90,7 @@ module TypeScript {
         if (!ast)
             return false;
 
-        if (ast.minChar === -1 || ast.limChar === -1)
+        if (ast.start() === -1 || ast.end() === -1)
             return false;
 
         return true;
@@ -126,21 +126,21 @@ module TypeScript {
                         cur.nodeType() === NodeType.VariableDeclaration ||
                         cur.nodeType() === NodeType.VariableDeclarator ||
                         cur.nodeType() === NodeType.InvocationExpression ||
-                        pos === script.limChar + script.trailingTriviaWidth; // Special "EOF" case
+                        pos === script.end() + script.trailingTriviaWidth(); // Special "EOF" case
 
-                    var minChar = cur.minChar;
-                    var limChar = cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0) + (inclusive ? 1 : 0);
+                    var minChar = cur.start();
+                    var limChar = cur.end() + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth() : 0) + (inclusive ? 1 : 0);
                     if (pos >= minChar && pos < limChar) {
 
                         // Ignore empty lists
-                        if ((cur.nodeType() !== NodeType.List && cur.nodeType() !== NodeType.SeparatedList) || cur.limChar > cur.minChar) {
+                        if ((cur.nodeType() !== NodeType.List && cur.nodeType() !== NodeType.SeparatedList) || cur.end() > cur.start()) {
                             // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
                             //       than top of the stack.
                             if (top === null) {
                                 top = cur;
                             }
-                            else if (cur.minChar >= top.minChar &&
-                                (cur.limChar + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth : 0)) <= (top.limChar + (useTrailingTriviaAsLimChar ? top.trailingTriviaWidth : 0))) {
+                            else if (cur.start() >= top.start() &&
+                                (cur.end() + (useTrailingTriviaAsLimChar ? cur.trailingTriviaWidth() : 0)) <= (top.end() + (useTrailingTriviaAsLimChar ? top.trailingTriviaWidth() : 0))) {
                                 // this new node appears to be better than the one we're 
                                 // storing.  Make this the new node.
 

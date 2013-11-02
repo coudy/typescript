@@ -50,7 +50,7 @@ module TypeScript {
     function preCollectImportDecls(ast: AST, context: DeclCollectionContext): void {
         var importDecl = <ImportDeclaration>ast;
         var declFlags = PullElementFlags.None;
-        var span = TextSpan.fromBounds(importDecl.minChar, importDecl.limChar);
+        var span = TextSpan.fromBounds(importDecl.start(), importDecl.end());
 
         var parent = context.getParent();
 
@@ -68,7 +68,7 @@ module TypeScript {
     }
 
     function preCollectScriptDecls(script: Script, context: DeclCollectionContext): void {
-        var span = TextSpan.fromBounds(script.minChar, script.limChar);
+        var span = TextSpan.fromBounds(script.start(), script.end());
 
         var fileName = script.fileName();
         var decl = new RootPullDecl(
@@ -98,7 +98,7 @@ module TypeScript {
         declFlags |= PullElementFlags.Enum;
         kind = PullElementKind.Enum;
 
-        var span = TextSpan.fromBounds(enumDecl.minChar, enumDecl.limChar);
+        var span = TextSpan.fromBounds(enumDecl.start(), enumDecl.end());
 
         var enumDeclaration = new NormalPullDecl(enumName, enumDecl.identifier.text(), kind, declFlags, context.getParent(), span);
         context.semanticInfoChain.setDeclForAST(enumDecl, enumDeclaration);
@@ -118,7 +118,7 @@ module TypeScript {
     function createEnumElementDecls(propertyDecl: EnumElement, context: DeclCollectionContext): void {
         var parent = context.getParent();
 
-        var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
+        var span = TextSpan.fromBounds(propertyDecl.start(), propertyDecl.end());
 
         var decl = new PullEnumElementDecl(propertyDecl.propertyName.valueText(), propertyDecl.propertyName.text(), parent, span);
         context.semanticInfoChain.setDeclForAST(propertyDecl, decl);
@@ -144,7 +144,7 @@ module TypeScript {
 
         var kind = isDynamic ? PullElementKind.DynamicModule : PullElementKind.Container;
 
-        var span = TextSpan.fromBounds(moduleDecl.minChar, moduleDecl.limChar);
+        var span = TextSpan.fromBounds(moduleDecl.start(), moduleDecl.end());
 
         var decl = new NormalPullDecl(modName, (<Identifier>moduleDecl.name).text(), kind, declFlags, context.getParent(), span);
         context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
@@ -207,7 +207,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        var span = TextSpan.fromBounds(classDecl.minChar, classDecl.limChar);
+        var span = TextSpan.fromBounds(classDecl.start(), classDecl.end());
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(classDecl.identifier.valueText(), classDecl.identifier.text(), PullElementKind.Class, declFlags, parent, span);
@@ -232,7 +232,7 @@ module TypeScript {
 
         var declFlags = PullElementFlags.None;
 
-        var span = TextSpan.fromBounds(objectType.minChar, objectType.limChar);
+        var span = TextSpan.fromBounds(objectType.start(), objectType.end());
 
         var parent = context.getParent();
 
@@ -254,7 +254,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Exported;
         }
 
-        var span = TextSpan.fromBounds(interfaceDecl.minChar, interfaceDecl.limChar);
+        var span = TextSpan.fromBounds(interfaceDecl.start(), interfaceDecl.end());
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(interfaceDecl.identifier.valueText(), interfaceDecl.identifier.text(), PullElementKind.Interface, declFlags, parent, span);
@@ -284,7 +284,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var span = TextSpan.fromBounds(argDecl.minChar, argDecl.limChar);
+        var span = TextSpan.fromBounds(argDecl.start(), argDecl.end());
 
         var decl = new NormalPullDecl(argDecl.identifier.valueText(), argDecl.identifier.text(), PullElementKind.Parameter, declFlags, parent, span);
 
@@ -331,7 +331,7 @@ module TypeScript {
     function preCollectTypeParameterDecl(typeParameterDecl: TypeParameter, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
 
-        var span = TextSpan.fromBounds(typeParameterDecl.minChar, typeParameterDecl.limChar);
+        var span = TextSpan.fromBounds(typeParameterDecl.start(), typeParameterDecl.end());
 
         var parent = context.getParent();
 
@@ -359,7 +359,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = TextSpan.fromBounds(propertyDecl.minChar, propertyDecl.limChar);
+        var span = TextSpan.fromBounds(propertyDecl.start(), propertyDecl.end());
 
         var decl = new NormalPullDecl(propertyDecl.propertyName.valueText(), propertyDecl.propertyName.text(), declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(propertyDecl, decl);
@@ -386,7 +386,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Static;
         }
 
-        var span = TextSpan.fromBounds(memberDecl.minChar, memberDecl.limChar);
+        var span = TextSpan.fromBounds(memberDecl.start(), memberDecl.end());
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(memberDecl.variableDeclarator.identifier.valueText(), memberDecl.variableDeclarator.identifier.text(), declType, declFlags, parent, span);
@@ -412,7 +412,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Ambient;
         }
 
-        var span = TextSpan.fromBounds(varDecl.minChar, varDecl.limChar);
+        var span = TextSpan.fromBounds(varDecl.start(), varDecl.end());
 
         var parent = context.getParent();
 
@@ -449,7 +449,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.FunctionType;
 
-        var span = TextSpan.fromBounds(functionTypeDeclAST.minChar, functionTypeDeclAST.limChar);
+        var span = TextSpan.fromBounds(functionTypeDeclAST.start(), functionTypeDeclAST.end());
 
         var parent = context.getParent();
 
@@ -469,7 +469,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.ConstructorType;
 
-        var span = TextSpan.fromBounds(constructorTypeDeclAST.minChar, constructorTypeDeclAST.limChar);
+        var span = TextSpan.fromBounds(constructorTypeDeclAST.start(), constructorTypeDeclAST.end());
 
         var parent = context.getParent();
 
@@ -501,7 +501,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        var span = TextSpan.fromBounds(funcDeclAST.minChar, funcDeclAST.limChar);
+        var span = TextSpan.fromBounds(funcDeclAST.start(), funcDeclAST.end());
 
         var parent = context.getParent();
 
@@ -530,7 +530,7 @@ module TypeScript {
             declFlags |= PullElementFlags.ArrowFunction;
         }
 
-        var span = TextSpan.fromBounds(functionExpressionDeclAST.minChar, functionExpressionDeclAST.limChar);
+        var span = TextSpan.fromBounds(functionExpressionDeclAST.start(), functionExpressionDeclAST.end());
 
         var parent = context.getParent();
 
@@ -556,7 +556,7 @@ module TypeScript {
                 declFlags |= PullElementFlags.DeclaredInAWithBlock;
             }
 
-            var span = TextSpan.fromBounds(simpleArrow.identifier.minChar, simpleArrow.identifier.limChar);
+            var span = TextSpan.fromBounds(simpleArrow.identifier.start(), simpleArrow.identifier.end());
 
             var decl: PullDecl = new NormalPullDecl(simpleArrow.identifier.valueText(), simpleArrow.identifier.text(), PullElementKind.Parameter, declFlags, parent, span);
 
@@ -587,7 +587,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        var span = TextSpan.fromBounds(funcDecl.minChar, funcDecl.limChar);
+        var span = TextSpan.fromBounds(funcDecl.start(), funcDecl.end());
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(funcDecl.propertyName.valueText(), funcDecl.propertyName.text(), declType, declFlags, parent, span);
@@ -602,7 +602,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.IndexSignature;
 
-        var span = TextSpan.fromBounds(indexSignatureDeclAST.minChar, indexSignatureDeclAST.limChar);
+        var span = TextSpan.fromBounds(indexSignatureDeclAST.start(), indexSignatureDeclAST.end());
 
         var parent = context.getParent();
 
@@ -631,7 +631,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.CallSignature;
 
-        var span = TextSpan.fromBounds(callSignature.minChar, callSignature.limChar);
+        var span = TextSpan.fromBounds(callSignature.start(), callSignature.end());
 
         var parent = context.getParent();
 
@@ -657,7 +657,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Optional;
         }
 
-        var span = TextSpan.fromBounds(method.minChar, method.limChar);
+        var span = TextSpan.fromBounds(method.start(), method.end());
         var parent = context.getParent();
 
         var decl = new NormalPullDecl(method.propertyName.valueText(), method.propertyName.text(), declType, declFlags, parent, span);
@@ -672,7 +672,7 @@ module TypeScript {
         var declFlags = PullElementFlags.Signature;
         var declType = PullElementKind.ConstructSignature;
 
-        var span = TextSpan.fromBounds(constructSignatureDeclAST.minChar, constructSignatureDeclAST.limChar);
+        var span = TextSpan.fromBounds(constructSignatureDeclAST.start(), constructSignatureDeclAST.end());
 
         var parent = context.getParent();
 
@@ -696,7 +696,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Signature;
         }
 
-        var span = TextSpan.fromBounds(constructorDeclAST.minChar, constructorDeclAST.limChar);
+        var span = TextSpan.fromBounds(constructorDeclAST.start(), constructorDeclAST.end());
 
         var parent = context.getParent();
 
@@ -731,7 +731,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        var span = TextSpan.fromBounds(getAccessorDeclAST.minChar, getAccessorDeclAST.limChar);
+        var span = TextSpan.fromBounds(getAccessorDeclAST.start(), getAccessorDeclAST.end());
 
         var parent = context.getParent();
 
@@ -765,7 +765,7 @@ module TypeScript {
             declFlags |= PullElementFlags.Public;
         }
 
-        var span = TextSpan.fromBounds(setAccessorDeclAST.minChar, setAccessorDeclAST.limChar);
+        var span = TextSpan.fromBounds(setAccessorDeclAST.start(), setAccessorDeclAST.end());
 
         var parent = context.getParent();
 
@@ -784,7 +784,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.CatchBlock;
 
-        var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+        var span = TextSpan.fromBounds(ast.start(), ast.end());
 
         var parent = context.getParent();
 
@@ -802,7 +802,7 @@ module TypeScript {
         var declType = PullElementKind.CatchVariable;
 
         // Create a decl for the catch clause variable.
-        var span = TextSpan.fromBounds(ast.identifier.minChar, ast.identifier.limChar);
+        var span = TextSpan.fromBounds(ast.identifier.start(), ast.identifier.end());
 
         var parent = context.getParent();
 
@@ -824,7 +824,7 @@ module TypeScript {
         var declFlags = PullElementFlags.None;
         var declType = PullElementKind.WithBlock;
 
-        var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+        var span = TextSpan.fromBounds(ast.start(), ast.end());
 
         var parent = context.getParent();
 
@@ -836,7 +836,7 @@ module TypeScript {
     }
 
     function preCollectObjectLiteralDecls(ast: AST, context: DeclCollectionContext): void {
-        var span = TextSpan.fromBounds(ast.minChar, ast.limChar);
+        var span = TextSpan.fromBounds(ast.start(), ast.end());
         var decl = new NormalPullDecl(
             "", "", PullElementKind.ObjectLiteral, PullElementFlags.None, context.getParent(), span);
 
@@ -848,7 +848,7 @@ module TypeScript {
 
     function preCollectSimplePropertyAssignmentDecls(propertyAssignment: SimplePropertyAssignment, context: DeclCollectionContext): void {
         var assignmentText = getPropertyAssignmentNameTextFromIdentifier(propertyAssignment.propertyName);
-        var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
+        var span = TextSpan.fromBounds(propertyAssignment.start(), propertyAssignment.end());
 
         var decl = new NormalPullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, context.getParent(), span);
 
@@ -863,7 +863,7 @@ module TypeScript {
 
     function preCollectFunctionPropertyAssignmentDecls(propertyAssignment: FunctionPropertyAssignment, context: DeclCollectionContext): void {
         var assignmentText = getPropertyAssignmentNameTextFromIdentifier(propertyAssignment.propertyName);
-        var span = TextSpan.fromBounds(propertyAssignment.minChar, propertyAssignment.limChar);
+        var span = TextSpan.fromBounds(propertyAssignment.start(), propertyAssignment.end());
 
         var decl = new NormalPullDecl(assignmentText.memberName, assignmentText.actualText, PullElementKind.Property, PullElementFlags.Public, context.getParent(), span);
 

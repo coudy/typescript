@@ -162,9 +162,7 @@ module TypeScript.Services {
             }
 
             var isWriteAccess = this.isWriteAccess(node);
-            return [
-                new ReferenceEntry(this.compiler.getHostFileName(fileName), node.minChar, node.limChar, isWriteAccess)
-            ];
+            return [new ReferenceEntry(this.compiler.getHostFileName(fileName), node.start(), node.end(), isWriteAccess)];
         }
 
         public getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[] {
@@ -303,7 +301,7 @@ module TypeScript.Services {
                             var isWriteAccess = this.isWriteAccess(nameAST);
 
                             result.push(new ReferenceEntry(this.compiler.getHostFileName(fileName),
-                                nameAST.minChar, nameAST.limChar, isWriteAccess));
+                                nameAST.start(), nameAST.end(), isWriteAccess));
                         }
                     }
                 });
@@ -323,14 +321,14 @@ module TypeScript.Services {
 
                 possiblePositions.forEach(p => {
                     // If it's not in the bounds of the AST we're asking for, then this can't possibly be a hit.
-                    if (containingASTOpt && (p < containingASTOpt.minChar || p > containingASTOpt.limChar)) {
+                    if (containingASTOpt && (p < containingASTOpt.start() || p > containingASTOpt.end())) {
                         return;
                     }
 
                     var nameAST = TypeScript.getAstAtPosition(script, p);
 
                     // Compare the length so we filter out strict superstrings of the symbol we are looking for
-                    if (nameAST === null || nameAST.nodeType() !== TypeScript.NodeType.Name || (nameAST.limChar - nameAST.minChar !== symbolName.length)) {
+                    if (nameAST === null || nameAST.nodeType() !== TypeScript.NodeType.Name || (nameAST.end() - nameAST.start() !== symbolName.length)) {
                         return;
                     }
 
@@ -340,7 +338,7 @@ module TypeScript.Services {
 
                         if (FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol)) {
                             var isWriteAccess = this.isWriteAccess(nameAST);
-                            result.push(new ReferenceEntry(this.compiler.getHostFileName(fileName), nameAST.minChar, nameAST.limChar, isWriteAccess));
+                            result.push(new ReferenceEntry(this.compiler.getHostFileName(fileName), nameAST.start(), nameAST.end(), isWriteAccess));
                         }
                     }
                 });
@@ -482,7 +480,7 @@ module TypeScript.Services {
             while (node) {
                 if (node.nodeType() === TypeScript.NodeType.InvocationExpression ||
                     node.nodeType() === TypeScript.NodeType.ObjectCreationExpression ||  // Valid call or new expressions
-                    (isSignatureHelpBlocker(node) && position > node.minChar)) // Its a declaration node - call expression cannot be in parent scope
+                    (isSignatureHelpBlocker(node) && position > node.start())) // Its a declaration node - call expression cannot be in parent scope
                 {
                     break;
                 }
@@ -509,8 +507,8 @@ module TypeScript.Services {
 
             TypeScript.Debug.assert(callExpression.argumentList.arguments !== null, "Expected call expression to have arguments, but it did not");
 
-            var argumentsStart = callExpression.expression.limChar + callExpression.expression.trailingTriviaWidth;
-            var argumentsEnd = callExpression.argumentList.arguments.limChar + callExpression.argumentList.arguments.trailingTriviaWidth
+            var argumentsStart = callExpression.expression.end() + callExpression.expression.trailingTriviaWidth();
+            var argumentsEnd = callExpression.argumentList.arguments.end() + callExpression.argumentList.arguments.trailingTriviaWidth()
 
             if (position <= argumentsStart || position > argumentsEnd) {
                 this.logger.log("Outside argument list");
@@ -989,7 +987,7 @@ module TypeScript.Services {
                     return null;
                 case TypeScript.NodeType.ConstructorDeclaration:
                     var constructorAST = <TypeScript.ConstructorDeclaration>ast;
-                    if (!isConstructorValidPosition || !(position >= constructorAST.minChar && position <= constructorAST.minChar + 11 /*constructor*/)) {
+                    if (!isConstructorValidPosition || !(position >= constructorAST.start() && position <= constructorAST.start() + 11 /*constructor*/)) {
                         return null;
                     }
                     else {
@@ -1127,8 +1125,8 @@ module TypeScript.Services {
             var docCommentSymbol = candidateSignature || symbol;
             var docComment = docCommentSymbol.docComments(!_isCallExpression);
             var symbolName = this.getFullNameOfSymbol(symbol, enclosingScopeSymbol);
-            var minChar = ast ? ast.minChar : -1;
-            var limChar = ast ? ast.limChar : -1;
+            var minChar = ast ? ast.start() : -1;
+            var limChar = ast ? ast.end() : -1;
 
             return new TypeInfo(memberName, docComment, symbolName, kind, minChar, limChar);
         }
@@ -1147,7 +1145,7 @@ module TypeScript.Services {
             var node = TypeScript.getAstAtPosition(script, position, /*useTrailingTriviaAsLimChar*/ true, /*forceInclusive*/ true);
 
             if (node && node.nodeType() === TypeScript.NodeType.Name &&
-                node.minChar === node.limChar) {
+                node.start() === node.end()) {
                 // Ignore missing name nodes
                 node = node.parent;
             }
@@ -1155,14 +1153,14 @@ module TypeScript.Services {
             var isRightOfDot = false;
             if (node &&
                 node.nodeType() === TypeScript.NodeType.MemberAccessExpression &&
-                (<TypeScript.MemberAccessExpression>node).expression.limChar < position) {
+                (<TypeScript.MemberAccessExpression>node).expression.end() < position) {
 
                 isRightOfDot = true;
                 node = (<TypeScript.MemberAccessExpression>node).expression;
             }
             else if (node &&
                 node.nodeType() === TypeScript.NodeType.QualifiedName &&
-                (<TypeScript.QualifiedName>node).left.limChar < position) {
+                (<TypeScript.QualifiedName>node).left.end() < position) {
 
                 isRightOfDot = true;
                 node = (<TypeScript.QualifiedName>node).left;
@@ -1686,7 +1684,7 @@ module TypeScript.Services {
                 }
             }
 
-            var spanInfo = new SpanInfo(node.minChar, node.limChar);
+            var spanInfo = new SpanInfo(node.start(), node.end());
             return spanInfo;
         }
 
