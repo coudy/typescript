@@ -109,7 +109,7 @@ module TypeScript {
             return result;
         }
 
-        public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
+        public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTSeparatedList {
             var start = this.position;
             var array = new Array<any>(list.nonSeparatorCount());
 
@@ -126,7 +126,7 @@ module TypeScript {
                 }
             }
 
-            var result = new ASTList(this.fileName, array, list.separatorCount());
+            var result = new ASTSeparatedList(this.fileName, array, list.separatorCount());
             this.setSpan(result, start, list);
 
             result.setPostComments(this.previousTokenTrailingComments);
@@ -1899,8 +1899,8 @@ module TypeScript {
             return result;
         }
 
-        public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTList {
-            var result: ASTList = this.getAndMovePastAST(list);
+        public visitSeparatedSyntaxList(list: ISeparatedSyntaxList): ASTSeparatedList {
+            var result: ASTSeparatedList = this.getAndMovePastAST(list);
             if (!result) {
                 result = super.visitSeparatedSyntaxList(list);
 

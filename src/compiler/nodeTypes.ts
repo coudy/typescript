@@ -20,6 +20,7 @@ module TypeScript {
     export enum NodeType {
         None,
         List,
+        SeparatedList,
         Script,
         ArgumentList,
 

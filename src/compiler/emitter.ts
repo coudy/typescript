@@ -188,8 +188,9 @@ module TypeScript {
         }
     }
 
-    export function lastParameterIsRest(parameters: ParameterList): boolean {
-        return parameters.parameters.members.length > 0 && ArrayUtilities.last(<Parameter[]>parameters.parameters.members).dotDotDotToken !== null;
+    export function lastParameterIsRest(parameterList: ParameterList): boolean {
+        var parameters = parameterList.parameters;
+        return parameters.nonSeparatorCount() > 0 && (<Parameter>parameters.nonSeparatorAt(parameters.nonSeparatorCount() - 1)).dotDotDotToken !== null;
     }
 
     export class Emitter {
@@ -567,7 +568,7 @@ module TypeScript {
                 this.recordSourceMappingStart(args);
                 this.writeToOutput("(");
                 this.emitThis();
-                if (args && args.members.length > 0) {
+                if (args && args.nonSeparatorCount() > 0) {
                     this.writeToOutput(", ");
                     this.emitCommaSeparatedList(callNode.argumentList, args, /*buffer:*/ "", /*preserveNewLines:*/ false);
                 }
@@ -582,7 +583,7 @@ module TypeScript {
                 this.writeToOutput("(");
                 if (callNode.expression.nodeType() === NodeType.SuperExpression && this.emitState.container === EmitContainer.Constructor) {
                     this.writeToOutput("this");
-                    if (args && args.members.length) {
+                    if (args && args.nonSeparatorCount() > 0) {
                         this.writeToOutput(", ");
                     }
                 }
@@ -852,7 +853,7 @@ module TypeScript {
                 this.writeCaptureThisStatement(moduleDecl);
             }
 
-            this.emitList(moduleDecl.enumElements);
+            this.emitSeparatedList(moduleDecl.enumElements);
             this.indenter.decreaseIndent();
             this.emitIndent();
 
@@ -1429,7 +1430,7 @@ module TypeScript {
         }
 
         public emitVariableDeclaration(declaration: VariableDeclaration) {
-            var varDecl = <VariableDeclarator>declaration.declarators.members[0];
+            var varDecl = <VariableDeclarator>declaration.declarators.nonSeparatorAt(0);
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
 
@@ -1444,8 +1445,8 @@ module TypeScript {
                 var prevVariableDeclaration = this.currentVariableDeclaration;
                 this.currentVariableDeclaration = declaration;
 
-                for (var i = 0, n = declaration.declarators.members.length; i < n; i++) {
-                    var declarator = declaration.declarators.members[i];
+                for (var i = 0, n = declaration.declarators.nonSeparatorCount(); i < n; i++) {
+                    var declarator = declaration.declarators.nonSeparatorAt(i);
 
                     if (i > 0) {
                         this.writeToOutput(", ");
@@ -1835,8 +1836,8 @@ module TypeScript {
             var constructorDecl = getLastConstructor(this.thisClassNode);
 
             if (constructorDecl && constructorDecl.parameterList) {
-                for (var i = 0, n = constructorDecl.parameterList.parameters.members.length; i < n; i++) {
-                    var parameter = <Parameter>constructorDecl.parameterList.parameters.members[i];
+                for (var i = 0, n = constructorDecl.parameterList.parameters.nonSeparatorCount(); i < n; i++) {
+                    var parameter = <Parameter>constructorDecl.parameterList.parameters.nonSeparatorAt(i);
                     var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         this.emitIndent();
@@ -1850,9 +1851,9 @@ module TypeScript {
                 }
             }
 
-            for (var i = 0, n = this.thisClassNode.classElements.members.length; i < n; i++) {
-                if (this.thisClassNode.classElements.members[i].nodeType() === NodeType.MemberVariableDeclaration) {
-                    var varDecl = <MemberVariableDeclaration>this.thisClassNode.classElements.members[i];
+            for (var i = 0, n = this.thisClassNode.classElements.childCount(); i < n; i++) {
+                if (this.thisClassNode.classElements.childAt(i).nodeType() === NodeType.MemberVariableDeclaration) {
+                    var varDecl = <MemberVariableDeclaration>this.thisClassNode.classElements.childAt(i);
                     if (!hasModifier(varDecl.modifiers, PullElementFlags.Static) && varDecl.variableDeclarator.equalsValueClause) {
                         this.emitIndent();
                         this.emitMemberVariableDeclaration(varDecl);
@@ -1867,14 +1868,14 @@ module TypeScript {
             return lineMap.getLineNumberFromPosition(pos1) === lineMap.getLineNumberFromPosition(pos2);
         }
 
-        private emitCommaSeparatedList(parent: AST, list: ASTList, buffer: string, preserveNewLines: boolean): void {
-            if (list === null || list.members.length === 0) {
+        private emitCommaSeparatedList(parent: AST, list: ASTSeparatedList, buffer: string, preserveNewLines: boolean): void {
+            if (list === null || list.nonSeparatorCount() === 0) {
                 return;
             }
 
             // If the first element isn't on hte same line as the parent node, then we need to 
             // start with a newline.
-            var startLine = preserveNewLines && !this.isOnSameLine(parent.limChar, list.members[0].limChar);
+            var startLine = preserveNewLines && !this.isOnSameLine(parent.limChar, list.nonSeparatorAt(0).limChar);
 
             if (preserveNewLines) {
                 // Any elements on a new line will have to be indented.
@@ -1890,8 +1891,8 @@ module TypeScript {
                 this.writeToOutput(buffer);
             }
 
-            for (var i = 0, n = list.members.length; i < n; i++) {
-                var emitNode = list.members[i];
+            for (var i = 0, n = list.nonSeparatorCount(); i < n; i++) {
+                var emitNode = list.nonSeparatorAt(i);
 
                 // Write out the element, emitting an indent if we're on a new line.
                 this.emitJavascript(emitNode, startLine);
@@ -1900,7 +1901,7 @@ module TypeScript {
                     // If the next element start on a different line than this element ended on, 
                     // then we want to start on a newline.  Emit the comma with a newline.  
                     // Otherwise, emit the comma with the space.
-                    startLine = preserveNewLines && !this.isOnSameLine(emitNode.limChar, list.members[i + 1].minChar);
+                    startLine = preserveNewLines && !this.isOnSameLine(emitNode.limChar, list.nonSeparatorAt(i + 1).minChar);
                     if (startLine) {
                         this.writeLineToOutput(",");
                     }
@@ -1919,7 +1920,7 @@ module TypeScript {
             // after the last element and emit our indent so the list's terminator will be
             // on the right line.  Otherwise, emit the buffer string between the last value
             // and the terminator.
-            if (preserveNewLines && !this.isOnSameLine(parent.limChar, ArrayUtilities.last(list.members).limChar)) {
+            if (preserveNewLines && !this.isOnSameLine(parent.limChar, list.nonSeparatorAt(list.nonSeparatorCount() - 1).limChar)) {
                 this.writeLineToOutput("");
                 this.emitIndent();
             }
@@ -1928,7 +1929,7 @@ module TypeScript {
             }
         }
 
-        public emitList(list: ASTList, useNewLineSeparator = true, startInclusive = 0, endExclusive = list.members.length) {
+        public emitList(list: ASTList, useNewLineSeparator = true, startInclusive = 0, endExclusive = list.childCount()) {
             if (list === null) {
                 return;
             }
@@ -1937,7 +1938,33 @@ module TypeScript {
             var lastEmittedNode: AST = null;
 
             for (var i = startInclusive; i < endExclusive; i++) {
-                var node = list.members[i];
+                var node = list.childAt(i);
+
+                if (this.shouldEmit(node)) {
+                    this.emitSpaceBetweenConstructs(lastEmittedNode, node);
+
+                    this.emitJavascript(node, true);
+                    if (useNewLineSeparator) {
+                        this.writeLineToOutput("");
+                    }
+
+                    lastEmittedNode = node;
+                }
+            }
+
+            this.emitComments(list, false);
+        }
+
+        public emitSeparatedList(list: ASTSeparatedList, useNewLineSeparator = true, startInclusive = 0, endExclusive = list.nonSeparatorCount()) {
+            if (list === null) {
+                return;
+            }
+
+            this.emitComments(list, true);
+            var lastEmittedNode: AST = null;
+
+            for (var i = startInclusive; i < endExclusive; i++) {
+                var node = list.nonSeparatorAt(i);
 
                 if (this.shouldEmit(node)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
@@ -2029,12 +2056,12 @@ module TypeScript {
 
         private emitPossibleCopyrightHeaders(script: Script): void {
             var list = script.moduleElements;
-            if (list.members.length > 0) {
-                var firstElement = list.members[0];
+            if (list.childCount() > 0) {
+                var firstElement = list.childAt(0);
                 if (firstElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleDeclaration = <ModuleDeclaration>firstElement;
                     if (moduleDeclaration.isExternalModule) {
-                        firstElement = moduleDeclaration.moduleElements.members[0];
+                        firstElement = moduleDeclaration.moduleElements.childAt(0);
                     }
                 }
 
@@ -2049,8 +2076,8 @@ module TypeScript {
             this.emitPossibleCopyrightHeaders(script);
 
             // First, emit all the prologue elements.
-            for (var i = 0, n = list.members.length; i < n; i++) {
-                var node = list.members[i];
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                var node = list.childAt(i);
 
                 if (!this.isDirectivePrologueElement(node)) {
                     break;
@@ -2063,9 +2090,9 @@ module TypeScript {
             // Now emit __extends or a _this capture if necessary.
             this.emitPrologue(script);
 
-            var isExternalModule = script.moduleElements.members.length === 1 &&
-                script.moduleElements.members[0].nodeType() === NodeType.ModuleDeclaration &&
-                (<ModuleDeclaration>script.moduleElements.members[0]).isExternalModule;
+            var isExternalModule = script.moduleElements.childCount() === 1 &&
+                script.moduleElements.childAt(0).nodeType() === NodeType.ModuleDeclaration &&
+                (<ModuleDeclaration>script.moduleElements.childAt(0)).isExternalModule;
             var isNonElidedExternalModule = isExternalModule && !scriptIsElided(script);
             if (isNonElidedExternalModule) {
                 this.recordSourceMappingStart(script);
@@ -2098,14 +2125,14 @@ module TypeScript {
             var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
             var lastEmittedNode: AST = null;
 
-            for (var i = 0, n = list.members.length; i < n; i++) {
+            for (var i = 0, n = list.childCount(); i < n; i++) {
                 // In some circumstances, class property initializers must be emitted immediately after the 'super' constructor
                 // call which, in these cases, must be the first statement in the constructor body
                 if (i === propertyAssignmentIndex) {
                     this.emitParameterPropertyAndMemberVariableAssignments();
                 }
 
-                var node = list.members[i];
+                var node = list.childAt(i);
 
                 if (this.shouldEmit(node)) {
                     this.emitSpaceBetweenConstructs(lastEmittedNode, node);
@@ -2248,7 +2275,7 @@ module TypeScript {
             this.indenter.increaseIndent();
 
             if (hasBaseClass) {
-                baseTypeReference = getExtendsHeritageClause(classDecl.heritageClauses).typeNames.members[0];
+                baseTypeReference = getExtendsHeritageClause(classDecl.heritageClauses).typeNames.nonSeparatorAt(0);
                 this.emitIndent();
                 this.writeLineToOutput("__extends(" + className + ", _super);");
             }
@@ -2324,8 +2351,8 @@ module TypeScript {
             // First, emit all the functions.
             var lastEmittedMember: AST = null;
 
-            for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
-                var memberDecl = classDecl.classElements.members[i];
+            for (var i = 0, n = classDecl.classElements.childCount(); i < n; i++) {
+                var memberDecl = classDecl.classElements.childAt(i);
 
                 if (memberDecl.nodeType() === NodeType.GetAccessor) {
                     this.emitSpaceBetweenConstructs(lastEmittedMember, memberDecl);
@@ -2355,8 +2382,8 @@ module TypeScript {
             }
 
             // Now emit all the statics.
-            for (var i = 0, n = classDecl.classElements.members.length; i < n; i++) {
-                var memberDecl = classDecl.classElements.members[i];
+            for (var i = 0, n = classDecl.classElements.childCount(); i < n; i++) {
+                var memberDecl = classDecl.classElements.childAt(i);
 
                 if (memberDecl.nodeType() === NodeType.MemberVariableDeclaration) {
                     var varDecl = <MemberVariableDeclaration>memberDecl;
@@ -2426,8 +2453,8 @@ module TypeScript {
         }
 
         private requiresExtendsBlock(moduleElements: ASTList): boolean {
-            for (var i = 0, n = moduleElements.members.length; i < n; i++) {
-                var moduleElement = moduleElements.members[i];
+            for (var i = 0, n = moduleElements.childCount(); i < n; i++) {
+                var moduleElement = moduleElements.childAt(i);
 
                 if (moduleElement.nodeType() === NodeType.ModuleDeclaration) {
                     var moduleAST = <ModuleDeclaration>moduleElement;
@@ -2951,9 +2978,9 @@ module TypeScript {
         }
 
         private emitSwitchClauseBody(body: ASTList): void {
-            if (body.members.length === 1 && body.members[0].nodeType() === NodeType.Block) {
+            if (body.childCount() === 1 && body.childAt(0).nodeType() === NodeType.Block) {
                 // The case statement was written with curly braces, so emit it with the appropriate formatting
-                this.emit(body.members[0]);
+                this.emit(body.childAt(0));
                 this.writeLineToOutput("");
             }
             else {
@@ -3106,7 +3133,7 @@ module TypeScript {
         }
 
         private firstVariableDeclarator(statement: VariableStatement): VariableDeclarator {
-            return <VariableDeclarator>statement.declaration.declarators.members[0];
+            return <VariableDeclarator>statement.declaration.declarators.nonSeparatorAt(0);
         }
 
         private isNotAmbientOrHasInitializer(variableStatement: VariableStatement): boolean {
@@ -3166,6 +3193,8 @@ module TypeScript {
             }
 
             switch (ast.nodeType()) {
+                case NodeType.SeparatedList:
+                    return this.emitSeparatedList(<ASTSeparatedList>ast);
                 case NodeType.List:
                     return this.emitList(<ASTList>ast);
                 case NodeType.Script:
@@ -3365,7 +3394,6 @@ module TypeScript {
     }
 
     export function getLastConstructor(classDecl: ClassDeclaration): ConstructorDeclaration {
-        return <ConstructorDeclaration>ArrayUtilities.lastOrDefault(classDecl.classElements.members,
-            m => m.nodeType() === NodeType.ConstructorDeclaration);
+        return <ConstructorDeclaration>classDecl.classElements.lastOrDefault(e => e.nodeType() === NodeType.ConstructorDeclaration);
     }
 }

@@ -255,10 +255,10 @@ module TypeScript.Services {
                 result.currentParameterIsTypeParameter = true;
                 result.currentParameter = typeParameterInformation.argumentIndex;
             }
-            else if (ast.argumentList.arguments && ast.argumentList.arguments.members) {
+            else if (ast.argumentList.arguments && ast.argumentList.arguments.nonSeparatorCount() > 0) {
                 result.currentParameter = 0;
-                for (var index = 0; index < ast.argumentList.arguments.members.length; index++) {
-                    if (caretPosition > ast.argumentList.arguments.members[index].limChar + ast.argumentList.arguments.members[index].trailingTriviaWidth) {
+                for (var index = 0; index < ast.argumentList.arguments.nonSeparatorCount(); index++) {
+                    if (caretPosition > ast.argumentList.arguments.nonSeparatorAt(index).limChar + ast.argumentList.arguments.nonSeparatorAt(index).trailingTriviaWidth) {
                         result.currentParameter++;
                     }
                 }

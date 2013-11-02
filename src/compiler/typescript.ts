@@ -674,8 +674,8 @@ module TypeScript {
                                 if (callResolutionResults.actualParametersContextTypeSymbols) {
                                     var argExpression = path[i + 3];
                                     if (argExpression) {
-                                        for (var j = 0, m = callExpression.argumentList.arguments.members.length; j < m; j++) {
-                                            if (callExpression.argumentList.arguments.members[j] === argExpression) {
+                                        for (var j = 0, m = callExpression.argumentList.arguments.nonSeparatorCount(); j < m; j++) {
+                                            if (callExpression.argumentList.arguments.nonSeparatorAt(j) === argExpression) {
                                                 var callContextualType = callResolutionResults.actualParametersContextTypeSymbols[j];
                                                 if (callContextualType) {
                                                     contextualType = callContextualType;
@@ -722,14 +722,14 @@ module TypeScript {
                             resolver.resolveObjectLiteralExpression(objectLiteralExpression, inContextuallyTypedAssignment, resolutionContext, objectLiteralResolutionContext);
 
                             // find the member in the path
-                            var memeberAST = (path[i + 1] && path[i + 1].nodeType() === NodeType.List) ? path[i + 2] : path[i + 1];
+                            var memeberAST = (path[i + 1] && path[i + 1].nodeType() === NodeType.SeparatedList) ? path[i + 2] : path[i + 1];
                             if (memeberAST) {
                                 // Propagate the member contextual type
                                 var contextualType: PullTypeSymbol = null;
                                 var memberDecls = objectLiteralExpression.propertyAssignments;
                                 if (memberDecls && objectLiteralResolutionContext.membersContextTypeSymbols) {
-                                    for (var j = 0, m = memberDecls.members.length; j < m; j++) {
-                                        if (memberDecls.members[j] === memeberAST) {
+                                    for (var j = 0, m = memberDecls.nonSeparatorCount(); j < m; j++) {
+                                        if (memberDecls.nonSeparatorAt(j) === memeberAST) {
                                             var memberContextualType = objectLiteralResolutionContext.membersContextTypeSymbols[j];
                                             if (memberContextualType) {
                                                 contextualType = memberContextualType;

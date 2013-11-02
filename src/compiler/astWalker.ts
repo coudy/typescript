@@ -17,9 +17,8 @@
 
 module TypeScript {
     function walkListChildren(preAst: ASTList, walker: AstWalker): void {
-        var members = preAst.members;
-        for (var i = 0, n = members.length; i < n; i++) {
-            walker.walk(members[i]);
+        for (var i = 0, n = preAst.childCount(); i < n; i++) {
+            walker.walk(preAst.childAt(i));
         }
     }
 
@@ -76,6 +75,12 @@ module TypeScript {
         walker.walk(preAst.parameterList);
         walker.walk(preAst.typeAnnotation);
         walker.walk(preAst.block);
+    }
+
+    function walkSeparatedListChildren(preAst: ASTSeparatedList, walker: AstWalker): void {
+        for (var i = 0, n = preAst.nonSeparatorCount(); i < n; i++) {
+            walker.walk(preAst.nonSeparatorAt(i));
+        }
     }
 
     function walkSetAccessorChildren(preAst: SetAccessor, walker: AstWalker): void {
@@ -532,6 +537,7 @@ module TypeScript {
     childrenWalkers[NodeType.RegularExpressionLiteral] = null;
     childrenWalkers[NodeType.ReturnStatement] = walkReturnStatementChildren;
     childrenWalkers[NodeType.Script] = walkScriptChildren;
+    childrenWalkers[NodeType.SeparatedList] = walkSeparatedListChildren;
     childrenWalkers[NodeType.SetAccessor] = walkSetAccessorChildren;
     childrenWalkers[NodeType.SignedRightShiftAssignmentExpression] = walkBinaryExpressionChildren;
     childrenWalkers[NodeType.SignedRightShiftExpression] = walkBinaryExpressionChildren;

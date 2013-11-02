@@ -23,7 +23,7 @@ module TypeScript {
         while (ast) {
             if (ast.nodeType() === NodeType.ModuleDeclaration) {
                 var moduleDecl = <ModuleDeclaration>ast;
-                return ArrayUtilities.any(moduleDecl.moduleElements.members, m => m.nodeType() === NodeType.ExportAssignment);
+                return moduleDecl.moduleElements.any(m => m.nodeType() === NodeType.ExportAssignment);
             }
 
             ast = ast.parent;
@@ -164,8 +164,8 @@ module TypeScript {
     }
 
     function containsExecutableCode(members: ASTList): boolean {
-        for (var i = 0, n = members.members.length; i < n; i++) {
-            var member = members.members[i];
+        for (var i = 0, n = members.childCount(); i < n; i++) {
+            var member = members.childAt(i);
 
             // October 11, 2013
             // Internal modules are either instantiated or non-instantiated. A non-instantiated 
@@ -616,7 +616,7 @@ module TypeScript {
     // call signatures
     function createCallSignatureDeclaration(callSignature: CallSignature, context: DeclCollectionContext): void {
         var isChildOfObjectType = callSignature.parent && callSignature.parent.parent &&
-            callSignature.parent.nodeType() === NodeType.List &&
+            callSignature.parent.nodeType() === NodeType.SeparatedList &&
             callSignature.parent.parent.nodeType() === NodeType.ObjectType;
 
         if (!isChildOfObjectType) {
@@ -1030,8 +1030,8 @@ module TypeScript {
         var currentConstantValue = 0;
         var enumMemberDecls = <PullEnumElementDecl[]>enumDecl.getChildDecls();
 
-        for (var i = 0, n = ast.enumElements.members.length; i < n; i++) {
-            var enumElement = <EnumElement>ast.enumElements.members[i];
+        for (var i = 0, n = ast.enumElements.nonSeparatorCount(); i < n; i++) {
+            var enumElement = <EnumElement>ast.enumElements.nonSeparatorAt(i);
             var enumElementDecl = ArrayUtilities.first(enumMemberDecls, d =>
                 context.semanticInfoChain.getASTForDecl(d) === enumElement);
 

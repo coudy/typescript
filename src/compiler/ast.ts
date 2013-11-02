@@ -146,12 +146,20 @@ module TypeScript {
     }
 
     export class ASTList extends AST {
-        constructor(private _fileName: string, public members: AST[], public separatorCount?: number) {
+        constructor(private _fileName: string, private members: AST[]) {
             super();
 
             for (var i = 0, n = members.length; i < n; i++) {
                 members[i].parent = this;
             }
+        }
+
+        public childCount(): number {
+            return this.members.length;
+        }
+
+        public childAt(index: number): AST {
+            return this.members[index];
         }
 
         public fileName(): string {
@@ -162,9 +170,66 @@ module TypeScript {
             return NodeType.List;
         }
 
+        public firstOrDefault(func: (v: AST, index: number) => boolean): AST {
+            return ArrayUtilities.firstOrDefault(this.members, func);
+        }
+
+        public lastOrDefault(func: (v: AST, index: number) => boolean): AST {
+            return ArrayUtilities.lastOrDefault(this.members, func);
+        }
+
+        public any(func: (v: AST) => boolean): boolean {
+            return ArrayUtilities.any(this.members, func);
+        }
+
         public structuralEquals(ast: ASTList, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    astArrayStructuralEquals(this.members, ast.members, includingPosition);
+        }
+    }
+
+    export class ASTSeparatedList extends AST {
+        constructor(private _fileName: string, private members: AST[], private _separatorCount: number) {
+            super();
+
+            for (var i = 0, n = members.length; i < n; i++) {
+                members[i].parent = this;
+            }
+        }
+
+        public nonSeparatorCount(): number {
+            return this.members.length;
+        }
+
+        public separatorCount(): number {
+            return this._separatorCount;
+        }
+
+        public nonSeparatorAt(index: number): AST {
+            return this.members[index];
+        }
+
+        public nonSeparatorIndexOf(ast: AST): number {
+            for (var i = 0, n = this.nonSeparatorCount(); i < n; i++) {
+                if (this.nonSeparatorAt(i) === ast) {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public fileName(): string {
+            return this._fileName;
+        }
+
+        public nodeType(): NodeType {
+            return NodeType.SeparatedList;
+        }
+
+        public structuralEquals(ast: ASTSeparatedList, includingPosition: boolean): boolean {
+            return super.structuralEquals(ast, includingPosition) &&
+                astArrayStructuralEquals(this.members, ast.members, includingPosition);
         }
     }
 
@@ -407,7 +472,7 @@ module TypeScript {
     }
 
     export class TypeParameterList extends AST {
-        constructor(public typeParameters: ASTList) {
+        constructor(public typeParameters: ASTSeparatedList) {
             super();
             typeParameters && (typeParameters.parent = this);
         }
@@ -462,7 +527,7 @@ module TypeScript {
     }
 
     export class HeritageClause extends AST {
-        constructor(private _nodeType: NodeType, public typeNames: ASTList) {
+        constructor(private _nodeType: NodeType, public typeNames: ASTSeparatedList) {
             super();
             typeNames && (typeNames.parent = this);
         }
@@ -532,7 +597,7 @@ module TypeScript {
     }
 
     export class VariableDeclaration extends AST {
-        constructor(public declarators: ASTList) {
+        constructor(public declarators: ASTSeparatedList) {
             super();
             declarators && (declarators.parent = this);
         }
@@ -595,7 +660,7 @@ module TypeScript {
     }
 
     export class ArrayLiteralExpression extends AST {
-        constructor(public expressions: ASTList) {
+        constructor(public expressions: ASTSeparatedList) {
             super();
             expressions && (expressions.parent = this);
         }
@@ -686,7 +751,7 @@ module TypeScript {
     }
 
     export class ParameterList extends AST {
-        constructor(public openParenTrailingComments: Comment[], public parameters: ASTList) {
+        constructor(public openParenTrailingComments: Comment[], public parameters: ASTSeparatedList) {
             super();
             parameters && (parameters.parent = this);
         }
@@ -723,7 +788,7 @@ module TypeScript {
     }
 
     export class ObjectType extends AST {
-        constructor(public typeMembers: ASTList) {
+        constructor(public typeMembers: ASTSeparatedList) {
             super();
             typeMembers && (typeMembers.parent = this);
         }
@@ -755,7 +820,7 @@ module TypeScript {
     }
 
     export class TypeArgumentList extends AST {
-        constructor(public typeArguments: ASTList) {
+        constructor(public typeArguments: ASTSeparatedList) {
             super();
             typeArguments && (typeArguments.parent = this);
         }
@@ -899,7 +964,7 @@ module TypeScript {
     }
 
     export class ArgumentList extends AST {
-        constructor(public typeArgumentList: TypeArgumentList, public arguments: ASTList, public closeParenToken: ASTSpan) {
+        constructor(public typeArgumentList: TypeArgumentList, public arguments: ASTSeparatedList, public closeParenToken: ASTSpan) {
             super();
             typeArgumentList && (typeArgumentList.parent = this);
             arguments && (arguments.parent = this);
@@ -1374,7 +1439,7 @@ module TypeScript {
     }
 
     export class EnumDeclaration extends AST {
-        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public enumElements: ASTList) {
+        constructor(public modifiers: PullElementFlags[], public identifier: Identifier, public enumElements: ASTSeparatedList) {
             super();
             identifier && (identifier.parent = this);
             enumElements && (enumElements.parent = this);
@@ -1416,7 +1481,7 @@ module TypeScript {
     }
 
     export class ObjectLiteralExpression extends AST {
-        constructor(public propertyAssignments: ASTList) {
+        constructor(public propertyAssignments: ASTSeparatedList) {
             super();
             propertyAssignments && (propertyAssignments.parent = this);
         }

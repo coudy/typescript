@@ -912,7 +912,6 @@ module TypeScript {
                 }
             }
 
-            var members = ast.enumElements.members;
             containerSymbol.setResolved();
 
             this.resolveOtherDeclarations(ast, context);
@@ -964,7 +963,7 @@ module TypeScript {
                 }
             }
 
-            var members = ast.moduleElements.members;
+            var members = ast.moduleElements;
 
             var instanceSymbol = containerSymbol.getInstanceSymbol();
 
@@ -973,9 +972,9 @@ module TypeScript {
                 this.resolveDeclaredSymbol(instanceSymbol, context);
             }
 
-            for (var i = 0; i < members.length; i++) {
-                if (members[i].nodeType() == NodeType.ExportAssignment) {
-                    this.resolveExportAssignmentStatement(<ExportAssignment>members[i], context);
+            for (var i = 0, n = members.childCount(); i < n; i++) {
+                if (members.childAt(i).nodeType() == NodeType.ExportAssignment) {
+                    this.resolveExportAssignmentStatement(<ExportAssignment>members.childAt(i), context);
                     break;
                 }
             }
@@ -1103,12 +1102,12 @@ module TypeScript {
             // Extends list
             var extendsClause = getExtendsHeritageClause(heritageClauses);
             if (extendsClause) {
-                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < extendsClause.typeNames.members.length; i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); i < extendsClause.typeNames.nonSeparatorCount(); i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var parentType = this.resolveTypeReference(extendsClause.typeNames.members[i], context);
+                    var parentType = this.resolveTypeReference(extendsClause.typeNames.nonSeparatorAt(i), context);
 
                     if (typeDeclSymbol.isValidBaseKind(parentType, true)) {
-                        this.setSymbolForAST(extendsClause.typeNames.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
+                        this.setSymbolForAST(extendsClause.typeNames.nonSeparatorAt(i), parentType, null /* setting it without context so that we record the baseType associated with the members */);
 
                         // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
                         if (!typeDeclSymbol.hasBase(parentType) && !parentType.hasBase(typeDeclSymbol)) {
@@ -1121,30 +1120,30 @@ module TypeScript {
                             }
                         }
                     }
-                    else if (parentType && !this.getSymbolForAST(extendsClause.typeNames.members[i], context)) {
-                        this.setSymbolForAST(extendsClause.typeNames.members[i], parentType, null /* setting it without context so that we record the baseType associated with the members */);
+                    else if (parentType && !this.getSymbolForAST(extendsClause.typeNames.nonSeparatorAt(i), context)) {
+                        this.setSymbolForAST(extendsClause.typeNames.nonSeparatorAt(i), parentType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
             }
 
             var implementsClause = getImplementsHeritageClause(heritageClauses);
             if (implementsClause && typeDeclIsClass) {
-                var extendsCount = extendsClause ? extendsClause.typeNames.members.length : 0;
-                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < implementsClause.typeNames.members.length); i = typeDeclSymbol.getKnownBaseTypeCount()) {
+                var extendsCount = extendsClause ? extendsClause.typeNames.nonSeparatorCount() : 0;
+                for (var i = typeDeclSymbol.getKnownBaseTypeCount(); ((i - extendsCount) >= 0) && ((i - extendsCount) < implementsClause.typeNames.nonSeparatorCount()); i = typeDeclSymbol.getKnownBaseTypeCount()) {
                     typeDeclSymbol.incrementKnownBaseCount();
-                    var implementedTypeAST = implementsClause.typeNames.members[i - extendsCount];
+                    var implementedTypeAST = implementsClause.typeNames.nonSeparatorAt(i - extendsCount);
                     var implementedType = this.resolveTypeReference(implementedTypeAST, context);
 
                     if (typeDeclSymbol.isValidBaseKind(implementedType, false)) {
-                        this.setSymbolForAST(implementsClause.typeNames.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
+                        this.setSymbolForAST(implementsClause.typeNames.nonSeparatorAt(i - extendsCount), implementedType, null /* setting it without context so that we record the baseType associated with the members */);
 
                         // Do not add parentType as a base if it already added, or if it will cause a cycle as it already inherits from typeDeclSymbol
                         if (!typeDeclSymbol.hasBase(implementedType) && !implementedType.hasBase(typeDeclSymbol)) {
                             typeDeclSymbol.addImplementedType(implementedType);
                         }
                     }
-                    else if (implementedType && !this.getSymbolForAST(implementsClause.typeNames.members[i - extendsCount], context)) {
-                        this.setSymbolForAST(implementsClause.typeNames.members[i - extendsCount], implementedType, null /* setting it without context so that we record the baseType associated with the members */);
+                    else if (implementedType && !this.getSymbolForAST(implementsClause.typeNames.nonSeparatorAt(i - extendsCount), context)) {
+                        this.setSymbolForAST(implementsClause.typeNames.nonSeparatorAt(i - extendsCount), implementedType, null /* setting it without context so that we record the baseType associated with the members */);
                     }
                 }
             }
@@ -1881,15 +1880,15 @@ module TypeScript {
             }
 
             if (typeParameters) {
-                for (var i = 0; i < typeParameters.typeParameters.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.members[i], context);
+                for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
             }
 
             // link parameters and resolve their annotations
             if (parameterList) {
-                for (var i = 0; i < parameterList.parameters.members.length; i++) {
-                    this.resolveFunctionTypeSignatureParameter(<Parameter>parameterList.parameters.members[i], signature, functionDecl, context);
+                for (var i = 0; i < parameterList.parameters.nonSeparatorCount(); i++) {
+                    this.resolveFunctionTypeSignatureParameter(<Parameter>parameterList.parameters.nonSeparatorAt(i), signature, functionDecl, context);
                 }
             }
 
@@ -2161,11 +2160,11 @@ module TypeScript {
                 var memberType: PullTypeSymbol = null;
                 var typeMembers = objectType.typeMembers;
 
-                for (var i = 0; i < typeMembers.members.length; i++) {
-                    memberDecl = this.semanticInfoChain.getDeclForAST(typeMembers.members[i]);
+                for (var i = 0; i < typeMembers.nonSeparatorCount(); i++) {
+                    memberDecl = this.semanticInfoChain.getDeclForAST(typeMembers.nonSeparatorAt(i));
                     memberSymbol = (memberDecl.kind & PullElementKind.SomeSignature) ? memberDecl.getSignatureSymbol() : memberDecl.getSymbol();
 
-                    this.resolveAST(typeMembers.members[i], false, context);
+                    this.resolveAST(typeMembers.nonSeparatorAt(i), false, context);
 
                     memberType = memberSymbol.type;
 
@@ -2393,7 +2392,7 @@ module TypeScript {
         }
 
         private resolveParameterList(list: ParameterList, context: PullTypeResolutionContext): PullSymbol {
-            return this.resolveList(list.parameters, context);
+            return this.resolveSeparatedList(list.parameters, context);
         }
 
         private resolveParameter(parameter: Parameter, context: PullTypeResolutionContext): PullSymbol {
@@ -2813,7 +2812,7 @@ module TypeScript {
         private isForInVariableDeclarator(ast: AST): boolean {
             return ast.nodeType() === NodeType.VariableDeclarator &&
                 ast.parent && ast.parent.parent && ast.parent.parent.parent &&
-                ast.parent.nodeType() === NodeType.List &&
+                ast.parent.nodeType() === NodeType.SeparatedList &&
                 ast.parent.parent.nodeType() === NodeType.VariableDeclaration &&
                 ast.parent.parent.parent.nodeType() === NodeType.ForInStatement &&
                 (<ForInStatement>ast.parent.parent.parent).variableDeclaration === ast.parent.parent;
@@ -3111,8 +3110,8 @@ module TypeScript {
 
             // resolve parameter type annotations as necessary
             if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.parameters.members.length; i++) {
-                    this.resolveAST(funcDeclAST.parameterList.parameters.members[i], /*isContextuallyTyped:*/ false, context);
+                for (var i = 0; i < funcDeclAST.parameterList.parameters.nonSeparatorCount(); i++) {
+                    this.resolveAST(funcDeclAST.parameterList.parameters.nonSeparatorAt(i), /*isContextuallyTyped:*/ false, context);
                 }
             }
 
@@ -3201,8 +3200,8 @@ module TypeScript {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             if (typeParameters) {
-                for (var i = 0; i < typeParameters.typeParameters.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.members[i], context);
+                for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
             }
 
@@ -3227,7 +3226,7 @@ module TypeScript {
             if (funcDeclAST.nodeType() !== NodeType.ConstructSignature && block && returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
 
-                if (!isVoidOrAny && !(block.statements.members.length > 0 && block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                if (!isVoidOrAny && !(block.statements.childCount() > 0 && block.statements.childAt(0).nodeType() === NodeType.ThrowStatement)) {
                     var funcName = funcDecl.getDisplayName();
                     funcName = funcName ? funcName : "expression";
 
@@ -3460,9 +3459,9 @@ module TypeScript {
                     // TODO: why are we getting ourselves out of typecheck here?
                     context.inTypeCheck = false;
 
-                    for (var i = 0; i < funcDeclAST.parameterList.parameters.members.length; i++) {
+                    for (var i = 0; i < funcDeclAST.parameterList.parameters.nonSeparatorCount(); i++) {
                         // TODO: why are we calling resolveParameter instead of resolveAST.
-                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.members[i], context);
+                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.nonSeparatorAt(i), context);
                     }
 
                     context.inTypeCheck = prevInTypeCheck;
@@ -3700,8 +3699,8 @@ module TypeScript {
                 signature.startResolving();
 
                 if (typeParameters) {
-                    for (var i = 0; i < typeParameters.typeParameters.members.length; i++) {
-                        this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.members[i], context);
+                    for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
+                        this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                     }
                 }
 
@@ -3713,9 +3712,9 @@ module TypeScript {
                     // TODO: why are we setting inTypeCheck false here?
                     context.inTypeCheck = false;
 
-                    for (var i = 0; i < parameterList.parameters.members.length; i++) {
+                    for (var i = 0; i < parameterList.parameters.nonSeparatorCount(); i++) {
                         // TODO: why are are calling resolveParameter directly here?
-                        this.resolveParameter(<Parameter>parameterList.parameters.members[i], context);
+                        this.resolveParameter(<Parameter>parameterList.parameters.nonSeparatorAt(i), context);
                     }
 
                     context.inTypeCheck = prevInTypeCheck;
@@ -3819,9 +3818,9 @@ module TypeScript {
 
             if (setterFunctionDeclarationAst &&
                 setterFunctionDeclarationAst.parameterList &&
-                setterFunctionDeclarationAst.parameterList.parameters.members.length > 0) {
+                setterFunctionDeclarationAst.parameterList.parameters.nonSeparatorCount() > 0) {
 
-                var parameter = <Parameter>setterFunctionDeclarationAst.parameterList.parameters.members[0];
+                var parameter = <Parameter>setterFunctionDeclarationAst.parameterList.parameters.nonSeparatorAt(0);
                 return this.resolveTypeReference(getType(parameter), context);
             }
 
@@ -4078,7 +4077,7 @@ module TypeScript {
             //      signature is doesnt have the return statement flag &&
             //      accessor body has atleast one statement and it isnt throw statement
             if (!hasReturn &&
-                !(funcDeclAST.block.statements.members.length > 0 && funcDeclAST.block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                !(funcDeclAST.block.statements.childCount() > 0 && funcDeclAST.block.statements.childAt(0).nodeType() === NodeType.ThrowStatement)) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcNameAST, DiagnosticCode.Getters_must_return_a_value));
             }
 
@@ -4103,7 +4102,7 @@ module TypeScript {
         }
 
         static hasSetAccessorParameterTypeAnnotation(setAccessor: SetAccessor) {
-            return setAccessor.parameterList && setAccessor.parameterList.parameters.members.length > 0 && (<Parameter>setAccessor.parameterList.parameters.members[0]).typeAnnotation != null;
+            return setAccessor.parameterList && setAccessor.parameterList.parameters.nonSeparatorCount() > 0 && (<Parameter>setAccessor.parameterList.parameters.nonSeparatorAt(0)).typeAnnotation != null;
         }
 
         private resolveSetAccessorDeclaration(funcDeclAST: AST, parameterList: ParameterList, context: PullTypeResolutionContext): PullSymbol {
@@ -4134,8 +4133,8 @@ module TypeScript {
 
                 // resolve parameter type annotations as necessary
                 if (parameterList) {
-                    for (var i = 0; i < parameterList.parameters.members.length; i++) {
-                        this.resolveParameter(<Parameter>parameterList.parameters.members[i], context);
+                    for (var i = 0; i < parameterList.parameters.nonSeparatorCount(); i++) {
+                        this.resolveParameter(<Parameter>parameterList.parameters.nonSeparatorAt(i), context);
                     }
                 }
 
@@ -4164,8 +4163,8 @@ module TypeScript {
             var accessorSymbol = <PullAccessorSymbol> funcDecl.getSymbol();
 
             if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.parameters.members.length; i++) {
-                    this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.members[i], context);
+                for (var i = 0; i < funcDeclAST.parameterList.parameters.nonSeparatorCount(); i++) {
+                    this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.nonSeparatorAt(i), context);
                 }
             }
 
@@ -4215,9 +4214,21 @@ module TypeScript {
                 this.setTypeChecked(list, context);
 
                 // Visit members   
-                var members = list.members;
-                for (var i = 0, n = members.length; i < n; i++) {
-                    this.resolveAST(members[i], /*isContextuallyTyped*/ false, context);
+                for (var i = 0, n = list.childCount(); i < n; i++) {
+                    this.resolveAST(list.childAt(i), /*isContextuallyTyped*/ false, context);
+                }
+            }
+
+            return this.semanticInfoChain.voidTypeSymbol;
+        }
+
+        private resolveSeparatedList(list: ASTSeparatedList, context: PullTypeResolutionContext): PullSymbol {
+            if (this.canTypeCheckAST(list, context)) {
+                this.setTypeChecked(list, context);
+
+                // Visit members   
+                for (var i = 0, n = list.nonSeparatorCount(); i < n; i++) {
+                    this.resolveAST(list.nonSeparatorAt(i), /*isContextuallyTyped*/ false, context);
                 }
             }
 
@@ -4571,7 +4582,7 @@ module TypeScript {
 
             if (forInStatement.variableDeclaration) {
                 var declaration = <VariableDeclaration>forInStatement.variableDeclaration;
-                var varDecl = <VariableDeclarator>declaration.declarators.members[0];
+                var varDecl = <VariableDeclarator>declaration.declarators.nonSeparatorAt(0);
 
                 if (varDecl.typeAnnotation) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(lval, DiagnosticCode.Variable_declarations_of_a_for_statement_cannot_use_a_type_annotation));
@@ -4907,8 +4918,8 @@ module TypeScript {
 
             var expressionType = this.resolveAST(ast.expression, false, context).type;
 
-            for (var i = 0, n = ast.switchClauses.members.length; i < n; i++) {
-                var switchClause = ast.switchClauses.members[i];
+            for (var i = 0, n = ast.switchClauses.childCount(); i < n; i++) {
+                var switchClause = ast.switchClauses.childAt(i);
                 if (switchClause.nodeType() === NodeType.CaseSwitchClause) {
                     var caseSwitchClause = <CaseSwitchClause>switchClause;
 
@@ -5190,6 +5201,9 @@ module TypeScript {
 
                 case NodeType.List:
                     return this.resolveList(<ASTList>ast, context);
+
+                case NodeType.SeparatedList:
+                    return this.resolveSeparatedList(<ASTSeparatedList>ast, context);
 
                 case NodeType.Script:
                     return this.resolveScript(<Script>ast, context);
@@ -5784,7 +5798,7 @@ module TypeScript {
                     var foundMatchingParameter = false;
                     if (parameterList) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
-                            var candidateParameter = <Parameter>parameterList.parameters.members[i];
+                            var candidateParameter = <Parameter>parameterList.parameters.nonSeparatorAt(i);
                             if (candidateParameter && candidateParameter.identifier.valueText() === id) {
                                 foundMatchingParameter = true;
                             }
@@ -5795,7 +5809,7 @@ module TypeScript {
                         // We didn't find a matching parameter to the left, so error
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
                             DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
-                            [(<Parameter>parameterList.parameters.members[currentParameterIndex]).identifier.text(), nameAST.text()]));
+                            [(<Parameter>parameterList.parameters.nonSeparatorAt(currentParameterIndex)).identifier.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
                 }
@@ -5841,7 +5855,7 @@ module TypeScript {
                     if (parameter.parent.parent === parameterList) {
                         // We were contained in the parameter list.  Return which parameter index 
                         // we were at.
-                        return parameterList.parameters.members.indexOf(parameter);
+                        return parameterList.parameters.nonSeparatorIndexOf(parameter);
                     }
 
                     parameter = parameter.parent;
@@ -6103,9 +6117,9 @@ module TypeScript {
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
 
-            if (genericTypeAST.typeArgumentList && genericTypeAST.typeArgumentList.typeArguments.members.length) {
-                for (var i = 0; i < genericTypeAST.typeArgumentList.typeArguments.members.length; i++) {
-                    typeArgs[i] = this.resolveTypeReference(genericTypeAST.typeArgumentList.typeArguments.members[i], context);
+            if (genericTypeAST.typeArgumentList && genericTypeAST.typeArgumentList.typeArguments.nonSeparatorCount()) {
+                for (var i = 0; i < genericTypeAST.typeArgumentList.typeArguments.nonSeparatorCount(); i++) {
+                    typeArgs[i] = this.resolveTypeReference(genericTypeAST.typeArgumentList.typeArguments.nonSeparatorAt(i), context);
 
                     if (typeArgs[i].isError()) {
                         typeArgs[i] = this.semanticInfoChain.anyTypeSymbol;
@@ -6311,7 +6325,7 @@ module TypeScript {
             // and e is processed with the contextual type T, as described in section 4.9.3.
 
             // No type parameters
-            if (typeParameters && typeParameters.typeParameters.members.length > 0) {
+            if (typeParameters && typeParameters.typeParameters.nonSeparatorCount() > 0) {
                 return false;
             }
 
@@ -6377,8 +6391,8 @@ module TypeScript {
             funcDeclSymbol.startResolving();
 
             if (typeParameters) {
-                for (var i = 0; i < typeParameters.typeParameters.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.members[i], context);
+                for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
             }
 
@@ -6512,8 +6526,8 @@ module TypeScript {
             var returnTypeSymbol = signature.returnType;
 
             if (typeParameters) {
-                for (var i = 0; i < typeParameters.typeParameters.members.length; i++) {
-                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.members[i], context);
+                for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
+                    this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
             }
 
@@ -6533,7 +6547,7 @@ module TypeScript {
             if (block && returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
 
-                if (!isVoidOrAny && !(block.statements.members.length > 0 && block.statements.members[0].nodeType() === NodeType.ThrowStatement)) {
+                if (!isVoidOrAny && !(block.statements.childCount() > 0 && block.statements.childAt(0).nodeType() === NodeType.ThrowStatement)) {
                     var funcName = functionDecl.getDisplayName();
                     funcName = funcName ? "'" + funcName + "'" : "expression";
 
@@ -6954,13 +6968,13 @@ module TypeScript {
         private bindObjectLiteralMembers(
             objectLiteralDeclaration: PullDecl,
             objectLiteralTypeSymbol: PullTypeSymbol,
-            objectLiteralMembers: ASTList,
+            objectLiteralMembers: ASTSeparatedList,
             isUsingExistingSymbol: boolean,
             pullTypeContext: PullTypeResolutionContext): PullSymbol[] {
             var boundMemberSymbols: PullSymbol[] = [];
             var memberSymbol: PullSymbol;
-            for (var i = 0, len = objectLiteralMembers.members.length; i < len; i++) {
-                var propertyAssignment = objectLiteralMembers.members[i];
+            for (var i = 0, len = objectLiteralMembers.nonSeparatorCount(); i < len; i++) {
+                var propertyAssignment = objectLiteralMembers.nonSeparatorAt(i);
 
                 var id = this.getPropertyAssignmentName(propertyAssignment);
                 var assignmentText = getPropertyAssignmentNameTextFromIdentifier(id);
@@ -7005,7 +7019,7 @@ module TypeScript {
             objectLiteralDeclaration: PullDecl,
             objectLiteralTypeSymbol: PullTypeSymbol,
             objectLiteralContextualType: PullTypeSymbol,
-            objectLiteralMembers: ASTList,
+            objectLiteralMembers: ASTSeparatedList,
             stringIndexerSignature: PullSignatureSymbol,
             numericIndexerSignature: PullSignatureSymbol,
             allMemberTypes: PullTypeSymbol[],
@@ -7015,8 +7029,8 @@ module TypeScript {
             pullTypeContext: PullTypeResolutionContext,
             additionalResults?: PullAdditionalObjectLiteralResolutionData) {
 
-            for (var i = 0, len = objectLiteralMembers.members.length; i < len; i++) {
-                var propertyAssignment = objectLiteralMembers.members[i];
+            for (var i = 0, len = objectLiteralMembers.nonSeparatorCount(); i < len; i++) {
+                var propertyAssignment = objectLiteralMembers.nonSeparatorAt(i);
                 
                 var acceptedContextualType = false;
                 var assigningSymbol: PullSymbol = null;
@@ -7257,8 +7271,8 @@ module TypeScript {
                     context.pushContextualType(contextualElementType, context.inProvisionalResolution(), null);
                 }
 
-                for (var i = 0, n = elements.members.length; i < n; i++) {
-                    elementTypes.push(this.resolveAST(elements.members[i], contextualElementType !== null, context).type);
+                for (var i = 0, n = elements.nonSeparatorCount(); i < n; i++) {
+                    elementTypes.push(this.resolveAST(elements.nonSeparatorAt(i), contextualElementType !== null, context).type);
                 }
 
                 if (contextualElementType) {
@@ -7277,13 +7291,13 @@ module TypeScript {
                 }
                 // Add the contextual type to the collection as one of the types to be considered for best common type
                 collection = {
-                    getLength: () => { return elements.members.length + 1; },
+                    getLength: () => { return elements.nonSeparatorCount() + 1; },
                     getTypeAtIndex: (index: number) => { return index === elementTypes.length ? contextualElementType : elementTypes[index]; }
                 };
             }
             else {
                 collection = {
-                    getLength: () => { return elements.members.length; },
+                    getLength: () => { return elements.nonSeparatorCount(); },
                     getTypeAtIndex: (index: number) => { return elementTypes[index]; }
                 };
             }
@@ -7719,7 +7733,7 @@ module TypeScript {
             if (callEx.argumentList.arguments) {
                 var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
 
-                var len = callEx.argumentList.arguments.members.length;
+                var len = callEx.argumentList.arguments.nonSeparatorCount();
                 for (var i = 0; i < len; i++) {
                     // Ensure call resolution data contains additional information. 
                     // Actual parameters context type symbols will be undefined if the call target resolves to any or error types.
@@ -7728,7 +7742,7 @@ module TypeScript {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                     }
 
-                    this.resolveAST(callEx.argumentList.arguments.members[i], contextualType != null, context);
+                    this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                     if (contextualType) {
                         context.popContextualType();
@@ -7755,7 +7769,7 @@ module TypeScript {
                 // resolve any arguments.
                 this.resolveAST(callEx.argumentList.arguments, /*isContextuallyTyped:*/ false, context);
 
-                if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.members.length) {
+                if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount()) {
                     // Can't invoke 'any' generically.
                     if (targetTypeSymbol === this.semanticInfoChain.anyTypeSymbol) {
                         this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Untyped_function_calls_may_not_accept_type_arguments),
@@ -7812,9 +7826,9 @@ module TypeScript {
                 // specialize the type arguments
                 typeArgs = [];
 
-                if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.members.length) {
-                    for (var i = 0; i < callEx.argumentList.typeArgumentList.typeArguments.members.length; i++) {
-                        typeArgs[i] = this.resolveTypeReference(callEx.argumentList.typeArgumentList.typeArguments.members[i], context);
+                if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount()) {
+                    for (var i = 0; i < callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount(); i++) {
+                        typeArgs[i] = this.resolveTypeReference(callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorAt(i), context);
                     }
                 }
             }
@@ -7859,7 +7873,7 @@ module TypeScript {
                             continue;
                         }
                     }
-                    else if (!typeArgs && callEx.argumentList.arguments && callEx.argumentList.arguments.members.length) {
+                    else if (!typeArgs && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
                         inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.argumentList.arguments, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
@@ -7946,7 +7960,7 @@ module TypeScript {
                     }
                 }
                 else {
-                    if (!(callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.members.length)) {
+                    if (!(callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount())) {
                         resolvedSignatures[resolvedSignatures.length] = signatures[i];
                     }
                 }
@@ -8023,8 +8037,8 @@ module TypeScript {
                 this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
                     additionalResults, context);
             }
-            else if (signature.isGeneric() && callEx.argumentList.typeArgumentList && signature.getTypeParameters() && (callEx.argumentList.typeArgumentList.typeArguments.members.length != signature.getTypeParameters().length)) {
-                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.argumentList.typeArgumentList.typeArguments.members.length]),
+            else if (signature.isGeneric() && callEx.argumentList.typeArgumentList && signature.getTypeParameters() && (callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount() != signature.getTypeParameters().length)) {
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount()]),
                     additionalResults, context);
             }
 
@@ -8033,7 +8047,7 @@ module TypeScript {
             // contextually type arguments
             var actualParametersContextTypeSymbols: PullTypeSymbol[] = [];
             if (callEx.argumentList.arguments) {
-                var len = callEx.argumentList.arguments.members.length;
+                var len = callEx.argumentList.arguments.nonSeparatorCount();
                 var params = signature.parameters;
                 var contextualType: PullTypeSymbol = null;
                 var signatureDecl = signature.getDeclarations()[0];
@@ -8058,7 +8072,7 @@ module TypeScript {
                         actualParametersContextTypeSymbols[i] = contextualType;
                     }
 
-                    this.resolveAST(callEx.argumentList.arguments.members[i], contextualType != null, context);
+                    this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                     if (contextualType) {
                         context.popContextualType();
@@ -8126,7 +8140,7 @@ module TypeScript {
             var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
             if (callEx.argumentList) {
                 var callResolutionData = this.semanticInfoChain.getCallResolutionDataForAST(callEx);
-                var len = callEx.argumentList.arguments.members.length;
+                var len = callEx.argumentList.arguments.nonSeparatorCount();
 
                 for (var i = 0; i < len; i++) {
                     // Ensure call resolution data contains additional information. 
@@ -8136,7 +8150,7 @@ module TypeScript {
                         context.pushContextualType(contextualType, context.inProvisionalResolution(), null);
                     }
 
-                    this.resolveAST(callEx.argumentList.arguments.members[i], contextualType != null, context);
+                    this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                     if (contextualType) {
                         context.popContextualType();
@@ -8204,9 +8218,9 @@ module TypeScript {
                     // specialize the type arguments
                     typeArgs = [];
 
-                    if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.members.length) {
-                        for (var i = 0; i < callEx.argumentList.typeArgumentList.typeArguments.members.length; i++) {
-                            typeArgs[i] = this.resolveTypeReference(callEx.argumentList.typeArgumentList.typeArguments.members[i], context);
+                    if (callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount()) {
+                        for (var i = 0; i < callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount(); i++) {
+                            typeArgs[i] = this.resolveTypeReference(callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorAt(i), context);
                         }
                     }
                 }
@@ -8246,7 +8260,7 @@ module TypeScript {
                                     continue;
                                 }
                             }
-                            else if (!typeArgs && callEx.argumentList && callEx.argumentList.arguments && callEx.argumentList.arguments.members.length) {
+                            else if (!typeArgs && callEx.argumentList && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
                                 inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.argumentList.arguments, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
@@ -8332,7 +8346,7 @@ module TypeScript {
                             }
                         }
                         else {
-                            if (!(callEx.argumentList && callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.members.length)) {
+                            if (!(callEx.argumentList && callEx.argumentList.typeArgumentList && callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount())) {
                                 resolvedSignatures[resolvedSignatures.length] = constructSignatures[i];
                             }
                         }
@@ -8421,7 +8435,7 @@ module TypeScript {
                 // contextually type arguments
                 var actualParametersContextTypeSymbols: PullTypeSymbol[] = [];
                 if (callEx.argumentList && callEx.argumentList.arguments) {
-                    var len = callEx.argumentList.arguments.members.length;
+                    var len = callEx.argumentList.arguments.nonSeparatorCount();
                     var params = signature.parameters;
                     var contextualType: PullTypeSymbol = null;
                     var signatureDecl = signature.getDeclarations()[0];
@@ -8446,7 +8460,7 @@ module TypeScript {
                             actualParametersContextTypeSymbols[i] = contextualType;
                         }
 
-                        this.resolveAST(callEx.argumentList.arguments.members[i], contextualType != null, context);
+                        this.resolveAST(callEx.argumentList.arguments.nonSeparatorAt(i), contextualType != null, context);
 
                         if (contextualType) {
                             context.popContextualType();
@@ -9104,8 +9118,8 @@ module TypeScript {
                     var extendsClause = getExtendsHeritageClause(sourceAST.heritageClauses);
 
                     if (extendsClause) {
-                        for (var j = 0; j < extendsClause.typeNames.members.length; j++) {
-                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsClause.typeNames.members[j]);
+                        for (var j = 0; j < extendsClause.typeNames.nonSeparatorCount(); j++) {
+                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsClause.typeNames.nonSeparatorAt(j));
 
                             if (extendsSymbol && (extendsSymbol == target || this.sourceExtendsTarget(extendsSymbol, target, context))) {
                                 return true;
@@ -10017,7 +10031,7 @@ module TypeScript {
             diagnostics: Diagnostic[]): PullSignatureSymbol {
             var hasOverloads = group.length > 1;
             var comparisonInfo = new TypeComparisonInfo();
-            var args: ASTList = application.argumentList ? application.argumentList.arguments : null;
+            var args = application.argumentList ? application.argumentList.arguments : null;
 
             var initialCandidates = ArrayUtilities.where(group, signature => {
                 // Filter out definition if overloads are available
@@ -10086,18 +10100,18 @@ module TypeScript {
             return (callEx.expression.nodeType() === NodeType.MemberAccessExpression) ? (<MemberAccessExpression>callEx.expression).name : callEx.expression;
         }
 
-        private overloadHasCorrectArity(signature: PullSignatureSymbol, args: ASTList): boolean {
+        private overloadHasCorrectArity(signature: PullSignatureSymbol, args: ASTSeparatedList): boolean {
             if (args == null) {
                 return signature.nonOptionalParamCount === 0;
             }
 
-            // First, figure out how many arguments there are. This is usually args.members.length, but if we have trailing separators,
+            // First, figure out how many arguments there are. This is usually args.nonSeparatorCount(), but if we have trailing separators,
             // we need to pretend we have one more "phantom" argument that the user is currently typing. This is useful for signature help.
             // Example: foo(1, 2, 
             // should have 3 arguments
-            var numberOfArgs = (args.members.length && args.members.length === args.separatorCount) ?
-                args.separatorCount + 1 :
-                args.members.length;
+            var numberOfArgs = (args.nonSeparatorCount() && args.nonSeparatorCount() === args.separatorCount())
+                ? args.separatorCount() + 1
+                : args.nonSeparatorCount();
             if (numberOfArgs < signature.nonOptionalParamCount) {
                 return false;
             }
@@ -10108,7 +10122,7 @@ module TypeScript {
             return true;
         }
 
-        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTList, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
+        private overloadIsApplicable(signature: PullSignatureSymbol, args: ASTSeparatedList, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): OverloadApplicabilityStatus {
             // Already checked for arity, so it's automatically applicable if there are no args
             if (args === null) {
                 return OverloadApplicabilityStatus.Subtype;
@@ -10122,7 +10136,7 @@ module TypeScript {
             // Indeed this is the case for a call with no arguments.
             var overloadApplicability = OverloadApplicabilityStatus.Subtype;
 
-            for (var i = 0; i < args.members.length; i++) {
+            for (var i = 0; i < args.nonSeparatorCount(); i++) {
                 if (!isInVarArg) {
                     this.resolveDeclaredSymbol(parameters[i], context);
 
@@ -10138,7 +10152,7 @@ module TypeScript {
 
                 // We aggregate the statuses across arguments by taking the less flattering of the two statuses.
                 // In the case where we get a completely unassignable argument, we can short circuit and just throw out the signature.
-                var statusOfCurrentArgument = this.overloadIsApplicableForArgument(paramType, args.members[i], i, context, comparisonInfo);
+                var statusOfCurrentArgument = this.overloadIsApplicableForArgument(paramType, args.nonSeparatorAt(i), i, context, comparisonInfo);
 
                 if (statusOfCurrentArgument === OverloadApplicabilityStatus.NotAssignable) {
                     return OverloadApplicabilityStatus.NotAssignable;
@@ -10308,7 +10322,7 @@ module TypeScript {
             return OverloadApplicabilityStatus.NotAssignable;
         }
 
-        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, args: ASTList, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
+        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, args: ASTSeparatedList, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
             var cxt: PullContextualTypeContext = null;
 
             var parameters = signature.parameters;
@@ -10323,7 +10337,7 @@ module TypeScript {
                 argContext.addInferenceRoot(typeParameters[i]);
             }
 
-            for (var i = 0; i < args.members.length; i++) {
+            for (var i = 0; i < args.nonSeparatorCount(); i++) {
 
                 if (i >= parameters.length) {
                     break;
@@ -10346,7 +10360,7 @@ module TypeScript {
 
                         context.pushContextualType(parameterType, true, substitutions);
 
-                        var argSym = this.resolveAST(args.members[i], true, context);
+                        var argSym = this.resolveAST(args.nonSeparatorAt(i), true, context);
 
                         this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, context);
 
@@ -10355,7 +10369,7 @@ module TypeScript {
                 }
                 else {
                     context.pushContextualType(parameterType, true, []);
-                    var argSym = this.resolveAST(args.members[i], true, context);
+                    var argSym = this.resolveAST(args.nonSeparatorAt(i), true, context);
 
                     this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, context);
 
@@ -10382,7 +10396,7 @@ module TypeScript {
             }
 
             // REVIEW: Remove this block?
-            if (!args.members.length && !resultTypes.length && typeParameters.length) {
+            if (!args.nonSeparatorCount() && !resultTypes.length && typeParameters.length) {
                 for (var i = 0; i < typeParameters.length; i++) {
                     resultTypes[resultTypes.length] = this.semanticInfoChain.emptyTypeSymbol;
                 }
@@ -10423,7 +10437,7 @@ module TypeScript {
             return resultTypes;
         }
 
-        private typeParametersAreInScopeAtArgumentList(typeParameters: PullTypeParameterSymbol[], args: ASTList): boolean {
+        private typeParametersAreInScopeAtArgumentList(typeParameters: PullTypeParameterSymbol[], args: ASTSeparatedList): boolean {
             // If the parent path from the current enclosing decl contains the type parameters'
             // parent decl, then the type parameters must be in scope
             var enclosingDecl = this.getEnclosingDeclForAST(args);
@@ -11013,7 +11027,7 @@ module TypeScript {
                 ? (<ClassDeclaration>classOrInterface).typeParameterList
                 : (<InterfaceDeclaration>classOrInterface).typeParameterList;
 
-            var typeParameterAST = typeParameters.typeParameters.members[indexOfTypeParameter];
+            var typeParameterAST = typeParameters.typeParameters.nonSeparatorAt(indexOfTypeParameter);
 
             var typeSymbol = <PullTypeSymbol>symbol;
             var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);
@@ -11179,8 +11193,8 @@ module TypeScript {
 
             // TypeParameters
             if (typeParameters && !isGetter && !isSetter && !isIndexSignature && funcDeclAST.nodeType() !== NodeType.ConstructorDeclaration) {
-                for (var i = 0; i < typeParameters.typeParameters.members.length; i++) {
-                    var typeParameterAST = <TypeParameter>typeParameters.typeParameters.members[i];
+                for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
+                    var typeParameterAST = <TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i);
                     var typeParameter = this.resolveTypeParameterDeclaration(typeParameterAST, context);
                     this.checkSymbolPrivacy(functionSymbol, typeParameter, (symbol: PullSymbol) =>
                         this.functionTypeArgumentArgumentTypePrivacyErrorReporter(
@@ -11544,8 +11558,8 @@ module TypeScript {
         }
 
         private getFirstStatementOfBlockOrNull(block: Block): AST {
-            if (block && block.statements && block.statements.members) {
-                return block.statements.members[0];
+            if (block && block.statements && block.statements.childCount() > 0) {
+                return block.statements.childAt(0);
             }
 
             return null;
@@ -11976,15 +11990,15 @@ module TypeScript {
             var typeDeclIsClass = classOrInterface.nodeType() === NodeType.ClassDeclaration;
 
             if (extendsClause) {
-                for (var i = 0; i < extendsClause.typeNames.members.length; i++) {
-                    this.typeCheckBase(classOrInterface, name, typeSymbol, extendsClause.typeNames.members[i], /*isExtendedType:*/ true, enclosingDecl, context);
+                for (var i = 0; i < extendsClause.typeNames.nonSeparatorCount(); i++) {
+                    this.typeCheckBase(classOrInterface, name, typeSymbol, extendsClause.typeNames.nonSeparatorAt(i), /*isExtendedType:*/ true, enclosingDecl, context);
                 }
             }
 
             if (typeSymbol.isClass()) {
                 if (implementsClause) {
-                    for (var i = 0; i < implementsClause.typeNames.members.length; i++) {
-                        this.typeCheckBase(classOrInterface, name, typeSymbol, implementsClause.typeNames.members[i], /*isExtendedType:*/false, enclosingDecl, context);
+                    for (var i = 0; i < implementsClause.typeNames.nonSeparatorCount(); i++) {
+                        this.typeCheckBase(classOrInterface, name, typeSymbol, implementsClause.typeNames.nonSeparatorAt(i), /*isExtendedType:*/false, enclosingDecl, context);
                     }
                 }
             }

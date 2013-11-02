@@ -33,8 +33,8 @@ module TypeScript {
     }
 
     function moduleMembersAreElided(members: ASTList): boolean {
-        for (var i = 0, n = members.members.length; i < n; i++) {
-            var member = members.members[i];
+        for (var i = 0, n = members.childCount(); i < n; i++) {
+            var member = members.childAt(i);
 
             // We should emit *this* module if it contains any non-interface types. 
             // Caveat: if we have contain a module, then we should be emitted *if we want to
@@ -133,7 +133,7 @@ module TypeScript {
                     if (pos >= minChar && pos < limChar) {
 
                         // Ignore empty lists
-                        if (cur.nodeType() !== NodeType.List || cur.limChar > cur.minChar) {
+                        if ((cur.nodeType() !== NodeType.List && cur.nodeType() !== NodeType.SeparatedList) || cur.limChar > cur.minChar) {
                             // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
                             //       than top of the stack.
                             if (top === null) {
@@ -170,8 +170,8 @@ module TypeScript {
             return null;
         }
 
-        return ArrayUtilities.firstOrDefault(<HeritageClause[]>clauses.members,
-            c => c.typeNames.members.length > 0 && c.nodeType() === NodeType.ExtendsHeritageClause);
+        return <HeritageClause>clauses.firstOrDefault((c: HeritageClause) =>
+            c.typeNames.nonSeparatorCount() > 0 && c.nodeType() === NodeType.ExtendsHeritageClause);
     }
 
     export function getImplementsHeritageClause(clauses: ASTList): HeritageClause {
@@ -179,8 +179,8 @@ module TypeScript {
             return null;
         }
 
-        return ArrayUtilities.firstOrDefault(<HeritageClause[]>clauses.members,
-            c => c.typeNames.members.length > 0 && c.nodeType() === NodeType.ImplementsHeritageClause);
+        return <HeritageClause>clauses.firstOrDefault((c: HeritageClause) =>
+            c.typeNames.nonSeparatorCount() > 0 && c.nodeType() === NodeType.ImplementsHeritageClause);
     }
 
     export function isCallExpression(ast: AST): boolean {
@@ -342,14 +342,14 @@ module TypeScript {
 
         export function fromParameterList(list: ParameterList): IParameters {
             return {
-                length: list.parameters.members.length,
+                length: list.parameters.nonSeparatorCount(),
                 lastParameterIsRest: () => lastParameterIsRest(list),
                 ast: list.parameters,
-                astAt: (index: number) => list.parameters.members[index],
-                identifierAt: (index: number) => (<Parameter>list.parameters.members[index]).identifier,
-                typeAt: (index: number) => getType(list.parameters.members[index]),
-                initializerAt: (index: number) => (<Parameter>list.parameters.members[index]).equalsValueClause,
-                isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.parameters.members[index]),
+                astAt: (index: number) => list.parameters.nonSeparatorAt(index),
+                identifierAt: (index: number) => (<Parameter>list.parameters.nonSeparatorAt(index)).identifier,
+                typeAt: (index: number) => getType(list.parameters.nonSeparatorAt(index)),
+                initializerAt: (index: number) => (<Parameter>list.parameters.nonSeparatorAt(index)).equalsValueClause,
+                isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.parameters.nonSeparatorAt(index)),
             }
         }
     }
@@ -542,7 +542,7 @@ module TypeScript {
 
     function getVariableStatement(variableDeclarator: VariableDeclarator): VariableStatement {
         if (variableDeclarator && variableDeclarator.parent && variableDeclarator.parent.parent && variableDeclarator.parent.parent.parent &&
-            variableDeclarator.parent.nodeType() === NodeType.List &&
+            variableDeclarator.parent.nodeType() === NodeType.SeparatedList &&
             variableDeclarator.parent.parent.nodeType() === NodeType.VariableDeclaration &&
             variableDeclarator.parent.parent.parent.nodeType() === NodeType.VariableStatement) {
 

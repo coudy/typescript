@@ -64,8 +64,14 @@ module TypeScript {
         }
 
         private emitDeclarationsForList(list: ASTList) {
-            for (var i = 0; i < list.members.length; i++) {
-                this.emitDeclarationsForAST(list.members[i]);
+            for (var i = 0, n = list.childCount(); i < n; i++) {
+                this.emitDeclarationsForAST(list.childAt(i));
+            }
+        }
+
+        private emitSeparatedList(list: ASTSeparatedList) {
+            for (var i = 0, n = list.nonSeparatorCount(); i < n; i++) {
+                this.emitDeclarationsForAST(list.nonSeparatorAt(i));
             }
         }
 
@@ -412,9 +418,9 @@ module TypeScript {
         }
 
         private emitDeclarationsForVariableDeclaration(variableDeclaration: VariableDeclaration) {
-            var varListCount = variableDeclaration.declarators.members.length;
+            var varListCount = variableDeclaration.declarators.nonSeparatorCount();
             for (var i = 0; i < varListCount; i++) {
-                this.emitVariableDeclarator(<VariableDeclarator>variableDeclaration.declarators.members[i], i == 0, i == varListCount - 1);
+                this.emitVariableDeclarator(<VariableDeclarator>variableDeclaration.declarators.nonSeparatorAt(i), i == 0, i == varListCount - 1);
             }
         }
 
@@ -752,16 +758,16 @@ module TypeScript {
             this.declFile.WriteLine(";");
         }
 
-        private emitBaseList(bases: ASTList, useExtendsList: boolean) {
-            if (bases && (bases.members.length > 0)) {
+        private emitBaseList(bases: ASTSeparatedList, useExtendsList: boolean) {
+            if (bases && (bases.nonSeparatorCount() > 0)) {
                 var qual = useExtendsList ? "extends" : "implements";
                 this.declFile.Write(" " + qual + " ");
-                var basesLen = bases.members.length;
+                var basesLen = bases.nonSeparatorCount();
                 for (var i = 0; i < basesLen; i++) {
                     if (i > 0) {
                         this.declFile.Write(", ");
                     }
-                    var baseType = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(bases.members[i]);
+                    var baseType = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(bases.nonSeparatorAt(i));
                     this.emitTypeSignature(baseType);
                 }
             }
@@ -820,13 +826,13 @@ module TypeScript {
 
         private emitClassMembersFromConstructorDefinition(funcDecl: ConstructorDeclaration) {
             if (funcDecl.parameterList) {
-                var argsLen = funcDecl.parameterList.parameters.members.length;
+                var argsLen = funcDecl.parameterList.parameters.nonSeparatorCount();
                 if (lastParameterIsRest(funcDecl.parameterList)) {
                     argsLen--;
                 }
 
                 for (var i = 0; i < argsLen; i++) {
-                    var parameter = <Parameter>funcDecl.parameterList.parameters.members[i];
+                    var parameter = <Parameter>funcDecl.parameterList.parameters.nonSeparatorAt(i);
                     var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
                     if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
                         var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
@@ -876,8 +882,8 @@ module TypeScript {
 
         private emitHeritageClauses(clauses: ASTList): void {
             if (clauses) {
-                for (var i = 0, n = clauses.members.length; i < n; i++) {
-                    this.emitHeritageClause(<HeritageClause>clauses.members[i]);
+                for (var i = 0, n = clauses.childCount(); i < n; i++) {
+                    this.emitHeritageClause(<HeritageClause>clauses.childAt(i));
                 }
             }
         }
@@ -887,7 +893,7 @@ module TypeScript {
         }
 
         private emitTypeParameters(typeParams: TypeParameterList, funcSignature?: PullSignatureSymbol) {
-            if (!typeParams || !typeParams.typeParameters.members.length) {
+            if (!typeParams || !typeParams.typeParameters.nonSeparatorCount()) {
                 return;
             }
 
@@ -936,7 +942,7 @@ module TypeScript {
 
             this.indenter.increaseIndent();
 
-            this.emitDeclarationsForList(interfaceDecl.body.typeMembers);
+            this.emitSeparatedList(interfaceDecl.body.typeMembers);
 
             this.indenter.decreaseIndent();
             this.popDeclarationContainer(interfaceDecl);
@@ -987,9 +993,9 @@ module TypeScript {
             this.declFile.WriteLine(moduleDecl.identifier.text() + " {");
 
             this.indenter.increaseIndent();
-            var membersLen = moduleDecl.enumElements.members.length;
+            var membersLen = moduleDecl.enumElements.nonSeparatorCount();
             for (var j = 0; j < membersLen; j++) {
-                var memberDecl: AST = moduleDecl.enumElements.members[j];
+                var memberDecl: AST = moduleDecl.enumElements.nonSeparatorAt(j);
                 var enumElement = <EnumElement>memberDecl;
                 this.emitDeclarationComments(enumElement);
                 this.emitIndent();
@@ -1021,13 +1027,13 @@ module TypeScript {
                     for (;
                         // Till the module has single module element with exported flag and without doc comments,
                         //  we traverse the module element so we can create a dotted module name.
-                        moduleDecl.moduleElements.members.length === 1 &&
-                        moduleDecl.moduleElements.members[0].nodeType() === NodeType.ModuleDeclaration &&
-                        hasModifier((<ModuleDeclaration>moduleDecl.moduleElements.members[0]).modifiers, PullElementFlags.Exported) &&
+                        moduleDecl.moduleElements.childCount() === 1 &&
+                        moduleDecl.moduleElements.childAt(0).nodeType() === NodeType.ModuleDeclaration &&
+                        hasModifier((<ModuleDeclaration>moduleDecl.moduleElements.childAt(0)).modifiers, PullElementFlags.Exported) &&
                         (docComments(moduleDecl) === null || docComments(moduleDecl).length === 0)
 
                         // Module to look up is the single module element of the current module
-                        ; moduleDecl = <ModuleDeclaration>moduleDecl.moduleElements.members[0]) {
+                        ; moduleDecl = <ModuleDeclaration>moduleDecl.moduleElements.childAt(0)) {
 
                         // construct dotted name
                         moduleName += moduleDecl.name.text() + ".";
