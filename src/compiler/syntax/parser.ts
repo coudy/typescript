@@ -1069,8 +1069,7 @@ module TypeScript.Parser {
 
         private factory: Syntax.IFactory = Syntax.normalModeFactory;
 
-        // Only use newText for debugging purposes.
-        constructor(fileName: string, lineMap: LineMap, source: IParserSource, parseOptions: ParseOptions, private newText: ISimpleText) {
+        constructor(fileName: string, lineMap: LineMap, source: IParserSource, parseOptions: ParseOptions, private newText_forDebuggingPurposesOnly: ISimpleText) {
             this.fileName = fileName;
             this.lineMap = lineMap;
             this.source = source;
@@ -1594,10 +1593,10 @@ module TypeScript.Parser {
             sourceUnit = <SourceUnitSyntax>this.addSkippedTokensBeforeNode(sourceUnit, result.skippedTokens);
 
             if (Debug.shouldAssert(AssertionLevel.Aggressive)) {
-                Debug.assert(sourceUnit.fullWidth() === this.newText.length());
+                Debug.assert(sourceUnit.fullWidth() === this.newText_forDebuggingPurposesOnly.length());
 
                 if (Debug.shouldAssert(AssertionLevel.VeryAggressive)) {
-                    Debug.assert(sourceUnit.fullText() === this.newText.substr(0, this.newText.length(), /*intern:*/ false));
+                    Debug.assert(sourceUnit.fullText() === this.newText_forDebuggingPurposesOnly.substr(0, this.newText_forDebuggingPurposesOnly.length(), /*intern:*/ false));
                 }
             }
 
