@@ -1022,7 +1022,7 @@ module TypeScript {
                 var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
                 var moduleName = this.getDeclFlagsString(modulePullDecl, "module");
 
-                if (!isQuoted(moduleDecl.name.valueText())) {
+                if (moduleDecl.name) {
                     // Module is dotted if it contains single module element with exported flag and it does not have doc comments for it
                     for (;
                         // Till the module has single module element with exported flag and without doc comments,
@@ -1036,13 +1036,24 @@ module TypeScript {
                         ; moduleDecl = <ModuleDeclaration>moduleDecl.moduleElements.childAt(0)) {
 
                         // construct dotted name
-                        moduleName += moduleDecl.name.text() + ".";
+                        if (moduleDecl.stringLiteral) {
+                            moduleName += moduleDecl.stringLiteral.text() + ".";
+                        }
+                        else {
+                            moduleName += moduleDecl.name.text() + ".";
+                        }
+
                         dottedModuleContainers.push(moduleDecl);
                         this.pushDeclarationContainer(moduleDecl);
                     }
                 }
 
-                moduleName += moduleDecl.name.text();
+                if (moduleDecl.stringLiteral) {
+                    moduleName += moduleDecl.stringLiteral.text();
+                }
+                else {
+                    moduleName += moduleDecl.name.text();
+                }
 
                 this.emitDeclarationComments(moduleDecl);
                 this.declFile.Write(moduleName);

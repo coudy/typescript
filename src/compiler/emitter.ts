@@ -964,9 +964,15 @@ module TypeScript {
             this.pushDecl(pullDecl);
 
             var svModuleName = this.moduleName;
-            this.moduleName = moduleDecl.name.text();
-            if (isTSFile(this.moduleName)) {
-                this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
+
+            if (moduleDecl.stringLiteral) {
+                this.moduleName = moduleDecl.stringLiteral.valueText();
+                if (isTSFile(this.moduleName)) {
+                    this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
+                }
+            }
+            else {
+                this.moduleName = moduleDecl.name.text();
             }
 
             var isExternalModule = moduleDecl.isExternalModule;
@@ -984,9 +990,10 @@ module TypeScript {
                 if (!isExported) {
                     this.recordSourceMappingStart(moduleDecl);
                     this.writeToOutput("var ");
-                    this.recordSourceMappingStart(moduleDecl.name);
+                    var name: AST = moduleDecl.stringLiteral || moduleDecl.name;
+                    this.recordSourceMappingStart(name);
                     this.writeToOutput(this.moduleName);
-                    this.recordSourceMappingEnd(moduleDecl.name);
+                    this.recordSourceMappingEnd(name);
                     this.writeLineToOutput(";");
                     this.recordSourceMappingEnd(moduleDecl);
                     this.emitIndent();
@@ -998,10 +1005,11 @@ module TypeScript {
                 // Use the name that doesnt conflict with its members, 
                 // this.moduleName needs to be updated to make sure that export member declaration is emitted correctly
                 this.moduleName = this.getModuleName(pullDecl);
-                this.writeToOutputWithSourceMapRecord(this.moduleName, moduleDecl.name);
+                var name: AST = moduleDecl.stringLiteral || moduleDecl.name;
+                this.writeToOutputWithSourceMapRecord(this.moduleName, name);
                 this.writeLineToOutput(") {");
 
-                this.recordSourceMappingNameStart(moduleDecl.name.text());
+                this.recordSourceMappingNameStart(moduleDecl.stringLiteral ? moduleDecl.stringLiteral.text() : moduleDecl.name.text());
             }
 
             // body - don't indent for Node
@@ -1014,7 +1022,7 @@ module TypeScript {
             }
 
             this.emitList(moduleDecl.moduleElements);
-            this.moduleName = moduleDecl.name.text();
+            this.moduleName = moduleDecl.stringLiteral ? moduleDecl.stringLiteral.text() : moduleDecl.name.text();
             if (!isExternalModule || this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }

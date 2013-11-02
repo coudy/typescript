@@ -436,7 +436,13 @@ module TypeScript {
             moduleContainerTypeSymbol.addDeclaration(moduleContainerDecl);
             moduleContainerDecl.setSymbol(moduleContainerTypeSymbol);
 
-            this.semanticInfoChain.setSymbolForAST(moduleAST.name, moduleContainerTypeSymbol);
+            if (moduleAST.name) {
+                this.semanticInfoChain.setSymbolForAST(moduleAST.name, moduleContainerTypeSymbol);
+            }
+            else {
+                this.semanticInfoChain.setSymbolForAST(moduleAST.stringLiteral, moduleContainerTypeSymbol);
+            }
+
             this.semanticInfoChain.setSymbolForAST(moduleAST, moduleContainerTypeSymbol);
 
             if (!moduleInstanceSymbol && isInitializedModule) {

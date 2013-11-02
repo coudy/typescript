@@ -570,9 +570,10 @@ module TypeScript {
     }
 
     export class ModuleDeclaration extends AST {
-        constructor(public modifiers: PullElementFlags[], public name: Identifier, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
+        constructor(public modifiers: PullElementFlags[], public name: Identifier, public stringLiteral: StringLiteral, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
             super();
             name && (name.parent = this);
+            stringLiteral && (stringLiteral.parent = this);
             moduleElements && (moduleElements.parent = this);
         }
 

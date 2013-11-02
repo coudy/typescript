@@ -359,7 +359,7 @@ module TypeScript.Services {
                         return (<TypeScript.InterfaceDeclaration>parent).identifier === current;
 
                     case TypeScript.NodeType.ModuleDeclaration:
-                        return (<TypeScript.ModuleDeclaration>parent).name === current;
+                        return (<TypeScript.ModuleDeclaration>parent).name === current || (<TypeScript.ModuleDeclaration>parent).stringLiteral === current;
 
                     case TypeScript.NodeType.FunctionDeclaration:
                         return (<TypeScript.FunctionDeclaration>parent).identifier === current;

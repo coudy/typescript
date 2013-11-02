@@ -230,7 +230,7 @@ module TypeScript {
             case NodeType.EnumDeclaration:
                 return (<EnumDeclaration>ast.parent).identifier === ast;
             case NodeType.ModuleDeclaration:
-                return (<ModuleDeclaration>ast.parent).name === ast;
+                return (<ModuleDeclaration>ast.parent).name === ast || (<ModuleDeclaration>ast.parent).stringLiteral === ast;
             case NodeType.VariableDeclarator:
                 return (<VariableDeclarator>ast.parent).identifier === ast;
             case NodeType.FunctionDeclaration:

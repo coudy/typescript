@@ -131,8 +131,7 @@ module TypeScript {
 
     function preCollectModuleDecls(moduleDecl: ModuleDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
-        var modName = (<Identifier>moduleDecl.name).valueText();
-        var isDynamic = isQuoted(modName) || moduleDecl.isExternalModule;
+        var isDynamic = moduleDecl.stringLiteral !== null || moduleDecl.isExternalModule;
 
         if ((hasModifier(moduleDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
             declFlags |= PullElementFlags.Exported;
@@ -146,7 +145,10 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(moduleDecl.start(), moduleDecl.end());
 
-        var decl = new NormalPullDecl(modName, (<Identifier>moduleDecl.name).text(), kind, declFlags, context.getParent(), span);
+        var valueText = moduleDecl.stringLiteral ? quoteStr(moduleDecl.stringLiteral.valueText()) : moduleDecl.name.valueText();
+        var text = moduleDecl.stringLiteral ? moduleDecl.stringLiteral.text() : moduleDecl.name.text();
+
+        var decl = new NormalPullDecl(valueText, text, kind, declFlags, context.getParent(), span);
         context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
 

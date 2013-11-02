@@ -377,6 +377,7 @@ module TypeScript {
 
     function walkModuleDeclarationChildren(preAst: ModuleDeclaration, walker: AstWalker): void {
         walker.walk(preAst.name);
+        walker.walk(preAst.stringLiteral);
         walker.walk(preAst.moduleElements);
     }
 

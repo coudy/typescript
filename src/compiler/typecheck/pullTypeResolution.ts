@@ -997,12 +997,14 @@ module TypeScript {
             var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.validateVariableDeclarationGroups(containerDecl, context);
 
-            if (isRelative(stripStartAndEndQuotes(ast.name.text()))) {
-                this.semanticInfoChain.addDiagnosticFromAST(
-                    ast.name, DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name);
+            if (ast.stringLiteral) {
+                if (isRelative(ast.stringLiteral.valueText())) {
+                    this.semanticInfoChain.addDiagnosticFromAST(
+                        ast.stringLiteral, DiagnosticCode.Ambient_external_module_declaration_cannot_specify_relative_module_name);
+                }
             }
 
-            if (!moduleIsElided(ast)) {
+            if (!moduleIsElided(ast) && ast.name) {
                 this.checkNameForCompilerGeneratedDeclarationCollision(ast, /*isDeclaration*/ true, ast.name, context);
             }
         }
