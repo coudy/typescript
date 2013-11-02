@@ -104,7 +104,7 @@ module TypeScript {
 
         var pre = function (cur: AST, walker: IAstWalker) {
             if (isValidAstNode(cur)) {
-                var isInvalid1 = cur.nodeType() === NodeType.ExpressionStatement && cur.getLength() === 0;
+                var isInvalid1 = cur.nodeType() === NodeType.ExpressionStatement && cur.width() === 0;
 
                 if (isInvalid1) {
                     walker.options.goChildren = false;
@@ -148,7 +148,7 @@ module TypeScript {
                                 // don't want to replace it with another missing identifier.
                                 // We want to return the first missing identifier found in a
                                 // depth first walk of  the tree.
-                                if (top.getLength() !== 0 || cur.getLength() !== 0) {
+                                if (top.width() !== 0 || cur.width() !== 0) {
                                     top = cur;
                                 }
                             }

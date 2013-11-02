@@ -647,7 +647,7 @@ module TypeScript {
         }
 
         public diagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[]= null): Diagnostic {
-            return new Diagnostic(ast.fileName(), this.lineMap(ast.fileName()), ast.start(), ast.getLength(), diagnosticKey, arguments);
+            return new Diagnostic(ast.fileName(), this.lineMap(ast.fileName()), ast.start(), ast.width(), diagnosticKey, arguments);
         }
     }
 }

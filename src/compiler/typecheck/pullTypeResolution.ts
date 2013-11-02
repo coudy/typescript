@@ -2294,7 +2294,7 @@ module TypeScript {
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text());
                 var decl = new PullSynthesizedDecl(stringConstantAST.text(), stringConstantAST.text(),
                     typeDeclSymbol.kind, null, enclosingDecl,
-                    new TextSpan(stringConstantAST.start(), stringConstantAST.getLength()),
+                    new TextSpan(stringConstantAST.start(), stringConstantAST.width()),
                     enclosingDecl.semanticInfoChain());
                 typeDeclSymbol.addDeclaration(decl);
             }

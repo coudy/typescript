@@ -156,7 +156,7 @@ module TypeScript {
             }
         }
 
-        public getLength(): number {
+        public width(): number {
             return this.end() - this.start();
         }
 
