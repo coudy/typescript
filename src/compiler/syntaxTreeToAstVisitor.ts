@@ -660,8 +660,8 @@ module TypeScript {
 
         public visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
             var start = this.position;
-            var name = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var name = this.identifierFromToken(node.propertyName);
+            this.movePast(node.propertyName);
             var typeExpr = this.visitTypeAnnotation(node.typeAnnotation);
             var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
 
