@@ -44,6 +44,10 @@ module TypeScript {
                 return null;
             }
 
+            if (element.fullWidth() === 0) {
+                return new ASTSpan(/*start:*/ -1, /*end:*/ -1, /*trailingTriviaWidth:*/ 0);
+            }
+
             var leadingTriviaWidth = element.leadingTriviaWidth();
             var trailingTriviaWidth = element.trailingTriviaWidth();
 
