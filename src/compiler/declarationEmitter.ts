@@ -997,7 +997,6 @@ module TypeScript {
                 return;
             }
 
-            var dottedModuleContainers: ModuleDeclaration[] = [];
             if (!isExternalModule) {
                 var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
                 var moduleName = this.getDeclFlagsString(modulePullDecl, "module");
@@ -1022,8 +1021,6 @@ module TypeScript {
                         else {
                             moduleName += moduleDecl.name.text() + ".";
                         }
-
-                        dottedModuleContainers.push(moduleDecl);
                     }
                 }
 
