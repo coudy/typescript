@@ -682,7 +682,7 @@ module TypeScript {
         private getDocCommentsOfDecl(decl: TypeScript.PullDecl): TypeScript.Comment[] {
             var ast = decl.ast();
 
-            if (ast && (ast.nodeType() != TypeScript.NodeType.ModuleDeclaration || decl.kind != TypeScript.PullElementKind.Variable)) {
+            if (ast && (ast.nodeType() != TypeScript.SyntaxKind.ModuleDeclaration || decl.kind != TypeScript.PullElementKind.Variable)) {
                 return docComments(ast);
             }
 

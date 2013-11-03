@@ -637,20 +637,19 @@ module TypeScript {
     }
 
     export class HeritageClauseSyntax extends SyntaxNode {
+    private _kind: SyntaxKind;
 
-        constructor(public extendsOrImplementsKeyword: ISyntaxToken,
+        constructor(kind: SyntaxKind,
+                    public extendsOrImplementsKeyword: ISyntaxToken,
                     public typeNames: ISeparatedSyntaxList,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
 
+            this._kind = kind;
         }
 
     public accept(visitor: ISyntaxVisitor): any {
         return visitor.visitHeritageClause(this);
-    }
-
-    public kind(): SyntaxKind {
-        return SyntaxKind.HeritageClause;
     }
 
     public childCount(): number {
@@ -665,13 +664,18 @@ module TypeScript {
         }
     }
 
-    public update(extendsOrImplementsKeyword: ISyntaxToken,
+    public kind(): SyntaxKind {
+        return this._kind;
+    }
+
+    public update(kind: SyntaxKind,
+                  extendsOrImplementsKeyword: ISyntaxToken,
                   typeNames: ISeparatedSyntaxList): HeritageClauseSyntax {
-        if (this.extendsOrImplementsKeyword === extendsOrImplementsKeyword && this.typeNames === typeNames) {
+        if (this._kind === kind && this.extendsOrImplementsKeyword === extendsOrImplementsKeyword && this.typeNames === typeNames) {
             return this;
         }
 
-        return new HeritageClauseSyntax(extendsOrImplementsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
+        return new HeritageClauseSyntax(kind, extendsOrImplementsKeyword, typeNames, /*parsedInStrictMode:*/ this.parsedInStrictMode());
     }
 
     public withLeadingTrivia(trivia: ISyntaxTriviaList): HeritageClauseSyntax {
@@ -682,12 +686,16 @@ module TypeScript {
         return <HeritageClauseSyntax>super.withTrailingTrivia(trivia);
     }
 
+    public withKind(kind: SyntaxKind): HeritageClauseSyntax {
+        return this.update(kind, this.extendsOrImplementsKeyword, this.typeNames);
+    }
+
     public withExtendsOrImplementsKeyword(extendsOrImplementsKeyword: ISyntaxToken): HeritageClauseSyntax {
-        return this.update(extendsOrImplementsKeyword, this.typeNames);
+        return this.update(this._kind, extendsOrImplementsKeyword, this.typeNames);
     }
 
     public withTypeNames(typeNames: ISeparatedSyntaxList): HeritageClauseSyntax {
-        return this.update(this.extendsOrImplementsKeyword, typeNames);
+        return this.update(this._kind, this.extendsOrImplementsKeyword, typeNames);
     }
 
     public withTypeName(typeName: INameSyntax): HeritageClauseSyntax {

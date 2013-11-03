@@ -121,6 +121,7 @@ module TypeScript {
 
         public visitHeritageClause(node: HeritageClauseSyntax): any {
             return node.update(
+                node.kind(),
                 this.visitToken(node.extendsOrImplementsKeyword),
                 this.visitSeparatedList(node.typeNames));
         }

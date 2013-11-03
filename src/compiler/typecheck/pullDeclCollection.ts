@@ -21,9 +21,9 @@ module TypeScript {
     function containingModuleHasExportAssignment(ast: AST): boolean {
         ast = ast.parent;
         while (ast) {
-            if (ast.nodeType() === NodeType.ModuleDeclaration) {
+            if (ast.nodeType() === SyntaxKind.ModuleDeclaration) {
                 var moduleDecl = <ModuleDeclaration>ast;
-                return moduleDecl.moduleElements.any(m => m.nodeType() === NodeType.ExportAssignment);
+                return moduleDecl.moduleElements.any(m => m.nodeType() === SyntaxKind.ExportAssignment);
             }
 
             ast = ast.parent;
@@ -35,7 +35,7 @@ module TypeScript {
     function isParsingAmbientModule(ast: AST, context: DeclCollectionContext): boolean {
         ast = ast.parent;
         while (ast) {
-            if (ast.nodeType() === NodeType.ModuleDeclaration) {
+            if (ast.nodeType() === SyntaxKind.ModuleDeclaration) {
                 if (hasModifier((<ModuleDeclaration>ast).modifiers, PullElementFlags.Ambient)) {
                     return true;
                 }
@@ -178,7 +178,7 @@ module TypeScript {
             // consider a module instantiated.  After all, if there is an import, but no actual
             // code that references the imported value, then there's no need to emit the import
             // or the module.
-            if (member.nodeType() === NodeType.ModuleDeclaration) {
+            if (member.nodeType() === SyntaxKind.ModuleDeclaration) {
                 var moduleDecl = <ModuleDeclaration>member;
 
                 // If we have a module in us, and it contains executable code, then we
@@ -187,7 +187,7 @@ module TypeScript {
                     return true;
                 }
             }
-            else if (member.nodeType() !== NodeType.InterfaceDeclaration && member.nodeType() !== NodeType.ImportDeclaration) {
+            else if (member.nodeType() !== SyntaxKind.InterfaceDeclaration && member.nodeType() !== SyntaxKind.ImportDeclaration) {
                 // If we contain anything that's not an interface declaration, then we contain
                 // executable code.
                 return true;
@@ -228,7 +228,7 @@ module TypeScript {
     function preCollectObjectTypeDecls(objectType: ObjectType, context: DeclCollectionContext): void {
         // if this is the 'body' of an interface declaration, then we don't want to create a decl 
         // here.  We want the interface decl to be the parent decl of all the members we visit.
-        if (objectType.parent.nodeType() === NodeType.InterfaceDeclaration) {
+        if (objectType.parent.nodeType() === SyntaxKind.InterfaceDeclaration) {
             return;
         }
 
@@ -437,7 +437,7 @@ module TypeScript {
     }
 
     function preCollectVarDecls(ast: AST, context: DeclCollectionContext): void {
-        if (ast.parent.nodeType() === NodeType.MemberVariableDeclaration) {
+        if (ast.parent.nodeType() === SyntaxKind.MemberVariableDeclaration) {
             // Already handled this node.
             return;
         }
@@ -527,8 +527,8 @@ module TypeScript {
 
         var declFlags = PullElementFlags.None;
 
-        if (functionExpressionDeclAST.nodeType() === NodeType.SimpleArrowFunctionExpression ||
-            functionExpressionDeclAST.nodeType() === NodeType.ParenthesizedArrowFunctionExpression) {
+        if (functionExpressionDeclAST.nodeType() === SyntaxKind.SimpleArrowFunctionExpression ||
+            functionExpressionDeclAST.nodeType() === SyntaxKind.ParenthesizedArrowFunctionExpression) {
             declFlags |= PullElementFlags.ArrowFunction;
         }
 
@@ -548,7 +548,7 @@ module TypeScript {
 
         context.pushParent(decl);
 
-        if (functionExpressionDeclAST.nodeType() === NodeType.SimpleArrowFunctionExpression) {
+        if (functionExpressionDeclAST.nodeType() === SyntaxKind.SimpleArrowFunctionExpression) {
             var simpleArrow = <SimpleArrowFunctionExpression>functionExpressionDeclAST;
             var declFlags = PullElementFlags.Public;
 
@@ -618,8 +618,8 @@ module TypeScript {
     // call signatures
     function createCallSignatureDeclaration(callSignature: CallSignature, context: DeclCollectionContext): void {
         var isChildOfObjectType = callSignature.parent && callSignature.parent.parent &&
-            callSignature.parent.nodeType() === NodeType.SeparatedList &&
-            callSignature.parent.parent.nodeType() === NodeType.ObjectType;
+            callSignature.parent.nodeType() === SyntaxKind.SeparatedList &&
+            callSignature.parent.parent.nodeType() === SyntaxKind.ObjectType;
 
         if (!isChildOfObjectType) {
             // This was a call signature that was part of some other entity (like a function 
@@ -878,98 +878,98 @@ module TypeScript {
 
     function preCollectDecls(ast: AST, context: DeclCollectionContext) {
         switch (ast.nodeType()) {
-            case NodeType.Script:
+            case SyntaxKind.SourceUnit:
                 preCollectScriptDecls(<Script>ast, context);
                 break;
-            case NodeType.EnumDeclaration:
+            case SyntaxKind.EnumDeclaration:
                 preCollectEnumDecls(<EnumDeclaration>ast, context);
                 break;
-            case NodeType.EnumElement:
+            case SyntaxKind.EnumElement:
                 createEnumElementDecls(<EnumElement>ast, context);
                 break;
-            case NodeType.ModuleDeclaration:
+            case SyntaxKind.ModuleDeclaration:
                 preCollectModuleDecls(<ModuleDeclaration>ast, context);
                 break;
-            case NodeType.ClassDeclaration:
+            case SyntaxKind.ClassDeclaration:
                 preCollectClassDecls(<ClassDeclaration>ast, context);
                 break;
-            case NodeType.InterfaceDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
                 preCollectInterfaceDecls(<InterfaceDeclaration>ast, context);
                 break;
-            case NodeType.ObjectType:
+            case SyntaxKind.ObjectType:
                 preCollectObjectTypeDecls(<ObjectType>ast, context);
                 break;
-            case NodeType.Parameter:
+            case SyntaxKind.Parameter:
                 preCollectParameterDecl(<Parameter>ast, context);
                 break;
-            case NodeType.MemberVariableDeclaration:
+            case SyntaxKind.MemberVariableDeclaration:
                 createMemberVariableDeclaration(<MemberVariableDeclaration>ast, context);
                 break;
-            case NodeType.PropertySignature:
+            case SyntaxKind.PropertySignature:
                 createPropertySignature(<PropertySignature>ast, context);
                 break;
-            case NodeType.VariableDeclarator:
+            case SyntaxKind.VariableDeclarator:
                 preCollectVarDecls(ast, context);
                 break;
-            case NodeType.ConstructorDeclaration:
+            case SyntaxKind.ConstructorDeclaration:
                 createClassConstructorDeclaration(<ConstructorDeclaration>ast, context);
                 break;
-            case NodeType.GetAccessor:
+            case SyntaxKind.GetAccessor:
                 createGetAccessorDeclaration(<GetAccessor>ast, context);
                 break;
-            case NodeType.SetAccessor:
+            case SyntaxKind.SetAccessor:
                 createSetAccessorDeclaration(<SetAccessor>ast, context);
                 break;
-            case NodeType.FunctionExpression:
+            case SyntaxKind.FunctionExpression:
                 createFunctionExpressionDeclaration(<FunctionExpression>ast, context);
                 break;
-            case NodeType.MemberFunctionDeclaration:
+            case SyntaxKind.MemberFunctionDeclaration:
                 createMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
                 break;
-            case NodeType.IndexSignature:
+            case SyntaxKind.IndexSignature:
                 createIndexSignatureDeclaration(<IndexSignature>ast, context);
                 break;
-            case NodeType.FunctionType:
+            case SyntaxKind.FunctionType:
                 createFunctionTypeDeclaration(<FunctionType>ast, context);
                 break;
-            case NodeType.ConstructorType:
+            case SyntaxKind.ConstructorType:
                 createConstructorTypeDeclaration(<ConstructorType>ast, context);
                 break;
-            case NodeType.CallSignature:
+            case SyntaxKind.CallSignature:
                 createCallSignatureDeclaration(<CallSignature>ast, context);
                 break;
-            case NodeType.ConstructSignature:
+            case SyntaxKind.ConstructSignature:
                 createConstructSignatureDeclaration(<ConstructSignature>ast, context);
                 break;
-            case NodeType.MethodSignature:
+            case SyntaxKind.MethodSignature:
                 createMethodSignatureDeclaration(<MethodSignature>ast, context);
                 break;
-            case NodeType.FunctionDeclaration:
+            case SyntaxKind.FunctionDeclaration:
                 createFunctionDeclaration(<FunctionDeclaration>ast, context);
                 break;
-            case NodeType.SimpleArrowFunctionExpression:
-            case NodeType.ParenthesizedArrowFunctionExpression:
+            case SyntaxKind.SimpleArrowFunctionExpression:
+            case SyntaxKind.ParenthesizedArrowFunctionExpression:
                 createAnyFunctionExpressionDeclaration(ast, /*id*/null, context);
                 break;
-            case NodeType.ImportDeclaration:
+            case SyntaxKind.ImportDeclaration:
                 preCollectImportDecls(ast, context);
                 break;
-            case NodeType.TypeParameter:
+            case SyntaxKind.TypeParameter:
                 preCollectTypeParameterDecl(<TypeParameter>ast, context);
                 break;
-            case NodeType.CatchClause:
+            case SyntaxKind.CatchClause:
                 preCollectCatchDecls(<CatchClause>ast, context);
                 break;
-            case NodeType.WithStatement:
+            case SyntaxKind.WithStatement:
                 preCollectWithDecls(ast, context);
                 break;
-            case NodeType.ObjectLiteralExpression:
+            case SyntaxKind.ObjectLiteralExpression:
                 preCollectObjectLiteralDecls(ast, context);
                 break;
-            case NodeType.SimplePropertyAssignment:
+            case SyntaxKind.SimplePropertyAssignment:
                 preCollectSimplePropertyAssignmentDecls(<SimplePropertyAssignment>ast, context);
                 break;
-            case NodeType.FunctionPropertyAssignment:
+            case SyntaxKind.FunctionPropertyAssignment:
                 preCollectFunctionPropertyAssignmentDecls(<FunctionPropertyAssignment>ast, context);
                 break;
         }
@@ -1006,14 +1006,14 @@ module TypeScript {
     function postCollectDecls(ast: AST, context: DeclCollectionContext) {
         var currentDecl = context.getParent();
 
-        if (ast.nodeType() === NodeType.EnumDeclaration) {
+        if (ast.nodeType() === SyntaxKind.EnumDeclaration) {
             // Now that we've created all the child decls for the enum elements, determine what 
             // (if any) their constant values should be.
             computeEnumElementConstantValues(<EnumDeclaration>ast, currentDecl, context);
         }
 
         // Don't pop the topmost decl.  We return that out at the end.
-        if (ast.nodeType() !== NodeType.Script && currentDecl.ast() === ast) {
+        if (ast.nodeType() !== SyntaxKind.SourceUnit && currentDecl.ast() === ast) {
             context.popParent();
         }
     }
@@ -1079,8 +1079,8 @@ module TypeScript {
             // Always produce a value for an integer literal.
             var token: NumericLiteral;
             switch (expression.nodeType()) {
-                case NodeType.PlusExpression:
-                case NodeType.NegateExpression:
+                case SyntaxKind.PlusExpression:
+                case SyntaxKind.NegateExpression:
                     token = <NumericLiteral>(<PrefixUnaryExpression>expression).operand;
                     break;
                 default:
@@ -1088,14 +1088,14 @@ module TypeScript {
             }
 
             var value = token.value();
-            return value && expression.nodeType() === NodeType.NegateExpression ? -value : value;
+            return value && expression.nodeType() === SyntaxKind.NegateExpression ? -value : value;
         }
         else if (context.propagateEnumConstants) {
             // It wasn't a numeric literal.  However, the experimental switch to be more aggressive
             // about propogating enum constants is enabled.  See if we can still figure out the
             // constant value for this enum element.
             switch (expression.nodeType()) {
-                case NodeType.Name:
+                case SyntaxKind.IdentifierName:
                     // If it's a name, see if we already had an enum value named this.  If so,
                     // return that value.  Note, only search backward in the enum for a match.
                     var name = <Identifier>expression;
@@ -1103,7 +1103,7 @@ module TypeScript {
 
                     return matchingEnumElement ? matchingEnumElement.constantValue : null;
 
-                case NodeType.LeftShiftExpression:
+                case SyntaxKind.LeftShiftExpression:
                     // Handle the common case of a left shifted value.
                     var binaryExpression = <BinaryExpression>expression;
                     var left = computeEnumElementConstantValue(binaryExpression.left, enumMemberDecls, context);
@@ -1114,7 +1114,7 @@ module TypeScript {
 
                     return left << right;
 
-                case NodeType.BitwiseOrExpression:
+                case SyntaxKind.BitwiseOrExpression:
                     // Handle the common case of an or'ed value.
                     var binaryExpression = <BinaryExpression>expression;
                     var left = computeEnumElementConstantValue(binaryExpression.left, enumMemberDecls, context);

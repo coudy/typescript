@@ -39,12 +39,12 @@ module TypeScript {
             // We should emit *this* module if it contains any non-interface types. 
             // Caveat: if we have contain a module, then we should be emitted *if we want to
             // emit that inner module as well.
-            if (member.nodeType() === NodeType.ModuleDeclaration) {
+            if (member.nodeType() === SyntaxKind.ModuleDeclaration) {
                 if (!moduleIsElided(<ModuleDeclaration>member)) {
                     return false;
                 }
             }
-            else if (member.nodeType() !== NodeType.InterfaceDeclaration) {
+            else if (member.nodeType() !== SyntaxKind.InterfaceDeclaration) {
                 return false;
             }
         }
@@ -61,7 +61,7 @@ module TypeScript {
     }
 
     export function importDeclarationIsElided(importDeclAST: ImportDeclaration, semanticInfoChain: SemanticInfoChain, compilationSettings: ImmutableCompilationSettings = null) {
-        var isExternalModuleReference = importDeclAST.moduleReference.nodeType() === NodeType.ExternalModuleReference;
+        var isExternalModuleReference = importDeclAST.moduleReference.nodeType() === SyntaxKind.ExternalModuleReference;
         var importDecl = semanticInfoChain.getDeclForAST(importDeclAST);
         var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
         var isAmdCodeGen = compilationSettings && compilationSettings.moduleGenTarget() == ModuleGenTarget.Asynchronous;
@@ -70,7 +70,7 @@ module TypeScript {
             isExported || // External module reference with export modifier always needs to be emitted
             !isAmdCodeGen) {// commonjs needs the var declaration for the import declaration
             var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-            if (importDeclAST.moduleReference.nodeType() !== NodeType.ExternalModuleReference) {
+            if (importDeclAST.moduleReference.nodeType() !== SyntaxKind.ExternalModuleReference) {
                 if (importSymbol.getExportAssignedValueSymbol()) {
                     return true;
                 }
@@ -104,7 +104,7 @@ module TypeScript {
 
         var pre = function (cur: AST, walker: IAstWalker) {
             if (isValidAstNode(cur)) {
-                var isInvalid1 = cur.nodeType() === NodeType.ExpressionStatement && cur.width() === 0;
+                var isInvalid1 = cur.nodeType() === SyntaxKind.ExpressionStatement && cur.width() === 0;
 
                 if (isInvalid1) {
                     walker.options.goChildren = false;
@@ -119,13 +119,13 @@ module TypeScript {
                     // If "position === 3", the caret is at the "right" of the "r" character, which should be considered valid
                     var inclusive =
                         forceInclusive ||
-                        cur.nodeType() === NodeType.Name ||
-                        cur.nodeType() === NodeType.MemberAccessExpression ||
-                        cur.nodeType() === NodeType.QualifiedName ||
-                        //cur.nodeType() === NodeType.TypeRef ||
-                        cur.nodeType() === NodeType.VariableDeclaration ||
-                        cur.nodeType() === NodeType.VariableDeclarator ||
-                        cur.nodeType() === NodeType.InvocationExpression ||
+                        cur.nodeType() === SyntaxKind.IdentifierName ||
+                        cur.nodeType() === SyntaxKind.MemberAccessExpression ||
+                        cur.nodeType() === SyntaxKind.QualifiedName ||
+                        //cur.nodeType() === SyntaxKind.TypeRef ||
+                        cur.nodeType() === SyntaxKind.VariableDeclaration ||
+                        cur.nodeType() === SyntaxKind.VariableDeclarator ||
+                        cur.nodeType() === SyntaxKind.InvocationExpression ||
                         pos === script.end() + script.trailingTriviaWidth(); // Special "EOF" case
 
                     var minChar = cur.start();
@@ -133,7 +133,7 @@ module TypeScript {
                     if (pos >= minChar && pos < limChar) {
 
                         // Ignore empty lists
-                        if ((cur.nodeType() !== NodeType.List && cur.nodeType() !== NodeType.SeparatedList) || cur.end() > cur.start()) {
+                        if ((cur.nodeType() !== SyntaxKind.List && cur.nodeType() !== SyntaxKind.SeparatedList) || cur.end() > cur.start()) {
                             // TODO: Since AST is sometimes not correct wrt to position, only add "cur" if it's better
                             //       than top of the stack.
                             if (top === null) {
@@ -171,7 +171,7 @@ module TypeScript {
         }
 
         return <HeritageClause>clauses.firstOrDefault((c: HeritageClause) =>
-            c.typeNames.nonSeparatorCount() > 0 && c.nodeType() === NodeType.ExtendsHeritageClause);
+            c.typeNames.nonSeparatorCount() > 0 && c.nodeType() === SyntaxKind.ExtendsHeritageClause);
     }
 
     export function getImplementsHeritageClause(clauses: ASTList): HeritageClause {
@@ -180,12 +180,12 @@ module TypeScript {
         }
 
         return <HeritageClause>clauses.firstOrDefault((c: HeritageClause) =>
-            c.typeNames.nonSeparatorCount() > 0 && c.nodeType() === NodeType.ImplementsHeritageClause);
+            c.typeNames.nonSeparatorCount() > 0 && c.nodeType() === SyntaxKind.ImplementsHeritageClause);
     }
 
     export function isCallExpression(ast: AST): boolean {
-        return (ast && ast.nodeType() === NodeType.InvocationExpression) ||
-            (ast && ast.nodeType() === NodeType.ObjectCreationExpression);
+        return (ast && ast.nodeType() === SyntaxKind.InvocationExpression) ||
+            (ast && ast.nodeType() === SyntaxKind.ObjectCreationExpression);
     }
 
     export function isCallExpressionTarget(ast: AST): boolean {
@@ -196,7 +196,7 @@ module TypeScript {
         var current = ast;
 
         while (current && current.parent) {
-            if (current.parent.nodeType() === NodeType.MemberAccessExpression &&
+            if (current.parent.nodeType() === SyntaxKind.MemberAccessExpression &&
                 (<MemberAccessExpression>current.parent).name === current) {
                 current = current.parent;
                 continue;
@@ -206,7 +206,7 @@ module TypeScript {
         }
 
         if (current && current.parent) {
-            if (current.parent.nodeType() === NodeType.InvocationExpression || current.parent.nodeType() === NodeType.ObjectCreationExpression) {
+            if (current.parent.nodeType() === SyntaxKind.InvocationExpression || current.parent.nodeType() === SyntaxKind.ObjectCreationExpression) {
                 return current === (<InvocationExpression>current.parent).expression;
             }
         }
@@ -218,36 +218,36 @@ module TypeScript {
         if (ast === null || ast.parent === null) {
             return false;
         }
-        if (ast.nodeType() !== NodeType.Name) {
+        if (ast.nodeType() !== SyntaxKind.IdentifierName) {
             return false;
         }
 
         switch (ast.parent.nodeType()) {
-            case NodeType.ClassDeclaration:
+            case SyntaxKind.ClassDeclaration:
                 return (<ClassDeclaration>ast.parent).identifier === ast;
-            case NodeType.InterfaceDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
                 return (<InterfaceDeclaration>ast.parent).identifier === ast;
-            case NodeType.EnumDeclaration:
+            case SyntaxKind.EnumDeclaration:
                 return (<EnumDeclaration>ast.parent).identifier === ast;
-            case NodeType.ModuleDeclaration:
+            case SyntaxKind.ModuleDeclaration:
                 return (<ModuleDeclaration>ast.parent).name === ast || (<ModuleDeclaration>ast.parent).stringLiteral === ast;
-            case NodeType.VariableDeclarator:
+            case SyntaxKind.VariableDeclarator:
                 return (<VariableDeclarator>ast.parent).propertyName === ast;
-            case NodeType.FunctionDeclaration:
+            case SyntaxKind.FunctionDeclaration:
                 return (<FunctionDeclaration>ast.parent).identifier === ast;
-            case NodeType.MemberFunctionDeclaration:
+            case SyntaxKind.MemberFunctionDeclaration:
                 return (<MemberFunctionDeclaration>ast.parent).propertyName === ast;
-            case NodeType.Parameter:
+            case SyntaxKind.Parameter:
                 return (<Parameter>ast.parent).identifier === ast;
-            case NodeType.TypeParameter:
+            case SyntaxKind.TypeParameter:
                 return (<TypeParameter>ast.parent).identifier === ast;
-            case NodeType.SimplePropertyAssignment:
+            case SyntaxKind.SimplePropertyAssignment:
                 return (<SimplePropertyAssignment>ast.parent).propertyName === ast;
-            case NodeType.FunctionPropertyAssignment:
+            case SyntaxKind.FunctionPropertyAssignment:
                 return (<FunctionPropertyAssignment>ast.parent).propertyName === ast;
-            case NodeType.EnumElement:
+            case SyntaxKind.EnumElement:
                 return (<EnumElement>ast.parent).propertyName === ast;
-            case NodeType.ImportDeclaration:
+            case SyntaxKind.ImportDeclaration:
                 return (<ImportDeclaration>ast.parent).identifier === ast;
         }
 
@@ -261,23 +261,23 @@ module TypeScript {
     export function isNameOfFunction(ast: AST) {
         return ast
             && ast.parent
-            && ast.nodeType() === NodeType.Name
-            && ast.parent.nodeType() === NodeType.FunctionDeclaration
+            && ast.nodeType() === SyntaxKind.IdentifierName
+            && ast.parent.nodeType() === SyntaxKind.FunctionDeclaration
             && (<FunctionDeclaration>ast.parent).identifier === ast;
     }
 
     export function isNameOfMemberFunction(ast: AST) {
         return ast
             && ast.parent
-            && ast.nodeType() === NodeType.Name
-            && ast.parent.nodeType() === NodeType.MemberFunctionDeclaration
+            && ast.nodeType() === SyntaxKind.IdentifierName
+            && ast.parent.nodeType() === SyntaxKind.MemberFunctionDeclaration
             && (<MemberFunctionDeclaration>ast.parent).propertyName === ast;
     }
 
     export function isNameOfMemberAccessExpression(ast: AST) {
         if (ast &&
             ast.parent &&
-            ast.parent.nodeType() === NodeType.MemberAccessExpression &&
+            ast.parent.nodeType() === SyntaxKind.MemberAccessExpression &&
             (<MemberAccessExpression>ast.parent).name === ast) {
 
             return true;
@@ -289,7 +289,7 @@ module TypeScript {
     export function isRightSideOfQualifiedName(ast: AST) {
         if (ast &&
             ast.parent &&
-            ast.parent.nodeType() === NodeType.QualifiedName &&
+            ast.parent.nodeType() === SyntaxKind.QualifiedName &&
             (<QualifiedName>ast.parent).right === ast) {
 
             return true;
@@ -356,36 +356,36 @@ module TypeScript {
 
     export function isDeclarationAST(ast: AST): boolean {
         switch (ast.nodeType()) {
-            case NodeType.VariableDeclarator:
+            case SyntaxKind.VariableDeclarator:
                 return getVariableStatement(<VariableDeclarator>ast) !== null;
 
-            case NodeType.ImportDeclaration:
-            case NodeType.ClassDeclaration:
-            case NodeType.InterfaceDeclaration:
-            case NodeType.Parameter:
-            case NodeType.SimpleArrowFunctionExpression:
-            case NodeType.ParenthesizedArrowFunctionExpression:
-            case NodeType.IndexSignature:
-            case NodeType.FunctionDeclaration:
-            case NodeType.ModuleDeclaration:
-            case NodeType.ArrayType:
-            case NodeType.ObjectType:
-            case NodeType.TypeParameter:
-            case NodeType.ConstructorDeclaration:
-            case NodeType.MemberFunctionDeclaration:
-            case NodeType.GetAccessor:
-            case NodeType.SetAccessor:
-            case NodeType.MemberVariableDeclaration:
-            case NodeType.IndexMemberDeclaration:
-            case NodeType.EnumDeclaration:
-            case NodeType.EnumElement:
-            case NodeType.SimplePropertyAssignment:
-            case NodeType.FunctionPropertyAssignment:
-            case NodeType.FunctionExpression:
-            case NodeType.CallSignature:
-            case NodeType.ConstructSignature:
-            case NodeType.MethodSignature:
-            case NodeType.PropertySignature:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.SimpleArrowFunctionExpression:
+            case SyntaxKind.ParenthesizedArrowFunctionExpression:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.ArrayType:
+            case SyntaxKind.ObjectType:
+            case SyntaxKind.TypeParameter:
+            case SyntaxKind.ConstructorDeclaration:
+            case SyntaxKind.MemberFunctionDeclaration:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.MemberVariableDeclaration:
+            case SyntaxKind.IndexMemberDeclaration:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumElement:
+            case SyntaxKind.SimplePropertyAssignment:
+            case SyntaxKind.FunctionPropertyAssignment:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.PropertySignature:
                 return true;
             default:
                 return false;
@@ -394,7 +394,7 @@ module TypeScript {
 
     export function docComments(ast: AST): Comment[] {
         if (isDeclarationAST(ast)) {
-            var preComments = ast.nodeType() === NodeType.VariableDeclarator
+            var preComments = ast.nodeType() === SyntaxKind.VariableDeclarator
                 ? getVariableStatement(<VariableDeclarator>ast).preComments()
                 : ast.preComments();
 
@@ -417,77 +417,34 @@ module TypeScript {
         return sentinelEmptyArray;
     }
 
-    export function getTextForBinaryToken(nodeType: NodeType): string {
-        switch (nodeType) {
-            case NodeType.CommaExpression: return ",";
-            case NodeType.AssignmentExpression: return "=";
-            case NodeType.AddAssignmentExpression: return "+=";
-            case NodeType.SubtractAssignmentExpression: return "-=";
-            case NodeType.MultiplyAssignmentExpression: return "*=";
-            case NodeType.DivideAssignmentExpression: return "/=";
-            case NodeType.ModuloAssignmentExpression: return "%=";
-            case NodeType.AndAssignmentExpression: return "&=";
-            case NodeType.ExclusiveOrAssignmentExpression: return "^=";
-            case NodeType.OrAssignmentExpression: return "|=";
-            case NodeType.LeftShiftAssignmentExpression: return "<<=";
-            case NodeType.SignedRightShiftAssignmentExpression: return ">>=";
-            case NodeType.UnsignedRightShiftAssignmentExpression: return ">>>=";
-            case NodeType.LogicalOrExpression: return "||";
-            case NodeType.LogicalAndExpression: return "&&";
-            case NodeType.BitwiseOrExpression: return "|";
-            case NodeType.BitwiseExclusiveOrExpression: return "^";
-            case NodeType.BitwiseAndExpression: return "&";
-            case NodeType.EqualsWithTypeConversionExpression: return "==";
-            case NodeType.NotEqualsWithTypeConversionExpression: return "!=";
-            case NodeType.EqualsExpression: return "===";
-            case NodeType.NotEqualsExpression: return "!==";
-            case NodeType.LessThanExpression: return "<";
-            case NodeType.GreaterThanExpression: return ">";
-            case NodeType.LessThanOrEqualExpression: return "<=";
-            case NodeType.GreaterThanOrEqualExpression: return ">=";
-            case NodeType.InstanceOfExpression: return "instanceof";
-            case NodeType.InExpression: return "in";
-            case NodeType.LeftShiftExpression: return "<<";
-            case NodeType.SignedRightShiftExpression: return ">>";
-            case NodeType.UnsignedRightShiftExpression: return ">>>";
-            case NodeType.MultiplyExpression: return "*";
-            case NodeType.DivideExpression: return "/";
-            case NodeType.ModuloExpression: return "%";
-            case NodeType.AddExpression: return "+";
-            case NodeType.SubtractExpression: return "-";
-        }
-
-        throw Errors.invalidOperation();
-    }
-
     export function getParameterList(ast: AST): ParameterList {
         if (ast) {
             switch (ast.nodeType()) {
-                case NodeType.ConstructorDeclaration:
+                case SyntaxKind.ConstructorDeclaration:
                     return (<ConstructorDeclaration>ast).parameterList;
-                case NodeType.FunctionDeclaration:
+                case SyntaxKind.FunctionDeclaration:
                     return getParameterList((<FunctionDeclaration>ast).callSignature);
-                case NodeType.ParenthesizedArrowFunctionExpression:
+                case SyntaxKind.ParenthesizedArrowFunctionExpression:
                     return getParameterList((<ParenthesizedArrowFunctionExpression>ast).callSignature);
-                case NodeType.ConstructSignature:
+                case SyntaxKind.ConstructSignature:
                     return getParameterList((<ConstructSignature>ast).callSignature);
-                case NodeType.MemberFunctionDeclaration:
+                case SyntaxKind.MemberFunctionDeclaration:
                     return getParameterList((<MemberFunctionDeclaration>ast).callSignature);
-                case NodeType.FunctionPropertyAssignment:
+                case SyntaxKind.FunctionPropertyAssignment:
                     return getParameterList((<FunctionPropertyAssignment>ast).callSignature);
-                case NodeType.FunctionExpression:
+                case SyntaxKind.FunctionExpression:
                     return getParameterList((<FunctionExpression>ast).callSignature);
-                case NodeType.MethodSignature:
+                case SyntaxKind.MethodSignature:
                     return getParameterList((<MethodSignature>ast).callSignature);
-                case NodeType.ConstructorType:
+                case SyntaxKind.ConstructorType:
                     return (<ConstructorType>ast).parameterList;
-                case NodeType.FunctionType:
+                case SyntaxKind.FunctionType:
                     return (<FunctionType>ast).parameterList;
-                case NodeType.CallSignature:
+                case SyntaxKind.CallSignature:
                     return (<CallSignature>ast).parameterList;
-                case NodeType.GetAccessor:
+                case SyntaxKind.GetAccessor:
                     return (<GetAccessor>ast).parameterList;
-                case NodeType.SetAccessor:
+                case SyntaxKind.SetAccessor:
                     return (<SetAccessor>ast).parameterList;
             }
         }
@@ -498,41 +455,41 @@ module TypeScript {
     export function getType(ast: AST): AST {
         if (ast) {
             switch (ast.nodeType()) {
-                case NodeType.FunctionDeclaration:
+                case SyntaxKind.FunctionDeclaration:
                     return getType((<FunctionDeclaration>ast).callSignature);
-                case NodeType.ParenthesizedArrowFunctionExpression:
+                case SyntaxKind.ParenthesizedArrowFunctionExpression:
                     return getType((<ParenthesizedArrowFunctionExpression>ast).callSignature);
-                case NodeType.ConstructSignature:
+                case SyntaxKind.ConstructSignature:
                     return getType((<ConstructSignature>ast).callSignature);
-                case NodeType.MemberFunctionDeclaration:
+                case SyntaxKind.MemberFunctionDeclaration:
                     return getType((<MemberFunctionDeclaration>ast).callSignature);
-                case NodeType.FunctionPropertyAssignment:
+                case SyntaxKind.FunctionPropertyAssignment:
                     return getType((<FunctionPropertyAssignment>ast).callSignature);
-                case NodeType.FunctionExpression:
+                case SyntaxKind.FunctionExpression:
                     return getType((<FunctionExpression>ast).callSignature);
-                case NodeType.MethodSignature:
+                case SyntaxKind.MethodSignature:
                     return getType((<MethodSignature>ast).callSignature);
-                case NodeType.CallSignature:
+                case SyntaxKind.CallSignature:
                     return getType((<CallSignature>ast).typeAnnotation);
-                case NodeType.IndexSignature:
+                case SyntaxKind.IndexSignature:
                     return getType((<IndexSignature>ast).typeAnnotation);
-                case NodeType.PropertySignature:
+                case SyntaxKind.PropertySignature:
                     return getType((<PropertySignature>ast).typeAnnotation);
-                case NodeType.GetAccessor:
+                case SyntaxKind.GetAccessor:
                     return getType((<GetAccessor>ast).typeAnnotation);
-                case NodeType.Parameter:
+                case SyntaxKind.Parameter:
                     return getType((<Parameter>ast).typeAnnotation);
-                case NodeType.MemberVariableDeclaration:
+                case SyntaxKind.MemberVariableDeclaration:
                     return getType((<MemberVariableDeclaration>ast).variableDeclarator);
-                case NodeType.VariableDeclarator:
+                case SyntaxKind.VariableDeclarator:
                     return getType((<VariableDeclarator>ast).typeAnnotation);
-                case NodeType.CatchClause:
+                case SyntaxKind.CatchClause:
                     return getType((<CatchClause>ast).typeAnnotation);
-                case NodeType.ConstructorType:
+                case SyntaxKind.ConstructorType:
                     return (<ConstructorType>ast).type;
-                case NodeType.FunctionType:
+                case SyntaxKind.FunctionType:
                     return (<FunctionType>ast).type;
-                case NodeType.TypeAnnotation:
+                case SyntaxKind.TypeAnnotation:
                     return (<TypeAnnotation>ast).type;
             }
         }
@@ -542,9 +499,9 @@ module TypeScript {
 
     function getVariableStatement(variableDeclarator: VariableDeclarator): VariableStatement {
         if (variableDeclarator && variableDeclarator.parent && variableDeclarator.parent.parent && variableDeclarator.parent.parent.parent &&
-            variableDeclarator.parent.nodeType() === NodeType.SeparatedList &&
-            variableDeclarator.parent.parent.nodeType() === NodeType.VariableDeclaration &&
-            variableDeclarator.parent.parent.parent.nodeType() === NodeType.VariableStatement) {
+            variableDeclarator.parent.nodeType() === SyntaxKind.SeparatedList &&
+            variableDeclarator.parent.parent.nodeType() === SyntaxKind.VariableDeclaration &&
+            variableDeclarator.parent.parent.parent.nodeType() === SyntaxKind.VariableStatement) {
 
             return <VariableStatement>variableDeclarator.parent.parent.parent;
         }
@@ -560,15 +517,15 @@ module TypeScript {
     export function isIntegerLiteralAST(expression: AST): boolean {
         if (expression) {
             switch (expression.nodeType()) {
-                case NodeType.PlusExpression:
-                case NodeType.NegateExpression:
+                case SyntaxKind.PlusExpression:
+                case SyntaxKind.NegateExpression:
                     // Note: if there is a + or - sign, we can only allow a normal integer following
                     // (and not a hex integer).  i.e. -0xA is a legal expression, but it is not a 
                     // *literal*.
                     expression = (<PrefixUnaryExpression>expression).operand;
-                    return expression.nodeType() === NodeType.NumericLiteral && IntegerUtilities.isInteger((<NumericLiteral>expression).text());
+                    return expression.nodeType() === SyntaxKind.NumericLiteral && IntegerUtilities.isInteger((<NumericLiteral>expression).text());
 
-                case NodeType.NumericLiteral:
+                case SyntaxKind.NumericLiteral:
                     // If it doesn't have a + or -, then either an integer literal or a hex literal
                     // is acceptable.
                     var text = (<NumericLiteral>expression).text();

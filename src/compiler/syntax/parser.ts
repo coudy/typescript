@@ -2672,7 +2672,9 @@ module TypeScript.Parser {
             var typeNames = result.list;
             extendsOrImplementsKeyword = this.addSkippedTokensAfterToken(extendsOrImplementsKeyword, result.skippedTokens);
 
-            return this.factory.heritageClause(extendsOrImplementsKeyword, typeNames);
+            return this.factory.heritageClause(
+                extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword ? SyntaxKind.ExtendsHeritageClause : SyntaxKind.ImplementsHeritageClause,
+                extendsOrImplementsKeyword, typeNames);
         }
 
         private isStatement(inErrorRecovery: boolean): boolean {

@@ -113,7 +113,7 @@ module TypeScript {
                 var identifiers = createIntrinsicsObject<boolean>();
                 var pre = function (cur: TypeScript.AST) {
                     if (isValidAstNode(cur)) {
-                        if (cur.nodeType() === NodeType.Name) {
+                        if (cur.nodeType() === SyntaxKind.IdentifierName) {
                             var nodeText = (<TypeScript.Identifier>cur).valueText();
 
                             identifiers[nodeText] = true;
@@ -201,7 +201,7 @@ module TypeScript {
         }
 
         public getEnclosingDecl(ast: AST): PullDecl {
-            if (ast.nodeType() === NodeType.Script) {
+            if (ast.nodeType() === SyntaxKind.SourceUnit) {
                 return this._getDeclForAST(ast);
             }
 

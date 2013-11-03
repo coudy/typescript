@@ -201,25 +201,25 @@ module TypeScript {
         public visitTokenWorker(token: ISyntaxToken): IASTToken {
             switch (token.tokenKind) {
                 case SyntaxKind.AnyKeyword:
-                    return new BuiltInType(NodeType.AnyType, token.text(), token.valueText());
+                    return new BuiltInType(SyntaxKind.AnyKeyword, token.text(), token.valueText());
                 case SyntaxKind.BooleanKeyword:
-                    return new BuiltInType(NodeType.BooleanType, token.text(), token.valueText());
+                    return new BuiltInType(SyntaxKind.BooleanKeyword, token.text(), token.valueText());
                 case SyntaxKind.NumberKeyword:
-                    return new BuiltInType(NodeType.NumberType, token.text(), token.valueText());
+                    return new BuiltInType(SyntaxKind.NumberKeyword, token.text(), token.valueText());
                 case SyntaxKind.StringKeyword:
-                    return new BuiltInType(NodeType.StringType, token.text(), token.valueText());
+                    return new BuiltInType(SyntaxKind.StringKeyword, token.text(), token.valueText());
                 case SyntaxKind.VoidKeyword:
-                    return new BuiltInType(NodeType.VoidType, token.text(), token.valueText());
+                    return new BuiltInType(SyntaxKind.VoidKeyword, token.text(), token.valueText());
                 case SyntaxKind.ThisKeyword:
                     return new ThisExpression(token.text(), token.valueText());
                 case SyntaxKind.SuperKeyword:
                     return new SuperExpression(token.text(), token.valueText());
                 case SyntaxKind.TrueKeyword:
-                    return new LiteralExpression(NodeType.TrueLiteral, token.text(), token.valueText());
+                    return new LiteralExpression(SyntaxKind.TrueKeyword, token.text(), token.valueText());
                 case SyntaxKind.FalseKeyword:
-                    return new LiteralExpression(NodeType.FalseLiteral, token.text(), token.valueText());
+                    return new LiteralExpression(SyntaxKind.FalseKeyword, token.text(), token.valueText());
                 case SyntaxKind.NullKeyword:
-                    return new LiteralExpression(NodeType.NullLiteral, token.text(), token.valueText());
+                    return new LiteralExpression(SyntaxKind.NullKeyword, token.text(), token.valueText());
                 case SyntaxKind.StringLiteral:
                     return new StringLiteral(token.text(), token.valueText());
                 case SyntaxKind.RegularExpressionLiteral:
@@ -437,7 +437,7 @@ module TypeScript {
             var typeNames = this.visitSeparatedSyntaxList(node.typeNames);
 
             var result = new HeritageClause(
-                node.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword ? NodeType.ExtendsHeritageClause : NodeType.ImplementsHeritageClause,
+                node.extendsOrImplementsKeyword.tokenKind === SyntaxKind.ExtendsKeyword ? SyntaxKind.ExtendsHeritageClause : SyntaxKind.ImplementsHeritageClause,
                 typeNames);
             this.setSpan(result, start, node);
 
@@ -501,7 +501,7 @@ module TypeScript {
                 }
 
                 var stringLiteral: StringLiteral = null;
-                if (innerName.nodeType() === NodeType.StringLiteral) {
+                if (innerName.nodeType() === SyntaxKind.StringLiteral) {
                     stringLiteral = <StringLiteral><AST>innerName;
                     innerName = null;
                 }
@@ -656,26 +656,13 @@ module TypeScript {
             return result;
         }
 
-        private getUnaryExpressionNodeType(kind: SyntaxKind): NodeType {
-            switch (kind) {
-                case SyntaxKind.PlusExpression: return NodeType.PlusExpression;
-                case SyntaxKind.NegateExpression: return NodeType.NegateExpression;
-                case SyntaxKind.BitwiseNotExpression: return NodeType.BitwiseNotExpression;
-                case SyntaxKind.LogicalNotExpression: return NodeType.LogicalNotExpression;
-                case SyntaxKind.PreIncrementExpression: return NodeType.PreIncrementExpression;
-                case SyntaxKind.PreDecrementExpression: return NodeType.PreDecrementExpression;
-                default:
-                    throw Errors.invalidOperation();
-            }
-        }
-
         public visitPrefixUnaryExpression(node: PrefixUnaryExpressionSyntax): PrefixUnaryExpression {
             var start = this.position;
 
             this.movePast(node.operatorToken);
             var operand = node.operand.accept(this);
 
-            var result = new PrefixUnaryExpression(this.getUnaryExpressionNodeType(node.kind()), operand);
+            var result = new PrefixUnaryExpression(node.kind(), operand);
             this.setSpan(result, start, node);
 
             return result;
@@ -939,7 +926,7 @@ module TypeScript {
             var operand = node.operand.accept(this);
             this.movePast(node.operatorToken);
 
-            var result = new PostfixUnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? NodeType.PostIncrementExpression : NodeType.PostDecrementExpression, operand);
+            var result = new PostfixUnaryExpression(node.kind() === SyntaxKind.PostIncrementExpression ? SyntaxKind.PostIncrementExpression : SyntaxKind.PostDecrementExpression, operand);
             this.setSpan(result, start, node);
 
             return result;
@@ -999,58 +986,14 @@ module TypeScript {
             return result;
         }
 
-        private getBinaryExpressionNodeType(node: BinaryExpressionSyntax): NodeType {
-            switch (node.kind()) {
-                case SyntaxKind.CommaExpression: return NodeType.CommaExpression;
-                case SyntaxKind.AssignmentExpression: return NodeType.AssignmentExpression;
-                case SyntaxKind.AddAssignmentExpression: return NodeType.AddAssignmentExpression;
-                case SyntaxKind.SubtractAssignmentExpression: return NodeType.SubtractAssignmentExpression;
-                case SyntaxKind.MultiplyAssignmentExpression: return NodeType.MultiplyAssignmentExpression;
-                case SyntaxKind.DivideAssignmentExpression: return NodeType.DivideAssignmentExpression;
-                case SyntaxKind.ModuloAssignmentExpression: return NodeType.ModuloAssignmentExpression;
-                case SyntaxKind.AndAssignmentExpression: return NodeType.AndAssignmentExpression;
-                case SyntaxKind.ExclusiveOrAssignmentExpression: return NodeType.ExclusiveOrAssignmentExpression;
-                case SyntaxKind.OrAssignmentExpression: return NodeType.OrAssignmentExpression;
-                case SyntaxKind.LeftShiftAssignmentExpression: return NodeType.LeftShiftAssignmentExpression;
-                case SyntaxKind.SignedRightShiftAssignmentExpression: return NodeType.SignedRightShiftAssignmentExpression;
-                case SyntaxKind.UnsignedRightShiftAssignmentExpression: return NodeType.UnsignedRightShiftAssignmentExpression;
-                case SyntaxKind.LogicalOrExpression: return NodeType.LogicalOrExpression;
-                case SyntaxKind.LogicalAndExpression: return NodeType.LogicalAndExpression;
-                case SyntaxKind.BitwiseOrExpression: return NodeType.BitwiseOrExpression;
-                case SyntaxKind.BitwiseExclusiveOrExpression: return NodeType.BitwiseExclusiveOrExpression;
-                case SyntaxKind.BitwiseAndExpression: return NodeType.BitwiseAndExpression;
-                case SyntaxKind.EqualsWithTypeConversionExpression: return NodeType.EqualsWithTypeConversionExpression;
-                case SyntaxKind.NotEqualsWithTypeConversionExpression: return NodeType.NotEqualsWithTypeConversionExpression;
-                case SyntaxKind.EqualsExpression: return NodeType.EqualsExpression;
-                case SyntaxKind.NotEqualsExpression: return NodeType.NotEqualsExpression;
-                case SyntaxKind.LessThanExpression: return NodeType.LessThanExpression;
-                case SyntaxKind.GreaterThanExpression: return NodeType.GreaterThanExpression;
-                case SyntaxKind.LessThanOrEqualExpression: return NodeType.LessThanOrEqualExpression;
-                case SyntaxKind.GreaterThanOrEqualExpression: return NodeType.GreaterThanOrEqualExpression;
-                case SyntaxKind.InstanceOfExpression: return NodeType.InstanceOfExpression;
-                case SyntaxKind.InExpression: return NodeType.InExpression;
-                case SyntaxKind.LeftShiftExpression: return NodeType.LeftShiftExpression;
-                case SyntaxKind.SignedRightShiftExpression: return NodeType.SignedRightShiftExpression;
-                case SyntaxKind.UnsignedRightShiftExpression: return NodeType.UnsignedRightShiftExpression;
-                case SyntaxKind.MultiplyExpression: return NodeType.MultiplyExpression;
-                case SyntaxKind.DivideExpression: return NodeType.DivideExpression;
-                case SyntaxKind.ModuloExpression: return NodeType.ModuloExpression;
-                case SyntaxKind.AddExpression: return NodeType.AddExpression;
-                case SyntaxKind.SubtractExpression: return NodeType.SubtractExpression;
-            }
-
-            throw Errors.invalidOperation();
-        }
-
         public visitBinaryExpression(node: BinaryExpressionSyntax): BinaryExpression {
             var start = this.position;
 
-            var nodeType = this.getBinaryExpressionNodeType(node);
             var left = node.left.accept(this);
             this.movePast(node.operatorToken);
             var right = node.right.accept(this);
 
-            var result = new BinaryExpression(nodeType, left, right);
+            var result = new BinaryExpression(node.kind(), left, right);
             this.setSpan(result, start, node);
 
             return result;
@@ -1782,27 +1725,27 @@ module TypeScript {
 
                 // Apply delta to all custom span fields
                 switch (cur.nodeType()) {
-                    case NodeType.Block:
+                    case SyntaxKind.Block:
                         applyDelta((<Block>cur).closeBraceToken, delta);
                         break; 
 
-                    case NodeType.ArgumentList:
+                    case SyntaxKind.ArgumentList:
                         applyDelta((<ArgumentList>cur).closeParenToken, delta);
                         break;
 
-                    case NodeType.ModuleDeclaration:
+                    case SyntaxKind.ModuleDeclaration:
                         applyDelta((<ModuleDeclaration>cur).endingToken, delta);
                         break;
 
-                    case NodeType.ClassDeclaration:
+                    case SyntaxKind.ClassDeclaration:
                         applyDelta((<ClassDeclaration>cur).closeBraceToken, delta);
                         break;
 
-                    case NodeType.DoStatement:
+                    case SyntaxKind.DoStatement:
                         applyDelta((<DoStatement>cur).whileKeyword, delta);
                         break;
 
-                    case NodeType.SwitchStatement:
+                    case SyntaxKind.SwitchStatement:
                         applyDelta((<SwitchStatement>cur).closeParenToken, delta);
                         break;
                 }

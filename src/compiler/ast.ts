@@ -126,7 +126,7 @@ module TypeScript {
             return this.parent.fileName();
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             throw Errors.abstract();
         }
 
@@ -198,8 +198,8 @@ module TypeScript {
             return this._fileName;
         }
 
-        public nodeType(): NodeType {
-            return NodeType.List;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.List;
         }
 
         public firstOrDefault(func: (v: AST, index: number) => boolean): AST {
@@ -255,8 +255,8 @@ module TypeScript {
             return this._fileName;
         }
 
-        public nodeType(): NodeType {
-            return NodeType.SeparatedList;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SeparatedList;
         }
 
         public structuralEquals(ast: ASTSeparatedList, includingPosition: boolean): boolean {
@@ -283,8 +283,8 @@ module TypeScript {
             return isDTSFile(this.fileName());
         }
 
-        public nodeType(): NodeType {
-            return NodeType.Script;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SourceUnit;
         }
 
         public structuralEquals(ast: Script, includingPosition: boolean): boolean {
@@ -329,8 +329,8 @@ module TypeScript {
             return this._valueText;
         }
 
-        public nodeType(): NodeType {
-            return NodeType.Name;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.IdentifierName;
         }
 
         public structuralEquals(ast: Identifier, includingPosition: boolean): boolean {
@@ -340,7 +340,7 @@ module TypeScript {
     }
 
     export class LiteralExpression extends AST {
-        constructor(private _nodeType: NodeType, private _text: string, private _valueText: string) {
+        constructor(private _nodeType: SyntaxKind, private _text: string, private _valueText: string) {
             super();
         }
 
@@ -352,7 +352,7 @@ module TypeScript {
             return this._valueText;
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             return this._nodeType;
         }
 
@@ -374,8 +374,8 @@ module TypeScript {
             return this._valueText;
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ThisExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ThisKeyword;
         }
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
@@ -396,8 +396,8 @@ module TypeScript {
             return this._valueText;
         }
 
-        public nodeType(): NodeType {
-            return NodeType.SuperExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SuperKeyword;
         }
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
@@ -416,8 +416,8 @@ module TypeScript {
         public valueText(): string { return this._valueText; }
         public value(): any { return this._value; }
 
-        public nodeType(): NodeType {
-            return NodeType.NumericLiteral;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.NumericLiteral;
         }
 
         public structuralEquals(ast: NumericLiteral, includingPosition: boolean): boolean {
@@ -440,8 +440,8 @@ module TypeScript {
             return this._valueText;
         }
 
-        public nodeType(): NodeType {
-            return NodeType.RegularExpressionLiteral;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.RegularExpressionLiteral;
         }
     }
 
@@ -455,8 +455,8 @@ module TypeScript {
         public text(): string { return this._text; }
         public valueText(): string { return this._valueText; }
 
-        public nodeType(): NodeType {
-            return NodeType.StringLiteral;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.StringLiteral;
         }
 
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
@@ -471,13 +471,13 @@ module TypeScript {
             type && (type.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TypeAnnotation;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TypeAnnotation;
         }
     }
 
     export class BuiltInType extends AST implements IASTToken {
-        constructor(private _nodeType: NodeType, private _text: string, private _valueText: string) {
+        constructor(private _nodeType: SyntaxKind, private _text: string, private _valueText: string) {
             super();
         }
 
@@ -489,7 +489,7 @@ module TypeScript {
             return this._valueText;
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             return this._nodeType;
         }
     }
@@ -500,8 +500,8 @@ module TypeScript {
             stringLiteral && (stringLiteral.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ExternalModuleReference;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ExternalModuleReference;
         }
     }
 
@@ -511,8 +511,8 @@ module TypeScript {
             moduleName && (moduleName.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ModuleNameModuleReference;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ModuleNameModuleReference;
         }
     }
 
@@ -523,8 +523,8 @@ module TypeScript {
             moduleReference && (moduleReference.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ImportDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ImportDeclaration;
         }
 
         public structuralEquals(ast: ImportDeclaration, includingPosition: boolean): boolean {
@@ -540,8 +540,8 @@ module TypeScript {
             identifier && (identifier.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ExportAssignment;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ExportAssignment;
         }
 
         public structuralEquals(ast: ExportAssignment, includingPosition: boolean): boolean {
@@ -556,8 +556,8 @@ module TypeScript {
             typeParameters && (typeParameters.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TypeParameterList;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TypeParameterList;
         }
     }
 
@@ -570,8 +570,8 @@ module TypeScript {
             classElements && (classElements.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ClassDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ClassDeclaration;
         }
 
         public structuralEquals(ast: ClassDeclaration, includingPosition: boolean): boolean {
@@ -592,8 +592,8 @@ module TypeScript {
             heritageClauses && (heritageClauses.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.InterfaceDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.InterfaceDeclaration;
         }
 
         public structuralEquals(ast: InterfaceDeclaration, includingPosition: boolean): boolean {
@@ -606,12 +606,12 @@ module TypeScript {
     }
 
     export class HeritageClause extends AST {
-        constructor(private _nodeType: NodeType, public typeNames: ASTSeparatedList) {
+        constructor(private _nodeType: SyntaxKind, public typeNames: ASTSeparatedList) {
             super();
             typeNames && (typeNames.parent = this);
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             return this._nodeType;
         }
 
@@ -629,8 +629,8 @@ module TypeScript {
             moduleElements && (moduleElements.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ModuleDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ModuleDeclaration;
         }
 
         public structuralEquals(ast: ModuleDeclaration, includingPosition: boolean): boolean {
@@ -648,8 +648,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.FunctionDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.FunctionDeclaration;
         }
 
         public structuralEquals(ast: FunctionDeclaration, includingPosition: boolean): boolean {
@@ -666,8 +666,8 @@ module TypeScript {
             declaration && (declaration.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.VariableStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.VariableStatement;
         }
 
         public structuralEquals(ast: VariableStatement, includingPosition: boolean): boolean {
@@ -682,8 +682,8 @@ module TypeScript {
             declarators && (declarators.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.VariableDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.VariableDeclaration;
         }
 
         public structuralEquals(ast: VariableDeclaration, includingPosition: boolean): boolean {
@@ -700,8 +700,8 @@ module TypeScript {
             equalsValueClause && (equalsValueClause.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.VariableDeclarator;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.VariableDeclarator;
         }
     }
 
@@ -711,18 +711,18 @@ module TypeScript {
             value && (value.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.EqualsValueClause;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.EqualsValueClause;
         }
     }
 
     export class PrefixUnaryExpression extends AST {
-        constructor(private _nodeType: NodeType, public operand: AST) {
+        constructor(private _nodeType: SyntaxKind, public operand: AST) {
             super();
             operand && (operand.parent = this);
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             return this._nodeType;
         }
 
@@ -738,8 +738,8 @@ module TypeScript {
             expressions && (expressions.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ArrayLiteralExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ArrayLiteralExpression;
         }
 
         public structuralEquals(ast: ArrayLiteralExpression, includingPosition: boolean): boolean {
@@ -749,8 +749,8 @@ module TypeScript {
     }
 
     export class OmittedExpression extends AST {
-        public nodeType(): NodeType {
-            return NodeType.OmittedExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.OmittedExpression;
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -764,8 +764,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ParenthesizedExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ParenthesizedExpression;
         }
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
@@ -787,8 +787,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.SimpleArrowFunctionExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SimpleArrowFunctionExpression;
         }
     }
 
@@ -800,8 +800,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ParenthesizedArrowFunctionExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ParenthesizedArrowFunctionExpression;
         }
     }
 
@@ -812,8 +812,8 @@ module TypeScript {
             right && (right.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.QualifiedName;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.QualifiedName;
         }
 
         public structuralEquals(ast: QualifiedName, includingPosition: boolean): boolean {
@@ -829,8 +829,8 @@ module TypeScript {
             parameters && (parameters.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ParameterList;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ParameterList;
         }
     }
 
@@ -842,8 +842,8 @@ module TypeScript {
             type && (type.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ConstructorType;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ConstructorType;
         }
     }
 
@@ -855,8 +855,8 @@ module TypeScript {
             type && (type.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.FunctionType;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.FunctionType;
         }
     }
 
@@ -866,8 +866,8 @@ module TypeScript {
             typeMembers && (typeMembers.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ObjectType;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ObjectType;
         }
 
         public structuralEquals(ast: ObjectType, includingPosition: boolean): boolean {
@@ -882,8 +882,8 @@ module TypeScript {
             type && (type.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ArrayType;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ArrayType;
         }
 
         public structuralEquals(ast: ArrayType, includingPosition: boolean): boolean {
@@ -898,8 +898,8 @@ module TypeScript {
             typeArguments && (typeArguments.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TypeArgumentList;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TypeArgumentList;
         }
     }
 
@@ -910,8 +910,8 @@ module TypeScript {
             typeArgumentList && (typeArgumentList.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.GenericType;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.GenericType;
         }
 
         public structuralEquals(ast: GenericType, includingPosition: boolean): boolean {
@@ -927,8 +927,8 @@ module TypeScript {
             name && (name.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TypeQuery;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TypeQuery;
         }
 
         public structuralEquals(ast: TypeQuery, includingPosition: boolean): boolean {
@@ -943,8 +943,8 @@ module TypeScript {
             statements && (statements.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.Block;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.Block;
         }
 
         public structuralEquals(ast: Block, includingPosition: boolean): boolean {
@@ -961,8 +961,8 @@ module TypeScript {
             equalsValueClause && (equalsValueClause.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.Parameter;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.Parameter;
         }
     }
 
@@ -973,8 +973,8 @@ module TypeScript {
             name && (name.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.MemberAccessExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.MemberAccessExpression;
         }
 
         public structuralEquals(ast: MemberAccessExpression, includingPosition: boolean): boolean {
@@ -985,12 +985,12 @@ module TypeScript {
     }
 
     export class PostfixUnaryExpression extends AST {
-        constructor(private _nodeType: NodeType, public operand: AST) {
+        constructor(private _nodeType: SyntaxKind, public operand: AST) {
             super();
             operand && (operand.parent = this);
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             return this._nodeType;
         }
 
@@ -1007,8 +1007,8 @@ module TypeScript {
             argumentExpression && (argumentExpression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ElementAccessExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ElementAccessExpression;
         }
 
         public structuralEquals(ast: ElementAccessExpression, includingPosition: boolean): boolean {
@@ -1025,8 +1025,8 @@ module TypeScript {
             argumentList && (argumentList.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.InvocationExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.InvocationExpression;
         }
 
         public structuralEquals(ast: InvocationExpression, includingPosition: boolean): boolean {
@@ -1043,19 +1043,19 @@ module TypeScript {
             arguments && (arguments.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ArgumentList;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ArgumentList;
         }
     }
 
     export class BinaryExpression extends AST {
-        constructor(private _nodeType: NodeType, public left: AST, public right: AST) {
+        constructor(private _nodeType: SyntaxKind, public left: AST, public right: AST) {
             super();
             left && (left.parent = this);
             right && (right.parent = this);
         }
 
-        public nodeType(): NodeType {
+        public nodeType(): SyntaxKind {
             return this._nodeType;
         }
 
@@ -1074,8 +1074,8 @@ module TypeScript {
             whenFalse && (whenFalse.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ConditionalExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ConditionalExpression;
         }
 
         public structuralEquals(ast: ConditionalExpression, includingPosition: boolean): boolean {
@@ -1092,8 +1092,8 @@ module TypeScript {
             callSignature && (callSignature.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ConstructSignature;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ConstructSignature;
         }
     }
 
@@ -1104,8 +1104,8 @@ module TypeScript {
             callSignature && (callSignature.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.MethodSignature;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.MethodSignature;
         }
     }
 
@@ -1116,8 +1116,8 @@ module TypeScript {
             typeAnnotation && (typeAnnotation.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.IndexSignature;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.IndexSignature;
         }
     }
 
@@ -1128,8 +1128,8 @@ module TypeScript {
             typeAnnotation && (typeAnnotation.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.PropertySignature;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.PropertySignature;
         }
     }
 
@@ -1141,8 +1141,8 @@ module TypeScript {
             typeAnnotation && (typeAnnotation.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.CallSignature;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.CallSignature;
         }
     }
 
@@ -1153,8 +1153,8 @@ module TypeScript {
             constraint && (constraint.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TypeParameter;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TypeParameter;
         }
 
         public structuralEquals(ast: TypeParameter, includingPosition: boolean): boolean {
@@ -1170,8 +1170,8 @@ module TypeScript {
             type && (type.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.Constraint;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.Constraint;
         }
     }
 
@@ -1181,8 +1181,8 @@ module TypeScript {
             statement && (statement.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ElseClause;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ElseClause;
         }
 
         public structuralEquals(ast: ElseClause, includingPosition: boolean): boolean {
@@ -1199,8 +1199,8 @@ module TypeScript {
             elseClause && (elseClause.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.IfStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.IfStatement;
         }
 
         public structuralEquals(ast: IfStatement, includingPosition: boolean): boolean {
@@ -1217,8 +1217,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ExpressionStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ExpressionStatement;
         }
 
         public structuralEquals(ast: ExpressionStatement, includingPosition: boolean): boolean {
@@ -1234,8 +1234,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ConstructorDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ConstructorDeclaration;
         }
     }
 
@@ -1247,8 +1247,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.MemberFunctionDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.MemberFunctionDeclaration;
         }
     }
 
@@ -1261,8 +1261,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.GetAccessor;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.GetAccessor;
         }
     }
 
@@ -1274,8 +1274,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.SetAccessor;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SetAccessor;
         }
     }
 
@@ -1285,8 +1285,8 @@ module TypeScript {
             variableDeclarator && (variableDeclarator.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.MemberVariableDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.MemberVariableDeclaration;
         }
     }
 
@@ -1296,8 +1296,8 @@ module TypeScript {
             indexSignature && (indexSignature.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.IndexMemberDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.IndexMemberDeclaration;
         }
     }
 
@@ -1307,8 +1307,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ThrowStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ThrowStatement;
         }
 
         public structuralEquals(ast: ThrowStatement, includingPosition: boolean): boolean {
@@ -1323,8 +1323,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ReturnStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ReturnStatement;
         }
 
         public structuralEquals(ast: ReturnStatement, includingPosition: boolean): boolean {
@@ -1340,8 +1340,8 @@ module TypeScript {
             argumentList && (argumentList.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ObjectCreationExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ObjectCreationExpression;
         }
 
         public structuralEquals(ast: ObjectCreationExpression, includingPosition: boolean): boolean {
@@ -1358,8 +1358,8 @@ module TypeScript {
             switchClauses && (switchClauses.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.SwitchStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SwitchStatement;
         }
 
         public structuralEquals(ast: SwitchStatement, includingPosition: boolean): boolean {
@@ -1376,8 +1376,8 @@ module TypeScript {
             statements && (statements.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.CaseSwitchClause;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.CaseSwitchClause;
         }
 
         public structuralEquals(ast: CaseSwitchClause, includingPosition: boolean): boolean {
@@ -1393,8 +1393,8 @@ module TypeScript {
             statements && (statements.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.DefaultSwitchClause;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.DefaultSwitchClause;
         }
 
         public structuralEquals(ast: DefaultSwitchClause, includingPosition: boolean): boolean {
@@ -1408,8 +1408,8 @@ module TypeScript {
             super();
         }
 
-        public nodeType(): NodeType {
-            return NodeType.BreakStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.BreakStatement;
         }
 
         public structuralEquals(ast: BreakStatement, includingPosition: boolean): boolean {
@@ -1422,8 +1422,8 @@ module TypeScript {
             super();
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ContinueStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ContinueStatement;
         }
 
         public structuralEquals(ast: ContinueStatement, includingPosition: boolean): boolean {
@@ -1441,8 +1441,8 @@ module TypeScript {
             statement && (statement.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ForStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ForStatement;
         }
 
         public structuralEquals(ast: ForStatement, includingPosition: boolean): boolean {
@@ -1463,8 +1463,8 @@ module TypeScript {
             statement && (statement.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ForInStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ForInStatement;
         }
 
         public structuralEquals(ast: ForInStatement, includingPosition: boolean): boolean {
@@ -1482,8 +1482,8 @@ module TypeScript {
             statement && (statement.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.WhileStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.WhileStatement;
         }
 
         public structuralEquals(ast: WhileStatement, includingPosition: boolean): boolean {
@@ -1500,8 +1500,8 @@ module TypeScript {
             statement && (statement.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.WithStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.WithStatement;
         }
 
         public structuralEquals(ast: WithStatement, includingPosition: boolean): boolean {
@@ -1518,8 +1518,8 @@ module TypeScript {
             enumElements && (enumElements.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.EnumDeclaration;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.EnumDeclaration;
         }
     }
 
@@ -1530,8 +1530,8 @@ module TypeScript {
             equalsValueClause && (equalsValueClause.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.EnumElement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.EnumElement;
         }
     }
 
@@ -1542,8 +1542,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.CastExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.CastExpression;
         }
 
         public structuralEquals(ast: CastExpression, includingPosition: boolean): boolean {
@@ -1559,8 +1559,8 @@ module TypeScript {
             propertyAssignments && (propertyAssignments.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.ObjectLiteralExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.ObjectLiteralExpression;
         }
 
         public structuralEquals(ast: ObjectLiteralExpression, includingPosition: boolean): boolean {
@@ -1576,8 +1576,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.SimplePropertyAssignment;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.SimplePropertyAssignment;
         }
     }
 
@@ -1589,8 +1589,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.FunctionPropertyAssignment;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.FunctionPropertyAssignment;
         }
     }
 
@@ -1602,14 +1602,14 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.FunctionExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.FunctionExpression;
         }
     }
 
     export class EmptyStatement extends AST {
-        public nodeType(): NodeType {
-            return NodeType.EmptyStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.EmptyStatement;
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -1625,8 +1625,8 @@ module TypeScript {
             finallyClause && (finallyClause.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TryStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TryStatement;
         }
 
         public structuralEquals(ast: TryStatement, includingPosition: boolean): boolean {
@@ -1645,8 +1645,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.CatchClause;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.CatchClause;
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -1663,8 +1663,8 @@ module TypeScript {
             block && (block.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.FinallyClause;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.FinallyClause;
         }
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
@@ -1680,8 +1680,8 @@ module TypeScript {
             statement && (statement.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.LabeledStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.LabeledStatement;
         }
 
         public structuralEquals(ast: LabeledStatement, includingPosition: boolean): boolean {
@@ -1698,8 +1698,8 @@ module TypeScript {
             condition && (condition.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.DoStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.DoStatement;
         }
 
         public structuralEquals(ast: DoStatement, includingPosition: boolean): boolean {
@@ -1715,8 +1715,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.TypeOfExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.TypeOfExpression;
         }
 
         public structuralEquals(ast: TypeOfExpression, includingPosition: boolean): boolean {
@@ -1731,8 +1731,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.DeleteExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.DeleteExpression;
         }
 
         public structuralEquals(ast: DeleteExpression, includingPosition: boolean): boolean {
@@ -1747,8 +1747,8 @@ module TypeScript {
             expression && (expression.parent = this);
         }
 
-        public nodeType(): NodeType {
-            return NodeType.VoidExpression;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.VoidExpression;
         }
 
         public structuralEquals(ast: VoidExpression, includingPosition: boolean): boolean {
@@ -1758,8 +1758,8 @@ module TypeScript {
     }
 
     export class DebuggerStatement extends AST {
-        public nodeType(): NodeType {
-            return NodeType.DebuggerStatement;
+        public nodeType(): SyntaxKind {
+            return SyntaxKind.DebuggerStatement;
         }
     }
 
