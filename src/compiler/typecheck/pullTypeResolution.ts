@@ -190,24 +190,11 @@ module TypeScript {
         }
 
         private setTypeChecked(ast: AST, context: PullTypeResolutionContext) {
-            if (!context || !context.inProvisionalResolution()) {
-                ast.typeCheckPhase = PullTypeResolver.globalTypeCheckPhase;
-            }
+            context.setTypeChecked(ast);
         }
 
         private canTypeCheckAST(ast: AST, context: PullTypeResolutionContext) {
-            // If we're in a context where we're type checking, and the ast we're typechecking
-            // hasn't been typechecked in this phase yet, *and* the ast is from the file we're
-            // currently typechecking, then we can typecheck.
-            //
-            // If the ast has been typechecked in this phase, then there's no need to typecheck
-            // it again.  Also, if it's from another file, there's no need to typecheck it since
-            // whatever host we're in will eventually get around to typechecking it.  This is 
-            // also important as it's very possible to stack overflow when typechecking if we 
-            // keep jumping around to AST nodes all around a large project.
-            return context && context.typeCheck() &&
-                ast.typeCheckPhase !== PullTypeResolver.globalTypeCheckPhase &&
-               context.fileName === ast.fileName();
+            return context.canTypeCheckAST(ast);
         }
 
         private setSymbolForAST(ast: AST, symbol: PullSymbol, context: PullTypeResolutionContext): void {

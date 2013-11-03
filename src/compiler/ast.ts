@@ -92,7 +92,6 @@ module TypeScript {
 
     export class AST implements IASTSpan {
         public parent: AST = null;
-        public typeCheckPhase = -1;
         public _start: number = -1;
         public _end: number = -1;
         public _trailingTriviaWidth: number = 0;
