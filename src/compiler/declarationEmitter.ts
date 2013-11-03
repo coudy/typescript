@@ -948,17 +948,17 @@ module TypeScript {
                     this.declFile.WriteLine("require(" + (<ExternalModuleReference>importDeclAST.moduleReference).stringLiteral.text() + ");");
                 }
                 else {
-                    this.declFile.WriteLine(this.getAliasName((<ModuleNameModuleReference>importDeclAST.moduleReference).moduleName) + ";");
+                    this.declFile.WriteLine(this.getFullName((<ModuleNameModuleReference>importDeclAST.moduleReference).moduleName) + ";");
                 }
             }
         }
 
-        public getAliasName(aliasAST: AST): string {
-            if (aliasAST.nodeType() === SyntaxKind.IdentifierName) {
-                return (<Identifier>aliasAST).text();
+        public getFullName(name: AST): string {
+            if (name.nodeType() === SyntaxKind.IdentifierName) {
+                return (<Identifier>name).text();
             } else {
-                var dotExpr = <QualifiedName>aliasAST;
-                return this.getAliasName(dotExpr.left) + "." + this.getAliasName(dotExpr.right);
+                var dotExpr = <QualifiedName>name;
+                return this.getFullName(dotExpr.left) + "." + this.getFullName(dotExpr.right);
             }
         }
 
