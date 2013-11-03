@@ -349,21 +349,14 @@ module TypeScript {
 
         private emitVariableDeclarator(varDecl: VariableDeclarator, isFirstVarInList: boolean, isLastVarInList: boolean) {
             if (this.canEmitDeclarations(varDecl)) {
-                var interfaceMember = (this.getAstDeclarationContainer().nodeType() === SyntaxKind.InterfaceDeclaration);
                 this.emitDeclarationComments(varDecl);
-                if (!interfaceMember) {
-                    // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
-                    // If it is var list of form  var a = varList count will be 0
-                    if (isFirstVarInList) {
-                        this.emitDeclFlags(this.semanticInfoChain.getDeclForAST(varDecl), "var");
-                    }
+                // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
+                // If it is var list of form  var a = varList count will be 0
+                if (isFirstVarInList) {
+                    this.emitDeclFlags(this.semanticInfoChain.getDeclForAST(varDecl), "var");
+                }
 
-                    this.declFile.Write(varDecl.propertyName.text());
-                }
-                else {
-                    this.emitIndent();
-                    this.declFile.Write(varDecl.propertyName.text());
-                }
+                this.declFile.Write(varDecl.propertyName.text());
 
                 if (!hasModifier(getVariableDeclaratorModifiers(varDecl), PullElementFlags.Private)) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
@@ -669,8 +662,6 @@ module TypeScript {
         private emitDeclarationsForFunctionDeclaration(funcDecl: FunctionDeclaration) {
             var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
 
-            var isInterfaceMember = (this.getAstDeclarationContainer().nodeType() === SyntaxKind.InterfaceDeclaration);
-
             var start = new Date().getTime();
             var funcSymbol = this.semanticInfoChain.getSymbolForAST(funcDecl);
 
@@ -695,23 +686,12 @@ module TypeScript {
             this.emitDeclarationComments(funcDecl);
 
             var id = funcDecl.identifier.text();
-            if (!isInterfaceMember) {
-                this.emitDeclFlags(funcPullDecl, "function");
-                if (id !== "" || !funcDecl.identifier || funcDecl.identifier.text().length > 0) {
-                    this.declFile.Write(id);
-                }
-                else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
-                    this.declFile.Write("new");
-                }
+            this.emitDeclFlags(funcPullDecl, "function");
+            if (id !== "" || !funcDecl.identifier || funcDecl.identifier.text().length > 0) {
+                this.declFile.Write(id);
             }
-            else {
-                this.emitIndent();
-                if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
-                    this.declFile.Write("new");
-                }
-                else if (funcPullDecl.kind !== PullElementKind.CallSignature) {
-                    this.declFile.Write(id);
-                }
+            else if (funcPullDecl.kind === PullElementKind.ConstructSignature) {
+                this.declFile.Write("new");
             }
 
             var funcSignature = funcPullDecl.getSignatureSymbol();
