@@ -75,31 +75,6 @@ module TypeScript {
             span._end = end;
         }
 
-        public identifierFromToken(token: ISyntaxToken): Identifier {
-            var result: Identifier = null;
-
-            switch (token.tokenKind) {
-                case SyntaxKind.IdentifierName:
-                    result = new Identifier(token.text(), null, /*isStringOrNumericLiteral:*/ false);
-                    break;
-
-                case SyntaxKind.NumericLiteral:
-                case SyntaxKind.StringLiteral:
-                    var tokenText = token.text();
-                    var text = token.valueText();
-                    result = new Identifier(token.text(), token.valueText(), /*isStringOrNumericLiteral:*/ true);
-                    break;
-
-                default:
-                    throw Errors.invalidOperation();
-            }
-
-            var start = this.position + token.leadingTriviaWidth();
-            this.setSpanExplicit(result, start, start + token.width());
-
-            return result;
-        }
-
         public visitSyntaxList(node: ISyntaxList): ASTList {
             var start = this.position;
             var array = new Array<any>(node.childCount());
@@ -207,7 +182,11 @@ module TypeScript {
             return this.convertComments(lastToken.trailingTrivia(), nodeStart + node.fullWidth() - lastToken.trailingTriviaWidth());
         }
 
-        public visitToken(token: ISyntaxToken): AST {
+        private visitIdentifier(token: ISyntaxToken): Identifier {
+            return <Identifier>this.visitToken(token);
+        }
+
+        public visitToken(token: ISyntaxToken): IASTToken {
             var fullStart = this.position;
 
             var result = this.visitTokenWorker(token);
@@ -219,32 +198,32 @@ module TypeScript {
             return result;
         }
 
-        public visitTokenWorker(token: ISyntaxToken): AST {
+        public visitTokenWorker(token: ISyntaxToken): IASTToken {
             switch (token.tokenKind) {
                 case SyntaxKind.AnyKeyword:
-                    return new BuiltInType(NodeType.AnyType);
+                    return new BuiltInType(NodeType.AnyType, token.text(), token.valueText());
                 case SyntaxKind.BooleanKeyword:
-                    return new BuiltInType(NodeType.BooleanType);
+                    return new BuiltInType(NodeType.BooleanType, token.text(), token.valueText());
                 case SyntaxKind.NumberKeyword:
-                    return new BuiltInType(NodeType.NumberType);
+                    return new BuiltInType(NodeType.NumberType, token.text(), token.valueText());
                 case SyntaxKind.StringKeyword:
-                    return new BuiltInType(NodeType.StringType);
+                    return new BuiltInType(NodeType.StringType, token.text(), token.valueText());
                 case SyntaxKind.VoidKeyword:
-                    return new BuiltInType(NodeType.VoidType);
+                    return new BuiltInType(NodeType.VoidType, token.text(), token.valueText());
                 case SyntaxKind.ThisKeyword:
-                    return new ThisExpression();
+                    return new ThisExpression(token.text(), token.valueText());
                 case SyntaxKind.SuperKeyword:
-                    return new SuperExpression();
+                    return new SuperExpression(token.text(), token.valueText());
                 case SyntaxKind.TrueKeyword:
-                    return new LiteralExpression(NodeType.TrueLiteral);
+                    return new LiteralExpression(NodeType.TrueLiteral, token.text(), token.valueText());
                 case SyntaxKind.FalseKeyword:
-                    return new LiteralExpression(NodeType.FalseLiteral);
+                    return new LiteralExpression(NodeType.FalseLiteral, token.text(), token.valueText());
                 case SyntaxKind.NullKeyword:
-                    return new LiteralExpression(NodeType.NullLiteral);
+                    return new LiteralExpression(NodeType.NullLiteral, token.text(), token.valueText());
                 case SyntaxKind.StringLiteral:
                     return new StringLiteral(token.text(), token.valueText());
                 case SyntaxKind.RegularExpressionLiteral:
-                    return new RegularExpressionLiteral(token.text());
+                    return new RegularExpressionLiteral(token.text(), token.valueText());
                 case SyntaxKind.NumericLiteral:
                     var fullStart = this.position;
                     var preComments = this.convertTokenLeadingComments(token, fullStart);
@@ -253,8 +232,10 @@ module TypeScript {
 
                     result.setPreComments(preComments);
                     return result;
+                case SyntaxKind.IdentifierName:
+                    return new Identifier(token.text())
                 default:
-                    return this.identifierFromToken(token);
+                    throw Errors.invalidOperation();
             }
         }
 
@@ -384,8 +365,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var name = this.visitIdentifier(node.identifier);
 
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
@@ -437,8 +417,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var name = this.visitIdentifier(node.identifier);
             var typeParameters = this.visitTypeParameterList(node.typeParameterList);
             var heritageClauses = node.heritageClauses ? this.visitSyntaxList(node.heritageClauses) : null;
 
@@ -483,12 +462,10 @@ module TypeScript {
                 var qualifiedName = <QualifiedNameSyntax>name;
                 this.getModuleNamesHelper(qualifiedName.left, result);
                 this.movePast(qualifiedName.dotToken);
-                result.push(this.identifierFromToken(qualifiedName.right));
-                this.movePast(qualifiedName.right);
+                result.push(this.visitIdentifier(qualifiedName.right));
             }
             else {
-                result.push(this.identifierFromToken(<ISyntaxToken>name));
-                this.movePast(name);
+                result.push(this.visitIdentifier(<ISyntaxToken>name));
             }
         }
 
@@ -551,9 +528,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier);
-
-            this.movePast(node.identifier);
+            var name = this.visitIdentifier(node.identifier);
 
             var callSignature = this.visitCallSignature(node.callSignature);
             var block = node.block ? this.visitBlock(node.block) : null;
@@ -570,8 +545,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var identifier = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var identifier = this.visitIdentifier(node.identifier);
 
             this.movePast(node.openBraceToken);
 
@@ -588,8 +562,7 @@ module TypeScript {
         public visitEnumElement(node: EnumElementSyntax): EnumElement {
             var start = this.position;
 
-            var memberName = this.identifierFromToken(node.propertyName);
-            this.movePast(node.propertyName);
+            var memberName = this.visitToken(node.propertyName);
 
             var value = node.equalsValueClause !== null ? this.visitEqualsValueClause(node.equalsValueClause) : null;
 
@@ -603,8 +576,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var name = this.visitIdentifier(node.identifier);
             this.movePast(node.equalsToken);
             var alias: AST = node.moduleReference.accept(this);
             this.movePast(node.semicolonToken);
@@ -620,8 +592,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.identifier);
-            var name = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var name = this.visitIdentifier(node.identifier);
             this.movePast(node.semicolonToken);
 
             var result = new ExportAssignment(name);
@@ -660,12 +631,11 @@ module TypeScript {
 
         public visitVariableDeclarator(node: VariableDeclaratorSyntax): VariableDeclarator {
             var start = this.position;
-            var name = this.identifierFromToken(node.propertyName);
-            this.movePast(node.propertyName);
+            var propertyName = this.visitToken(node.propertyName);
             var typeExpr = this.visitTypeAnnotation(node.typeAnnotation);
-            var init: EqualsValueClause = node.equalsValueClause ? node.equalsValueClause.accept(this) : null;
+            var init = node.equalsValueClause ? this.visitEqualsValueClause(node.equalsValueClause) : null;
 
-            var result = new VariableDeclarator(name, typeExpr, init);
+            var result = new VariableDeclarator(propertyName, typeExpr, init);
             this.setSpan(result, start, node);
 
             return result;
@@ -803,8 +773,7 @@ module TypeScript {
             var start = this.position;
             var left = this.visitType(node.left);
             this.movePast(node.dotToken);
-            var right = this.identifierFromToken(node.right);
-            this.movePast(node.right);
+            var right = this.visitIdentifier(node.right);
 
             var result = new QualifiedName(left, right);
             this.setSpan(result, start, node);
@@ -936,8 +905,7 @@ module TypeScript {
             var dotDotDotToken = this.createTokenSpan(this.position, node.dotDotDotToken);
 
             this.moveTo(node, node.identifier);
-            var identifier = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var identifier = this.visitIdentifier(node.identifier);
 
             var questionToken = this.createTokenSpan(this.position, node.questionToken);
             this.movePast(node.questionToken);
@@ -957,8 +925,7 @@ module TypeScript {
 
             var expression: AST = node.expression.accept(this);
             this.movePast(node.dotToken);
-            var name = this.identifierFromToken(node.name);
-            this.movePast(node.name);
+            var name = this.visitIdentifier(node.name);
 
             var result = new MemberAccessExpression(expression, name);
             this.setSpan(result, start, node);
@@ -1119,8 +1086,7 @@ module TypeScript {
         public visitMethodSignature(node: MethodSignatureSyntax): MethodSignature {
             var start = this.position;
 
-            var name = this.identifierFromToken(node.propertyName);
-            this.movePast(node.propertyName);
+            var name = this.visitToken(node.propertyName);
 
             var questionToken = this.createTokenSpan(this.position, node.questionToken);
             this.movePast(node.questionToken);
@@ -1152,8 +1118,7 @@ module TypeScript {
         public visitPropertySignature(node: PropertySignatureSyntax): PropertySignature {
             var start = this.position;
 
-            var name = this.identifierFromToken(node.propertyName);
-            this.movePast(node.propertyName);
+            var name = this.visitToken(node.propertyName);
 
             var questionToken = this.createTokenSpan(this.position, node.questionToken);
             this.movePast(node.questionToken);
@@ -1223,8 +1188,7 @@ module TypeScript {
         public visitTypeParameter(node: TypeParameterSyntax): TypeParameter {
             var start = this.position;
 
-            var identifier = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var identifier = this.visitIdentifier(node.identifier);
             var constraint: Constraint = node.constraint ? node.constraint.accept(this) : null;
 
             var result = new TypeParameter(identifier, constraint);
@@ -1326,9 +1290,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName);
-            
-            this.movePast(node.propertyName);
+            var name = this.visitToken(node.propertyName);
 
             var callSignature = this.visitCallSignature(node.callSignature);
             var block = node.block ? this.visitBlock(node.block) : null;
@@ -1344,8 +1306,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName);
-            this.movePast(node.propertyName);
+            var name = this.visitToken(node.propertyName);
             var parameters = this.visitParameterList(node.parameterList);
             var returnType = this.visitTypeAnnotation(node.typeAnnotation);
 
@@ -1360,8 +1321,7 @@ module TypeScript {
             var start = this.position;
 
             this.moveTo(node, node.propertyName);
-            var name = this.identifierFromToken(node.propertyName);
-            this.movePast(node.propertyName);
+            var name = this.visitToken(node.propertyName);
             var parameters = this.visitParameterList(node.parameterList);
             var block = node.block ? node.block.accept(this) : null;
             var result = new SetAccessor(this.visitModifiers(node.modifiers), name, parameters, block);
@@ -1635,8 +1595,7 @@ module TypeScript {
             var start = this.position;
 
             this.movePast(node.functionKeyword);
-            var name = node.identifier === null ? null : this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var name = node.identifier === null ? null : this.visitIdentifier(node.identifier);
 
             var callSignature = this.visitCallSignature(node.callSignature);
             var block: Block = node.block ? node.block.accept(this) : null;
@@ -1685,8 +1644,7 @@ module TypeScript {
 
             this.movePast(node.catchKeyword);
             this.movePast(node.openParenToken);
-            var identifier = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var identifier = this.visitIdentifier(node.identifier);
             var typeAnnotation = this.visitTypeAnnotation(node.typeAnnotation);
             this.movePast(node.closeParenToken);
             var block = node.block.accept(this);
@@ -1711,8 +1669,7 @@ module TypeScript {
         public visitLabeledStatement(node: LabeledStatementSyntax): LabeledStatement {
             var start = this.position;
 
-            var identifier = this.identifierFromToken(node.identifier);
-            this.movePast(node.identifier);
+            var identifier = this.visitIdentifier(node.identifier);
             this.movePast(node.colonToken);
             var statement = node.statement.accept(this);
 
@@ -1919,7 +1876,7 @@ module TypeScript {
             return result;
         }
 
-        public visitToken(token: ISyntaxToken): AST {
+        public visitToken(token: ISyntaxToken): IASTToken {
             var result = this.getAndMovePastAST(token);
 
             if (!result) {

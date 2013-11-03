@@ -250,7 +250,7 @@ module TypeScript {
     }
 
     function walkVariableDeclaratorChildren(preAst: VariableDeclarator, walker: AstWalker): void {
-        walker.walk(preAst.identifier);
+        walker.walk(preAst.propertyName);
         walker.walk(preAst.typeAnnotation);
         walker.walk(preAst.equalsValueClause);
     }

@@ -985,7 +985,7 @@ module TypeScript {
                 variableSymbol.addDeclaration(variableDeclaration);
                 variableDeclaration.setSymbol(variableSymbol);
 
-                this.semanticInfoChain.setSymbolForAST(varDeclAST.identifier, variableSymbol);
+                this.semanticInfoChain.setSymbolForAST(varDeclAST.propertyName, variableSymbol);
                 this.semanticInfoChain.setSymbolForAST(varDeclAST, variableSymbol);
             }
             else if (!parentHadSymbol) {
@@ -1227,10 +1227,12 @@ module TypeScript {
 
             var ast = this.semanticInfoChain.getASTForDecl(propertyDeclaration);
             var astName = ast.nodeType() === NodeType.MemberVariableDeclaration
-                ? (<MemberVariableDeclaration>ast).variableDeclarator.identifier
+                ? (<MemberVariableDeclaration>ast).variableDeclarator.propertyName
                 : ast.nodeType() === NodeType.PropertySignature
                     ? (<PropertySignature>ast).propertyName
-                    : (<VariableDeclarator>ast).identifier;
+                    : ast.nodeType() === NodeType.Parameter
+                        ? (<Parameter>ast).identifier
+                        : (<VariableDeclarator>ast).propertyName;
 
             var isStatic = false;
             var isOptional = false;

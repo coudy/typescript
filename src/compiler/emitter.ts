@@ -1423,7 +1423,7 @@ module TypeScript {
             if (varDecl.equalsValueClause) {
                 this.emitComments(varDecl, true);
                 this.recordSourceMappingStart(varDecl);
-                this.writeToOutputWithSourceMapRecord(varDecl.identifier.text(), varDecl.identifier);
+                this.writeToOutputWithSourceMapRecord(varDecl.propertyName.text(), varDecl.propertyName);
                 this.emitJavascript(varDecl.equalsValueClause, false);
                 this.recordSourceMappingEnd(varDecl);
                 this.emitComments(varDecl, false);
@@ -1480,8 +1480,8 @@ module TypeScript {
             this.emitComments(varDecl, true);
             this.recordSourceMappingStart(varDecl);
 
-            var varDeclName = varDecl.variableDeclarator.identifier.text();
-            var quotedOrNumber = isQuoted(varDeclName) || varDecl.variableDeclarator.identifier.isStringOrNumericLiteral;
+            var varDeclName = varDecl.variableDeclarator.propertyName.text();
+            var quotedOrNumber = isQuoted(varDeclName) || varDecl.variableDeclarator.propertyName.nodeType() !== NodeType.Name;
 
             var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
             var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1494,7 +1494,7 @@ module TypeScript {
                 this.writeToOutput("this.");
             }
 
-            this.writeToOutputWithSourceMapRecord(varDecl.variableDeclarator.identifier.text(), varDecl.variableDeclarator.identifier);
+            this.writeToOutputWithSourceMapRecord(varDecl.variableDeclarator.propertyName.text(), varDecl.variableDeclarator.propertyName);
 
             if (quotedOrNumber) {
                 this.writeToOutput("]");
@@ -1531,7 +1531,7 @@ module TypeScript {
                 this.recordSourceMappingStart(this.currentVariableDeclaration);
                 this.recordSourceMappingStart(varDecl);
 
-                var varDeclName = varDecl.identifier.text();
+                var varDeclName = varDecl.propertyName.text();
 
                 var symbol = this.semanticInfoChain.getSymbolForAST(varDecl);
                 var parentSymbol = symbol ? symbol.getContainer() : null;
@@ -1556,7 +1556,7 @@ module TypeScript {
                     this.emitVarDeclVar();
                 }
 
-                this.writeToOutputWithSourceMapRecord(varDecl.identifier.text(), varDecl.identifier);
+                this.writeToOutputWithSourceMapRecord(varDecl.propertyName.text(), varDecl.propertyName);
 
                 if (varDecl.equalsValueClause) {
                     // Ensure we have a fresh var list count when recursing into the variable 
@@ -2174,7 +2174,7 @@ module TypeScript {
             this.emit(ast);
         }
 
-        public emitAccessorMemberDeclaration(funcDecl: AST, name: Identifier, className: string, isProto: boolean) {
+        public emitAccessorMemberDeclaration(funcDecl: AST, name: IASTToken, className: string, isProto: boolean) {
             if (funcDecl.nodeType() !== NodeType.GetAccessor) {
                 var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
                 if (accessorSymbol.getGetter()) {
@@ -2402,8 +2402,8 @@ module TypeScript {
                         this.emitIndent();
                         this.recordSourceMappingStart(varDecl);
 
-                        var varDeclName = varDecl.variableDeclarator.identifier.text();
-                        if (isQuoted(varDeclName) || varDecl.variableDeclarator.identifier.isStringOrNumericLiteral) {
+                        var varDeclName = varDecl.variableDeclarator.propertyName.text();
+                        if (isQuoted(varDeclName) || varDecl.variableDeclarator.propertyName.nodeType() !== NodeType.Name) {
                             this.writeToOutput(classDecl.identifier.text() + "[" + varDeclName + "]");
                         }
                         else {
@@ -2433,7 +2433,7 @@ module TypeScript {
                 this.writeToOutput(".prototype");
             }
 
-            if (isQuoted(functionName) || funcDecl.propertyName.isStringOrNumericLiteral) {
+            if (isQuoted(functionName) || funcDecl.propertyName.nodeType() !== NodeType.Name) {
                 this.writeToOutput("[" + functionName + "] = ");
             }
             else {
@@ -3045,7 +3045,7 @@ module TypeScript {
         }
 
         public emitRegularExpressionLiteral(literal: RegularExpressionLiteral): void {
-            this.writeToOutputWithSourceMapRecord(literal.text, literal);
+            this.writeToOutputWithSourceMapRecord(literal.text(), literal);
         }
 
         public emitStringLiteral(literal: StringLiteral): void {

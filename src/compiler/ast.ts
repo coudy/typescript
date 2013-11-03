@@ -172,6 +172,11 @@ module TypeScript {
         }
     }
 
+    export interface IASTToken extends AST {
+        text(): string;
+        valueText(): string;
+    }
+
     export class ASTList extends AST {
         constructor(private _fileName: string, private members: AST[]) {
             super();
@@ -288,7 +293,9 @@ module TypeScript {
         }
     }
 
-    export class Identifier extends AST {
+    export class Identifier extends AST implements IASTToken {
+        private _valueText: string = null;
+
         // 'actualText' is the text that the user has entered for the identifier. the text might 
         // include any Unicode escape sequences (e.g.: \u0041 for 'A'). 'text', however, contains 
         // the resolved value of any escape sequences in the actual text; so in the previous 
@@ -299,7 +306,7 @@ module TypeScript {
         // For purposes of finding a symbol, use text, as this will allow you to match all 
         // variations of the variable text. For full-fidelity translation of the user input, such
         // as emitting, use the actualText field.
-        constructor(private _text: string, private _valueText: string, public isStringOrNumericLiteral: boolean) {
+        constructor(private _text: string) {
             super();
         }
 
@@ -333,8 +340,16 @@ module TypeScript {
     }
 
     export class LiteralExpression extends AST {
-        constructor(private _nodeType: NodeType) {
+        constructor(private _nodeType: NodeType, private _text: string, private _valueText: string) {
             super();
+        }
+
+        public text(): string {
+            return this._text;
+        }
+
+        public valueText(): string {
+            return this._valueText;
         }
 
         public nodeType(): NodeType {
@@ -346,7 +361,19 @@ module TypeScript {
         }
     }
 
-    export class ThisExpression extends AST {
+    export class ThisExpression extends AST implements IASTToken {
+        constructor(private _text: string, private _valueText: string) {
+            super();
+        }
+
+        public text(): string {
+            return this._text;
+        }
+
+        public valueText(): string {
+            return this._valueText;
+        }
+
         public nodeType(): NodeType {
             return NodeType.ThisExpression;
         }
@@ -356,7 +383,19 @@ module TypeScript {
         }
     }
 
-    export class SuperExpression extends AST {
+    export class SuperExpression extends AST implements IASTToken {
+        constructor(private _text: string, private _valueText: string) {
+            super();
+        }
+
+        public text(): string {
+            return this._text;
+        }
+
+        public valueText(): string {
+            return this._valueText;
+        }
+
         public nodeType(): NodeType {
             return NodeType.SuperExpression;
         }
@@ -366,7 +405,7 @@ module TypeScript {
         }
     }
 
-    export class NumericLiteral extends AST {
+    export class NumericLiteral extends AST implements IASTToken {
         constructor(private _value: number,
                     private _text: string,
                     private _valueText: string) {
@@ -388,24 +427,29 @@ module TypeScript {
         }
     }
 
-    export class RegularExpressionLiteral extends AST {
-        constructor(public text: string) {
+    export class RegularExpressionLiteral extends AST implements IASTToken {
+        constructor(private _text: string, private _valueText: string) {
             super();
+        }
+
+        public text(): string {
+            return this._text;
+        }
+
+        public valueText(): string {
+            return this._valueText;
         }
 
         public nodeType(): NodeType {
             return NodeType.RegularExpressionLiteral;
         }
-
-        public structuralEquals(ast: RegularExpressionLiteral, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                   this.text === ast.text;
-        }
     }
 
-    export class StringLiteral extends AST {
+    export class StringLiteral extends AST implements IASTToken {
         constructor(private _text: string, private _valueText: string) {
             super();
+            this._valueText = _valueText === "__proto__" ? "#__proto__" : _valueText;
+
         }
 
         public text(): string { return this._text; }
@@ -432,9 +476,17 @@ module TypeScript {
         }
     }
 
-    export class BuiltInType extends AST {
-        constructor(private _nodeType: NodeType) {
+    export class BuiltInType extends AST implements IASTToken {
+        constructor(private _nodeType: NodeType, private _text: string, private _valueText: string) {
             super();
+        }
+
+        public text(): string {
+            return this._text;
+        }
+
+        public valueText(): string {
+            return this._valueText;
         }
 
         public nodeType(): NodeType {
@@ -641,22 +693,15 @@ module TypeScript {
     }
 
     export class VariableDeclarator extends AST {
-        constructor(public identifier: Identifier, public typeAnnotation: TypeAnnotation, public equalsValueClause: EqualsValueClause) {
+        constructor(public propertyName: IASTToken, public typeAnnotation: TypeAnnotation, public equalsValueClause: EqualsValueClause) {
             super();
-            identifier && (identifier.parent = this);
+            propertyName && (propertyName.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
             equalsValueClause && (equalsValueClause.parent = this);
         }
 
         public nodeType(): NodeType {
             return NodeType.VariableDeclarator;
-        }
-
-        public structuralEquals(ast: VariableDeclarator, includingPosition: boolean): boolean {
-            return super.structuralEquals(ast, includingPosition) &&
-                structuralEquals(this.equalsValueClause, ast.equalsValueClause, includingPosition) &&
-                structuralEquals(this.typeAnnotation, ast.typeAnnotation, includingPosition) &&
-                structuralEquals(this.identifier, ast.identifier, includingPosition);
         }
     }
 
@@ -1053,7 +1098,7 @@ module TypeScript {
     }
 
     export class MethodSignature extends AST {
-        constructor(public propertyName: Identifier, public questionToken: ASTSpan, public callSignature: CallSignature) {
+        constructor(public propertyName: IASTToken, public questionToken: ASTSpan, public callSignature: CallSignature) {
             super();
             propertyName && (propertyName.parent = this);
             callSignature && (callSignature.parent = this);
@@ -1077,7 +1122,7 @@ module TypeScript {
     }
 
     export class PropertySignature extends AST {
-        constructor(public propertyName: Identifier, public questionToken: ASTSpan, public typeAnnotation: TypeAnnotation) {
+        constructor(public propertyName: IASTToken, public questionToken: ASTSpan, public typeAnnotation: TypeAnnotation) {
             super();
             propertyName && (propertyName.parent = this);
             typeAnnotation && (typeAnnotation.parent = this);
@@ -1195,7 +1240,7 @@ module TypeScript {
     }
 
     export class MemberFunctionDeclaration extends AST {
-        constructor(public modifiers: PullElementFlags[], public propertyName: Identifier, public callSignature: CallSignature, public block: Block) {
+        constructor(public modifiers: PullElementFlags[], public propertyName: IASTToken, public callSignature: CallSignature, public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             callSignature && (callSignature.parent = this);
@@ -1208,7 +1253,7 @@ module TypeScript {
     }
 
     export class GetAccessor extends AST {
-        constructor(public modifiers: PullElementFlags[], public propertyName: Identifier, public parameterList: ParameterList, public typeAnnotation: TypeAnnotation, public block: Block) {
+        constructor(public modifiers: PullElementFlags[], public propertyName: IASTToken, public parameterList: ParameterList, public typeAnnotation: TypeAnnotation, public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             parameterList && (parameterList.parent = this);
@@ -1222,7 +1267,7 @@ module TypeScript {
     }
 
     export class SetAccessor extends AST {
-        constructor(public modifiers: PullElementFlags[], public propertyName: Identifier, public parameterList: ParameterList, public block: Block) {
+        constructor(public modifiers: PullElementFlags[], public propertyName: IASTToken, public parameterList: ParameterList, public block: Block) {
             super();
             propertyName && (propertyName.parent = this);
             parameterList && (parameterList.parent = this);
@@ -1479,7 +1524,7 @@ module TypeScript {
     }
 
     export class EnumElement extends AST {
-        constructor(public propertyName: Identifier, public equalsValueClause: EqualsValueClause) {
+        constructor(public propertyName: IASTToken, public equalsValueClause: EqualsValueClause) {
             super();
             propertyName && (propertyName.parent = this);
             equalsValueClause && (equalsValueClause.parent = this);

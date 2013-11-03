@@ -35,7 +35,7 @@ module TypeScript {
         exports
     }
 
-    function getCompilerReservedName(name: Identifier) {
+    function getCompilerReservedName(name: IASTToken) {
         // If this array changes, update the order accordingly in CompilerReservedNames
         var nameText = name.valueText();
         var index = <CompilerReservedNames>CompilerReservedNames[nameText];
@@ -2037,7 +2037,7 @@ module TypeScript {
             paramSymbol.setResolved();
         }
 
-        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: Identifier, context: PullTypeResolutionContext, immediateThisCheck?: boolean) {
+        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: IASTToken, context: PullTypeResolutionContext, immediateThisCheck?: boolean) {
             var compilerReservedName = getCompilerReservedName(name);
             if (compilerReservedName) {
                 switch (compilerReservedName) {
@@ -2135,7 +2135,7 @@ module TypeScript {
             }
         }
 
-        private checkExternalModuleRequireExportsCollides(ast: AST, name: Identifier, context: PullTypeResolutionContext) {
+        private checkExternalModuleRequireExportsCollides(ast: AST, name: IASTToken, context: PullTypeResolutionContext) {
             var enclosingDecl = this.getEnclosingDeclForAST(ast);
             // If the declaration is in external module
             if (enclosingDecl && enclosingDecl.kind == PullElementKind.DynamicModule) {
@@ -2380,7 +2380,7 @@ module TypeScript {
 
         private resolveMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, getType(varDecl.variableDeclarator), varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.modifiers, varDecl.variableDeclarator.propertyName, getType(varDecl.variableDeclarator), varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private resolvePropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext): PullSymbol {
@@ -2390,7 +2390,7 @@ module TypeScript {
 
         private resolveVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext): PullSymbol {
             return this.resolveVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.identifier, getType(varDecl), varDecl.equalsValueClause, context);
+                varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.propertyName, getType(varDecl), varDecl.equalsValueClause, context);
         }
 
         private resolveParameterList(list: ParameterList, context: PullTypeResolutionContext): PullSymbol {
@@ -2432,7 +2432,7 @@ module TypeScript {
         private resolveVariableDeclaratorOrParameterOrEnumElement(
             varDeclOrParameter: AST,
             modifiers: PullElementFlags[],
-            name: Identifier,
+            name: IASTToken,
             typeExpr: AST,
             init: EqualsValueClause,
             context: PullTypeResolutionContext): PullSymbol {
@@ -2513,7 +2513,7 @@ module TypeScript {
             return declSymbol;
         }
 
-        private resolveAndTypeCheckVariableDeclarationTypeExpr(varDeclOrParameter: AST, name: Identifier, typeExpr: AST, context: PullTypeResolutionContext) {
+        private resolveAndTypeCheckVariableDeclarationTypeExpr(varDeclOrParameter: AST, name: IASTToken, typeExpr: AST, context: PullTypeResolutionContext) {
             var enclosingDecl = this.getEnclosingDeclForAST(varDeclOrParameter);
             var decl = this.semanticInfoChain.getDeclForAST(varDeclOrParameter);
             var declSymbol = decl.getSymbol();
@@ -2601,7 +2601,7 @@ module TypeScript {
             return typeExprSymbol;
         }
 
-        private resolveAndTypeCheckVariableDeclaratorOrParameterInitExpr(varDeclOrParameter: AST, name: Identifier, typeExpr: AST, init: EqualsValueClause, context: PullTypeResolutionContext, typeExprSymbol: PullTypeSymbol) {
+        private resolveAndTypeCheckVariableDeclaratorOrParameterInitExpr(varDeclOrParameter: AST, name: IASTToken, typeExpr: AST, init: EqualsValueClause, context: PullTypeResolutionContext, typeExprSymbol: PullTypeSymbol) {
             if (!init) {
                 return null;
             }
@@ -2669,12 +2669,12 @@ module TypeScript {
 
         private typeCheckMemberVariableDeclaration(varDecl: MemberVariableDeclaration, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, varDecl.modifiers, varDecl.variableDeclarator.identifier, getType(varDecl), varDecl.variableDeclarator.equalsValueClause, context);
+                varDecl, varDecl.modifiers, varDecl.variableDeclarator.propertyName, getType(varDecl), varDecl.variableDeclarator.equalsValueClause, context);
         }
 
         private typeCheckVariableDeclarator(varDecl: VariableDeclarator, context: PullTypeResolutionContext) {
             this.typeCheckVariableDeclaratorOrParameterOrEnumElement(
-                varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.identifier, getType(varDecl), varDecl.equalsValueClause, context);
+                varDecl, getVariableDeclaratorModifiers(varDecl), varDecl.propertyName, getType(varDecl), varDecl.equalsValueClause, context);
         }
 
         private typeCheckParameter(parameter: Parameter, context: PullTypeResolutionContext) {
@@ -2682,7 +2682,7 @@ module TypeScript {
                 parameter, parameter.modifiers, parameter.identifier, getType(parameter), parameter.equalsValueClause, context);
         }
 
-        private typeCheckVariableDeclaratorOrParameterOrEnumElement(varDeclOrParameter: AST, modifiers: PullElementFlags[], name: Identifier, typeExpr: AST, init: EqualsValueClause, context: PullTypeResolutionContext) {
+        private typeCheckVariableDeclaratorOrParameterOrEnumElement(varDeclOrParameter: AST, modifiers: PullElementFlags[], name: IASTToken, typeExpr: AST, init: EqualsValueClause, context: PullTypeResolutionContext) {
             this.setTypeChecked(varDeclOrParameter, context);
 
             var hasTypeExpr = typeExpr !== null || varDeclOrParameter.nodeType() === NodeType.EnumElement;
@@ -3191,7 +3191,7 @@ module TypeScript {
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
             isStatic: boolean,
-            name: Identifier,
+            name: IASTToken,
             typeParameters: TypeParameterList,
             parameters: ParameterList,
             returnTypeAnnotation: AST,
@@ -3292,8 +3292,9 @@ module TypeScript {
                 // Check that property names comply with indexer constraints (either string or numeric)
                 var allMembers = parentSymbol.type.getAllMembers(PullElementKind.All, GetAllMembersVisiblity.all);
                 for (var i = 0; i < allMembers.length; i++) {
-                    var name = allMembers[i].name;
-                    if (name) {
+                    var member = allMembers[i];
+                    var name = member.name;
+                    if (name || (member.kind === PullElementKind.Property && name === "")) {
                         if (!allMembers[i].isResolved) {
                             this.resolveDeclaredSymbol(allMembers[i], context);
                         }
@@ -3627,7 +3628,7 @@ module TypeScript {
         }
 
 
-        private resolveFunctionDeclaration(funcDeclAST: AST, isStatic: boolean, name: Identifier, typeParameters: TypeParameterList, parameterList: ParameterList, returnTypeAnnotation: AST, block: Block, context: PullTypeResolutionContext): PullSymbol {
+        private resolveFunctionDeclaration(funcDeclAST: AST, isStatic: boolean, name: IASTToken, typeParameters: TypeParameterList, parameterList: ParameterList, returnTypeAnnotation: AST, block: Block, context: PullTypeResolutionContext): PullSymbol {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             var funcSymbol = funcDecl.getSymbol();
@@ -3642,8 +3643,8 @@ module TypeScript {
                 if (signature.isResolved) {
                     if (this.canTypeCheckAST(funcDeclAST, context)) {
                         this.typeCheckFunctionDeclaration(
-                            funcDeclAST, isStatic, name,
-                            typeParameters, parameterList, returnTypeAnnotation, block, context);
+                            funcDeclAST, isStatic, name, typeParameters,
+                            parameterList, returnTypeAnnotation, block, context);
                     }
                     return funcSymbol;
                 }
@@ -3793,9 +3794,8 @@ module TypeScript {
 
             if (this.canTypeCheckAST(funcDeclAST, context)) {
                 this.typeCheckFunctionDeclaration(
-                    funcDeclAST, isStatic, name,
-                    typeParameters, parameterList, returnTypeAnnotation,
-                    block, context);
+                    funcDeclAST, isStatic, name, typeParameters,
+                    parameterList, returnTypeAnnotation, block, context);
             }
 
             return funcSymbol;
@@ -5319,10 +5319,10 @@ module TypeScript {
                     return this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
 
                 case NodeType.ThisExpression:
-                    return this.resolveThisExpression(ast, context);
+                    return this.resolveThisExpression(<ThisExpression>ast, context);
 
                 case NodeType.SuperExpression:
-                    return this.resolveSuperExpression(ast, context);
+                    return this.resolveSuperExpression(<SuperExpression>ast, context);
 
                 case NodeType.InvocationExpression:
                     return this.resolveInvocationExpression(<InvocationExpression>ast, context);
@@ -6828,7 +6828,7 @@ module TypeScript {
             return false;
         }
 
-        private resolveSuperExpression(ast: AST, context: PullTypeResolutionContext): PullSymbol {
+        private resolveSuperExpression(ast: SuperExpression, context: PullTypeResolutionContext): PullSymbol {
             var enclosingDecl = this.getEnclosingDeclForAST(ast);
             var superType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
 
@@ -11676,9 +11676,10 @@ module TypeScript {
                 for (var i = 0; i < members.length; i++) {
                     // Make sure the member is actually contained by the containerType, and not its associated constructor type
                     var member = members[i];
-                    if (member.name
-                        && member.kind !== PullElementKind.ConstructorMethod
-                        && !hasFlag(member.flags, PullElementFlags.Static)) {
+                    if ((member.name || (member.kind === PullElementKind.Property && member.name === "")) &&
+                        member.kind !== PullElementKind.ConstructorMethod &&
+                        !hasFlag(member.flags, PullElementFlags.Static)) {
+
                         // Decide whether to check against the number or string signature
                         var isMemberNumeric = PullHelpers.isNameNumeric(member.name);
                         if (isMemberNumeric && numberSignature) {

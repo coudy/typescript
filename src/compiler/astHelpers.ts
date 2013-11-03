@@ -232,7 +232,7 @@ module TypeScript {
             case NodeType.ModuleDeclaration:
                 return (<ModuleDeclaration>ast.parent).name === ast || (<ModuleDeclaration>ast.parent).stringLiteral === ast;
             case NodeType.VariableDeclarator:
-                return (<VariableDeclarator>ast.parent).identifier === ast;
+                return (<VariableDeclarator>ast.parent).propertyName === ast;
             case NodeType.FunctionDeclaration:
                 return (<FunctionDeclaration>ast.parent).identifier === ast;
             case NodeType.MemberFunctionDeclaration:

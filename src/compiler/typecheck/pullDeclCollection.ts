@@ -391,7 +391,7 @@ module TypeScript {
         var span = TextSpan.fromBounds(memberDecl.start(), memberDecl.end());
         var parent = context.getParent();
 
-        var decl = new NormalPullDecl(memberDecl.variableDeclarator.identifier.valueText(), memberDecl.variableDeclarator.identifier.text(), declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(memberDecl.variableDeclarator.propertyName.valueText(), memberDecl.variableDeclarator.propertyName.text(), declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(memberDecl, decl);
         context.semanticInfoChain.setDeclForAST(memberDecl.variableDeclarator, decl);
         context.semanticInfoChain.setASTForDecl(decl, memberDecl);
@@ -422,7 +422,7 @@ module TypeScript {
             declFlags |= PullElementFlags.DeclaredInAWithBlock;
         }
 
-        var decl = new NormalPullDecl(varDecl.identifier.valueText(), varDecl.identifier.text(), declType, declFlags, parent, span);
+        var decl = new NormalPullDecl(varDecl.propertyName.valueText(), varDecl.propertyName.text(), declType, declFlags, parent, span);
         context.semanticInfoChain.setDeclForAST(varDecl, decl);
         context.semanticInfoChain.setASTForDecl(decl, varDecl);
 

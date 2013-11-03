@@ -358,11 +358,11 @@ module TypeScript {
                         this.emitDeclFlags(this.semanticInfoChain.getDeclForAST(varDecl), "var");
                     }
 
-                    this.declFile.Write(varDecl.identifier.text());
+                    this.declFile.Write(varDecl.propertyName.text());
                 }
                 else {
                     this.emitIndent();
-                    this.declFile.Write(varDecl.identifier.text());
+                    this.declFile.Write(varDecl.propertyName.text());
                 }
 
                 if (!hasModifier(getVariableDeclaratorModifiers(varDecl), PullElementFlags.Private)) {
@@ -403,7 +403,7 @@ module TypeScript {
                 this.declFile.Write(this.getIndentString());
                 this.emitClassElementModifiers(varDecl.modifiers);;
 
-                this.declFile.Write(varDecl.variableDeclarator.identifier.text());
+                this.declFile.Write(varDecl.variableDeclarator.propertyName.text());
 
                 if (!hasModifier(varDecl.modifiers, PullElementFlags.Private)) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
@@ -801,7 +801,7 @@ module TypeScript {
             this.emitMemberAccessorDeclaration(funcDecl, funcDecl.modifiers, funcDecl.propertyName);
         }
 
-        private emitMemberAccessorDeclaration(funcDecl: AST, modifiers: PullElementFlags[], name: Identifier) {
+        private emitMemberAccessorDeclaration(funcDecl: AST, modifiers: PullElementFlags[], name: IASTToken) {
             var start = new Date().getTime();
             var accessorSymbol = PullHelpers.getAccessorSymbol(funcDecl, this.semanticInfoChain);
             TypeScript.declarationEmitGetAccessorFunctionTime += new Date().getTime();
