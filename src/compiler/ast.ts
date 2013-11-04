@@ -100,7 +100,6 @@ module TypeScript {
 
         private _preComments: Comment[] = null;
         private _postComments: Comment[] = null;
-        private _docComments: Comment[] = null;
 
         constructor() {
         }
@@ -621,7 +620,7 @@ module TypeScript {
     }
 
     export class ModuleDeclaration extends AST {
-        constructor(public modifiers: PullElementFlags[], public name: Identifier, public stringLiteral: StringLiteral, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
+        constructor(public modifiers: PullElementFlags[], public name: AST, public stringLiteral: StringLiteral, public moduleElements: ASTList, public endingToken: ASTSpan, public isExternalModule: boolean) {
             super();
             name && (name.parent = this);
             stringLiteral && (stringLiteral.parent = this);

@@ -209,7 +209,14 @@ module TypeScript {
             ast = ast.parent;
             var decl: PullDecl = null;
             while (ast) {
-                decl = this._getDeclForAST(ast);
+                //if (ast.nodeType() === SyntaxKind.ModuleDeclaration) {
+                //    var moduleDecl = <ModuleDeclaration>ast;
+                //    decl = this._getDeclForAST(<AST>moduleDecl.stringLiteral || ArrayUtilities.last(getModuleNames(moduleDecl.name)));
+                //}
+                //else {
+                    decl = this._getDeclForAST(ast);
+                //}
+
                 if (decl) {
                     break;
                 }

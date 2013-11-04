@@ -959,8 +959,25 @@ module TypeScript {
             return moduleDisplayName;
         }
 
-        public emitModule(moduleDecl: ModuleDeclaration) {
-            var pullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
+        private emitModuleDeclarationWorker(moduleDecl: ModuleDeclaration) {
+            if (moduleDecl.stringLiteral) {
+                this.emitSingleModuleDeclaration(moduleDecl, moduleDecl.stringLiteral);
+            }
+            else {
+                var moduleNames = getModuleNames(moduleDecl.name);
+                this.emitSingleModuleDeclaration(moduleDecl, moduleNames[0]);
+            }
+        }
+
+        public emitSingleModuleDeclaration(moduleDecl: ModuleDeclaration, moduleName: IASTToken) {
+            var isLastName = isLastNameOfModule(moduleDecl, moduleName);
+
+            if (isLastName) {
+                // Doc Comments on the ast belong to the innermost module being emitted.
+                this.emitComments(moduleDecl, true);
+            }
+
+            var pullDecl = this.semanticInfoChain.getDeclForAST(moduleName);
             this.pushDecl(pullDecl);
 
             var svModuleName = this.moduleName;
@@ -972,7 +989,7 @@ module TypeScript {
                 }
             }
             else {
-                this.moduleName = moduleDecl.name.text();
+                this.moduleName = moduleName.text();
             }
 
             var isExternalModule = moduleDecl.isExternalModule;
@@ -990,10 +1007,9 @@ module TypeScript {
                 if (!isExported) {
                     this.recordSourceMappingStart(moduleDecl);
                     this.writeToOutput("var ");
-                    var name: AST = moduleDecl.stringLiteral || moduleDecl.name;
-                    this.recordSourceMappingStart(name);
+                    this.recordSourceMappingStart(moduleName);
                     this.writeToOutput(this.moduleName);
-                    this.recordSourceMappingEnd(name);
+                    this.recordSourceMappingEnd(moduleName);
                     this.writeLineToOutput(";");
                     this.recordSourceMappingEnd(moduleDecl);
                     this.emitIndent();
@@ -1005,11 +1021,10 @@ module TypeScript {
                 // Use the name that doesnt conflict with its members, 
                 // this.moduleName needs to be updated to make sure that export member declaration is emitted correctly
                 this.moduleName = this.getModuleName(pullDecl);
-                var name: AST = moduleDecl.stringLiteral || moduleDecl.name;
-                this.writeToOutputWithSourceMapRecord(this.moduleName, name);
+                this.writeToOutputWithSourceMapRecord(this.moduleName, moduleName);
                 this.writeLineToOutput(") {");
 
-                this.recordSourceMappingNameStart(moduleDecl.stringLiteral ? moduleDecl.stringLiteral.text() : moduleDecl.name.text());
+                this.recordSourceMappingNameStart(moduleName.text());
             }
 
             // body - don't indent for Node
@@ -1021,8 +1036,27 @@ module TypeScript {
                 this.writeCaptureThisStatement(moduleDecl);
             }
 
-            this.emitList(moduleDecl.moduleElements);
-            this.moduleName = moduleDecl.stringLiteral ? moduleDecl.stringLiteral.text() : moduleDecl.name.text();
+            if (moduleName === moduleDecl.stringLiteral) {
+                this.emitList(moduleDecl.moduleElements);
+            }
+            else {
+                var moduleNames = getModuleNames(moduleDecl.name);
+                var nameIndex = moduleNames.indexOf(<Identifier>moduleName);
+                Debug.assert(nameIndex >= 0);
+
+                if (isLastName) {
+                    // If we're on the innermost module, we can emit the module elements.
+                    this.emitList(moduleDecl.moduleElements);
+                }
+                else {
+                    // otherwise, just recurse and emit the next module in the A.B.C module name.
+                    this.emitIndent();
+                    this.emitSingleModuleDeclaration(moduleDecl, moduleNames[nameIndex + 1]);
+                    this.writeLineToOutput("");
+                }
+            }
+
+            this.moduleName = moduleName.text();
             if (!isExternalModule || this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                 this.indenter.decreaseIndent();
             }
@@ -1099,6 +1133,11 @@ module TypeScript {
             this.moduleName = svModuleName;
 
             this.popDecl(pullDecl);
+
+            if (isLastName) {
+                // Comments on the module ast belong to the innermose module being emitted.
+                this.emitComments(moduleDecl, false);
+            }
         }
 
         public emitEnumElement(varDecl: EnumElement): void {
@@ -3108,11 +3147,9 @@ module TypeScript {
             return declaration.preComments() !== null || !moduleIsElided(declaration);
         }
 
-        public emitModuleDeclaration(declaration: ModuleDeclaration): void {
+        private emitModuleDeclaration(declaration: ModuleDeclaration): void {
             if (!moduleIsElided(declaration)) {
-                this.emitComments(declaration, true);
-                this.emitModule(declaration);
-                this.emitComments(declaration, false);
+                this.emitModuleDeclarationWorker(declaration);
             }
             else {
                 this.emitComments(declaration, true, /*onlyPinnedOrTripleSlashComments:*/ true);

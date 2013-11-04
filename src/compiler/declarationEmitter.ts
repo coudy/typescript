@@ -165,7 +165,17 @@ module TypeScript {
                 else {
                     var emitDeclare = !hasFlag(pullFlags, PullElementFlags.Exported);
 
-                    var container = this.getEnclosingContainer(this.semanticInfoChain.getASTForDecl(pullDecl));
+                    var declAST = this.semanticInfoChain.getASTForDecl(pullDecl);
+                    var container = this.getEnclosingContainer(declAST);
+
+                    // We may have been in the 'name' portion of an module declaration.  If so, we want the actual 
+                    // container of *that* module declaration.  
+                    if (container.nodeType() === SyntaxKind.ModuleDeclaration &&
+                        isAnyNameOfModule(<ModuleDeclaration>container, declAST)) {
+
+                        container = this.getEnclosingContainer(container);
+                    }
+
                     var isExternalModule = container.nodeType() === SyntaxKind.ModuleDeclaration && (<ModuleDeclaration>container).isExternalModule;
 
                     // Emit export only for global export statements. 
@@ -190,8 +200,8 @@ module TypeScript {
             return result;
         }
 
-        private emitDeclFlags(pullDecl: PullDecl, typeString: string) {
-            this.declFile.Write(this.getDeclFlagsString(pullDecl, typeString));
+        private emitDeclFlags(declarationAST: AST, typeString: string) {
+            this.declFile.Write(this.getDeclFlagsString(this.semanticInfoChain.getDeclForAST(declarationAST), typeString));
         }
 
         private emitTypeNamesMember(memberName: MemberName, emitIndent: boolean = false) {
@@ -339,7 +349,7 @@ module TypeScript {
                 // If it is var list of form var a, b, c = emit it only if count > 0 - which will be when emitting first var
                 // If it is var list of form  var a = varList count will be 0
                 if (isFirstVarInList) {
-                    this.emitDeclFlags(this.semanticInfoChain.getDeclForAST(varDecl), "var");
+                    this.emitDeclFlags(varDecl, "var");
                 }
 
                 this.declFile.Write(varDecl.propertyName.text());
@@ -533,7 +543,7 @@ module TypeScript {
             var funcSignature = funcPullDecl.getSignatureSymbol();
             this.emitDeclarationComments(funcDecl);
 
-            this.emitDeclFlags(funcPullDecl, "function");
+            this.emitDeclFlags(funcDecl, "function");
             var id = funcDecl.propertyName.text();
             this.declFile.Write(id);
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
@@ -670,7 +680,7 @@ module TypeScript {
             this.emitDeclarationComments(funcDecl);
 
             var id = funcDecl.identifier.text();
-            this.emitDeclFlags(funcPullDecl, "function");
+            this.emitDeclFlags(funcDecl, "function");
             if (id !== "" || !funcDecl.identifier || funcDecl.identifier.text().length > 0) {
                 this.declFile.Write(id);
             }
@@ -823,7 +833,7 @@ module TypeScript {
             var className = classDecl.identifier.text();
             this.emitDeclarationComments(classDecl);
             var classPullDecl = this.semanticInfoChain.getDeclForAST(classDecl);
-            this.emitDeclFlags(classPullDecl, "class");
+            this.emitDeclFlags(classDecl, "class");
             this.declFile.Write(className);
 
             this.emitTypeParameters(classDecl.typeParameterList);
@@ -914,7 +924,7 @@ module TypeScript {
             var interfaceName = interfaceDecl.identifier.text();
             this.emitDeclarationComments(interfaceDecl);
             var interfacePullDecl = this.semanticInfoChain.getDeclForAST(interfaceDecl);
-            this.emitDeclFlags(interfacePullDecl, "interface");
+            this.emitDeclFlags(interfaceDecl, "interface");
             this.declFile.Write(interfaceName);
 
             this.emitTypeParameters(interfaceDecl.typeParameterList);
@@ -969,7 +979,7 @@ module TypeScript {
 
             this.emitDeclarationComments(moduleDecl);
             var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
-            this.emitDeclFlags(modulePullDecl, "enum");
+            this.emitDeclFlags(moduleDecl, "enum");
             this.declFile.WriteLine(moduleDecl.identifier.text() + " {");
 
             this.indenter.increaseIndent();
@@ -999,40 +1009,18 @@ module TypeScript {
 
             if (!isExternalModule) {
                 var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
-                var moduleName = this.getDeclFlagsString(modulePullDecl, "module");
+                this.emitDeclarationComments(moduleDecl);
 
-                if (moduleDecl.name) {
-                    // Module is dotted if it contains single module element with exported flag and it does not have doc comments for it
-                    for (;
-                        // Till the module has single module element with exported flag and without doc comments,
-                        //  we traverse the module element so we can create a dotted module name.
-                        moduleDecl.moduleElements.childCount() === 1 &&
-                        moduleDecl.moduleElements.childAt(0).nodeType() === SyntaxKind.ModuleDeclaration &&
-                        hasModifier((<ModuleDeclaration>moduleDecl.moduleElements.childAt(0)).modifiers, PullElementFlags.Exported) &&
-                        (docComments(moduleDecl) === null || docComments(moduleDecl).length === 0)
-
-                        // Module to look up is the single module element of the current module
-                        ; moduleDecl = <ModuleDeclaration>moduleDecl.moduleElements.childAt(0)) {
-
-                        // construct dotted name
-                        if (moduleDecl.stringLiteral) {
-                            moduleName += moduleDecl.stringLiteral.text() + ".";
-                        }
-                        else {
-                            moduleName += moduleDecl.name.text() + ".";
-                        }
-                    }
-                }
+                var name: AST = moduleDecl.stringLiteral || ArrayUtilities.first(getModuleNames(moduleDecl.name));
+                this.emitDeclFlags(name, "module");
 
                 if (moduleDecl.stringLiteral) {
-                    moduleName += moduleDecl.stringLiteral.text();
+                    this.declFile.Write(moduleDecl.stringLiteral.text());
                 }
                 else {
-                    moduleName += moduleDecl.name.text();
+                    this.declFile.Write(this.getFullName(moduleDecl.name));
                 }
 
-                this.emitDeclarationComments(moduleDecl);
-                this.declFile.Write(moduleName);
                 this.declFile.WriteLine(" {");
                 this.indenter.increaseIndent();
             }

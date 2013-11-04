@@ -34,6 +34,7 @@
 // this line triggers a semantic/syntactic error check, remove line when 788570 is fixed
 edit.insert('');
 
+debugger;
 goTo.file("commentsExternalModules_file0.ts");
 goTo.marker('1');
 verify.quickInfoIs("m1", "Module comment", "m1", "module");

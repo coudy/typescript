@@ -131,6 +131,9 @@ module TypeScript {
 
     function preCollectModuleDecls(moduleDecl: ModuleDeclaration, context: DeclCollectionContext): void {
         var declFlags = PullElementFlags.None;
+
+        var moduleContainsExecutableCode = containsExecutableCode(moduleDecl.moduleElements);
+
         var isDynamic = moduleDecl.stringLiteral !== null || moduleDecl.isExternalModule;
 
         if ((hasModifier(moduleDecl.modifiers, PullElementFlags.Exported) || isParsingAmbientModule(moduleDecl, context)) && !containingModuleHasExportAssignment(moduleDecl)) {
@@ -145,24 +148,78 @@ module TypeScript {
 
         var span = TextSpan.fromBounds(moduleDecl.start(), moduleDecl.end());
 
-        var valueText = moduleDecl.stringLiteral ? quoteStr(moduleDecl.stringLiteral.valueText()) : moduleDecl.name.valueText();
-        var text = moduleDecl.stringLiteral ? moduleDecl.stringLiteral.text() : moduleDecl.name.text();
+        if (moduleDecl.stringLiteral) {
+            var valueText = quoteStr(moduleDecl.stringLiteral.valueText());
+            var text = moduleDecl.stringLiteral.text();
 
-        var decl = new NormalPullDecl(valueText, text, kind, declFlags, context.getParent(), span);
-        context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
-        context.semanticInfoChain.setASTForDecl(decl, moduleDecl);
+            var decl = new NormalPullDecl(valueText, text, kind, declFlags, context.getParent(), span);
 
-        // If we contain any code that requires initialization, then mark us as an initialized.
-        if (containsExecutableCode(moduleDecl.moduleElements)) {
-            decl.setFlags(declFlags | getInitializationFlag(decl));
+            context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
+            context.semanticInfoChain.setDeclForAST(moduleDecl.stringLiteral, decl);
+            context.semanticInfoChain.setASTForDecl(decl, moduleDecl.stringLiteral);
 
-            // create the value decl
-            var valueDecl = new NormalPullDecl(decl.name, decl.getDisplayName(), PullElementKind.Variable, decl.flags, context.getParent(), decl.getSpan());
-            decl.setValueDecl(valueDecl);
-            context.semanticInfoChain.setASTForDecl(valueDecl, moduleDecl);
+            if (moduleContainsExecutableCode) {
+                createModuleVariableDecl(decl, moduleDecl.stringLiteral, context);
+            }
+
+            context.pushParent(decl);
+        }
+        else {
+            // Module has a name or dotted name.
+            var moduleNames = getModuleNames(moduleDecl.name);
+            for (var i = 0, n = moduleNames.length; i < n; i++) {
+                var moduleName = moduleNames[i];
+
+                // All the inner module decls are exported.
+                var specificFlags = declFlags;
+                if (i > 0) {
+                    specificFlags |= PullElementFlags.Exported;
+                }
+
+                var decl = new NormalPullDecl(moduleName.valueText(), moduleName.text(), kind, specificFlags, context.getParent(), span);
+
+                //// The innermost moduleDecl maps to the entire ModuleDeclaration node.
+                //// All the other ones map to the name node.  i.e. module A.B.C { }
+                ////
+                //// The decl for C points to the entire module declaration.  The decls for A and B
+                //// will point at the A and B nodes respectively.
+                //var ast = (i === (moduleName.length - 1))
+                //    ? moduleDecl
+                //    : moduleName;
+                context.semanticInfoChain.setDeclForAST(moduleDecl, decl);
+                context.semanticInfoChain.setDeclForAST(moduleName, decl);
+                context.semanticInfoChain.setASTForDecl(decl, moduleName);
+
+                if (moduleContainsExecutableCode) {
+                    createModuleVariableDecl(decl, moduleName, context);
+                }
+
+                context.pushParent(decl);
+            }
+        }
+    }
+
+    export function getModuleNames(name: AST, result?: Identifier[]): Identifier[] {
+        result = result || [];
+
+        if (name.nodeType() === SyntaxKind.QualifiedName) {
+            getModuleNames((<QualifiedName>name).left, result);
+            result.push((<QualifiedName>name).right);
+        }
+        else {
+            result.push(<Identifier>name);
         }
 
-        context.pushParent(decl);
+        return result;
+    }
+
+    function createModuleVariableDecl(decl: PullDecl, moduleNameAST: AST, context: DeclCollectionContext): void {
+        decl.setFlags(decl.flags | getInitializationFlag(decl));
+
+        // create the value decl
+        var valueDecl = new NormalPullDecl(decl.name, decl.getDisplayName(), PullElementKind.Variable, decl.flags, context.getParent(), decl.getSpan());
+        decl.setValueDecl(valueDecl);
+        context.semanticInfoChain.setASTForDecl(valueDecl, moduleNameAST);
     }
 
     function containsExecutableCode(members: ASTList): boolean {
@@ -1005,6 +1062,31 @@ module TypeScript {
 
     function postCollectDecls(ast: AST, context: DeclCollectionContext) {
         var currentDecl = context.getParent();
+
+        // We only want to pop the module decls when we're done with the module itself, and not 
+        // when we are done with the module names.
+        if (ast.nodeType() === SyntaxKind.IdentifierName || ast.nodeType() === SyntaxKind.StringLiteral) {
+            if (currentDecl.kind === PullElementKind.Container || currentDecl.kind === PullElementKind.DynamicModule) {
+                return;
+            }
+        }
+
+        if (ast.nodeType() === SyntaxKind.ModuleDeclaration) {
+            var moduleDeclaration = <ModuleDeclaration>ast;
+            if (moduleDeclaration.stringLiteral) {
+                Debug.assert(currentDecl.ast() === moduleDeclaration.stringLiteral);
+                context.popParent();
+            }
+            else {
+                var moduleNames = getModuleNames(moduleDeclaration.name);
+                for (var i = moduleNames.length - 1; i >= 0; i--) {
+                    var moduleName = moduleNames[i];
+                    Debug.assert(currentDecl.ast() === moduleName);
+                    context.popParent();
+                    currentDecl = context.getParent();
+                }
+            }
+        }
 
         if (ast.nodeType() === SyntaxKind.EnumDeclaration) {
             // Now that we've created all the child decls for the enum elements, determine what 

@@ -444,83 +444,27 @@ module TypeScript {
             return result;
         }
 
-        private getModuleNames(node: ModuleDeclarationSyntax): Identifier[] {
-            var result: Identifier[] = [];
-
-            if (node.stringLiteral !== null) {
-                result.push(node.stringLiteral.accept(this));
-            }
-            else {
-                this.getModuleNamesHelper(node.moduleName, result);
-            }
-
-            return result;
-        }
-
-        private getModuleNamesHelper(name: INameSyntax, result: Identifier[]): void {
-            if (name.kind() === SyntaxKind.QualifiedName) {
-                var qualifiedName = <QualifiedNameSyntax>name;
-                this.getModuleNamesHelper(qualifiedName.left, result);
-                this.movePast(qualifiedName.dotToken);
-                result.push(this.visitIdentifier(qualifiedName.right));
-            }
-            else {
-                result.push(this.visitIdentifier(<ISyntaxToken>name));
-            }
-        }
-
         public visitModuleDeclaration(node: ModuleDeclarationSyntax): ModuleDeclaration {
             var start = this.position;
 
-            var firstToken = node.firstToken();
-            var preComments = this.convertTokenLeadingComments(firstToken, start);
-            var postComments = this.convertNodeTrailingComments(node, node.closeBraceToken, start);
+            var modifiers = this.visitModifiers(node.modifiers);
 
             this.moveTo(node, node.moduleKeyword);
             this.movePast(node.moduleKeyword);
-            var names = this.getModuleNames(node);
+
+            var moduleName = node.moduleName ? node.moduleName.accept(this) : null;
+            var stringLiteral = node.stringLiteral ? node.stringLiteral.accept(this) : null;
+
             this.movePast(node.openBraceToken);
 
-            var members = this.visitSyntaxList(node.moduleElements);
+            var moduleElements = this.visitSyntaxList(node.moduleElements);
 
             var closeBraceToken = this.createTokenSpan(this.position, node.closeBraceToken);
             this.movePast(node.closeBraceToken);
 
-            for (var i = names.length - 1; i >= 0; i--) {
-                var innerName = names[i];
+            var result = new ModuleDeclaration(modifiers, moduleName, stringLiteral, moduleElements, closeBraceToken, /*isExternalModule:*/ false);
+            this.setCommentsAndSpan(result, start, node);
 
-                var modifiers: PullElementFlags[] = null;
-
-                if (i > 0) {
-                    // All inner modules are exported.
-                    modifiers = [];
-                    modifiers.push(PullElementFlags.Exported);
-                }
-                else {
-                    modifiers = this.visitModifiers(node.modifiers);
-                }
-
-                var stringLiteral: StringLiteral = null;
-                if (innerName.nodeType() === SyntaxKind.StringLiteral) {
-                    stringLiteral = <StringLiteral><AST>innerName;
-                    innerName = null;
-                }
-
-                var result = new ModuleDeclaration(modifiers, innerName, stringLiteral, members, closeBraceToken, /*isExternalModule:*/ false);
-                this.setSpan(result, start, node);
-
-                result.setPreComments(preComments);
-                result.setPostComments(postComments);
-
-                preComments = null;
-                postComments = null;
-
-                // REVIEW: will also possibly need to re-parent comments as well
-
-                members = new ASTList(this.fileName, [result]);
-            }
-
-            this.setSpan(result, start, node);
             return result;
         }
 

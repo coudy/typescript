@@ -535,4 +535,48 @@ module TypeScript {
 
         return false;
     }
+
+    export function getEnclosingModuleDeclaration(ast: AST): ModuleDeclaration {
+        while (ast) {
+            if (ast.nodeType() === SyntaxKind.ModuleDeclaration) {
+                return <ModuleDeclaration>ast;
+            }
+
+            ast = ast.parent;
+        }
+
+        return null;
+    }
+
+    export function isLastNameOfModule(ast: ModuleDeclaration, astName: AST): boolean {
+        if (ast) {
+            if (ast.stringLiteral) {
+                return astName === ast.stringLiteral;
+            }
+            else {
+                var moduleNames = getModuleNames(ast.name);
+                var nameIndex = moduleNames.indexOf(<Identifier>astName);
+
+                return nameIndex === (moduleNames.length - 1);
+            }
+        }
+
+        return false;
+    }
+
+    export function isAnyNameOfModule(ast: ModuleDeclaration, astName: AST): boolean {
+        if (ast) {
+            if (ast.stringLiteral) {
+                return ast.stringLiteral === astName;
+            }
+            else {
+                var moduleNames = getModuleNames(ast.name);
+                var nameIndex = moduleNames.indexOf(<Identifier>astName);
+
+                return nameIndex >= 0;
+            }
+        }
+
+        return false;
+    }
 }

@@ -827,10 +827,18 @@ module TypeScript {
                     return symbol;
                 }
 
-                // This assert is here to catch potential stack overflows. There have been infinite recursions resulting
-                // from one of these decls pointing to a name expression.
-                Debug.assert(ast.nodeType() != SyntaxKind.IdentifierName && ast.nodeType() != SyntaxKind.MemberAccessExpression);
-                var resolvedSymbol = this.resolveAST(ast, /*isContextuallyTyped*/false, context);
+
+                var enclosingModule = getEnclosingModuleDeclaration(ast);
+                var resolvedSymbol: PullSymbol;
+                if (isAnyNameOfModule(enclosingModule, ast)) {
+                    resolvedSymbol = this.resolveSingleModuleDeclaration(enclosingModule, ast, context);
+                }
+                else {
+                    // This assert is here to catch potential stack overflows. There have been infinite recursions resulting
+                    // from one of these decls pointing to a name expression.
+                    Debug.assert(ast.nodeType() != SyntaxKind.IdentifierName && ast.nodeType() != SyntaxKind.MemberAccessExpression);
+                    var resolvedSymbol: PullSymbol = this.resolveAST(ast, /*isContextuallyTyped*/false, context);
+                }
 
                 // if the symbol is a parameter property referenced in an out-of-order fashion, it may not have been resolved
                 // along with the original property, so we need to "fix" its type here
@@ -848,16 +856,22 @@ module TypeScript {
             return symbol;
         }
 
-        private resolveOtherDeclarations(ast: AST, context: PullTypeResolutionContext) {
-            var resolvedDecl = this.semanticInfoChain.getDeclForAST(ast);
+        private resolveOtherDeclarations(astName: AST, context: PullTypeResolutionContext) {
+            var resolvedDecl = this.semanticInfoChain.getDeclForAST(astName);
             var symbol = resolvedDecl.getSymbol();
 
             var allDecls = symbol.getDeclarations();
             for (var i = 0; i < allDecls.length; i++) {
                 var currentDecl = allDecls[i];
                 var astForCurrentDecl = this.getASTForDecl(currentDecl);
-                if (astForCurrentDecl != ast) {
-                    this.resolveAST(astForCurrentDecl, false, context);
+                if (astForCurrentDecl != astName) {
+                    var moduleDecl = getEnclosingModuleDeclaration(astForCurrentDecl);
+                    if (isAnyNameOfModule(moduleDecl, astForCurrentDecl)) {
+                        this.resolveSingleModuleDeclaration(moduleDecl, astForCurrentDecl, context);
+                    }
+                    else {
+                        this.resolveAST(astForCurrentDecl, false, context);
+                    }
                 }
             }
         }
@@ -930,7 +944,28 @@ module TypeScript {
         // Resolve a module declaration
         //
         private resolveModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
-            var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
+            var result: PullTypeSymbol;
+
+            if (ast.stringLiteral) {
+                result = this.resolveSingleModuleDeclaration(ast, ast.stringLiteral, context);
+            }
+            else {
+
+                var moduleNames = getModuleNames(ast.name);
+                for (var i = 0, n = moduleNames.length; i < n; i++) {
+                    result = this.resolveSingleModuleDeclaration(ast, moduleNames[i], context);
+                }
+            }
+
+            if (this.canTypeCheckAST(ast, context)) {
+                this.typeCheckModuleDeclaration(ast, context);
+            }
+
+            return result;
+        }
+
+        private resolveSingleModuleDeclaration(ast: ModuleDeclaration, astName: AST, context: PullTypeResolutionContext): PullTypeSymbol {
+            var containerDecl = this.semanticInfoChain.getDeclForAST(astName);
             var containerSymbol = <PullContainerSymbol>containerDecl.getSymbol();
 
             if (containerSymbol.isResolved || containerSymbol.inResolution) {
@@ -942,15 +977,12 @@ module TypeScript {
             var containerDecls = containerSymbol.getDeclarations();
 
             for (var i = 0; i < containerDecls.length; i++) {
-
                 var childDecls = containerDecls[i].getChildDecls();
 
                 for (var j = 0; j < childDecls.length; j++) {
                     childDecls[j].ensureSymbolIsBound();
                 }
             }
-
-            var members = ast.moduleElements;
 
             var instanceSymbol = containerSymbol.getInstanceSymbol();
 
@@ -959,29 +991,44 @@ module TypeScript {
                 this.resolveDeclaredSymbol(instanceSymbol, context);
             }
 
-            for (var i = 0, n = members.childCount(); i < n; i++) {
-                if (members.childAt(i).nodeType() == SyntaxKind.ExportAssignment) {
-                    this.resolveExportAssignmentStatement(<ExportAssignment>members.childAt(i), context);
-                    break;
+            var isLastName = isLastNameOfModule(ast, astName);
+            if (isLastName) {
+                for (var i = 0, n = ast.moduleElements.childCount(); i < n; i++) {
+                    var moduleElement = ast.moduleElements.childAt(i);
+                    if (moduleElement.nodeType() == SyntaxKind.ExportAssignment) {
+                        this.resolveExportAssignmentStatement(<ExportAssignment>moduleElement, context);
+                        break;
+                    }
                 }
             }
 
             containerSymbol.setResolved();
 
-            this.resolveOtherDeclarations(ast, context);
-
-            if (this.canTypeCheckAST(ast, context)) {
-                this.typeCheckModuleDeclaration(ast, context);
-            }
+            this.resolveOtherDeclarations(astName, context);
 
             return containerSymbol;
         }
 
-        private typeCheckModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext) {
+        private typeCheckModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext): void {
+            if (ast.stringLiteral) {
+                this.typeCheckSingleModuleDeclaration(ast, ast.stringLiteral, context);
+            }
+            else {
+                var moduleNames = getModuleNames(ast.name);
+                for (var i = 0, n = moduleNames.length; i < n; i++) {
+                    this.typeCheckSingleModuleDeclaration(ast, moduleNames[i], context);
+                }
+            }
+        }
+
+        private typeCheckSingleModuleDeclaration(ast: ModuleDeclaration, astName: AST, context: PullTypeResolutionContext) {
             this.setTypeChecked(ast, context);
 
-            this.resolveAST(ast.moduleElements, false, context);
-            var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
+            if (isLastNameOfModule(ast, astName)) {
+                this.resolveAST(ast.moduleElements, false, context);
+            }
+
+            var containerDecl = this.semanticInfoChain.getDeclForAST(astName);
             this.validateVariableDeclarationGroups(containerDecl, context);
 
             if (ast.stringLiteral) {
@@ -991,8 +1038,8 @@ module TypeScript {
                 }
             }
 
-            if (!moduleIsElided(ast) && ast.name) {
-                this.checkNameForCompilerGeneratedDeclarationCollision(ast, /*isDeclaration*/ true, ast.name, context);
+            if (!moduleIsElided(ast) && !ast.stringLiteral) {
+                this.checkNameForCompilerGeneratedDeclarationCollision(astName, /*isDeclaration*/ true, <Identifier>astName, context);
             }
         }
 
@@ -1696,7 +1743,7 @@ module TypeScript {
 
                 var modPath = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.valueText();
                 if (enclosingDecl.kind === PullElementKind.DynamicModule) {
-                    var ast = this.getASTForDecl(enclosingDecl);
+                    var ast = getEnclosingModuleDeclaration(this.getASTForDecl(enclosingDecl));
                     if (ast.nodeType() === SyntaxKind.ModuleDeclaration && (<ModuleDeclaration>ast).endingToken) {
                         if (isRelative(modPath)) {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(importStatementAST,
@@ -2124,6 +2171,14 @@ module TypeScript {
 
         private checkExternalModuleRequireExportsCollides(ast: AST, name: IASTToken, context: PullTypeResolutionContext) {
             var enclosingDecl = this.getEnclosingDeclForAST(ast);
+
+            var enclosingModule = getEnclosingModuleDeclaration(name);
+            if (isAnyNameOfModule(enclosingModule, name)) {
+                // If we're actually the name of a module, then we want the enclosing decl for the 
+                // module that we're in.
+                enclosingDecl = this.getEnclosingDeclForAST(enclosingModule);
+            }
+
             // If the declaration is in external module
             if (enclosingDecl && enclosingDecl.kind == PullElementKind.DynamicModule) {
                 var decl = this.semanticInfoChain.getDeclForAST(ast);
@@ -2847,6 +2902,15 @@ module TypeScript {
 
             // Verify if this variable name conflicts with the _this that would be emitted to capture this in any of the enclosing context
             var enclosingDecl = this.getEnclosingDeclForAST(_thisAST);
+
+            var enclosingModule = getEnclosingModuleDeclaration(_thisAST);
+            if (isAnyNameOfModule(enclosingModule, _thisAST)) {
+                // If we're actually the name of a module, then we want the enclosing decl for the 
+                // module that we're in.
+                enclosingDecl = this.getEnclosingDeclForAST(enclosingModule);
+            }
+
+
             var declPath = enclosingDecl.getParentPath();
 
             for (var i = declPath.length - 1; i >= 0; i--) {
@@ -6259,7 +6323,8 @@ module TypeScript {
 
             // now for the name...
             var onLeftOfDot = this.isLeftSideOfQualifiedName(dottedNameAST);
-            var memberKind = onLeftOfDot ? PullElementKind.SomeContainer : PullElementKind.SomeType;
+            var isNameOfModule = dottedNameAST.parent.nodeType() === SyntaxKind.ModuleDeclaration && (<ModuleDeclaration>dottedNameAST.parent).name === dottedNameAST;
+            var memberKind = (onLeftOfDot || isNameOfModule) ? PullElementKind.SomeContainer : PullElementKind.SomeType;
 
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
 

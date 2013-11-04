@@ -28,7 +28,7 @@
 ////var /*14*/r4 = a1(/*13*/);
 ////var v1: a1./*15*/connectExport;
 
-
+debugger;
 goTo.file("externalModuleWithExportAssignment_file1.ts");
 goTo.marker('1');
 verify.quickInfoIs("{ test1: a1.connectModule; test2(): a1.connectModule; (): a1.connectExport; }", undefined, "a1", "var");
@@ -37,9 +37,9 @@ goTo.marker('2');
 verify.quickInfoIs("{ test1: a1.connectModule; test2(): a1.connectModule; (): a1.connectExport; }", undefined, "a", "var");
 
 goTo.marker('3');
-verify.quickInfoIs("(res: any, req: any, next: any): void", undefined, "a1.connectModule", "function");
-verify.completionListContains("test1", "a1.connectModule", undefined, "test1", "property");
-verify.completionListContains("test2", "(): a1.connectModule", undefined, "test2", "method");
+verify.quickInfoIs("(res: any, req: any, next: any): void", undefined, "m2.connectModule", "function");
+verify.completionListContains("test1", "m2.connectModule", undefined, "test1", "property");
+verify.completionListContains("test2", "(): m2.connectModule", undefined, "test2", "method");
 verify.not.completionListContains("connectModule");
 verify.not.completionListContains("connectExport");
 
@@ -59,9 +59,9 @@ goTo.marker('8');
 verify.quickInfoIs("a1.connectExport", undefined, "r2", "var");
 
 goTo.marker('9');
-verify.quickInfoIs("(res: any, req: any, next: any): void", undefined, "a1.connectModule", "function");
-verify.completionListContains("test1", "a1.connectModule", undefined, "test1", "property");
-verify.completionListContains("test2", "(): a1.connectModule", undefined, "test2", "method");
+verify.quickInfoIs("(res: any, req: any, next: any): void", undefined, "m2.connectModule", "function");
+verify.completionListContains("test1", "m2.connectModule", undefined, "test1", "property");
+verify.completionListContains("test2", "(): m2.connectModule", undefined, "test2", "method");
 verify.not.completionListContains("connectModule");
 verify.not.completionListContains("connectExport");
 
