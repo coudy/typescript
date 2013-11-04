@@ -1714,6 +1714,10 @@ module TypeScript {
             return this._indexSignatures !== null;
         }
 
+        public getOwnIndexSignatures(): PullSignatureSymbol[] {
+            return this._indexSignatures || sentinelEmptyArray;
+        }
+
         public getIndexSignatures(): PullSignatureSymbol[] {
             if (this._allIndexSignatures) {
                 return this._allIndexSignatures;

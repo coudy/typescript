@@ -26,6 +26,16 @@ module TypeScript {
         public membersContextTypeSymbols: PullTypeSymbol[] = null;
     }
 
+    interface TypeWithBaseOrigin {
+        type: PullTypeSymbol;
+        baseOrigin: PullTypeSymbol;
+    }
+
+    interface SignatureWithBaseOrigin {
+        signature: PullSignatureSymbol;
+        baseOrigin: PullTypeSymbol;
+    }
+
     enum CompilerReservedNames {
         _this = 1,
         _super,
@@ -12115,21 +12125,26 @@ module TypeScript {
                 var firstInterfaceASTWithExtendsClause = ArrayUtilities.firstOrDefault(typeSymbol.getDeclarations(), decl => 
                     (<InterfaceDeclaration>decl.ast()).heritageClauses !== null).ast();
                 if (classOrInterface === firstInterfaceASTWithExtendsClause) {
-                    this.checkPropertyTypeIdentityBetweenBases(classOrInterface, name, typeSymbol, context);
+                    this.checkPropertyTypeIdentityBetweenBases((<InterfaceDeclaration>classOrInterface).identifier, typeSymbol, context);
                 }
             }
         }
 
         private checkPropertyTypeIdentityBetweenBases(
-            classOrInterface: AST,
-            name: Identifier,
-            typeSymbol: PullTypeSymbol,
-            context: PullTypeResolutionContext): void {
+        name: Identifier,
+        typeSymbol: PullTypeSymbol,
+        context: PullTypeResolutionContext): void {
 
-            // October 16, 2013: Section 7.1:
-            // Inherited properties with the same name must be identical (section 3.8.2).
             // The membersBag will map each member name to its type and which base type we got it from
-            var membersBag = createIntrinsicsObject<{ type: PullTypeSymbol; baseOrigin: PullTypeSymbol; }>();
+            var derivedTypeCallSignatures = typeSymbol.getOwnCallSignatures();
+            var derivedTypeConstructSignatures = typeSymbol.getOwnConstructSignatures();
+            var derivedIndexSignatures = typeSymbol.getOwnIndexSignatures();
+
+            var inheritedMembersMap = createIntrinsicsObject<TypeWithBaseOrigin>();
+            var inheritedCallSignatures = new Array<SignatureWithBaseOrigin>();
+            var inheritedConstructSignatures = new Array<SignatureWithBaseOrigin>();
+            var inheritedIndexSignatures = new Array<SignatureWithBaseOrigin>();
+
             var baseTypes = typeSymbol.getExtendedTypes();
             for (var i = 0; i < baseTypes.length; i++) {
                 var baseMembers = baseTypes[i].getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.all);
@@ -12142,8 +12157,8 @@ module TypeScript {
                     }
 
                     // Error if there is already a member in the bag with that name, and it doesn't have the same type
-                    if (membersBag[memberName]) {
-                        var prevMember = membersBag[memberName];
+                    if (inheritedMembersMap[memberName]) {
+                        var prevMember = inheritedMembersMap[memberName];
                         if (prevMember.baseOrigin !== baseTypes[i] && !this.typesAreIdentical(member.type, prevMember.type)) {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name,
                                 DiagnosticCode.Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_Types_of_property_3_of_types_1_and_2_are_not_identical,
@@ -12152,13 +12167,97 @@ module TypeScript {
                         }
                     }
                     else {
-                        membersBag[memberName] = {
+                        inheritedMembersMap[memberName] = {
                             type: member.type,
                             baseOrigin: baseTypes[i]
                         };
                     }
                 }
             }
+        }
+
+        private checkNamedPropertyTypeIdentityBetweenBases(
+            interfaceName: Identifier,
+            interfaceSymbol: PullTypeSymbol,
+            baseTypeSymbol: PullTypeSymbol,
+            inheritedMembersMap: IIndexable<TypeWithBaseOrigin>,
+            context: PullTypeResolutionContext): boolean {
+            
+            // October 16, 2013: Section 7.1:
+            // Inherited properties with the same name must be identical (section 3.8.2).
+            var baseMembers = baseTypeSymbol.getAllMembers(PullElementKind.Property | PullElementKind.Method, GetAllMembersVisiblity.all);
+            for (var i = 0; i < baseMembers.length; i++) {
+                var member = baseMembers[i];
+                var memberName = member.name;
+                // Skip the member if it is shadowed in the derived type
+                if (interfaceSymbol.findMember(memberName, /*lookInParent*/ false)) {
+                    continue;
+                }
+
+                // Error if there is already a member in the bag with that name, and it doesn't have the same type
+                if (inheritedMembersMap[memberName]) {
+                    var prevMember = inheritedMembersMap[memberName];
+                    if (prevMember.baseOrigin !== baseTypeSymbol && !this.typesAreIdentical(member.type, prevMember.type)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(interfaceName,
+                            DiagnosticCode.Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_Types_of_property_3_of_types_1_and_2_are_not_identical,
+                            [interfaceSymbol.getDisplayName(), prevMember.baseOrigin.getScopedName(), baseTypeSymbol.getScopedName(), memberName]));
+                        return true; // Only report first offense
+                    }
+                }
+                else {
+                    inheritedMembersMap[memberName] = {
+                        type: member.type,
+                        baseOrigin: baseTypeSymbol
+                    };
+                }
+            }
+
+            return false;
+        }
+
+        private checkIndexSignatureCompatibilityBetweenBases(
+        interfaceName: Identifier,
+        interfaceSymbol: PullTypeSymbol,
+        baseTypeSymbol: PullTypeSymbol,
+        inheritedSignaturesFromThisBaseType: PullSignatureSymbol[],
+        allInheritedSignatures: SignatureWithBaseOrigin[],
+        derivedTypeSignatures: PullSignatureSymbol[],
+        context: PullTypeResolutionContext): boolean {
+
+            // October 16, 2013:
+            // Section 3.7.4:
+            // An object type can contain at most one string index signature and one numeric index signature.
+            for (var i = 0; i < inheritedSignaturesFromThisBaseType.length; i++) {
+                var currentInheritedSignature = inheritedSignaturesFromThisBaseType[i];
+
+                // Skip the signature if it is shadowed in the derived type
+                var signatureIsShadowedInDerivedType = ArrayUtilities.any(derivedTypeSignatures, signatureFromArray =>
+                    this.signaturesAreIdentical(currentInheritedSignature, signatureFromArray, /*includeReturnType*/ false));
+
+                if (signatureIsShadowedInDerivedType) {
+                    continue;
+                }
+
+                // Now error if there is already an inherited signature identical to this one
+                var prevSignature = ArrayUtilities.firstOrDefault(allInheritedSignatures, signatureFromArray =>
+                    this.signaturesAreIdentical(currentInheritedSignature, signatureFromArray.signature, /*includeReturnType*/ false));
+                if (prevSignature) {
+                    if (prevSignature.baseOrigin !== baseTypeSymbol) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(interfaceName,
+                            DiagnosticCode.Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_Types_of_property_3_of_types_1_and_2_are_not_identical,
+                            [interfaceSymbol.getDisplayName(), prevSignature.baseOrigin.getScopedName(), baseTypeSymbol.getScopedName(), memberName]));
+                        return true; // Only report first offense
+                    }
+                }
+                else {
+                    allInheritedSignatures.push({
+                        signature: currentInheritedSignature,
+                        baseOrigin: baseTypeSymbol
+                    });
+                }
+            }
+
+            return false;
         }
 
         private checkAssignability(ast: AST, source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext): void {
