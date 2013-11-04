@@ -2,7 +2,7 @@
 
 ////module Underscore {
 ////    export interface Iterator<T, U> {
-////        <T,U>(value: T, index: any, list: any): U;
+////        (value: T, index: any, list: any): U;
 ////    }
 ////
 ////    export interface Static {
