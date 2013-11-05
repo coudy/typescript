@@ -44,6 +44,54 @@ module TypeScript {
             TypeScript.syntaxDiagnosticsTime += new Date().getTime() - start;
 
             this._lineMap = syntaxTree.lineMap();
+
+            var sourceUnit = syntaxTree.sourceUnit();
+            this._isExternalModule = this.hasImplicitImport(sourceUnit.firstToken().leadingTrivia()) || this.hasTopLevelImportOrExport(sourceUnit);
+        }
+
+        private hasImplicitImport(sourceUnitLeadingComments: ISyntaxTriviaList): boolean {
+            for (var i = 0, n = sourceUnitLeadingComments.count(); i < n; i++) {
+                var trivia = sourceUnitLeadingComments.syntaxTriviaAt(i);
+
+                if (this.getImplicitImport(trivia.fullText())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private getImplicitImport(comment: string): boolean {
+            var implicitImportRegEx = /^(\/\/\/\s*<implicit-import\s*)*\/>/gim;
+            var match = implicitImportRegEx.exec(comment);
+
+            if (match) {
+                return true;
+            }
+
+            return false;
+        }
+
+        private hasTopLevelImportOrExport(node: SourceUnitSyntax): boolean {
+            var firstToken: ISyntaxToken;
+
+            for (var i = 0, n = node.moduleElements.childCount(); i < n; i++) {
+                var moduleElement = node.moduleElements.childAt(i);
+
+                firstToken = moduleElement.firstToken();
+                if (firstToken !== null && firstToken.tokenKind === SyntaxKind.ExportKeyword) {
+                    return true;
+                }
+
+                if (moduleElement.kind() === SyntaxKind.ImportDeclaration) {
+                    var importDecl = <ImportDeclarationSyntax>moduleElement;
+                    if (importDecl.moduleReference.kind() === SyntaxKind.ExternalModuleReference) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public script(): Script {
@@ -82,6 +130,19 @@ module TypeScript {
             }
 
             return this._lineMap;
+        }
+
+        public isExternalModule(): boolean {
+            // October 11, 2013
+            // External modules are written as separate source files that contain at least one 
+            // external import declaration, export assignment, or top-level exported declaration.
+            if (this._isExternalModule === undefined) {
+                // force the info about isExternalModule to get created.
+                this.syntaxTree();
+                Debug.assert(this._isExternalModule !== undefined);
+            }
+
+            return this._isExternalModule;
         }
 
         public syntaxTree(): SyntaxTree {
@@ -145,42 +206,6 @@ module TypeScript {
             // emitting to our own file.  Also, if we're an external module, then we're 
             // definitely emitting to our own file.
             return !this._compiler.compilationSettings().outFileOption() || this.isExternalModule();
-        }
-
-
-        public isExternalModule(): boolean {
-            // October 11, 2013
-            // External modules are written as separate source files that contain at least one 
-            // external import declaration, export assignment, or top-level exported declaration.
-            if (this._isExternalModule === undefined) {
-                this._isExternalModule = this.hasTopLevelImportOrExport(this.script());
-            }
-
-            return this._isExternalModule;
-        }
-
-        private hasTopLevelImportOrExport(script: Script): boolean {
-            if (script.hasImplicitImport) {
-                return true;
-            }
-
-            for (var i = 0, n = script.moduleElements.childCount(); i < n; i++) {
-                var moduleElement = script.moduleElements.childAt(i);
-
-                if (moduleElement.nodeType() === SyntaxKind.ImportDeclaration) {
-                    var importDeclaration = <ImportDeclaration>moduleElement;
-                    if (importDeclaration.moduleReference.nodeType() === SyntaxKind.ExternalModuleReference) {
-                        return true;
-                    }
-                }
-
-                var modifiers = getModifiers(moduleElement);
-                if (modifiers && hasModifier(modifiers, PullElementFlags.Exported)) {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public update(scriptSnapshot: IScriptSnapshot, version: number, isOpen: boolean, textChangeRange: TextChangeRange): Document {

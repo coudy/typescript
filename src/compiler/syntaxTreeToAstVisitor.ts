@@ -281,24 +281,10 @@ module TypeScript {
                 }
             }
 
-            var hasImplicitImport = this.hasImplicitImport(leadingComments);
-
-            var result = new Script(bod, this.fileName, amdDependencies, hasImplicitImport);
+            var result = new Script(bod, this.fileName, amdDependencies);
             this.setSpanExplicit(result, start, start + node.fullWidth());
 
             return result;
-        }
-
-        private hasImplicitImport(sourceUnitLeadingComments: ISyntaxTrivia[]): boolean {
-            for (var i = 0, n = sourceUnitLeadingComments.length; i < n; i++) {
-                var trivia = sourceUnitLeadingComments[i];
-
-                if (getImplicitImport(trivia.fullText())) {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public visitExternalModuleReference(node: ExternalModuleReferenceSyntax): ExternalModuleReference {

@@ -266,8 +266,7 @@ module TypeScript {
     export class Script extends AST {
         constructor(public moduleElements: ASTList,
                     private _fileName: string,
-                    public amdDependencies: string[],
-                    public hasImplicitImport: boolean) {
+                    public amdDependencies: string[]) {
             super();
             moduleElements && (moduleElements.parent = this);
         }
