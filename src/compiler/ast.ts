@@ -25,7 +25,7 @@ module TypeScript {
     }
 
     export class ASTSpan implements IASTSpan {
-        constructor(public _start: number, public _end: number, public _trailingTriviaWidth: number) {
+        constructor(public _start: number, public _end: number) {
         }
 
         public start(): number {
@@ -34,10 +34,6 @@ module TypeScript {
 
         public end(): number {
             return this._end;
-        }
-
-        public trailingTriviaWidth(): number {
-            return this._trailingTriviaWidth;
         }
     }
 

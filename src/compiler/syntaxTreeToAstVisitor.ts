@@ -45,16 +45,16 @@ module TypeScript {
             }
 
             if (element.fullWidth() === 0) {
-                return new ASTSpan(/*start:*/ -1, /*end:*/ -1, /*trailingTriviaWidth:*/ 0);
+                return new ASTSpan(/*start:*/ -1, /*end:*/ -1);
             }
 
             var leadingTriviaWidth = element.leadingTriviaWidth();
             var trailingTriviaWidth = element.trailingTriviaWidth();
 
-            var desiredMinChar = fullStart + leadingTriviaWidth;
-            var desiredLimChar = fullStart + element.fullWidth() - trailingTriviaWidth;
+            var start = fullStart + leadingTriviaWidth;
+            var end = fullStart + element.fullWidth() - trailingTriviaWidth;
 
-            return new ASTSpan(desiredMinChar, desiredLimChar, trailingTriviaWidth);
+            return new ASTSpan(start, end);
         }
 
         public setSpan(span: AST, fullStart: number, element: ISyntaxElement, firstToken = element.firstToken(), lastToken = element.lastToken()): void {
