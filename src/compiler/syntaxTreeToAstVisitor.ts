@@ -239,49 +239,13 @@ module TypeScript {
             }
         }
 
-        private getLeadingComments(node: SyntaxNode): ISyntaxTrivia[] {
-            var firstToken = node.firstToken();
-            var result: ISyntaxTrivia[] = [];
-
-            if (firstToken.hasLeadingComment()) {
-                var leadingTrivia = firstToken.leadingTrivia();
-
-                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
-                    var trivia = leadingTrivia.syntaxTriviaAt(i);
-
-                    if (trivia.isComment()) {
-                        result.push(trivia);
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private getAmdDependency(comment: string): string {
-            var amdDependencyRegEx = /^\/\/\/\s*<amd-dependency\s+path=('|")(.+?)\1/gim;
-            var match = amdDependencyRegEx.exec(comment);
-            return match ? match[2] : null;
-        }
-
         public visitSourceUnit(node: SourceUnitSyntax): Script {
             var start = this.position;
             Debug.assert(start === 0);
 
             var bod = this.visitSyntaxList(node.moduleElements);
 
-            var amdDependencies: string[] = [];
-
-            var leadingComments = this.getLeadingComments(node);
-            for (var i = 0, n = leadingComments.length; i < n; i++) {
-                var trivia = leadingComments[i];
-                var amdDependency = this.getAmdDependency(trivia.fullText());
-                if (amdDependency) {
-                    amdDependencies.push(amdDependency);
-                }
-            }
-
-            var result = new Script(bod, this.fileName, amdDependencies);
+            var result = new Script(bod, this.fileName);
             this.setSpanExplicit(result, start, start + node.fullWidth());
 
             return result;

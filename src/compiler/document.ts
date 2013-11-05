@@ -10,6 +10,7 @@ module TypeScript {
         private _declASTMap: AST[] = [];
         private _astDeclMap: PullDecl[] = [];
         private _isExternalModule: boolean = undefined;
+        private _amdDependencies: string[] = undefined;
 
         constructor(private _compiler: TypeScriptCompiler,
                     private _semanticInfoChain: SemanticInfoChain,
@@ -46,12 +47,50 @@ module TypeScript {
             this._lineMap = syntaxTree.lineMap();
 
             var sourceUnit = syntaxTree.sourceUnit();
-            this._isExternalModule = this.hasImplicitImport(sourceUnit.firstToken().leadingTrivia()) || this.hasTopLevelImportOrExport(sourceUnit);
+            var leadingComments = this.getLeadingComments(sourceUnit);
+
+            this._isExternalModule = this.hasImplicitImport(leadingComments) || this.hasTopLevelImportOrExport(sourceUnit);
+
+            var amdDependencies: string[] = [];
+            for (var i = 0, n = leadingComments.length; i < n; i++) {
+                var trivia = leadingComments[i];
+                var amdDependency = this.getAmdDependency(trivia.fullText());
+                if (amdDependency) {
+                    amdDependencies.push(amdDependency);
+                }
+            }
+
+            this._amdDependencies = amdDependencies;
         }
 
-        private hasImplicitImport(sourceUnitLeadingComments: ISyntaxTriviaList): boolean {
-            for (var i = 0, n = sourceUnitLeadingComments.count(); i < n; i++) {
-                var trivia = sourceUnitLeadingComments.syntaxTriviaAt(i);
+        private getLeadingComments(node: SyntaxNode): ISyntaxTrivia[] {
+            var firstToken = node.firstToken();
+            var result: ISyntaxTrivia[] = [];
+
+            if (firstToken.hasLeadingComment()) {
+                var leadingTrivia = firstToken.leadingTrivia();
+
+                for (var i = 0, n = leadingTrivia.count(); i < n; i++) {
+                    var trivia = leadingTrivia.syntaxTriviaAt(i);
+
+                    if (trivia.isComment()) {
+                        result.push(trivia);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private getAmdDependency(comment: string): string {
+            var amdDependencyRegEx = /^\/\/\/\s*<amd-dependency\s+path=('|")(.+?)\1/gim;
+            var match = amdDependencyRegEx.exec(comment);
+            return match ? match[2] : null;
+        }
+
+        private hasImplicitImport(sourceUnitLeadingComments: ISyntaxTrivia[]): boolean {
+            for (var i = 0, n = sourceUnitLeadingComments.length; i < n; i++) {
+                var trivia = sourceUnitLeadingComments[i];
 
                 if (this.getImplicitImport(trivia.fullText())) {
                     return true;
@@ -143,6 +182,16 @@ module TypeScript {
             }
 
             return this._isExternalModule;
+        }
+
+        public amdDependencies(): string[] {
+            if (this._amdDependencies === undefined) {
+                // force the info about the amd dependencies to get created.
+                this.syntaxTree();
+                Debug.assert(this._amdDependencies !== undefined);
+            }
+
+            return this._amdDependencies;
         }
 
         public syntaxTree(): SyntaxTree {

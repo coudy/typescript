@@ -794,8 +794,9 @@ module TypeScript {
             }
 
             // emit any potential amd dependencies
-            for (var i = 0; i < script.amdDependencies.length; i++) {
-                dependencyList += ", \"" + script.amdDependencies[i] + "\"";
+            var amdDependencies = this.document.amdDependencies();
+            for (var i = 0; i < amdDependencies.length; i++) {
+                dependencyList += ", \"" + amdDependencies[i] + "\"";
             }
 
             return {
