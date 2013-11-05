@@ -28189,7 +28189,7 @@ var TypeScript;
                 var preCommentsLength = preComments.length;
                 var docComments = new Array();
                 for (var i = preCommentsLength - 1; i >= 0; i--) {
-                    if (preComments[i].isDocComment()) {
+                    if (isDocComment(preComments[i])) {
                         docComments.push(preComments[i]);
                         continue;
                     }
@@ -28204,6 +28204,15 @@ var TypeScript;
         return TypeScript.sentinelEmptyArray;
     }
     TypeScript.docComments = docComments;
+
+    function isDocComment(comment) {
+        if (comment.nodeType() === 6 /* MultiLineCommentTrivia */) {
+            var fullText = comment.fullText();
+            return fullText.charAt(2) === "*" && fullText.charAt(3) !== "/";
+        }
+
+        return false;
+    }
 
     function getParameterList(ast) {
         if (ast) {
@@ -29680,7 +29689,7 @@ var TypeScript;
                 return;
             }
 
-            var text = comment.getText();
+            var text = getTrimmedTextLines(comment);
             var emitColumn = this.emitState.column;
 
             if (emitColumn === 0) {
@@ -29689,7 +29698,7 @@ var TypeScript;
                 this.writeToOutput(" ");
             }
 
-            if (comment.isBlockComment()) {
+            if (comment.nodeType() === 6 /* MultiLineCommentTrivia */) {
                 this.recordSourceMappingStart(comment);
                 this.writeToOutput(text[0]);
 
@@ -29720,6 +29729,7 @@ var TypeScript;
 
         Emitter.prototype.emitComments = function (ast, pre, onlyPinnedOrTripleSlashComments) {
             if (typeof onlyPinnedOrTripleSlashComments === "undefined") { onlyPinnedOrTripleSlashComments = false; }
+            var _this = this;
             if (ast && ast.nodeType() !== 146 /* Block */) {
                 if (ast.parent.nodeType() === 219 /* SimpleArrowFunctionExpression */ || ast.parent.nodeType() === 218 /* ParenthesizedArrowFunctionExpression */) {
                     return;
@@ -29736,13 +29746,22 @@ var TypeScript;
 
                 if (onlyPinnedOrTripleSlashComments) {
                     preComments = TypeScript.ArrayUtilities.where(preComments, function (c) {
-                        return c.isPinnedOrTripleSlash();
+                        return _this.isPinnedOrTripleSlash(c);
                     });
                 }
 
                 this.emitCommentsArray(preComments, false);
             } else {
                 this.emitCommentsArray(ast.postComments(), true);
+            }
+        };
+
+        Emitter.prototype.isPinnedOrTripleSlash = function (comment) {
+            var fullText = comment.fullText();
+            if (fullText.match(TypeScript.tripleSlashReferenceRegExp)) {
+                return true;
+            } else {
+                return fullText.indexOf("/*!") === 0;
             }
         };
 
@@ -32548,6 +32567,17 @@ var TypeScript;
         });
     }
     TypeScript.getLastConstructor = getLastConstructor;
+
+    function getTrimmedTextLines(comment) {
+        if (comment.nodeType() === 6 /* MultiLineCommentTrivia */) {
+            return comment.fullText().split("\n").map(function (s) {
+                return s.trim();
+            });
+        } else {
+            return [comment.fullText().trim()];
+        }
+    }
+    TypeScript.getTrimmedTextLines = getTrimmedTextLines;
 })(TypeScript || (TypeScript = {}));
 var TypeScript;
 (function (TypeScript) {
@@ -33454,10 +33484,10 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.emitComment = function (comment) {
-            var text = comment.getText();
+            var text = TypeScript.getTrimmedTextLines(comment);
             if (this.declFile.onNewLine) {
                 this.emitIndent();
-            } else if (!comment.isBlockComment()) {
+            } else if (comment.nodeType() !== 6 /* MultiLineCommentTrivia */) {
                 this.declFile.WriteLine("");
                 this.emitIndent();
             }
@@ -33470,7 +33500,7 @@ var TypeScript;
                 this.declFile.Write(text[i]);
             }
 
-            if (comment.endsLine || !comment.isBlockComment()) {
+            if (comment.endsLine || comment.nodeType() !== 6 /* MultiLineCommentTrivia */) {
                 this.declFile.WriteLine("");
             } else {
                 this.declFile.Write(" ");
@@ -35728,11 +35758,26 @@ var TypeScript;
             return classSymbol.type.getConstructSignatures()[0];
         };
 
+        PullSymbol.prototype.getDocCommentText = function (comments) {
+            var docCommentText = new Array();
+            for (var c = 0; c < comments.length; c++) {
+                var commentText = this.getDocCommentTextValue(comments[c]);
+                if (commentText !== "") {
+                    docCommentText.push(commentText);
+                }
+            }
+            return docCommentText.join("\n");
+        };
+
+        PullSymbol.prototype.getDocCommentTextValue = function (comment) {
+            return this.cleanJSDocComment(comment.fullText());
+        };
+
         PullSymbol.prototype.docComments = function (useConstructorAsClass) {
             var decls = this.getDeclarations();
             if (useConstructorAsClass && decls.length && decls[0].kind == 32768 /* ConstructorMethod */) {
                 var classDecl = decls[0].getParentDecl();
-                return TypeScript.Comment.getDocCommentText(this.getDocCommentsOfDecl(classDecl));
+                return this.getDocCommentText(this.getDocCommentsOfDecl(classDecl));
             }
 
             if (this._docComments === null) {
@@ -35750,12 +35795,12 @@ var TypeScript;
 
                     var funcContainer = this.getEnclosingSignature();
                     var funcDocComments = this.getDocCommentArray(funcContainer);
-                    var paramComment = TypeScript.Comment.getParameterDocCommentText(this.getDisplayName(), funcDocComments);
+                    var paramComment = this.getParameterDocCommentText(this.getDisplayName(), funcDocComments);
                     if (paramComment != "") {
                         parameterComments.push(paramComment);
                     }
 
-                    var paramSelfComment = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(this));
+                    var paramSelfComment = this.getDocCommentText(this.getDocCommentArray(this));
                     if (paramSelfComment != "") {
                         parameterComments.push(paramSelfComment);
                     }
@@ -35777,7 +35822,7 @@ var TypeScript;
                         }
                     }
                     if (getSymbolComments) {
-                        docComments = TypeScript.Comment.getDocCommentText(this.getDocCommentArray(this));
+                        docComments = this.getDocCommentText(this.getDocCommentArray(this));
                         if (docComments == "") {
                             if (this.kind == 1048576 /* CallSignature */) {
                                 var callTypeSymbol = this.functionType;
@@ -35793,6 +35838,200 @@ var TypeScript;
             }
 
             return this._docComments;
+        };
+
+        PullSymbol.prototype.getParameterDocCommentText = function (param, fncDocComments) {
+            if (fncDocComments.length === 0 || fncDocComments[0].nodeType() !== 6 /* MultiLineCommentTrivia */) {
+                return "";
+            }
+
+            for (var i = 0; i < fncDocComments.length; i++) {
+                var commentContents = fncDocComments[i].fullText();
+                for (var j = commentContents.indexOf("@param", 0); 0 <= j; j = commentContents.indexOf("@param", j)) {
+                    j += 6;
+                    if (!this.isSpaceChar(commentContents, j)) {
+                        continue;
+                    }
+
+                    j = this.consumeLeadingSpace(commentContents, j);
+                    if (j === -1) {
+                        break;
+                    }
+
+                    if (commentContents.charCodeAt(j) === 123 /* openBrace */) {
+                        j++;
+
+                        var charCode = 0;
+                        for (var curlies = 1; j < commentContents.length; j++) {
+                            charCode = commentContents.charCodeAt(j);
+
+                            if (charCode === 123 /* openBrace */) {
+                                curlies++;
+                                continue;
+                            }
+
+                            if (charCode === 125 /* closeBrace */) {
+                                curlies--;
+                                if (curlies === 0) {
+                                    break;
+                                } else {
+                                    continue;
+                                }
+                            }
+
+                            if (charCode === 64 /* at */) {
+                                break;
+                            }
+                        }
+
+                        if (j === commentContents.length) {
+                            break;
+                        }
+
+                        if (charCode === 64 /* at */) {
+                            continue;
+                        }
+
+                        j = this.consumeLeadingSpace(commentContents, j + 1);
+                        if (j === -1) {
+                            break;
+                        }
+                    }
+
+                    if (param !== commentContents.substr(j, param.length) || !this.isSpaceChar(commentContents, j + param.length)) {
+                        continue;
+                    }
+
+                    j = this.consumeLeadingSpace(commentContents, j + param.length);
+                    if (j === -1) {
+                        return "";
+                    }
+
+                    var endOfParam = commentContents.indexOf("@", j);
+                    var paramHelpString = commentContents.substring(j, endOfParam < 0 ? commentContents.length : endOfParam);
+
+                    var paramSpacesToRemove = undefined;
+                    var paramLineIndex = commentContents.substring(0, j).lastIndexOf("\n") + 1;
+                    if (paramLineIndex !== 0) {
+                        if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) === "\r") {
+                            paramLineIndex++;
+                        }
+                    }
+                    var startSpaceRemovalIndex = this.consumeLeadingSpace(commentContents, paramLineIndex);
+                    if (startSpaceRemovalIndex !== j && commentContents.charAt(startSpaceRemovalIndex) === "*") {
+                        paramSpacesToRemove = j - startSpaceRemovalIndex - 1;
+                    }
+
+                    return this.cleanJSDocComment(paramHelpString, paramSpacesToRemove);
+                }
+            }
+
+            return "";
+        };
+
+        PullSymbol.prototype.cleanJSDocComment = function (content, spacesToRemove) {
+            var docCommentLines = new Array();
+            content = content.replace("/**", "");
+            if (content.length >= 2 && content.charAt(content.length - 1) === "/" && content.charAt(content.length - 2) === "*") {
+                content = content.substring(0, content.length - 2);
+            }
+            var lines = content.split("\n");
+            var inParamTag = false;
+            for (var l = 0; l < lines.length; l++) {
+                var line = lines[l];
+                var cleanLinePos = this.cleanDocCommentLine(line, true, spacesToRemove);
+                if (!cleanLinePos) {
+                    continue;
+                }
+
+                var docCommentText = "";
+                var prevPos = cleanLinePos.start;
+                for (var i = line.indexOf("@", cleanLinePos.start); 0 <= i && i < cleanLinePos.end; i = line.indexOf("@", i + 1)) {
+                    var wasInParamtag = inParamTag;
+
+                    if (line.indexOf("param", i + 1) === i + 1 && this.isSpaceChar(line, i + 6)) {
+                        if (!wasInParamtag) {
+                            docCommentText += line.substring(prevPos, i);
+                        }
+
+                        prevPos = i;
+                        inParamTag = true;
+                    } else if (wasInParamtag) {
+                        prevPos = i;
+                        inParamTag = false;
+                    }
+                }
+
+                if (!inParamTag) {
+                    docCommentText += line.substring(prevPos, cleanLinePos.end);
+                }
+
+                var newCleanPos = this.cleanDocCommentLine(docCommentText, false);
+                if (newCleanPos) {
+                    if (spacesToRemove === undefined) {
+                        spacesToRemove = cleanLinePos.jsDocSpacesRemoved;
+                    }
+                    docCommentLines.push(docCommentText);
+                }
+            }
+
+            return docCommentLines.join("\n");
+        };
+
+        PullSymbol.prototype.consumeLeadingSpace = function (line, startIndex, maxSpacesToRemove) {
+            var endIndex = line.length;
+            if (maxSpacesToRemove !== undefined) {
+                endIndex = TypeScript.MathPrototype.min(startIndex + maxSpacesToRemove, endIndex);
+            }
+
+            for (; startIndex < endIndex; startIndex++) {
+                var charCode = line.charCodeAt(startIndex);
+                if (charCode !== 32 /* space */ && charCode !== 9 /* tab */) {
+                    return startIndex;
+                }
+            }
+
+            if (endIndex !== line.length) {
+                return endIndex;
+            }
+
+            return -1;
+        };
+
+        PullSymbol.prototype.isSpaceChar = function (line, index) {
+            var length = line.length;
+            if (index < length) {
+                var charCode = line.charCodeAt(index);
+
+                return charCode === 32 /* space */ || charCode === 9 /* tab */;
+            }
+
+            return index === length;
+        };
+
+        PullSymbol.prototype.cleanDocCommentLine = function (line, jsDocStyleComment, jsDocLineSpaceToRemove) {
+            var nonSpaceIndex = this.consumeLeadingSpace(line, 0);
+            if (nonSpaceIndex !== -1) {
+                var jsDocSpacesRemoved = nonSpaceIndex;
+                if (jsDocStyleComment && line.charAt(nonSpaceIndex) === '*') {
+                    var startIndex = nonSpaceIndex + 1;
+                    nonSpaceIndex = this.consumeLeadingSpace(line, startIndex, jsDocLineSpaceToRemove);
+
+                    if (nonSpaceIndex !== -1) {
+                        jsDocSpacesRemoved = nonSpaceIndex - startIndex;
+                    } else {
+                        return null;
+                    }
+                }
+
+                return {
+                    start: nonSpaceIndex,
+                    end: line.charAt(line.length - 1) === "\r" ? line.length - 1 : line.length,
+                    jsDocSpacesRemoved: jsDocSpacesRemoved
+                };
+            }
+
+            return null;
         };
         return PullSymbol;
     })();
@@ -58723,8 +58962,6 @@ var TypeScript;
             this.endsLine = endsLine;
             this._start = _start;
             this._end = _end;
-            this.text = null;
-            this.docCommentText = null;
         }
         Comment.prototype.start = function () {
             return this._start;
@@ -58738,8 +58975,8 @@ var TypeScript;
             return this._trivia.fullText();
         };
 
-        Comment.prototype.isBlockComment = function () {
-            return this._trivia.kind() === 6 /* MultiLineCommentTrivia */;
+        Comment.prototype.nodeType = function () {
+            return this._trivia.kind();
         };
 
         Comment.prototype.structuralEquals = function (ast, includingPosition) {
@@ -58750,250 +58987,6 @@ var TypeScript;
             }
 
             return this._trivia.fullText() === ast._trivia.fullText() && this.endsLine === ast.endsLine;
-        };
-
-        Comment.prototype.isPinnedOrTripleSlash = function () {
-            if (this.fullText().match(TypeScript.tripleSlashReferenceRegExp)) {
-                return true;
-            } else {
-                return this.fullText().indexOf("/*!") === 0;
-            }
-        };
-
-        Comment.prototype.getText = function () {
-            if (this.text === null) {
-                if (this.isBlockComment()) {
-                    this.text = this.fullText().split("\n");
-                    for (var i = 0; i < this.text.length; i++) {
-                        this.text[i] = this.text[i].replace(/^\s+|\s+$/g, '');
-                    }
-                } else {
-                    this.text = [(this.fullText().replace(/^\s+|\s+$/g, ''))];
-                }
-            }
-
-            return this.text;
-        };
-
-        Comment.prototype.isDocComment = function () {
-            if (this.isBlockComment()) {
-                return this.fullText().charAt(2) === "*" && this.fullText().charAt(3) !== "/";
-            }
-
-            return false;
-        };
-
-        Comment.prototype.getDocCommentTextValue = function () {
-            if (this.docCommentText === null) {
-                this.docCommentText = Comment.cleanJSDocComment(this.fullText());
-            }
-
-            return this.docCommentText;
-        };
-
-        Comment.consumeLeadingSpace = function (line, startIndex, maxSpacesToRemove) {
-            var endIndex = line.length;
-            if (maxSpacesToRemove !== undefined) {
-                endIndex = min(startIndex + maxSpacesToRemove, endIndex);
-            }
-
-            for (; startIndex < endIndex; startIndex++) {
-                var charCode = line.charCodeAt(startIndex);
-                if (charCode !== 32 /* space */ && charCode !== 9 /* tab */) {
-                    return startIndex;
-                }
-            }
-
-            if (endIndex !== line.length) {
-                return endIndex;
-            }
-
-            return -1;
-        };
-
-        Comment.isSpaceChar = function (line, index) {
-            var length = line.length;
-            if (index < length) {
-                var charCode = line.charCodeAt(index);
-
-                return charCode === 32 /* space */ || charCode === 9 /* tab */;
-            }
-
-            return index === length;
-        };
-
-        Comment.cleanDocCommentLine = function (line, jsDocStyleComment, jsDocLineSpaceToRemove) {
-            var nonSpaceIndex = Comment.consumeLeadingSpace(line, 0);
-            if (nonSpaceIndex !== -1) {
-                var jsDocSpacesRemoved = nonSpaceIndex;
-                if (jsDocStyleComment && line.charAt(nonSpaceIndex) === '*') {
-                    var startIndex = nonSpaceIndex + 1;
-                    nonSpaceIndex = Comment.consumeLeadingSpace(line, startIndex, jsDocLineSpaceToRemove);
-
-                    if (nonSpaceIndex !== -1) {
-                        jsDocSpacesRemoved = nonSpaceIndex - startIndex;
-                    } else {
-                        return null;
-                    }
-                }
-
-                return {
-                    start: nonSpaceIndex,
-                    end: line.charAt(line.length - 1) === "\r" ? line.length - 1 : line.length,
-                    jsDocSpacesRemoved: jsDocSpacesRemoved
-                };
-            }
-
-            return null;
-        };
-
-        Comment.cleanJSDocComment = function (content, spacesToRemove) {
-            var docCommentLines = new Array();
-            content = content.replace("/**", "");
-            if (content.length >= 2 && content.charAt(content.length - 1) === "/" && content.charAt(content.length - 2) === "*") {
-                content = content.substring(0, content.length - 2);
-            }
-            var lines = content.split("\n");
-            var inParamTag = false;
-            for (var l = 0; l < lines.length; l++) {
-                var line = lines[l];
-                var cleanLinePos = Comment.cleanDocCommentLine(line, true, spacesToRemove);
-                if (!cleanLinePos) {
-                    continue;
-                }
-
-                var docCommentText = "";
-                var prevPos = cleanLinePos.start;
-                for (var i = line.indexOf("@", cleanLinePos.start); 0 <= i && i < cleanLinePos.end; i = line.indexOf("@", i + 1)) {
-                    var wasInParamtag = inParamTag;
-
-                    if (line.indexOf("param", i + 1) === i + 1 && Comment.isSpaceChar(line, i + 6)) {
-                        if (!wasInParamtag) {
-                            docCommentText += line.substring(prevPos, i);
-                        }
-
-                        prevPos = i;
-                        inParamTag = true;
-                    } else if (wasInParamtag) {
-                        prevPos = i;
-                        inParamTag = false;
-                    }
-                }
-
-                if (!inParamTag) {
-                    docCommentText += line.substring(prevPos, cleanLinePos.end);
-                }
-
-                var newCleanPos = Comment.cleanDocCommentLine(docCommentText, false);
-                if (newCleanPos) {
-                    if (spacesToRemove === undefined) {
-                        spacesToRemove = cleanLinePos.jsDocSpacesRemoved;
-                    }
-                    docCommentLines.push(docCommentText);
-                }
-            }
-
-            return docCommentLines.join("\n");
-        };
-
-        Comment.getDocCommentText = function (comments) {
-            var docCommentText = new Array();
-            for (var c = 0; c < comments.length; c++) {
-                var commentText = comments[c].getDocCommentTextValue();
-                if (commentText !== "") {
-                    docCommentText.push(commentText);
-                }
-            }
-            return docCommentText.join("\n");
-        };
-
-        Comment.getParameterDocCommentText = function (param, fncDocComments) {
-            if (fncDocComments.length === 0 || !fncDocComments[0].isBlockComment()) {
-                return "";
-            }
-
-            for (var i = 0; i < fncDocComments.length; i++) {
-                var commentContents = fncDocComments[i].fullText();
-                for (var j = commentContents.indexOf("@param", 0); 0 <= j; j = commentContents.indexOf("@param", j)) {
-                    j += 6;
-                    if (!Comment.isSpaceChar(commentContents, j)) {
-                        continue;
-                    }
-
-                    j = Comment.consumeLeadingSpace(commentContents, j);
-                    if (j === -1) {
-                        break;
-                    }
-
-                    if (commentContents.charCodeAt(j) === 123 /* openBrace */) {
-                        j++;
-
-                        var charCode = 0;
-                        for (var curlies = 1; j < commentContents.length; j++) {
-                            charCode = commentContents.charCodeAt(j);
-
-                            if (charCode === 123 /* openBrace */) {
-                                curlies++;
-                                continue;
-                            }
-
-                            if (charCode === 125 /* closeBrace */) {
-                                curlies--;
-                                if (curlies === 0) {
-                                    break;
-                                } else {
-                                    continue;
-                                }
-                            }
-
-                            if (charCode === 64 /* at */) {
-                                break;
-                            }
-                        }
-
-                        if (j === commentContents.length) {
-                            break;
-                        }
-
-                        if (charCode === 64 /* at */) {
-                            continue;
-                        }
-
-                        j = Comment.consumeLeadingSpace(commentContents, j + 1);
-                        if (j === -1) {
-                            break;
-                        }
-                    }
-
-                    if (param !== commentContents.substr(j, param.length) || !Comment.isSpaceChar(commentContents, j + param.length)) {
-                        continue;
-                    }
-
-                    j = Comment.consumeLeadingSpace(commentContents, j + param.length);
-                    if (j === -1) {
-                        return "";
-                    }
-
-                    var endOfParam = commentContents.indexOf("@", j);
-                    var paramHelpString = commentContents.substring(j, endOfParam < 0 ? commentContents.length : endOfParam);
-
-                    var paramSpacesToRemove = undefined;
-                    var paramLineIndex = commentContents.substring(0, j).lastIndexOf("\n") + 1;
-                    if (paramLineIndex !== 0) {
-                        if (paramLineIndex < j && commentContents.charAt(paramLineIndex + 1) === "\r") {
-                            paramLineIndex++;
-                        }
-                    }
-                    var startSpaceRemovalIndex = Comment.consumeLeadingSpace(commentContents, paramLineIndex);
-                    if (startSpaceRemovalIndex !== j && commentContents.charAt(startSpaceRemovalIndex) === "*") {
-                        paramSpacesToRemove = j - startSpaceRemovalIndex - 1;
-                    }
-
-                    return Comment.cleanJSDocComment(paramHelpString, paramSpacesToRemove);
-                }
-            }
-
-            return "";
         };
         return Comment;
     })();
