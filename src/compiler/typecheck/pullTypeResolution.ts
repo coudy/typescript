@@ -27,19 +27,17 @@ module TypeScript {
     }
 
     // A base origin is for inherited members. It points to which base the member was inherited from.
-    interface MemberWithBaseOrigin {
-        memberSymbol: PullSymbol;
-        baseOrigin: PullTypeSymbol;
+    class MemberWithBaseOrigin {
+        constructor(public memberSymbol: PullSymbol, public baseOrigin: PullTypeSymbol) { }
     }
 
-    interface SignatureWithBaseOrigin {
-        signature: PullSignatureSymbol;
-        baseOrigin: PullTypeSymbol;
+    class SignatureWithBaseOrigin {
+        constructor(public signature: PullSignatureSymbol, public baseOrigin: PullTypeSymbol) { }
     }
 
-    interface InheritedIndexSignatureInfo {
-        numberSignatureWithBaseOrigin: SignatureWithBaseOrigin;
-        stringSignatureWithBaseOrigin: SignatureWithBaseOrigin;
+    class InheritedIndexSignatureInfo {
+        public numberSignatureWithBaseOrigin: SignatureWithBaseOrigin;
+        public stringSignatureWithBaseOrigin: SignatureWithBaseOrigin;
     }
 
     enum CompilerReservedNames {
@@ -11788,8 +11786,14 @@ module TypeScript {
                         !hasFlag(member.flags, PullElementFlags.Static)) {
 
                         // Decide whether to check against the number or string signature
-                        this.memberIsSubtypeOfRelevantIndexer(member.getSymbol(), numberSignature, stringSignature, this.semanticInfoChain.getASTForDecl(member),
-                            context, /*reportError*/ true);
+                        var memberSymbol = member.getSymbol();
+                        var relevantSignature = this.determineRelevantIndexerForMember(memberSymbol, numberSignature, stringSignature);
+                        if (relevantSignature) {
+                            var comparisonInfo = new TypeComparisonInfo();
+                            if (!this.sourceIsSubtypeOfTarget(memberSymbol.type, relevantSignature.returnType, context, comparisonInfo)) {
+                                this.reportErrorThatMemberIsNotSubtypeOfIndexer(memberSymbol, relevantSignature, member.ast(), context, comparisonInfo);
+                            }
+                        }
                     }
                 }
             }
@@ -11804,32 +11808,6 @@ module TypeScript {
             }
 
             return null;
-        }
-
-        // Returns true in an error case, false otherwise
-        // Indexer arguments can be null for this method
-        private memberIsSubtypeOfRelevantIndexer(
-            member: PullSymbol,
-            numberIndexSignature: PullSignatureSymbol,
-            stringIndexSignature: PullSignatureSymbol,
-            astForError: AST,
-            context: PullTypeResolutionContext,
-            reportError: boolean,
-            comparisonInfo?: TypeComparisonInfo): boolean {
-            var relevantSignature = this.determineRelevantIndexerForMember(member, numberIndexSignature, stringIndexSignature);
-            if (relevantSignature) {
-                if (!comparisonInfo) {
-                    comparisonInfo = reportError ? new TypeComparisonInfo() : null;
-                }
-                if (!this.sourceIsSubtypeOfTarget(member.type, relevantSignature.returnType, context, comparisonInfo)) {
-                    if (reportError) {
-                        this.reportErrorThatMemberIsNotSubtypeOfIndexer(member, relevantSignature, astForError, context, comparisonInfo);
-                    }
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private reportErrorThatMemberIsNotSubtypeOfIndexer(member: PullSymbol, indexSignature: PullSignatureSymbol, astForError: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo): void {
@@ -12175,7 +12153,7 @@ module TypeScript {
             var derivedIndexSignatures = typeSymbol.getOwnIndexSignatures();
 
             var inheritedMembersMap = createIntrinsicsObject<MemberWithBaseOrigin>();
-            var inheritedIndexSignatures = <InheritedIndexSignatureInfo>{};
+            var inheritedIndexSignatures = new InheritedIndexSignatureInfo();
 
             var typeHasOwnNumberIndexer = false;
             var typeHasOwnStringIndexer = false;
@@ -12195,22 +12173,23 @@ module TypeScript {
             for (var i = 0; i < baseTypes.length; i++) {
                 // Check the member identity and the index signature identity between this base
                 // and bases checked so far. Only report the first error.
-                var baseIsInvalid = this.checkNamedPropertyTypeIdentityBetweenBases(name, typeSymbol, baseTypes[i], inheritedMembersMap, context);
-                if (baseIsInvalid) {
-                    return;
-                }
-                baseIsInvalid = this.checkIndexSignatureIdentityBetweenBases(name, typeSymbol, baseTypes[i], inheritedIndexSignatures, typeHasOwnNumberIndexer, typeHasOwnStringIndexer, context);
-                if (baseIsInvalid) {
+                if (this.checkNamedPropertyTypeIdentityBetweenBases(name, typeSymbol, baseTypes[i], inheritedMembersMap, context) ||
+                    this.checkIndexSignatureIdentityBetweenBases(name, typeSymbol, baseTypes[i], inheritedIndexSignatures, typeHasOwnNumberIndexer, typeHasOwnStringIndexer, context)) {
                     return;
                 }
             }
 
             // Check that number indexer is a subtype of the string indexer. If that check succeeds,
-            // check all the inherited members against the relevant signatures
-            this.checkThatInheritedNumberSignatureIsSubtypeOfInheritedStringSignature(name, typeSymbol, inheritedIndexSignatures, context) ||
+            // check all the inherited members against the relevant signature
+            if (this.checkThatInheritedNumberSignatureIsSubtypeOfInheritedStringSignature(name, typeSymbol, inheritedIndexSignatures, context)) {
+                return;
+            }
+
             this.checkInheritedMembersAgainstInheritedIndexSignatures(name, typeSymbol, inheritedIndexSignatures, inheritedMembersMap, context);
         }
 
+        // This method returns true if there was an error given, and false if there was no error.
+        // The boolean value is used by the caller for short circuiting.
         private checkNamedPropertyTypeIdentityBetweenBases(
             interfaceName: Identifier,
             interfaceSymbol: PullTypeSymbol,
@@ -12242,16 +12221,15 @@ module TypeScript {
                     }
                 }
                 else {
-                    inheritedMembersMap[memberName] = {
-                        memberSymbol: member,
-                        baseOrigin: baseTypeSymbol
-                    };
+                    inheritedMembersMap[memberName] = new MemberWithBaseOrigin(member, baseTypeSymbol);
                 }
             }
 
             return false;
         }
 
+        // This method returns true if there was an error given, and false if there was no error.
+        // The boolean value is used by the caller for short circuiting.
         private checkIndexSignatureIdentityBetweenBases(
             interfaceName: Identifier,
             interfaceSymbol: PullTypeSymbol,
@@ -12294,10 +12272,7 @@ module TypeScript {
                         }
                     }
                     else {
-                        allInheritedSignatures.stringSignatureWithBaseOrigin = {
-                            signature: currentInheritedSignature,
-                            baseOrigin: baseTypeSymbol
-                        }
+                        allInheritedSignatures.stringSignatureWithBaseOrigin = new SignatureWithBaseOrigin(currentInheritedSignature, baseTypeSymbol);
                     }
                 }
                 else if (parameterTypeIsNumber) {
@@ -12313,10 +12288,7 @@ module TypeScript {
                         }
                     }
                     else {
-                        allInheritedSignatures.numberSignatureWithBaseOrigin = {
-                            signature: currentInheritedSignature,
-                            baseOrigin: baseTypeSymbol
-                        }
+                        allInheritedSignatures.numberSignatureWithBaseOrigin = new SignatureWithBaseOrigin(currentInheritedSignature, baseTypeSymbol);
                     }
                 }
             }
@@ -12324,6 +12296,8 @@ module TypeScript {
             return false;
         }
 
+        // This method returns true if there was an error given, and false if there was no error.
+        // The boolean value is used by the caller for short circuiting.
         private checkInheritedMembersAgainstInheritedIndexSignatures(
             interfaceName: Identifier,
             interfaceSymbol: PullTypeSymbol,
@@ -12357,8 +12331,7 @@ module TypeScript {
                     continue;
                 }
 
-                var memberIsSubtype = this.memberIsSubtypeOfRelevantIndexer(memberWithBaseOrigin.memberSymbol, inheritedIndexSignatures.numberSignatureWithBaseOrigin.signature,
-                    inheritedIndexSignatures.stringSignatureWithBaseOrigin.signature, /*astForError*/ null, context, /*reportError*/ false, comparisonInfo);
+                var memberIsSubtype = this.sourceIsSubtypeOfTarget(memberWithBaseOrigin.memberSymbol.type, relevantSignature.returnType, context, comparisonInfo);
 
                 if (!memberIsSubtype) {
                     if (relevantSignatureIsNumberSignature) {
