@@ -19,11 +19,9 @@ module TypeScript {
     export interface IASTSpan {
         _start: number;
         _end: number;
-        _trailingTriviaWidth: number;
 
         start(): number;
-        end(): number;
-        trailingTriviaWidth(): number;
+        end(): number;        //trailingTriviaWidth(): number;
     }
 
     export class ASTSpan implements IASTSpan {
@@ -1761,7 +1759,6 @@ module TypeScript {
     export class Comment {
         public text: string[] = null;
         private docCommentText: string = null;
-        public _trailingTriviaWidth = 0;
 
         constructor(private _trivia: ISyntaxTrivia,
                     public endsLine: boolean,
@@ -1775,10 +1772,6 @@ module TypeScript {
 
         public end(): number {
             return this._end;
-        }
-
-        public trailingTriviaWidth(): number {
-            return this._trailingTriviaWidth;
         }
 
         public fullText(): string {
