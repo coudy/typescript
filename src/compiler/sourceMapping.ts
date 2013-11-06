@@ -44,7 +44,6 @@ module TypeScript {
             Debug.assert(isFinite(emittedColumn));
             Debug.assert(isFinite(sourceColumn));
             Debug.assert(isFinite(sourceLine));
-
         }
     }
 
@@ -93,8 +92,8 @@ module TypeScript {
         public decreaseMappingLevel(ast: IASTSpan) {
             Debug.assert(this.mappingLevel.length > 0, "Mapping level should never be less than 0. This suggests a missing start call.");
             var expectedAst = this.mappingLevel.pop();
-            var expectedAstInfo: any = (<AST>expectedAst).nodeType ? SyntaxKind[(<AST>expectedAst).nodeType()] : [expectedAst.start(), expectedAst.end()];
-            var astInfo: any = (<AST>ast).nodeType ? SyntaxKind[(<AST>ast).nodeType()] : [ast.start(), ast.end()]
+            var expectedAstInfo: any = (<AST>expectedAst).kind ? SyntaxKind[(<AST>expectedAst).kind()] : [expectedAst.start(), expectedAst.end()];
+            var astInfo: any = (<AST>ast).kind ? SyntaxKind[(<AST>ast).kind()] : [ast.start(), ast.end()]
             Debug.assert(
                 ast === expectedAst,
                 "Provided ast is not the expected AST, Expected: " + expectedAstInfo + " Given: " + astInfo)
@@ -162,7 +161,7 @@ module TypeScript {
             Debug.assert(
                 this.mappingLevel.length === 0,
                 "Mapping level is not 0. This suggest a missing end call. Value: " +
-                this.mappingLevel.map(item => ['Node of type', SyntaxKind[(<AST>item).nodeType()], 'at', item.start(), 'to', item.end()].join(' ')).join(', '));
+                this.mappingLevel.map(item => ['Node of type', SyntaxKind[(<AST>item).kind()], 'at', item.start(), 'to', item.end()].join(' ')).join(', '));
             // Output map file name into the js file
             this.jsFile.WriteLine("//# sourceMappingURL=" + this.sourceMapPath);
 
