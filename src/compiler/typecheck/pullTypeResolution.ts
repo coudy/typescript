@@ -7980,7 +7980,7 @@ module TypeScript {
                         }
                     }
                     else if (!typeArgs && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
-                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], callEx.argumentList.arguments, new TypeComparisonInfo(), context);
+                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], new ArgumentInferenceContext(this, callEx.argumentList.arguments), new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
                     else {
@@ -8367,7 +8367,7 @@ module TypeScript {
                                 }
                             }
                             else if (!typeArgs && callEx.argumentList && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
-                                inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], callEx.argumentList.arguments, new TypeComparisonInfo(), context);
+                                inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], new ArgumentInferenceContext(this, callEx.argumentList.arguments), new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
                             else {
@@ -8611,9 +8611,13 @@ module TypeScript {
             var typeParameters: PullTypeParameterSymbol[] = signatureA.getTypeParameters();
             var typeConstraint: PullTypeSymbol = null;
 
-            // create a type argument list based on the parameters of signatureB
-            var signatureAST = this.semanticInfoChain.getASTForDecl(signatureB.getDeclarations()[0]);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, getParameterList(signatureAST).parameters, new TypeComparisonInfo, context);
+            var fixedParameterTypes: PullTypeSymbol[] = [];
+
+            for (var i = 0; i < signatureB.parameters.length; i++) {
+                fixedParameterTypes.push(signatureB.parameters[i].isVarArg ? signatureB.parameters[i].type.getElementType() : signatureB.parameters[i].type);
+            }
+
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, new ArgumentInferenceContext(this, fixedParameterTypes), new TypeComparisonInfo(), context);
 
             var functionTypeA = signatureA.functionType;
             var functionTypeB = signatureB.functionType;
@@ -10444,14 +10448,14 @@ module TypeScript {
             return OverloadApplicabilityStatus.NotAssignable;
         }
 
-        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, args: ISeparatedSyntaxList2, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
+        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, argContext: ArgumentInferenceContext, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
             var cxt: PullContextualTypeContext = null;
 
             var parameters = signature.parameters;
             var typeParameters = signature.getTypeParameters();
-            var argContext = new ArgumentInferenceContext();
 
             var parameterType: PullTypeSymbol = null;
+            var argCount = argContext.getInferenceArgumentCount();
 
             // seed each type parameter with the undefined type, so that we can widen it to 'any'
             // if no inferences can be made
@@ -10459,7 +10463,7 @@ module TypeScript {
                 argContext.addInferenceRoot(typeParameters[i]);
             }
 
-            for (var i = 0; i < args.nonSeparatorCount(); i++) {
+            for (var i = 0; i < argCount; i++) {
 
                 if (i >= parameters.length) {
                     break;
@@ -10482,18 +10486,15 @@ module TypeScript {
 
                         context.pushContextualType(parameterType, true, substitutions);
 
-                        var argSym = this.resolveAST(args.nonSeparatorAt(i), true, context);
-
-                        this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, context);
+                        this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
 
                         cxt = context.popContextualType();
                     }
                 }
                 else {
                     context.pushContextualType(parameterType, true, []);
-                    var argSym = this.resolveAST(args.nonSeparatorAt(i), true, context);
 
-                    this.relateTypeToTypeParameters(argSym.type, parameterType, false, argContext, context);
+                    this.relateTypeToTypeParameters(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
 
                     cxt = context.popContextualType();
                 }
@@ -10518,7 +10519,7 @@ module TypeScript {
             }
 
             // REVIEW: Remove this block?
-            if (!args.nonSeparatorCount() && !resultTypes.length && typeParameters.length) {
+            if (!argCount && !resultTypes.length && typeParameters.length) {
                 for (var i = 0; i < typeParameters.length; i++) {
                     resultTypes[resultTypes.length] = this.semanticInfoChain.emptyTypeSymbol;
                 }
@@ -10540,13 +10541,13 @@ module TypeScript {
 
             // We know that if we are inferring at a call expression we are not doing
             // contextual signature instantiation
-            var inferringAtCallExpression = args.parent && args.parent.kind() === SyntaxKind.ArgumentList &&
-                (args.parent.parent.kind() === SyntaxKind.InvocationExpression || args.parent.parent.kind() === SyntaxKind.ObjectCreationExpression);
+            var inferringAtCallExpression = argContext.argumentASTs && argContext.argumentASTs.parent && argContext.argumentASTs.parent.kind() === SyntaxKind.ArgumentList &&
+                (argContext.argumentASTs.parent.parent.kind() === SyntaxKind.InvocationExpression || argContext.argumentASTs.parent.parent.kind() === SyntaxKind.ObjectCreationExpression);
 
             if (inferringAtCallExpression) {
                 // Need to know if the type parameters are in scope. If not, they are not legal inference
                 // candidates unless we are in contextual signature instantiation
-                if (!this.typeParametersAreInScopeAtArgumentList(typeParameters, args)) {
+                if (!this.typeParametersAreInScopeAtArgumentList(typeParameters, argContext.argumentASTs)) {
                     for (var i = 0; i < resultTypes.length; i++) {
                         // Check if the inferred type wraps any one of the type parameters
                         if (resultTypes[i].wrapsSomeTypeParameter(argContext.candidateCache)) {
@@ -10597,9 +10598,6 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
-                if (expressionType.isGeneric() && !expressionType.isTypeParameter()) {
-                    expressionType = this.instantiateTypeToAny(expressionType, context);
-                }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
             }
@@ -12368,15 +12366,18 @@ module TypeScript {
             // All properties of the interface must satisfy the constraints implied by the index
             // signatures of the interface as specified in section 3.7.4.
             var comparisonInfo = new TypeComparisonInfo();
+            var stringSignature = inheritedIndexSignatures.stringSignatureWithBaseOrigin && inheritedIndexSignatures.stringSignatureWithBaseOrigin.signature;
+            var numberSignature = inheritedIndexSignatures.numberSignatureWithBaseOrigin && inheritedIndexSignatures.numberSignatureWithBaseOrigin.signature;
             for (var memberName in inheritedMembers) {
                 var memberWithBaseOrigin = inheritedMembers[memberName];
                 if (!memberWithBaseOrigin) {
                     continue;
                 }
 
-                var relevantSignature = this.determineRelevantIndexerForMember(memberWithBaseOrigin.memberSymbol, inheritedIndexSignatures.numberSignatureWithBaseOrigin.signature,
-                    inheritedIndexSignatures.stringSignatureWithBaseOrigin.signature);
-                Debug.assert(relevantSignature);
+                var relevantSignature = this.determineRelevantIndexerForMember(memberWithBaseOrigin.memberSymbol, numberSignature, stringSignature);
+                if (!relevantSignature) {
+                    continue;
+                }
 
                 var relevantSignatureIsNumberSignature = relevantSignature.parameters[0].type === this.semanticInfoChain.numberTypeSymbol;
                 var signatureBaseOrigin = relevantSignatureIsNumberSignature ? inheritedIndexSignatures.numberSignatureWithBaseOrigin.baseOrigin :
