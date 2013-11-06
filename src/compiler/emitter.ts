@@ -120,7 +120,7 @@ module TypeScript {
                 var document = compiler.getDocument(fileNames[i]);
                 var sourceUnit = document.sourceUnit();
 
-                if (!sourceUnit.isDeclareFile()) {
+                if (!document.isDeclareFile()) {
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength === -1) {
                         // First time at finding common path
@@ -3261,7 +3261,7 @@ module TypeScript {
         }
 
         private emitSourceUnit(sourceUnit: SourceUnit): void {
-            if (!sourceUnit.isDeclareFile()) {
+            if (!this.document.isDeclareFile()) {
                 var pullDecl = this.semanticInfoChain.getDeclForAST(sourceUnit);
                 this.pushDecl(pullDecl);
                 this.emitScriptElements(sourceUnit);
