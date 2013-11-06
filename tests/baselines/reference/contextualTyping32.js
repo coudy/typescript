@@ -1,8 +1,12 @@
 function foo(param) {
 }
 ;
-foo([function () {
+
+foo([
+    function () {
         return 1;
-    }, function () {
+    },
+    function () {
         return 4;
-    }]);
+    }
+]);

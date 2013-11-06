@@ -7398,7 +7398,7 @@ module TypeScript {
                 // Add the contextual type to the collection as one of the types to be considered for best common type
                 collection = {
                     getLength: () => { return elements.nonSeparatorCount() + 1; },
-                    getTypeAtIndex: (index: number) => { return index === elementTypes.length ? contextualElementType : elementTypes[index]; }
+                    getTypeAtIndex: (index: number) => { return index === 0 ? contextualElementType : elementTypes[index - 1]; }
                 };
             }
             else {
@@ -8781,47 +8781,20 @@ module TypeScript {
         // type relationships
 
         private chooseCommonType(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
-            if (!(a || b)) {
-                return null;
-            }
-            if (!a) {
-                return b;
-            }
-            if (!b) {
+            Debug.assert(a && b);
+            if (this.typesAreIdentical(a, b)) {
                 return a;
             }
-            if (this.isAnyOrEquivalent(a) || this.isAnyOrEquivalent(b)) {
-                return this.semanticInfoChain.anyTypeSymbol;
-            }
-            else if (a === b) {
-                return a;
-            }
-            else if ((b === this.semanticInfoChain.nullTypeSymbol) && a != this.semanticInfoChain.nullTypeSymbol) {
-                return a;
-            }
-            else if ((a === this.semanticInfoChain.nullTypeSymbol) && (b != this.semanticInfoChain.nullTypeSymbol)) {
-                return b;
-            }
-            else if ((a === this.semanticInfoChain.voidTypeSymbol) && (b === this.semanticInfoChain.voidTypeSymbol || b === this.semanticInfoChain.undefinedTypeSymbol || b === this.semanticInfoChain.nullTypeSymbol)) {
-                return a;
-            }
-            else if ((a === this.semanticInfoChain.voidTypeSymbol) && (b === this.semanticInfoChain.anyTypeSymbol)) {
-                return b;
-            }
-            else if ((b === this.semanticInfoChain.undefinedTypeSymbol) && a != this.semanticInfoChain.voidTypeSymbol) {
-                return a;
-            }
-            else if ((a === this.semanticInfoChain.undefinedTypeSymbol) && (b != this.semanticInfoChain.undefinedTypeSymbol)) {
-                return b;
-            }
-            else if (a.isTypeParameter() && !b.isTypeParameter()) {
+            if (a.isTypeParameter() && !b.isTypeParameter()) {
                 return b;
             }
             else if (!a.isTypeParameter() && b.isTypeParameter()) {
                 return a;
             }
+            // Account for the fact that two types can be subtypes of each other without being
+            // identical. In this case there should be no BCT.
             else if (this.sourceIsSubtypeOfTarget(a, b, context, comparisonInfo)) {
-                return b;
+                return this.sourceIsSubtypeOfTarget(b, a, context, comparisonInfo) ? null : b;
             }
             else if (this.sourceIsSubtypeOfTarget(b, a, context, comparisonInfo)) {
                 return a;
@@ -9009,8 +8982,8 @@ module TypeScript {
 
             // properties are identical in name, optionality, and type
             if (t1.hasMembers() && t2.hasMembers()) {
-                var t1Members = t1.getMembers();
-                var t2Members = t2.getMembers();
+                var t1Members = t1.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+                var t2Members = t2.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
                 if (t1Members.length != t2Members.length) {
                     this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
@@ -9421,7 +9394,7 @@ module TypeScript {
             }
 
             if (target == this.semanticInfoChain.voidTypeSymbol) {
-                if (source == this.semanticInfoChain.anyTypeSymbol || source == this.semanticInfoChain.undefinedTypeSymbol || source == this.semanticInfoChain.nullTypeSymbol) {
+                if (source == this.semanticInfoChain.undefinedTypeSymbol || source == this.semanticInfoChain.nullTypeSymbol) {
                     return true;
                 }
 
@@ -9439,9 +9412,8 @@ module TypeScript {
                 return true;
             }
 
-            // REVIEW: We allow this only for enum initialization purposes
             if (source === this.semanticInfoChain.numberTypeSymbol && PullHelpers.symbolIsEnum(target)) {
-                return true;
+                return assignableTo;
             }
 
             if (PullHelpers.symbolIsEnum(target) && PullHelpers.symbolIsEnum(source)) {
@@ -9493,15 +9465,9 @@ module TypeScript {
 
             // this check ensures that we only operate on object types from this point forward,
             // since the checks involving primitives occurred above
-            if (source.isPrimitive() && target.isPrimitive()) {
-
+            if (sourceSubstitution.isPrimitive() || target.isPrimitive()) {
                 // we already know that they're not the same, and that neither is 'any'
                 return false;
-            }
-            else if (source.isPrimitive() != target.isPrimitive()) {
-                if (target.isPrimitive()) {
-                    return false;
-                }
             }
 
             if (target.isTypeParameter()) {

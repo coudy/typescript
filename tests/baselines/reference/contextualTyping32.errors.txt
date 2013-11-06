@@ -1,0 +1,6 @@
+contextualTyping32.ts line 6 col 1: error TS2082: Supplied parameters do not match any signature of call target:
+	Type '{ (): number; (i: number): number; }' requires a call signature, but type '{}' lacks one.
+	Types of property 'pop' of types '{}[]' and '{ (): number; (i: number): number; }[]' are incompatible:
+		Call signatures of types '() => {}' and '() => { (): number; (i: number): number; }' are incompatible:
+			Type '{ (): number; (i: number): number; }' requires a call signature, but type '{}' lacks one.
+contextualTyping32.ts line 6 col 1: error TS2087: Could not select overload for 'call' expression.
