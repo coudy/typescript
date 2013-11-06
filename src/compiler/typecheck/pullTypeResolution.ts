@@ -10608,9 +10608,6 @@ module TypeScript {
             }
 
             if (parameterType.isTypeParameter()) {
-                if (expressionType.isGeneric() && !expressionType.isTypeParameter()) {
-                    expressionType = this.instantiateTypeToAny(expressionType, context);
-                }
                 argContext.addCandidateForInference(<PullTypeParameterSymbol>parameterType, expressionType, shouldFix);
                 return;
             }
