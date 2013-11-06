@@ -44,7 +44,6 @@ module TypeScript {
             Debug.assert(isFinite(emittedColumn));
             Debug.assert(isFinite(sourceColumn));
             Debug.assert(isFinite(sourceLine));
-
         }
     }
 
