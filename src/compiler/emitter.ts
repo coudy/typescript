@@ -118,9 +118,9 @@ module TypeScript {
             for (var i = 0, len = fileNames.length; i < len; i++) {
                 var fileName = fileNames[i];
                 var document = compiler.getDocument(fileNames[i]);
-                var script = document.script();
+                var sourceUnit = document.sourceUnit();
 
-                if (!script.isDeclareFile()) {
+                if (!sourceUnit.isDeclareFile()) {
                     var fileComponents = filePathComponents(fileName);
                     if (commonComponentsLength === -1) {
                         // First time at finding common path
@@ -778,7 +778,7 @@ module TypeScript {
             return result;
         }
 
-        public getModuleImportAndDependencyList(script: Script) {
+        public getModuleImportAndDependencyList(sourceUnit: SourceUnit) {
             var importList = "";
             var dependencyList = "";
 
@@ -2090,7 +2090,7 @@ module TypeScript {
             return [];
         }
 
-        private emitPossibleCopyrightHeaders(script: Script): void {
+        private emitPossibleCopyrightHeaders(script: SourceUnit): void {
             var list = script.moduleElements;
             if (list.childCount() > 0) {
                 var firstElement = list.childAt(0);
@@ -2100,10 +2100,10 @@ module TypeScript {
             }
         }
 
-        public emitScriptElements(script: Script) {
-            var list = script.moduleElements;
+        public emitScriptElements(sourceUnit: SourceUnit) {
+            var list = sourceUnit.moduleElements;
 
-            this.emitPossibleCopyrightHeaders(script);
+            this.emitPossibleCopyrightHeaders(sourceUnit);
 
             // First, emit all the prologue elements.
             for (var i = 0, n = list.childCount(); i < n; i++) {
@@ -2118,18 +2118,18 @@ module TypeScript {
             }
 
             // Now emit __extends or a _this capture if necessary.
-            this.emitPrologue(script);
+            this.emitPrologue(sourceUnit);
 
             var isExternalModule = this.document.isExternalModule();
-            var isNonElidedExternalModule = isExternalModule && !scriptIsElided(script);
+            var isNonElidedExternalModule = isExternalModule && !scriptIsElided(sourceUnit);
             if (isNonElidedExternalModule) {
-                this.recordSourceMappingStart(script);
+                this.recordSourceMappingStart(sourceUnit);
 
                 if (this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) { // AMD
                     var dependencyList = "[\"require\", \"exports\"";
                     var importList = "require, exports";
 
-                    var importAndDependencyList = this.getModuleImportAndDependencyList(script);
+                    var importAndDependencyList = this.getModuleImportAndDependencyList(sourceUnit);
                     importList += importAndDependencyList.importList;
                     dependencyList += importAndDependencyList.dependencyList + "]";
 
@@ -2141,7 +2141,7 @@ module TypeScript {
                 var temp = this.setContainer(EmitContainer.DynamicModule);
 
                 var svModuleName = this.moduleName;
-                this.moduleName = script.fileName();
+                this.moduleName = sourceUnit.fileName();
                 if (TypeScript.isTSFile(this.moduleName)) {
                     this.moduleName = this.moduleName.substring(0, this.moduleName.length - ".ts".length);
                 }
@@ -2154,10 +2154,10 @@ module TypeScript {
                     this.indenter.increaseIndent();
                 }
 
-                var externalModule = this.semanticInfoChain.getDeclForAST(this.document.script());
+                var externalModule = this.semanticInfoChain.getDeclForAST(this.document.sourceUnit());
 
                 if (hasFlag(externalModule.flags, PullElementFlags.MustCaptureThis)) {
-                    this.writeCaptureThisStatement(script);
+                    this.writeCaptureThisStatement(sourceUnit);
                 }
 
                 this.pushDecl(externalModule);
@@ -2189,7 +2189,7 @@ module TypeScript {
                         this.writeToOutput("module.exports = " + exportAssignmentIdentifier + ";");
                     }
 
-                    this.recordSourceMappingEnd(script);
+                    this.recordSourceMappingEnd(sourceUnit);
                     this.writeLineToOutput("");
                 }
 
@@ -2563,9 +2563,9 @@ module TypeScript {
             return false;
         }
 
-        public emitPrologue(script: Script) {
+        public emitPrologue(sourceUnit: SourceUnit) {
             if (!this.extendsPrologueEmitted) {
-                if (this.requiresExtendsBlock(script.moduleElements)) {
+                if (this.requiresExtendsBlock(sourceUnit.moduleElements)) {
                     this.extendsPrologueEmitted = true;
                     this.writeLineToOutput("var __extends = this.__extends || function (d, b) {");
                     this.writeLineToOutput("    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];");
@@ -2577,7 +2577,7 @@ module TypeScript {
             }
 
             if (!this.globalThisCapturePrologueEmitted) {
-                if (this.shouldCaptureThis(script)) {
+                if (this.shouldCaptureThis(sourceUnit)) {
                     this.globalThisCapturePrologueEmitted = true;
                     this.writeLineToOutput(this.captureThisStmtString);
                 }
@@ -3163,9 +3163,9 @@ module TypeScript {
             }
         }
 
-        private emitScript(script: Script): void {
-            if (!script.isDeclareFile()) {
-                this.emitScriptElements(script);
+        private emitSourceUnit(sourceUnit: SourceUnit): void {
+            if (!sourceUnit.isDeclareFile()) {
+                this.emitScriptElements(sourceUnit);
             }
         }
 
@@ -3284,7 +3284,7 @@ module TypeScript {
                 case SyntaxKind.List:
                     return this.emitList(<ISyntaxList2>ast);
                 case SyntaxKind.SourceUnit:
-                    return this.emitScript(<Script>ast);
+                    return this.emitSourceUnit(<SourceUnit>ast);
                 case SyntaxKind.ImportDeclaration:
                     return this.emitImportDeclaration(<ImportDeclaration>ast);
                 case SyntaxKind.ExportAssignment:
