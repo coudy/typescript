@@ -8778,31 +8778,6 @@ module TypeScript {
             return typeToReturn;
         }
 
-        // type relationships
-
-        private chooseCommonType(a: PullTypeSymbol, b: PullTypeSymbol, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo): PullTypeSymbol {
-            Debug.assert(a && b);
-            if (this.typesAreIdentical(a, b)) {
-                return a;
-            }
-            if (a.isTypeParameter() && !b.isTypeParameter()) {
-                return b;
-            }
-            else if (!a.isTypeParameter() && b.isTypeParameter()) {
-                return a;
-            }
-            // Account for the fact that two types can be subtypes of each other without being
-            // identical. In this case there should be no BCT.
-            else if (this.sourceIsSubtypeOfTarget(a, b, context, comparisonInfo)) {
-                return this.sourceIsSubtypeOfTarget(b, a, context, comparisonInfo) ? null : b;
-            }
-            else if (this.sourceIsSubtypeOfTarget(b, a, context, comparisonInfo)) {
-                return a;
-            }
-
-            return null;
-        }
-
         public widenType(type: PullTypeSymbol, ast?: AST, context?: PullTypeResolutionContext): PullTypeSymbol {
             if (type === this.semanticInfoChain.undefinedTypeSymbol ||
                 type === this.semanticInfoChain.nullTypeSymbol ||
@@ -8843,38 +8818,39 @@ module TypeScript {
 
         public findBestCommonType(collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
             var len = collection.getLength();
-            var bestCommonType: PullTypeSymbol = null;
 
-            // We set i = Math.max(i, j) + 1 in the incrementor as an optimization. If we did not converge on a type in the inner loop,
-            // then every type that we tried in the inner loop would not be a suitable candidate. Therefore there is no point in
-            // trying them.
-            for (var i = 0, j = 0; i < len; i = Math.max(i, j) + 1) {
-                bestCommonType = collection.getTypeAtIndex(i);
-
-                for (j = 0; j < len; j++) {
-
-                    // no use in comparing a type against itself
-                    if (i == j) {
-                        continue;
-                    }
-
-                    bestCommonType = this.chooseCommonType(bestCommonType, collection.getTypeAtIndex(j), context, comparisonInfo);
-
-                    // If there is no common type, try starting again with the next type in the collection
-                    if (bestCommonType === null || this.isAnyOrEquivalent(bestCommonType)) {
-                        break;
-                    }
-                }
-
-                // If we've found a type by this point, it is the best common type
-                if (bestCommonType) {
-                    return bestCommonType;
+            for (var i = 0; i < len; i++) {
+                var candidateType = collection.getTypeAtIndex(i);
+                if (this.typeIsBestCommonTypeCandidate(candidateType, collection, context)) {
+                    return candidateType;
                 }
             }
 
-            // October 16, 2013: It is possible that no such [common] type exists or more than one
-            // such type exists, in which case the best common type is an empty object type.
+            // October 16, 2013: It is possible that no such [common] type exists, in which case
+            // the best common type is an empty object type.
             return this.semanticInfoChain.emptyTypeSymbol;
+        }
+
+        private typeIsBestCommonTypeCandidate(candidateType: PullTypeSymbol, collection: IPullTypeCollection, context: PullTypeResolutionContext): boolean {
+            for (var i = 0; i < collection.getLength(); i++) {
+                var otherType = collection.getTypeAtIndex(i);
+                if (candidateType == otherType) {
+                    continue;
+                }
+                // The following two conditionals are wrong but are necessary pending fixes to
+                // type argument inference
+                if (candidateType.isTypeParameter() && !otherType.isTypeParameter()) {
+                    return false;
+                }
+                else if (!candidateType.isTypeParameter() && otherType.isTypeParameter()) {
+                    continue;
+                }
+                else if (!this.sourceIsSubtypeOfTarget(otherType, candidateType, context)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         // Type Identity

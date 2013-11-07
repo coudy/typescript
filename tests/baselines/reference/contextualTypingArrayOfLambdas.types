@@ -7,8 +7,8 @@ Line 5 col 0 IdentifierName "bar" = string
 Line 8 col 6 IdentifierName "C" = C
 Line 8 col 16 IdentifierName "A" = A
 Line 9 col 0 IdentifierName "baz" = string
-Line 12 col 4 IdentifierName "xs" = {}[]
-Line 12 col 9 ArrayLiteralExpression "[(x: A) => { }, (x: B) => { }, (x: C) => { }]" = {}[]
+Line 12 col 4 IdentifierName "xs" = { (x: A): void; }[]
+Line 12 col 9 ArrayLiteralExpression "[(x: A) => { }, (x: B) => { }, (x: C) => { }]" = { (x: A): void; }[]
 Line 12 col 10 ParenthesizedArrowFunctionExpression "(x: A) => { }" = (x: A) => void
 Line 12 col 11 IdentifierName "x" = A
 Line 12 col 14 IdentifierName "A" = A
