@@ -988,11 +988,12 @@ module TypeScript {
             for (var j = 0; j < membersLen; j++) {
                 var memberDecl: AST = moduleDecl.enumElements.nonSeparatorAt(j);
                 var enumElement = <EnumElement>memberDecl;
+                var enumElementDecl = <PullEnumElementDecl>this.semanticInfoChain.getDeclForAST(enumElement);
                 this.emitDeclarationComments(enumElement);
                 this.emitIndent();
                 this.declFile.Write(enumElement.propertyName.text());
-                if (enumElement.equalsValueClause && enumElement.equalsValueClause.value.kind() == SyntaxKind.NumericLiteral) {
-                    this.declFile.Write(" = " + (<NumericLiteral>enumElement.equalsValueClause.value).text());
+                if (enumElementDecl.constantValue != null) {
+                    this.declFile.Write(" = " + enumElementDecl.constantValue);
                 }
                 this.declFile.WriteLine(",");
             }
