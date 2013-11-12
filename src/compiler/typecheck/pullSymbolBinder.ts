@@ -1481,7 +1481,7 @@ module TypeScript {
             var functionName = declKind == PullElementKind.FunctionExpression ?
                 (<PullFunctionExpressionDecl>functionExpressionDeclaration).getFunctionExpressionName() :
                 functionExpressionDeclaration.name;
-            var functionSymbol: PullSymbol = new PullSymbol(functionName, PullElementKind.Function);
+            var functionSymbol: PullSymbol = new PullSymbol(functionName, declKind);
             var functionTypeSymbol = new PullTypeSymbol("", PullElementKind.FunctionType);
             functionTypeSymbol.setFunctionSymbol(functionSymbol);
 

@@ -1,5 +1,5 @@
 === tests/cases/compiler/innerTypeParameterShadowingOuterOne.ts ===
-Line 0 col 9 IdentifierName "f" = <T extends Date>() => void
+Line 0 col 9 IdentifierName "f" = typeof f
 Line 0 col 11 IdentifierName "T" = T
 Line 0 col 21 IdentifierName "Date" = Date
 Line 1 col 13 IdentifierName "g" = <T extends Number>() => void
@@ -17,7 +17,7 @@ Line 6 col 0 InvocationExpression "x.getDate()" = number
 Line 6 col 0 MemberAccessExpression "x.getDate" = () => number
 Line 6 col 0 IdentifierName "x" = T
 Line 6 col 6 IdentifierName "getDate" = () => number
-Line 9 col 9 IdentifierName "f2" = <T extends Date, U extends T>() => void
+Line 9 col 9 IdentifierName "f2" = typeof f2
 Line 9 col 12 IdentifierName "T" = T
 Line 9 col 22 IdentifierName "Date" = Date
 Line 9 col 28 IdentifierName "U" = U

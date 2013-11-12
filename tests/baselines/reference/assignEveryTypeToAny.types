@@ -37,11 +37,11 @@ Line 24 col 0 IdentifierName "A" = E
 Line 26 col 0 AssignmentExpression "x = E.A" = E
 Line 26 col 0 IdentifierName "x" = any
 Line 27 col 4 MemberAccessExpression "E.A" = E
-Line 27 col 4 IdentifierName "E" = { A: E; [x: number]: string; }
+Line 27 col 4 IdentifierName "E" = typeof E
 Line 27 col 6 IdentifierName "A" = E
 Line 28 col 4 IdentifierName "f" = E
 Line 28 col 8 MemberAccessExpression "E.A" = E
-Line 28 col 8 IdentifierName "E" = { A: E; [x: number]: string; }
+Line 28 col 8 IdentifierName "E" = typeof E
 Line 28 col 10 IdentifierName "A" = E
 Line 29 col 0 AssignmentExpression "x = f" = E
 Line 29 col 0 IdentifierName "x" = any
@@ -76,7 +76,7 @@ Line 48 col 8 IdentifierName "T" = T
 Line 48 col 11 IdentifierName "x" = T
 Line 48 col 14 IdentifierName "T" = T
 Line 48 col 26 IdentifierName "x" = T
-Line 50 col 9 IdentifierName "j" = <T>(a: T) => void
+Line 50 col 9 IdentifierName "j" = typeof j
 Line 50 col 11 IdentifierName "T" = T
 Line 50 col 14 IdentifierName "a" = T
 Line 50 col 17 IdentifierName "T" = T

@@ -456,7 +456,7 @@ module TypeScript {
             return fullName;
         }
 
-        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
+        public getScopedName(scopeSymbol?: PullSymbol, skipTypeParametersInName?: boolean, useConstraintInName?: boolean): string {
             var path = this.findCommonAncestorPath(scopeSymbol);
             var fullName = "";
             var aliasedSymbols = this.getScopedDynamicModuleAlias(scopeSymbol);
@@ -465,7 +465,7 @@ module TypeScript {
                 for (var i = 1, symbolsLen = aliasedSymbols.length; i < symbolsLen; i++) {
                     aliasScopedName = aliasScopedName + "." + aliasedSymbols[i].getNamePartForFullName();
                 }
-                return aliasedSymbols[0].getScopedName(scopeSymbol) + aliasScopedName;
+                return aliasedSymbols[0].getScopedName(scopeSymbol, skipTypeParametersInName) + aliasScopedName;
             }
 
             for (var i = 1; i < path.length; i++) {
@@ -478,7 +478,7 @@ module TypeScript {
                         for (var i = 1, symbolsLen = aliasedSymbols.length; i < symbolsLen; i++) {
                             aliasScopedName = aliasScopedName + "." + aliasedSymbols[i].getNamePartForFullName();
                         }
-                        fullName = aliasedSymbols[0].getScopedName(scopeSymbol) + aliasScopedName + "." + fullName;
+                        fullName = aliasedSymbols[0].getScopedName(scopeSymbol, skipTypeParametersInName) + aliasScopedName + "." + fullName;
                         break;
                     } else if (kind === PullElementKind.Container) {
                         fullName = path[i].getDisplayName() + "." + fullName;
@@ -499,8 +499,8 @@ module TypeScript {
             return fullName;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) {
-            var name = this.getScopedName(scopeSymbol, useConstraintInName);
+        public getScopedNameEx(scopeSymbol?: PullSymbol, skipTypeParametersInName?: boolean, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean) {
+            var name = this.getScopedName(scopeSymbol, skipTypeParametersInName, useConstraintInName);
             return MemberName.create(name);
         }
 
@@ -514,7 +514,7 @@ module TypeScript {
             if (type) {
                 var memberName: MemberName = getPrettyTypeName ? this.getTypeNameForFunctionSignature("", scopeSymbol, getPrettyTypeName) : null;
                 if (!memberName) {
-                    memberName = type.getScopedNameEx(scopeSymbol, /*useConstraintInName:*/ true, getPrettyTypeName);
+                    memberName = type.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ false, /*useConstraintInName:*/ true, getPrettyTypeName);
                 }
 
                 return memberName;
@@ -577,7 +577,7 @@ module TypeScript {
                         builder.add(new MemberName());
                     }
 
-                    builder.add(typeParameters[i].getScopedNameEx(scopeSymbol, useContraintInName));
+                    builder.add(typeParameters[i].getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ false, useContraintInName));
 
                     if (getTypeParamMarkerInfo) {
                         builder.add(new MemberName());
@@ -2265,8 +2265,8 @@ module TypeScript {
             return name + typarString;
         }
 
-        public getScopedName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            return this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
+        public getScopedName(scopeSymbol?: PullSymbol, skipTypeParametersInName?: boolean, useConstraintInName?: boolean): string {
+            return this.getScopedNameEx(scopeSymbol, skipTypeParametersInName, useConstraintInName).toString();
         }
 
         public isNamedTypeSymbol(): boolean {
@@ -2286,18 +2286,18 @@ module TypeScript {
         }
 
         public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            var s = this.getScopedNameEx(scopeSymbol, useConstraintInName).toString();
+            var s = this.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ false, useConstraintInName).toString();
             return s;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean): MemberName {
+        public getScopedNameEx(scopeSymbol?: PullSymbol, skipTypeParametersInName?: boolean,  useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean): MemberName {
 
             if (this.isArrayNamedTypeReference()) {
                 var elementType = this.getElementType();
                 var elementMemberName = elementType ?
                     (elementType.isArrayNamedTypeReference() || elementType.isNamedTypeSymbol() ?
-                    elementType.getScopedNameEx(scopeSymbol, false, getPrettyTypeName, getTypeParamMarkerInfo) :
-                    elementType.getMemberTypeNameEx(false, scopeSymbol, getPrettyTypeName)) :
+                    elementType.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ false, /*useConstraintInName*/ false, getPrettyTypeName, getTypeParamMarkerInfo) :
+                    elementType.getMemberTypeNameEx(/*topLevel*/ false, scopeSymbol, getPrettyTypeName)) :
                     MemberName.create("any");
                 return MemberName.create(elementMemberName, "", "[]");
             }
@@ -2306,13 +2306,17 @@ module TypeScript {
                 return this.getMemberTypeNameEx(/*topLevel*/ true, scopeSymbol, getPrettyTypeName);
             }
 
-            var builder = new MemberNameArray();
-            builder.prefix = super.getScopedName(scopeSymbol, useConstraintInName);
+            if (skipTypeParametersInName) {
+               return MemberName.create(super.getScopedName(scopeSymbol, skipTypeParametersInName, useConstraintInName));
+            } else {
+                var builder = new MemberNameArray();
+                builder.prefix = super.getScopedName(scopeSymbol, skipTypeParametersInName, useConstraintInName);
 
-            var typars = this.getTypeArgumentsOrTypeParameters();
-            builder.add(PullSymbol.getTypeParameterStringEx(typars, scopeSymbol, getTypeParamMarkerInfo, useConstraintInName));
+                var typars = this.getTypeArgumentsOrTypeParameters();
+                builder.add(PullSymbol.getTypeParameterStringEx(typars, scopeSymbol, getTypeParamMarkerInfo, useConstraintInName));
 
-            return builder;
+                return builder;
+            }
         }
 
         public hasOnlyOverloadCallSignatures(): boolean {
@@ -2322,6 +2326,22 @@ module TypeScript {
             return members.length === 0 && constructSignatures.length === 0 && callSignatures.length > 1;
         }
 
+        public getTypeOfSymbol() {
+            // typeof Module/Class/Enum
+            var associatedContainerType = this.getAssociatedContainerType();
+            if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
+                return associatedContainerType;
+            }
+
+            // typeof Function
+            var functionSymbol = this.getFunctionSymbol();
+            if (functionSymbol && functionSymbol.kind == PullElementKind.Function && !PullHelpers.isSymbolLocal(functionSymbol)) {
+                return functionSymbol;
+            }
+
+            return null;
+        }
+
         private getMemberTypeNameEx(topLevel: boolean, scopeSymbol?: PullSymbol, getPrettyTypeName?: boolean): MemberName {
             var members = this.getMembers();
             var callSignatures = this.getCallSignatures();
@@ -2329,15 +2349,15 @@ module TypeScript {
             var indexSignatures = this.getIndexSignatures();
 
             if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
+                var typeOfSymbol = this.getTypeOfSymbol();
+                if (typeOfSymbol) {
+                    var nameForTypeOf = typeOfSymbol.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ true);
+                    return MemberName.create(nameForTypeOf, "typeof ", "");
+                }
+
                 if (this._inMemberTypeNameEx) {
-                    var associatedContainerType = this.getAssociatedContainerType();
-                    if (associatedContainerType && associatedContainerType.isNamedTypeSymbol()) {
-                        var nameForTypeOf = associatedContainerType.getScopedNameEx(scopeSymbol);
-                        return MemberName.create(nameForTypeOf, "typeof ", "");
-                    } else {
-                        // If recursive without type name(possible?) default to any
-                        return MemberName.create("any");
-                    }
+                    // If recursive without type name possible if function expression type
+                    return MemberName.create("any");
                 }
 
                 this._inMemberTypeNameEx = true;
