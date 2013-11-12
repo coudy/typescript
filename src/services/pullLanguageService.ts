@@ -162,7 +162,7 @@ module TypeScript.Services {
             }
 
             var isWriteAccess = this.isWriteAccess(node);
-            return [new ReferenceEntry(this.compiler.getHostFileName(fileName), node.start(), node.end(), isWriteAccess)];
+            return [new ReferenceEntry(this.compiler.getCachedHostFileName(fileName), node.start(), node.end(), isWriteAccess)];
         }
 
         public getImplementorsAtPosition(fileName: string, pos: number): ReferenceEntry[] {
@@ -300,7 +300,7 @@ module TypeScript.Services {
                         if (normalizedSymbol === symbol) {
                             var isWriteAccess = this.isWriteAccess(nameAST);
 
-                            result.push(new ReferenceEntry(this.compiler.getHostFileName(fileName),
+                            result.push(new ReferenceEntry(this.compiler.getCachedHostFileName(fileName),
                                 nameAST.start(), nameAST.end(), isWriteAccess));
                         }
                     }
@@ -338,7 +338,7 @@ module TypeScript.Services {
 
                         if (FindReferenceHelpers.compareSymbolsForLexicalIdentity(searchSymbol, symbol)) {
                             var isWriteAccess = this.isWriteAccess(nameAST);
-                            result.push(new ReferenceEntry(this.compiler.getHostFileName(fileName), nameAST.start(), nameAST.end(), isWriteAccess));
+                            result.push(new ReferenceEntry(this.compiler.getCachedHostFileName(fileName), nameAST.start(), nameAST.end(), isWriteAccess));
                         }
                     }
                 });
@@ -643,7 +643,7 @@ module TypeScript.Services {
         private addDeclaration(symbolKind: string, symbolName: string, containerKind: string, containerName: string, declaration: TypeScript.PullDecl, result: DefinitionInfo[]): void {
             var span = declaration.getSpan();
             result.push(new DefinitionInfo(
-                this.compiler.getHostFileName(declaration.fileName()),
+                this.compiler.getCachedHostFileName(declaration.fileName()),
                 span.start(), span.end(), symbolKind, symbolName, containerKind, containerName));
         }
 
@@ -705,8 +705,8 @@ module TypeScript.Services {
 
             var fileNames = this.compiler.fileNames();
             for (var i = 0, n = fileNames.length; i < n; i++) {
-                var fileName = this.compiler.getHostFileName(fileNames[i]);
-                var declaration = this.compiler.topLevelDeclaration(TypeScript.switchToForwardSlashes(fileName));
+                var fileName = fileNames[i];
+                var declaration = this.compiler.getCachedTopLevelDeclaration(fileName);
                 this.findSearchValueInPullDecl(fileName, [declaration], items, terms, regExpTerms);
             }
             return items;
@@ -775,7 +775,7 @@ module TypeScript.Services {
                         item.matchKind = matchKind;
                         item.kind = this.mapPullElementKind(declaration.kind);
                         item.kindModifiers = this.getScriptElementKindModifiersFromDecl(declaration);
-                        item.fileName = this.compiler.getHostFileName(fileName);
+                        item.fileName = this.compiler.getCachedHostFileName(fileName);
                         item.minChar = declaration.getSpan().start();
                         item.limChar = declaration.getSpan().end();
                         item.containerName = parentName || "";
