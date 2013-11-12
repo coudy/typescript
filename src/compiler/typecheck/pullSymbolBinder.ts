@@ -382,8 +382,6 @@ module TypeScript {
             var moduleInstanceSymbol: PullSymbol = null;
             var moduleInstanceTypeSymbol: PullTypeSymbol = null;
 
-            var moduleInstanceDecl: PullDecl = moduleContainerDecl.getValueDecl();
-
             var moduleKind = moduleContainerDecl.kind;
 
             var parent = this.getParent(moduleContainerDecl);
@@ -553,6 +551,17 @@ module TypeScript {
 
             if (valueDecl) {
                 valueDecl.ensureSymbolIsBound();
+                // We associate the value decl to the module instance symbol. This should have
+                // already been achieved by ensureSymbolIsBound, but if bindModuleDeclarationToPullSymbol
+                // was called recursively while in the middle of binding the value decl, the cycle
+                // will be short-circuited. With a more organized binding pattern, this situation
+                // shouldn't be possible.
+                if (!valueDecl.hasSymbol()) {
+                    valueDecl.setSymbol(moduleInstanceSymbol);
+                    if (!moduleInstanceSymbol.hasDeclaration(valueDecl)) {
+                        moduleInstanceSymbol.addDeclaration(valueDecl);
+                    }
+                }
             }
 
             var otherDecls = this.findDeclsInContext(moduleContainerDecl, moduleContainerDecl.kind, true);
@@ -1116,7 +1125,14 @@ module TypeScript {
                     if (moduleContainerTypeSymbol) {
                         variableSymbol = moduleContainerTypeSymbol.getInstanceSymbol();
 
-                        variableSymbol.addDeclaration(variableDeclaration);
+                        // If this method calls bindModuleDeclarationToPullSymbol recursively,
+                        // we may associate the variable decl with its symbol in that recursive
+                        // call before we do it here. Therefore, make sure the symbol doesn't already
+                        // have the decl before adding it. Just like in bindModuleDeclarationToPullSymbol,
+                        // we shouldn't need this maneuver with a more iterative binding pattern.
+                        if (!variableSymbol.hasDeclaration(variableDeclaration)) {
+                            variableSymbol.addDeclaration(variableDeclaration);
+                        }
                         variableDeclaration.setSymbol(variableSymbol);
                     }
                     else {
@@ -1125,7 +1141,9 @@ module TypeScript {
                 }
             }
             else {
-                variableSymbol.addDeclaration(variableDeclaration);
+                if (!variableSymbol.hasDeclaration(variableDeclaration)) {
+                    variableSymbol.addDeclaration(variableDeclaration);
+                }
                 variableDeclaration.setSymbol(variableSymbol);
             }
 

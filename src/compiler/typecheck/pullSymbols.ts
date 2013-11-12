@@ -311,6 +311,14 @@ module TypeScript {
             return this._declarations;
         }
 
+        public hasDeclaration(decl: PullDecl): boolean {
+            if (!this._declarations) {
+                return false;
+            }
+
+            return ArrayUtilities.any(this._declarations, eachDecl => eachDecl === decl);
+        }
+
         // link methods
 
         public setContainer(containerSymbol: PullTypeSymbol) {
