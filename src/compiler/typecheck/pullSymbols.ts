@@ -231,6 +231,10 @@ module TypeScript {
             return this._declarations[0].semanticInfoChain().getResolver();
         }
 
+        public _resolveDeclaredSymbol() {
+            return this._getResolver().resolveDeclaredSymbol(this);
+        }
+
         /** Use getName for type checking purposes, and getDisplayName to report an error or display info to the user.
          * They will differ when the identifier is an escaped unicode character or the identifier "__proto__".
          */
@@ -1329,6 +1333,10 @@ module TypeScript {
                 var parameters = signature.parameters;
 
                 for (var i = 0; i < parameters.length; i++) {
+                    if (!parameters[i].type) {
+                        parameters[i]._resolveDeclaredSymbol();
+                    }
+
                     if (parameters[i].type.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                         wrapsSomeTypeParameter = true;
                         break;
@@ -2882,12 +2890,12 @@ module TypeScript {
         }
 
         public typeUsedExternally(): boolean {
-            this._getResolver().resolveDeclaredSymbol(this);
+            this._resolveDeclaredSymbol();
             return this._typeUsedExternally;
         }
 
         public isUsedAsValue(): boolean {
-            this._getResolver().resolveDeclaredSymbol(this);
+            this._resolveDeclaredSymbol();
             return this._isUsedAsValue;
         }
 
@@ -2899,8 +2907,8 @@ module TypeScript {
             this._isUsedAsValue = value;
 
             // Set the alias as used as value if this alias comes from the another alias
+            this._resolveDeclaredSymbol();
             var resolver = this._getResolver();
-            resolver.resolveDeclaredSymbol(this);
             var importDeclStatement = <ImportDeclaration>resolver.semanticInfoChain.getASTForDecl(this.getDeclarations()[0]);
             var aliasSymbol = <PullTypeAliasSymbol>resolver.semanticInfoChain.getAliasSymbolForAST(importDeclStatement.moduleReference);
             if (aliasSymbol) {
@@ -2909,17 +2917,17 @@ module TypeScript {
         }
 
         public assignedValue(): PullSymbol {
-            this._getResolver().resolveDeclaredSymbol(this);
+            this._resolveDeclaredSymbol();
             return this._assignedValue;
         }
 
         public assignedType(): PullTypeSymbol {
-            this._getResolver().resolveDeclaredSymbol(this);
+            this._resolveDeclaredSymbol();
             return this._assignedType;
         }
 
         public assignedContainer(): PullContainerSymbol {
-            this._getResolver().resolveDeclaredSymbol(this);
+            this._resolveDeclaredSymbol();
             return this._assignedContainer;
         }
 
