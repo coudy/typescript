@@ -713,20 +713,16 @@ module TypeScript {
 
                 typeParameter = classSymbol.findTypeParameter(typeParameters[i].name);
 
-                if (!typeParameter) {
-                    typeParameter = new PullTypeParameterSymbol(typeParameters[i].name, /*_isFunctionTypeParameter*/ false);
-
-                    classSymbol.addTypeParameter(typeParameter);
-                    constructorTypeSymbol.addConstructorTypeParameter(typeParameter);
-                    typeParameter.addDeclaration(typeParameters[i]);
-                }
-                else {
+                if (typeParameter !== null) {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfoChain.addDiagnosticFromAST(typeParameterAST, DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]);
                 }
 
-                // even if the type parameter was duplicated it should still have a symbol bound to it
-                // in that case we use the existing symbol
+                typeParameter = new PullTypeParameterSymbol(typeParameters[i].name, /*_isFunctionTypeParameter*/ false);
+
+                classSymbol.addTypeParameter(typeParameter);
+                constructorTypeSymbol.addConstructorTypeParameter(typeParameter);
+                typeParameter.addDeclaration(typeParameters[i]);
                 typeParameters[i].setSymbol(typeParameter);
             }
 
