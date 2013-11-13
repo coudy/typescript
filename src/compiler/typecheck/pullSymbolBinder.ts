@@ -713,7 +713,7 @@ module TypeScript {
 
                 typeParameter = classSymbol.findTypeParameter(typeParameters[i].name);
 
-                if (typeParameter !== null) {
+                if (typeParameter != null) {
                     var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
                     this.semanticInfoChain.addDiagnosticFromAST(typeParameterAST, DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]);
                 }
