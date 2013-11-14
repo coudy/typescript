@@ -5828,15 +5828,21 @@ module TypeScript {
             return nameSymbol;
         }
 
-        private isSomeFunctionScope(declPath: PullDecl[]) {
+        private getSomeInnermostFunctionScopeDecl(declPath: PullDecl[]) {
             for (var i = declPath.length - 1; i >= 0; i--) {
                 var decl = declPath[i];
                 if (decl.kind & PullElementKind.SomeFunction) {
-                    return true;
+                    return decl;
                 }
             }
 
-            return false;
+            return null;
+        }
+
+        private isFromFunctionScope(nameSymbol: PullSymbol, functionScopeDecl: PullDecl) {
+            // If there exists any declaration that is from same functionScopeDecl, nameSymbol is from functionScope
+            return ArrayUtilities.any(nameSymbol.getDeclarations(), (nameSymbolDecl) =>
+                this.getSomeInnermostFunctionScopeDecl(nameSymbolDecl.getParentPath()) == functionScopeDecl);
         }
 
         private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
@@ -5859,12 +5865,6 @@ module TypeScript {
                 var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
             }
 
-            if (!nameSymbol && id === "arguments" && this.isSomeFunctionScope(declPath)) {
-                nameSymbol = this.cachedFunctionArgumentsSymbol();
-
-                this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), context);
-            }
-
             // Try looking up a type alias with an associated instance type
             if (!nameSymbol) {
                 nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
@@ -5872,6 +5872,19 @@ module TypeScript {
                 // Modules are also picked up when searching for aliases
                 if (nameSymbol && !nameSymbol.isAlias()) {
                     nameSymbol = null;
+                }
+            }
+
+            // arguments is resolved to local variable in the function or the arguments list that runtime passes and never to any other symbol
+            if (id === "arguments") {
+                var functionScopeDecl = this.getSomeInnermostFunctionScopeDecl(declPath);
+                if (functionScopeDecl) {
+                    // if there wasnt nameSymbol Or the nameSymbol isnt from the functionScope we are looking in
+                    // resolve this to arguments of type IArguments
+                    if (!nameSymbol || !this.isFromFunctionScope(nameSymbol, functionScopeDecl)) {
+                        nameSymbol = this.cachedFunctionArgumentsSymbol();
+                        this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), context);
+                    }
                 }
             }
 
