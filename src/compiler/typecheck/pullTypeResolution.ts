@@ -10452,15 +10452,18 @@ module TypeScript {
 
             for (var i = 0; i < argCount; i++) {
 
-                if (i >= parameters.length) {
-                    break;
-                }
-
-                parameterType = parameters[i].type;
-
-                // account for varargs
-                if (signature.hasVarArgs && (i >= signature.nonOptionalParamCount - 1) && parameterType.isArrayNamedTypeReference()) {
-                    parameterType = parameterType.getElementType();
+                var paramCount = parameters.length;
+                if (signature.hasVarArgs) {
+                    if (i < paramCount - 1) {
+                        parameterType = parameters[i].type;
+                    } else {
+                        parameterType = parameters[paramCount - 1].type.getElementType();
+                    }
+                } else {
+                    if (i >= paramCount) {
+                        break;
+                    }
+                    parameterType = parameters[i].type;
                 }
 
                 var inferenceCandidates = argContext.getInferenceCandidates();
