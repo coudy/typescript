@@ -8867,6 +8867,12 @@ module TypeScript {
 
         private typesAreIdenticalInEnclosingTypes(t1: PullTypeSymbol, t2: PullTypeSymbol,
             t1EnclosingType: PullTypeSymbol, t2EnclosingType: PullTypeSymbol, val?: AST) {
+            t1 = this.getSymbolForRelationshipCheck(t1);
+            t2 = this.getSymbolForRelationshipCheck(t2);
+
+            if (t1 === t2) {
+                return true;
+            }
 
             if (t1 && t2) {
                 // Section 3.8.7 - Recursive Types
@@ -8883,23 +8889,12 @@ module TypeScript {
                 }
             }
 
-            if (!this.typesAreIdentical(t1, t2, val)) {
-                //this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
-                return false;
-            }
-
-            return true;
+            return this.typesAreIdentical(t1, t2, val);
         }
 
         public typesAreIdentical(t1: PullTypeSymbol, t2: PullTypeSymbol, val?: AST) {
-
-            if (t1 && t1.isTypeReference()) {
-                t1 = (<PullTypeReferenceSymbol>t1).getReferencedTypeSymbol();
-            }
-
-            if (t2 && t2.isTypeReference()) {
-                t2 = (<PullTypeReferenceSymbol>t2).getReferencedTypeSymbol();
-            }
+            t1 = this.getSymbolForRelationshipCheck(t1);
+            t2 = this.getSymbolForRelationshipCheck(t2);
 
             // This clause will cover both primitive types (since the type objects are shared),
             // as well as shared brands
@@ -9264,42 +9259,47 @@ module TypeScript {
             return this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
         }
 
+        private getSymbolForRelationshipCheck(symbol: PullTypeSymbol) {
+            if (symbol && symbol.isTypeReference()) {
+                return (<PullTypeReferenceSymbol>symbol).getReferencedTypeSymbol();
+            }
+
+            return symbol;
+        }
+
         private sourceIsRelatableToTargetInEnclosingTypes(source: PullTypeSymbol, target: PullTypeSymbol,
             sourceEnclosingType: PullTypeSymbol, targetEnclosingType: PullTypeSymbol, assignableTo: boolean,
             comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
-                if (source && target) {
-                    // Section 3.8.7 - Recursive Types
-                    //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and assignability(section 3.8.4) relationships, 
-                    //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
-                    //  -	S and T must both be type references to the same named type, and
-                    //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
+            source = this.getSymbolForRelationshipCheck(source);
+            target = this.getSymbolForRelationshipCheck(target);
 
-                    var sourceGenerativeTypeKind = sourceEnclosingType ? source.getGenerativeTypeClassification(sourceEnclosingType) : GenerativeTypeClassification.Unknown;
-                    var targetGenerativeTypeKind = targetEnclosingType ? target.getGenerativeTypeClassification(targetEnclosingType) : GenerativeTypeClassification.Unknown;
-                    if (sourceGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
-                        targetGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
-                        return this.infinitelyExpandingSourceTypeIsRelatableToTargetType(source, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
-                    }
+            if (source === target) {
+                return true;
+            }
+
+            if (source && target) {
+                // Section 3.8.7 - Recursive Types
+                //  When comparing two types S and T for identity(section 3.8.2), subtype(section 3.8.3), and assignability(section 3.8.4) relationships, 
+                //  if either type originates in an infinitely expanding type reference, S and T are not compared by the rules in the preceding sections.Instead, for the relationship to be considered true,
+                //  -	S and T must both be type references to the same named type, and
+                //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
+
+                var sourceGenerativeTypeKind = sourceEnclosingType ? source.getGenerativeTypeClassification(sourceEnclosingType) : GenerativeTypeClassification.Unknown;
+                var targetGenerativeTypeKind = targetEnclosingType ? target.getGenerativeTypeClassification(targetEnclosingType) : GenerativeTypeClassification.Unknown;
+                if (sourceGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding ||
+                    targetGenerativeTypeKind == GenerativeTypeClassification.InfinitelyExpanding) {
+                    return this.infinitelyExpandingSourceTypeIsRelatableToTargetType(source, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
                 }
+            }
 
-                return this.sourceIsRelatableToTarget(source, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            return this.sourceIsRelatableToTarget(source, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
         }
 
         private sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
-
-            // REVIEW: Does this check even matter?
-            //if (this.typesAreIdentical(source, target)) {
-            //    return true;
-            //}
-
-            if (source && source.isTypeReference() && !source.getIsSpecialized()) {
-                source = (<PullTypeReferenceSymbol>source).getReferencedTypeSymbol();
-            }
-
-            if (target && target.isTypeReference() && !target.getIsSpecialized()) {
-                target = (<PullTypeReferenceSymbol>target).getReferencedTypeSymbol();
-            }
+            source = this.getSymbolForRelationshipCheck(source);
+            target = this.getSymbolForRelationshipCheck(target);
+            
 
             if (source === target) {
                 return true;
@@ -9603,6 +9603,7 @@ module TypeScript {
 
                 var sourceTypeNamedTypeReference = PullHelpers.getRootType(sourceType);
                 var targetTypeNamedTypeReference = PullHelpers.getRootType(targetType);
+
                 //  -	S and T must both be type references to the same named type, and
                 if (sourceTypeNamedTypeReference != targetTypeNamedTypeReference) {
                     comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
