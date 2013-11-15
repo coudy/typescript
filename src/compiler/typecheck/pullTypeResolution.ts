@@ -12513,7 +12513,7 @@ module TypeScript {
                 return false;
             }
 
-            // Disallow assignment to an enum, class or module variables.
+            // Disallow assignment to an enum, class, functions or module variables.
             if (ast.kind() === SyntaxKind.IdentifierName) {
                 if (astSymbol.kind === PullElementKind.Variable && astSymbol.anyDeclHasFlag(PullElementFlags.Enum)) {
                     return false;
@@ -12523,7 +12523,7 @@ module TypeScript {
                     return false;
                 }
 
-                if (astSymbol.kind === PullElementKind.ConstructorMethod) {
+                if (astSymbol.kind === PullElementKind.ConstructorMethod || astSymbol.kind === PullElementKind.Function) {
                     return false;
                 }
             }
