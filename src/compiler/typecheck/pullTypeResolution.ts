@@ -8683,7 +8683,7 @@ module TypeScript {
                     if (!this.sourceIsAssignableToTarget(inferredTypeArgs[i], typeConstraint, /*ast*/ null, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
                         // if the signature is not assignable due to a constraint mismatch, it may be because the two signatures are identical
                         // (hence, no inferences could be made for the signature's type parameters)
-                        if (this.signaturesAreIdentical(signatureA, signatureB, true)) {
+                        if (this.signaturesAreIdentical(signatureA, signatureB)) {
                             return signatureA;
                         }
                         else {
@@ -8940,6 +8940,11 @@ module TypeScript {
                 return true;
             }
 
+            var isIdentical = this.identicalCache.valueAt(t1.pullSymbolID, t2.pullSymbolID);
+            if (isIdentical != undefined) {
+                return isIdentical;
+            }
+
             if (t1.isTypeParameter() != t2.isTypeParameter()) {
                 return false;
             }
@@ -8956,11 +8961,6 @@ module TypeScript {
                 else {
                     return false;
                 }
-            }
-
-            var isIdentical = this.identicalCache.valueAt(t1.pullSymbolID, t2.pullSymbolID);
-            if (isIdentical != undefined) {
-                return isIdentical;
             }
 
             // If one is an enum, and they're not the same type, they're not identical
@@ -9087,6 +9087,48 @@ module TypeScript {
             return true;
         }
 
+        private typeParametersAreIdentical(tp1: PullTypeParameterSymbol[], tp2: PullTypeParameterSymbol[]) {
+            // Set the cache pairwise identity of type parameters so that 
+            // if the constraints refer to the type parameters, we would be able to say true
+            var typeParamsAreIdentical = this.typeParametersAreIdenticalWorker(tp1, tp2);
+
+            // Reset the cahce with pairwise identity of type parameters
+            this.setTypeParameterIdentity(tp1, tp2, undefined);
+
+            return typeParamsAreIdentical;
+        }
+
+        private typeParametersAreIdenticalWorker(tp1: PullTypeParameterSymbol[], tp2: PullTypeParameterSymbol[]) {
+            // Check if both the type parameter list present or both are absent
+            if (!!(tp1 && tp1.length) != !!(tp2 && tp2.length)) {
+                return false;
+            }
+
+            // Verify the legth
+            if (tp1 && tp2 && (tp1.length != tp2.length)) {
+                return false;
+            }
+
+            if (tp1 && tp2) {
+                for (var i = 0; i < tp1.length; i++) {
+                    // Verify the pairwise identity of the constraints
+                    if (!this.typesAreIdentical(tp1[i].getConstraint(), tp2[i].getConstraint())) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private setTypeParameterIdentity(tp1: PullTypeParameterSymbol[], tp2: PullTypeParameterSymbol[], val: boolean) {
+            if (tp1 && tp2 && tp1.length == tp2.length) {
+                for (var i = 0; i < tp1.length; i++) {
+                    this.identicalCache.setValueAt(tp1[i].pullSymbolID, tp2[i].pullSymbolID, val);
+                }
+            }
+        }
+
         public signaturesAreIdentical(s1: PullSignatureSymbol, s2: PullSignatureSymbol, includingReturnType = true) {
             if (s1 === s2) {
                 return true;
@@ -9100,14 +9142,6 @@ module TypeScript {
                 return false;
             }
 
-            if (!!(s1.typeParameters && s1.typeParameters.length) != !!(s2.typeParameters && s2.typeParameters.length)) {
-                return false;
-            }
-
-            if (s1.typeParameters && s2.typeParameters && (s1.typeParameters.length != s2.typeParameters.length)) {
-                return false;
-            }
-
             if (s1.parameters.length != s2.parameters.length) {
                 return false;
             }
@@ -9116,12 +9150,27 @@ module TypeScript {
             this.resolveDeclaredSymbol(s1);
             this.resolveDeclaredSymbol(s2);
 
-            var s1Params = s1.parameters;
-            var s2Params = s2.parameters;
+            // Assume typeParameter pairwise identity before we check
+            this.setTypeParameterIdentity(s1.typeParameters, s2.typeParameters, true);
+
+            var typeParametersParametersAndReturnTypesAreIdentical = this.signatureTypeParametersParametersAndReturnTypesAreIdentical(s1, s2, includingReturnType);
+
+            // Reset the cahce with pairwise identity of type parameters
+            this.setTypeParameterIdentity(s1.typeParameters, s2.typeParameters, undefined);
+            return typeParametersParametersAndReturnTypesAreIdentical;
+        }
+
+        private signatureTypeParametersParametersAndReturnTypesAreIdentical(s1: PullSignatureSymbol, s2: PullSignatureSymbol, includingReturnType?: boolean) {
+            if (!this.typeParametersAreIdenticalWorker(s1.typeParameters, s2.typeParameters)) {
+                return false;
+            }
 
             if (includingReturnType && !this.typesAreIdenticalInEnclosingTypes(s1.returnType, s2.returnType, s1.functionType, s2.functionType)) {
                 return false;
             }
+
+            var s1Params = s1.parameters;
+            var s2Params = s2.parameters;
 
             for (var iParam = 0; iParam < s1Params.length; iParam++) {
                 if (!this.typesAreIdenticalInEnclosingTypes(s1Params[iParam].type, s2Params[iParam].type, s1.functionType, s2.functionType)) {
