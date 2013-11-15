@@ -6082,13 +6082,15 @@ module TypeScript {
                 lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
             }
 
-            if (this.isAnyOrEquivalent(lhsType)) {
-                return lhsType;
-            }
-
             // this could happen if a module exports an import statement
             if (lhsType.isAlias()) {
                 lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
+            }
+
+            lhsType = this.widenType(lhsType, expression, context);
+
+            if (this.isAnyOrEquivalent(lhsType)) {
+                return lhsType;
             }
 
             if (!lhsType) {
