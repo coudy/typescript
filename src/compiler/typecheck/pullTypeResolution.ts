@@ -9928,8 +9928,21 @@ module TypeScript {
                 }
 
                 if (targetStringSig) {
+                    // Spec section 3.8.3	Subtypes and Supertypes
+                    // S is a subtype of a type T, and T is a supertype of S, if one of the following is true, 
+                    // where S’ denotes the apparent type(section 3.8.1) of S:
+                    //      - M is a string index signature of type U and 
+                    //        S’ contains a string index signature of a type that is assignable to U.
+
+                    // Spec section 3.8.4	Assignment Compatibility
+                    // S is assignable to a type T, and T is assignable from S, if one of the following is true, 
+                    // where S’ denotes the apparent type(section 3.8.1) of S:
+                    //      - M is a string index signature of type U and 
+                    //        S’ contains a string index signature of a type that is assignable to U.
                     if (sourceStringSig) {
-                        comparable = this.signatureIsAssignableToTarget(sourceStringSig, targetStringSig, ast, context, comparisonInfoSignatuesTypeCheck, isComparingInstantiatedSignatures);
+                        comparable = this.sourceIsRelatableToTargetInEnclosingTypes(sourceStringSig.returnType, targetStringSig.returnType,
+                            sourceStringSig.functionType, targetStringSig.functionType, assignableTo, comparisonCache, ast,
+                            context, comparisonInfoSignatuesTypeCheck, isComparingInstantiatedSignatures);
                     }
                     else {
                         comparable = false;
@@ -9937,11 +9950,26 @@ module TypeScript {
                 }
 
                 if (comparable && targetNumberSig) {
+                    // Spec section 3.8.3	Subtypes and Supertypes
+                    // S is a subtype of a type T, and T is a supertype of S, if one of the following is true, 
+                    // where S’ denotes the apparent type(section 3.8.1) of S:
+                    //      - M is a numeric index signature of type U and 
+                    //        S’ contains a string or numeric index signature of a type that is a subtype of U.
+
+                    // Spec section 3.8.4	Assignment Compatibility
+                    // S is assignable to a type T, and T is assignable from S, if one of the following is true, 
+                    // where S’ denotes the apparent type(section 3.8.1) of S:
+                    //      - M is a numeric index signature of type U and
+                    //        S’ contains a string or numeric index signature of a type that is assignable to U.
                     if (sourceNumberSig) {
-                        comparable = this.signatureIsAssignableToTarget(sourceNumberSig, targetNumberSig, ast, context, comparisonInfoSignatuesTypeCheck, isComparingInstantiatedSignatures);
+                        comparable = this.sourceIsRelatableToTargetInEnclosingTypes(sourceNumberSig.returnType, targetNumberSig.returnType,
+                            sourceNumberSig.functionType, targetNumberSig.functionType, assignableTo, comparisonCache, ast,
+                            context, comparisonInfoSignatuesTypeCheck, isComparingInstantiatedSignatures);
                     }
                     else if (sourceStringSig) {
-                        comparable = this.sourceIsAssignableToTarget(sourceStringSig.returnType, targetNumberSig.returnType, ast, context, comparisonInfoSignatuesTypeCheck);
+                        comparable = this.sourceIsRelatableToTargetInEnclosingTypes(sourceStringSig.returnType, targetNumberSig.returnType,
+                            sourceStringSig.functionType, targetNumberSig.functionType, assignableTo, comparisonCache, ast,
+                            context, comparisonInfoSignatuesTypeCheck, isComparingInstantiatedSignatures);
                     }
                     else {
                         comparable = false;
