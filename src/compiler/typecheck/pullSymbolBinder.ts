@@ -1330,18 +1330,16 @@ module TypeScript {
                         parameterSymbol.isVarArg = true;
                     }
 
-                    if (decl.flags & PullElementFlags.Optional) {
-                        parameterSymbol.isOptional = true;
-                    }
-
                     if (params[id.valueText()]) {
                         this.semanticInfoChain.addDiagnosticFromAST(argDecl, DiagnosticCode.Duplicate_identifier_0, [id.text()]);
                     }
                     else {
                         params[id.valueText()] = true;
                     }
-                    if (decl) {
 
+                    var isParameterOptional = false;
+
+                    if (decl) {
                         if (isProperty) {
                             decl.ensureSymbolIsBound();
                             var valDecl = decl.getValueDecl();
@@ -1349,15 +1347,21 @@ module TypeScript {
                             // if this is a parameter property, we still need to set the value decl
                             // for the function parameter
                             if (valDecl) {
+                                isParameterOptional = TypeScript.hasFlag(valDecl.flags, PullElementFlags.Optional);
+
                                 valDecl.setSymbol(parameterSymbol);
                                 parameterSymbol.addDeclaration(valDecl);
                             }
                         }
                         else {
+                            isParameterOptional = TypeScript.hasFlag(decl.flags, PullElementFlags.Optional);
+
                             parameterSymbol.addDeclaration(decl);
                             decl.setSymbol(parameterSymbol);
                         }
                     }
+
+                    parameterSymbol.isOptional = isParameterOptional;
 
                     signatureSymbol.addParameter(parameterSymbol, parameterSymbol.isOptional);
 
