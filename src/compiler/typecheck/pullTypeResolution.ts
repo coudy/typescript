@@ -8972,15 +8972,20 @@ module TypeScript {
                 return false;
             }
 
-            this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, false);
+            this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, true);
+            isIdentical = this.typesAreIdenticalWorker(t1, t2);
+            this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, isIdentical);
 
+            return isIdentical;
+        }
+
+        private typesAreIdenticalWorker(t1: PullTypeSymbol, t2: PullTypeSymbol) {
             // properties are identical in name, optionality, and type
             if (t1.hasMembers() && t2.hasMembers()) {
                 var t1Members = t1.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
                 var t2Members = t2.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
                 if (t1Members.length != t2Members.length) {
-                    this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                     return false;
                 }
 
@@ -8996,7 +9001,6 @@ module TypeScript {
                     t2MemberSymbol = this.getMemberSymbol(t1MemberSymbol.name, PullElementKind.SomeValue, t2);
 
                     if (!t2MemberSymbol || (t1MemberSymbol.isOptional != t2MemberSymbol.isOptional)) {
-                        this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                         return false;
                     }
 
@@ -9009,7 +9013,6 @@ module TypeScript {
                 }
             }
             else if (t1.hasMembers() || t2.hasMembers()) {
-                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
@@ -9023,21 +9026,17 @@ module TypeScript {
             var t2IndexSigs = t2.getIndexSignatures();
 
             if (!this.signatureGroupsAreIdentical(t1CallSigs, t2CallSigs)) {
-                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.signatureGroupsAreIdentical(t1ConstructSigs, t2ConstructSigs)) {
-                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
             if (!this.signatureGroupsAreIdentical(t1IndexSigs, t2IndexSigs)) {
-                this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, undefined);
                 return false;
             }
 
-            this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, true);
             return true;
         }
 
