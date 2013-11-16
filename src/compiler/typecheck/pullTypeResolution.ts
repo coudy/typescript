@@ -3160,14 +3160,6 @@ module TypeScript {
                     var returnType = bestCommonReturnType;
                     var returnExpression = returnExpressions[returnExpressionSymbols.indexOf(returnType)];
 
-                    if (useContextualType && returnType == this.semanticInfoChain.anyTypeSymbol) {
-                        var contextualType = context.getContextualType();
-
-                        if (contextualType) {
-                            returnType = contextualType;
-                        }
-                    }
-
                     var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
                     var functionSymbol = functionDecl.getSymbol();
 
