@@ -388,7 +388,13 @@ module TypeScript {
                     return this.semanticInfoChain.anyTypeSymbol;
                 }
 
-                if (pathDeclKind & (PullElementKind.Container | PullElementKind.DynamicModule)) {
+                // if search kind allows searching for enum members - expand search space to enums
+                var allowedContainerDeclKind = PullElementKind.Container | PullElementKind.DynamicModule;
+                if (TypeScript.hasFlag(declSearchKind, PullElementKind.EnumMember)) {
+                    allowedContainerDeclKind |= PullElementKind.Enum;
+                }
+                
+                if (pathDeclKind & allowedContainerDeclKind) {
 
                     // first check locally
                     childDecls = decl.searchChildDecls(symbolName, declSearchKind);
@@ -5828,6 +5834,28 @@ module TypeScript {
             return nameSymbol;
         }
 
+        private isInEnumDecl(decl: PullDecl) : boolean {
+            if (decl.kind & PullElementKind.Enum) {
+                return true;
+            }
+
+            var declPath = decl.getParentPath();
+            // enum cannot contain these kinds of declarations, if one is met - exit with false
+            var disallowedKinds = PullElementKind.SomeContainer | PullElementKind.SomeType;
+            for (var i = declPath.length - 1; i >= 0; i--) {
+                var decl = declPath[i];
+
+                if (decl.kind & PullElementKind.Enum) {
+                    return true;
+                }
+
+                if (decl.kind & disallowedKinds) {
+                    return false;
+                }
+            }
+            return false;
+        }
+
         private getSomeInnermostFunctionScopeDecl(declPath: PullDecl[]) {
             for (var i = declPath.length - 1; i >= 0; i--) {
                 var decl = declPath[i];
@@ -5862,7 +5890,14 @@ module TypeScript {
             var declPath = enclosingDecl.getParentPath();
 
             if (!nameSymbol) {
-                var nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.SomeValue);
+                var searchKind = PullElementKind.SomeValue;
+
+                // disallow accessing enum members with no qualification except the case when enclosing decl is enum
+                if (!this.isInEnumDecl(enclosingDecl)) {
+                    searchKind = searchKind & ~(PullElementKind.EnumMember);
+                }
+
+                var nameSymbol = this.getSymbolFromDeclPath(id, declPath, searchKind);
             }
 
             // Try looking up a type alias with an associated instance type
