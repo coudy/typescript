@@ -2002,22 +2002,22 @@ module TypeScript {
                 context.setTypeInContext(paramSymbol, typeRef);
             }
             else {
-                if (paramSymbol.isVarArg && paramSymbol.type) {
+                if (paramSymbol.isVarArg) {
                     if (this.cachedArrayInterfaceType()) {
-                        context.setTypeInContext(paramSymbol, this.createInstantiatedType(this.cachedArrayInterfaceType(), [paramSymbol.type]));
+                        context.setTypeInContext(paramSymbol, this.createInstantiatedType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol]));
                     }
                     else {
-                        context.setTypeInContext(paramSymbol, paramSymbol.type);
+                        context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
                     }
                 }
                 else {
                     context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+                }
 
-                    // if the noImplicitAny flag is set to be true, report an error 
-                    if (this.compilationSettings.noImplicitAny()) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
-                            [argDeclAST.identifier.text()]));
-                    }
+                // if the noImplicitAny flag is set to be true, report an error 
+                if (this.compilationSettings.noImplicitAny()) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
+                        [argDeclAST.identifier.text()]));
                 }
             }
 
@@ -2044,8 +2044,12 @@ module TypeScript {
             if (contextualType) {
                 context.setTypeInContext(paramSymbol, contextualType);
             }
-            else if (paramSymbol.isVarArg && this.cachedArrayInterfaceType()) {
-                context.setTypeInContext(paramSymbol, this.createInstantiatedType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol]));
+            else if (paramSymbol.isVarArg) {
+                if (this.cachedArrayInterfaceType()) {
+                    context.setTypeInContext(paramSymbol, this.createInstantiatedType(this.cachedArrayInterfaceType(), [this.semanticInfoChain.anyTypeSymbol]));
+                } else {
+                    context.setTypeInContext(paramSymbol, this.semanticInfoChain.anyTypeSymbol);
+                }
                 isImplicitAny = true;
             }
 
@@ -2579,7 +2583,7 @@ module TypeScript {
                     if (!(hasTypeExpr || init)) {
                         var defaultType: PullTypeSymbol = this.semanticInfoChain.anyTypeSymbol;
 
-                        if (declSymbol.isVarArg) {
+                        if (declSymbol.isVarArg && this.cachedArrayInterfaceType()) {
                             defaultType = this.createInstantiatedType(this.cachedArrayInterfaceType(), [defaultType]);
                         }
 
