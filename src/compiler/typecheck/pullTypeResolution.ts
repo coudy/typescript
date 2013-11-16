@@ -10260,31 +10260,31 @@ module TypeScript {
             var sourceParamName = "";
             var targetParamName = "";
 
-            for (var iSource = 0, iTarget = 0; iSource < len; iSource++, iTarget++) {
+            for (var iParam = 0; iParam < len; iParam++) {
 
-                if (iSource < sourceParameters.length && (!sourceSig.hasVarArgs || iSource < sourceVarArgCount)) {
-                    sourceParamType = sourceParameters[iSource].type;
-                    sourceParamName = sourceParameters[iSource].name;
+                if (iParam < sourceParameters.length - 1 || (iParam < sourceParameters.length && !sourceSig.hasVarArgs)) {
+                    sourceParamType = sourceParameters[iParam].type;
+                    sourceParamName = sourceParameters[iParam].name;
                 }
-                else if (iSource === sourceVarArgCount) {
-                    sourceParamType = sourceParameters[iSource].type;
+                else if (sourceSig.hasVarArgs) {
+                    sourceParamType = sourceParameters[sourceParameters.length - 1].type;
                     if (sourceParamType.isArrayNamedTypeReference()) {
                         sourceParamType = sourceParamType.getElementType();
                     }
-                    sourceParamName = sourceParameters[iSource].name;
+                    sourceParamName = sourceParameters[sourceParameters.length - 1].name;
                 }
 
-                if (iTarget < targetParameters.length && !targetSig.hasVarArgs && (!targetVarArgCount || (iTarget < targetVarArgCount))) {
-                    targetParamType = targetParameters[iTarget].type;
-                    targetParamName = targetParameters[iTarget].name;
+                if (iParam < targetParameters.length - 1 || (iParam < targetParameters.length && !targetSig.hasVarArgs)) {
+                    targetParamType = targetParameters[iParam].type;
+                    targetParamName = targetParameters[iParam].name;
                 }
-                else if (targetSig.hasVarArgs && iTarget === targetVarArgCount) {
-                    targetParamType = targetParameters[iTarget].type;
+                else if (targetSig.hasVarArgs) {
+                    targetParamType = targetParameters[targetParameters.length - 1].type;
 
                     if (targetParamType.isArrayNamedTypeReference()) {
                         targetParamType = targetParamType.getElementType();
                     }
-                    targetParamName = targetParameters[iTarget].name;
+                    targetParamName = targetParameters[targetParameters.length - 1].name;
                 }
 
                 if (!(this.sourceIsRelatableToTargetInEnclosingTypes(sourceParamType, targetParamType, sourceSig.functionType, targetSig.functionType, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures) ||
