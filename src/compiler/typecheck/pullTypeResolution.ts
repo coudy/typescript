@@ -8958,6 +8958,13 @@ module TypeScript {
                 return false;
             }
 
+            // identity check for enums is 't1 === t2'
+            // if it returns false and one of elements is enum - they are not identical
+            if ((t1.kind & PullElementKind.Enum) || (t2.kind & PullElementKind.Enum)) {
+                return false;
+            }
+
+
             if (val && t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
                 return (val.kind() === SyntaxKind.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).text()) === stripStartAndEndQuotes(t1.name));
             }
@@ -9000,11 +9007,6 @@ module TypeScript {
                 else {
                     return false;
                 }
-            }
-
-            // If one is an enum, and they're not the same type, they're not identical
-            if ((t1.kind & PullElementKind.Enum) || (t2.kind & PullElementKind.Enum)) {
-                return t1.getAssociatedContainerType() === t2 || t2.getAssociatedContainerType() === t1;
             }
 
             if (t1.isPrimitive() != t2.isPrimitive()) {
