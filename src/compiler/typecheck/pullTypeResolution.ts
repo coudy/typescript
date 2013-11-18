@@ -7625,25 +7625,22 @@ module TypeScript {
             if (PullHelpers.symbolIsEnum(lhsType)) {
                 lhsType = this.semanticInfoChain.numberTypeSymbol;
             }
-            else if (lhsType === this.semanticInfoChain.nullTypeSymbol || lhsType === this.semanticInfoChain.undefinedTypeSymbol) {
-                if (rhsType != this.semanticInfoChain.nullTypeSymbol && rhsType != this.semanticInfoChain.undefinedTypeSymbol) {
-                    lhsType = rhsType;
-                }
-                else {
-                    lhsType = this.semanticInfoChain.anyTypeSymbol;
-                }
-            }
 
             if (PullHelpers.symbolIsEnum(rhsType)) {
                 rhsType = this.semanticInfoChain.numberTypeSymbol;
             }
-            else if (rhsType === this.semanticInfoChain.nullTypeSymbol || rhsType === this.semanticInfoChain.undefinedTypeSymbol) {
-                if (lhsType != this.semanticInfoChain.nullTypeSymbol && lhsType != this.semanticInfoChain.undefinedTypeSymbol) {
-                    rhsType = lhsType;
+
+            var isLhsTypeNullOrUndefined = lhsType === this.semanticInfoChain.nullTypeSymbol || lhsType === this.semanticInfoChain.undefinedTypeSymbol;
+            var isRhsTypeNullOrUndefined = rhsType === this.semanticInfoChain.nullTypeSymbol || rhsType === this.semanticInfoChain.undefinedTypeSymbol;
+
+            if (isLhsTypeNullOrUndefined) {
+                if (isRhsTypeNullOrUndefined) {
+                    lhsType = rhsType = this.semanticInfoChain.anyTypeSymbol;
+                } else {
+                    lhsType = rhsType;
                 }
-                else {
-                    rhsType = this.semanticInfoChain.anyTypeSymbol;
-                }
+            } else if(isRhsTypeNullOrUndefined) {
+                rhsType = lhsType;
             }
 
             var exprType: PullTypeSymbol = null;
