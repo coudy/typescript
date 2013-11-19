@@ -7624,6 +7624,9 @@ module TypeScript {
             var lhsType = lhsExpression.type;
             var rhsType = this.resolveAST(binaryExpression.right, /*isContextuallyTyped*/ false, context).type;
 
+            // 4.15.2 The + operator             // The binary + operator requires both operands to be of the Number primitive type or an enum type, or at least one of the operands to be of type Any or the String primitive type. 
+            // Operands of an enum type are treated as having the primitive type Number.
+            // If one operand is the null or undefined value, it is treated as having the type of the other operand. 
             if (PullHelpers.symbolIsEnum(lhsType)) {
                 lhsType = this.semanticInfoChain.numberTypeSymbol;
             }
@@ -7638,10 +7641,12 @@ module TypeScript {
             if (isLhsTypeNullOrUndefined) {
                 if (isRhsTypeNullOrUndefined) {
                     lhsType = rhsType = this.semanticInfoChain.anyTypeSymbol;
-                } else {
+                }
+                else {
                     lhsType = rhsType;
                 }
-            } else if(isRhsTypeNullOrUndefined) {
+            }
+            else if (isRhsTypeNullOrUndefined) {
                 rhsType = lhsType;
             }
 
@@ -8954,10 +8959,9 @@ module TypeScript {
 
             // identity check for enums is 't1 === t2'
             // if it returns false and one of elements is enum - they are not identical
-            if ((t1.kind & PullElementKind.Enum) || (t2.kind & PullElementKind.Enum)) {
+            if (hasFlag(t1.kind, PullElementKind.Enum) || hasFlag(t2.kind, PullElementKind.Enum)) {
                 return false;
             }
-
 
             if (val && t1.isPrimitive() && (<PullPrimitiveTypeSymbol>t1).isStringConstant() && t2 === this.semanticInfoChain.stringTypeSymbol) {
                 return (val.kind() === SyntaxKind.StringLiteral) && (stripStartAndEndQuotes((<StringLiteral>val).text()) === stripStartAndEndQuotes(t1.name));
@@ -12639,7 +12643,8 @@ module TypeScript {
                 return false;
             }
 
-            // Disallow assignment to an enum, class, functions or module variables.
+            // An identifier expression that references a variable or parameter is classified as a reference. 
+            // An identifier expression that references any other kind of entity is classified as a value(and therefore cannot be the target of an assignment).
             if (ast.kind() === SyntaxKind.IdentifierName) {
                 if (astSymbol.kind === PullElementKind.Variable && astSymbol.anyDeclHasFlag(PullElementFlags.Enum)) {
                     return false;
@@ -12654,7 +12659,7 @@ module TypeScript {
                 }
             }
 
-            // Disallow assignment to an enum member.
+            // Disallow assignment to an enum member (NOTE: not reflected in spec).
             if (ast.kind() === SyntaxKind.MemberAccessExpression && astSymbol.kind === PullElementKind.EnumMember) {
                 return false;
             }
