@@ -52,7 +52,7 @@ module TypeScript {
     function getCompilerReservedName(name: IASTToken) {
         // If this array changes, update the order accordingly in CompilerReservedNames
         var nameText = name.valueText();
-        var index = <CompilerReservedNames>CompilerReservedNames[nameText];
+        var index = (<IIndexable<CompilerReservedNames>><any>CompilerReservedNames)[nameText];
         return CompilerReservedNames[index] ? index : undefined;
     }
 
@@ -7568,6 +7568,9 @@ module TypeScript {
             // otherwise, if indexExpr is of type Any, the String or Number primitive type or an enum type,
             // the property access is of type Any
             else if (isNumberIndex || indexType === this.semanticInfoChain.anyTypeSymbol || indexType === this.semanticInfoChain.stringTypeSymbol) {
+                if (this.compilationSettings.noImplicitAny()) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(callEx.argumentExpression, DiagnosticCode.Index_signature_of_object_type_implicitly_has_an_any_type));
+                }
                 return { symbol: this.semanticInfoChain.anyTypeSymbol };
             }
             // otherwise, the property acess is invalid and a compile-time error occurs
