@@ -4591,7 +4591,8 @@ module TypeScript {
             var lhsType = this.resolveAST(binaryExpression.left, false, context).type;
             var rhsType = this.resolveAST(binaryExpression.right, false, context).type;
 
-            var enclosingSymbol = this.getEnclosingSymbolForAST(binaryExpression);            var isValidLHS = this.isAnyOrEquivalent(lhsType) || lhsType.isObject() || lhsType.isTypeParameter();
+            var enclosingSymbol = this.getEnclosingSymbolForAST(binaryExpression);
+            var isValidLHS = this.isAnyOrEquivalent(lhsType) || lhsType.isObject() || lhsType.isTypeParameter();
             var isValidRHS = this.isAnyOrEquivalent(rhsType) || this.typeIsSubtypeOfFunction(rhsType, binaryExpression, context);
 
             if (!isValidLHS) {

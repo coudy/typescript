@@ -1122,12 +1122,15 @@ module Harness {
                     flag: 'module', setFlag: (x: TypeScript.CompilationSettings, value: string) => {
                         switch (value.toLowerCase()) {
                             // this needs to be set on the global variable
-                            case 'amd':
-                                x.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
-                                break;
                             default:
                             case 'commonjs':
                                 x.moduleGenTarget = TypeScript.ModuleGenTarget.Synchronous;
+                                break;
+                            case 'amd':
+                                x.moduleGenTarget = TypeScript.ModuleGenTarget.Asynchronous;
+                                break;
+                            case 'unspecified':
+                                x.moduleGenTarget = TypeScript.ModuleGenTarget.Unspecified;
                                 break;
                         }
                     }
