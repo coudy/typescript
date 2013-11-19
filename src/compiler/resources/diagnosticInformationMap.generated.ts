@@ -166,7 +166,7 @@ module TypeScript {
     "code": 1039,
     "category": DiagnosticCategory.Error
   },
-  "Parameter property declarations can only be used in constructors.": {
+  "Parameter property declarations can only be used in a non-ambient constructor declaration.": {
     "code": 1040,
     "category": DiagnosticCategory.Error
   },
@@ -324,10 +324,6 @@ module TypeScript {
   },
   "Function overload must not be static.": {
     "code": 1081,
-    "category": DiagnosticCategory.Error
-  },
-  "Parameter property declarations cannot be used in an ambient context.": {
-    "code": 1082,
     "category": DiagnosticCategory.Error
   },
   "Parameter property declarations cannot be used in a constructor overload.": {
