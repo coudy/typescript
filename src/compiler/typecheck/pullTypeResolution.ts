@@ -3272,8 +3272,10 @@ module TypeScript {
             return false;
         }
 
-        private typeCheckFunctionExpression(funcDecl: FunctionExpression, context: PullTypeResolutionContext): void {
-            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList, getType(funcDecl), funcDecl.block, /*bodyExpression:*/ null, context);
+        private typeCheckFunctionExpression(funcDecl: FunctionExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
+            this.typeCheckAnyFunctionExpression(funcDecl, funcDecl.callSignature.typeParameterList,
+                Parameters.fromParameterList(funcDecl.callSignature.parameterList), 
+                funcDecl.callSignature.typeAnnotation, funcDecl.block, /*bodyExpression:*/ null, isContextuallyTyped, context);
         }
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
@@ -5690,7 +5692,7 @@ module TypeScript {
                     return;
 
                 case SyntaxKind.FunctionExpression:
-                    this.typeCheckFunctionExpression(<FunctionExpression>ast, context);
+                    this.typeCheckFunctionExpression(<FunctionExpression>ast, isContextuallyTyped, context);
                     break;
 
                 case SyntaxKind.IndexSignature:
@@ -5716,11 +5718,11 @@ module TypeScript {
                     }
 
                 case SyntaxKind.SimpleArrowFunctionExpression:
-                    this.typeCheckSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast, context);
+                    this.typeCheckSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast, isContextuallyTyped, context);
                     return;
 
                 case SyntaxKind.ParenthesizedArrowFunctionExpression:
-                    this.typeCheckParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast, context);
+                    this.typeCheckParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast, isContextuallyTyped, context);
                     return;
 
                 case SyntaxKind.ArrayLiteralExpression:
@@ -6564,45 +6566,7 @@ module TypeScript {
             }
 
             // link parameters and resolve their annotations
-            if (parameters) {
-                var contextParams: PullSymbol[] = [];
-
-                if (assigningFunctionSignature) {
-                    contextParams = assigningFunctionSignature.parameters;
-                }
-
-                // Push the function onto the parameter index stack
-                var contextualParametersCount = contextParams.length;
-                for (var i = 0, n = parameters.length; i < n; i++) {
-                    // Function has a variable argument list, and this paramter is the last
-
-                    var actualParameterIsVarArgParameter = (i === (n - 1)) && parameters.lastParameterIsRest();
-                    var correspondingContextualParameter: PullSymbol = null;
-                    var contextualParameterType: PullTypeSymbol = null;
-
-                    // Find the matching contextual paramter
-                    if (i < contextualParametersCount) {
-                        correspondingContextualParameter = contextParams[i];
-                    }
-                    else if (contextualParametersCount && contextParams[contextualParametersCount - 1].isVarArg) {
-                        correspondingContextualParameter = contextParams[contextualParametersCount - 1];
-                    }
-
-                    // Find the contextual type from the paramter
-                    if (correspondingContextualParameter) {
-                        if (correspondingContextualParameter.isVarArg === actualParameterIsVarArgParameter) {
-                            contextualParameterType = correspondingContextualParameter.type;
-                        }
-                        else if (correspondingContextualParameter.isVarArg) {
-                            contextualParameterType = correspondingContextualParameter.type.getElementType();
-                        }
-                    }
-
-                    // use the function decl as the enclosing decl, so as to properly resolve type parameters
-                    this.resolveFunctionExpressionParameter(parameters.astAt(i), parameters.identifierAt(i),
-                        parameters.typeAt(i), parameters.initializerAt(i), contextualParameterType, functionDecl, context);
-                }
-            }
+            this.resolveAnyFunctionExpressionParameters(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, isContextuallyTyped, context);
 
             // resolve the return type annotation
             if (returnTypeAnnotation) {
@@ -6647,32 +6611,89 @@ module TypeScript {
             funcDeclSymbol.setResolved();
 
             if (this.canTypeCheckAST(funcDeclAST, context)) {
-                this.typeCheckAnyFunctionExpression(funcDeclAST, typeParameters, returnTypeAnnotation, block, bodyExpression, context);
+                this.typeCheckAnyFunctionExpression(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, block, bodyExpression, isContextuallyTyped, context);
             }
 
             return funcDeclSymbol;
         }
 
-        private typeCheckSimpleArrowFunctionExpression(
-            arrowFunction: SimpleArrowFunctionExpression, context: PullTypeResolutionContext): void {
+        private resolveAnyFunctionExpressionParameters(funcDeclAST: AST, typeParameters: TypeParameterList, parameters: IParameters, returnTypeAnnotation: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
+            if (!parameters) {
+                return;
+            }
+
+            var functionDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
+
+            var contextParams: PullSymbol[] = [];
+
+            var assigningFunctionSignature: PullSignatureSymbol = null;
+            if (isContextuallyTyped &&
+                this.shouldContextuallyTypeAnyFunctionExpression(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, context)) {
+
+                assigningFunctionSignature = context.getContextualType().getCallSignatures()[0];
+            }
+
+            if (assigningFunctionSignature) {
+                contextParams = assigningFunctionSignature.parameters;
+            }
+
+            // Push the function onto the parameter index stack
+            var contextualParametersCount = contextParams.length;
+            for (var i = 0, n = parameters.length; i < n; i++) {
+                // Function has a variable argument list, and this paramter is the last
+
+                var actualParameterIsVarArgParameter = (i === (n - 1)) && parameters.lastParameterIsRest();
+                var correspondingContextualParameter: PullSymbol = null;
+                var contextualParameterType: PullTypeSymbol = null;
+
+                // Find the matching contextual paramter
+                if (i < contextualParametersCount) {
+                    correspondingContextualParameter = contextParams[i];
+                }
+                else if (contextualParametersCount && contextParams[contextualParametersCount - 1].isVarArg) {
+                    correspondingContextualParameter = contextParams[contextualParametersCount - 1];
+                }
+
+                // Find the contextual type from the paramter
+                if (correspondingContextualParameter) {
+                    if (correspondingContextualParameter.isVarArg === actualParameterIsVarArgParameter) {
+                        contextualParameterType = correspondingContextualParameter.type;
+                    }
+                    else if (correspondingContextualParameter.isVarArg) {
+                        contextualParameterType = correspondingContextualParameter.type.getElementType();
+                    }
+                }
+
+                // use the function decl as the enclosing decl, so as to properly resolve type parameters
+                this.resolveFunctionExpressionParameter(parameters.astAt(i), parameters.identifierAt(i),
+                    parameters.typeAt(i), parameters.initializerAt(i), contextualParameterType, functionDecl, context);
+            }
+        }
+
+        private typeCheckSimpleArrowFunctionExpression(arrowFunction: SimpleArrowFunctionExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
 
             return this.typeCheckAnyFunctionExpression(
-                arrowFunction, /*typeParameters:*/ null, /*returnTypeAnnotation:*/ null, arrowFunction.block, arrowFunction.expression, context);
+                arrowFunction, /*typeParameters:*/ null, Parameters.fromIdentifier(arrowFunction.identifier),
+                /*returnTypeAnnotation:*/ null, arrowFunction.block, arrowFunction.expression, isContextuallyTyped, context);
         }
 
         private typeCheckParenthesizedArrowFunctionExpression(
-            arrowFunction: ParenthesizedArrowFunctionExpression, context: PullTypeResolutionContext): void {
+            arrowFunction: ParenthesizedArrowFunctionExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
 
             return this.typeCheckAnyFunctionExpression(
-                arrowFunction, arrowFunction.callSignature.typeParameterList, getType(arrowFunction), arrowFunction.block, arrowFunction.expression, context);
+                arrowFunction, arrowFunction.callSignature.typeParameterList,
+                Parameters.fromParameterList(arrowFunction.callSignature.parameterList),
+                getType(arrowFunction), arrowFunction.block, arrowFunction.expression, isContextuallyTyped, context);
         }
 
         private typeCheckAnyFunctionExpression(
             funcDeclAST: AST,
             typeParameters: TypeParameterList,
+            parameters: IParameters,
             returnTypeAnnotation: AST,
             block: Block,
             bodyExpression: AST,
+            isContextuallyTyped: boolean,
             context: PullTypeResolutionContext) {
 
             this.setTypeChecked(funcDeclAST, context);
@@ -6689,6 +6710,8 @@ module TypeScript {
                     this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
             }
+
+            this.resolveAnyFunctionExpressionParameters(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, isContextuallyTyped, context);
 
             // Make sure there is no contextual type on the stack when resolving the block
             context.pushNewContextualType(null);
@@ -7108,7 +7131,9 @@ module TypeScript {
         }
 
         private typeCheckFunctionPropertyAssignment(funcProp: FunctionPropertyAssignment, isContextuallyTyped: boolean, context: PullTypeResolutionContext) {
-            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList, getType(funcProp), funcProp.block, /*bodyExpression:*/ null, context);
+            this.typeCheckAnyFunctionExpression(funcProp, funcProp.callSignature.typeParameterList,
+                Parameters.fromParameterList(funcProp.callSignature.parameterList),
+                getType(funcProp), funcProp.block, /*bodyExpression:*/ null, isContextuallyTyped, context);
         }
 
         public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
@@ -7629,7 +7654,8 @@ module TypeScript {
             var rhsType = this.resolveAST(binaryExpression.right, /*isContextuallyTyped*/ false, context).type;
 
             // November 18, 2013
-            // 4.15.2 The + operator             // The binary + operator requires both operands to be of the Number primitive type or an enum type, or at least one of the operands to be of type Any or the String primitive type. 
+            // 4.15.2 The + operator 
+            // The binary + operator requires both operands to be of the Number primitive type or an enum type, or at least one of the operands to be of type Any or the String primitive type. 
             // Operands of an enum type are treated as having the primitive type Number.
             // If one operand is the null or undefined value, it is treated as having the type of the other operand. 
             if (PullHelpers.symbolIsEnum(lhsType)) {
