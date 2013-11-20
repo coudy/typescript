@@ -7628,6 +7628,7 @@ module TypeScript {
             var lhsType = lhsExpression.type;
             var rhsType = this.resolveAST(binaryExpression.right, /*isContextuallyTyped*/ false, context).type;
 
+            // November 18, 2013
             // 4.15.2 The + operator             // The binary + operator requires both operands to be of the Number primitive type or an enum type, or at least one of the operands to be of type Any or the String primitive type. 
             // Operands of an enum type are treated as having the primitive type Number.
             // If one operand is the null or undefined value, it is treated as having the type of the other operand. 
@@ -12633,6 +12634,7 @@ module TypeScript {
         }
 
         private isReference(ast: AST, astSymbol: PullSymbol): boolean {
+            // November 18, 2013
             // References are the subset of expressions that are permitted as the target of an 
             // assignment.Specifically, references are combinations of identifiers(section 4.3),
             // parentheses(section 4.7), and property accesses(section 4.10).All other expression
@@ -12647,6 +12649,7 @@ module TypeScript {
                 return false;
             }
 
+            // November 18, 2013
             // An identifier expression that references a variable or parameter is classified as a reference. 
             // An identifier expression that references any other kind of entity is classified as a value(and therefore cannot be the target of an assignment).
             if (ast.kind() === SyntaxKind.IdentifierName) {
