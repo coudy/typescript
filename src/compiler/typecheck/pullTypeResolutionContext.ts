@@ -36,7 +36,8 @@ module TypeScript {
             };
 
             // Now widen (per the spec citation above)
-            this._inferredTypeAfterFixing = resolver.widenType(resolver.findBestCommonType(collection, context, new TypeComparisonInfo()));
+            var bestCommonType = resolver.findBestCommonType(collection, context, new TypeComparisonInfo());
+            this._inferredTypeAfterFixing = resolver.widenType(bestCommonType, /*ast*/ null, context);
         }
     }
 

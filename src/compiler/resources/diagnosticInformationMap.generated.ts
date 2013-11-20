@@ -1685,6 +1685,10 @@ module TypeScript {
   "Index signature of object type implicitly has an 'any' type.": {
     "code": 7017,
     "category": DiagnosticCategory.Error
+  },
+  "Object literal's property '{0}' implicitly has an 'any' type from widening.": {
+    "code": 7018,
+    "category": DiagnosticCategory.Error
   }
 };
 }

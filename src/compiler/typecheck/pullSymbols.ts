@@ -253,7 +253,7 @@ module TypeScript {
                 (symbol) => symbol.getDisplayName(), skipInternalAliasName);
             if (aliasDisplayName != null) {
                 return aliasDisplayName;
-           }
+            }
 
             // Get the actual name associated with a declaration for this symbol
             var decls = this.getDeclarations();
@@ -1501,7 +1501,8 @@ module TypeScript {
 
         public isObject(): boolean {
             return hasFlag(this.kind,
-                PullElementKind.Class | PullElementKind.ConstructorType | PullElementKind.Enum | PullElementKind.FunctionType | PullElementKind.Interface | PullElementKind.ObjectType);
+                PullElementKind.Class | PullElementKind.ConstructorType | PullElementKind.Enum | PullElementKind.FunctionType |
+                PullElementKind.Interface | PullElementKind.ObjectType | PullElementKind.ObjectLiteral);
         }
 
         public getKnownBaseTypeCount() { return this._knownBaseTypeCount; }

@@ -2740,10 +2740,10 @@ module TypeScript {
             }
             else {
                 var initTypeSymbol = initExprSymbol.type;
-                var widenedInitTypeSymbol = this.widenType(initTypeSymbol, init.value, context);
 
                 // Don't reset the type if we already have one from the type expression
                 if (!hasTypeExpr) {
+                    var widenedInitTypeSymbol = this.widenType(initTypeSymbol, init.value, context);
                     context.setTypeInContext(declSymbol, widenedInitTypeSymbol);
 
                     if (declParameterSymbol) {
@@ -2758,10 +2758,12 @@ module TypeScript {
                                 [name.text()]));
                         }
                     }
+
+                    return widenedInitTypeSymbol;
                 }
             }
 
-            return widenedInitTypeSymbol;
+            return initTypeSymbol;
         }
 
         private typeCheckPropertySignature(varDecl: PropertySignature, context: PullTypeResolutionContext) {
@@ -7353,7 +7355,7 @@ module TypeScript {
 
             if (!typeSymbol) {
                 // TODO: why don't se just use the normal symbol binder for this?
-                typeSymbol = new PullTypeSymbol("", PullElementKind.Interface);
+                typeSymbol = new PullTypeSymbol("", PullElementKind.ObjectLiteral);
                 typeSymbol.addDeclaration(objectLitDecl);
                 this.setSymbolForAST(objectLitAST, typeSymbol, context);
                 objectLitDecl.setSymbol(typeSymbol);
@@ -7455,7 +7457,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
                 };
                 var decl = objectLiteralSymbol.getDeclarations()[0];
-                var indexerReturnType = this.widenType(this.findBestCommonType(typeCollection, context));
+                var indexerReturnType = this.widenType(this.findBestCommonType(typeCollection, context), /*ast*/ null, context);
                 if (indexerReturnType == contextualIndexSignature.returnType) {
                     objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
                 }
@@ -8925,7 +8927,7 @@ module TypeScript {
             return typeToReturn;
         }
 
-        public widenType(type: PullTypeSymbol, ast?: AST, context?: PullTypeResolutionContext): PullTypeSymbol {
+        public widenType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
             if (type === this.semanticInfoChain.undefinedTypeSymbol ||
                 type === this.semanticInfoChain.nullTypeSymbol ||
                 type.isError()) {
@@ -8934,33 +8936,92 @@ module TypeScript {
             }
 
             if (type.isArrayNamedTypeReference()) {
-                var elementType = this.widenType(type.getElementType(), null, context);
-
-                if (this.compilationSettings.noImplicitAny() && ast && ast.kind() === SyntaxKind.ArrayLiteralExpression) {
-                    // If we widened from non-'any' type to 'any', then report error.
-                    if (elementType === this.semanticInfoChain.anyTypeSymbol && type.getElementType() !== this.semanticInfoChain.anyTypeSymbol) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening));
-                    }
-                }
-
-
-                var arraySymbol = elementType.getArrayType();
-
-                // otherwise, create a new array symbol
-                if (!arraySymbol) {
-                    // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-
-                    arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
-
-                    if (!arraySymbol) {
-                        arraySymbol = this.semanticInfoChain.anyTypeSymbol;
-                    }
-                }
-
-                return arraySymbol;
+                return this.widenArrayType(type, ast, context);
+            }
+            else if (type.kind === PullElementKind.ObjectLiteral) {
+                return this.widenObjectLiteralType(type, ast, context);
             }
 
             return type;
+        }
+
+        private widenArrayType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
+            var elementType = this.widenType(type.getElementType(), /*ast*/ ast, context);
+
+            if (this.compilationSettings.noImplicitAny() && ast) {
+                // If we widened from non-'any' type to 'any', then report error.
+                if (elementType === this.semanticInfoChain.anyTypeSymbol && type.getElementType() !== this.semanticInfoChain.anyTypeSymbol) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Array_Literal_implicitly_has_an_any_type_from_widening));
+                }
+            }
+
+
+            var arraySymbol = elementType.getArrayType();
+
+            // otherwise, create a new array symbol
+            if (!arraySymbol) {
+                // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
+
+                arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
+
+                if (!arraySymbol) {
+                    arraySymbol = this.semanticInfoChain.anyTypeSymbol;
+                }
+
+                elementType.setArrayType(arraySymbol);
+            }
+
+            return arraySymbol;
+        }
+
+        private widenObjectLiteralType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
+            // The name here should be "", and the kind should be ObjectLiteral
+            Debug.assert(type.name == "");
+            var newObjectTypeSymbol = new PullTypeSymbol(type.name, type.kind);
+            var declsOfObjectType = type.getDeclarations();
+            Debug.assert(declsOfObjectType.length == 1);
+            newObjectTypeSymbol.addDeclaration(declsOfObjectType[0]);
+            var members = type.getMembers();
+
+            for (var i = 0; i < members.length; i++) {
+                var memberType = members[i].type;
+                var widenedMemberType = this.widenType(members[i].type, ast, context);
+                var newMember = new PullSymbol(members[i].name, members[i].kind);
+
+                // Since this is an object literal, we only care about one decl for this member.
+                // It has more than one decl in an error case where there was a duplicate member
+                // declaration. For example:
+                // var obj = { a: 3, a: 4 };
+                // This will have two decls for "a", but an error is already given in computeObjectLiteralExpression.
+                var declsOfMember = members[i].getDeclarations();
+                //Debug.assert(declsOfMember.length == 1);
+                //Debug.assert(members[i].isResolved);
+                newMember.addDeclaration(declsOfMember[0]);
+                newMember.type = widenedMemberType;
+                newObjectTypeSymbol.addMember(newMember);
+                newMember.setResolved();
+
+                if (this.compilationSettings.noImplicitAny() &&
+                    ast &&
+                    widenedMemberType === this.semanticInfoChain.anyTypeSymbol
+                    && memberType !== this.semanticInfoChain.anyTypeSymbol) {
+                    // Property was widened from non-any to any
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Object_literal_s_property_0_implicitly_has_an_any_type_from_widening, [members[i].name]));
+                }
+            }
+
+            var indexers = type.getIndexSignatures();
+            for (var i = 0; i < indexers.length; i++) {
+                var newIndexer = new PullSignatureSymbol(PullElementKind.IndexSignature);
+                var parameter = indexers[i].parameters[0];
+                var newParameter = new PullSymbol(parameter.name, parameter.kind);
+                newParameter.type = parameter.type;
+                newIndexer.addParameter(newParameter);
+                newIndexer.returnType = indexers[i].returnType;
+                newObjectTypeSymbol.addIndexSignature(newIndexer);
+            }
+
+            return newObjectTypeSymbol;
         }
 
         public findBestCommonType(collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
@@ -9828,8 +9889,8 @@ module TypeScript {
             //  -	the relationship in question must be true for each corresponding pair of type arguments in
             //      the type argument lists of S and T.
 
-            var widenedTargetType = this.widenType(targetType);
-            var widenedSourceType = this.widenType(sourceType);
+            var widenedTargetType = this.widenType(targetType, /*ast*/ null, context);
+            var widenedSourceType = this.widenType(sourceType, /*ast*/ null, context);
 
             // Check if the type is not any/null or undefined
             if ((widenedSourceType != this.semanticInfoChain.anyTypeSymbol) &&
@@ -9912,8 +9973,8 @@ module TypeScript {
             //  -	the relationship in question must be true for each corresponding pair of type arguments in
             //      the type argument lists of S and T.
 
-            var widenedTargetType = this.widenType(targetType);
-            var widenedSourceType = this.widenType(sourceType);
+            var widenedTargetType = this.widenType(targetType, /*ast*/ null, /*context*/ null);
+            var widenedSourceType = this.widenType(sourceType, /*ast*/ null, /*context*/ null);
 
             // Check if the type is not any/null or undefined
             if ((widenedSourceType != this.semanticInfoChain.anyTypeSymbol) &&
