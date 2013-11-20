@@ -8,8 +8,8 @@ Line 9 col 0 IdentifierName "foo" = any
 Line 12 col 4 IdentifierName "b" = { foo: any; }
 Line 12 col 8 ObjectLiteralExpression "{
     foo: null
-}" = { foo: null; }
-Line 13 col 0 IdentifierName "foo" = null
+}" = { foo: any; }
+Line 13 col 0 IdentifierName "foo" = any
 Line 17 col 4 IdentifierName "r1" = any
 Line 17 col 9 MemberAccessExpression "(new C()).foo" = any
 Line 17 col 9 ParenthesizedExpression "(new C())" = C

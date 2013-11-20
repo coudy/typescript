@@ -2765,6 +2765,20 @@ module TypeScript {
         public setUnresolved() {
             // do nothing...
         }
+
+        // Overrides the PullSymbol.getDisplayName to give the appearance of widening. The spec
+        // doesn't say anything about displaying types, but we should leave no trace of undefined
+        // or null.
+        public getDisplayName() {
+            var isRealPrimitive = !this.isStringConstant();
+            var isNullOrUndefined = isRealPrimitive && (this.name === "undefined" || this.name === "null");
+            if (isNullOrUndefined) {
+                return "any";
+            }
+            else {
+                return super.getDisplayName();
+            }
+        }
     }
 
     export class PullStringConstantTypeSymbol extends PullPrimitiveTypeSymbol {

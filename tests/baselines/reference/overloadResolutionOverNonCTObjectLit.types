@@ -28,10 +28,10 @@ Line 18 col 0 IdentifierName "tokens" = Bugs.IToken[]
 Line 18 col 39 IdentifierName "push" = (...items: Bugs.IToken[]) => number
 Line 18 col 44 CastExpression "<IToken>({ startIndex: 1, type: '', bracket: 3, state: null, length: 10 })" = Bugs.IToken
 Line 18 col 45 IdentifierName "IToken" = Bugs.IToken
-Line 18 col 52 ParenthesizedExpression "({ startIndex: 1, type: '', bracket: 3, state: null, length: 10 })" = { startIndex: number; type: string; bracket: number; state: null; length: number; }
-Line 18 col 53 ObjectLiteralExpression "{ startIndex: 1, type: '', bracket: 3, state: null, length: 10 }" = { startIndex: number; type: string; bracket: number; state: null; length: number; }
+Line 18 col 52 ParenthesizedExpression "({ startIndex: 1, type: '', bracket: 3, state: null, length: 10 })" = { startIndex: number; type: string; bracket: number; state: any; length: number; }
+Line 18 col 53 ObjectLiteralExpression "{ startIndex: 1, type: '', bracket: 3, state: null, length: 10 }" = { startIndex: number; type: string; bracket: number; state: any; length: number; }
 Line 18 col 55 IdentifierName "startIndex" = number
 Line 18 col 70 IdentifierName "type" = string
 Line 18 col 80 IdentifierName "bracket" = number
-Line 18 col 92 IdentifierName "state" = null
+Line 18 col 92 IdentifierName "state" = any
 Line 18 col 105 IdentifierName "length" = number
