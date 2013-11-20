@@ -82,7 +82,7 @@ verify.memberListContains("x1");
 verify.memberListContains("y1");
 
 goTo.marker("2");
-verify.not.memberListContains("x1");
+verify.memberListContains("x1");
 verify.memberListContains("y1");
 
 goTo.marker("3");
@@ -97,7 +97,7 @@ goTo.marker("5");
 verify.completionListIsEmpty();
 
 goTo.marker("6");
-verify.not.memberListContains("x1");
+verify.memberListContains("x1");
 verify.memberListContains("y1");
 
 goTo.marker("7");
