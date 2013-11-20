@@ -1006,7 +1006,7 @@ module TypeScript {
     "code": 2173,
     "category": DiagnosticCategory.Error
   },
-  "Default arguments are not allowed in an overload parameter.": {
+  "Default arguments are only allowed in implementation.": {
     "code": 2174,
     "category": DiagnosticCategory.Error
   },

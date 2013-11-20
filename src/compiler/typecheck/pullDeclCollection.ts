@@ -390,7 +390,7 @@ module TypeScript {
         if (parent.kind == PullElementKind.ConstructorMethod) {
             decl.setFlag(PullElementFlags.ConstructorParameter);
         }
-
+        
         // if it's a property type, we'll need to add it to the parent's parent as well
         var isPublicOrPrivate = hasModifier(argDecl.modifiers, PullElementFlags.Public | PullElementFlags.Private);
         var isInConstructor = parent.kind === PullElementKind.ConstructorMethod;

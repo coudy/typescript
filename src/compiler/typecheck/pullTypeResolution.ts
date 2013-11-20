@@ -1997,7 +1997,7 @@ module TypeScript {
                 var typeRef = this.resolveTypeReference(getType(argDeclAST), context);
 
                 if (paramSymbol.isVarArg && !typeRef.isArrayNamedTypeReference()) {
-                    var diagnostic = context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Rest_parameters_must_be_array_types));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Rest_parameters_must_be_array_types));
                     typeRef = this.getNewErrorTypeSymbol();
                 }
 
@@ -2021,6 +2021,10 @@ module TypeScript {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Parameter_0_of_function_type_implicitly_has_an_any_type,
                         [argDeclAST.identifier.text()]));
                 }
+            }
+
+            if (hasFlag(paramDecl.flags, PullElementFlags.Optional) && argDeclAST.equalsValueClause && isTypesOnlyLocation(argDeclAST)) {
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(argDeclAST, DiagnosticCode.Default_arguments_are_only_allowed_in_implementation));
             }
 
             paramSymbol.setResolved();
@@ -2895,7 +2899,7 @@ module TypeScript {
             if (init && varDeclOrParameter.kind() === SyntaxKind.Parameter) {
                 var containerSignature = enclosingDecl.getSignatureSymbol();
                 if (containerSignature && !containerSignature.isDefinition()) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Default_arguments_are_not_allowed_in_an_overload_parameter));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter, DiagnosticCode.Default_arguments_are_only_allowed_in_implementation));
                 }
             }
             if (declSymbol.kind != PullElementKind.Parameter &&
