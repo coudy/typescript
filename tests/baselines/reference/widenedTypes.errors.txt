@@ -13,3 +13,5 @@ widenedTypes.ts line 24 col 5: error TS2012: Cannot convert '{}[]' to 'string[]'
 		Call signatures of types '{ <U extends T[]>(...items: U[]): {}[]; (...items: {}[]): {}[]; }' and '{ <U extends T[]>(...items: U[]): string[]; (...items: string[]): string[]; }' are incompatible:
 			Types of property 'pop' of types '{}[]' and 'string[]' are incompatible:
 				Call signatures of types '() => {}' and '() => string' are incompatible.
+widenedTypes.ts line 25 col 5: error TS2012: Cannot convert '{ x: number; y: null; [x: string]: {}; }' to '{ [x: string]: string; }':
+	Index signatures of types '{ x: number; y: null; [x: string]: {}; }' and '{ [x: string]: string; }' are incompatible.

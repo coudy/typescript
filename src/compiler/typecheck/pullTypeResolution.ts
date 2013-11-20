@@ -7299,20 +7299,19 @@ module TypeScript {
                     }
                 }
 
-                var propertySymbol = this.resolveAST(propertyAssignment, contextualMemberType != null, pullTypeContext);
-                var memberExpr = this.widenType(propertySymbol.type, propertyAssignment, pullTypeContext);
+                var memberSymbolType = this.resolveAST(propertyAssignment, contextualMemberType != null, pullTypeContext).type;
 
-                if (memberExpr.type) {
-                    if (memberExpr.type.isGeneric()) {
+                if (memberSymbolType) {
+                    if (memberSymbolType.isGeneric()) {
                         objectLiteralTypeSymbol.setHasGenericMember();
                     }
 
                     // Add the member to the appropriate member type lists to compute the type of the synthesized index signatures
                     if (stringIndexerSignature) {
-                        allMemberTypes.push(memberExpr.type);
+                        allMemberTypes.push(memberSymbolType);
                     }
                     if (numericIndexerSignature && PullHelpers.isNameNumeric(memberSymbol.name)) {
-                        allNumericMemberTypes.push(memberExpr.type);
+                        allNumericMemberTypes.push(memberSymbolType);
                     }
                 }
 
@@ -7323,9 +7322,9 @@ module TypeScript {
                 var isAccessor = propertyAssignment.kind() === SyntaxKind.SetAccessor || propertyAssignment.kind() === SyntaxKind.GetAccessor;
                 if (!isUsingExistingSymbol) {
                     if (isAccessor) {
-                        this.setSymbolForAST(id, memberExpr, pullTypeContext);
+                        this.setSymbolForAST(id, memberSymbolType, pullTypeContext);
                     } else {
-                        pullTypeContext.setTypeInContext(memberSymbol, memberExpr.type);
+                        pullTypeContext.setTypeInContext(memberSymbol, memberSymbolType);
                         memberSymbol.setResolved();
 
                         this.setSymbolForAST(id, memberSymbol, pullTypeContext);
