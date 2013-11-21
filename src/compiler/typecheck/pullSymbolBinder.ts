@@ -503,11 +503,16 @@ module TypeScript {
                             hasFlag(sibling.kind, PullElementKind.SomeFunction) ||
                             hasFlag(sibling.flags, PullElementFlags.ImplicitVariable)
 
-                        if (sibling !== moduleContainerDecl &&
+                        // We need to determine of this sibling is something this module definition can augment
+                        // Augmentable items are: Function declarations, Classes (whos value decl is its constructor method), Enums
+                        var isSiblingAnAugmentableVariable =
+                            sibling !== moduleContainerDecl &&
                             sibling !== currentModuleValueDecl &&
                             sibling.name === modName &&
                             siblingIsSomeValue &&
-                            siblingIsFunctionOrHasImplictVarFlag) {
+                            siblingIsFunctionOrHasImplictVarFlag;
+
+                        if (isSiblingAnAugmentableVariable) {
 
                             // IMPORTANT: We don't want to just call sibling.getSymbol() here.  
                             // That would force the sibling to get bound.  Something we don't want
