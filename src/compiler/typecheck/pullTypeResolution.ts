@@ -5179,13 +5179,13 @@ module TypeScript {
             return false;
         }
 
-        private inIterationStatement(ast: AST): boolean {
+        private inIterationStatement(ast: AST, crossFunctions: boolean): boolean {
             while (ast) {
                 if (this.isIterationStatement(ast)) {
                     return true;
                 }
 
-                if (this.isAnyFunctionExpressionOrDeclaration(ast)) {
+                if (!crossFunctions && this.isAnyFunctionExpressionOrDeclaration(ast)) {
                     return false;
                 }
 
@@ -5228,9 +5228,15 @@ module TypeScript {
         private typeCheckContinueStatement(ast: ContinueStatement, context: PullTypeResolutionContext): void {
             this.setTypeChecked(ast, context);
 
-            if (!this.inIterationStatement(ast)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
-                    DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement));
+            if (!this.inIterationStatement(ast, /*crossFunctions:*/ false)) {
+                if (this.inIterationStatement(ast, /*crossFunctions:*/ true)) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
+                        DiagnosticCode.Jump_target_cannot_cross_function_boundary));
+                }
+                else {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
+                        DiagnosticCode.continue_statement_can_only_be_used_within_an_enclosing_iteration_statement));
+                }
             }
             else if (ast.identifier) {
                 var continuableLabels = this.getEnclosingLabels(ast, /*breakable:*/ false, /*crossFunctions:*/ false);
@@ -5287,9 +5293,15 @@ module TypeScript {
                     }
                 }
             }
-            else if (!this.inIterationStatement(ast) && !this.inSwitchStatement(ast)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
-                    DiagnosticCode.break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement));
+            else if (!this.inIterationStatement(ast, /*crossFunctions:*/ false) && !this.inSwitchStatement(ast)) {
+                if (this.inIterationStatement(ast, /*crossFunctions:*/ true)) {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
+                        DiagnosticCode.Jump_target_cannot_cross_function_boundary));
+                }
+                else {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
+                        DiagnosticCode.break_statement_can_only_be_used_within_an_enclosing_iteration_or_switch_statement));
+                }
             }
         }
 
