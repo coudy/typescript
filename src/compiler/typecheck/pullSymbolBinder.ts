@@ -448,7 +448,7 @@ module TypeScript {
             this.semanticInfoChain.setSymbolForAST(moduleDeclAST, moduleContainerTypeSymbol);
 
             var variableSymbol: PullSymbol = null;
-            var currentModulesValueDecl = moduleContainerDecl.getValueDecl();
+            var currentModuleValueDecl = moduleContainerDecl.getValueDecl();
 
             if (!moduleInstanceSymbol && isInitializedModule) {
                 // search for a complementary instance symbol first
@@ -469,9 +469,8 @@ module TypeScript {
                         }
                     }
 
-                    // use getValueDecl to emphasise that we are merging value side of the module
-                    var moduleValueDecl = moduleContainerDecl.getValueDecl()
-                    if (variableSymbol && moduleValueDecl) {
+                    // use currentModuleValueDecl to emphasise that we are merging value side of the module
+                    if (variableSymbol && currentModuleValueDecl) {
                         var declarations = variableSymbol.getDeclarations();
 
                         if (declarations.length) {
@@ -482,7 +481,7 @@ module TypeScript {
                             // - current decl is either exported or has the same parent with the previosly defined symbol
                             // AND
                             // exports match for both current and previous decl
-                            var canReuseVariableSymbol = isExportedOrHasTheSameParent && this.checkThatExportsMatch(moduleValueDecl, variableSymbol, false);
+                            var canReuseVariableSymbol = isExportedOrHasTheSameParent && this.checkThatExportsMatch(currentModuleValueDecl, variableSymbol, false);
 
                             if (!canReuseVariableSymbol) {
                                 variableSymbol = null;
@@ -505,7 +504,7 @@ module TypeScript {
                             hasFlag(sibling.flags, PullElementFlags.ImplicitVariable)
 
                         if (sibling !== moduleContainerDecl &&
-                            sibling !== currentModulesValueDecl &&
+                            sibling !== currentModuleValueDecl &&
                             sibling.name === modName &&
                             siblingIsSomeValue &&
                             siblingIsFunctionOrHasImplictVarFlag) {
@@ -566,17 +565,17 @@ module TypeScript {
                 }
             }
 
-            if (currentModulesValueDecl) {
-                currentModulesValueDecl.ensureSymbolIsBound();
+            if (currentModuleValueDecl) {
+                currentModuleValueDecl.ensureSymbolIsBound();
                 // We associate the value decl to the module instance symbol. This should have
                 // already been achieved by ensureSymbolIsBound, but if bindModuleDeclarationToPullSymbol
                 // was called recursively while in the middle of binding the value decl, the cycle
                 // will be short-circuited. With a more organized binding pattern, this situation
                 // shouldn't be possible.
-                if (!currentModulesValueDecl.hasSymbol()) {
-                    currentModulesValueDecl.setSymbol(moduleInstanceSymbol);
-                    if (!moduleInstanceSymbol.hasDeclaration(currentModulesValueDecl)) {
-                        moduleInstanceSymbol.addDeclaration(currentModulesValueDecl);
+                if (!currentModuleValueDecl.hasSymbol()) {
+                    currentModuleValueDecl.setSymbol(moduleInstanceSymbol);
+                    if (!moduleInstanceSymbol.hasDeclaration(currentModuleValueDecl)) {
+                        moduleInstanceSymbol.addDeclaration(currentModuleValueDecl);
                     }
                 }
             }
