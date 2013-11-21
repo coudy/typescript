@@ -500,7 +500,7 @@ module TypeScript {
                         var sibling = siblingDecls[i];
 
                         var siblingIsSomeValue = hasFlag(sibling.kind, PullElementKind.SomeValue);
-                        var siblingIsFunctionOrAugmentationOfExistingImplictVar = 
+                        var siblingIsFunctionOrHasImplictVarFlag = 
                             hasFlag(sibling.kind, PullElementKind.SomeFunction) ||
                             hasFlag(sibling.flags, PullElementFlags.ImplicitVariable)
 
@@ -508,7 +508,7 @@ module TypeScript {
                             sibling !== currentModulesValueDecl &&
                             sibling.name === modName &&
                             siblingIsSomeValue &&
-                            siblingIsFunctionOrAugmentationOfExistingImplictVar) {
+                            siblingIsFunctionOrHasImplictVarFlag) {
 
                             // IMPORTANT: We don't want to just call sibling.getSymbol() here.  
                             // That would force the sibling to get bound.  Something we don't want
