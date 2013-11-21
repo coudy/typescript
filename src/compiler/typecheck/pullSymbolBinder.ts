@@ -447,9 +447,11 @@ module TypeScript {
             this.semanticInfoChain.setSymbolForAST(moduleNameAST, moduleContainerTypeSymbol);
             this.semanticInfoChain.setSymbolForAST(moduleDeclAST, moduleContainerTypeSymbol);
 
+            var variableSymbol: PullSymbol = null;
+            var currentModulesValueDecl = moduleContainerDecl.getValueDecl();
+
             if (!moduleInstanceSymbol && isInitializedModule) {
                 // search for a complementary instance symbol first
-                var variableSymbol: PullSymbol = null;
                 if (parentInstanceSymbol) {
                     if (isExported) {
                         // We search twice because export visibility does not need to agree
@@ -496,9 +498,17 @@ module TypeScript {
 
                     for (var i = 0; i < siblingDecls.length; i++) {
                         var sibling = siblingDecls[i];
+
+                        var siblingIsSomeValue = hasFlag(sibling.kind, PullElementKind.SomeValue);
+                        var siblingIsFunctionOrAugmentationOfExistingImplictVar = 
+                            hasFlag(sibling.kind, PullElementKind.SomeFunction) ||
+                            hasFlag(sibling.flags, PullElementFlags.ImplicitVariable)
+
                         if (sibling !== moduleContainerDecl &&
+                            sibling !== currentModulesValueDecl &&
                             sibling.name === modName &&
-                            hasFlag(sibling.kind, PullElementKind.SomeValue)) {
+                            siblingIsSomeValue &&
+                            siblingIsFunctionOrAugmentationOfExistingImplictVar) {
 
                             // IMPORTANT: We don't want to just call sibling.getSymbol() here.  
                             // That would force the sibling to get bound.  Something we don't want
@@ -556,19 +566,17 @@ module TypeScript {
                 }
             }
 
-            var valueDecl = moduleContainerDecl.getValueDecl();
-
-            if (valueDecl) {
-                valueDecl.ensureSymbolIsBound();
+            if (currentModulesValueDecl) {
+                currentModulesValueDecl.ensureSymbolIsBound();
                 // We associate the value decl to the module instance symbol. This should have
                 // already been achieved by ensureSymbolIsBound, but if bindModuleDeclarationToPullSymbol
                 // was called recursively while in the middle of binding the value decl, the cycle
                 // will be short-circuited. With a more organized binding pattern, this situation
                 // shouldn't be possible.
-                if (!valueDecl.hasSymbol()) {
-                    valueDecl.setSymbol(moduleInstanceSymbol);
-                    if (!moduleInstanceSymbol.hasDeclaration(valueDecl)) {
-                        moduleInstanceSymbol.addDeclaration(valueDecl);
+                if (!currentModulesValueDecl.hasSymbol()) {
+                    currentModulesValueDecl.setSymbol(moduleInstanceSymbol);
+                    if (!moduleInstanceSymbol.hasDeclaration(currentModulesValueDecl)) {
+                        moduleInstanceSymbol.addDeclaration(currentModulesValueDecl);
                     }
                 }
             }
@@ -974,7 +982,7 @@ module TypeScript {
                 if (!acceptableRedeclaration || prevIsParam) {
                     // If neither of them are implicit (both explicitly declared as vars), we won't error now. We'll check that the types match during type check.
                     // However, we will error when a variable clobbers a function, or when the two explicit var declarations are not in the same parent declaration
-                    if (!prevIsParam && (isImplicit || prevIsImplicit || (prevKind & PullElementKind.SomeFunction) !== 0) || !shareParent) {
+                    if (!prevIsParam && (isImplicit || prevIsImplicit || hasFlag(prevKind, PullElementKind.SomeFunction)) || !shareParent) {
                         var diagnostic = diagnosticFromDecl(variableDeclaration, DiagnosticCode.Duplicate_identifier_0, [variableDeclaration.getDisplayName()]);
                         this.semanticInfoChain.addDiagnostic(diagnostic);
                         variableSymbol.type = this.semanticInfoChain.getResolver().getNewErrorTypeSymbol(declName);
