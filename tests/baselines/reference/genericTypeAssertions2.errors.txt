@@ -4,5 +4,5 @@ genericTypeAssertions2.ts line 10 col 5: error TS2012: Cannot convert 'B<string>
 genericTypeAssertions2.ts line 11 col 5: error TS2012: Cannot convert 'A<number>' to 'B<number>':
 	Type 'A<number>' is missing property 'bar' from type 'B<number>'.
 genericTypeAssertions2.ts line 13 col 21: error TS2012: Cannot convert 'any[]' to 'A<number>':
-	Type 'A<number>' is missing property 'concat' from type 'any[]'.
 	Type 'any[]' is missing property 'foo' from type 'A<number>'.
+	Type 'A<number>' is missing property 'concat' from type 'any[]'.

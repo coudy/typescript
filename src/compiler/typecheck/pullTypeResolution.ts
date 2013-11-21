@@ -2424,7 +2424,7 @@ module TypeScript {
 
                 // Get the type of the symbol
                 if (valueSymbol) {
-                    typeDeclSymbol = valueSymbol.type;
+                    typeDeclSymbol = this.widenType(valueSymbol.type, typeQueryTerm, context);
                 }
                 else {
                     typeDeclSymbol = this.getNewErrorTypeSymbol();
@@ -8858,9 +8858,15 @@ module TypeScript {
 
             var comparisonInfo = new TypeComparisonInfo();
 
-            var isAssignable =
-                this.sourceIsAssignableToTarget(typeAssertionType, exprType, assertionExpression, context, comparisonInfo) ||
-                this.sourceIsAssignableToTarget(exprType, typeAssertionType, assertionExpression, context, comparisonInfo);
+            // Be careful to check exprType assignable to typeAssertionType first. Only widen if
+            // this direction is not assignable to avoid extra implicit any errors that widening
+            // would cause.
+            var isAssignable = this.sourceIsAssignableToTarget(exprType, typeAssertionType, assertionExpression, context, comparisonInfo);
+
+            if (!isAssignable) {
+                var widenedExprType = this.widenType(exprType, assertionExpression.expression, context);
+                isAssignable = this.sourceIsAssignableToTarget(typeAssertionType, widenedExprType, assertionExpression, context, comparisonInfo);
+            }
 
             if (!isAssignable) {
                 var enclosingSymbol = this.getEnclosingSymbolForAST(assertionExpression);
