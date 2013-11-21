@@ -1,0 +1,272 @@
+=== tests/cases/compiler/comparisonOperatorWithTypeParameter.ts ===
+Line 0 col 4 IdentifierName "a" = {}
+Line 1 col 4 IdentifierName "b" = Object
+Line 1 col 7 IdentifierName "Object" = Object
+Line 3 col 9 IdentifierName "foo" = typeof foo
+Line 3 col 13 IdentifierName "T" = T
+Line 3 col 16 IdentifierName "U" = U
+Line 3 col 26 IdentifierName "T" = T
+Line 3 col 29 IdentifierName "V" = V
+Line 3 col 39 IdentifierName "U" = U
+Line 3 col 42 IdentifierName "t" = T
+Line 3 col 45 IdentifierName "T" = T
+Line 3 col 48 IdentifierName "u" = U
+Line 3 col 51 IdentifierName "U" = U
+Line 3 col 54 IdentifierName "v" = V
+Line 3 col 57 IdentifierName "V" = V
+Line 4 col 8 IdentifierName "ra1" = boolean
+Line 4 col 14 LessThanExpression "t < u" = boolean
+Line 4 col 14 IdentifierName "t" = T
+Line 4 col 18 IdentifierName "u" = U
+Line 5 col 8 IdentifierName "ra2" = boolean
+Line 5 col 14 GreaterThanExpression "t > u" = boolean
+Line 5 col 14 IdentifierName "t" = T
+Line 5 col 18 IdentifierName "u" = U
+Line 6 col 8 IdentifierName "ra3" = boolean
+Line 6 col 14 LessThanOrEqualExpression "t <= u" = boolean
+Line 6 col 14 IdentifierName "t" = T
+Line 6 col 19 IdentifierName "u" = U
+Line 7 col 8 IdentifierName "ra4" = boolean
+Line 7 col 14 GreaterThanOrEqualExpression "t >= u" = boolean
+Line 7 col 14 IdentifierName "t" = T
+Line 7 col 19 IdentifierName "u" = U
+Line 8 col 8 IdentifierName "ra5" = boolean
+Line 8 col 14 EqualsWithTypeConversionExpression "t == u" = boolean
+Line 8 col 14 IdentifierName "t" = T
+Line 8 col 19 IdentifierName "u" = U
+Line 9 col 8 IdentifierName "ra6" = boolean
+Line 9 col 14 NotEqualsWithTypeConversionExpression "t != u" = boolean
+Line 9 col 14 IdentifierName "t" = T
+Line 9 col 19 IdentifierName "u" = U
+Line 10 col 8 IdentifierName "ra7" = boolean
+Line 10 col 14 EqualsExpression "t === u" = boolean
+Line 10 col 14 IdentifierName "t" = T
+Line 10 col 20 IdentifierName "u" = U
+Line 11 col 8 IdentifierName "ra8" = boolean
+Line 11 col 14 NotEqualsExpression "t !== u" = boolean
+Line 11 col 14 IdentifierName "t" = T
+Line 11 col 20 IdentifierName "u" = U
+Line 13 col 8 IdentifierName "rb1" = boolean
+Line 13 col 14 LessThanExpression "u < t" = boolean
+Line 13 col 14 IdentifierName "u" = U
+Line 13 col 18 IdentifierName "t" = T
+Line 14 col 8 IdentifierName "rb2" = boolean
+Line 14 col 14 GreaterThanExpression "u > t" = boolean
+Line 14 col 14 IdentifierName "u" = U
+Line 14 col 18 IdentifierName "t" = T
+Line 15 col 8 IdentifierName "rb3" = boolean
+Line 15 col 14 LessThanOrEqualExpression "u <= t" = boolean
+Line 15 col 14 IdentifierName "u" = U
+Line 15 col 19 IdentifierName "t" = T
+Line 16 col 8 IdentifierName "rb4" = boolean
+Line 16 col 14 GreaterThanOrEqualExpression "u >= t" = boolean
+Line 16 col 14 IdentifierName "u" = U
+Line 16 col 19 IdentifierName "t" = T
+Line 17 col 8 IdentifierName "rb5" = boolean
+Line 17 col 14 EqualsWithTypeConversionExpression "u == t" = boolean
+Line 17 col 14 IdentifierName "u" = U
+Line 17 col 19 IdentifierName "t" = T
+Line 18 col 8 IdentifierName "rb6" = boolean
+Line 18 col 14 NotEqualsWithTypeConversionExpression "u != t" = boolean
+Line 18 col 14 IdentifierName "u" = U
+Line 18 col 19 IdentifierName "t" = T
+Line 19 col 8 IdentifierName "rb7" = boolean
+Line 19 col 14 EqualsExpression "u === t" = boolean
+Line 19 col 14 IdentifierName "u" = U
+Line 19 col 20 IdentifierName "t" = T
+Line 20 col 8 IdentifierName "rb8" = boolean
+Line 20 col 14 NotEqualsExpression "u !== t" = boolean
+Line 20 col 14 IdentifierName "u" = U
+Line 20 col 20 IdentifierName "t" = T
+Line 22 col 8 IdentifierName "rc1" = boolean
+Line 22 col 14 LessThanExpression "t < v" = boolean
+Line 22 col 14 IdentifierName "t" = T
+Line 22 col 18 IdentifierName "v" = V
+Line 23 col 8 IdentifierName "rc2" = boolean
+Line 23 col 14 GreaterThanExpression "t > v" = boolean
+Line 23 col 14 IdentifierName "t" = T
+Line 23 col 18 IdentifierName "v" = V
+Line 24 col 8 IdentifierName "rc3" = boolean
+Line 24 col 14 LessThanOrEqualExpression "t <= v" = boolean
+Line 24 col 14 IdentifierName "t" = T
+Line 24 col 19 IdentifierName "v" = V
+Line 25 col 8 IdentifierName "rc4" = boolean
+Line 25 col 14 GreaterThanOrEqualExpression "t >= v" = boolean
+Line 25 col 14 IdentifierName "t" = T
+Line 25 col 19 IdentifierName "v" = V
+Line 26 col 8 IdentifierName "rc5" = boolean
+Line 26 col 14 EqualsWithTypeConversionExpression "t == v" = boolean
+Line 26 col 14 IdentifierName "t" = T
+Line 26 col 19 IdentifierName "v" = V
+Line 27 col 8 IdentifierName "rc6" = boolean
+Line 27 col 14 NotEqualsWithTypeConversionExpression "t != v" = boolean
+Line 27 col 14 IdentifierName "t" = T
+Line 27 col 19 IdentifierName "v" = V
+Line 28 col 8 IdentifierName "rc7" = boolean
+Line 28 col 14 EqualsExpression "t === v" = boolean
+Line 28 col 14 IdentifierName "t" = T
+Line 28 col 20 IdentifierName "v" = V
+Line 29 col 8 IdentifierName "rc8" = boolean
+Line 29 col 14 NotEqualsExpression "t !== v" = boolean
+Line 29 col 14 IdentifierName "t" = T
+Line 29 col 20 IdentifierName "v" = V
+Line 31 col 8 IdentifierName "rd1" = boolean
+Line 31 col 14 LessThanExpression "v < t" = boolean
+Line 31 col 14 IdentifierName "v" = V
+Line 31 col 18 IdentifierName "t" = T
+Line 32 col 8 IdentifierName "rd2" = boolean
+Line 32 col 14 GreaterThanExpression "v > t" = boolean
+Line 32 col 14 IdentifierName "v" = V
+Line 32 col 18 IdentifierName "t" = T
+Line 33 col 8 IdentifierName "rd3" = boolean
+Line 33 col 14 LessThanOrEqualExpression "v <= t" = boolean
+Line 33 col 14 IdentifierName "v" = V
+Line 33 col 19 IdentifierName "t" = T
+Line 34 col 8 IdentifierName "rd4" = boolean
+Line 34 col 14 GreaterThanOrEqualExpression "v >= t" = boolean
+Line 34 col 14 IdentifierName "v" = V
+Line 34 col 19 IdentifierName "t" = T
+Line 35 col 8 IdentifierName "rd5" = boolean
+Line 35 col 14 EqualsWithTypeConversionExpression "v == t" = boolean
+Line 35 col 14 IdentifierName "v" = V
+Line 35 col 19 IdentifierName "t" = T
+Line 36 col 8 IdentifierName "rd6" = boolean
+Line 36 col 14 NotEqualsWithTypeConversionExpression "v != t" = boolean
+Line 36 col 14 IdentifierName "v" = V
+Line 36 col 19 IdentifierName "t" = T
+Line 37 col 8 IdentifierName "rd7" = boolean
+Line 37 col 14 EqualsExpression "v === t" = boolean
+Line 37 col 14 IdentifierName "v" = V
+Line 37 col 20 IdentifierName "t" = T
+Line 38 col 8 IdentifierName "rd8" = boolean
+Line 38 col 14 NotEqualsExpression "v !== t" = boolean
+Line 38 col 14 IdentifierName "v" = V
+Line 38 col 20 IdentifierName "t" = T
+Line 40 col 8 IdentifierName "re1" = boolean
+Line 40 col 14 LessThanExpression "t < a" = boolean
+Line 40 col 14 IdentifierName "t" = T
+Line 40 col 18 IdentifierName "a" = {}
+Line 41 col 8 IdentifierName "re2" = boolean
+Line 41 col 14 GreaterThanExpression "t > a" = boolean
+Line 41 col 14 IdentifierName "t" = T
+Line 41 col 18 IdentifierName "a" = {}
+Line 42 col 8 IdentifierName "re3" = boolean
+Line 42 col 14 LessThanOrEqualExpression "t <= a" = boolean
+Line 42 col 14 IdentifierName "t" = T
+Line 42 col 19 IdentifierName "a" = {}
+Line 43 col 8 IdentifierName "re4" = boolean
+Line 43 col 14 GreaterThanOrEqualExpression "t >= a" = boolean
+Line 43 col 14 IdentifierName "t" = T
+Line 43 col 19 IdentifierName "a" = {}
+Line 44 col 8 IdentifierName "re5" = boolean
+Line 44 col 14 EqualsWithTypeConversionExpression "t == a" = boolean
+Line 44 col 14 IdentifierName "t" = T
+Line 44 col 19 IdentifierName "a" = {}
+Line 45 col 8 IdentifierName "re6" = boolean
+Line 45 col 14 NotEqualsWithTypeConversionExpression "t != a" = boolean
+Line 45 col 14 IdentifierName "t" = T
+Line 45 col 19 IdentifierName "a" = {}
+Line 46 col 8 IdentifierName "re7" = boolean
+Line 46 col 14 EqualsExpression "t === a" = boolean
+Line 46 col 14 IdentifierName "t" = T
+Line 46 col 20 IdentifierName "a" = {}
+Line 47 col 8 IdentifierName "re8" = boolean
+Line 47 col 14 NotEqualsExpression "t !== a" = boolean
+Line 47 col 14 IdentifierName "t" = T
+Line 47 col 20 IdentifierName "a" = {}
+Line 49 col 8 IdentifierName "rf1" = boolean
+Line 49 col 14 LessThanExpression "a < t" = boolean
+Line 49 col 14 IdentifierName "a" = {}
+Line 49 col 18 IdentifierName "t" = T
+Line 50 col 8 IdentifierName "rf2" = boolean
+Line 50 col 14 GreaterThanExpression "a > t" = boolean
+Line 50 col 14 IdentifierName "a" = {}
+Line 50 col 18 IdentifierName "t" = T
+Line 51 col 8 IdentifierName "rf3" = boolean
+Line 51 col 14 LessThanOrEqualExpression "a <= t" = boolean
+Line 51 col 14 IdentifierName "a" = {}
+Line 51 col 19 IdentifierName "t" = T
+Line 52 col 8 IdentifierName "rf4" = boolean
+Line 52 col 14 GreaterThanOrEqualExpression "a >= t" = boolean
+Line 52 col 14 IdentifierName "a" = {}
+Line 52 col 19 IdentifierName "t" = T
+Line 53 col 8 IdentifierName "rf5" = boolean
+Line 53 col 14 EqualsWithTypeConversionExpression "a == t" = boolean
+Line 53 col 14 IdentifierName "a" = {}
+Line 53 col 19 IdentifierName "t" = T
+Line 54 col 8 IdentifierName "rf6" = boolean
+Line 54 col 14 NotEqualsWithTypeConversionExpression "a != t" = boolean
+Line 54 col 14 IdentifierName "a" = {}
+Line 54 col 19 IdentifierName "t" = T
+Line 55 col 8 IdentifierName "rf7" = boolean
+Line 55 col 14 EqualsExpression "a === t" = boolean
+Line 55 col 14 IdentifierName "a" = {}
+Line 55 col 20 IdentifierName "t" = T
+Line 56 col 8 IdentifierName "rf8" = boolean
+Line 56 col 14 NotEqualsExpression "a !== t" = boolean
+Line 56 col 14 IdentifierName "a" = {}
+Line 56 col 20 IdentifierName "t" = T
+Line 58 col 8 IdentifierName "rg1" = boolean
+Line 58 col 14 LessThanExpression "t < b" = boolean
+Line 58 col 14 IdentifierName "t" = T
+Line 58 col 18 IdentifierName "b" = Object
+Line 59 col 8 IdentifierName "rg2" = boolean
+Line 59 col 14 GreaterThanExpression "t > b" = boolean
+Line 59 col 14 IdentifierName "t" = T
+Line 59 col 18 IdentifierName "b" = Object
+Line 60 col 8 IdentifierName "rg3" = boolean
+Line 60 col 14 LessThanOrEqualExpression "t <= b" = boolean
+Line 60 col 14 IdentifierName "t" = T
+Line 60 col 19 IdentifierName "b" = Object
+Line 61 col 8 IdentifierName "rg4" = boolean
+Line 61 col 14 GreaterThanOrEqualExpression "t >= b" = boolean
+Line 61 col 14 IdentifierName "t" = T
+Line 61 col 19 IdentifierName "b" = Object
+Line 62 col 8 IdentifierName "rg5" = boolean
+Line 62 col 14 EqualsWithTypeConversionExpression "t == b" = boolean
+Line 62 col 14 IdentifierName "t" = T
+Line 62 col 19 IdentifierName "b" = Object
+Line 63 col 8 IdentifierName "rg6" = boolean
+Line 63 col 14 NotEqualsWithTypeConversionExpression "t != b" = boolean
+Line 63 col 14 IdentifierName "t" = T
+Line 63 col 19 IdentifierName "b" = Object
+Line 64 col 8 IdentifierName "rg7" = boolean
+Line 64 col 14 EqualsExpression "t === b" = boolean
+Line 64 col 14 IdentifierName "t" = T
+Line 64 col 20 IdentifierName "b" = Object
+Line 65 col 8 IdentifierName "rg8" = boolean
+Line 65 col 14 NotEqualsExpression "t !== b" = boolean
+Line 65 col 14 IdentifierName "t" = T
+Line 65 col 20 IdentifierName "b" = Object
+Line 67 col 8 IdentifierName "rh1" = boolean
+Line 67 col 14 LessThanExpression "b < t" = boolean
+Line 67 col 14 IdentifierName "b" = Object
+Line 67 col 18 IdentifierName "t" = T
+Line 68 col 8 IdentifierName "rh2" = boolean
+Line 68 col 14 GreaterThanExpression "b > t" = boolean
+Line 68 col 14 IdentifierName "b" = Object
+Line 68 col 18 IdentifierName "t" = T
+Line 69 col 8 IdentifierName "rh3" = boolean
+Line 69 col 14 LessThanOrEqualExpression "b <= t" = boolean
+Line 69 col 14 IdentifierName "b" = Object
+Line 69 col 19 IdentifierName "t" = T
+Line 70 col 8 IdentifierName "rh4" = boolean
+Line 70 col 14 GreaterThanOrEqualExpression "b >= t" = boolean
+Line 70 col 14 IdentifierName "b" = Object
+Line 70 col 19 IdentifierName "t" = T
+Line 71 col 8 IdentifierName "rh5" = boolean
+Line 71 col 14 EqualsWithTypeConversionExpression "b == t" = boolean
+Line 71 col 14 IdentifierName "b" = Object
+Line 71 col 19 IdentifierName "t" = T
+Line 72 col 8 IdentifierName "rh6" = boolean
+Line 72 col 14 NotEqualsWithTypeConversionExpression "b != t" = boolean
+Line 72 col 14 IdentifierName "b" = Object
+Line 72 col 19 IdentifierName "t" = T
+Line 73 col 8 IdentifierName "rh7" = boolean
+Line 73 col 14 EqualsExpression "b === t" = boolean
+Line 73 col 14 IdentifierName "b" = Object
+Line 73 col 20 IdentifierName "t" = T
+Line 74 col 8 IdentifierName "rh8" = boolean
+Line 74 col 14 NotEqualsExpression "b !== t" = boolean
+Line 74 col 14 IdentifierName "b" = Object
+Line 74 col 20 IdentifierName "t" = T
