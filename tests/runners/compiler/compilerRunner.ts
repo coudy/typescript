@@ -43,6 +43,13 @@ class CompilerBaselineRunner extends RunnerBase {
         return text;
     }
 
+    private getDiagnosticText(diagnostic: TypeScript.Diagnostic): string {
+        return CompilerBaselineRunner.removeFullPaths(Harness.getFileName(diagnostic.fileName()) +
+            ' line ' + (diagnostic.line() + 1) +
+            ' col ' + (diagnostic.character() + 1) +
+            ': ' + diagnostic.message());
+    }
+
     public checkTestCodeOutput(fileName: string) {
         // strips the fileName from the path.
         var justName = fileName.replace(/^.*[\\\/]/, '');
@@ -110,7 +117,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     if (result.errors.length === 0) {
                         return null;
                     } else {
-                        var errorDescr = result.errors.map(err => CompilerBaselineRunner.removeFullPaths(Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message)).join('\r\n');
+                        var errorDescr = result.errors.map(err => this.getDiagnosticText(err)).join("\r\n");
                         return errorDescr;
                     }
                 });
@@ -142,7 +149,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     [declFile],
                     declOtherFiles,
                     function (result) {
-                        declErrors = result.errors.map(err => Harness.getFileName(err.fileName) + ' line ' + err.line + ' col ' + err.column + ': ' + err.message + '\r\n');
+                        declErrors = result.errors.map(err => this.getDiagnosticText(err) + "\r\n");
                     },
                     function (settings) {
                         harnessCompiler.setCompilerSettings(tcSettings);

@@ -675,6 +675,10 @@ module TypeScript {
             return result;
         }
 
+        private getLocationText(location: Location): string {
+            return location.fileName() + "(" + (location.line() + 1) + "," + (location.character() + 1) + ")";
+        }
+
         private addDiagnostic(diagnostic: Diagnostic) {
             var diagnosticInfo = diagnostic.info();
             if (diagnosticInfo.category === DiagnosticCategory.Error) {
@@ -682,10 +686,19 @@ module TypeScript {
             }
 
             if (diagnostic.fileName()) {
-                this.ioHost.stderr.Write(diagnostic.fileName() + "(" + (diagnostic.line() + 1) + "," + (diagnostic.character() + 1) + "): ");
+                this.ioHost.stderr.Write(this.getLocationText(diagnostic) + ": ");
             }
 
             this.ioHost.stderr.WriteLine(diagnostic.message());
+
+            var additionalLocations = diagnostic.additionalLocations();
+            if (additionalLocations.length > 0) {
+                this.ioHost.stderr.WriteLine(getLocalizedText(DiagnosticCode.Additional_locations, null));
+
+                for (var i = 0, n = additionalLocations.length; i < n; i++) {
+                    this.ioHost.stderr.WriteLine("\t" + this.getLocationText(additionalLocations[i]));
+                }
+            }
         }
 
         private tryWriteOutputFiles(outputFiles: OutputFile[]): boolean {

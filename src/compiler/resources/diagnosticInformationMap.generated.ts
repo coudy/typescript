@@ -1618,6 +1618,10 @@ module TypeScript {
     "code": 6040,
     "category": DiagnosticCategory.Message
   },
+  "Additional locations:": {
+    "code": 6041,
+    "category": DiagnosticCategory.Message
+  },
   "This version of the Javascript runtime does not support the '{0}' function.": {
     "code": 7000,
     "category": DiagnosticCategory.Error
