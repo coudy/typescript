@@ -328,7 +328,7 @@ interface JQuery {
     removeAttr(attributeName: any): JQuery;
 
     removeClass(func: (index: any, cls: any) => any): JQuery;
-    removeClass(className?: any): JQuery;
+    removeClass(className?: string): JQuery;
 
     removeProp(propertyName: any): JQuery;
 
@@ -393,44 +393,67 @@ interface JQuery {
 
     // Effects
     animate(properties: any, options: { duration?: any; easing?: string; complete?: Function; step?: Function; queue?: boolean; specialEasing?: any; }): JQuery;
+    animate(properties: any, duration?: any, easing?: "linear", complete?: Function): JQuery;
+    animate(properties: any, duration?: any, easing?: "swing", complete?: Function): JQuery;
     animate(properties: any, duration?: any, easing?: string, complete?: Function): JQuery;
 
     delay(duration: number, queueName?: string): JQuery;
 
-    fadeIn(duration?: any, easing?: string, callback?: any): JQuery;
-    fadeIn(duration?: any, callback?: any): JQuery;
+    fadeIn(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    fadeIn(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    fadeIn(duration?: any, easing?: string, complete?: Function): JQuery;
+    fadeIn(duration?: any, complete?: Function): JQuery;
 
-    fadeOut(duration?: any, easing?: string, callback?: any): JQuery;
-    fadeOut(duration?: any, callback?: any): JQuery;
 
-    fadeTo(duration: any, opacity: number, easing?: string, callback?: any): JQuery;
-    fadeTo(duration: any, opacity: number, callback?: any): JQuery;
+    fadeOut(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    fadeOut(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    fadeOut(duration?: any, easing?: string, complete?: Function): JQuery;
+    fadeOut(duration?: any, complete?: any): JQuery;
 
-    fadeToggle(duration?: any, easing?: string, callback?: any): JQuery;
+    fadeTo(duration: any, opacity: number, easing?: "linear", complete?: Function): JQuery;
+    fadeTo(duration: any, opacity: number, easing?: "swing", complete?: Function): JQuery;
+    fadeTo(duration: any, opacity: number, easing?: string, complete?: Function): JQuery;
+    fadeTo(duration: any, opacity: number, complete?: Function): JQuery;
+
+    fadeToggle(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    fadeToggle(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    fadeToggle(duration?: any, easing?: string, complete?: Function): JQuery;
 
     finish(queue?: string): JQuery;
 
-    hide(duration?: any, easing?: string, callback?: any): JQuery;
-    hide(duration?: any, callback?: any): JQuery;
+    hide(duration?: any, easing?: "linear", callback?: Function): JQuery;
+    hide(duration?: any, easing?: "swing", callback?: Function): JQuery;
+    hide(duration?: any, easing?: string, callback?: Function): JQuery;
+    hide(duration?: any, callback?: Function): JQuery;
 
-    show(duration?: any, easing?: string, callback?: any): JQuery;
-    show(duration?: any, callback?: any): JQuery;
+    show(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    show(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    show(duration?: any, easing?: string, complete?: Function): JQuery;
+    show(duration?: any, complete?: Function): JQuery;
 
-    slideDown(duration?: any, easing?: string, callback?: any): JQuery;
-    slideDown(duration?: any, callback?: any): JQuery;
+    slideDown(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    slideDown(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    slideDown(duration?: any, easing?: string, complete?: Function): JQuery;
+    slideDown(duration?: any, complete?: Function): JQuery;
 
-    slideToggle(duration?: any, easing?: string, callback?: any): JQuery;
-    slideToggle(duration?: any, callback?: any): JQuery;
+    slideToggle(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    slideToggle(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    slideToggle(duration?: any, easing?: string, complete?: Function): JQuery;
+    slideToggle(duration?: any, complete?: Function): JQuery;
 
-    slideUp(duration?: any, easing?: string, callback?: any): JQuery;
-    slideUp(duration?: any, callback?: any): JQuery;
+    slideUp(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    slideUp(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    slideUp(duration?: any, easing?: string, complete?: Function): JQuery;
+    slideUp(duration?: any, complete?: Function): JQuery;
 
     stop(clearQueue?: boolean, jumpToEnd?: boolean): JQuery;
     stop(queue?: any, clearQueue?: boolean, jumpToEnd?: boolean): JQuery;
 
     toggle(showOrHide: boolean): JQuery;
-    toggle(duration?: any, easing?: string, callback?: any): JQuery;
-    toggle(duration?: any, callback?: any): JQuery;
+    toggle(duration?: any, easing?: "linear", complete?: Function): JQuery;
+    toggle(duration?: any, easing?: "swing", complete?: Function): JQuery;
+    toggle(duration?: any, easing?: string, complete?: Function): JQuery;
+    toggle(duration?: any, complete?: Function): JQuery;
 
     // Events
     bind(eventType: string, preventBubble: boolean): JQuery;
