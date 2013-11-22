@@ -2769,7 +2769,15 @@ module TypeScript {
         }
 
         public isAny(): boolean {
-            return this.name === "any";
+            return !this.isStringConstant() && this.name === "any";
+        }
+
+        public isNull(): boolean {
+            return !this.isStringConstant() && this.name === "null";
+        }
+
+        public isUndefined(): boolean {
+            return !this.isStringConstant() && this.name === "undefined";
         }
 
         public isStringConstant() { return false; }
@@ -2782,9 +2790,7 @@ module TypeScript {
         // doesn't say anything about displaying types, but we should leave no trace of undefined
         // or null.
         public getDisplayName() {
-            var isRealPrimitive = !this.isStringConstant();
-            var isNullOrUndefined = isRealPrimitive && (this.name === "undefined" || this.name === "null");
-            if (isNullOrUndefined) {
+            if (this.isNull() || this.isUndefined()) {
                 return "any";
             }
             else {
