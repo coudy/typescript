@@ -128,7 +128,9 @@ class RWCRunner extends RunnerBase {
                         fsOutput.Close();
                         fsDeclOutput.Close();
 
-                        compilationErrors.forEach(err => this._getDiagnosticText(err) + '\r\n');
+                        compilationErrors.forEach(err => {
+                            errors += this._getDiagnosticText(err);
+                        });
                         result = fsOutput.lines.join('\r\n');
                         dtsresult = fsDeclOutput.lines.join("\r\n");
 

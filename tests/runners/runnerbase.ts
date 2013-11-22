@@ -24,10 +24,7 @@ class RunnerBase {
     }
 
     public _getDiagnosticText(diagnostic: TypeScript.Diagnostic): string {
-        return RunnerBase.removeFullPaths(Harness.getFileName(diagnostic.fileName()) +
-            ' line ' + (diagnostic.line() + 1) +
-            ' col ' + (diagnostic.character() + 1) +
-            ': ' + diagnostic.message());
+        return RunnerBase.removeFullPaths(TypeScript.TypeScriptCompiler.getFullDiagnosticText(diagnostic));
     }
 
     /** Replaces instances of full paths with filenames only */

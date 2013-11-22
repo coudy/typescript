@@ -1045,6 +1045,31 @@ module TypeScript {
         public topLevelDecl(fileName: string): PullDecl {
             return this.semanticInfoChain.topLevelDecl(fileName);
         }
+
+        private static getLocationText(location: Location): string {
+            return location.fileName() + "(" + (location.line() + 1) + "," + (location.character() + 1) + ")";
+        }
+
+        public static getFullDiagnosticText(diagnostic: Diagnostic): string {
+            var result = "";
+            if (diagnostic.fileName()) {
+                result += this.getLocationText(diagnostic) + ": ";
+            }
+
+            result += diagnostic.message() + Environment.newLine;
+
+            // Enable in next checkin.
+            //var additionalLocations = diagnostic.additionalLocations();
+            //if (additionalLocations.length > 0) {
+            //    result += getLocalizedText(DiagnosticCode.Additional_locations, null) + Environment.newLine;
+
+            //    for (var i = 0, n = additionalLocations.length; i < n; i++) {
+            //        result += "\t" + this.getLocationText(additionalLocations[i]) + Environment.newLine;
+            //    }
+            //}
+
+            return result;
+        }
     }
 
     enum CompilerPhase {

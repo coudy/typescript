@@ -33,23 +33,6 @@ class CompilerBaselineRunner extends RunnerBase {
         }
     }    
 
-    /** Replaces instances of full paths with filenames only */
-    static removeFullPaths(text: string) {
-        var fullPath = /(\w+:)?(\/|\\)([\w+\-\.]|\/)*\.ts/g;
-        var fullPathList = text.match(fullPath);
-        if (fullPathList) {
-            fullPathList.forEach((match: string) => text = text.replace(match, Harness.getFileName(match)));
-        }
-        return text;
-    }
-
-    private getDiagnosticText(diagnostic: TypeScript.Diagnostic): string {
-        return CompilerBaselineRunner.removeFullPaths(Harness.getFileName(diagnostic.fileName()) +
-            ' line ' + (diagnostic.line() + 1) +
-            ' col ' + (diagnostic.character() + 1) +
-            ': ' + diagnostic.message());
-    }
-
     public checkTestCodeOutput(fileName: string) {
         // strips the fileName from the path.
         var justName = fileName.replace(/^.*[\\\/]/, '');
@@ -117,7 +100,7 @@ class CompilerBaselineRunner extends RunnerBase {
                     if (result.errors.length === 0) {
                         return null;
                     } else {
-                        var errorDescr = result.errors.map(err => this.getDiagnosticText(err)).join("\r\n");
+                        var errorDescr = result.errors.map(err => this._getDiagnosticText(err)).join("");
                         return errorDescr;
                     }
                 });

@@ -675,30 +675,14 @@ module TypeScript {
             return result;
         }
 
-        private getLocationText(location: Location): string {
-            return location.fileName() + "(" + (location.line() + 1) + "," + (location.character() + 1) + ")";
-        }
 
-        private addDiagnostic(diagnostic: Diagnostic) {
+        private addDiagnostic(diagnostic: Diagnostic): void {
             var diagnosticInfo = diagnostic.info();
             if (diagnosticInfo.category === DiagnosticCategory.Error) {
                 this.hasErrors = true;
             }
 
-            if (diagnostic.fileName()) {
-                this.ioHost.stderr.Write(this.getLocationText(diagnostic) + ": ");
-            }
-
-            this.ioHost.stderr.WriteLine(diagnostic.message());
-
-            var additionalLocations = diagnostic.additionalLocations();
-            if (additionalLocations.length > 0) {
-                this.ioHost.stderr.WriteLine(getLocalizedText(DiagnosticCode.Additional_locations, null));
-
-                for (var i = 0, n = additionalLocations.length; i < n; i++) {
-                    this.ioHost.stderr.WriteLine("\t" + this.getLocationText(additionalLocations[i]));
-                }
-            }
+            this.ioHost.stderr.Write(TypeScriptCompiler.getFullDiagnosticText(diagnostic));
         }
 
         private tryWriteOutputFiles(outputFiles: OutputFile[]): boolean {
