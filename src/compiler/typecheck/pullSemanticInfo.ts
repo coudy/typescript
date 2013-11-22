@@ -642,12 +642,25 @@ module TypeScript {
             return this._topLevelDecls;
         }
 
-        public addDiagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[]= null): void {
-            this.addDiagnostic(this.diagnosticFromAST(ast, diagnosticKey, arguments));
+        public addDiagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[] = null, additionalLocations: Location[] = null): void {
+            this.addDiagnostic(this.diagnosticFromAST(ast, diagnosticKey, arguments, additionalLocations));
         }
 
-        public diagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[]= null): Diagnostic {
-            return new Diagnostic(ast.fileName(), this.lineMap(ast.fileName()), ast.start(), ast.width(), diagnosticKey, arguments);
+        public diagnosticFromAST(ast: AST, diagnosticKey: string, arguments: any[] = null, additionalLocations: Location[] = null): Diagnostic {
+            return new Diagnostic(ast.fileName(), this.lineMap(ast.fileName()), ast.start(), ast.width(), diagnosticKey, arguments, additionalLocations);
+        }
+
+        public locationFromAST(ast: AST): Location {
+            return new Location(ast.fileName(), this.lineMap(ast.fileName()), ast.start(), ast.width());
+        }
+
+        public duplicateIdentifierDiagnosticFromAST(ast: AST, identifier: string, additionalLocationAST: AST): Diagnostic {
+            return this.diagnosticFromAST(ast, DiagnosticCode.Duplicate_identifier_0, [identifier],
+                additionalLocationAST ? [this.locationFromAST(additionalLocationAST)] : null);
+        }
+
+        public addDuplicateIdentifierDiagnosticFromAST(ast: AST, identifier: string, additionalLocationAST: AST): void {
+            this.addDiagnostic(this.duplicateIdentifierDiagnosticFromAST(ast, identifier, additionalLocationAST));
         }
     }
 }

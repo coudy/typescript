@@ -5110,9 +5110,10 @@ module TypeScript {
             var breakableLabels = this.getEnclosingLabels(ast, /*breakable:*/ true, /*crossFunctions:*/ false);
 
             // It is invalid to have a label enclosed in a label of the same name.
-            if (ArrayUtilities.contains(breakableLabels, labelIdentifier)) {
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast.identifier,
-                    DiagnosticCode.Duplicate_identifier_0, [labelIdentifier]));
+            var matchingLabel = ArrayUtilities.firstOrDefault(breakableLabels, s => s.identifier.valueText() === labelIdentifier);
+            if (matchingLabel) {
+                context.postDiagnostic(this.semanticInfoChain.duplicateIdentifierDiagnosticFromAST(
+                    ast.identifier, labelIdentifier, matchingLabel));
             }
 
             this.resolveAST(ast.statement, /*isContextuallyTyped*/ false, context);
@@ -5210,8 +5211,8 @@ module TypeScript {
             return false;
         }
 
-        private getEnclosingLabels(ast: AST, breakable: boolean, crossFunctions: boolean): string[] {
-            var result: string[] = [];
+        private getEnclosingLabels(ast: AST, breakable: boolean, crossFunctions: boolean): LabeledStatement[] {
+            var result: LabeledStatement[] = [];
 
             ast = ast.parent;
             while (ast) {
@@ -5219,13 +5220,13 @@ module TypeScript {
                     var labeledStatement = <LabeledStatement>ast;
                     if (breakable) {
                         // Breakable labels can be placed on any construct
-                        result.push(labeledStatement.identifier.valueText());
+                        result.push(labeledStatement);
                     }
                     else {
                         // They're asking for continuable labels.  Continuable labels must be on
                         // a loop construct.
                         if (this.labelIsOnContinuableConstruct(labeledStatement.statement)) {
-                            result.push(labeledStatement.identifier.valueText());
+                            result.push(labeledStatement);
                         }
                     }
                 }
@@ -5256,14 +5257,14 @@ module TypeScript {
             else if (ast.identifier) {
                 var continuableLabels = this.getEnclosingLabels(ast, /*breakable:*/ false, /*crossFunctions:*/ false);
 
-                if (!ArrayUtilities.contains(continuableLabels, ast.identifier.valueText())) {
+                if (!ArrayUtilities.any(continuableLabels, s => s.identifier.valueText() === ast.identifier.valueText())) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
                     var continuableLabels = this.getEnclosingLabels(ast, /*breakable:*/ false, /*crossFunctions:*/ true);
 
-                    if (ArrayUtilities.contains(continuableLabels, ast.identifier.valueText())) {
+                    if (ArrayUtilities.any(continuableLabels, s => s.identifier.valueText() === ast.identifier.valueText())) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary));
                     }
@@ -5292,13 +5293,13 @@ module TypeScript {
             if (ast.identifier) {
                 var breakableLabels = this.getEnclosingLabels(ast, /*breakable:*/ true, /*crossFunctions:*/ false);
 
-                if (!ArrayUtilities.contains(breakableLabels, ast.identifier.valueText())) {
+                if (!ArrayUtilities.any(breakableLabels, s => s.identifier.valueText() === ast.identifier.valueText())) {
                     // The target of the continue statement wasn't to a reachable label.
                     //
                     // Let hte user know, with a specialized message if the target was to an
                     // unreachable label (as opposed to a non-existed label)
                     var breakableLabels = this.getEnclosingLabels(ast, /*breakable:*/ true, /*crossFunctions:*/ true);
-                    if (ArrayUtilities.contains(breakableLabels, ast.identifier.valueText())) {
+                    if (ArrayUtilities.any(breakableLabels, s => s.identifier.valueText() === ast.identifier.valueText())) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast,
                             DiagnosticCode.Jump_target_cannot_cross_function_boundary));
                     }
@@ -7238,8 +7239,10 @@ module TypeScript {
 
                 if (!isUsingExistingSymbol && !isAccessor) {
                     // Make sure this was not defined before
-                    if (objectLiteralTypeSymbol.findMember(memberSymbol.name, /*lookInParent*/ true)) {
-                        pullTypeContext.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(propertyAssignment, DiagnosticCode.Duplicate_identifier_0, [assignmentText.actualText]));
+                    var existingMember = objectLiteralTypeSymbol.findMember(memberSymbol.name, /*lookInParent*/ true);
+                    if (existingMember) {
+                        pullTypeContext.postDiagnostic(this.semanticInfoChain.duplicateIdentifierDiagnosticFromAST(propertyAssignment, assignmentText.actualText,
+                            existingMember.getDeclarations()[0].ast()));
                     }
 
                     objectLiteralTypeSymbol.addMember(memberSymbol);
