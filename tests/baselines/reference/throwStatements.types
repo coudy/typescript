@@ -46,7 +46,7 @@ Line 37 col 23 ObjectCreationExpression "new C()" = C
 Line 37 col 27 IdentifierName "C" = typeof C
 Line 38 col 6 IdentifierName "anOtherAny" = any
 Line 39 col 4 IdentifierName "anUndefined" = any
-Line 39 col 18 IdentifierName "undefined" = undefined
+Line 39 col 18 IdentifierName "undefined" = any
 Line 40 col 6 IdentifierName "anUndefined" = any
 Line 42 col 4 IdentifierName "aClass" = C
 Line 42 col 13 ObjectCreationExpression "new C()" = C
@@ -89,7 +89,7 @@ Line 61 col 26 IdentifierName "F2" = typeof M.F2
 Line 62 col 6 IdentifierName "aFunctionInModule" = typeof M.F2
 Line 65 col 4 IdentifierName "x" = any
 Line 66 col 6 IdentifierName "x" = any
-Line 72 col 6 IdentifierName "undefined" = undefined
+Line 72 col 6 IdentifierName "undefined" = any
 Line 74 col 6 FunctionExpression "function () { return 'a string' }" = () => string
 Line 75 col 6 ParenthesizedArrowFunctionExpression "<T>(x:T) => 42" = <T>(x: T) => number
 Line 75 col 7 IdentifierName "T" = T
@@ -98,7 +98,7 @@ Line 75 col 12 IdentifierName "T" = T
 Line 76 col 6 ObjectLiteralExpression "{ x: 12, y: 13 }" = { x: number; y: number; }
 Line 76 col 8 IdentifierName "x" = number
 Line 76 col 15 IdentifierName "y" = number
-Line 77 col 6 ArrayLiteralExpression "[]" = undefined[]
+Line 77 col 6 ArrayLiteralExpression "[]" = any[]
 Line 78 col 6 ArrayLiteralExpression "['a', ['b']]" = {}[]
 Line 78 col 12 ArrayLiteralExpression "['b']" = string[]
 Line 80 col 6 ObjectCreationExpression "new Date()" = Date
