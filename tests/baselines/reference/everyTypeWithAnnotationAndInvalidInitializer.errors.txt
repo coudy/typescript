@@ -1,29 +1,29 @@
-everyTypeWithAnnotationAndInvalidInitializer.ts line 34 col 5: error TS2011: Cannot convert 'string' to 'number'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 35 col 5: error TS2011: Cannot convert 'number' to 'string'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 36 col 5: error TS2012: Cannot convert 'number' to 'Date':
+everyTypeWithAnnotationAndInvalidInitializer.ts(34,5): error TS2011: Cannot convert 'string' to 'number'.
+everyTypeWithAnnotationAndInvalidInitializer.ts(35,5): error TS2011: Cannot convert 'number' to 'string'.
+everyTypeWithAnnotationAndInvalidInitializer.ts(36,5): error TS2012: Cannot convert 'number' to 'Date':
 	Type 'Number' is missing property 'toDateString' from type 'Date'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 38 col 5: error TS2011: Cannot convert 'number' to 'void'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 40 col 5: error TS2012: Cannot convert 'D<{}>' to 'I':
+everyTypeWithAnnotationAndInvalidInitializer.ts(38,5): error TS2011: Cannot convert 'number' to 'void'.
+everyTypeWithAnnotationAndInvalidInitializer.ts(40,5): error TS2012: Cannot convert 'D<{}>' to 'I':
 	Type 'D<{}>' is missing property 'id' from type 'I'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 41 col 5: error TS2012: Cannot convert 'D<{}>' to 'C':
+everyTypeWithAnnotationAndInvalidInitializer.ts(41,5): error TS2012: Cannot convert 'D<{}>' to 'C':
 	Type 'D<{}>' is missing property 'id' from type 'C'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 42 col 5: error TS2012: Cannot convert 'C' to 'D<string>':
+everyTypeWithAnnotationAndInvalidInitializer.ts(42,5): error TS2012: Cannot convert 'C' to 'D<string>':
 	Type 'C' is missing property 'source' from type 'D<string>'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 43 col 5: error TS2012: Cannot convert '{ id: string; }' to 'I':
+everyTypeWithAnnotationAndInvalidInitializer.ts(43,5): error TS2012: Cannot convert '{ id: string; }' to 'I':
 	Types of property 'id' of types '{ id: string; }' and 'I' are incompatible.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 44 col 5: error TS2012: Cannot convert 'C' to '{ id: string; }':
+everyTypeWithAnnotationAndInvalidInitializer.ts(44,5): error TS2012: Cannot convert 'C' to '{ id: string; }':
 	Types of property 'id' of types 'C' and '{ id: string; }' are incompatible.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 46 col 5: error TS2012: Cannot convert 'typeof F2' to 'typeof F':
+everyTypeWithAnnotationAndInvalidInitializer.ts(46,5): error TS2012: Cannot convert 'typeof F2' to 'typeof F':
 	Call signatures of types 'typeof F2' and 'typeof F' are incompatible.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 47 col 5: error TS2012: Cannot convert 'typeof F2' to '(x: string) => number':
+everyTypeWithAnnotationAndInvalidInitializer.ts(47,5): error TS2012: Cannot convert 'typeof F2' to '(x: string) => number':
 	Call signatures of types 'typeof F2' and '(x: string) => number' are incompatible.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 48 col 5: error TS2012: Cannot convert '(x: string) => string' to 'typeof F':
+everyTypeWithAnnotationAndInvalidInitializer.ts(48,5): error TS2012: Cannot convert '(x: string) => string' to 'typeof F':
 	Call signatures of types '(x: string) => string' and 'typeof F' are incompatible.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 50 col 5: error TS2012: Cannot convert 'typeof N' to 'typeof M':
+everyTypeWithAnnotationAndInvalidInitializer.ts(50,5): error TS2012: Cannot convert 'typeof N' to 'typeof M':
 	Types of property 'M.A' of types 'typeof N' and 'typeof M' are incompatible:
 		Types of property 'prototype' of types 'typeof N.A' and 'typeof M.A' are incompatible:
 			Type 'N.A' is missing property 'name' from type 'M.A'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 51 col 5: error TS2012: Cannot convert 'N.A' to 'M.A':
+everyTypeWithAnnotationAndInvalidInitializer.ts(51,5): error TS2012: Cannot convert 'N.A' to 'M.A':
 	Type 'N.A' is missing property 'name' from type 'M.A'.
-everyTypeWithAnnotationAndInvalidInitializer.ts line 52 col 5: error TS2012: Cannot convert 'typeof F2' to 'typeof M.F2':
+everyTypeWithAnnotationAndInvalidInitializer.ts(52,5): error TS2012: Cannot convert 'typeof F2' to 'typeof M.F2':
 	Call signatures of types 'typeof F2' and 'typeof M.F2' are incompatible.

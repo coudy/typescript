@@ -96,17 +96,10 @@ intTypeCheck.ts(180,5): error TS2012: Cannot convert '{}' to 'i7':
 	Type 'i7' requires a construct signature, but type '{}' lacks one.
 intTypeCheck.ts(181,5): error TS2012: Cannot convert 'Object' to 'i7':
 	Type 'i7' requires a construct signature, but type 'Object' lacks one.
-<<<<<<< HEAD
-intTypeCheck.ts line 183 col 17: error TS2012: Cannot convert 'Base' to 'i7':
-	Type 'i7' requires a construct signature, but type 'Base' lacks one.
-	Type 'i7' is missing property 'foo' from type 'Base'.
-intTypeCheck.ts line 185 col 5: error TS2012: Cannot convert '() => void' to 'i7':
-=======
 intTypeCheck.ts(183,17): error TS2012: Cannot convert 'Base' to 'i7':
-	Type 'i7' is missing property 'foo' from type 'Base'.
 	Type 'i7' requires a construct signature, but type 'Base' lacks one.
+	Type 'i7' is missing property 'foo' from type 'Base'.
 intTypeCheck.ts(185,5): error TS2012: Cannot convert '() => void' to 'i7':
->>>>>>> Unify how we emit diagnostics in both the compiler and hte test harnesses.
 	Type 'i7' requires a construct signature, but type '() => void' lacks one.
 intTypeCheck.ts(188,5): error TS2012: Cannot convert 'boolean' to 'i7':
 	Type 'i7' requires a construct signature, but type 'Boolean' lacks one.
