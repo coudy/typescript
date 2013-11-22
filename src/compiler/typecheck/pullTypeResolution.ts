@@ -2083,7 +2083,7 @@ module TypeScript {
                     var initTypeSymbol = this.getInstanceTypeForAssignment(argDeclAST, initExprSymbol.type, context);
                     if (!contextualType) {
                         // Set the type to the inferred initializer type
-                        context.setTypeInContext(paramSymbol, this.widenType(initTypeSymbol, equalsValueClause, context));
+                        context.setTypeInContext(paramSymbol, initTypeSymbol.widenedType(this, equalsValueClause, context));
                         isImplicitAny = initTypeSymbol !== paramSymbol.type;
                     }
                     else {
@@ -2424,7 +2424,7 @@ module TypeScript {
 
                 // Get the type of the symbol
                 if (valueSymbol) {
-                    typeDeclSymbol = this.widenType(valueSymbol.type, typeQueryTerm, context);
+                    typeDeclSymbol = valueSymbol.type.widenedType(this, typeQueryTerm, context);
                 }
                 else {
                     typeDeclSymbol = this.getNewErrorTypeSymbol();
@@ -2743,7 +2743,7 @@ module TypeScript {
 
                 // Don't reset the type if we already have one from the type expression
                 if (!hasTypeExpr) {
-                    var widenedInitTypeSymbol = this.widenType(initTypeSymbol, init.value, context);
+                    var widenedInitTypeSymbol = initTypeSymbol.widenedType(this, init.value, context);
                     context.setTypeInContext(declSymbol, widenedInitTypeSymbol);
 
                     if (declParameterSymbol) {
@@ -3173,7 +3173,7 @@ module TypeScript {
 
                     if (returnType) {
                         var previousReturnType = returnType;
-                        var newReturnType = this.widenType(returnType, returnExpression, context);
+                        var newReturnType = returnType.widenedType(this, returnExpression, context);
                         signature.returnType = newReturnType;
 
                         if (!ArrayUtilities.contains(returnExpressionSymbols, bestCommonReturnType)) {
@@ -6115,7 +6115,7 @@ module TypeScript {
                 lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
             }
 
-            lhsType = this.widenType(lhsType, expression, context);
+            lhsType = lhsType.widenedType(this, expression, context);
 
             if (this.isAnyOrEquivalent(lhsType)) {
                 return lhsType;
@@ -7457,7 +7457,7 @@ module TypeScript {
                     getTypeAtIndex: (index: number) => indexerTypeCandidates[index]
                 };
                 var decl = objectLiteralSymbol.getDeclarations()[0];
-                var indexerReturnType = this.widenType(this.findBestCommonType(typeCollection, context), /*ast*/ null, context);
+                var indexerReturnType = this.findBestCommonType(typeCollection, context).widenedType(this, /*ast*/ null, context);
                 if (indexerReturnType == contextualIndexSignature.returnType) {
                     objectLiteralSymbol.addIndexSignature(contextualIndexSignature);
                 }
@@ -8864,7 +8864,7 @@ module TypeScript {
             var isAssignable = this.sourceIsAssignableToTarget(exprType, typeAssertionType, assertionExpression, context, comparisonInfo);
 
             if (!isAssignable) {
-                var widenedExprType = this.widenType(exprType, assertionExpression.expression, context);
+                var widenedExprType = exprType.widenedType(this, assertionExpression.expression, context);
                 isAssignable = this.sourceIsAssignableToTarget(typeAssertionType, widenedExprType, assertionExpression, context, comparisonInfo);
             }
 
@@ -8952,7 +8952,8 @@ module TypeScript {
         }
 
         private widenArrayType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
-            var elementType = this.widenType(type.getElementType(), /*ast*/ ast, context);
+            // Call into the symbol to get the widened type so we pick up the cached version if there is one
+            var elementType = type.getElementType().widenedType(this, /*ast*/ ast, context);
 
             if (this.compilationSettings.noImplicitAny() && ast) {
                 // If we widened from non-'any' type to 'any', then report error.
@@ -8981,6 +8982,10 @@ module TypeScript {
         }
 
         private widenObjectLiteralType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
+            if (!this.needsToWidenObjectLiteralType(type, ast, context)) {
+                return type;
+            }
+
             // The name here should be "", and the kind should be ObjectLiteral
             Debug.assert(type.name == "");
             var newObjectTypeSymbol = new PullTypeSymbol(type.name, type.kind);
@@ -8991,7 +8996,8 @@ module TypeScript {
 
             for (var i = 0; i < members.length; i++) {
                 var memberType = members[i].type;
-                var widenedMemberType = this.widenType(members[i].type, ast, context);
+                // Call into the symbol to get the widened type so we pick up the cached version if there is one
+                var widenedMemberType = members[i].type.widenedType(this, ast, context);
                 var newMember = new PullSymbol(members[i].name, members[i].kind);
 
                 // Since this is an object literal, we only care about one decl for this member.
@@ -9028,6 +9034,18 @@ module TypeScript {
             }
 
             return newObjectTypeSymbol;
+        }
+
+        private needsToWidenObjectLiteralType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): boolean {
+            var members = type.getMembers();
+            for (var i = 0; i < members.length; i++) {
+                var memberType = members[i].type;
+                if (memberType !== memberType.widenedType(this, ast, context)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public findBestCommonType(collection: IPullTypeCollection, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo) {
@@ -9895,8 +9913,8 @@ module TypeScript {
             //  -	the relationship in question must be true for each corresponding pair of type arguments in
             //      the type argument lists of S and T.
 
-            var widenedTargetType = this.widenType(targetType, /*ast*/ null, context);
-            var widenedSourceType = this.widenType(sourceType, /*ast*/ null, context);
+            var widenedTargetType = targetType.widenedType(this, /*ast*/ null, context);
+            var widenedSourceType = sourceType.widenedType(this, /*ast*/ null, context);
 
             // Check if the type is not any/null or undefined
             if ((widenedSourceType != this.semanticInfoChain.anyTypeSymbol) &&
@@ -9979,8 +9997,8 @@ module TypeScript {
             //  -	the relationship in question must be true for each corresponding pair of type arguments in
             //      the type argument lists of S and T.
 
-            var widenedTargetType = this.widenType(targetType, /*ast*/ null, /*context*/ null);
-            var widenedSourceType = this.widenType(sourceType, /*ast*/ null, /*context*/ null);
+            var widenedTargetType = targetType.widenedType(this, /*ast*/ null, /*context*/ null);
+            var widenedSourceType = sourceType.widenedType(this, /*ast*/ null, /*context*/ null);
 
             // Check if the type is not any/null or undefined
             if ((widenedSourceType != this.semanticInfoChain.anyTypeSymbol) &&

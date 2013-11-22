@@ -1447,6 +1447,8 @@ module TypeScript {
 
         public typeReference: PullTypeReferenceSymbol = null;
 
+        private _widenedType: PullTypeSymbol = null;
+
         constructor(name: string, kind: PullElementKind) {
             super(name, kind);
             this.type = this;
@@ -2746,6 +2748,16 @@ module TypeScript {
 
                 return false;
             }
+        }
+
+        // This is the same signature as PullTypeResolver.widenType (except that the positions
+        // of the resolver are switched). This method just returns the cached value of the widened
+        // type, otherwise, calls into the resolver.
+        public widenedType(resolver: PullTypeResolver, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
+            if (!this._widenedType) {
+                this._widenedType = resolver.widenType(this, ast, context);
+            }
+            return this._widenedType;
         }
     }
 
