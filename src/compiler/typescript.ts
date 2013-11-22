@@ -1056,17 +1056,19 @@ module TypeScript {
                 result += this.getLocationText(diagnostic) + ": ";
             }
 
-            result += diagnostic.message() + Environment.newLine;
+            result += diagnostic.message();
 
-            // Enable in next checkin.
-            //var additionalLocations = diagnostic.additionalLocations();
-            //if (additionalLocations.length > 0) {
-            //    result += getLocalizedText(DiagnosticCode.Additional_locations, null) + Environment.newLine;
+            var additionalLocations = diagnostic.additionalLocations();
+            if (additionalLocations.length > 0) {
+                result += " " + getLocalizedText(DiagnosticCode.Additional_locations, null) + Environment.newLine;
 
-            //    for (var i = 0, n = additionalLocations.length; i < n; i++) {
-            //        result += "\t" + this.getLocationText(additionalLocations[i]) + Environment.newLine;
-            //    }
-            //}
+                for (var i = 0, n = additionalLocations.length; i < n; i++) {
+                    result += "\t" + this.getLocationText(additionalLocations[i]) + Environment.newLine;
+                }
+            }
+            else {
+                result += Environment.newLine;
+            }
 
             return result;
         }
