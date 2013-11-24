@@ -3334,16 +3334,18 @@ module TypeScript {
 
             var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
 
-            // It is a constructor or function
-            var hasReturn = (funcDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) != 0;
+            var hasReturn = hasFlag(funcDecl.flags, PullElementFlags.HasReturnStatement);
 
-            // If this is a function and it has returnType annotation, check if block contains non void return expression
-            if (funcDeclAST.kind() !== SyntaxKind.ConstructSignature && block && returnTypeAnnotation != null && !hasReturn) {
-                var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
+            // November 18, 2013
+            // An explicitly typed function returning a non-void type must have at least one return 
+            // statement somewhere in its body.An exception to this rule is if the function 
+            // implementation consists of a single ‘throw’ statement.
+            if (block !== null && returnTypeAnnotation != null && !hasReturn) {
+                var isVoidOrError = signature.returnType === this.semanticInfoChain.voidTypeSymbol || signature.returnType.isError();
+                var isSingleThrowStatement = block.statements.childCount() === 1 && block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement;
 
-                if (!isVoidOrAny && !(block.statements.childCount() > 0 && block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement)) {
-                    var funcName = funcDecl.getDisplayName();
-                    funcName = funcName ? funcName : "expression";
+                if (!isVoidOrError && !isSingleThrowStatement) {
+                    var funcName = funcDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
 
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
                 }
