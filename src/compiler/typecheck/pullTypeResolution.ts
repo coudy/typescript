@@ -1736,7 +1736,12 @@ module TypeScript {
                 // dynamic module name (string literal)
                 var modPath = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.valueText();
                 var declPath = enclosingDecl.getParentPath();
-
+                
+                // SPEC: November 18, 2013 section 10.3 -
+                //  - An EntityName consisting of more than one identifier is resolved as 
+                //     a ModuleName followed by an identifier that names one or more exported entities in the given module.
+                //     The resulting local alias has all the meanings and classifications of the referenced entity or entities. 
+                //     (As many as three distinct meanings are possible for an entity name—namespace, type, and member.)
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
 
                 if (!aliasedType) {
@@ -6452,6 +6457,23 @@ module TypeScript {
             return symbol;
         }
 
+        private isInImportDeclaration(ast: AST): boolean {
+            var parent = ast.parent;
+            while (parent) {
+                // SPEC: November 18, 2013 section 10.3 -
+                // Don't walk up any other qualified names because the spec says only the last entity name can be a non-module
+                // i.e. Only Module.Module.Module.var and not Module.Type.var or Module.var.member
+                if (parent.kind() === SyntaxKind.Last) {
+                    parent = parent.parent;
+                }
+                else {
+                    break;
+                }
+            }
+
+            return !!parent && parent.kind() === SyntaxKind.ImportDeclaration;
+        }
+
         private computeQualifiedName(dottedNameAST: QualifiedName, context: PullTypeResolutionContext): PullTypeSymbol {
             var rhsName = dottedNameAST.right.valueText();
             if (rhsName.length === 0) {
@@ -6482,9 +6504,20 @@ module TypeScript {
             // now for the name...
             var onLeftOfDot = this.isLeftSideOfQualifiedName(dottedNameAST);
             var isNameOfModule = dottedNameAST.parent.kind() === SyntaxKind.ModuleDeclaration && (<ModuleDeclaration>dottedNameAST.parent).name === dottedNameAST;
+
             var memberKind = (onLeftOfDot || isNameOfModule) ? PullElementKind.SomeContainer : PullElementKind.SomeType;
 
             var childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, memberKind, lhsType);
+
+            // SPEC: November 18, 2013 section 10.3 -
+            //  - An EntityName consisting of more than one identifier is resolved as 
+            //     a ModuleName followed by an identifier that names one or more exported entities in the given module.
+            //     The resulting local alias has all the meanings and classifications of the referenced entity or entities. 
+            //     (As many as three distinct meanings are possible for an entity name—namespace, type, and member.)
+            if (!childTypeSymbol && !isNameOfModule && this.isInImportDeclaration(dottedNameAST))
+            {
+                childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
+            }
 
             // if the lhs exports a container type, but not a type, we should check the container type
             if (!childTypeSymbol && lhsType.isContainer()) {
