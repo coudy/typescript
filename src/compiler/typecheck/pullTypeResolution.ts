@@ -544,7 +544,7 @@ module TypeScript {
                         if (functionExpressionName) {
                             result.push(decl);
                         }
-                    // intentional fall through
+                    // intentional fall through.
 
                     case PullElementKind.Function:
                     case PullElementKind.ConstructorMethod:
@@ -767,7 +767,8 @@ module TypeScript {
                 // Find the module relative to current file
                 var path = getRootFilePath(switchToForwardSlashes(currentFileName));
                 symbol = this.semanticInfoChain.findExternalModule(path + idText);
-            } else {
+            }
+            else {
                 idText = originalIdText;
 
                 // Search in global context if there exists ambient module
@@ -3231,7 +3232,7 @@ module TypeScript {
             if (funcDecl.getSignatureSymbol() && funcDecl.getSignatureSymbol().isDefinition() && this.enclosingClassIsDerived(funcDecl.getParentDecl())) {
                 // Constructors for derived classes must contain a call to the class's 'super' constructor
                 if (!this.constructorHasSuperCall(funcDeclAST)) {
-                    context.postDiagnostic(new Diagnostic(funcDeclAST.fileName(), this.semanticInfoChain.lineMap(funcDeclAST.fileName()), funcDeclAST.start(), 11 /* "constructor" */,
+                    context.postDiagnostic(new Diagnostic(funcDeclAST.fileName(), this.semanticInfoChain.lineMap(funcDeclAST.fileName()), funcDeclAST.start(), "constructor".length,
                         DiagnosticCode.Constructors_for_derived_classes_must_contain_a_super_call));
                 }
                 // The first statement in the body of a constructor must be a super call if both of the following are true:
@@ -3240,7 +3241,7 @@ module TypeScript {
                 else if (this.superCallMustBeFirstStatementInConstructor(funcDecl)) {
                     var firstStatement = this.getFirstStatementOfBlockOrNull(funcDeclAST.block);
                     if (!firstStatement || !this.isSuperInvocationExpressionStatement(firstStatement)) {
-                        context.postDiagnostic(new Diagnostic(funcDeclAST.fileName(), this.semanticInfoChain.lineMap(funcDeclAST.fileName()), funcDeclAST.start(), 11 /* "constructor" */,
+                        context.postDiagnostic(new Diagnostic(funcDeclAST.fileName(), this.semanticInfoChain.lineMap(funcDeclAST.fileName()), funcDeclAST.start(), "constructor".length,
                             DiagnosticCode.A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties));
                     }
                 }
@@ -3299,6 +3300,10 @@ module TypeScript {
                 null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, getType(funcDecl), null, context);
         }
 
+        private containsSingleThrowStatement(block: Block): boolean {
+            return block !== null && block.statements.childCount() === 1 && block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement;
+        }
+
         private typeCheckFunctionDeclaration(
             funcDeclAST: AST,
             isStatic: boolean,
@@ -3340,9 +3345,8 @@ module TypeScript {
             // implementation consists of a single ‘throw’ statement.
             if (block !== null && returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrError = signature.returnType === this.semanticInfoChain.voidTypeSymbol || signature.returnType.isError();
-                var isSingleThrowStatement = block.statements.childCount() === 1 && block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement;
 
-                if (!isVoidOrError && !isSingleThrowStatement) {
+                if (!isVoidOrError && !this.containsSingleThrowStatement(block)) {
                     var funcName = funcDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
 
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
@@ -4174,8 +4178,7 @@ module TypeScript {
             }
         }
 
-        private typeCheckGetAccessorDeclaration(
-            funcDeclAST: GetAccessor, context: PullTypeResolutionContext) {
+        private typeCheckGetAccessorDeclaration(funcDeclAST: GetAccessor, context: PullTypeResolutionContext) {
             // Accessors are handled only by resolve/typeCheckAccessorDeclaration, 
             // hence the resolve/typeCheckGetAccessorDeclaration is helper and need not set setTypeChecked flag
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
@@ -4196,7 +4199,7 @@ module TypeScript {
             //      signature is doesnt have the return statement flag &&
             //      accessor body has atleast one statement and it isnt throw statement
             if (!hasReturn &&
-                !(funcDeclAST.block.statements.childCount() > 0 && funcDeclAST.block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement)) {
+                !this.containsSingleThrowStatement(funcDeclAST.block)) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcNameAST, DiagnosticCode.Getters_must_return_a_value));
             }
 
@@ -6815,9 +6818,8 @@ module TypeScript {
             if (block && returnTypeAnnotation != null && !hasReturn) {
                 var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
 
-                if (!isVoidOrAny && !(block.statements.childCount() > 0 && block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement)) {
-                    var funcName = functionDecl.getDisplayName();
-                    funcName = funcName ? "'" + funcName + "'" : "expression";
+                if (!isVoidOrAny && !this.containsSingleThrowStatement(block)) {
+                    var funcName = functionDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
 
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
                 }
