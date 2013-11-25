@@ -40,7 +40,7 @@ module TypeScript {
         public stringSignatureWithBaseOrigin: SignatureWithBaseOrigin;
     }
 
-    enum CompilerReservedNames {
+    enum CompilerReservedName {
         _this = 1,
         _super,
         arguments,
@@ -49,11 +49,9 @@ module TypeScript {
         exports
     }
 
-    function getCompilerReservedName(name: IASTToken) {
-        // If this array changes, update the order accordingly in CompilerReservedNames
+    function getCompilerReservedName(name: IASTToken): number {
         var nameText = name.valueText();
-        var index = (<IIndexable<CompilerReservedNames>><any>CompilerReservedNames)[nameText];
-        return CompilerReservedNames[index] ? index : undefined;
+        return (<IIndexable<CompilerReservedName>><any>CompilerReservedName)[nameText];
     }
 
     // The resolver associates types with a given AST
@@ -2138,40 +2136,36 @@ module TypeScript {
 
         private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: IASTToken, context: PullTypeResolutionContext, immediateThisCheck?: boolean) {
             var compilerReservedName = getCompilerReservedName(name);
-            if (compilerReservedName) {
-                switch (compilerReservedName) {
-                    case CompilerReservedNames._this: // _this
-                        if (immediateThisCheck) {
-                            this.checkThisCaptureVariableCollides(astWithName, isDeclaration, context);
-                        } else {
-                            this.postTypeCheckWorkitems.push(astWithName);
-                        }
-                        return;
+            switch (compilerReservedName) {
+                case CompilerReservedName._this:
+                    if (immediateThisCheck) {
+                        this.checkThisCaptureVariableCollides(astWithName, isDeclaration, context);
+                    }
+                    else {
+                        this.postTypeCheckWorkitems.push(astWithName);
+                    }
+                    return;
 
-                    case CompilerReservedNames._super: // _super
-                        this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, context);
-                        return;
+                case CompilerReservedName._super:
+                    this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, context);
+                    return;
 
-                    case CompilerReservedNames.arguments: // arguments
-                        this.checkArgumentsCollides(astWithName, context);
-                        return;
+                case CompilerReservedName.arguments:
+                    this.checkArgumentsCollides(astWithName, context);
+                    return;
 
-                    case CompilerReservedNames._i: // _i
-                        if (isDeclaration) {
-                            this.checkIndexOfRestArgumentInitializationCollides(astWithName, context);
-                        }
-                        return;
+                case CompilerReservedName._i:
+                    if (isDeclaration) {
+                        this.checkIndexOfRestArgumentInitializationCollides(astWithName, context);
+                    }
+                    return;
 
-                    case CompilerReservedNames.require: // require
-                    case CompilerReservedNames.exports: // require
-                        if (isDeclaration) {
-                            this.checkExternalModuleRequireExportsCollides(astWithName, name, context);
-                        }
-                        return;
-
-                    default:
-                        Debug.fail("Unknown compiler reserved name: " + name.text());
-                }
+                case CompilerReservedName.require:
+                case CompilerReservedName.exports:
+                    if (isDeclaration) {
+                        this.checkExternalModuleRequireExportsCollides(astWithName, name, context);
+                    }
+                    return;
             }
         }
 
