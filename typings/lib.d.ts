@@ -93,6 +93,9 @@ interface PropertyDescriptorMap {
 }
 
 interface Object {
+    /** The initial value of Object.prototype.constructor is the standard built-in Object constructor. */
+    constructor: Function; 
+
     /** Returns a string representation of an object. */
     toString(): string;
     
