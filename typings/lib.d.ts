@@ -13230,9 +13230,8 @@ declare var indexedDB: IDBFactory;
 declare var console: Console;
 
 /////////////////////////////
-/// IE11 APIs 
+/// IE11 DOM APIs 
 /////////////////////////////
-
 
 
 interface StoreExceptionsInformation extends ExceptionInformation {
@@ -13296,10 +13295,6 @@ interface NavigatorID {
     product: string;
     vendor: string;
 }
-declare var NavigatorID: {
-    prototype: NavigatorID;
-    new (): NavigatorID;
-}
 
 interface HTMLBodyElement {
     onpageshow: (ev: PageTransitionEvent) => any;
@@ -13316,18 +13311,10 @@ interface MSWindowExtensions {
     captureEvents(): void;
     releaseEvents(): void;
 }
-declare var MSWindowExtensions: {
-    prototype: MSWindowExtensions;
-    new (): MSWindowExtensions;
-}
 
 interface MSGraphicsTrust {
     status: string;
     constrictionActive: boolean;
-}
-declare var MSGraphicsTrust: {
-    prototype: MSGraphicsTrust;
-    new (): MSGraphicsTrust;
 }
 
 interface AudioTrack {
@@ -13335,7 +13322,7 @@ interface AudioTrack {
 }
 
 interface DragEvent {
-    msConvertURL(file: File, targetType: string, targetURL?: string): boolean;
+    msConvertURL(file: File, targetType: string, targetURL?: string): void;
 }
 
 interface SubtleCrypto {
@@ -13351,30 +13338,39 @@ interface SubtleCrypto {
     sign(algorithm: any, key: Key, buffer?: ArrayBufferView): CryptoOperation;
     decrypt(algorithm: any, key: Key, buffer?: ArrayBufferView): CryptoOperation;
 }
-declare var SubtleCrypto: {
-    prototype: SubtleCrypto;
-    new (): SubtleCrypto;
-}
 
 interface Crypto extends RandomSource {
     subtle: SubtleCrypto;
 }
-declare var Crypto: {
-    prototype: Crypto;
-    new (): Crypto;
-}
 
 interface VideoPlaybackQuality {
+    totalFrameDelay: number;
     creationTime: number;
     totalVideoFrames: number;
     droppedVideoFrames: number;
 }
-declare var VideoPlaybackQuality: {
-    prototype: VideoPlaybackQuality;
-    new (): VideoPlaybackQuality;
+
+interface GlobalEventHandlers {
+    onpointerenter: (ev: PointerEvent) => any;
+    addEventListener(type: "pointerenter", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointerout: (ev: PointerEvent) => any;
+    addEventListener(type: "pointerout", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointerdown: (ev: PointerEvent) => any;
+    addEventListener(type: "pointerdown", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointerup: (ev: PointerEvent) => any;
+    addEventListener(type: "pointerup", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointercancel: (ev: PointerEvent) => any;
+    addEventListener(type: "pointercancel", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointerover: (ev: PointerEvent) => any;
+    addEventListener(type: "pointerover", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointermove: (ev: PointerEvent) => any;
+    addEventListener(type: "pointermove", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    onpointerleave: (ev: PointerEvent) => any;
+    addEventListener(type: "pointerleave", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+    addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
 
-interface Window {
+interface Window extends GlobalEventHandlers {
     onpageshow: (ev: PageTransitionEvent) => any;
     addEventListener(type: "pageshow", listener: (ev: PageTransitionEvent) => any, useCapture?: boolean): void;
     ondevicemotion: (ev: DeviceMotionEvent) => any;
@@ -13383,6 +13379,9 @@ interface Window {
     msCrypto: Crypto;
     ondeviceorientation: (ev: DeviceOrientationEvent) => any;
     addEventListener(type: "deviceorientation", listener: (ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
+    oncompassneedscalibration: (ev: any) => any;
+    addEventListener(type: "compassneedscalibration", listener: (ev: any) => any, useCapture?: boolean): void;
+    doNotTrack: string;
     onmspointerenter: (ev: any) => any;
     addEventListener(type: "mspointerenter", listener: (ev: any) => any, useCapture?: boolean): void;
     onpagehide: (ev: PageTransitionEvent) => any;
@@ -13397,10 +13396,6 @@ interface Key {
     extractable: boolean;
     keyUsage: string[];
 }
-declare var Key: {
-    prototype: Key;
-    new (): Key;
-}
 
 interface TextTrackList extends EventTarget {
     onaddtrack: (ev: any) => any;
@@ -13412,10 +13407,6 @@ interface DeviceAcceleration {
     y: number;
     x: number;
     z: number;
-}
-declare var DeviceAcceleration: {
-    prototype: DeviceAcceleration;
-    new (): DeviceAcceleration;
 }
 
 interface Console {
@@ -13432,45 +13423,35 @@ interface Console {
 }
 
 interface MSNavigatorDoNotTrack {
-    removeSiteSpecificTrackingException(args: ExceptionInformation): boolean;
-    removeWebWideTrackingException(args: ExceptionInformation): boolean;
+    removeSiteSpecificTrackingException(args: ExceptionInformation): void;
+    removeWebWideTrackingException(args: ExceptionInformation): void;
     storeWebWideTrackingException(args: StoreExceptionsInformation): void;
     storeSiteSpecificTrackingException(args: StoreSiteSpecificExceptionsInformation): void;
     confirmSiteSpecificTrackingException(args: ConfirmSiteSpecificExceptionsInformation): boolean;
     confirmWebWideTrackingException(args: ExceptionInformation): boolean;
 }
-declare var MSNavigatorDoNotTrack: {
-    prototype: MSNavigatorDoNotTrack;
-    new (): MSNavigatorDoNotTrack;
-}
 
 interface HTMLImageElement {
     crossOrigin: string;
+    msPlayToPreferredSourceUri: string;
 }
 
 interface HTMLAllCollection extends HTMLCollection {
     namedItem(name: string): Element;
-}
-declare var HTMLAllCollection: {
-    prototype: HTMLAllCollection;
-    new (): HTMLAllCollection;
+    //[name: string]: Element;
 }
 
 interface MSNavigatorExtensions {
     language: string;
-}
-declare var MSNavigatorExtensions: {
-    prototype: MSNavigatorExtensions;
-    new (): MSNavigatorExtensions;
 }
 
 interface AesGcmEncryptResult {
     ciphertext: ArrayBuffer;
     tag: ArrayBuffer;
 }
-declare var AesGcmEncryptResult: {
-    prototype: AesGcmEncryptResult;
-    new (): AesGcmEncryptResult;
+
+interface HTMLSourceElement {
+    msKeySystem: string;
 }
 
 interface CSSStyleDeclaration {
@@ -13489,6 +13470,7 @@ interface CSSStyleDeclaration {
     flexWrap: string;
     borderImageOutset: string;
     flexDirection: string;
+    touchAction: string;
     flexFlow: string;
     borderImage: string;
     justifyContent: string;
@@ -13496,17 +13478,9 @@ interface CSSStyleDeclaration {
     msTextCombineHorizontal: string;
 }
 
-interface HTMLSourceElement {
-    msKeySystem: string;
-}
-
 interface NavigationCompletedEvent extends NavigationEvent {
     webErrorStatus: number;
     isSuccess: boolean;
-}
-declare var NavigationCompletedEvent: {
-    prototype: NavigationCompletedEvent;
-    new (): NavigationCompletedEvent;
 }
 
 interface MutationRecord {
@@ -13520,12 +13494,13 @@ interface MutationRecord {
     attributeNamespace: string;
     type: string;
 }
-declare var MutationRecord: {
-    prototype: MutationRecord;
-    new (): MutationRecord;
+
+interface Navigator {
+    pointerEnabled: boolean;
+    maxTouchPoints: number;
 }
 
-interface Document extends MSDocumentExtensions {
+interface Document extends MSDocumentExtensions, GlobalEventHandlers {
     msFullscreenEnabled: boolean;
     onmsfullscreenerror: (ev: any) => any;
     addEventListener(type: "msfullscreenerror", listener: (ev: any) => any, useCapture?: boolean): void;
@@ -13544,10 +13519,7 @@ interface MimeTypeArray {
     item(index: number): Plugin;
     [index: number]: Plugin;
     namedItem(type: string): Plugin;
-}
-declare var MimeTypeArray: {
-    prototype: MimeTypeArray;
-    new (): MimeTypeArray;
+    //[type: string]: Plugin;
 }
 
 interface HTMLMediaElement {
@@ -13580,16 +13552,8 @@ interface KeyOperation extends EventTarget {
     result: any;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var KeyOperation: {
-    prototype: KeyOperation;
-    new (): KeyOperation;
-}
 
 interface DOMStringMap {
-}
-declare var DOMStringMap: {
-    prototype: DOMStringMap;
-    new (): DOMStringMap;
 }
 
 interface DeviceOrientationEvent extends Event {
@@ -13598,19 +13562,6 @@ interface DeviceOrientationEvent extends Event {
     absolute: boolean;
     beta: number;
     initDeviceOrientationEvent(type: string, bubbles: boolean, cancelable: boolean, alpha: number, beta: number, gamma: number, absolute: boolean): void;
-}
-declare var DeviceOrientationEvent: {
-    prototype: DeviceOrientationEvent;
-    new (): DeviceOrientationEvent;
-}
-
-interface MSMediaKeyMessageEvent extends Event {
-    destinationURL: string;
-    message: Uint8Array;
-}
-declare var MSMediaKeyMessageEvent: {
-    prototype: MSMediaKeyMessageEvent;
-    new (): MSMediaKeyMessageEvent;
 }
 
 interface MSMediaKeys {
@@ -13621,6 +13572,11 @@ interface MSMediaKeys {
 declare var MSMediaKeys: {
     prototype: MSMediaKeys;
     new (): MSMediaKeys;
+}
+
+interface MSMediaKeyMessageEvent extends Event {
+    destinationURL: string;
+    message: Uint8Array;
 }
 
 interface MSHTMLWebViewElement extends HTMLElement {
@@ -13643,26 +13599,24 @@ interface MSHTMLWebViewElement extends HTMLElement {
     invokeScriptAsync(scriptName: string, ...args: any[]): MSWebViewAsyncOperation;
     buildLocalStreamUri(contentIdentifier: string, relativePath: string): string;
 }
-declare var MSHTMLWebViewElement: {
-    prototype: MSHTMLWebViewElement;
-    new (): MSHTMLWebViewElement;
-}
 
 interface NavigationEvent extends Event {
     uri: string;
 }
-declare var NavigationEvent: {
-    prototype: NavigationEvent;
-    new (): NavigationEvent;
-}
 
-interface Element {
+interface Element extends GlobalEventHandlers {
+    onlostpointercapture: (ev: PointerEvent) => any;
+    addEventListener(type: "lostpointercapture", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
     onmspointerenter: (ev: any) => any;
     addEventListener(type: "mspointerenter", listener: (ev: any) => any, useCapture?: boolean): void;
+    ongotpointercapture: (ev: PointerEvent) => any;
+    addEventListener(type: "gotpointercapture", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
     onmspointerleave: (ev: any) => any;
     addEventListener(type: "mspointerleave", listener: (ev: any) => any, useCapture?: boolean): void;
     msZoomTo(args: MsZoomToOptions): void;
+    setPointerCapture(pointerId: number): void;
     msGetUntransformedBounds(): ClientRect;
+    releasePointerCapture(pointerId: number): void;
     msRequestFullscreen(): void;
 }
 
@@ -13688,10 +13642,6 @@ interface SourceBuffer extends EventTarget {
     abort(): void;
     appendStream(stream: MSStream, maxSize?: number): void;
 }
-declare var SourceBuffer: {
-    prototype: SourceBuffer;
-    new (): SourceBuffer;
-}
 
 interface MSInputMethodContext extends EventTarget {
     oncandidatewindowshow: (ev: any) => any;
@@ -13709,19 +13659,11 @@ interface MSInputMethodContext extends EventTarget {
     isCandidateWindowVisible(): boolean;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var MSInputMethodContext: {
-    prototype: MSInputMethodContext;
-    new (): MSInputMethodContext;
-}
 
 interface DeviceRotationRate {
     gamma: number;
     alpha: number;
     beta: number;
-}
-declare var DeviceRotationRate: {
-    prototype: DeviceRotationRate;
-    new (): DeviceRotationRate;
 }
 
 interface PluginArray {
@@ -13730,10 +13672,7 @@ interface PluginArray {
     item(index: number): Plugin;
     [index: number]: Plugin;
     namedItem(name: string): Plugin;
-}
-declare var PluginArray: {
-    prototype: PluginArray;
-    new (): PluginArray;
+    //[name: string]: Plugin;
 }
 
 interface MSMediaKeyError {
@@ -13747,8 +13686,6 @@ interface MSMediaKeyError {
     MS_MEDIA_KEYERR_CLIENT: number;
 }
 declare var MSMediaKeyError: {
-    prototype: MSMediaKeyError;
-    new (): MSMediaKeyError;
     MS_MEDIA_KEYERR_SERVICE: number;
     MS_MEDIA_KEYERR_HARDWARECHANGE: number;
     MS_MEDIA_KEYERR_OUTPUT: number;
@@ -13766,10 +13703,7 @@ interface Plugin {
     item(index: number): MimeType;
     [index: number]: MimeType;
     namedItem(type: string): MimeType;
-}
-declare var Plugin: {
-    prototype: Plugin;
-    new (): Plugin;
+    //[type: string]: MimeType;
 }
 
 interface HTMLFrameSetElement {
@@ -13790,8 +13724,8 @@ interface Screen extends EventTarget {
 
 interface MediaSource extends EventTarget {
     sourceBuffers: SourceBufferList;
-    duration: string;
-    readyState: any;
+    duration: number;
+    readyState: string;
     activeSourceBuffers: SourceBufferList;
     addSourceBuffer(type: string): SourceBuffer;
     endOfStream(error?: string): void;
@@ -13807,7 +13741,6 @@ interface MediaError {
     MS_MEDIA_ERR_ENCRYPTED: number;
 }
 //declare var MediaError: {
-//    prototype: MediaError;
 //    MS_MEDIA_ERR_ENCRYPTED: number;
 //}
 
@@ -13816,16 +13749,8 @@ interface SourceBufferList extends EventTarget {
     item(index: number): SourceBuffer;
     [index: number]: SourceBuffer;
 }
-declare var SourceBufferList: {
-    prototype: SourceBufferList;
-    new (): SourceBufferList;
-}
 
 interface XMLDocument extends Document {
-}
-declare var XMLDocument: {
-    prototype: XMLDocument;
-    new (): XMLDocument;
 }
 
 interface DeviceMotionEvent extends Event {
@@ -13835,10 +13760,6 @@ interface DeviceMotionEvent extends Event {
     accelerationIncludingGravity: DeviceAcceleration;
     initDeviceMotionEvent(type: string, bubbles: boolean, cancelable: boolean, acceleration: DeviceAccelerationDict, accelerationIncludingGravity: DeviceAccelerationDict, rotationRate: DeviceRotationRateDict, interval: number): void;
 }
-declare var DeviceMotionEvent: {
-    prototype: DeviceMotionEvent;
-    new (): DeviceMotionEvent;
-}
 
 interface MimeType {
     enabledPlugin: Plugin;
@@ -13846,9 +13767,23 @@ interface MimeType {
     type: string;
     description: string;
 }
-declare var MimeType: {
-    prototype: MimeType;
-    new (): MimeType;
+
+interface PointerEvent extends MouseEvent {
+    width: number;
+    rotation: number;
+    pressure: number;
+    pointerType: any;
+    isPrimary: boolean;
+    tiltY: number;
+    height: number;
+    intermediatePoints: any;
+    currentPoint: any;
+    tiltX: number;
+    hwTimestamp: number;
+    pointerId: number;
+    initPointerEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, viewArg: Window, detailArg: number, screenXArg: number, screenYArg: number, clientXArg: number, clientYArg: number, ctrlKeyArg: boolean, altKeyArg: boolean, shiftKeyArg: boolean, metaKeyArg: boolean, buttonArg: number, relatedTargetArg: EventTarget, offsetXArg: number, offsetYArg: number, widthArg: number, heightArg: number, pressure: number, rotation: number, tiltX: number, tiltY: number, pointerIdArg: number, pointerType: any, hwTimestampArg: number, isPrimary: boolean): void;
+    getCurrentPoint(element: Element): void;
+    getIntermediatePoints(element: Element): void;
 }
 
 interface MSDocumentExtensions {
@@ -13869,7 +13804,7 @@ interface MutationObserver {
 }
 declare var MutationObserver: {
     prototype: MutationObserver;
-    new (callback: (arr: MutationRecord[], observer: MutationObserver)=>any): MutationObserver;
+    new (): MutationObserver;
 }
 
 interface AudioTrackList {
@@ -13890,6 +13825,7 @@ interface HTMLObjectElement {
       * Gets or sets whether the DLNA PlayTo device is available.
       */
     msPlayToDisabled: boolean;
+    readyState: number;
     /**
       * Gets the source associated with the media element for use by the PlayToManager.
       */
@@ -13909,6 +13845,7 @@ interface HTMLEmbedElement {
       * Gets or sets whether the DLNA PlayTo device is available.
       */
     msPlayToDisabled: boolean;
+    readyState: string;
     /**
       * Gets the source associated with the media element for use by the PlayToManager.
       */
@@ -13935,8 +13872,6 @@ interface MSWebViewAsyncOperation extends EventTarget {
     STARTED: number;
 }
 declare var MSWebViewAsyncOperation: {
-    prototype: MSWebViewAsyncOperation;
-    new (): MSWebViewAsyncOperation;
     ERROR: number;
     TYPE_CREATE_DATA_PACKAGE_FROM_SELECTION: number;
     TYPE_INVOKE_SCRIPT: number;
@@ -13948,10 +13883,6 @@ declare var MSWebViewAsyncOperation: {
 interface ScriptNotifyEvent extends Event {
     value: string;
     callingUri: string;
-}
-declare var ScriptNotifyEvent: {
-    prototype: ScriptNotifyEvent;
-    new (): ScriptNotifyEvent;
 }
 
 interface PerformanceNavigationTiming extends PerformanceEntry {
@@ -13978,17 +13909,9 @@ interface PerformanceNavigationTiming extends PerformanceEntry {
     domContentLoadedEventEnd: number;
     type: string;
 }
-declare var PerformanceNavigationTiming: {
-    prototype: PerformanceNavigationTiming;
-    new (): PerformanceNavigationTiming;
-}
 
 interface MSMediaKeyNeededEvent extends Event {
     initData: Uint8Array;
-}
-declare var MSMediaKeyNeededEvent: {
-    prototype: MSMediaKeyNeededEvent;
-    new (): MSMediaKeyNeededEvent;
 }
 
 interface MSManipulationEvent {
@@ -13999,7 +13922,6 @@ interface MSManipulationEvent {
     MS_MANIPULATION_STATE_CANCELLED: number;
 }
 //declare var MSManipulationEvent: {
-//    prototype: MSManipulationEvent;
 //    MS_MANIPULATION_STATE_SELECTING: number;
 //    MS_MANIPULATION_STATE_COMMITTED: number;
 //    MS_MANIPULATION_STATE_PRESELECT: number;
@@ -14011,28 +13933,25 @@ interface LongRunningScriptDetectedEvent extends Event {
     stopPageScriptExecution: boolean;
     executionTime: number;
 }
-declare var LongRunningScriptDetectedEvent: {
-    prototype: LongRunningScriptDetectedEvent;
-    new (): LongRunningScriptDetectedEvent;
-}
 
 interface MSAppView {
     viewId: number;
     close(): void;
     postMessage(message: any, targetOrigin: string, ports?: any): void;
 }
-declare var MSAppView: {
-    prototype: MSAppView;
-    new (): MSAppView;
-}
 
 interface PerfWidgetExternal {
     maxCpuSpeed: number;
-    performanceCounterFrequency: number;
+    independentRenderingEnabled: boolean;
+    irDisablingContentString: string;
+    irStatusAvailable: boolean;
     performanceCounter: number;
     averagePaintTime: number;
     activeNetworkRequestCount: number;
     paintRequestsPerSecond: number;
+    extraInformationEnabled: boolean;
+    performanceCounterFrequency: number;
+    averageFrameTime: number;
     repositionWindow(x: number, y: number): void;
     getRecentMemoryUsage(last: number): any;
     getMemoryUsage(): number;
@@ -14041,19 +13960,13 @@ interface PerfWidgetExternal {
     removeEventListener(eventType: string, callback: (ev: any) => any): void;
     getRecentCpuUsage(last: number): any;
     addEventListener(eventType: string, callback: (ev: any) => any): void;
+    getRecentFrames(last: number): any;
     getRecentPaintRequests(last: number): any;
 }
-declare var PerfWidgetExternal: {
-    prototype: PerfWidgetExternal;
-    new (): PerfWidgetExternal;
-}
+
 
 interface PageTransitionEvent extends Event {
     persisted: boolean;
-}
-declare var PageTransitionEvent: {
-    prototype: PageTransitionEvent;
-    new (): PageTransitionEvent;
 }
 
 interface MutationCallback {
@@ -14062,18 +13975,10 @@ interface MutationCallback {
 
 interface HTMLDocument extends Document {
 }
-declare var HTMLDocument: {
-    prototype: HTMLDocument;
-    new (): HTMLDocument;
-}
 
 interface KeyPair {
     privateKey: Key;
     publicKey: Key;
-}
-declare var KeyPair: {
-    prototype: KeyPair;
-    new (): KeyPair;
 }
 
 interface MSApp {
@@ -14090,26 +13995,10 @@ interface MSApp {
     CURRENT: string;
 }
 //declare var MSApp: {
-//    prototype: MSApp;
 //    NORMAL: string;
 //    HIGH: string;
 //    IDLE: string;
 //    CURRENT: string;
-//}
-
-interface HTMLTrackElement {
-    readyState: number;
-    ERROR: number;
-    LOADING: number;
-    LOADED: number;
-    NONE: number;
-}
-//declare var HTMLTrackElement: {
-//    prototype: HTMLTrackElement;
-//    ERROR: number;
-//    LOADING: number;
-//    LOADED: number;
-//    NONE: number;
 //}
 
 interface MSMediaKeySession extends EventTarget {
@@ -14119,21 +14008,27 @@ interface MSMediaKeySession extends EventTarget {
     close(): void;
     update(key: Uint8Array): void;
 }
-declare var MSMediaKeySession: {
-    prototype: MSMediaKeySession;
-    new (): MSMediaKeySession;
+
+interface HTMLTrackElement {
+    readyState: number;
+    ERROR: number;
+    LOADING: number;
+    LOADED: number;
+    NONE: number;
 }
+//declare var HTMLTrackElement: {
+//    ERROR: number;
+//    LOADING: number;
+//    LOADED: number;
+//    NONE: number;
+//}
 
 interface HTMLVideoElement {
-    videoPlaybackQuality: VideoPlaybackQuality;
+    getVideoPlaybackQuality(): VideoPlaybackQuality;
 }
 
 interface UnviewableContentIdentifiedEvent extends NavigationEvent {
     referrer: string;
-}
-declare var UnviewableContentIdentifiedEvent: {
-    prototype: UnviewableContentIdentifiedEvent;
-    new (): UnviewableContentIdentifiedEvent;
 }
 
 interface CryptoOperation extends EventTarget {
@@ -14153,10 +14048,6 @@ interface CryptoOperation extends EventTarget {
     process(buffer: ArrayBufferView): void;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var CryptoOperation: {
-    prototype: CryptoOperation;
-    new (): CryptoOperation;
-}
 
 declare var onpageshow: (ev: PageTransitionEvent) => any;
 declare function addEventListener(type: "pageshow", listener: (ev: PageTransitionEvent) => any, useCapture?: boolean): void;
@@ -14166,12 +14057,31 @@ declare var devicePixelRatio: number;
 declare var msCrypto: Crypto;
 declare var ondeviceorientation: (ev: DeviceOrientationEvent) => any;
 declare function addEventListener(type: "deviceorientation", listener: (ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
+declare var oncompassneedscalibration: (ev: any) => any;
+declare function addEventListener(type: "compassneedscalibration", listener: (ev: any) => any, useCapture?: boolean): void;
+declare var doNotTrack: string;
 declare var onmspointerenter: (ev: any) => any;
 declare function addEventListener(type: "mspointerenter", listener: (ev: any) => any, useCapture?: boolean): void;
 declare var onpagehide: (ev: PageTransitionEvent) => any;
 declare function addEventListener(type: "pagehide", listener: (ev: PageTransitionEvent) => any, useCapture?: boolean): void;
 declare var onmspointerleave: (ev: any) => any;
 declare function addEventListener(type: "mspointerleave", listener: (ev: any) => any, useCapture?: boolean): void;
+declare var onpointerenter: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointerenter", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointerout: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointerout", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointerdown: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointerdown", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointerup: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointerup", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointercancel: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointercancel", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointerover: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointerover", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointermove: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointermove", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
+declare var onpointerleave: (ev: PointerEvent) => any;
+declare function addEventListener(type: "pointerleave", listener: (ev: PointerEvent) => any, useCapture?: boolean): void;
 
 
 /////////////////////////////
