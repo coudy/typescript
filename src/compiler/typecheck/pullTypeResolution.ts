@@ -9494,7 +9494,7 @@ module TypeScript {
             var decls2 = symbol2.getDeclarations();
 
             if (decls1.length && decls2.length) {
-                return decls1[0].isEqual(decls2[0]);
+                return decls1[0] === decls2[0];
             }
 
             return false;
@@ -10111,7 +10111,7 @@ module TypeScript {
                 var targetDecl = targetProp.getDeclarations()[0];
                 var sourceDecl = sourceProp.getDeclarations()[0];
 
-                if (!targetDecl.isEqual(sourceDecl)) {
+                if (targetDecl !== sourceDecl) {
                     if (comparisonInfo) {
                         var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
                         // Both types define property with same name as private
@@ -10956,7 +10956,7 @@ module TypeScript {
                 parameterDeclarations.length &&
                 expressionDeclarations.length &&
                 !(parameterType.isTypeParameter() || expressionType.isTypeParameter()) &&
-                (parameterDeclarations[0].isEqual(expressionDeclarations[0]) || (expressionType.isGeneric() && parameterType.isGeneric() &&
+                (parameterDeclarations[0] === expressionDeclarations[0] || (expressionType.isGeneric() && parameterType.isGeneric() &&
                 this.sourceIsSubtypeOfTarget(this.instantiateTypeToAny(expressionType, context), this.instantiateTypeToAny(parameterType, context), /*ast*/ null, context, null))) &&
                 expressionType.isGeneric()) {
                 this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);

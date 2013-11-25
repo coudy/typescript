@@ -4,7 +4,7 @@
 ///<reference path='..\references.ts' />
 
 module TypeScript {
-    export var pullDeclID = 0;
+    var pullDeclID = 0;
     var sentinelEmptyPullDeclArray: any[] = [];
 
     export class PullDecl {
@@ -153,15 +153,6 @@ module TypeScript {
 
         public getValueDecl() { return this.synthesizedValDecl; }
 
-        public isEqual(other: PullDecl) {
-            return  (this.name === other.name) &&
-                    (this.kind === other.kind) &&
-                    (this.flags === other.flags) &&
-                    (this.fileName() === other.fileName()) &&
-                    (this.span.start() === other.span.start()) &&
-                    (this.span.end() === other.span.end());
-        }
-
         private getChildDeclCache(declKind: PullElementKind): IIndexable<PullDecl[]> {
             if (declKind === PullElementKind.TypeParameter) {
                 if (!this.childDeclTypeParameterCache) {
@@ -221,16 +212,6 @@ module TypeScript {
                 cache[declName] = childrenOfName;
             }
         }
-
-        //public lookupChildDecls(declName: string, declKind: PullElementKind): PullDecl[] {
-        //    // find the decl with the optional type
-        //    // if necessary, cache the decl
-        //    // may be wise to return a chain of decls, or take a parent decl as a parameter
-        //    var cache = this.getChildDeclCache(declKind);
-        //    var childrenOfName = <PullDecl[]>cache[declName];
-
-        //    return childrenOfName ? childrenOfName : [];
-        //}
 
         // Search for a child decl with the given name.  'isType' is used to specify whether or 
         // not child types or child values are returned.
