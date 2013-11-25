@@ -107,8 +107,8 @@ module TypeScript {
             this.semanticInfoChain().setSymbolForDecl(this, symbol);
         }
 
-        public ensureSymbolIsBound(bindSignatureSymbol=false) {
-            if (!((bindSignatureSymbol && this.hasSignatureSymbol()) || this.hasSymbol()) && this.kind != PullElementKind.Script) {
+        public ensureSymbolIsBound() {
+            if (!this.hasSymbol() && this.kind != PullElementKind.Script) {
                 var binder = this.semanticInfoChain().getBinder();
                 binder.bindDeclToPullSymbol(this);
             }
@@ -134,8 +134,7 @@ module TypeScript {
         }
 
         public getSignatureSymbol(): PullSignatureSymbol { 
-            this.ensureSymbolIsBound(true);
-
+            this.ensureSymbolIsBound();
             return this.semanticInfoChain().getSignatureSymbolForDecl(this);
         }
 
