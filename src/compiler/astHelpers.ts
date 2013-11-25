@@ -52,33 +52,6 @@ module TypeScript {
         return false;
     }
 
-    export function importDeclarationIsElided(importDeclAST: ImportDeclaration, semanticInfoChain: SemanticInfoChain, compilationSettings: ImmutableCompilationSettings = null) {
-        var isExternalModuleReference = importDeclAST.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
-        var importDecl = semanticInfoChain.getDeclForAST(importDeclAST);
-        var isExported = hasFlag(importDecl.flags, PullElementFlags.Exported);
-        var isAmdCodeGen = compilationSettings && compilationSettings.moduleGenTarget() == ModuleGenTarget.Asynchronous;
-
-        // 1) Any internal reference needs to check if the emit can happen
-        // 2) External module reference with export modifier always needs to be emitted
-        // 3) commonjs needs the var declaration for the import declaration
-        if (isExternalModuleReference && !isExported && isAmdCodeGen) {
-            return false;
-        }
-
-        var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-        if (importDeclAST.moduleReference.kind() !== SyntaxKind.ExternalModuleReference) {
-            if (importSymbol.getExportAssignedValueSymbol()) {
-                return true;
-            }
-            var containerSymbol = importSymbol.getExportAssignedContainerSymbol();
-            if (containerSymbol && containerSymbol.getInstanceSymbol()) {
-                return true;
-            }
-        }
-
-        return importSymbol.isUsedAsValue();
-    }
-
     export function isValidAstNode(ast: IASTSpan): boolean {
         if (!ast)
             return false;

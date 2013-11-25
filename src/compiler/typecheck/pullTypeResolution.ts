@@ -1814,7 +1814,8 @@ module TypeScript {
                 if (container && container.kind == PullElementKind.DynamicModule) {
                     checkPrivacy = true;
                 }
-            } else {
+            }
+            else {
                 checkPrivacy = true;
             }
 
@@ -1852,15 +1853,23 @@ module TypeScript {
                 }
             }
 
-            if (getCompilerReservedName(importStatementAST.identifier)) {
-                // Add as a post callback to make sure that isUsedAsValue flag is set correctly
-                this.postTypeCheckWorkitems.push(importStatementAST);
-            }
+            // Check if there's a name collision with the import's name.  Note: checkNameFor... 
+            // will do the check in a post typeCheck callback.  This is critical for import 
+            // statements as we need to know how the import is actually used in order for us to 
+            // know if there will be a collision or not.  For example, if the import is never used
+            // as a value, and is only used as a type, then no collision will occur.
+            this.checkNameForCompilerGeneratedDeclarationCollision(importStatementAST, /*isDeclaration:*/ true, importStatementAST.identifier, context);
         }
 
         private postTypeCheckImportDeclaration(importStatementAST: ImportDeclaration, context: PullTypeResolutionContext) {
-            if (importDeclarationIsElided(importStatementAST, this.semanticInfoChain)) {
-                this.checkNameForCompilerGeneratedDeclarationCollision(importStatementAST, /*isDeclaration*/ true, importStatementAST.identifier, context, /*immediateThisCheck*/ true);
+            var importDecl = this.semanticInfoChain.getDeclForAST(importStatementAST);
+            var importSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+
+            var isUsedAsValue = importSymbol.isUsedAsValue();
+            var hasAssignedValue = importStatementAST.moduleReference.kind() !== SyntaxKind.ExternalModuleReference && importSymbol.getExportAssignedValueSymbol() !== null;
+
+            if (isUsedAsValue || hasAssignedValue) {
+                this.checkThisCaptureVariableCollides(importStatementAST, /*isDeclaration*/ true, context);
             }
         }
 
@@ -2134,17 +2143,12 @@ module TypeScript {
             paramSymbol.setResolved();
         }
 
-        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: IASTToken, context: PullTypeResolutionContext, immediateThisCheck?: boolean) {
+        private checkNameForCompilerGeneratedDeclarationCollision(astWithName: AST, isDeclaration: boolean, name: IASTToken, context: PullTypeResolutionContext) {
             var compilerReservedName = getCompilerReservedName(name);
             switch (compilerReservedName) {
                 case CompilerReservedName._this:
-                    if (immediateThisCheck) {
-                        this.checkThisCaptureVariableCollides(astWithName, isDeclaration, context);
-                    }
-                    else {
-                        this.postTypeCheckWorkitems.push(astWithName);
-                    }
-                    return;
+                     this.postTypeCheckWorkitems.push(astWithName);
+                     return;
 
                 case CompilerReservedName._super:
                     this.checkSuperCaptureVariableCollides(astWithName, isDeclaration, context);
