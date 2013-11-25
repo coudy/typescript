@@ -193,7 +193,7 @@ module TypeScript {
                 this._cachedFunctionArgumentsSymbol.type = this.cachedIArgumentsInterfaceType() ? this.cachedIArgumentsInterfaceType() : this.semanticInfoChain.anyTypeSymbol;
                 this._cachedFunctionArgumentsSymbol.setResolved();
 
-                var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, new TextSpan(0, 0), this.semanticInfoChain);
+                var functionArgumentsDecl = new PullSynthesizedDecl("arguments", "arguments", PullElementKind.Parameter, PullElementFlags.None, /*parentDecl*/ null, this.semanticInfoChain);
                 functionArgumentsDecl.setSymbol(this._cachedFunctionArgumentsSymbol);
                 this._cachedFunctionArgumentsSymbol.addDeclaration(functionArgumentsDecl);
             }
@@ -2401,9 +2401,7 @@ module TypeScript {
                 var enclosingDecl = this.getEnclosingDeclForAST(term);
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text());
                 var decl = new PullSynthesizedDecl(stringConstantAST.text(), stringConstantAST.text(),
-                    typeDeclSymbol.kind, null, enclosingDecl,
-                    new TextSpan(stringConstantAST.start(), stringConstantAST.width()),
-                    enclosingDecl.semanticInfoChain());
+                    typeDeclSymbol.kind, null, enclosingDecl, enclosingDecl.semanticInfoChain());
                 typeDeclSymbol.addDeclaration(decl);
             }
             else if (term.kind() === SyntaxKind.TypeQuery) {
