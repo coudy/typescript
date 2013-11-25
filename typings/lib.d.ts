@@ -371,7 +371,7 @@ interface String {
       * @param end The index to the end of the specified portion of stringObj. The substring includes the characters up to, but not including, the character indicated by end. 
       * If this value is not specified, the substring continues to the end of stringObj.
       */
-    slice(start: number, end?: number): string;
+    slice(start?: number, end?: number): string;
 
     /**
       * Split a string into substrings using the specified separator and return them as an array.
@@ -805,7 +805,7 @@ interface RegExpExecArray {
     push(...items: string[]): number;
     reverse(): string[];
     shift(): string;
-    slice(start: number, end?: number): string[];
+    slice(start?: number, end?: number): string[];
     sort(compareFn?: (a: string, b: string) => number): string[];
     splice(start: number): string[];
     splice(start: number, deleteCount: number, ...items: string[]): string[];
@@ -1021,7 +1021,7 @@ interface Array<T> {
       * @param start The beginning of the specified portion of the array.
       * @param end The end of the specified portion of the array.
       */
-    slice(start: number, end?: number): T[];
+    slice(start?: number, end?: number): T[];
 
     /**
       * Sorts an array.
