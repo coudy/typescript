@@ -1421,18 +1421,18 @@ module TypeScript {
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
 
-            var typeParameters = classOrInterface.kind() === SyntaxKind.ClassDeclaration
-                ? (<ClassDeclaration>classOrInterface).typeParameterList
-                : (<InterfaceDeclaration>classOrInterface).typeParameterList;
 
             for (var i = 0; i < typeDeclTypeParameters.length; i++) {
-
                 var typeParameter = typeDeclTypeParameters[i];
 
                 this.checkSymbolPrivacy(typeDeclSymbol, typeParameter, (symbol: PullSymbol) =>
                     this.typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface, i, typeDeclTypeParameters[i], symbol, context));
 
                 if (this.isTypeParameterConstraintHasSelfReference(typeParameter)) {
+                    var typeParameters = classOrInterface.kind() === SyntaxKind.ClassDeclaration
+                        ? (<ClassDeclaration>classOrInterface).typeParameterList
+                        : (<InterfaceDeclaration>classOrInterface).typeParameterList;
+
                     var typeParameterAST = typeParameters.typeParameters.nonSeparatorAt(i);
                     this.reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameter, typeDeclSymbol, typeParameterAST, context);
                 }
@@ -11433,14 +11433,14 @@ module TypeScript {
         }
 
         private isTypeParameterConstraintHasSelfReference(originalTypeParameter: PullTypeParameterSymbol): boolean {
-            var seen = BitVector.getBitVector(false);
+            var seen: {[value: number]: boolean}= {};
 
-            function checkConstraints(typeParameter: PullTypeParameterSymbol): boolean {
-                if (seen.valueAt(typeParameter.pullSymbolID)) {
+            var checkConstraints = (typeParameter: PullTypeParameterSymbol): boolean => {
+                if (seen[typeParameter.pullSymbolID] !== undefined) {
                     return false;
                 }
 
-                seen.setValueAt(typeParameter.pullSymbolID, true);
+                seen[typeParameter.pullSymbolID] = true;
 
                 var isSelfReferenced = false;
                 var constraint = typeParameter.getConstraint();
@@ -11454,11 +11454,10 @@ module TypeScript {
                     }
                 }
 
-                seen.setValueAt(typeParameter.pullSymbolID, false);
+                seen[typeParameter.pullSymbolID] = false;
                 return isSelfReferenced;
             }
             var isSelfReferenced = checkConstraints(originalTypeParameter);
-            seen.release();
 
             return isSelfReferenced;
         }
