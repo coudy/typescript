@@ -9335,31 +9335,18 @@ module TypeScript {
                 return false;
             }
 
-            var sig1: PullSignatureSymbol = null;
-            var sig2: PullSignatureSymbol = null;
-            var sigsMatch = false;
-
-            // The signatures in the signature group may not be ordered...
-            // REVIEW: Should definition signatures be required to be identical as well?
-            for (var iSig1 = 0; iSig1 < sg1.length; iSig1++) {
-                sig1 = sg1[iSig1];
-
-                for (var iSig2 = 0; iSig2 < sg2.length; iSig2++) {
-                    sig2 = sg2[iSig2];
-
-                    if (this.signaturesAreIdentical(sig1, sig2)) {
-                        sigsMatch = true;
-                        break;
-                    }
+            // Signatures must be in the same order for the signature groups to be identical.
+            // The spec does not say this yet. It is vague about this comparison:
+            // November 18th, 2013: Section 3.8.2:
+            // Two members are considered identical when:
+            // ...
+            //    they are identical call signatures,
+            //    they are identical construct signatures, or
+            //    they are index signatures of identical kind with identical types.
+            for (var i = 0; i < sg1.length; i++) {
+                if (!this.signaturesAreIdentical(sg1[i], sg2[i], /*includeReturnTypes*/ true)) {
+                    return false;
                 }
-
-                if (sigsMatch) {
-                    sigsMatch = false;
-                    continue;
-                }
-
-                // no match found for a specific signature
-                return false;
             }
 
             return true;
