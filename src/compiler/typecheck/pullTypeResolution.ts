@@ -1420,9 +1420,22 @@ module TypeScript {
             var typeDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
             var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
             var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
+
+            var typeParameters = classOrInterface.kind() === SyntaxKind.ClassDeclaration
+                ? (<ClassDeclaration>classOrInterface).typeParameterList
+                : (<InterfaceDeclaration>classOrInterface).typeParameterList;
+
             for (var i = 0; i < typeDeclTypeParameters.length; i++) {
-                this.checkSymbolPrivacy(typeDeclSymbol, typeDeclTypeParameters[i], (symbol: PullSymbol) =>
+
+                var typeParameter = typeDeclTypeParameters[i];
+
+                this.checkSymbolPrivacy(typeDeclSymbol, typeParameter, (symbol: PullSymbol) =>
                     this.typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface, i, typeDeclTypeParameters[i], symbol, context));
+
+                if (this.isTypeParameterConstraintHasSelfReference(typeParameter)) {
+                    var typeParameterAST = typeParameters.typeParameters.nonSeparatorAt(i);
+                    this.reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameter, typeDeclSymbol, typeParameterAST, context);
+                }
             }
         }
 
@@ -1983,6 +1996,8 @@ module TypeScript {
                 for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
                     this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
+
+                this.checkTypeParameterListForSelfReferencesInConstraints(typeParameters.typeParameters, funcDeclSymbol, context);
             }
 
             // link parameters and resolve their annotations
@@ -3325,7 +3340,11 @@ module TypeScript {
             this.resolveAST(parameters, /*isContextuallyTyped:*/ false, context);
 
             this.resolveAST(block, false, context);
-            var enclosingDecl = this.getEnclosingDecl(funcDecl);
+                var enclosingDecl = this.getEnclosingDecl(funcDecl);
+
+            if (typeParameters) {
+                this.checkTypeParameterListForSelfReferencesInConstraints(typeParameters.typeParameters, funcDecl.getSymbol(), context);
+            }
 
             this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
             this.validateVariableDeclarationGroups(funcDecl, context);
@@ -6795,6 +6814,8 @@ module TypeScript {
                 for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
                     this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
+
+                this.checkTypeParameterListForSelfReferencesInConstraints(typeParameters.typeParameters, funcDeclSymbol, context);
             }
 
             this.resolveAnyFunctionExpressionParameters(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, isContextuallyTyped, context);
@@ -11407,6 +11428,55 @@ module TypeScript {
 
                 if (errorCode) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDecl, errorCode));
+                }
+            }
+        }
+
+        private isTypeParameterConstraintHasSelfReference(originalTypeParameter: PullTypeParameterSymbol): boolean {
+            var seen = BitVector.getBitVector(false);
+
+            function checkConstraints(typeParameter: PullTypeParameterSymbol): boolean {
+                if (seen.valueAt(typeParameter.pullSymbolID)) {
+                    return false;
+                }
+
+                seen.setValueAt(typeParameter.pullSymbolID, true);
+
+                var isSelfReferenced = false;
+                var constraint = typeParameter.getConstraint();
+
+                if (constraint && constraint.isTypeParameter()) {
+                    if (constraint === originalTypeParameter) {
+                        isSelfReferenced = true;
+                    }
+                    else {
+                        isSelfReferenced = checkConstraints(<PullTypeParameterSymbol>constraint);
+                    }
+                }
+
+                seen.setValueAt(typeParameter.pullSymbolID, false);
+                return isSelfReferenced;
+            }
+            var isSelfReferenced = checkConstraints(originalTypeParameter);
+            seen.release();
+
+            return isSelfReferenced;
+        }
+
+        private reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameterSymbol: PullSymbol, enclosingSymbol:PullSymbol, typeParameterAST: AST, context: PullTypeResolutionContext) {
+            var typeParameterName = typeParameterSymbol.getScopedName(enclosingSymbol);
+            context.postDiagnostic(
+                this.semanticInfoChain.diagnosticFromAST(typeParameterAST, DiagnosticCode.Type_parameter_0_cannot_be_a_direct_or_indirect_constraint_for_itself, [typeParameterName]));
+        }
+
+        private checkTypeParameterListForSelfReferencesInConstraints(typeParameters: ISeparatedSyntaxList2, enclosingSymbol: PullSymbol, context: PullTypeResolutionContext): void {
+            for (var i = 0; i < typeParameters.nonSeparatorCount(); i++) {
+                var typeParameterAST = typeParameters.nonSeparatorAt(i);
+                var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
+                var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
+
+                if (this.isTypeParameterConstraintHasSelfReference(typeParameterSymbol)) {
+                    this.reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameterSymbol, enclosingSymbol, typeParameterAST, context);
                 }
             }
         }
