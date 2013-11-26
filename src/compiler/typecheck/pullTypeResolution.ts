@@ -1459,27 +1459,6 @@ module TypeScript {
                 return typeDeclSymbol;
             }
 
-            if (!typeDeclSymbol.isResolved) {
-
-                if (!typeDeclIsClass) {
-                    // Resolve call, construct and index signatures
-                    var callSignatures = typeDeclSymbol.getCallSignatures();
-                    for (var i = 0; i < callSignatures.length; i++) {
-                        this.resolveDeclaredSymbol(callSignatures[i], context);
-                    }
-
-                    var constructSignatures = typeDeclSymbol.getConstructSignatures();
-                    for (var i = 0; i < constructSignatures.length; i++) {
-                        this.resolveDeclaredSymbol(constructSignatures[i], context);
-                    }
-
-                    var indexSignatures = typeDeclSymbol.getIndexSignatures();
-                    for (var i = 0; i < indexSignatures.length; i++) {
-                        this.resolveDeclaredSymbol(indexSignatures[i], context);
-                    }
-                }
-            }
-
             this.setSymbolForAST(name, typeDeclSymbol, context);
             this.setSymbolForAST(classOrInterface, typeDeclSymbol, context);
 
