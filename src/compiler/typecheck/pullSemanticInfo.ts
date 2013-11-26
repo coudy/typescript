@@ -75,7 +75,7 @@ module TypeScript {
 
         public getDocument(fileName: string): Document {
             var document = this.fileNameToDocument[fileName];
-            return document ? document : null;
+            return document || null;
         }
 
         public lineMap(fileName: string): LineMap {
@@ -561,7 +561,7 @@ module TypeScript {
 
         public getDiagnostics(fileName: string): Diagnostic[] {
             var diagnostics = this.fileNameToDiagnostics[fileName];
-            return diagnostics ? diagnostics : [];
+            return diagnostics || [];
         }
 
         public getBinder(): PullSymbolBinder {
