@@ -1230,7 +1230,7 @@ module TypeScript {
     "code": 2228,
     "category": DiagnosticCategory.Error
   },
-  "Type parameter '{0}'  cannot be a direct or indirect constraint for itself.": {
+  "Type parameter '{0}' cannot be a direct or indirect constraint for itself.": {
     "code": 2229,
     "category": DiagnosticCategory.Error
   },
