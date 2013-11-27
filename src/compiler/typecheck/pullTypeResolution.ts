@@ -9196,7 +9196,11 @@ module TypeScript {
             var members = type.getMembers();
             for (var i = 0; i < members.length; i++) {
                 var memberType = members[i].type;
-                if (memberType !== memberType.widenedType(this, ast, context)) {
+                // This null check for memberType is based on the assumption that a recursively
+                // referenced type, as in "var a = { f: a }" should be any. Thus in this example,
+                // the widened type should be { f: any }. It also assumes that when memberType
+                // is null, it is because of a recursive reference.
+                if (memberType && memberType !== memberType.widenedType(this, ast, context)) {
                     return true;
                 }
             }
