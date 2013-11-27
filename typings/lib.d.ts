@@ -1913,13 +1913,13 @@ interface String {
 }
 
 interface Number {
-    toLocaleString(locales: string[], options?: Intl.NumberFormatOptions): string;
-    toLocaleString(locale: string, options?: Intl.NumberFormatOptions): string;
+    toLocaleString(locales?: string[], options?: Intl.NumberFormatOptions): string;
+    toLocaleString(locale?: string, options?: Intl.NumberFormatOptions): string;
 }
 
 interface Date {
-    toLocaleString(locales: string[], options?: Intl.DateTimeFormatOptions): string;
-    toLocaleString(locale: string, options?: Intl.DateTimeFormatOptions): string;
+    toLocaleString(locales?: string[], options?: Intl.DateTimeFormatOptions): string;
+    toLocaleString(locale?: string, options?: Intl.DateTimeFormatOptions): string;
 }
 
 

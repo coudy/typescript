@@ -9871,16 +9871,6 @@ module TypeScript {
                 return true;
             }
 
-            if (this.cachedObjectInterfaceType() && target === this.cachedObjectInterfaceType()) {
-                return true;
-            }
-
-            if (this.cachedFunctionInterfaceType() &&
-                (sourceSubstitution.getCallSignatures().length || sourceSubstitution.getConstructSignatures().length) &&
-                target.hasBase(this.cachedFunctionInterfaceType())) {
-                return true;
-            }
-
             if (target.hasMembers() && !this.sourceMembersAreRelatableToTargetMembers(sourceSubstitution, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures)) {
                 return false;
             }
