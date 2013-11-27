@@ -29,3 +29,13 @@ var p;
 
 var p2;
 var p2;
+
+var M3;
+(function (M3) {
+    var Utils = (function () {
+        function Utils() {
+        }
+        return Utils;
+    })();
+    M3.Utils = Utils;
+})(M3 || (M3 = {}));
