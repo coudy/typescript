@@ -1,0 +1,69 @@
+subtypesOfTypeParameterWithRecursiveConstraints.ts(6,14): error TS2226: Type of conditional '{}' must be identical to 'T' or 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(7,14): error TS2226: Type of conditional '{}' must be identical to 'U' or 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(10,14): error TS2226: Type of conditional '{}' must be identical to 'T' or 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(11,14): error TS2226: Type of conditional '{}' must be identical to 'V' or 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(14,14): error TS2226: Type of conditional '{}' must be identical to 'V' or 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(15,14): error TS2226: Type of conditional '{}' must be identical to 'U' or 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(18,14): error TS2226: Type of conditional '{}' must be identical to 'T' or 'Foo<T>'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(19,14): error TS2226: Type of conditional '{}' must be identical to 'Foo<T>' or 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(26,14): error TS2226: Type of conditional '{}' must be identical to 'V' or 'Foo<T>'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(27,14): error TS2226: Type of conditional '{}' must be identical to 'Foo<T>' or 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(35,14): error TS2226: Type of conditional '{}' must be identical to 'U' or 'Foo<U>'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(36,14): error TS2226: Type of conditional '{}' must be identical to 'Foo<U>' or 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(39,14): error TS2226: Type of conditional '{}' must be identical to 'V' or 'Foo<U>'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(40,14): error TS2226: Type of conditional '{}' must be identical to 'Foo<U>' or 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(44,15): error TS2226: Type of conditional '{}' must be identical to 'T' or 'Foo<V>'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(45,15): error TS2226: Type of conditional '{}' must be identical to 'Foo<V>' or 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(48,15): error TS2226: Type of conditional '{}' must be identical to 'U' or 'Foo<V>'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(49,15): error TS2226: Type of conditional '{}' must be identical to 'Foo<V>' or 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(66,11): error TS2141: Class 'M1.D2<T, U, V>' cannot extend class 'M1.Base<T>':
+	Types of property 'foo' of types 'D2<T, U, V>' and 'Base<T>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(68,9): error TS2171: All named properties must be subtypes of string indexer type 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(71,11): error TS2141: Class 'M1.D3<T, U, V>' cannot extend class 'M1.Base<T>':
+	Types of property 'foo' of types 'D3<T, U, V>' and 'Base<T>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(73,9): error TS2171: All named properties must be subtypes of string indexer type 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(76,11): error TS2141: Class 'M1.D4<T, U, V>' cannot extend class 'M1.Base<U>':
+	Types of property 'foo' of types 'D4<T, U, V>' and 'Base<U>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(78,9): error TS2171: All named properties must be subtypes of string indexer type 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(86,11): error TS2141: Class 'M1.D6<T, U, V>' cannot extend class 'M1.Base<U>':
+	Types of property 'foo' of types 'D6<T, U, V>' and 'Base<U>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(88,9): error TS2171: All named properties must be subtypes of string indexer type 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(91,11): error TS2141: Class 'M1.D7<T, U, V>' cannot extend class 'M1.Base<V>':
+	Types of property 'foo' of types 'D7<T, U, V>' and 'Base<V>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(93,9): error TS2171: All named properties must be subtypes of string indexer type 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(96,11): error TS2141: Class 'M1.D8<T, U, V>' cannot extend class 'M1.Base<V>':
+	Types of property 'foo' of types 'D8<T, U, V>' and 'Base<V>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(98,9): error TS2171: All named properties must be subtypes of string indexer type 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(113,11): error TS2141: Class 'M2.D1<T, U, V>' cannot extend class 'M2.Base2<T>':
+	Types of property 'foo' of types 'D1<T, U, V>' and 'Base2<T>' are incompatible:
+		Types of property 'foo' of types 'Foo<U>' and 'Foo<T>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(118,11): error TS2141: Class 'M2.D2<T, U, V>' cannot extend class 'M2.Base2<T>':
+	Types of static property 'prototype' of class 'D2<T, U, V>' and class 'Base2<T>' are incompatible:
+		Types of property 'foo' of types 'D2<any, any, any>' and 'Base2<any>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(120,9): error TS2171: All named properties must be subtypes of string indexer type 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(123,11): error TS2141: Class 'M2.D3<T, U, V>' cannot extend class 'M2.Base2<T>':
+	Types of property 'foo' of types 'D3<T, U, V>' and 'Base2<T>' are incompatible:
+		Types of property 'foo' of types 'Foo<V>' and 'Foo<T>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(125,9): error TS2171: All named properties must be subtypes of string indexer type 'T'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(128,11): error TS2141: Class 'M2.D4<T, U, V>' cannot extend class 'M2.Base2<U>':
+	Types of static property 'prototype' of class 'D4<T, U, V>' and class 'Base2<U>' are incompatible:
+		Types of property 'foo' of types 'D4<any, any, any>' and 'Base2<any>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(130,9): error TS2171: All named properties must be subtypes of string indexer type 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(133,11): error TS2141: Class 'M2.D5<T, U, V>' cannot extend class 'M2.Base2<U>':
+	Types of property 'foo' of types 'D5<T, U, V>' and 'Base2<U>' are incompatible:
+		Types of property 'foo' of types 'Foo<T>' and 'Foo<U>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(138,11): error TS2141: Class 'M2.D6<T, U, V>' cannot extend class 'M2.Base2<U>':
+	Types of property 'foo' of types 'D6<T, U, V>' and 'Base2<U>' are incompatible:
+		Types of property 'foo' of types 'Foo<V>' and 'Foo<U>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(140,9): error TS2171: All named properties must be subtypes of string indexer type 'U'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(143,11): error TS2141: Class 'M2.D7<T, U, V>' cannot extend class 'M2.Base2<V>':
+	Types of property 'foo' of types 'D7<T, U, V>' and 'Base2<V>' are incompatible:
+		Types of property 'foo' of types 'Foo<U>' and 'Foo<V>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(145,9): error TS2171: All named properties must be subtypes of string indexer type 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(148,11): error TS2141: Class 'M2.D8<T, U, V>' cannot extend class 'M2.Base2<V>':
+	Types of property 'foo' of types 'D8<T, U, V>' and 'Base2<V>' are incompatible:
+		Types of property 'foo' of types 'Foo<T>' and 'Foo<V>' are incompatible.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(150,9): error TS2171: All named properties must be subtypes of string indexer type 'V'.
+subtypesOfTypeParameterWithRecursiveConstraints.ts(153,11): error TS2141: Class 'M2.D9<T, U, V>' cannot extend class 'M2.Base2<V>':
+	Types of static property 'prototype' of class 'D9<T, U, V>' and class 'Base2<V>' are incompatible:
+		Types of property 'foo' of types 'D9<any, any, any>' and 'Base2<any>' are incompatible.
