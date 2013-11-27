@@ -6477,21 +6477,14 @@ module TypeScript {
             return symbol;
         }
 
-        private isInImportDeclaration(ast: AST): boolean {
-            var parent = ast.parent;
-            while (parent) {
-                // SPEC: November 18, 2013 section 10.3 -
-                // Don't walk up any other qualified names because the spec says only the last entity name can be a non-module
-                // i.e. Only Module.Module.Module.var and not Module.Type.var or Module.var.member
-                if (parent.kind() === SyntaxKind.Last) {
-                    parent = parent.parent;
-                }
-                else {
-                    break;
-                }
-            }
-
-            return !!parent && parent.kind() === SyntaxKind.ImportDeclaration;
+        private isLastNameOfModuleNameModuleReference(ast: AST): boolean {
+            // SPEC: November 18, 2013 section 10.3 -
+            // Don't walk up any other qualified names because the spec says only the last entity name can be a non-module
+            // i.e. Only Module.Module.Module.var and not Module.Type.var or Module.var.member
+            return ast.kind() === SyntaxKind.IdentifierName &&
+                ast.parent && ast.parent.kind() === SyntaxKind.QualifiedName &&
+                (<QualifiedName>ast.parent).right === ast &&
+                ast.parent.parent && ast.parent.parent.kind() === SyntaxKind.ModuleNameModuleReference;
         }
 
         private computeQualifiedName(dottedNameAST: QualifiedName, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -6533,8 +6526,8 @@ module TypeScript {
             //  - An EntityName consisting of more than one identifier is resolved as 
             //     a ModuleName followed by an identifier that names one or more exported entities in the given module.
             //     The resulting local alias has all the meanings and classifications of the referenced entity or entities. 
-            //     (As many as three distinct meanings are possible for an entity name—namespace, type, and member.)
-            if (!childTypeSymbol && !isNameOfModule && this.isInImportDeclaration(dottedNameAST))
+            //     (As many as three distinct meanings are possible for an entity name — namespace, type, and member.)
+            if (!childTypeSymbol && !isNameOfModule && this.isLastNameOfModuleNameModuleReference(dottedNameAST.right))
             {
                 childTypeSymbol = <PullTypeSymbol>this.getMemberSymbol(rhsName, PullElementKind.SomeValue, lhsType);
             }
@@ -9909,7 +9902,7 @@ module TypeScript {
                     if (!sourceProp) {
                         // Now, the property was not found on Object, but the type in question is a function, look
                         // for it on function
-                        if (this.cachedFunctionInterfaceType() && (targetPropType.getCallSignatures().length || targetPropType.getConstructSignatures().length)) {
+                        if (this.cachedFunctionInterfaceType() && (source.getCallSignatures().length || source.getConstructSignatures().length)) {
                             sourceProp = this.getMemberSymbol(targetProp.name, PullElementKind.SomeValue, this.cachedFunctionInterfaceType());
                         }
 
