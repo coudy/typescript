@@ -347,11 +347,11 @@ module TypeScript {
 
         public getIsSpecialized() { return !this.isInstanceReferenceType; }
 
-        private _generativeTypeClassification: GenerativeTypeClassification = GenerativeTypeClassification.Unknown;
+        private _generativeTypeClassification: GenerativeTypeClassification[] = [];
 
         public getGenerativeTypeClassification(enclosingType: PullTypeSymbol): GenerativeTypeClassification {
-
-            if (this._generativeTypeClassification === GenerativeTypeClassification.Unknown) {
+            var generativeTypeClassification = this._generativeTypeClassification[enclosingType.pullSymbolID] || GenerativeTypeClassification.Unknown;
+            if (generativeTypeClassification === GenerativeTypeClassification.Unknown) {
                 // With respect to the enclosing type, is this type reference open, closed or 
                 // infinitely expanding?
 
@@ -373,13 +373,13 @@ module TypeScript {
 
                     // It's a wrap of a wrap
                     if (wrapsSomeTypeParameters && this.wrapsSomeNestedTypeIntoInfiniteExpansion(enclosingType)) {
-                        this._generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
+                        generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
                     }
                     else if (wrapsSomeTypeParameters) {
-                        this._generativeTypeClassification = GenerativeTypeClassification.Open;
+                        generativeTypeClassification = GenerativeTypeClassification.Open;
                     }
                     else {
-                        this._generativeTypeClassification = GenerativeTypeClassification.Closed;
+                        generativeTypeClassification = GenerativeTypeClassification.Closed;
                     }
                 }
                 else {
@@ -396,24 +396,23 @@ module TypeScript {
                     }
 
                     // if none of the type parameters are wrapped, the type reference is closed
-                    if (i === typeParameters.length) {
-                        this._generativeTypeClassification = GenerativeTypeClassification.Closed;
+                    if (i == typeParameters.length) {
+                        generativeTypeClassification = GenerativeTypeClassification.Closed;
                     }
 
                     // If the type reference is not closed, it's either open or infinitely expanding
-                    if (this._generativeTypeClassification === GenerativeTypeClassification.Unknown) {
-
+                    if (generativeTypeClassification === GenerativeTypeClassification.Unknown) {
                         // A type reference that references any of this type's type parameters in a type
                         // argument position is 'open'
 
                         var i = 0;
 
-                        while ((this._generativeTypeClassification === GenerativeTypeClassification.Unknown) &&
+                        while ((generativeTypeClassification == GenerativeTypeClassification.Unknown) &&
                             (i < typeReferenceTypeArguments.length)) {
 
                                 for (var j = 0; j < typeParameters.length; j++) {
-                                    if (typeParameters[j] === typeReferenceTypeArguments[i]) {
-                                        this._generativeTypeClassification = GenerativeTypeClassification.Open;
+                                    if (typeParameters[j] == typeReferenceTypeArguments[i]) {
+                                        generativeTypeClassification = GenerativeTypeClassification.Open;
                                         break;
                                     }
                                 }
@@ -423,14 +422,16 @@ module TypeScript {
 
                         // if it's not open, then it's infinitely expanding (given that the 'wrap' check above
                         // returned true
-                        if (this._generativeTypeClassification !== GenerativeTypeClassification.Open) {
-                            this._generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
+                        if (generativeTypeClassification !== GenerativeTypeClassification.Open) {
+                            generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
                         }
                     }
                 }
+
+                this._generativeTypeClassification[enclosingType.pullSymbolID] = generativeTypeClassification;
             }
 
-            return this._generativeTypeClassification;
+            return generativeTypeClassification;
         }
 
         // shims
