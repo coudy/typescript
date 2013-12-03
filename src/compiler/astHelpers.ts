@@ -224,7 +224,7 @@ module TypeScript {
         return isNameOfSomeDeclaration(ast) || isDeclarationAST(ast);
     }
 
-    export function getEnclosingParameter(ast: AST): Parameter {
+    export function getEnclosingParameterForInitializer(ast: AST): Parameter {
         var current = ast;
         while (current) {
             switch (current.kind()) {

@@ -5968,22 +5968,18 @@ module TypeScript {
             return null;
         }
 
-        private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
+        private checkNameAsPartOfInitializerExpressionForInstanceMemberVariable(nameAST: Identifier): Diagnostic {
             var id = nameAST.valueText();
             if (id.length === 0) {
-                return this.semanticInfoChain.anyTypeSymbol;
+                return null;
             }
-            
-            var nameSymbol: PullSymbol = null;
-            var enclosingDecl = this.getEnclosingDeclForAST(nameAST);//, /*skipNonScopeDecls:*/ false);
 
             // SPEC: Nov 18, 2013
             // Initializer expressions for instance member variables are evaluated in the scope of the class constructor body 
             // but are not permitted to reference parameters or local variables of the constructor.
             // This effectively means that entities from outer scopes by the same name as a constructor parameter or local variable are inaccessible 
             // in initializer expressions for instance member variables.
-            var diagnosticForInitializer: Diagnostic = null;
-            var memberVariableDeclarationAST = getEnclosingMemberVariableDeclaration (nameAST);
+            var memberVariableDeclarationAST = getEnclosingMemberVariableDeclaration(nameAST);
             if (memberVariableDeclarationAST) {
 
                 var memberVariableDecl = this.semanticInfoChain.getDeclForAST(memberVariableDeclarationAST);
@@ -5999,13 +5995,34 @@ module TypeScript {
                             // delay error reporting:
                             // - if this name won't be found in other scopes then we'll print normal 'Could not find symbol' error
                             // - otherwise we'll report more specific error about shadowing value from the outer scope
-                            diagnosticForInitializer = this.semanticInfoChain.diagnosticFromAST(nameAST,
+                            return this.semanticInfoChain.diagnosticFromAST(nameAST,
                                 DiagnosticCode.Initializer_of_instance_member_variable_0_cannot_reference_identifier_1_declared_in_the_constructor,
                                 [childDeclSymbol.getScopedName(constructorDecl.getSymbol()), nameAST.text()])
                         }
                     }
                 }
             }
+            return null;
+        }
+
+        private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
+            var id = nameAST.valueText();
+            if (id.length === 0) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+            
+            var nameSymbol: PullSymbol = null;
+            var enclosingDecl = this.getEnclosingDeclForAST(nameAST);//, /*skipNonScopeDecls:*/ false);
+
+            // if enclosing decl is property check if it has valueDecl that corresponds to parameter
+            if (hasFlag(enclosingDecl.flags, PullElementFlags.PropertyParameter)) {
+                var valueDecl = enclosingDecl.getValueDecl();
+                if (valueDecl && hasFlag(valueDecl.kind, PullElementKind.Parameter)) {
+                    enclosingDecl = valueDecl;
+                }
+            }
+
+            var diagnosticForInitializer = this.checkNameAsPartOfInitializerExpressionForInstanceMemberVariable(nameAST);
 
             // First check if this is the name child of a declaration. If it is, no need to search for a name in scope since this is not a reference.
             if (isDeclarationASTOrDeclarationNameAST(nameAST)) {
@@ -6102,7 +6119,7 @@ module TypeScript {
                             [(<Parameter>parameterList.parameters.nonSeparatorAt(currentParameterIndex)).identifier.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
-                    else if (matchingParameter === getEnclosingParameter(nameAST)) {
+                    else if (matchingParameter === getEnclosingParameterForInitializer(nameAST)) {
                         // we've found matching parameter but it references itself from the initializer
                         // per spec Nov 18: 
                         // Initializer expressions ..and are only permitted to access parameters that are declared to the left of the parameter they initialize
