@@ -224,13 +224,34 @@ module TypeScript {
         return isNameOfSomeDeclaration(ast) || isDeclarationAST(ast);
     }
 
-    export function getEnclosingMemberVariableDeclaration (ast: AST) {
+    export function getEnclosingParameter(ast: AST): Parameter {
+        var current = ast;
+        while (current) {
+            switch (current.kind()) {
+                case SyntaxKind.EqualsValueClause:
+                    if (current.parent && current.parent.kind() === SyntaxKind.Parameter) {
+                        return <Parameter>current.parent;
+                    }
+                    break;
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.ModuleDeclaration:
+                    // exit early
+                    return null;
+            }
+            
+            current = current.parent;
+        }
+        return null;
+    }
+
+    export function getEnclosingMemberVariableDeclaration (ast: AST): MemberVariableDeclaration {
         var current = ast;
 
         while (current) {
             switch (current.kind()) {
                 case SyntaxKind.MemberVariableDeclaration:
-                    return current;
+                    return <MemberVariableDeclaration>current;
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.ModuleDeclaration:

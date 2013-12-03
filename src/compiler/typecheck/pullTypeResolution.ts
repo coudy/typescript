@@ -5973,7 +5973,7 @@ module TypeScript {
             if (id.length === 0) {
                 return this.semanticInfoChain.anyTypeSymbol;
             }
-
+            
             var nameSymbol: PullSymbol = null;
             var enclosingDecl = this.getEnclosingDeclForAST(nameAST);//, /*skipNonScopeDecls:*/ false);
 
@@ -6084,22 +6084,33 @@ module TypeScript {
                 // Short circuit if we are located in the function body, since all child decls of the function are accessible there
                 if (currentParameterIndex >= 0) {
                     // Search the enclosing function AST for a parameter with the right name, but stop once we hit our current context
-                    var foundMatchingParameter = false;
+                    var matchingParameter: Parameter;
                     if (parameterList) {
                         for (var i = 0; i <= currentParameterIndex; i++) {
                             var candidateParameter = <Parameter>parameterList.parameters.nonSeparatorAt(i);
                             if (candidateParameter && candidateParameter.identifier.valueText() === id) {
-                                foundMatchingParameter = true;
+                                matchingParameter = candidateParameter;
+                                break;
                             }
                         }
                     }
 
-                    if (!foundMatchingParameter) {
+                    if (!matchingParameter) {
                         // We didn't find a matching parameter to the left, so error
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
                             DiagnosticCode.Initializer_of_parameter_0_cannot_reference_identifier_1_declared_after_it,
                             [(<Parameter>parameterList.parameters.nonSeparatorAt(currentParameterIndex)).identifier.text(), nameAST.text()]));
                         return this.getNewErrorTypeSymbol(id);
+                    }
+                    else if (matchingParameter === getEnclosingParameter(nameAST)) {
+                        // we've found matching parameter but it references itself from the initializer
+                        // per spec Nov 18: 
+                        // Initializer expressions ..and are only permitted to access parameters that are declared to the left of the parameter they initialize
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
+                            DiagnosticCode.Parameter_0_cannot_be_referenced_in_its_initializer,
+                            [(<Parameter>parameterList.parameters.nonSeparatorAt(currentParameterIndex)).identifier.text()]));
+                        return this.getNewErrorTypeSymbol(id);
+
                     }
                 }
             }
