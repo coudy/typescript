@@ -7337,8 +7337,9 @@ module TypeScript {
 
         public resolveObjectLiteralExpression(expressionAST: ObjectLiteralExpression, isContextuallyTyped: boolean, context: PullTypeResolutionContext, additionalResults?: PullAdditionalObjectLiteralResolutionData): PullSymbol {
             var symbol = this.getSymbolForAST(expressionAST, context);
+            var hasResolvedSymbol = symbol && symbol.isResolved;
 
-            if (!symbol || additionalResults || this.canTypeCheckAST(expressionAST, context)) {
+            if (!hasResolvedSymbol || additionalResults || this.canTypeCheckAST(expressionAST, context)) {
                 if (this.canTypeCheckAST(expressionAST, context)) {
                     this.setTypeChecked(expressionAST, context);
                 }
@@ -7474,7 +7475,7 @@ module TypeScript {
                 }
 
                 var isAccessor = propertyAssignment.kind() === SyntaxKind.SetAccessor || propertyAssignment.kind() === SyntaxKind.GetAccessor;
-                if (!isUsingExistingSymbol) {
+                if (!memberSymbol.isResolved) {
                     if (isAccessor) {
                         this.setSymbolForAST(id, memberSymbolType, pullTypeContext);
                     }
@@ -9196,11 +9197,7 @@ module TypeScript {
             var members = type.getMembers();
             for (var i = 0; i < members.length; i++) {
                 var memberType = members[i].type;
-                // This null check for memberType is based on the assumption that a recursively
-                // referenced type, as in "var a = { f: a }" should be any. Thus in this example,
-                // the widened type should be { f: any }. It also assumes that when memberType
-                // is null, it is because of a recursive reference.
-                if (memberType && memberType !== memberType.widenedType(this, ast, context)) {
+                if (memberType !== memberType.widenedType(this, ast, context)) {
                     return true;
                 }
             }
