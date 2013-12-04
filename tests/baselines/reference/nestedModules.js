@@ -1,9 +1,9 @@
 var A;
 (function (A) {
-    var B;
     (function (B) {
         var Point = { x: 0, y: 0 };
-    })(B || (B = {}));
+    })(A.B || (A.B = {}));
+    var B = A.B;
 })(A || (A = {}));
 
 var M2;

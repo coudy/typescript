@@ -1,3 +1,5 @@
+// expect no errors here
+
 module A {
 
     export var x = 'hello world'
