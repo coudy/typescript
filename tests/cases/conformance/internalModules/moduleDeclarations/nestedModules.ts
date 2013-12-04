@@ -6,7 +6,7 @@ module A.B.C {
 }
 
 module A {
-    module B {
+    export module B {
         var Point: C.Point = { x: 0, y: 0 }; // bug 832088: could not find module 'C'
     }
 }
