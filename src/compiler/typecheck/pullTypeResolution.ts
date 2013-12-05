@@ -6221,13 +6221,19 @@ module TypeScript {
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
+                var lhsAlias = <PullTypeAliasSymbol>lhs;
                 if (!this.inTypeQuery(expression)) {
-                    (<PullTypeAliasSymbol>lhs).setIsUsedAsValue(true);
+                    lhsAlias.setIsUsedAsValue(true);
                 }
-                lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
+                lhsType = lhsAlias.getExportAssignedTypeSymbol();
             }
 
-            // this can happen if a var is set to a type alias and the var is used in a dotted name..
+            // this can happen if a var is set to a type alias and the var is used in a dotted name.
+            // i.e. 
+            //    import myAlias = require('someModule');
+            //    var myAliasVar = myAlias
+            //    myAliasVar.someModulesMember();
+            // without this we would not be able to resolve someModules Members 
             if (lhsType.isAlias()) {
                 lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
             }
