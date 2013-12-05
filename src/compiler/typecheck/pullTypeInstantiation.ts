@@ -347,82 +347,46 @@ module TypeScript {
         private _generativeTypeClassification: GenerativeTypeClassification[] = [];
 
         public getGenerativeTypeClassification(enclosingType: PullTypeSymbol): GenerativeTypeClassification {
+            // Generative type classification is available only on named type symbols
+            if (!this.isNamedTypeSymbol()) {
+                return GenerativeTypeClassification.Unknown;
+            }
+
             var generativeTypeClassification = this._generativeTypeClassification[enclosingType.pullSymbolID] || GenerativeTypeClassification.Unknown;
             if (generativeTypeClassification === GenerativeTypeClassification.Unknown) {
                 // With respect to the enclosing type, is this type reference open, closed or 
                 // infinitely expanding?
 
+                // Create a type parameter map for figuring out if the typeParameter wraps
                 var typeParameters = enclosingType.getTypeParameters();
-                var typeReferenceTypeArguments = (<PullTypeReferenceSymbol>this.getRootSymbol()).getTypeArguments();
-                var referenceTypeArgument: PullTypeSymbol = null;
+                var enclosingTypeParameterMap: PullTypeSymbol[] = [];
+                for (var i = 0; i < typeParameters.length; i++) {
+                    enclosingTypeParameterMap[typeParameters[i].pullSymbolID] = typeParameters[i];
+                }
 
-                // may have an object literal or a function signature
-                if (!typeReferenceTypeArguments) {
-                    // create a new type map with just the type parameter
-                    var typeParametersMap: PullTypeSymbol[] = [];
-
-                    for (var i = 0; i < typeParameters.length; i++) {
-                        typeParametersMap[typeParameters[i].pullSymbolID] = typeParameters[i];
-                    }
-
-                    var rootThis = PullHelpers.getRootType(this);
-                    var wrapsSomeTypeParameters = rootThis.wrapsSomeTypeParameter(typeParametersMap);
-
-                    // It's a wrap of a wrap
-                    if (wrapsSomeTypeParameters && this.wrapsSomeNestedTypeIntoInfiniteExpansion(enclosingType)) {
-                        generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
-                    }
-                    else if (wrapsSomeTypeParameters) {
+                var typeArguments = this.getTypeArguments();
+                for (var i = 0; i < typeArguments.length; i++) {
+                    // Spec section 3.8.7 Recursive Types:
+                    // - A type reference without type arguments or with type arguments that do not reference 
+                    //      any of G’s type parameters is classified as a closed type reference.
+                    // - A type reference that references any of G’s type parameters in a type argument is 
+                    //      classified as an open type reference.
+                    if (typeArguments[i].wrapsSomeTypeParameter(enclosingTypeParameterMap, /*skipTypeArgumentCheck*/ true)) {
+                        // This type wraps type parameter of the enclosing type so it is alteast open
                         generativeTypeClassification = GenerativeTypeClassification.Open;
+                        break;
                     }
-                    else {
-                        generativeTypeClassification = GenerativeTypeClassification.Closed;
+                }
+
+                // If the type reference is determined to be atleast open, determine if it is infinitely expanding
+                if (generativeTypeClassification === GenerativeTypeClassification.Open) {
+                    if (this.wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReference(enclosingType)) {
+                        generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
                     }
                 }
                 else {
-                    var i = 0;
-
-                    while (i < typeReferenceTypeArguments.length) {
-                        referenceTypeArgument = <PullTypeSymbol>typeReferenceTypeArguments[i].getRootSymbol();
-
-                        if (referenceTypeArgument.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
-                            break;
-                        }
-
-                        i++;
-                    }
-
-                    // if none of the type parameters are wrapped, the type reference is closed
-                    if (i == typeParameters.length) {
-                        generativeTypeClassification = GenerativeTypeClassification.Closed;
-                    }
-
-                    // If the type reference is not closed, it's either open or infinitely expanding
-                    if (generativeTypeClassification === GenerativeTypeClassification.Unknown) {
-                        // A type reference that references any of this type's type parameters in a type
-                        // argument position is 'open'
-
-                        var i = 0;
-
-                        while ((generativeTypeClassification == GenerativeTypeClassification.Unknown) &&
-                            (i < typeReferenceTypeArguments.length)) {
-
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    if (typeParameters[j] == typeReferenceTypeArguments[i]) {
-                                        generativeTypeClassification = GenerativeTypeClassification.Open;
-                                        break;
-                                    }
-                                }
-
-                                i++;
-                        }
-
-                        // if it's not open, then it's infinitely expanding (given that the 'wrap' check above
-                        // returned true
-                        if (generativeTypeClassification !== GenerativeTypeClassification.Open) {
-                            generativeTypeClassification = GenerativeTypeClassification.InfinitelyExpanding;
-                        }
-                    }
+                    // This type doesnot wrap any type parameter from the enclosing type so it is closed
+                    generativeTypeClassification = GenerativeTypeClassification.Closed;
                 }
 
                 this._generativeTypeClassification[enclosingType.pullSymbolID] = generativeTypeClassification;

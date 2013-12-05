@@ -1090,6 +1090,7 @@ module TypeScript {
 
         public hasBeenChecked = false;
         public inWrapCheck = false;
+        public inWrapInfiniteExpandingReferenceCheck = false;
 
         constructor(kind: PullElementKind) {
             super("", kind);
@@ -1366,41 +1367,41 @@ module TypeScript {
             return wrapsSomeTypeParameter;
         }
 
-        public wrapsSomeNestedTypeIntoInfiniteExpansion(typeBeingWrapped: PullTypeSymbol, isCheckingTypeArgumentList: boolean, knownWrapMap: IBitMatrix): boolean {
-           if (this.inWrapCheck) {
-                return isCheckingTypeArgumentList;
+        public _wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReference(enclosingType: PullTypeSymbol, knownWrapMap: IBitMatrix) {
+            var wrapsIntoInfinitelyExpandingTypeReference = knownWrapMap.valueAt(this.pullSymbolID, enclosingType.pullSymbolID);
+            if (wrapsIntoInfinitelyExpandingTypeReference != undefined) {
+                return wrapsIntoInfinitelyExpandingTypeReference;
             }
 
-            if (knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID) !== undefined) {
-                return knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID);
+            if (this.inWrapInfiniteExpandingReferenceCheck) {
+                return false;
             }
 
-            knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, isCheckingTypeArgumentList);
+            this.inWrapInfiniteExpandingReferenceCheck = true;
+            wrapsIntoInfinitelyExpandingTypeReference =
+            this._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceWorker(enclosingType, knownWrapMap);
+            knownWrapMap.setValueAt(this.pullSymbolID, enclosingType.pullSymbolID, wrapsIntoInfinitelyExpandingTypeReference);
+            this.inWrapInfiniteExpandingReferenceCheck = false;
 
-            this.inWrapCheck = true;
+            return wrapsIntoInfinitelyExpandingTypeReference;
+        }
 
-            var wrapsSomeWrappedTypeParameter = false;
-
-            if (this.returnType && this.returnType._wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap)) {
-                wrapsSomeWrappedTypeParameter = true;
+        public _wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceWorker(enclosingType: PullTypeSymbol, knownWrapMap: IBitMatrix) {
+            if (this.returnType &&
+                this.returnType._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceRecurse(enclosingType, knownWrapMap)) {
+                return true;
             }
 
-            if (!wrapsSomeWrappedTypeParameter) {
-                var parameters = this.parameters;
+            var parameters = this.parameters;
 
-                for (var i = 0; i < parameters.length; i++) {
-                    if (parameters[i].type && parameters[i].type._wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap)) {
-                        wrapsSomeWrappedTypeParameter = true;
-                        break;
-                    }
+            for (var i = 0; i < parameters.length; i++) {
+                if (parameters[i].type &&
+                    parameters[i].type._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceRecurse(enclosingType, knownWrapMap)) {
+                    return true;
                 }
             }
 
-            knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, wrapsSomeWrappedTypeParameter);
-
-            this.inWrapCheck = false;
-
-            return wrapsSomeWrappedTypeParameter;
+            return false;
         }
     }
 
@@ -1462,6 +1463,7 @@ module TypeScript {
 
         public inSymbolPrivacyCheck = false;
         public inWrapCheck = false;
+        public inWrapInfiniteExpandingReferenceCheck = false;
 
         public typeReference: PullTypeReferenceSymbol = null;
 
@@ -2577,11 +2579,9 @@ module TypeScript {
         // The argument map prevents us from accidentally flagging method type parameters, or (if we
         // ever decide to go that route) allows for partial specialization
         public wrapsSomeTypeParameter(typeParameterArgumentMap: CandidateInferenceInfo[]): boolean;
-        public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSymbol[]): boolean;
-        public wrapsSomeTypeParameter(typeParameterArgumentMap: any[]): boolean {
+        public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSymbol[], skipTypeArgumentCheck?: boolean): boolean;
+        public wrapsSomeTypeParameter(typeParameterArgumentMap: any[], skipTypeArgumentCheck?: boolean): boolean {
             var type = this;
-
-            var wrapsSomeTypeParameter = false;
 
             // if we encounter a type paramter, we're obviously wrapping
             if (type.isTypeParameter()) {
@@ -2599,12 +2599,13 @@ module TypeScript {
             }
 
             if (type.inWrapCheck) {
-                return wrapsSomeTypeParameter;
+                return false;
             }
 
             type.inWrapCheck = true;
 
-            if (!wrapsSomeTypeParameter) {
+            var wrapsSomeTypeParameter = false;
+            if (!skipTypeArgumentCheck) {
                 var typeArguments = type.getTypeArguments();
 
                 // If there are no type arguments, we could be instantiating the 'root' type
@@ -2625,7 +2626,7 @@ module TypeScript {
             }
 
             // if it's not a named type, we'll need to introspect its member list
-            if (!(type.kind & PullElementKind.SomeInstantiatableType) || !type.name) {
+            if (skipTypeArgumentCheck || !(type.kind & PullElementKind.SomeInstantiatableType) || !type.name) {
                 if (!wrapsSomeTypeParameter) {
                     // otherwise, walk the member list and signatures, checking for wraps
                     var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
@@ -2683,175 +2684,114 @@ module TypeScript {
         //      p2: C<T>; <- no
         //      p3: C<C<T>> <- yes
         //  }
-        public wrapsSomeNestedTypeIntoInfiniteExpansion(typeBeingWrapped: PullTypeSymbol) {
-            if (!this.isArrayNamedTypeReference() && this.isNamedTypeSymbol()) {
-                var knownWrapMap = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
-                var result = this._wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped, /*isCheckingTypeArgumentList:*/ false, knownWrapMap);
-                knownWrapMap.release();
-
-                return result;
-            }
-
-            return false;
+        public wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReference(enclosingType: PullTypeSymbol) {
+            // Only named types can form infinite expansion
+            Debug.assert(this.isNamedTypeSymbol());
+            Debug.assert(PullHelpers.getRootType(enclosingType) == enclosingType); // Enclosing type passed has to be the root symbol
+            var knownWrapMap = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
+            var wrapsIntoInfinitelyExpandingTypeReference =                this._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceRecurse(enclosingType, knownWrapMap);            knownWrapMap.release();            return wrapsIntoInfinitelyExpandingTypeReference;
         }
 
-        private isTypeEquivalentToRootSymbol() {
-            if (this.isTypeReference()) {
-                if (this.getIsSpecialized()) {
-                    // If all the type parameters are typeArguments, the type is equivalent to its declaration - as in the members will be of same type
-                    var typeArguments = this.getTypeArguments();
-                    var rootTypeArguments = (<PullTypeSymbol>this.getRootSymbol()).getTypeArguments();
-                    if (typeArguments) {
-                        for (var i = 0; i < typeArguments.length; i++) {
-                            if (!typeArguments[i].isTypeParameter() && // The typeArgument is not type parameter
-                                !(rootTypeArguments && rootTypeArguments[i] === typeArguments[i].getRootSymbol())) { // Root symbol of the type argument is not same as type argument of rootSymbol
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-
-                    return false;
-                }
-                else {
-                    // Just a reference to the declaration
-                    return true;
-                }
+        public _wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceRecurse(enclosingType: PullTypeSymbol, knownWrapMap: IBitMatrix): boolean {
+            var wrapsIntoInfinitelyExpandingTypeReference = knownWrapMap.valueAt(this.pullSymbolID, enclosingType.pullSymbolID);
+            if (wrapsIntoInfinitelyExpandingTypeReference != undefined) {
+                return wrapsIntoInfinitelyExpandingTypeReference;
             }
 
-            return false;
-        }
-
-        private isTypeBeingWrapped(typeBeingWrapped: PullTypeSymbol) {
-            // If this type is already in wrap check or is this is the typeBeingWrapped - it is the wrapping of the type
-            if (this.inWrapCheck || this === typeBeingWrapped) {
-                return true;
-            }
-
-            // If typebeingWrapped is equivalent to the rootSymbol, check with the root
-            if (typeBeingWrapped.isTypeEquivalentToRootSymbol()) {
-                return this.isTypeBeingWrapped(<PullTypeSymbol>typeBeingWrapped.getRootSymbol());
-            }
-
-            return false;
-        }
-
-        private anyRootTypeBeingWrapped(typeBeingWrapped: PullTypeSymbol) {
-            var prevRootType = this;
-            var rootType = <PullTypeSymbol>this.getRootSymbol();
-            while (rootType !== prevRootType) {
-                if (rootType.isTypeBeingWrapped(typeBeingWrapped)) {
-                    // members are already being checked - do not iterate
-                    return true;
-                }
-
-                prevRootType = rootType;
-                rootType = <PullTypeSymbol>rootType.getRootSymbol();
-            }
-
-            return false;
-        }
-
-        public _wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped: PullTypeSymbol, isCheckingTypeArgumentList: boolean, knownWrapMap: IBitMatrix): boolean {
-            if (this.isArrayNamedTypeReference()) {
-                return this.getElementType()._wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap);
-            }
-
-            // If this type is being wrapped, we have nestedWrapping if we are checking type argument
-            if (this.isTypeBeingWrapped(typeBeingWrapped)) {
-                return isCheckingTypeArgumentList;
-            }
-
-            if (knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID) !== undefined) {
-                return knownWrapMap.valueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID);
-            }
-
-            // if we encounter a type parameter or primitive, nothing is being wrapped
-            if (this.isPrimitive() || this.isTypeParameter()) {
+            if (this.inWrapInfiniteExpandingReferenceCheck) {
                 return false;
             }
 
-            this.inWrapCheck = true;
+            this.inWrapInfiniteExpandingReferenceCheck = true;
+            wrapsIntoInfinitelyExpandingTypeReference =
+                this._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceWorker(enclosingType, knownWrapMap);
+            knownWrapMap.setValueAt(this.pullSymbolID, enclosingType.pullSymbolID, wrapsIntoInfinitelyExpandingTypeReference);
+            this.inWrapInfiniteExpandingReferenceCheck = false;
 
-            var wrapsSomeWrappedTypeParameter = false;
-
-            knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, false);
-
-            wrapsSomeWrappedTypeParameter = this._wrapsSomeNestedTypeIntoInfiniteExpansionWorker(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap);
-
-            knownWrapMap.setValueAt(this.pullSymbolID, typeBeingWrapped.pullSymbolID, wrapsSomeWrappedTypeParameter);
-
-            this.inWrapCheck = false;
-
-            return wrapsSomeWrappedTypeParameter;
+            return wrapsIntoInfinitelyExpandingTypeReference;
         }
 
-        private _wrapsSomeNestedTypeIntoInfiniteExpansionWorker(typeBeingWrapped: PullTypeSymbol, isCheckingTypeArgumentList: boolean, knownWrapMap: IBitMatrix): boolean {
-            // if it's a generic type, test to see if we're wrapping
+        private _wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceWorker(enclosingType: PullTypeSymbol, knownWrapMap: IBitMatrix) {
+
+            var thisRootType = PullHelpers.getRootType(this);
+
+
+            if (thisRootType != enclosingType) {
+                var thisIsNamedType = this.isNamedTypeSymbol();
+
+                if (thisIsNamedType) {
+                    if (thisRootType.inWrapInfiniteExpandingReferenceCheck) {
+                        // No need to iterating members of the type again if we are checking members of some 
+                        // version of this type
+                        return false;
+                    }
+
+                    thisRootType.inWrapInfiniteExpandingReferenceCheck = true;
+                }
+
+                var wrapsIntoInfinitelyExpandingTypeReference = this._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceStructure(
+                    enclosingType, knownWrapMap);
+
+                if (thisIsNamedType) {
+                    thisRootType.inWrapInfiniteExpandingReferenceCheck = false;
+                }
+
+                return wrapsIntoInfinitelyExpandingTypeReference;
+            }
+
+            // Spec section 3.8.7: Recursive Types
+            // A type reference which, directly or indirectly, references G through open type references and 
+            // which contains a wrapped form of any of G’s type parameters in one or more type arguments is classified
+            // as an infinitely expanding type reference.A type is said to wrap a type parameter if it references 
+            // the type parameter but isn’t simply the type parameter itself.
+            var enclosingTypeParameters = enclosingType.getTypeParameters();
             var typeArguments = this.getTypeArguments();
-            if (typeArguments) {
-                for (var i = 0; i < typeArguments.length; i++) {
-                    if (typeArguments[i]._wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped, /*isCheckingTypeArgumentList:*/ true, knownWrapMap)) {
-                        return true;
-                    }
+            for (var i = 0; i < typeArguments.length; i++) {
+                if (ArrayUtilities.contains(enclosingTypeParameters, typeArguments[i])) {
+                    // Just a reference to type parameter
+                    continue;
                 }
-            }
 
-            // There is root symbol already in typeCheck, we need not check members 
-            if (this.anyRootTypeBeingWrapped(typeBeingWrapped)) {
-                // If we are checking the type argument list and this type is just a reference to the root type, we have a wrapped type
-                if (isCheckingTypeArgumentList && this.isTypeReference() && !this.getIsSpecialized()) {
-                    // This is just a reference to the root Symbol, return true;
+                // Type arguments wraps type parameter
+                if (typeArguments[i].wrapsSomeTypeParameter((<PullInstantiatedTypeReferenceSymbol>this).getTypeParameterArgumentMap())) {
                     return true;
                 }
-
-                return false;
             }
-            // If it is not a named type symbol or this type is a generic type, verify members
-            else if (!this.isNamedTypeSymbol() || this.isGeneric()) {
-                // If this is a type that is specialized only with the type parameters or is just a reference type then checking members of this type 
-                // is equivalent to checking members of the rootSymbol
-                var isTypeEquivalentToRootSymbol = this.isTypeEquivalentToRootSymbol();
-                var rootType = PullHelpers.getRootType(this);
-                if (isTypeEquivalentToRootSymbol) {
-                    rootType.inWrapCheck = true;
-                }
 
-                // otherwise, walk the member list and signatures, checking for wraps
-                var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
-                for (var i = 0; i < members.length; i++) {
-                    if (members[i].type && members[i].type._wrapsSomeNestedTypeIntoInfiniteExpansionRecurse(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap)) {
-                        return true;
-                    }
-                }
+            return false;
+        }
 
-                var sigs = this.getCallSignatures();
-                for (var i = 0; i < sigs.length; i++) {
-                    if (sigs[i].wrapsSomeNestedTypeIntoInfiniteExpansion(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap)) {
-                        return true;
-                    }
+        private _wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceStructure(enclosingType: PullTypeSymbol, knownWrapMap: IBitMatrix) {
+            var members = this.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
+            for (var i = 0; i < members.length; i++) {
+                if (members[i].type && members[i].type._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReferenceRecurse(
+                    enclosingType, knownWrapMap)) {
+                    return true;
                 }
-
-                sigs = this.getConstructSignatures();
-                for (var i = 0; i < sigs.length; i++) {
-                    if (sigs[i].wrapsSomeNestedTypeIntoInfiniteExpansion(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap)) {
-                        return true;
-                    }
-                }
-
-                sigs = this.getIndexSignatures();
-                for (var i = 0; i < sigs.length; i++) {
-                    if (sigs[i].wrapsSomeNestedTypeIntoInfiniteExpansion(typeBeingWrapped, isCheckingTypeArgumentList, knownWrapMap)) {
-                        return true;
-                    }
-                }
-
-                if (isTypeEquivalentToRootSymbol) {
-                    rootType.inWrapCheck = false;
-                }
-
-                return false;
             }
+
+            var sigs = this.getCallSignatures();
+            for (var i = 0; i < sigs.length; i++) {
+                if (sigs[i]._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReference(enclosingType, knownWrapMap)) {
+                    return true;
+                }
+            }
+
+            sigs = this.getConstructSignatures();
+            for (var i = 0; i < sigs.length; i++) {
+                if (sigs[i]._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReference(enclosingType, knownWrapMap)) {
+                    return true;
+                }
+            }
+
+            sigs = this.getIndexSignatures();
+            for (var i = 0; i < sigs.length; i++) {
+                if (sigs[i]._wrapsSomeTypeParameterIntoInfinitelyExpandingTypeReference(enclosingType, knownWrapMap)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // This is the same signature as PullTypeResolver.widenType (except that the positions
@@ -3390,7 +3330,7 @@ module TypeScript {
             structure = "E" + getIDForTypeSubstitutionsOfType((<PullErrorTypeSymbol>type)._anyType);
         }
         else if (!type.isNamedTypeSymbol()) {
-            structure = this.getIDForTypeSubstitutionsFromObjectType(type);
+            structure = getIDForTypeSubstitutionsFromObjectType(type);
         }
 
         if (!structure) {
