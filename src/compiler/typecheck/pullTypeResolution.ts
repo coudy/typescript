@@ -1457,6 +1457,8 @@ module TypeScript {
             if (!classDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(classDeclSymbol, classDecl, context);
             }
+
+            this.checkTypeForDuplicateIndexSignatures(classDeclSymbol);
         }
 
         private postTypeCheckClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext) {
@@ -1513,6 +1515,52 @@ module TypeScript {
 
             if (!interfaceDeclSymbol.hasBaseTypeConflict()) {
                 this.typeCheckMembersAgainstIndexer(interfaceDeclSymbol, interfaceDecl, context);
+            }
+
+            // Only check for duplicate index signatures once per symbol
+            // We check that this interface decl is the last one for this symbol. The reason we don't
+            // use the first decl is because in case one decl is in lib.d.ts, the experience is
+            // slightly better in the language service because of the order we tend to type check
+            // the files in. Lib.d.ts is usually last in the language service, but it contains the
+            // first decl. Therefore, picking the last decl will report the error sooner. 
+            var allInterfaceDecls = interfaceDeclSymbol.getDeclarations();
+            if (interfaceDecl === allInterfaceDecls[allInterfaceDecls.length - 1]) {
+                this.checkTypeForDuplicateIndexSignatures(interfaceDeclSymbol);
+            }
+        }
+
+        // November 18, 2013: Section 3.7.4:
+        // An object type can contain at most one string index signature and one numeric index signature.
+        private checkTypeForDuplicateIndexSignatures(enclosingTypeSymbol: PullTypeSymbol): void {
+            var indexSignatures = enclosingTypeSymbol.getOwnIndexSignatures();
+            var firstStringIndexer: PullSignatureSymbol = null;
+            var firstNumberIndexer: PullSignatureSymbol = null;
+            for (var i = 0; i < indexSignatures.length; i++) {
+                var currentIndexer = indexSignatures[i];
+                var currentParameterType = currentIndexer.parameters[0].type;
+                Debug.assert(currentParameterType);
+                if (currentParameterType === this.semanticInfoChain.stringTypeSymbol) {
+                    if (firstStringIndexer) {
+                        this.semanticInfoChain.addDiagnosticFromAST(currentIndexer.getDeclarations()[0].ast(),
+                            DiagnosticCode.Duplicate_string_index_signature, null,
+                            [this.semanticInfoChain.locationFromAST(firstStringIndexer.getDeclarations()[0].ast())]);
+                        return;
+                    }
+                    else {
+                        firstStringIndexer = currentIndexer;
+                    }
+                }
+                else if (currentParameterType === this.semanticInfoChain.numberTypeSymbol) {
+                    if (firstNumberIndexer) {
+                        this.semanticInfoChain.addDiagnosticFromAST(currentIndexer.getDeclarations()[0].ast(),
+                            DiagnosticCode.Duplicate_number_index_signature, null,
+                            [this.semanticInfoChain.locationFromAST(firstNumberIndexer.getDeclarations()[0].ast())]);
+                        return;
+                    }
+                    else {
+                        firstNumberIndexer = currentIndexer;
+                    }
+                }
             }
         }
 
@@ -2315,6 +2363,7 @@ module TypeScript {
             var objectTypeSymbol = <PullTypeSymbol>objectTypeDecl.getSymbol();
 
             this.typeCheckMembersAgainstIndexer(objectTypeSymbol, objectTypeDecl, context);
+            this.checkTypeForDuplicateIndexSignatures(objectTypeSymbol);
         }
 
         private resolveTypeAnnotation(typeAnnotation: TypeAnnotation, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -3724,27 +3773,8 @@ module TypeScript {
                         signature.returnType = returnTypeSymbol;
                     }
                 }
-                // if there's no return-type annotation
-                //     - if it's not a definition signature, set the return type to 'any'
-                //     - if it's a definition sigature, take the best common type of all return expressions
-                //     - if it's a constructor, we set the return type link during binding
                 else {
                     signature.returnType = this.semanticInfoChain.anyTypeSymbol;
-                    var parentDeclFlags = TypeScript.PullElementFlags.None;
-                    if (TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.Method) ||
-                        TypeScript.hasFlag(funcDecl.kind, TypeScript.PullElementKind.ConstructorMethod)) {
-                        var parentDecl = funcDecl.getParentDecl();
-                        parentDeclFlags = parentDecl.flags;
-                    }
-
-                    // if the noImplicitAny flag is set to be true, report an error
-                    if (this.compilationSettings.noImplicitAny() &&
-                        (!TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) ||
-                        (TypeScript.hasFlag(parentDeclFlags, PullElementFlags.Ambient) && !TypeScript.hasFlag(funcDecl.flags, PullElementFlags.Private)))) {
-                        var funcDeclASTName = name;
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(funcDeclAST, DiagnosticCode._0_which_lacks_return_type_annotation_implicitly_has_an_any_return_type,
-                            ["Indexer"]));
-                    }
                 }
 
                 if (!hadError) {
