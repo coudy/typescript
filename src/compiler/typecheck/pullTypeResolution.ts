@@ -1659,6 +1659,8 @@ module TypeScript {
                         this.semanticInfoChain.setSymbolForAST(moduleNameExpr, moduleSymbol);
                         if (resolvedModuleNameSymbol.isAlias()) {
                             this.semanticInfoChain.setAliasSymbolForAST(moduleNameExpr, <PullTypeAliasSymbol>resolvedModuleNameSymbol);
+                            var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+                            importDeclSymbol.addContingentValueSymbol(<PullTypeAliasSymbol>resolvedModuleNameSymbol);
                         }
                     }
                     else {
@@ -1720,9 +1722,6 @@ module TypeScript {
                         importDeclSymbol.setAssignedTypeSymbol(identifierResolution.typeSymbol);
                         importDeclSymbol.setAssignedContainerSymbol(identifierResolution.containerSymbol);
                         this.semanticInfoChain.setAliasSymbolForAST(moduleReference, identifierResolution.aliasSymbol);
-                        if (identifierResolution.valueSymbol) {
-                            importDeclSymbol.setIsUsedAsValue(true);
-                        }
                         return null;
                     }
                 }
@@ -1754,12 +1753,7 @@ module TypeScript {
                 // dynamic module name (string literal)
                 var modPath = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.valueText();
                 var declPath = enclosingDecl.getParentPath();
-                
-                // SPEC: November 18, 2013 section 10.3 -
-                //  - An EntityName consisting of more than one identifier is resolved as 
-                //     a ModuleName followed by an identifier that names one or more exported entities in the given module.
-                //     The resulting local alias has all the meanings and classifications of the referenced entity or entities. 
-                //     (As many as three distinct meanings are possible for an entity name—namespace, type, and member.)
+
                 aliasedType = this.resolveExternalModuleReference(modPath, importDecl.fileName());
 
                 if (!aliasedType) {
@@ -6234,12 +6228,8 @@ module TypeScript {
                 if (!this.inTypeQuery(expression)) {
                     (<PullTypeAliasSymbol>lhs).setIsUsedAsValue(true);
                 }
-                lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
-            }
 
-            // this could happen if a module exports an import statement
-            if (lhsType.isAlias()) {
-                lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
+                lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
             }
 
             lhsType = lhsType.widenedType(this, expression, context);
