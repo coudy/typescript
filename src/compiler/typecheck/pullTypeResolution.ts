@@ -6224,8 +6224,12 @@ module TypeScript {
                 if (!this.inTypeQuery(expression)) {
                     (<PullTypeAliasSymbol>lhs).setIsUsedAsValue(true);
                 }
-
                 lhsType = (<PullTypeAliasSymbol>lhs).getExportAssignedTypeSymbol();
+            }
+
+            // this can happen if a var is set to a type alias and the var is used in a dotted name..
+            if (lhsType.isAlias()) {
+                lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
             }
 
             lhsType = lhsType.widenedType(this, expression, context);
