@@ -469,7 +469,7 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
             this.declFile.WriteLine(";");
         }
@@ -801,27 +801,25 @@ module TypeScript {
         }
 
         private emitClassMembersFromConstructorDefinition(funcDecl: ConstructorDeclaration) {
-            if (funcDecl.parameterList) {
-                var argsLen = funcDecl.parameterList.parameters.nonSeparatorCount();
-                if (lastParameterIsRest(funcDecl.parameterList)) {
-                    argsLen--;
-                }
+            var argsLen = funcDecl.callSignature.parameterList.parameters.nonSeparatorCount();
+            if (lastParameterIsRest(funcDecl.callSignature.parameterList)) {
+                argsLen--;
+            }
 
-                for (var i = 0; i < argsLen; i++) {
-                    var parameter = <Parameter>funcDecl.parameterList.parameters.nonSeparatorAt(i);
-                    var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
-                    if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
-                        var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
-                        this.emitDeclarationComments(parameter);
-                        this.declFile.Write(this.getIndentString());
-                        this.emitClassElementModifiers(parameter.modifiers);
-                        this.declFile.Write(parameter.identifier.text());
+            for (var i = 0; i < argsLen; i++) {
+                var parameter = <Parameter>funcDecl.callSignature.parameterList.parameters.nonSeparatorAt(i);
+                var parameterDecl = this.semanticInfoChain.getDeclForAST(parameter);
+                if (hasFlag(parameterDecl.flags, PullElementFlags.PropertyParameter)) {
+                    var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
+                    this.emitDeclarationComments(parameter);
+                    this.declFile.Write(this.getIndentString());
+                    this.emitClassElementModifiers(parameter.modifiers);
+                    this.declFile.Write(parameter.identifier.text());
 
-                        if (!hasModifier(parameter.modifiers, PullElementFlags.Private)) {
-                            this.emitTypeOfVariableDeclaratorOrParameter(parameter);
-                        }
-                        this.declFile.WriteLine(";");
+                    if (!hasModifier(parameter.modifiers, PullElementFlags.Private)) {
+                        this.emitTypeOfVariableDeclaratorOrParameter(parameter);
                     }
+                    this.declFile.WriteLine(";");
                 }
             }
         }

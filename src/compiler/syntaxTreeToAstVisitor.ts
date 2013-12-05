@@ -1059,14 +1059,14 @@ module TypeScript {
         public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): ConstructorDeclaration {
             var start = this.position;
 
-            this.moveTo(node, node.parameterList);
-            var parameters = this.visitParameterList(node.parameterList);
+            this.moveTo(node, node.callSignature);
+            var callSignature = this.visitCallSignature(node.callSignature);
 
             var block = node.block ? node.block.accept(this) : null;
 
             this.movePast(node.semicolonToken);
 
-            var result = new ConstructorDeclaration(parameters, block);
+            var result = new ConstructorDeclaration(callSignature, block);
             this.setCommentsAndSpan(result, start, node);
 
             return result;

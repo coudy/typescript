@@ -2213,7 +2213,7 @@ module TypeScript {
                 var constructorDeclaration = <ConstructorDeclaration>enclosingAST;
                  return !hasFlag(someFunctionDecl.getParentDecl().flags, PullElementFlags.Ambient)
                 && constructorDeclaration.block
-                && lastParameterIsRest(constructorDeclaration.parameterList);
+                && lastParameterIsRest(constructorDeclaration.callSignature.parameterList);
             }
             else if (nodeType === SyntaxKind.ParenthesizedArrowFunctionExpression) {
                 var arrowFunctionExpression = <ParenthesizedArrowFunctionExpression>enclosingAST;
@@ -3240,10 +3240,8 @@ module TypeScript {
             var funcDecl = this.semanticInfoChain.getDeclForAST(funcDeclAST);
 
             // resolve parameter type annotations as necessary
-            if (funcDeclAST.parameterList) {
-                for (var i = 0; i < funcDeclAST.parameterList.parameters.nonSeparatorCount(); i++) {
-                    this.resolveAST(funcDeclAST.parameterList.parameters.nonSeparatorAt(i), /*isContextuallyTyped:*/ false, context);
-                }
+            for (var i = 0; i < funcDeclAST.callSignature.parameterList.parameters.nonSeparatorCount(); i++) {
+                this.resolveAST(funcDeclAST.callSignature.parameterList.parameters.nonSeparatorAt(i), /*isContextuallyTyped:*/ false, context);
             }
 
             this.resolveAST(funcDeclAST.block, false, context);
@@ -3269,7 +3267,7 @@ module TypeScript {
             this.validateVariableDeclarationGroups(funcDecl, context);
 
             this.checkFunctionTypePrivacy(
-                funcDeclAST, /*isStatic:*/ false, null, Parameters.fromParameterList(funcDeclAST.parameterList), null, funcDeclAST.block, context);
+                funcDeclAST, /*isStatic:*/ false, null, Parameters.fromParameterList(funcDeclAST.callSignature.parameterList), null, funcDeclAST.block, context);
 
             this.typeCheckCallBacks.push(context => {
                 // Function or constructor
@@ -3601,19 +3599,17 @@ module TypeScript {
 
                 // resolve parameter type annotations as necessary
 
-                if (funcDeclAST.parameterList) {
-                    var prevInTypeCheck = context.inTypeCheck;
+                var prevInTypeCheck = context.inTypeCheck;
 
-                    // TODO: why are we getting ourselves out of typecheck here?
-                    context.inTypeCheck = false;
+                // TODO: why are we getting ourselves out of typecheck here?
+                context.inTypeCheck = false;
 
-                    for (var i = 0; i < funcDeclAST.parameterList.parameters.nonSeparatorCount(); i++) {
-                        // TODO: why are we calling resolveParameter instead of resolveAST.
-                        this.resolveParameter(<Parameter>funcDeclAST.parameterList.parameters.nonSeparatorAt(i), context);
-                    }
-
-                    context.inTypeCheck = prevInTypeCheck;
+                for (var i = 0; i < funcDeclAST.callSignature.parameterList.parameters.nonSeparatorCount(); i++) {
+                    // TODO: why are we calling resolveParameter instead of resolveAST.
+                    this.resolveParameter(<Parameter>funcDeclAST.callSignature.parameterList.parameters.nonSeparatorAt(i), context);
                 }
+
+                context.inTypeCheck = prevInTypeCheck;
 
                 if (signature.isGeneric()) {
                     // PULLREVIEW: This is split into a spearate if statement to make debugging slightly easier...
@@ -7043,9 +7039,11 @@ module TypeScript {
             var current = ast;
             while (current) {
                 switch (current.kind()) {
-                    case SyntaxKind.ConstructorDeclaration:
-                        var constructorDecl = <ConstructorDeclaration>current;
-                        return previous === constructorDecl.parameterList;
+                    case SyntaxKind.CallSignature:
+                        var callSignature = <CallSignature>current;
+                        if (previous === callSignature.parameterList && callSignature.parent.kind() === SyntaxKind.ConstructorDeclaration) {
+                            return true;
+                        }
 
                     case SyntaxKind.ClassDeclaration:
                     case SyntaxKind.ModuleDeclaration:

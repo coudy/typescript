@@ -88,46 +88,51 @@
                                 }
                             ]
                         },
-                        "parameterList": {
-                            "kind": "ParameterList",
+                        "callSignature": {
+                            "kind": "CallSignature",
                             "fullWidth": 9,
                             "isIncrementallyUnusable": true,
-                            "openParenToken": {
-                                "kind": "OpenParenToken",
-                                "width": 1,
-                                "text": "(",
-                                "value": "(",
-                                "valueText": "("
-                            },
-                            "parameters": [
-                                {
-                                    "kind": "Parameter",
-                                    "fullWidth": 6,
-                                    "isIncrementallyUnusable": true,
-                                    "modifiers": [],
-                                    "identifier": {
-                                        "kind": "IdentifierName",
-                                        "width": 6,
-                                        "text": "static",
-                                        "value": "static",
-                                        "valueText": "static"
-                                    }
-                                }
-                            ],
-                            "closeParenToken": {
-                                "kind": "CloseParenToken",
-                                "width": 1,
-                                "fullWidth": 2,
-                                "text": ")",
-                                "value": ")",
-                                "valueText": ")",
-                                "hasTrailingTrivia": true,
-                                "trailingTrivia": [
+                            "parameterList": {
+                                "kind": "ParameterList",
+                                "fullWidth": 9,
+                                "isIncrementallyUnusable": true,
+                                "openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "width": 1,
+                                    "text": "(",
+                                    "value": "(",
+                                    "valueText": "("
+                                },
+                                "parameters": [
                                     {
-                                        "kind": "WhitespaceTrivia",
-                                        "text": " "
+                                        "kind": "Parameter",
+                                        "fullWidth": 6,
+                                        "isIncrementallyUnusable": true,
+                                        "modifiers": [],
+                                        "identifier": {
+                                            "kind": "IdentifierName",
+                                            "width": 6,
+                                            "text": "static",
+                                            "value": "static",
+                                            "valueText": "static"
+                                        }
                                     }
-                                ]
+                                ],
+                                "closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "width": 1,
+                                    "fullWidth": 2,
+                                    "text": ")",
+                                    "value": ")",
+                                    "valueText": ")",
+                                    "hasTrailingTrivia": true,
+                                    "trailingTrivia": [
+                                        {
+                                            "kind": "WhitespaceTrivia",
+                                            "text": " "
+                                        }
+                                    ]
+                                }
                             }
                         },
                         "block": {

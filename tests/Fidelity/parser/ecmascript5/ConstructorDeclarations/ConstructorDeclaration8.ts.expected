@@ -4,6 +4,16 @@
     "parseOptions": {
         "allowAutomaticSemicolonInsertion": true
     },
+    "diagnostics": [
+        {
+            "start": 55,
+            "length": 1,
+            "diagnosticCode": "'{0}' expected.",
+            "arguments": [
+                "("
+            ]
+        }
+    ],
     "sourceUnit": {
         "kind": "SourceUnit",
         "fullWidth": 59,
@@ -62,7 +72,7 @@
                 },
                 "classElements": [
                     {
-                        "kind": "MemberVariableDeclaration",
+                        "kind": "ConstructorDeclaration",
                         "fullWidth": 47,
                         "isIncrementallyUnusable": true,
                         "modifiers": [
@@ -103,16 +113,32 @@
                                 ]
                             }
                         ],
-                        "variableDeclarator": {
-                            "kind": "VariableDeclarator",
-                            "fullWidth": 11,
+                        "constructorKeyword": {
+                            "kind": "ConstructorKeyword",
+                            "width": 11,
+                            "text": "constructor",
+                            "value": "constructor",
+                            "valueText": "constructor"
+                        },
+                        "callSignature": {
+                            "kind": "CallSignature",
+                            "fullWidth": 0,
                             "isIncrementallyUnusable": true,
-                            "propertyName": {
-                                "kind": "IdentifierName",
-                                "width": 11,
-                                "text": "constructor",
-                                "value": "constructor",
-                                "valueText": "constructor"
+                            "parameterList": {
+                                "kind": "ParameterList",
+                                "fullWidth": 0,
+                                "isIncrementallyUnusable": true,
+                                "openParenToken": {
+                                    "kind": "OpenParenToken",
+                                    "width": 0,
+                                    "text": ""
+                                },
+                                "parameters": [],
+                                "closeParenToken": {
+                                    "kind": "CloseParenToken",
+                                    "width": 0,
+                                    "text": ""
+                                }
                             }
                         },
                         "semicolonToken": {

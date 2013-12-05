@@ -1213,9 +1213,9 @@ module TypeScript {
     }
 
     export class ConstructorDeclaration extends AST {
-        constructor(public parameterList: ParameterList, public block: Block) {
+        constructor(public callSignature: CallSignature, public block: Block) {
             super();
-            parameterList && (parameterList.parent = this);
+            callSignature && (callSignature.parent = this);
             block && (block.parent = this);
         }
 

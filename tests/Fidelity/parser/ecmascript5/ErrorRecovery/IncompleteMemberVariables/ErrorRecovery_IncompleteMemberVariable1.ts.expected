@@ -530,78 +530,151 @@
                                         }
                                     ]
                                 },
-                                "parameterList": {
-                                    "kind": "ParameterList",
+                                "callSignature": {
+                                    "kind": "CallSignature",
                                     "fullWidth": 37,
-                                    "openParenToken": {
-                                        "kind": "OpenParenToken",
-                                        "width": 1,
-                                        "text": "(",
-                                        "value": "(",
-                                        "valueText": "("
-                                    },
-                                    "parameters": [
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 16,
-                                            "modifiers": [
-                                                {
-                                                    "kind": "PublicKeyword",
-                                                    "width": 6,
-                                                    "fullWidth": 7,
-                                                    "text": "public",
-                                                    "value": "public",
-                                                    "valueText": "public",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
-                                            ],
-                                            "identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 1,
-                                                "text": "x",
-                                                "value": "x",
-                                                "valueText": "x"
-                                            },
-                                            "typeAnnotation": {
-                                                "kind": "TypeAnnotation",
-                                                "fullWidth": 8,
-                                                "colonToken": {
-                                                    "kind": "ColonToken",
+                                    "parameterList": {
+                                        "kind": "ParameterList",
+                                        "fullWidth": 37,
+                                        "openParenToken": {
+                                            "kind": "OpenParenToken",
+                                            "width": 1,
+                                            "text": "(",
+                                            "value": "(",
+                                            "valueText": "("
+                                        },
+                                        "parameters": [
+                                            {
+                                                "kind": "Parameter",
+                                                "fullWidth": 16,
+                                                "modifiers": [
+                                                    {
+                                                        "kind": "PublicKeyword",
+                                                        "width": 6,
+                                                        "fullWidth": 7,
+                                                        "text": "public",
+                                                        "value": "public",
+                                                        "valueText": "public",
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": " "
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "identifier": {
+                                                    "kind": "IdentifierName",
                                                     "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": ":",
-                                                    "value": ":",
-                                                    "valueText": ":",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
+                                                    "text": "x",
+                                                    "value": "x",
+                                                    "valueText": "x"
                                                 },
-                                                "type": {
-                                                    "kind": "NumberKeyword",
-                                                    "width": 6,
-                                                    "text": "number",
-                                                    "value": "number",
-                                                    "valueText": "number"
+                                                "typeAnnotation": {
+                                                    "kind": "TypeAnnotation",
+                                                    "fullWidth": 8,
+                                                    "colonToken": {
+                                                        "kind": "ColonToken",
+                                                        "width": 1,
+                                                        "fullWidth": 2,
+                                                        "text": ":",
+                                                        "value": ":",
+                                                        "valueText": ":",
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": " "
+                                                            }
+                                                        ]
+                                                    },
+                                                    "type": {
+                                                        "kind": "NumberKeyword",
+                                                        "width": 6,
+                                                        "text": "number",
+                                                        "value": "number",
+                                                        "valueText": "number"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "kind": "CommaToken",
+                                                "width": 1,
+                                                "fullWidth": 2,
+                                                "text": ",",
+                                                "value": ",",
+                                                "valueText": ",",
+                                                "hasTrailingTrivia": true,
+                                                "trailingTrivia": [
+                                                    {
+                                                        "kind": "WhitespaceTrivia",
+                                                        "text": " "
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "kind": "Parameter",
+                                                "fullWidth": 16,
+                                                "modifiers": [
+                                                    {
+                                                        "kind": "PublicKeyword",
+                                                        "width": 6,
+                                                        "fullWidth": 7,
+                                                        "text": "public",
+                                                        "value": "public",
+                                                        "valueText": "public",
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": " "
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "identifier": {
+                                                    "kind": "IdentifierName",
+                                                    "width": 1,
+                                                    "text": "y",
+                                                    "value": "y",
+                                                    "valueText": "y"
+                                                },
+                                                "typeAnnotation": {
+                                                    "kind": "TypeAnnotation",
+                                                    "fullWidth": 8,
+                                                    "colonToken": {
+                                                        "kind": "ColonToken",
+                                                        "width": 1,
+                                                        "fullWidth": 2,
+                                                        "text": ":",
+                                                        "value": ":",
+                                                        "valueText": ":",
+                                                        "hasTrailingTrivia": true,
+                                                        "trailingTrivia": [
+                                                            {
+                                                                "kind": "WhitespaceTrivia",
+                                                                "text": " "
+                                                            }
+                                                        ]
+                                                    },
+                                                    "type": {
+                                                        "kind": "NumberKeyword",
+                                                        "width": 6,
+                                                        "text": "number",
+                                                        "value": "number",
+                                                        "valueText": "number"
+                                                    }
                                                 }
                                             }
-                                        },
-                                        {
-                                            "kind": "CommaToken",
+                                        ],
+                                        "closeParenToken": {
+                                            "kind": "CloseParenToken",
                                             "width": 1,
                                             "fullWidth": 2,
-                                            "text": ",",
-                                            "value": ",",
-                                            "valueText": ",",
+                                            "text": ")",
+                                            "value": ")",
+                                            "valueText": ")",
                                             "hasTrailingTrivia": true,
                                             "trailingTrivia": [
                                                 {
@@ -609,76 +682,7 @@
                                                     "text": " "
                                                 }
                                             ]
-                                        },
-                                        {
-                                            "kind": "Parameter",
-                                            "fullWidth": 16,
-                                            "modifiers": [
-                                                {
-                                                    "kind": "PublicKeyword",
-                                                    "width": 6,
-                                                    "fullWidth": 7,
-                                                    "text": "public",
-                                                    "value": "public",
-                                                    "valueText": "public",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                }
-                                            ],
-                                            "identifier": {
-                                                "kind": "IdentifierName",
-                                                "width": 1,
-                                                "text": "y",
-                                                "value": "y",
-                                                "valueText": "y"
-                                            },
-                                            "typeAnnotation": {
-                                                "kind": "TypeAnnotation",
-                                                "fullWidth": 8,
-                                                "colonToken": {
-                                                    "kind": "ColonToken",
-                                                    "width": 1,
-                                                    "fullWidth": 2,
-                                                    "text": ":",
-                                                    "value": ":",
-                                                    "valueText": ":",
-                                                    "hasTrailingTrivia": true,
-                                                    "trailingTrivia": [
-                                                        {
-                                                            "kind": "WhitespaceTrivia",
-                                                            "text": " "
-                                                        }
-                                                    ]
-                                                },
-                                                "type": {
-                                                    "kind": "NumberKeyword",
-                                                    "width": 6,
-                                                    "text": "number",
-                                                    "value": "number",
-                                                    "valueText": "number"
-                                                }
-                                            }
                                         }
-                                    ],
-                                    "closeParenToken": {
-                                        "kind": "CloseParenToken",
-                                        "width": 1,
-                                        "fullWidth": 2,
-                                        "text": ")",
-                                        "value": ")",
-                                        "valueText": ")",
-                                        "hasTrailingTrivia": true,
-                                        "trailingTrivia": [
-                                            {
-                                                "kind": "WhitespaceTrivia",
-                                                "text": " "
-                                            }
-                                        ]
                                     }
                                 },
                                 "block": {

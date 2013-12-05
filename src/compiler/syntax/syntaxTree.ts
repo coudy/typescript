@@ -237,12 +237,12 @@ module TypeScript {
                     return true;
                 }
 
-                if (!this.inAmbientDeclaration && this.currentConstructor && !this.currentConstructor.block && this.currentConstructor.parameterList === parameterList) {
+                if (!this.inAmbientDeclaration && this.currentConstructor && !this.currentConstructor.block && this.currentConstructor.callSignature.parameterList === parameterList) {
                     this.pushDiagnostic1(modifierFullStart, modifier,
                         DiagnosticCode.Parameter_property_declarations_cannot_be_used_in_a_constructor_overload);
                     return true;
                 }
-                else if (this.inAmbientDeclaration || this.currentConstructor === null || this.currentConstructor.parameterList !== parameterList) {
+                else if (this.inAmbientDeclaration || this.currentConstructor === null || this.currentConstructor.callSignature.parameterList !== parameterList) {
                     this.pushDiagnostic1(modifierFullStart, modifier,
                         DiagnosticCode.Parameter_property_declarations_can_only_be_used_in_a_non_ambient_constructor_declaration);
                     return true;
@@ -1470,7 +1470,9 @@ module TypeScript {
 
         public visitConstructorDeclaration(node: ConstructorDeclarationSyntax): void {
             if (this.checkClassElementModifiers(node.modifiers) ||
-                this.checkConstructorModifiers(node.modifiers)) {
+                this.checkConstructorModifiers(node.modifiers) ||
+                this.checkConstructorTypeParameterList(node) ||
+                this.checkConstructorTypeAnnotation(node)) {
 
                 this.skip(node);
                 return;
@@ -1493,6 +1495,32 @@ module TypeScript {
                 }
 
                 currentElementFullStart += child.fullWidth();
+            }
+
+            return false;
+        }
+
+        private checkConstructorTypeParameterList(node: ConstructorDeclarationSyntax): boolean {
+            var currentElementFullStart = this.position();
+
+            if (node.callSignature.typeParameterList) {
+                var callSignatureFullStart = this.childFullStart(node, node.callSignature);
+                var typeParameterListFullStart = callSignatureFullStart + Syntax.childOffset(node.callSignature, node.callSignature.typeAnnotation);
+                this.pushDiagnostic1(callSignatureFullStart, node.callSignature.typeParameterList, DiagnosticCode.Type_parameters_cannot_appear_on_a_constructor_declaration);
+                return true;
+            }
+
+            return false;
+        }
+
+        private checkConstructorTypeAnnotation(node: ConstructorDeclarationSyntax): boolean {
+            var currentElementFullStart = this.position();
+
+            if (node.callSignature.typeAnnotation) {
+                var callSignatureFullStart = this.childFullStart(node, node.callSignature);
+                var typeAnnotationFullStart = callSignatureFullStart + Syntax.childOffset(node.callSignature, node.callSignature.typeAnnotation);
+                this.pushDiagnostic1(typeAnnotationFullStart, node.callSignature.typeAnnotation, DiagnosticCode.Type_annotation_cannot_appear_on_a_constructor_declaration);
+                return true;
             }
 
             return false;

@@ -220,7 +220,7 @@ module TypeScript {
     }
 
     function walkConstructorDeclarationChildren(preAst: ConstructorDeclaration, walker: AstWalker): void {
-        walker.walk(preAst.parameterList);
+        walker.walk(preAst.callSignature);
         walker.walk(preAst.block);
     }
 

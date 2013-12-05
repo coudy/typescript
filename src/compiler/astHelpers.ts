@@ -438,7 +438,7 @@ module TypeScript {
         if (ast) {
             switch (ast.kind()) {
                 case SyntaxKind.ConstructorDeclaration:
-                    return (<ConstructorDeclaration>ast).parameterList;
+                    return getParameterList((<ConstructorDeclaration>ast).callSignature);
                 case SyntaxKind.FunctionDeclaration:
                     return getParameterList((<FunctionDeclaration>ast).callSignature);
                 case SyntaxKind.ParenthesizedArrowFunctionExpression:
