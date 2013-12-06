@@ -846,9 +846,20 @@ module TypeScript {
                     return symbol;
                 }
 
-                if (ast.kind() === SyntaxKind.IdentifierName && ast.parent && ast.parent.kind() === SyntaxKind.CatchClause) {
+                // There are a few places where an identifier may represent the declaration of 
+                // a symbol.  They include:
+
+                // A catch variable.  i.e.:  catch (e) { ...
+                if (ast.parent && ast.parent.kind() === SyntaxKind.CatchClause && (<CatchClause>ast.parent).identifier === ast) {
                     return symbol;
                 }
+
+                // A simple arrow parameter.  i.e.:   a => ...
+                if (ast.parent && ast.parent.kind() === SyntaxKind.SimpleArrowFunctionExpression && (<SimpleArrowFunctionExpression>ast.parent).identifier === ast) {
+                    return symbol;
+                }
+
+                // One of the names in a module declaration.  i.e.:  module A.B.C { ...
 
                 // If our decl points at a single name of a module, then just resolve that individual module.
                 var enclosingModule = getEnclosingModuleDeclaration(ast);
@@ -865,7 +876,7 @@ module TypeScript {
                     // This assert is here to catch potential stack overflows. There have been infinite recursions resulting
                     // from one of these decls pointing to a name expression.
                     Debug.assert(ast.kind() !== SyntaxKind.IdentifierName && ast.kind() !== SyntaxKind.MemberAccessExpression);
-                    var resolvedSymbol: PullSymbol = this.resolveAST(ast, /*isContextuallyTyped*/false, context);
+                    resolvedSymbol = this.resolveAST(ast, /*isContextuallyTyped*/false, context);
                 }
 
                 // if the symbol is a parameter property referenced in an out-of-order fashion, it may not have been resolved
