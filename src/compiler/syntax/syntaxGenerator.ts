@@ -1030,6 +1030,9 @@ function generateProperties(definition: ITypeDefinition): string {
         if (getType(child) === "SyntaxKind") {
             result += "    private _" + child.name + ": " + getType(child) + ";\r\n";
         }
+        else if (child.name === "arguments") {
+            result += "    public " + child.name + ": " + getType(child) + ";\r\n";
+        }
 
         hasKind = hasKind || (getType(child) === "SyntaxKind");
     }
@@ -1222,11 +1225,11 @@ function generateConstructor(definition: ITypeDefinition): string {
     for (i = 0; i < children.length; i++) {
         child = children[i];
 
-        if (getType(child) !== "SyntaxKind") {
+        if (getType(child) !== "SyntaxKind" && child.name !== "arguments") {
             result += "public ";
         }
 
-        result += child.name + ": " + getType(child);
+        result += getSafeName(child) + ": " + getType(child);
         result += ",\r\n                    ";
     }
 
@@ -1243,8 +1246,8 @@ function generateConstructor(definition: ITypeDefinition): string {
     for (i = 0; i < definition.children.length; i++) {
         child = definition.children[i];
 
-        if (child.type === "SyntaxKind") {
-            result += "            " + getPropertyAccess(child) + " = " + child.name + ";\r\n";
+        if (child.type === "SyntaxKind" || child.name === "arguments") {
+            result += "            " + getPropertyAccess(child) + " = " + getSafeName(child) + ";\r\n";
         }
     }
 
@@ -1515,7 +1518,7 @@ function generateSlotMethods(definition: ITypeDefinition): string {
                 continue;
             }
 
-            result += "            case " + index + ": return this." + definition.children[i].name + ";\r\n";
+            result += "            case " + index + ": return this." + child.name + ";\r\n";
             index++;
         }
 

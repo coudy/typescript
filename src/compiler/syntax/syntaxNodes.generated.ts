@@ -2961,14 +2961,16 @@ module TypeScript {
     }
 
     export class ArgumentListSyntax extends SyntaxNode {
+    public arguments: ISeparatedSyntaxList;
 
         constructor(public typeArgumentList: TypeArgumentListSyntax,
                     public openParenToken: ISyntaxToken,
-                    public arguments: ISeparatedSyntaxList,
+                    _arguments: ISeparatedSyntaxList,
                     public closeParenToken: ISyntaxToken,
                     parsedInStrictMode: boolean) {
             super(parsedInStrictMode); 
 
+            this.arguments = _arguments;
         }
 
     public accept(visitor: ISyntaxVisitor): any {
