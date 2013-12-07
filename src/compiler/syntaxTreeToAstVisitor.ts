@@ -826,18 +826,18 @@ module TypeScript {
 
             this.movePast(node.openParenToken);
 
-            var arguments = this.visitSeparatedSyntaxList(node.arguments);
+            var _arguments = this.visitSeparatedSyntaxList(node.arguments);
 
             if (node.arguments.fullWidth() === 0 && node.closeParenToken.fullWidth() === 0) {
                 // If the argument list was empty, and closing paren is missing, set the argument ofsets to be the open paren trivia
                 var openParenTokenEnd = start + node.openParenToken.leadingTriviaWidth() + node.openParenToken.width();
-                this.setSpanExplicit(arguments, openParenTokenEnd, openParenTokenEnd + node.openParenToken.trailingTriviaWidth());
+                this.setSpanExplicit(_arguments, openParenTokenEnd, openParenTokenEnd + node.openParenToken.trailingTriviaWidth());
             }
 
             var closeParenToken = this.createTokenSpan(this.position, node.closeParenToken);
             this.movePast(node.closeParenToken);
 
-            var result = new ArgumentList(typeArguments, arguments, closeParenToken);
+            var result = new ArgumentList(typeArguments, _arguments, closeParenToken);
             this.setSpan(result, start, node);
 
             return result;
