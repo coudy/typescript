@@ -288,8 +288,7 @@ module TypeScript {
             }
 
             // Check if the parent has a call/construct signature, and if so, inherit from Function
-            var parentHasCallOrConstructSignatures = parent.getCallSignatures().length > 0 || parent.getConstructSignatures().length > 0;
-            if (this.cachedFunctionInterfaceType() && parentHasCallOrConstructSignatures) {
+            if (this.cachedFunctionInterfaceType() && parent.isFunctionType()) {
                 memberSymbol = this.cachedFunctionInterfaceType().findMember(symbolName, /*lookInParent*/ true);
                 if (memberSymbol) {
                     return memberSymbol;
@@ -781,7 +780,7 @@ module TypeScript {
             }
 
             // could be a function symbol
-            if ((lhsType.getCallSignatures().length || lhsType.getConstructSignatures().length) && this.cachedFunctionInterfaceType()) {
+            if (lhsType.isFunctionType() && this.cachedFunctionInterfaceType()) {
                 members = members.concat(this.cachedFunctionInterfaceType().getAllMembers(declSearchKind, GetAllMembersVisiblity.externallyVisible));
             }
 
@@ -3497,7 +3496,7 @@ module TypeScript {
 
             this.typeCheckCallBacks.push(context => {
                 var parentSymbol = funcDecl.getSignatureSymbol().getContainer();
-                var allIndexSignatures = this.getBothKindsOfIndexSignatures(parentSymbol, context);
+                var allIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(parentSymbol, context);
                 var stringIndexSignature = allIndexSignatures.stringSignature;
                 var numberIndexSignature = allIndexSignatures.numericSignature;
                 var isNumericIndexer = numberIndexSignature === signature;
@@ -7598,7 +7597,7 @@ module TypeScript {
              
             // Get the index signatures for contextual typing
             if (contextualType) {
-                var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
+                var indexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(contextualType, context);
 
                 stringIndexerSignature = indexSignatures.stringSignature;
                 numericIndexerSignature = indexSignatures.numericSignature;
@@ -7720,7 +7719,7 @@ module TypeScript {
 
                 if (contextualType) {
                     // Get the number indexer if it exists
-                    var indexSignatures = this.getBothKindsOfIndexSignatures(contextualType, context);
+                    var indexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(contextualType, context);
                     if (indexSignatures.numericSignature) {
                         contextualElementType = indexSignatures.numericSignature.returnType;
                     }
@@ -7851,7 +7850,7 @@ module TypeScript {
                 targetTypeSymbol = this.cachedStringInterfaceType();
             }
 
-            var signatures = this.getBothKindsOfIndexSignatures(targetTypeSymbol, context);
+            var signatures = this.getBothKindsOfIndexSignaturesIncludingAugmentedType(targetTypeSymbol, context);
 
             var stringSignature = signatures.stringSignature;
             var numberSignature = signatures.numericSignature;
@@ -7885,8 +7884,18 @@ module TypeScript {
             }
         }
 
-        private getBothKindsOfIndexSignatures(enclosingType: PullTypeSymbol, context: PullTypeResolutionContext): { numericSignature: PullSignatureSymbol; stringSignature: PullSignatureSymbol } {
-            var signatures = enclosingType.getIndexSignatures();
+        private getBothKindsOfIndexSignaturesIncludingAugmentedType(enclosingType: PullTypeSymbol, context: PullTypeResolutionContext): { numericSignature: PullSignatureSymbol; stringSignature: PullSignatureSymbol } {
+            return this.getBothKindsOfIndexSignatures(enclosingType, context, /*includeAugmentedType*/ true);
+        }
+
+        private getBothKindsOfIndexSignaturesExcludingAugmentedType(enclosingType: PullTypeSymbol, context: PullTypeResolutionContext): { numericSignature: PullSignatureSymbol; stringSignature: PullSignatureSymbol } {
+            return this.getBothKindsOfIndexSignatures(enclosingType, context, /*includeAugmentedType*/ false);
+        }
+
+        private getBothKindsOfIndexSignatures(enclosingType: PullTypeSymbol, context: PullTypeResolutionContext, includeAugmentedType: boolean): { numericSignature: PullSignatureSymbol; stringSignature: PullSignatureSymbol } {
+            var signatures = includeAugmentedType
+                ? enclosingType.getIndexSignaturesOfAugmentedType(this, this.cachedFunctionInterfaceType(), this.cachedObjectInterfaceType())
+                : enclosingType.getIndexSignatures();
 
             var stringSignature: PullSignatureSymbol = null;
             var numberSignature: PullSignatureSymbol = null;
@@ -7924,6 +7933,38 @@ module TypeScript {
                 numericSignature: numberSignature,
                 stringSignature: stringSignature
             };
+        }
+
+        // This method can be called to get unhidden (not shadowed by a signature in derived class)
+        // signatures from a set of base class signatures. Can be used for signatures of any kind.
+        // October 16, 2013: Section 7.1:
+        // A call signature declaration hides a base type call signature that is identical when
+        // return types are ignored.
+        // A construct signature declaration hides a base type construct signature that is
+        // identical when return types are ignored.
+        // A string index signature declaration hides a base type string index signature.
+        // A numeric index signature declaration hides a base type numeric index signature.
+        public _addUnhiddenSignaturesFromBaseType(
+            derivedTypeSignatures: PullSignatureSymbol[],
+            baseTypeSignatures: PullSignatureSymbol[],
+            signaturesBeingAggregated: PullSignatureSymbol[]) {
+            // If there are no derived type signatures, none of the base signatures will be hidden.
+            if (!derivedTypeSignatures) {
+                signaturesBeingAggregated.push.apply(signaturesBeingAggregated, baseTypeSignatures);
+                return;
+            }
+
+            for (var i = 0; i < baseTypeSignatures.length; i++) {
+                var baseSignature = baseTypeSignatures[i];
+                // If it is different from every signature in the derived type (modulo
+                // return types, add it to the list)
+                var signatureIsHidden = ArrayUtilities.any(derivedTypeSignatures, sig =>
+                    this.signaturesAreIdentical(baseSignature, sig, /*includingReturnType*/ false));
+
+                if (!signatureIsHidden) {
+                    signaturesBeingAggregated.push(baseSignature);
+                }
+            }
         }
 
         private resolveBinaryAdditionOperation(binaryExpression: BinaryExpression, context: PullTypeResolutionContext): PullSymbol {
@@ -9774,7 +9815,7 @@ module TypeScript {
         private typeIsSubtypeOfFunction(source: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): boolean {
             // Note that object types containing one or more call or construct signatures are 
             // automatically subtypes of the ‘Function’ interface type, as described in section 3.3.
-            if (source.getCallSignatures().length || source.getConstructSignatures().length) {
+            if (source.isFunctionType()) {
                 return true;
             }
 
@@ -10427,12 +10468,12 @@ module TypeScript {
             assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
 
-            var targetIndexSigs = this.getBothKindsOfIndexSignatures(target, context);
+            var targetIndexSigs = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(target, context);
             var targetStringSig = targetIndexSigs.stringSignature;
             var targetNumberSig = targetIndexSigs.numericSignature;
 
             if (targetStringSig || targetNumberSig) {
-                var sourceIndexSigs = this.getBothKindsOfIndexSignatures(source, context);
+                var sourceIndexSigs = this.getBothKindsOfIndexSignaturesIncludingAugmentedType(source, context);
                 var sourceStringSig = sourceIndexSigs.stringSignature;
                 var sourceNumberSig = sourceIndexSigs.numericSignature;
 
@@ -11298,8 +11339,8 @@ module TypeScript {
 
             }
 
-            var parameterIndexSignatures = this.getBothKindsOfIndexSignatures(parameterType, context);
-            var objectIndexSignatures = this.getBothKindsOfIndexSignatures(objectType, context);
+            var parameterIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(parameterType, context);
+            var objectIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(objectType, context);
 
             // - If M is a string index signature and S contains a string index signature N, inferences are made from the type of N to the type of M.
             // - If M is a numeric index signature and S contains a numeric index signature N, inferences are made from the type of N to the type of M.
@@ -12445,7 +12486,7 @@ module TypeScript {
 
         private typeCheckMembersAgainstIndexer(containerType: PullTypeSymbol, containerTypeDecl: PullDecl, context: PullTypeResolutionContext) {
             // Check all the members defined in this symbol's declarations (no base classes)
-            var indexSignatures = this.getBothKindsOfIndexSignatures(containerType, context);
+            var indexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(containerType, context);
             var stringSignature = indexSignatures.stringSignature;
             var numberSignature = indexSignatures.numericSignature;
 
