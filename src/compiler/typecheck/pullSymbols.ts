@@ -1472,7 +1472,6 @@ module TypeScript {
             if (typeArgs && this.getTypeArguments().length === 1 &&
                 this.name === "Array") {
 
-                var container = this.getContainer();
                 var declaration = this.getDeclarations()[0];
 
                 // If we're a child of the global module (i.e. we have a parent decl, but our 
@@ -2333,13 +2332,26 @@ module TypeScript {
             return s;
         }
 
-        public getScopedNameEx(scopeSymbol?: PullSymbol, skipTypeParametersInName?: boolean, useConstraintInName?: boolean, getPrettyTypeName?: boolean, getTypeParamMarkerInfo?: boolean, skipInternalAliasName?: boolean): MemberName {
+        public getScopedNameEx(
+            scopeSymbol?: PullSymbol,
+            skipTypeParametersInName?: boolean,
+            useConstraintInName?: boolean,
+            getPrettyTypeName?: boolean,
+            getTypeParamMarkerInfo?: boolean,
+            skipInternalAliasName?: boolean,
+            shouldAllowArrayType: boolean = true): MemberName {
 
-            if (this.isArrayNamedTypeReference()) {
+            if (this.isArrayNamedTypeReference() && shouldAllowArrayType) {
                 var elementType = this.getElementType();
                 var elementMemberName = elementType ?
                     (elementType.isArrayNamedTypeReference() || elementType.isNamedTypeSymbol() ?
-                    elementType.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ false, /*useConstraintInName*/ false, getPrettyTypeName, getTypeParamMarkerInfo, skipInternalAliasName) :
+                    elementType.getScopedNameEx(
+                        scopeSymbol,
+                        /*skipTypeParametersInName*/ false,
+                        /*useConstraintInName*/ false,
+                        getPrettyTypeName,
+                        getTypeParamMarkerInfo,
+                        skipInternalAliasName) :
                     elementType.getMemberTypeNameEx(/*topLevel*/ false, scopeSymbol, getPrettyTypeName)) :
                     MemberName.create("any");
                 return MemberName.create(elementMemberName, "", "[]");
