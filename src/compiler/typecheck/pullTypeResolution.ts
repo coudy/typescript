@@ -966,6 +966,19 @@ module TypeScript {
             this.setTypeChecked(sourceUnit, context);
 
             this.resolveAST(sourceUnit.moduleElements, /*isContextuallyTyped:*/ false, context);
+
+            this.typeCheckCallBacks.push(context => this.verifyUniquenessOfImportNamesInSourceUnit(sourceUnit));
+        }
+
+        private verifyUniquenessOfImportNamesInSourceUnit(sourceUnit: SourceUnit) {
+            var enclosingDecl = this.semanticInfoChain.getDeclForAST(sourceUnit);
+
+            var doesImportNameExistInOtherFiles = (name: string): boolean => {
+                var importSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.TypeAlias, null);
+                return importSymbol && importSymbol.isAlias();
+            }
+
+            this.checkUniquenessOfImportNames([enclosingDecl], doesImportNameExistInOtherFiles);
         }
 
         private resolveEnumDeclaration(ast: EnumDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -1135,7 +1148,116 @@ module TypeScript {
             if (!moduleIsElided(ast) && !ast.stringLiteral) {
                 this.checkNameForCompilerGeneratedDeclarationCollision(astName, /*isDeclaration*/ true, <Identifier>astName, context);
             }
+
+            this.typeCheckCallBacks.push(context => this.verifyUniquenessOfImportNamesInModule(containerDecl));
         }
+
+        private verifyUniquenessOfImportNamesInModule(decl: PullDecl): void {
+            var symbol = decl.getSymbol();
+            if (!symbol) {
+                return;
+            }
+
+            var decls = symbol.getDeclarations();
+            // this check should be performed once per module.
+            // to guarantee this we'll perform check only for one declaration that form the module
+            if (decls[0] !== decl) {
+                return;
+            }
+
+            this.checkUniquenessOfImportNames(decls);
+        }
+
+        private checkUniquenessOfImportNames(decls: PullDecl[], doesNameExistOutside?: (name: string) => boolean): void {
+
+            var importDeclarationNames: IIndexable<boolean>;
+            // collect all type aliases across all supplied declarations
+            for (var i = 0; i < decls.length; ++i) {
+                var childDecls = decls[i].getChildDecls();
+                for (var j = 0; j < childDecls.length; ++j) {
+                    var childDecl = childDecls[j];
+                    if (childDecl.kind === PullElementKind.TypeAlias) {
+                        importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
+                        importDeclarationNames[childDecl.name] = true;
+                    }
+                }
+            }
+
+            if (!importDeclarationNames && !doesNameExistOutside) {
+                return;
+            }
+
+            for (var i = 0; i < decls.length; ++i) {
+                // Walk over all variable declaration groups located in 'decls[i]', 
+                // pick the first item from the group and test if it name conflicts with the name of any of import declaration.
+                // Taking just first item is enough since all variables in group have the same name
+                this.scanVariableDeclarationGroups(
+                    decls[i],
+                    (firstDeclInGroup: PullDecl) => {
+                        // Make sure the variable declaration doesn't conflict with an import declaration.
+                        var nameConflict = importDeclarationNames && importDeclarationNames[firstDeclInGroup.name];
+                        if (!nameConflict) {
+                            nameConflict = doesNameExistOutside && doesNameExistOutside(firstDeclInGroup.name);
+                            if (nameConflict) {
+                                // save result for name == 'firstDeclInGroup.name' so if we'll see it again the result will be picked from the cache instead of invoking 'doesNameExistOutside' callback.
+                                importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
+                                importDeclarationNames[firstDeclInGroup.name] = true;
+                            }
+                        }
+
+                        if (nameConflict) {
+                            this.semanticInfoChain.addDiagnosticFromAST(firstDeclInGroup.ast(),
+                                DiagnosticCode.Variable_declaration_cannot_have_the_same_name_as_an_import_declaration);
+                        }
+                    });
+            }
+        }
+
+        private scanVariableDeclarationGroups(
+            enclosingDecl: PullDecl,
+            firstDeclHandler: (firstDecl: PullDecl) => void,
+            subsequentDeclHandler?: (subsequentDecl: PullDecl, firstDeclSymbolType: PullTypeSymbol) => void): void {
+
+            var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
+
+            for (var i = 0; i < declGroups.length; i++) {
+                var firstSymbolType: PullTypeSymbol = null;
+
+                if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
+                    var name = declGroups[i][0].name;
+                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl);
+                    if (candidateSymbol && candidateSymbol.isResolved) {
+                        if (!candidateSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable)) {
+                            firstSymbolType = candidateSymbol.type;
+                        }
+                    }
+                }
+
+                for (var j = 0; j < declGroups[i].length; j++) {
+                    var decl = declGroups[i][j];
+
+                    var name = decl.name;
+
+                    var symbol = decl.getSymbol();
+                    var symbolType = symbol.type;
+
+                    if (j === 0) {
+                        firstDeclHandler(decl);
+                        if (!subsequentDeclHandler) {
+                            break;
+                        }
+
+                        if (!firstSymbolType) {
+                            firstSymbolType = symbolType;
+                            continue;
+                        }
+                    }
+
+                    subsequentDeclHandler(decl, firstSymbolType);
+                }
+            }
+        }
+
 
         private postTypeCheckModuleDeclaration(ast: ModuleDeclaration, context: PullTypeResolutionContext) {
             this.checkThisCaptureVariableCollides(ast, /*isDeclaration*/ true, context);
@@ -6046,7 +6168,7 @@ module TypeScript {
             if (memberVariableDeclarationAST) {
 
                 var memberVariableDecl = this.semanticInfoChain.getDeclForAST(memberVariableDeclarationAST);
-                if (memberVariableDecl && !hasFlag(memberVariableDecl.flags, PullElementFlags.Static)) {
+                if (!hasFlag(memberVariableDecl.flags, PullElementFlags.Static)) {
                     var constructorDecl = this.findConstructorDeclOfEnclosingType(memberVariableDecl);
 
                     if (constructorDecl) {
@@ -11424,73 +11546,29 @@ module TypeScript {
             }
         }
 
-        private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {
-            // If we're inside a module, collect the names of imports so we can ensure they don't 
-            // conflict with any variable declaration names.
-            var importDeclarationNames: IIndexable<boolean> = null;
-            if (enclosingDecl.kind & (PullElementKind.Container | PullElementKind.DynamicModule | PullElementKind.Script)) {
-                var childDecls = enclosingDecl.getChildDecls();
-                for (var i = 0, n = childDecls.length; i < n; i++) {
-                    var childDecl = childDecls[i];
-                    if (childDecl.kind === PullElementKind.TypeAlias) {
-                        importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
-                        importDeclarationNames[childDecl.name] = true;
-                    }
-                }
-            }
-
-            var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
-
-            for (var i = 0, i_max = declGroups.length; i < i_max; i++) {
-                var firstSymbol: PullSymbol = null;
-                var firstSymbolType: PullTypeSymbol = null;
-
-                // If we are in a script context, we need to check more than just the current file. We need to check var type identity between files as well.
-                if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
-                    var name = declGroups[i][0].name;
-                    var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl);
-                    if (candidateSymbol && candidateSymbol.isResolved) {
-                        if (!candidateSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable)) {
-                            firstSymbol = candidateSymbol;
-                            firstSymbolType = candidateSymbol.type;
-                        }
+        private validateVariableDeclarationGroups(enclosingDecl: PullDecl, context: PullTypeResolutionContext) {            
+            this.scanVariableDeclarationGroups(
+                enclosingDecl,
+                (_: PullDecl) => { },
+                (subsequentDecl: PullDecl, firstSymbolType: PullTypeSymbol) => {
+                    // do not report 'must have same type' error for parameters - it makes no sense for them
+                    // having 'duplicate name' error that can be raised during parameter binding is enough
+                    if (hasFlag(subsequentDecl.kind, PullElementKind.Parameter) || hasFlag(subsequentDecl.flags, PullElementFlags.PropertyParameter)) {
+                        return;
                     }
 
-                    // Also collect any imports with this name (throughout any of the files)
-                    var importSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.TypeAlias, null);
-                    if (importSymbol && importSymbol.isAlias()) {
-                        importDeclarationNames = importDeclarationNames || createIntrinsicsObject<boolean>();
-                    }
-                }
+                    var boundDeclAST = this.semanticInfoChain.getASTForDecl(subsequentDecl);
 
-                for (var j = 0, j_max = declGroups[i].length; j < j_max; j++) {
-                    var decl = declGroups[i][j];
-                    var boundDeclAST = this.semanticInfoChain.getASTForDecl(decl);
-
-                    var name = decl.name;
-
-                    // Make sure the variable declaration doesn't conflict with an import declaration.
-                    if (importDeclarationNames && importDeclarationNames[name]) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(boundDeclAST,
-                            DiagnosticCode.Variable_declaration_cannot_have_the_same_name_as_an_import_declaration));
-                        continue;
-                    }
-
-                    var symbol = decl.getSymbol();
+                    var symbol = subsequentDecl.getSymbol();
                     var symbolType = symbol.type;
 
-                    if (j === 0 && !firstSymbol) {
-                        firstSymbol = symbol;
-                        firstSymbolType = symbolType;
-                        continue;
-                    }
-
                     if (symbolType && firstSymbolType && symbolType !== firstSymbolType && !this.typesAreIdentical(symbolType, firstSymbolType)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(boundDeclAST, DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()]));
-                        continue;
+                        context.postDiagnostic(
+                            this.semanticInfoChain.diagnosticFromAST(
+                                boundDeclAST,
+                                DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()]));
                     }
-                }
-            }
+                });
         }
 
         private typeCheckFunctionOverloads(
