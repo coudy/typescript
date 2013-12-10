@@ -2357,6 +2357,9 @@ module TypeScript {
                 contextualType = typeRef || contextualType;
             }
             if (contextualType) {
+                if (context.isInferentiallyTyping()) {
+                    contextualType = context.fixAllTypeParametersReferencedByType(contextualType, this);
+                }
                 context.setTypeInContext(paramSymbol, contextualType);
             }
             else if (paramSymbol.isVarArg) {
@@ -11454,10 +11457,9 @@ module TypeScript {
                     parameterType = parameters[i].type;
                 }
 
-                var fixedTypeParameterSubstitutions = argContext.getFixedTypeParameterSubstitutions();
                 argContext.resetRelationshipCache();
 
-                context.pushInferentialType(parameterType, fixedTypeParameterSubstitutions);
+                context.pushInferentialType(parameterType, argContext);
 
                 this.relateTypeToTypeParametersWithNewEnclosingTypes(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
 

@@ -137,14 +137,7 @@ module TypeScript {
             for (var infoKey in this.candidateCache) {
                 if (this.candidateCache.hasOwnProperty(infoKey)) {
                     var info = this.candidateCache[infoKey];
-                    // We only want to substitute types for *fixed* type parameters
-                    // TODO: We fix type parameters too late. Therefore, sometimes we want the
-                    // inferred type of a type parameter that hasn't yet been fixed. For now,
-                    // we fall back on the first inference candidate (which might be null).
-                    // This means that in the common case with one candidate, we will have the
-                    // right type if the type parameter appears in a lambda parameter.
-                    fixedTypeParametersToTypesMap[info.typeParameter.pullSymbolID] = info._inferredTypeAfterFixing ||
-                        info.inferenceCandidates[0];
+                    fixedTypeParametersToTypesMap[info.typeParameter.pullSymbolID] = info._inferredTypeAfterFixing;
                 }
             }
 
@@ -183,7 +176,7 @@ module TypeScript {
         constructor(public contextualType: PullTypeSymbol,
             public provisional: boolean,
             public isInferentiallyTyping: boolean,
-            public substitutions: PullTypeSymbol[]) { }
+            public typeArgumentInferenceContext: ArgumentInferenceContext) { }
 
         public recordProvisionallyTypedSymbol(symbol: PullSymbol) {
             this.provisionallyTypedSymbols[this.provisionallyTypedSymbols.length] = symbol;
@@ -238,8 +231,8 @@ module TypeScript {
                 this.fileName === ast.fileName();
         }
 
-        private _pushAnyContextualType(type: PullTypeSymbol, provisional: boolean, isInferentiallyTyping: boolean, substitutions: PullTypeSymbol[]) {
-            this.contextStack.push(new PullContextualTypeContext(type, provisional, isInferentiallyTyping, substitutions));
+        private _pushAnyContextualType(type: PullTypeSymbol, provisional: boolean, isInferentiallyTyping: boolean, argContext: ArgumentInferenceContext) {
+            this.contextStack.push(new PullContextualTypeContext(type, provisional, isInferentiallyTyping, argContext));
         }
 
         // Use this to push any kind of contextual type if it is NOT propagated inward from a parent
@@ -255,9 +248,8 @@ module TypeScript {
         }
 
         // Use this if you are trying to infer type arguments.
-        // substitutions is information about what you have inferred so far.
-        public pushInferentialType(type: PullTypeSymbol, substitutions: PullTypeSymbol[]) {
-            this._pushAnyContextualType(type, /*provisional*/ true, /*isInferentiallyTyping*/ true, substitutions);
+        public pushInferentialType(type: PullTypeSymbol, typeArgumentInferenceContext: ArgumentInferenceContext) {
+            this._pushAnyContextualType(type, /*provisional*/ true, /*isInferentiallyTyping*/ true, typeArgumentInferenceContext);
         }
 
         // Use this if you are trying to choose an overload and are trying a contextual type.
@@ -288,8 +280,11 @@ module TypeScript {
         public findSubstitution(type: PullTypeSymbol) {
             if (this.contextStack.length) {
                 for (var i = this.contextStack.length - 1; i >= 0; i--) {
-                    if (this.contextStack[i].substitutions) {
-                        return this.contextStack[i].substitutions[type.pullSymbolID];
+                    if (this.contextStack[i].typeArgumentInferenceContext) {
+                        if (!this.contextStack[i].typeArgumentInferenceContext.candidateCache[type.pullSymbolID]) {
+                            return null;
+                        }
+                        return this.contextStack[i].typeArgumentInferenceContext.candidateCache[type.pullSymbolID]._inferredTypeAfterFixing;
                     }
                 }
             }
@@ -310,6 +305,42 @@ module TypeScript {
                 var substitution = this.findSubstitution(type);
 
                 return substitution || type;
+            }
+
+            return null;
+        }
+
+        public fixAllTypeParametersReferencedByType(type: PullTypeSymbol, resolver: PullTypeResolver): PullTypeSymbol {
+            var argContext = this.getCurrentTypeArgumentInferenceContext();
+            if (type.wrapsSomeTypeParameter(argContext.candidateCache)) {
+                // Build up a type parameter argument map with which we will instantiate this type
+                // after fixing type parameters
+                var typeParameterArgumentMap: PullTypeSymbol[] = [];
+                // Iterate over all the type parameters and fix any one that is wrapped
+                for (var n in argContext.candidateCache) {
+                    var typeParameter = argContext.candidateCache[n].typeParameter;
+                    if (typeParameter) {
+                        var dummyMap: PullTypeSymbol[] = [];
+                        dummyMap[typeParameter.pullSymbolID] = typeParameter;
+                        if (type.wrapsSomeTypeParameter(dummyMap)) {
+                            argContext.tryToFixTypeParameter(typeParameter, resolver, this);
+                            Debug.assert(argContext.candidateCache[n]._inferredTypeAfterFixing);
+                            typeParameterArgumentMap[typeParameter.pullSymbolID] = argContext.candidateCache[n]._inferredTypeAfterFixing;
+                        }
+                    }
+                }
+
+                return resolver.instantiateType(type, typeParameterArgumentMap, /*instantiateFunctionTypeParameters*/ true);
+            }
+
+            return type;
+        }
+
+        private getCurrentTypeArgumentInferenceContext() {
+            for (var i = this.contextStack.length - 1; i >= 0; i--) {
+                if (this.contextStack[i].typeArgumentInferenceContext) {
+                    return this.contextStack[i].typeArgumentInferenceContext;
+                }
             }
 
             return null;
