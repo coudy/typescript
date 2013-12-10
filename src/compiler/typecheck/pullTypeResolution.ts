@@ -11461,7 +11461,7 @@ module TypeScript {
 
                 context.pushInferentialType(parameterType, argContext);
 
-                this.relateTypeToTypeParametersWithNewEnclosingTypes(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, false, argContext, context);
+                this.relateTypeToTypeParametersWithNewEnclosingTypes(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, argContext, context);
 
                 context.popAnyContextualType();
             }
@@ -11531,31 +11531,30 @@ module TypeScript {
         }
 
         private relateTypeToTypeParametersInEnclosingType(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            shouldFix: boolean, argContext: ArgumentInferenceContext, context: PullTypeResolutionContext) {
+            argContext: ArgumentInferenceContext, context: PullTypeResolutionContext) {
             if (expressionType && parameterType) {
                 var generativeClassifications = context.getGenerativeClassifications();
                 var expressionTypeGenerativeTypeClassification = generativeClassifications.generativeClassification1;
                 var parameterTypeGenerativeTypeClassification = generativeClassifications.generativeClassification2;
                 if (expressionTypeGenerativeTypeClassification === GenerativeTypeClassification.InfinitelyExpanding ||
                     parameterTypeGenerativeTypeClassification === GenerativeTypeClassification.InfinitelyExpanding) {
-                    this.relateInifinitelyExpandingTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+                    this.relateInifinitelyExpandingTypeToTypeParameters(expressionType, parameterType, argContext, context);
                     return;
                 }
             }
-            this.relateTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+            this.relateTypeToTypeParameters(expressionType, parameterType, argContext, context);
         }
         
         private relateTypeToTypeParametersWithNewEnclosingTypes(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            shouldFix: boolean, argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
+            argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
 
             var enclosingTypeWalkers = context.resetEnclosingTypeWalkers();
-            this.relateTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+            this.relateTypeToTypeParameters(expressionType, parameterType, argContext, context);
             context.setEnclosingTypeWalkers(enclosingTypeWalkers);
         }
 
         private relateTypeToTypeParameters(expressionType: PullTypeSymbol,
             parameterType: PullTypeSymbol,
-            shouldFix: boolean,
             argContext: ArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
@@ -11570,9 +11569,6 @@ module TypeScript {
             if (parameterType.isTypeParameter()) {
                 var typeParameter = <PullTypeParameterSymbol>parameterType;
                 argContext.addCandidateForInference(typeParameter, expressionType);
-                if (shouldFix) {
-                    argContext.tryToFixTypeParameter(typeParameter, this, context);
-                }
                 return;
             }
 
@@ -11586,7 +11582,7 @@ module TypeScript {
                 (parameterDeclarations[0] === expressionDeclarations[0] || (expressionType.isGeneric() && parameterType.isGeneric() &&
                 this.sourceIsSubtypeOfTarget(this.instantiateTypeToAny(expressionType, context), this.instantiateTypeToAny(parameterType, context), /*ast*/ null, context, null))) &&
                 expressionType.isGeneric()) {
-                this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+                this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, argContext, context);
             }
 
             var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(expressionType, parameterType);
@@ -11597,15 +11593,15 @@ module TypeScript {
         private relateTypeToTypeParametersWorker(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
             shouldFix: boolean, argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
             if (expressionType.isArrayNamedTypeReference() && parameterType.isArrayNamedTypeReference()) {
-                this.relateArrayTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+                this.relateArrayTypeToTypeParameters(expressionType, parameterType, argContext, context);
 
                 return;
             }
 
-            this.relateObjectTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+            this.relateObjectTypeToTypeParameters(expressionType, parameterType, argContext, context);
         }
 
-        private relateTypeArgumentsOfTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol, shouldFix: boolean,
+        private relateTypeArgumentsOfTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
             argContext: ArgumentInferenceContext, context: PullTypeResolutionContext) {
             var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
             var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
@@ -11621,13 +11617,13 @@ module TypeScript {
                 for (var i = 0; i < typeParameters.length; i++) {
                     if (typeArguments[i] !== typeParameters[i]) {
                         // relate and fix
-                        this.relateTypeToTypeParametersWithNewEnclosingTypes(typeArguments[i], typeParameters[i], true, argContext, context);
+                        this.relateTypeToTypeParametersWithNewEnclosingTypes(typeArguments[i], typeParameters[i], argContext, context);
                     }
                 }
             }
         }
 
-        private relateInifinitelyExpandingTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol, shouldFix: boolean,
+        private relateInifinitelyExpandingTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
             argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
             if (!expressionType || !parameterType) {
                 return;
@@ -11648,7 +11644,7 @@ module TypeScript {
 
             if (expressionTypeTypeArguments && parameterTypeParameters && expressionTypeTypeArguments.length === parameterTypeParameters.length) {
                 for (var i = 0; i < expressionTypeTypeArguments.length; i++) {
-                    this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
+                    this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, argContext, context);
                 }
             }
         }
@@ -11668,20 +11664,19 @@ module TypeScript {
 
             for (var i = 0; i < len; i++) {
                 context.walkParameterTypes(i);
-                this.relateTypeToTypeParametersInEnclosingType(expressionParams[i].type, parameterParams[i].type, /*shouldFix:*/ true,
+                this.relateTypeToTypeParametersInEnclosingType(expressionParams[i].type, parameterParams[i].type,
                     argContext, context);
                 context.postWalkParameterTypes();
             }
 
             context.walkReturnTypes();
-            this.relateTypeToTypeParametersInEnclosingType(expressionReturnType, parameterReturnType, /*shouldFix:*/ false,
+            this.relateTypeToTypeParametersInEnclosingType(expressionReturnType, parameterReturnType,
                 argContext, context);
             context.postWalkReturnTypes();
         }
 
         private relateObjectTypeToTypeParameters(objectType: PullTypeSymbol,
             parameterType: PullTypeSymbol,
-            shouldFix: boolean,
             argContext: ArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
@@ -11705,14 +11700,11 @@ module TypeScript {
                         // PULLREVIEW: This may lead to duplicate inferences for type argument parameters, if the two are the same
                         // (which could occur via mutually recursive method calls within a generic class declaration)
                         argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i]);
-                        if (shouldFix) {
-                            argContext.tryToFixTypeParameter(parameterTypeParameters[i], this, context);
-                        }
                     }
                 }
                 else if (parameterType === this.semanticInfoChain.anyTypeSymbol) {
                     for (var i = 0; i < objectTypeArguments.length; i++) {
-                        this.relateTypeToTypeParametersWithNewEnclosingTypes(parameterType, objectTypeArguments[i], shouldFix, argContext, context);
+                        this.relateTypeToTypeParametersWithNewEnclosingTypes(parameterType, objectTypeArguments[i], argContext, context);
                     }
                 }
             }
@@ -11723,7 +11715,7 @@ module TypeScript {
                 if (objectMember) {
                     context.walkMemberTypes(parameterTypeMembers[i].name);
                     this.relateTypeToTypeParametersInEnclosingType(objectMember.type, parameterTypeMembers[i].type,
-                        shouldFix, argContext, context);
+                        argContext, context);
                     context.postWalkMemberTypes();
                 }
             }
@@ -11791,14 +11783,13 @@ module TypeScript {
 
         private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,
             parameterArrayType: PullTypeSymbol,
-            shouldFix: boolean,
             argContext: ArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
             var argElement = argArrayType.getElementType();
             var paramElement = parameterArrayType.getElementType();
 
-            this.relateTypeToTypeParametersWithNewEnclosingTypes(argElement, paramElement, shouldFix, argContext, context);
+            this.relateTypeToTypeParametersWithNewEnclosingTypes(argElement, paramElement, argContext, context);
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
