@@ -277,21 +277,6 @@ module TypeScript {
             return this.contextStack.length ? this.contextStack[this.contextStack.length - 1].hasProvisionalErrors : false;
         }
 
-        public findSubstitution(type: PullTypeSymbol) {
-            if (this.contextStack.length) {
-                for (var i = this.contextStack.length - 1; i >= 0; i--) {
-                    if (this.contextStack[i].typeArgumentInferenceContext) {
-                        if (!this.contextStack[i].typeArgumentInferenceContext.candidateCache[type.pullSymbolID]) {
-                            return null;
-                        }
-                        return this.contextStack[i].typeArgumentInferenceContext.candidateCache[type.pullSymbolID]._inferredTypeAfterFixing;
-                    }
-                }
-            }
-
-            return null;
-        }
-
         public getContextualType(): PullTypeSymbol {
             var context = !this.contextStack.length ? null : this.contextStack[this.contextStack.length - 1];
             
@@ -302,9 +287,7 @@ module TypeScript {
                     return null;
                 }
 
-                var substitution = this.findSubstitution(type);
-
-                return substitution || type;
+                return type;
             }
 
             return null;
@@ -369,9 +352,7 @@ module TypeScript {
         }
 
         public setTypeInContext(symbol: PullSymbol, type: PullTypeSymbol) {
-            var substitution: PullTypeSymbol = this.findSubstitution(type);
-
-            symbol.type = substitution || type;
+            symbol.type = type;
 
             if (this.contextStack.length && this.inProvisionalResolution()) {
                 this.contextStack[this.contextStack.length - 1].recordProvisionallyTypedSymbol(symbol);

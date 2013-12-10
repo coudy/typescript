@@ -2357,6 +2357,11 @@ module TypeScript {
                 contextualType = typeRef || contextualType;
             }
             if (contextualType) {
+                // November 18, 2013, Section 4.12.2:
+                // When a function expression is inferentially typed (section 4.9.3) and a type assigned
+                // to a parameter in that expression references type parameters for which inferences are
+                // being made, the corresponding inferred type arguments to become fixed and no further
+                // candidate inferences are made for them.
                 if (context.isInferentiallyTyping()) {
                     contextualType = context.fixAllTypeParametersReferencedByType(contextualType, this);
                 }
