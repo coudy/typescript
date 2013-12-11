@@ -9262,24 +9262,29 @@ module TypeScript {
             return this.getNewErrorTypeSymbol();
         }
 
-        private instantiateSignatureInContext(signatureA: PullSignatureSymbol, signatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
+        // Here, we are instantiating signatureAToInstantiate in the context of contextSignatureB.
+        // The A and B reference section 3.8.5 of the spec:
+        // A is instantiated in the context of B. If A is a non-generic signature, the result of
+        // this process is simply A. Otherwise, type arguments for A are inferred from B producing
+        // an instantiation of A that can be related to B
+        private instantiateSignatureInContext(signatureAToInstantiate: PullSignatureSymbol, contextualSignatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
 
             var typeReplacementMap: PullTypeSymbol[] = [];
             var inferredTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
-            var typeParameters: PullTypeParameterSymbol[] = signatureA.getTypeParameters();
+            var typeParameters: PullTypeParameterSymbol[] = signatureAToInstantiate.getTypeParameters();
             var typeConstraint: PullTypeSymbol = null;
 
             var fixedParameterTypes: PullTypeSymbol[] = [];
 
-            for (var i = 0; i < signatureB.parameters.length; i++) {
-                fixedParameterTypes.push(signatureB.parameters[i].isVarArg ? signatureB.parameters[i].type.getElementType() : signatureB.parameters[i].type);
+            for (var i = 0; i < contextualSignatureB.parameters.length; i++) {
+                fixedParameterTypes.push(contextualSignatureB.parameters[i].isVarArg ? contextualSignatureB.parameters[i].type.getElementType() : contextualSignatureB.parameters[i].type);
             }
 
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureA, new ArgumentInferenceContext(this, fixedParameterTypes), new TypeComparisonInfo(), context);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureAToInstantiate, new ArgumentInferenceContext(this, fixedParameterTypes), new TypeComparisonInfo(), context);
 
-            var functionTypeA = signatureA.functionType;
-            var functionTypeB = signatureB.functionType;
+            var functionTypeA = signatureAToInstantiate.functionType;
+            var functionTypeB = contextualSignatureB.functionType;
             var enclosingTypeParameterMap: PullTypeSymbol[];
 
             if (functionTypeA) {
@@ -9320,8 +9325,8 @@ module TypeScript {
                     if (!this.sourceIsAssignableToTargetWithNewEnclosingTypes(inferredTypeArgs[i], typeConstraint, /*ast*/ null, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
                         // if the signature is not assignable due to a constraint mismatch, it may be because the two signatures are identical
                         // (hence, no inferences could be made for the signature's type parameters)
-                        if (this.signaturesAreIdenticalWithNewEnclosingTypes(signatureA, signatureB, context)) {
-                            return signatureA;
+                        if (this.signaturesAreIdenticalWithNewEnclosingTypes(signatureAToInstantiate, contextualSignatureB, context)) {
+                            return signatureAToInstantiate;
                         }
                         else {
                             return null;
@@ -9330,7 +9335,7 @@ module TypeScript {
                 }
             }
 
-            return this.instantiateSignature(signatureA, typeReplacementMap);
+            return this.instantiateSignature(signatureAToInstantiate, typeReplacementMap);
         }
 
         private resolveCastExpression(assertionExpression: CastExpression, context: PullTypeResolutionContext): PullTypeSymbol {
@@ -11795,6 +11800,66 @@ module TypeScript {
             var paramElement = parameterArrayType.getElementType();
 
             this.relateTypeToTypeParametersWithNewEnclosingTypes(argElement, paramElement, argContext, context);
+        }
+
+        // November 18, 2013, Section 4.12.2:
+        // If e is an expression of a function type that contains exactly one generic call signature
+        // and no other members, and T is a function type with exactly one non-generic call signature
+        // and no other members, then any inferences made for type parameters referenced by the
+        // parameters of T's call signature are fixed and, if e's call signature can successfully be
+        // instantiated in the context of T's call signature(section 3.8.5), e's type is changed to
+        // a function type with that instantiated signature.
+        private alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionType: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
+            if (!context.isInferentiallyTyping()) {
+                return expressionType;
+            }
+
+            var contextualType = context.getContextualType();
+            Debug.assert(contextualType);
+            if (this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(expressionType, /*callSignatureShouldBeGeneric*/ true) &&
+                this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(contextualType, /*callSignatureShouldBeGeneric*/ false)) {
+                // Here we overwrite contextualType because we will want to use the version of the type
+                // that was instantiated with the fixed type parameters from the argument inference
+                // context
+                contextualType = context.fixAllTypeParametersReferencedByType(contextualType, this);
+                var genericExpressionSignature = expressionType.getCallSignatures()[0];
+                var contextualSignature = contextualType.getCallSignatures()[0];
+
+                // Contextual signature instantiation will return null if the instantiation is unsuccessful
+                var instantiatedSignature = this.instantiateSignatureInContext(genericExpressionSignature, contextualSignature, context);
+                if (instantiatedSignature === null) {
+                    return expressionType;
+                }
+
+                // Create new type with just the given call signature
+                var newType = new PullTypeSymbol("", PullElementKind.FunctionType);
+                newType.addCallSignature(instantiatedSignature);
+                return newType;
+            }
+
+            return expressionType;
+        }
+
+        private isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(type: PullTypeSymbol, callSignatureShouldBeGeneric: boolean): boolean {
+            Debug.assert(type);
+            if (type.getCallSignatures().length !== 1) {
+                return false;
+            }
+
+            var callSignatureIsGeneric = type.getCallSignatures()[0].isGeneric();
+            if (callSignatureIsGeneric !== callSignatureShouldBeGeneric) {
+                return false;
+            }
+
+            var expressionTypeHasOtherMembers =
+                type.getConstructSignatures().length ||
+                type.getIndexSignatures().length ||
+                type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all).length;
+            if (expressionTypeHasOtherMembers) {
+                return false;
+            }
+
+            return true;
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
