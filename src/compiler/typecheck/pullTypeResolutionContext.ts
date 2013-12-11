@@ -305,11 +305,6 @@ module TypeScript {
                     return null;
                 }
 
-                // if it's a type parameter, return the upper bound
-                if (type.isTypeParameter() && (<PullTypeParameterSymbol>type).getConstraint()) {
-                    type = (<PullTypeParameterSymbol>type).getConstraint();
-                }
-
                 var substitution = this.findSubstitution(type);
 
                 return substitution || type;
