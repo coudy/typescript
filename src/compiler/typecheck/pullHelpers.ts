@@ -6,6 +6,19 @@
 module TypeScript {
 
     export module PullHelpers {
+        // This helps in case we would like to make sure we have type while we are resolving/infering types for it
+        // without infering back to any because we incorrectly detected recursive resolution of function
+        export function resolveDeclaredSymbolToUseType(symbol: PullSymbol) {
+            if (symbol.isSignature()) {
+                if (!(<PullSignatureSymbol>symbol).returnType) {
+                    symbol._resolveDeclaredSymbol();
+                }
+            }
+            else if (!symbol.type) {
+                symbol._resolveDeclaredSymbol();
+            }
+        }
+
         export interface SignatureInfoForFuncDecl {
             signature: PullSignatureSymbol;
             allSignatures: PullSignatureSymbol[];

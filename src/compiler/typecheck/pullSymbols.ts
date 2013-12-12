@@ -1395,6 +1395,7 @@ module TypeScript {
 
             var wrapsSomeTypeParameter = false;
 
+            PullHelpers.resolveDeclaredSymbolToUseType(signature);
             if (signature.returnType && signature.returnType.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 wrapsSomeTypeParameter = true;
             }
@@ -1403,10 +1404,7 @@ module TypeScript {
                 var parameters = signature.parameters;
 
                 for (var i = 0; i < parameters.length; i++) {
-                    if (!parameters[i].type) {
-                        parameters[i]._resolveDeclaredSymbol();
-                    }
-
+                    PullHelpers.resolveDeclaredSymbolToUseType(parameters[i]);
                     if (parameters[i].type.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                         wrapsSomeTypeParameter = true;
                         break;
@@ -2690,9 +2688,7 @@ module TypeScript {
                     var members = type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all);
 
                     for (var i = 0; i < members.length; i++) {
-                        if (!members[i].type) {
-                            members[i]._resolveDeclaredSymbol();
-                        }
+                        PullHelpers.resolveDeclaredSymbolToUseType(members[i]);
                         if (members[i].type.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                             wrapsSomeTypeParameter = true;
                             break;

@@ -9893,10 +9893,6 @@ module TypeScript {
                 return false;
             }
 
-            // Ensure that both signatures are resolved
-            this.resolveDeclaredSymbol(s1);
-            this.resolveDeclaredSymbol(s2);
-
             // Assume typeParameter pairwise identity before we check
             var s1TypeParameters = s1.getTypeParameters();
             var s2TypeParameters = s2.getTypeParameters();
@@ -9916,6 +9912,8 @@ module TypeScript {
             }
 
             if (includingReturnType) {
+                PullHelpers.resolveDeclaredSymbolToUseType(s1);
+                PullHelpers.resolveDeclaredSymbolToUseType(s2);
                 context.walkReturnTypes();
                 var areReturnTypesIdentical = this.typesAreIdenticalInEnclosingTypes(s1.returnType, s2.returnType, context);
                 context.postWalkReturnTypes();
@@ -9928,6 +9926,8 @@ module TypeScript {
             var s2Params = s2.parameters;
 
             for (var iParam = 0; iParam < s1Params.length; iParam++) {
+                PullHelpers.resolveDeclaredSymbolToUseType(s1Params[iParam]);
+                PullHelpers.resolveDeclaredSymbolToUseType(s2Params[iParam]);
                 context.walkParameterTypes(iParam);
                 var areParameterTypesIdentical = this.typesAreIdenticalInEnclosingTypes(s1Params[iParam].type, s2Params[iParam].type, context);
                 context.postWalkParameterTypes();
@@ -11002,8 +11002,8 @@ module TypeScript {
                 return false;
             }
 
-            // If signatures are identitical sourceSig is subtype of targetSig
-            if (!assignableTo && this.signaturesAreIdentical(sourceSig, targetSig, context)) {
+            // If signatures are relatable if sourceSig and targetSig are identical
+            if (this.signaturesAreIdentical(sourceSig, targetSig, context)) {
                 return true;
             }
 

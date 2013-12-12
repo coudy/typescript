@@ -552,9 +552,7 @@ module TypeScript {
 
         private populateInstantiatedMemberFromReferencedMember(referencedMember: PullSymbol) {
             var instantiatedMember: PullSymbol;
-            if (!referencedMember.type) {
-                referencedMember._resolveDeclaredSymbol();
-            }
+            PullHelpers.resolveDeclaredSymbolToUseType(referencedMember);
 
             // if the member does not require further specialization, re-use the referenced symbol
             if (!referencedMember.type.wrapsSomeTypeParameter(this._typeParameterArgumentMap)) {
