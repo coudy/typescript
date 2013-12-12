@@ -9267,8 +9267,10 @@ module TypeScript {
         // A is instantiated in the context of B. If A is a non-generic signature, the result of
         // this process is simply A. Otherwise, type arguments for A are inferred from B producing
         // an instantiation of A that can be related to B
-        private instantiateSignatureInContext(signatureAToInstantiate: PullSignatureSymbol, contextualSignatureB: PullSignatureSymbol, context: PullTypeResolutionContext): PullSignatureSymbol {
-
+        private instantiateSignatureInContext(
+            signatureAToInstantiate: PullSignatureSymbol,
+            contextualSignatureB: PullSignatureSymbol,
+            context: PullTypeResolutionContext): PullSignatureSymbol {
             var typeReplacementMap: PullTypeSymbol[] = [];
             var inferredTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
@@ -9277,9 +9279,9 @@ module TypeScript {
 
             var fixedParameterTypes: PullTypeSymbol[] = [];
 
-            for (var i = 0; i < contextualSignatureB.parameters.length; i++) {
-                fixedParameterTypes.push(contextualSignatureB.parameters[i].isVarArg ? contextualSignatureB.parameters[i].type.getElementType() : contextualSignatureB.parameters[i].type);
-            }
+            contextualSignatureB.forCorrespondingParameterTypesInThisAndOtherSignature(signatureAToInstantiate, this, contextualSignatureParameterType => {
+                fixedParameterTypes.push(contextualSignatureParameterType);
+            });
 
             inferredTypeArgs = this.inferArgumentTypesForSignature(signatureAToInstantiate, new ArgumentInferenceContext(this, fixedParameterTypes), new TypeComparisonInfo(), context);
 
