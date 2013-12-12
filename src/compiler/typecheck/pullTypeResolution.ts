@@ -10180,6 +10180,22 @@ module TypeScript {
             return isSourceRelatable;
         }
 
+        private sourceIsRelatableToTargetInCache(source: PullSymbol, target: PullSymbol, comparisonCache: IBitMatrix, comparisonInfo: TypeComparisonInfo) {
+            var isRelatable = comparisonCache.valueAt(source.pullSymbolID, target.pullSymbolID);
+            // If the source is relatable, return immediately
+            if (isRelatable) {
+                return { isRelatable: isRelatable };
+            }
+
+            // if comparison info is not asked, we can return cached false value, 
+            // otherwise we need to redo the check to fill in the comparison info
+            if (isRelatable != undefined && !comparisonInfo) {
+                return { isRelatable: isRelatable };
+            }
+
+            return null;
+        }
+
         private sourceIsRelatableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
             source = this.getSymbolForRelationshipCheck(source);
             target = this.getSymbolForRelationshipCheck(target);
@@ -10220,11 +10236,9 @@ module TypeScript {
             }
 
             // In the case of a 'false', we want to short-circuit a recursive typecheck
-            var isRelatable = comparisonCache.valueAt(source.pullSymbolID, target.pullSymbolID);
-            if (isRelatable || // If the signature is relatable, return immediately
-                // if comparison info is not asked, we can return cached false value, otherwise we need to redo the check to fill in the comparison info
-                (isRelatable != undefined && !comparisonInfo)) {
-                return isRelatable;
+            var isRelatableInfo = this.sourceIsRelatableToTargetInCache(source, target, comparisonCache, comparisonInfo);
+            if (isRelatableInfo) {
+                return isRelatableInfo.isRelatable;
             }
 
             if (source === this.semanticInfoChain.stringTypeSymbol && target.isPrimitive() && (<PullPrimitiveTypeSymbol>target).isStringConstant()) {
@@ -10664,11 +10678,9 @@ module TypeScript {
             var targetPropType = targetProp.type;
 
             // In the case of a 'false', we want to short-circuit a recursive typecheck
-            var isSourceTypeRelatable = comparisonCache.valueAt(sourcePropType.pullSymbolID, targetPropType.pullSymbolID);
-            if (isSourceTypeRelatable ||  // If the signature is relatable, return immediately
-                // if comparison info is not asked, we can return cached false value, otherwise we need to redo the check to fill in the comparison info
-                (isSourceTypeRelatable != undefined && !comparisonInfo)) {
-                return isSourceTypeRelatable;
+            var isRelatableInfo = this.sourceIsRelatableToTargetInCache(sourcePropType, targetPropType, comparisonCache, comparisonInfo);
+            if (isRelatableInfo) {
+                return isRelatableInfo.isRelatable;
             }
 
             var comparisonInfoPropertyTypeCheck: TypeComparisonInfo = null;
@@ -10902,6 +10914,12 @@ module TypeScript {
 
             var targetExcludeDefinition = targetSG.length > 1;
             var sourceExcludeDefinition = sourceSG.length > 1;
+            var sigsCompared = 0;
+            var comparisonInfoSignatuesTypeCheck: TypeComparisonInfo = null;
+            if (comparisonInfo) {
+                comparisonInfoSignatuesTypeCheck = new TypeComparisonInfo(comparisonInfo, /*useSameIndent*/ true);
+                comparisonInfoSignatuesTypeCheck.message = comparisonInfo.message;
+            }
             for (var iMSig = 0; iMSig < targetSG.length; iMSig++) {
                 var mSig = targetSG[iMSig];
 
@@ -10917,8 +10935,11 @@ module TypeScript {
                     }
 
                     context.walkSignatures(nSig.kind, iNSig, iMSig);
-                    var isSignatureRelatableToTarget = this.signatureIsRelatableToTarget(nSig, mSig, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+                    var isSignatureRelatableToTarget = this.signatureIsRelatableToTarget(nSig, mSig, assignableTo, comparisonCache, ast, context,
+                        sigsCompared == 0 ? comparisonInfoSignatuesTypeCheck : null, isComparingInstantiatedSignatures);
                     context.postWalkSignatures();
+                    
+                    sigsCompared++;
 
                     if (isSignatureRelatableToTarget) {
                         foundMatch = true;
@@ -10931,6 +10952,13 @@ module TypeScript {
                     continue;
                 }
 
+                // Give information about check fail only if we are comparing one signature.
+                // This helps in perf (without comparisonInfo we can even use checks that were determined to be false)
+                // Yet we can give useful info if we are comparing two types with one signature
+                if (comparisonInfo && sigsCompared == 1) {
+                    comparisonInfo.message = comparisonInfoSignatuesTypeCheck.message;
+                }
+
                 return false;
             }
 
@@ -10940,6 +10968,22 @@ module TypeScript {
         private signatureIsRelatableToTarget(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol,
             assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext,
             comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
+            var isRelatableInfo = this.sourceIsRelatableToTargetInCache(sourceSig, targetSig, comparisonCache, comparisonInfo);
+            if (isRelatableInfo) {
+                return isRelatableInfo.isRelatable;
+            }
+
+            comparisonCache.setValueAt(sourceSig.pullSymbolID, targetSig.pullSymbolID, true);
+            var isRelatable = this.signatureIsRelatableToTargetWorker(sourceSig, targetSig, assignableTo, comparisonCache,
+                ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            comparisonCache.setValueAt(sourceSig.pullSymbolID, targetSig.pullSymbolID, isRelatable);
+            return isRelatable;
+        }
+
+        private signatureIsRelatableToTargetWorker(sourceSig: PullSignatureSymbol, targetSig: PullSignatureSymbol,
+            assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext,
+            comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean) {
+
             var sourceParameters = sourceSig.parameters;
             var targetParameters = targetSig.parameters;
 
@@ -13681,12 +13725,15 @@ module TypeScript {
         public stringConstantVal: AST = null;
         private indent = 1;
 
-        constructor(sourceComparisonInfo?: TypeComparisonInfo) {
+        constructor(sourceComparisonInfo?: TypeComparisonInfo, useSameIndent?: boolean) {
             if (sourceComparisonInfo) {
                 this.flags = sourceComparisonInfo.flags;
                 this.onlyCaptureFirstError = sourceComparisonInfo.onlyCaptureFirstError;
                 this.stringConstantVal = sourceComparisonInfo.stringConstantVal;
-                this.indent = sourceComparisonInfo.indent + 1;
+                this.indent = sourceComparisonInfo.indent;
+                if (!useSameIndent) {
+                    this.indent++;
+                }
             }
         }
 
