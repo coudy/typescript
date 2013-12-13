@@ -1216,19 +1216,20 @@ module TypeScript {
         private scanVariableDeclarationGroups(
             enclosingDecl: PullDecl,
             firstDeclHandler: (firstDecl: PullDecl) => void,
-            subsequentDeclHandler?: (subsequentDecl: PullDecl, firstDeclSymbolType: PullTypeSymbol) => void): void {
+            subsequentDeclHandler?: (subsequentDecl: PullDecl, firstSymbol: PullSymbol) => void): void {
 
             var declGroups: PullDecl[][] = enclosingDecl.getVariableDeclGroups();
 
             for (var i = 0; i < declGroups.length; i++) {
-                var firstSymbolType: PullTypeSymbol = null;
+                var firstSymbol: PullSymbol = null;
+                var enclosingDeclForFirstSymbol: PullSymbol = null;
 
                 if (enclosingDecl.kind === PullElementKind.Script && declGroups[i].length) {
                     var name = declGroups[i][0].name;
                     var candidateSymbol = this.semanticInfoChain.findTopLevelSymbol(name, PullElementKind.Variable, enclosingDecl);
                     if (candidateSymbol && candidateSymbol.isResolved) {
                         if (!candidateSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable)) {
-                            firstSymbolType = candidateSymbol.type;
+                            firstSymbol = candidateSymbol;
                         }
                     }
                 }
@@ -1239,7 +1240,6 @@ module TypeScript {
                     var name = decl.name;
 
                     var symbol = decl.getSymbol();
-                    var symbolType = symbol.type;
 
                     if (j === 0) {
                         firstDeclHandler(decl);
@@ -1247,13 +1247,13 @@ module TypeScript {
                             break;
                         }
 
-                        if (!firstSymbolType) {
-                            firstSymbolType = symbolType;
+                        if (!firstSymbol || !firstSymbol.type) {
+                            firstSymbol = symbol;
                             continue;
                         }
                     }
 
-                    subsequentDeclHandler(decl, firstSymbolType);
+                    subsequentDeclHandler(decl, firstSymbol);
                 }
             }
         }
@@ -9612,12 +9612,32 @@ module TypeScript {
                 var t2MemberType: PullTypeSymbol = null;
 
                 for (var iMember = 0; iMember < t1Members.length; iMember++) {
+                    // Spec section 3.8.2:
+                    // Two members are considered identical when
+                    // they are public properties with identical names, optionality, and types,
+                    // they are private properties originating in the same declaration and having identical types,
 
                     t1MemberSymbol = t1Members[iMember];
                     t2MemberSymbol = this.getNamedPropertySymbol(t1MemberSymbol.name, PullElementKind.SomeValue, t2);
-
+                    
                     if (!t2MemberSymbol || (t1MemberSymbol.isOptional !== t2MemberSymbol.isOptional)) {
                         return false;
+                    }
+
+                    var t1MemberSymbolIsPrivate = t1MemberSymbol.anyDeclHasFlag(PullElementFlags.Private);
+                    var t2MemberSymbolIsPrivate = t2MemberSymbol.anyDeclHasFlag(PullElementFlags.Private);
+
+                    // if visibility doesn't match, the types don't match
+                    if (t1MemberSymbolIsPrivate !== t2MemberSymbolIsPrivate) {
+                        return false;
+                    }
+                    // if both are private members, test to ensure that they share a declaration
+                    else if (t2MemberSymbolIsPrivate && t1MemberSymbolIsPrivate) {
+                        var t1MemberSymbolDecl = t1MemberSymbol.getDeclarations()[0];
+                        var sourceDecl = t2MemberSymbol.getDeclarations()[0];
+                        if (t1MemberSymbolDecl !== sourceDecl) {
+                            return false;
+                        }
                     }
 
                     t1MemberType = t1MemberSymbol.type;
@@ -11550,7 +11570,7 @@ module TypeScript {
             this.scanVariableDeclarationGroups(
                 enclosingDecl,
                 (_: PullDecl) => { },
-                (subsequentDecl: PullDecl, firstSymbolType: PullTypeSymbol) => {
+                (subsequentDecl: PullDecl, firstSymbol: PullSymbol) => {
                     // do not report 'must have same type' error for parameters - it makes no sense for them
                     // having 'duplicate name' error that can be raised during parameter binding is enough
                     if (hasFlag(subsequentDecl.kind, PullElementKind.Parameter) || hasFlag(subsequentDecl.flags, PullElementFlags.PropertyParameter)) {
@@ -11561,12 +11581,13 @@ module TypeScript {
 
                     var symbol = subsequentDecl.getSymbol();
                     var symbolType = symbol.type;
+                    var firstSymbolType = firstSymbol.type;
 
                     if (symbolType && firstSymbolType && symbolType !== firstSymbolType && !this.typesAreIdentical(symbolType, firstSymbolType)) {
                         context.postDiagnostic(
                             this.semanticInfoChain.diagnosticFromAST(
                                 boundDeclAST,
-                                DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(), symbolType.toString()]));
+                                DiagnosticCode.Subsequent_variable_declarations_must_have_the_same_type_Variable_0_must_be_of_type_1_but_here_has_type_2, [symbol.getScopedName(), firstSymbolType.toString(firstSymbol), symbolType.toString(symbol)]));
                     }
                 });
         }
