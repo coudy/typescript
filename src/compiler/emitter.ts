@@ -981,13 +981,30 @@ module TypeScript {
             return null;
         }
 
-        private hasChildNameCollision(moduleName: string, childDecls: PullDecl[]) {
+        private hasChildNameCollision(moduleName: string, parentDecl: PullDecl) {
+            var childDecls = parentDecl.getChildDecls();
             return ArrayUtilities.any(childDecls, (childDecl: PullDecl) => {
-                if (childDecl.name === moduleName) {
+                var childAST = this.semanticInfoChain.getASTForDecl(childDecl);
+                // Only if this child would be emitted we need to look further in
+                if (this.shouldEmit(childAST)) {
                     // same name child
-                    var childAST = this.semanticInfoChain.getASTForDecl(childDecl);
-                    if (this.shouldEmit(childAST)) {
-                        // Child ast would be emitted
+                    if (childDecl.name === moduleName) {
+                        // collision if the parent was not class
+                        if (parentDecl.kind != PullElementKind.Class) {
+                            return true;
+                        }
+
+                        // If the parent was class, we would find name collision if this was not a property/method/accessor
+                        if (!(childDecl.kind == PullElementKind.Method ||
+                            childDecl.kind == PullElementKind.Property ||
+                            childDecl.kind == PullElementKind.SetAccessor ||
+                            childDecl.kind == PullElementKind.GetAccessor)) {
+                            return true;
+                        }
+                    }
+
+                    // Check if the name collision exists in any of the children
+                    if (this.hasChildNameCollision(moduleName, childDecl)) {
                         return true;
                     }
                 }
@@ -1004,10 +1021,8 @@ module TypeScript {
             // If the decl is in stack it may need name change in the js file
             moduleDecl = this.getModuleDeclToVerifyChildNameCollision(moduleDecl, changeNameIfAnyDeclarationInContext);
             if (moduleDecl) {
-                var childDecls = moduleDecl.getChildDecls();
-
                 // If there is any child that would be emitted with same name as module, js files would need to use rename for the module
-                while (this.hasChildNameCollision(moduleName, childDecls)) {
+                while (this.hasChildNameCollision(moduleName, moduleDecl)) {
                     // there was name collision with member which could result in faulty codegen, try rename with prepend of '_'
                     moduleName = "_" + moduleName;
                     moduleDisplayName = "_" + moduleDisplayName;
