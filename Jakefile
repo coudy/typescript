@@ -372,6 +372,12 @@ var frontEndPath = "tests/cases/webharness/frontEnd.ts";
 var perfCompilerPath = "tests/cases/webharness/perfCompiler.js";
 compileFile(perfCompilerPath, [frontEndPath], [tscFile], [], true);
 
+// Webhost
+var webhostPath = "tests/cases/webhost/webtsc.ts";
+var webhostJsPath = "tests/cases/webhost/webtsc.js";
+compileFile(webhostJsPath, [webhostPath], [tscFile, webhostPath], [], true);
+
+
 // Fidelity Tests
 var fidelityTestsOutFile = "tests/Fidelity/program.js";
 var fidelityTestsInFile1 = "tests/Fidelity/Program.ts";
@@ -381,6 +387,9 @@ compileFile(fidelityTestsOutFile, [fidelityTestsInFile1], [tscFile, fidelityTest
 desc("Builds the web harness front end");
 task("test-harness", [perfCompilerPath]);
 
+desc("Builds the web host");
+task("test-webhost", [webhostJsPath]);
+
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 
@@ -388,10 +397,12 @@ var localRwcBaseline = "tests/baselines/rwc/local/";
 var refRwcBaseline = "tests/baselines/rwc/reference/";
 
 desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile, fidelityTestsOutFile, perfCompilerPath].concat(libraryTargets), function() {	
+task("tests", [run, serviceFile, fidelityTestsOutFile, perfCompilerPath, webhostJsPath].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
-	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);	
+	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);
+
+	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), "tests/cases/webhost");
 });
 
 desc("Runs the tests using the built run.js file. Syntax is jake runtests. Optional parameters 'host=' and 'tests='.");
@@ -410,7 +421,7 @@ task("runtests", ["local", "tests", builtTestDirectory], function() {
 	host = process.env.host || process.env.TYPESCRIPT_HOST || "node";
 	tests = process.env.test || process.env.tests;
 	tests = tests ? tests.split(',').join(' ') : ([].slice.call(arguments).join(' ') || "");
-	var cmd = host + " " + run + " " + tests;
+        var cmd = host + " " + run + " " + tests;
 	console.log(cmd);
 	var ex = jake.createExec([cmd]);
 	// Add listeners for output and error
