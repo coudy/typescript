@@ -375,8 +375,8 @@ compileFile(perfCompilerPath, [frontEndPath], [tscFile], [], true);
 // Webhost
 var webhostPath = "tests/cases/webhost/webtsc.ts";
 var webhostJsPath = "tests/cases/webhost/webtsc.js";
+desc("Builds the web host");
 compileFile(webhostJsPath, [webhostPath], [tscFile, webhostPath], [], true);
-
 
 // Fidelity Tests
 var fidelityTestsOutFile = "tests/Fidelity/program.js";
@@ -387,9 +387,6 @@ compileFile(fidelityTestsOutFile, [fidelityTestsInFile1], [tscFile, fidelityTest
 desc("Builds the web harness front end");
 task("test-harness", [perfCompilerPath]);
 
-desc("Builds the web host");
-task("test-webhost", [webhostJsPath]);
-
 var localBaseline = "tests/baselines/local/";
 var refBaseline = "tests/baselines/reference/";
 
@@ -397,7 +394,7 @@ var localRwcBaseline = "tests/baselines/rwc/local/";
 var refRwcBaseline = "tests/baselines/rwc/reference/";
 
 desc("Builds the test infrastructure using the built compiler");
-task("tests", [run, serviceFile, fidelityTestsOutFile, perfCompilerPath, webhostJsPath].concat(libraryTargets), function() {	
+task("tests", [run, serviceFile, fidelityTestsOutFile, perfCompilerPath].concat(libraryTargets), function() {	
 	// Copy the language service over to the test directory
 	jake.cpR(serviceFile, builtTestDirectory);
 	jake.cpR(path.join(libraryDirectory, "lib.d.ts"), builtTestDirectory);

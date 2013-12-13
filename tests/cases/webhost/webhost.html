@@ -2,49 +2,48 @@
     <head>
         <title>WebTSC</title>
         <style>
+            textarea {
+                width: 95%;
+                height: 120px;
+                border: 3px solid #cccccc;
+                padding: 5px;
+                font-family: Tahoma, sans-serif;
+            }
 
-textarea {
-    width: 95%;
-    height: 120px;
-    border: 3px solid #cccccc;
-    padding: 5px;
-    font-family: Tahoma, sans-serif;
-}
+            #container {
+                width: 100%;
+            }
 
-#container {
-    width: 100%;
-}
+            #header {
+                height:50px;
+                text-align:center;
+            }
 
-#header {
-    height:50px;
-    text-align:center;
-}
+            #content {
+                text-align:left;
+                width:950px;
+                min-height:300px;
+                margin:0px auto;
+            }
 
-#content {
-    text-align:left;
-    width:950px;
-    min-height:300px;
-    margin:0px auto;
-}
+            #main {
+                float:left;
+                width:700px;
+            }
 
-#main {
-    float:left;
-    width:700px;
-}
-
-#side{
-    float:right;
-    width:250px;
-    text-align:left;
-    padding-top:75px;
-}
+            #side{
+                float:right;
+                width:250px;
+                text-align:left;
+                padding-top:75px;
+            }
         </style>
         <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.js"></script>
         <script language="javascript" src="wscript.js"></script>
         <script language="javascript" src="webtsc.js"></script>
         <script>
             var idx = location.href.lastIndexOf("/");
-            var currentDir = location.href.substring(8, idx);
+            var currentDir = location.href.substring("file:///".length, idx);
             function appendText(str) {
                 var outputPane = $("#outputPane");
                 outputPane.val(outputPane.val() + str);

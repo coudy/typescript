@@ -285,10 +285,8 @@ module TypeScript {
                         var dynamicModuleDecl = topLevelDecl.getChildDecls()[0];
                         symbol = <PullContainerSymbol>dynamicModuleDecl.getSymbol();
 
-                        var cacheId = isTsFile ? tsCacheID : dtsCacheID;
-                        this.symbolCache[cacheId] = symbol;
-
                         if (isTsFile) {
+                            this.symbolCache[tsCacheID] = symbol;
                             // .ts file found - can return immediately
                             return symbol;
                         }
@@ -301,6 +299,7 @@ module TypeScript {
             }
 
             if (dtsSymbol) {
+                this.symbolCache[dtsCacheID] = symbol;
                 return dtsSymbol;
             }
 
