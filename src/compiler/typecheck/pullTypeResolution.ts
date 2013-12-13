@@ -383,6 +383,8 @@ module TypeScript {
                                         return valueSymbol;
                                     }
                                 }
+
+                                return aliasSymbol;
                             }
                         }
                     }
