@@ -2985,8 +2985,6 @@ module TypeScript {
 
             this.setContainer(temp);
             this.inArrowFunction = savedInArrowFunction;
-
-            this.recordSourceMappingEnd(funcProp);
         }
 
         public emitConditionalExpression(expression: ConditionalExpression): void {
