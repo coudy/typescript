@@ -6175,14 +6175,14 @@ module TypeScript {
                         var childDecls = constructorDecl.searchChildDecls(id, PullElementKind.SomeValue);
 
                         if (childDecls.length) {
-                            var childDeclSymbol = childDecls[0].getSymbol();
+                            var memberVariableSymbol = memberVariableDecl.getSymbol();
                             // name that was used in initializer was resolved in the scope of constructor.
                             // delay error reporting:
                             // - if this name won't be found in other scopes then we'll print normal 'Could not find symbol' error
                             // - otherwise we'll report more specific error about shadowing value from the outer scope
                             return this.semanticInfoChain.diagnosticFromAST(nameAST,
                                 DiagnosticCode.Initializer_of_instance_member_variable_0_cannot_reference_identifier_1_declared_in_the_constructor,
-                                [childDeclSymbol.getScopedName(constructorDecl.getSymbol()), nameAST.text()])
+                                [memberVariableSymbol.getScopedName(constructorDecl.getSymbol()), nameAST.text()])
                         }
                     }
                 }
