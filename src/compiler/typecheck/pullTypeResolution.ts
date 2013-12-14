@@ -8647,7 +8647,8 @@ module TypeScript {
                         }
                     }
                     else if (!typeArgs && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
-                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], new ArgumentInferenceContext(this, callEx.argumentList.arguments), new TypeComparisonInfo(), context);
+                        var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, callEx.argumentList.arguments);
+                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], typeArgumentInferenceContext, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
                     else {
@@ -9024,7 +9025,8 @@ module TypeScript {
                                 }
                             }
                             else if (!typeArgs && callEx.argumentList && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
-                                inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], new ArgumentInferenceContext(this, callEx.argumentList.arguments), new TypeComparisonInfo(), context);
+                                var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, callEx.argumentList.arguments);
+                                inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], typeArgumentInferenceContext, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
                             else {
@@ -9277,13 +9279,8 @@ module TypeScript {
             var typeParameters: PullTypeParameterSymbol[] = signatureAToInstantiate.getTypeParameters();
             var typeConstraint: PullTypeSymbol = null;
 
-            var fixedParameterTypes: PullTypeSymbol[] = [];
-
-            contextualSignatureB.forCorrespondingParameterTypesInThisAndOtherSignature(signatureAToInstantiate, this, contextualSignatureParameterType => {
-                fixedParameterTypes.push(contextualSignatureParameterType);
-            });
-
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureAToInstantiate, new ArgumentInferenceContext(this, fixedParameterTypes), new TypeComparisonInfo(), context);
+            var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, contextualSignatureB, /*shouldFixContextualSignatureParameterTypes*/ false);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureAToInstantiate, typeArgumentInferenceContext, new TypeComparisonInfo(), context);
 
             var functionTypeA = signatureAToInstantiate.functionType;
             var functionTypeB = contextualSignatureB.functionType;
@@ -11436,52 +11433,11 @@ module TypeScript {
             return OverloadApplicabilityStatus.NotAssignable;
         }
 
-        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, argContext: ArgumentInferenceContext, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
-            var cxt: PullContextualTypeContext = null;
-
-            var parameters = signature.parameters;
-            var typeParameters = signature.getTypeParameters();
-
-            var parameterType: PullTypeSymbol = null;
-            var argCount = argContext.getInferenceArgumentCount();
-
-            // seed each type parameter with the undefined type, so that we can widen it to 'any'
-            // if no inferences can be made
-            for (var i = 0; i < typeParameters.length; i++) {
-                argContext.addInferenceRoot(typeParameters[i]);
-            }
-
-            for (var i = 0; i < argCount; i++) {
-
-                var paramCount = parameters.length;
-                if (signature.hasVarArgs) {
-                    if (i < paramCount - 1) {
-                        parameterType = parameters[i].type;
-                    }
-                    else {
-                        parameterType = parameters[paramCount - 1].type.getElementType();
-                    }
-                }
-                else {
-                    if (i >= paramCount) {
-                        break;
-                    }
-                    parameterType = parameters[i].type;
-                }
-
-                argContext.resetRelationshipCache();
-
-                context.pushInferentialType(parameterType, argContext);
-
-                this.relateTypeToTypeParametersWithNewEnclosingTypes(argContext.getArgumentTypeSymbolAtIndex(i, context), parameterType, argContext, context);
-
-                context.popAnyContextualType();
-            }
-
-            var inferenceResults = argContext.inferArgumentTypes(this, context);
+        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, argContext: TypeArgumentInferenceContext, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
+            var inferenceResults = argContext.inferTypeArguments(signature);
 
             var resultTypes: PullTypeSymbol[] = [];
-
+            var typeParameters = signature.getTypeParameters();
             // match inferred types in-order to type parameters
             for (var i = 0; i < typeParameters.length; i++) {
                 for (var j = 0; j < inferenceResults.length; j++) {
@@ -11489,18 +11445,6 @@ module TypeScript {
                         resultTypes[resultTypes.length] = inferenceResults[j].type;
                         break;
                     }
-                }
-            }
-
-            // REVIEW: Remove this block?
-            if (!argCount && !resultTypes.length && typeParameters.length) {
-                for (var i = 0; i < typeParameters.length; i++) {
-                    resultTypes[resultTypes.length] = this.semanticInfoChain.emptyTypeSymbol;
-                }
-            }
-            else if (resultTypes.length < typeParameters.length) {
-                for (var i = resultTypes.length; i < typeParameters.length; i++) {
-                    resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
                 }
             }
 
@@ -11543,7 +11487,7 @@ module TypeScript {
         }
 
         private relateTypeToTypeParametersInEnclosingType(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext, context: PullTypeResolutionContext) {
+            argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext) {
             if (expressionType && parameterType) {
                 var generativeClassifications = context.getGenerativeClassifications();
                 var expressionTypeGenerativeTypeClassification = generativeClassifications.generativeClassification1;
@@ -11558,16 +11502,16 @@ module TypeScript {
         }
         
         private relateTypeToTypeParametersWithNewEnclosingTypes(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
+            argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext): void {
 
             var enclosingTypeWalkers = context.resetEnclosingTypeWalkers();
             this.relateTypeToTypeParameters(expressionType, parameterType, argContext, context);
             context.setEnclosingTypeWalkers(enclosingTypeWalkers);
         }
 
-        private relateTypeToTypeParameters(expressionType: PullTypeSymbol,
+        public relateTypeToTypeParameters(expressionType: PullTypeSymbol,
             parameterType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext,
+            argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
             if (!expressionType || !parameterType) {
@@ -11614,7 +11558,7 @@ module TypeScript {
         }
 
         private relateTypeArgumentsOfTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext, context: PullTypeResolutionContext) {
+            argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext) {
             var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
             var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
 
@@ -11636,7 +11580,7 @@ module TypeScript {
         }
 
         private relateInifinitelyExpandingTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
+            argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext): void {
             if (!expressionType || !parameterType) {
                 return;
             }
@@ -11663,7 +11607,7 @@ module TypeScript {
 
         private relateFunctionSignatureToTypeParameters(expressionSignature: PullSignatureSymbol,
             parameterSignature: PullSignatureSymbol,
-            argContext: ArgumentInferenceContext,
+            argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
             var expressionParams = expressionSignature.parameters;
@@ -11689,7 +11633,7 @@ module TypeScript {
 
         private relateObjectTypeToTypeParameters(objectType: PullTypeSymbol,
             parameterType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext,
+            argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
             var parameterTypeMembers = parameterType.getMembers();
@@ -11795,7 +11739,7 @@ module TypeScript {
 
         private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,
             parameterArrayType: PullTypeSymbol,
-            argContext: ArgumentInferenceContext,
+            argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
             var argElement = argArrayType.getElementType();
