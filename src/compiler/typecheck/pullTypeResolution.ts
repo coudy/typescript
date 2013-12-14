@@ -9269,17 +9269,22 @@ module TypeScript {
         // A is instantiated in the context of B. If A is a non-generic signature, the result of
         // this process is simply A. Otherwise, type arguments for A are inferred from B producing
         // an instantiation of A that can be related to B
+        // The shouldFixContextualSignatureParameterTypes flag should be set to true when inferences
+        // are being made for type parameters of the contextual signature (like for inferential
+        // typing in section 4.12.2). It should be set to false for relation checking (sections
+        // 3.8.3 & 3.8.4).
         private instantiateSignatureInContext(
             signatureAToInstantiate: PullSignatureSymbol,
             contextualSignatureB: PullSignatureSymbol,
-            context: PullTypeResolutionContext): PullSignatureSymbol {
+            context: PullTypeResolutionContext,
+            shouldFixContextualSignatureParameterTypes: boolean): PullSignatureSymbol {
             var typeReplacementMap: PullTypeSymbol[] = [];
             var inferredTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
             var typeParameters: PullTypeParameterSymbol[] = signatureAToInstantiate.getTypeParameters();
             var typeConstraint: PullTypeSymbol = null;
 
-            var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, contextualSignatureB, /*shouldFixContextualSignatureParameterTypes*/ false);
+            var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, contextualSignatureB, shouldFixContextualSignatureParameterTypes);
             inferredTypeArgs = this.inferArgumentTypesForSignature(signatureAToInstantiate, typeArgumentInferenceContext, new TypeComparisonInfo(), context);
 
             var functionTypeA = signatureAToInstantiate.functionType;
@@ -11059,7 +11064,7 @@ module TypeScript {
 
             if (sourceSig.isGeneric()) {
                 // TODO : what should be done here for enclosingtypes
-                sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context);
+                sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context, /*shouldFixContextualSignatureParameterTypes*/ false);
 
                 if (!sourceSig) {
                     return false;
@@ -11501,7 +11506,7 @@ module TypeScript {
             this.relateTypeToTypeParameters(expressionType, parameterType, argContext, context);
         }
         
-        private relateTypeToTypeParametersWithNewEnclosingTypes(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
+        public relateTypeToTypeParametersWithNewEnclosingTypes(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
             argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext): void {
 
             var enclosingTypeWalkers = context.resetEnclosingTypeWalkers();
@@ -11767,12 +11772,12 @@ module TypeScript {
                 // Here we overwrite contextualType because we will want to use the version of the type
                 // that was instantiated with the fixed type parameters from the argument inference
                 // context
-                contextualType = context.fixAllTypeParametersReferencedByType(contextualType, this);
                 var genericExpressionSignature = expressionType.getCallSignatures()[0];
                 var contextualSignature = contextualType.getCallSignatures()[0];
 
                 // Contextual signature instantiation will return null if the instantiation is unsuccessful
-                var instantiatedSignature = this.instantiateSignatureInContext(genericExpressionSignature, contextualSignature, context);
+                // We pass true so that the parameters of the contextual signature will be fixed per the spec.
+                var instantiatedSignature = this.instantiateSignatureInContext(genericExpressionSignature, contextualSignature, context, /*shouldFixContextualSignatureParameterTypes*/ true);
                 if (instantiatedSignature === null) {
                     return expressionType;
                 }
