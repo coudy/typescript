@@ -122,6 +122,7 @@ var compilerSources = [
 	"typecheck/pullDecls.ts",
 	"typecheck/pullFlags.ts",
 	"typecheck/pullHelpers.ts",	
+	"typecheck/pullInstantiationHelpers.ts",	
 	"typecheck/pullSemanticInfo.ts",
 	"typecheck/pullSymbolBinder.ts",
 	"typecheck/pullSymbols.ts",

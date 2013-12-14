@@ -471,15 +471,6 @@ module TypeScript {
             this.enclosingTypeWalker2.postWalkIndexSignatureReturnType(onlySignature);
         }
 
-        public walkElementTypes() {
-            this.enclosingTypeWalker1.walkElementType();
-            this.enclosingTypeWalker2.walkElementType();
-        }
-        public postWalkElementTypes() {
-            this.enclosingTypeWalker1.postWalkElementType();
-            this.enclosingTypeWalker2.postWalkElementType();
-        }
-
         public swapEnclosingTypeWalkers() {
             var tempEnclosingWalker1 = this.enclosingTypeWalker1;
             this.enclosingTypeWalker1 = this.enclosingTypeWalker2;

@@ -24,7 +24,7 @@ module TypeScript {
             if (funcSymbol.isSignature()) {
                 functionSignature = <PullSignatureSymbol>funcSymbol;
                 var parent = functionDecl.getParentDecl();
-                typeSymbolWithAllSignatures = parent.getSymbol().type;                
+                typeSymbolWithAllSignatures = parent.getSymbol().type;
             }
             else {
                 functionSignature = functionDecl.getSignatureSymbol();
@@ -51,7 +51,7 @@ module TypeScript {
         export function getAccessorSymbol(getterOrSetter: AST, semanticInfoChain: SemanticInfoChain): PullAccessorSymbol {
             var functionDecl = semanticInfoChain.getDeclForAST(getterOrSetter);
             var getterOrSetterSymbol = functionDecl.getSymbol();
-            
+
             return <PullAccessorSymbol>getterOrSetterSymbol;
         }
 

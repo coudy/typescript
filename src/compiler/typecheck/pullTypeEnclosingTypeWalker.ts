@@ -27,7 +27,11 @@ module TypeScript {
 
         public getGenerativeClassification() {
             if (this._canWalkStructure()) {
-                var currentType = <PullTypeSymbol>this._getCurrentSymbol();
+                var currentType = <PullTypeSymbol>this.currentSymbols[this.currentSymbols.length - 1];
+                if (!currentType) {
+                    // This may occur if we are trying to walk type parameter in the original declaration
+                    return GenerativeTypeClassification.Unknown;
+                }
                 return currentType.getGenerativeTypeClassification(this.enclosingType);
             }
 
@@ -62,7 +66,9 @@ module TypeScript {
                     if (symbol) {
                         if (symbol.kind == PullElementKind.Parameter ||
                             symbol.kind == PullElementKind.Property ||
-                            symbol.kind == PullElementKind.Method) {
+                            symbol.kind == PullElementKind.Method ||
+                            symbol.kind == PullElementKind.ConstructorMethod ||
+                            symbol.kind == PullElementKind.FunctionExpression) {
                             symbol = symbol.type;
                         }
 
@@ -127,9 +133,8 @@ module TypeScript {
         public walkMemberType(memberName: string, resolver: PullTypeResolver) {
             if (this._canWalkStructure()) {
                 var currentType = <PullTypeSymbol>this._getCurrentSymbol();
-                var memberSymbol = resolver._getNamedPropertySymbolOfAugmentedType(memberName, currentType);
-                Debug.assert(memberSymbol && memberSymbol.name == memberName);
-                this._pushSymbol(memberSymbol.type);
+                var memberSymbol = currentType ? resolver._getNamedPropertySymbolOfAugmentedType(memberName, currentType) : null;
+                this._pushSymbol(memberSymbol ? memberSymbol.type : null);
             }
         }
         public postWalkMemberType() {
@@ -142,18 +147,19 @@ module TypeScript {
             if (this._canWalkStructure()) {
                 var currentType = <PullTypeSymbol>this._getCurrentSymbol();
                 var signatures: PullSignatureSymbol[];
-                if (kind == PullElementKind.CallSignature) {
-                    signatures = currentType.getCallSignatures();
-                }
-                else if (kind == PullElementKind.ConstructSignature) {
-                    signatures = currentType.getConstructSignatures();
-                }
-                else {
-                    signatures = currentType.getIndexSignatures();
+                if (currentType) {
+                    if (kind == PullElementKind.CallSignature) {
+                        signatures = currentType.getCallSignatures();
+                    }
+                    else if (kind == PullElementKind.ConstructSignature) {
+                        signatures = currentType.getConstructSignatures();
+                    }
+                    else {
+                        signatures = currentType.getIndexSignatures();
+                    }
                 }
 
-                Debug.assert(signatures && index < signatures.length);
-                this._pushSymbol(signatures[index]);
+                this._pushSymbol(signatures ? signatures[index] : null);
             }
         }
         public postWalkSignature() {
@@ -166,14 +172,15 @@ module TypeScript {
             if (this._canWalkStructure()) {
                 var typeParameters: PullTypeParameterSymbol[];
                 var currentSymbol = this._getCurrentSymbol();
-                if (currentSymbol.isSignature()) {
-                    typeParameters = (<PullSignatureSymbol>currentSymbol).typeParameters;
-                } else {
-                    Debug.assert(currentSymbol.isType());
-                    typeParameters = (<PullTypeSymbol>currentSymbol).getTypeParameters();
+                if (currentSymbol) {
+                    if (currentSymbol.isSignature()) {
+                        typeParameters = (<PullSignatureSymbol>currentSymbol).getTypeParameters();
+                    } else {
+                        Debug.assert(currentSymbol.isType());
+                        typeParameters = (<PullTypeSymbol>currentSymbol).getTypeParameters();
+                    }
                 }
-                Debug.assert(typeParameters && index < typeParameters.length);
-                this._pushSymbol(typeParameters[index].getConstraint());
+                this._pushSymbol(typeParameters ? typeParameters[index].getConstraint() : null);
             }
         }
         public postWalkTypeParameterConstraint() {
@@ -185,7 +192,7 @@ module TypeScript {
         public walkReturnType() {
             if (this._canWalkStructure()) {
                 var currentSignature = <PullSignatureSymbol>this._getCurrentSymbol();
-                this._pushSymbol(currentSignature.returnType);
+                this._pushSymbol(currentSignature ? currentSignature.returnType : null);
             }
         }
 
@@ -198,8 +205,7 @@ module TypeScript {
         public walkParameterType(iParam: number) {
             if (this._canWalkStructure()) {
                 var currentSignature = <PullSignatureSymbol>this._getCurrentSymbol();
-                Debug.assert(currentSignature.parameters && iParam < currentSignature.parameters.length);
-                this._pushSymbol(currentSignature.getParameterTypeAtIndex(iParam));
+                this._pushSymbol(currentSignature ? currentSignature.getParameterTypeAtIndex(iParam) : null);
             }
         }
         public postWalkParameterType() {
@@ -210,18 +216,20 @@ module TypeScript {
 
         public getBothKindOfIndexSignatures(resolver: PullTypeResolver, context: PullTypeResolutionContext, includeAugmentedType: boolean) {
             if (this._canWalkStructure()) {
-                return resolver._getBothKindsOfIndexSignatures(<PullTypeSymbol>this._getCurrentSymbol(), context, includeAugmentedType);
+                var currentType = <PullTypeSymbol>this._getCurrentSymbol();
+                if (currentType) {
+                    return resolver._getBothKindsOfIndexSignatures(currentType, context, includeAugmentedType);
+                }
             }
             return null;
         }
         public walkIndexSignatureReturnType(indexSigInfo: IndexSignatureInfo, useStringIndexSignature: boolean,
-            onlySignature?: boolean) { 
+            onlySignature?: boolean) {
             if (this._canWalkStructure()) {
-                var indexSig = useStringIndexSignature ? indexSigInfo.stringSignature : indexSigInfo.numericSignature;
-                Debug.assert(indexSig);
+                var indexSig = indexSigInfo ? (useStringIndexSignature ? indexSigInfo.stringSignature : indexSigInfo.numericSignature) : null;
                 this._pushSymbol(indexSig);
                 if (!onlySignature) {
-                    this._pushSymbol(indexSig.returnType);
+                    this._pushSymbol(indexSig ? indexSig.returnType : null);
                 }
             }
         }
@@ -231,19 +239,6 @@ module TypeScript {
                     this._popSymbol(); // return type
                 }
                 this._popSymbol(); // index signature type
-            }
-        }
-
-        public walkElementType() {
-            if (this._canWalkStructure()) {
-                var currentType = <PullTypeSymbol>this._getCurrentSymbol();
-                Debug.assert(currentType && currentType.isNamedTypeSymbol());
-                this._pushSymbol(currentType.getElementType());
-            }
-        }
-        public postWalkElementType() {
-            if (this._canWalkStructure()) {
-                this._popSymbol();
             }
         }
     }
