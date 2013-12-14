@@ -1693,6 +1693,65 @@ module TypeScript {
             if (interfaceDecl === allInterfaceDecls[allInterfaceDecls.length - 1]) {
                 this.checkTypeForDuplicateIndexSignatures(interfaceDeclSymbol);
             }
+
+            if (!this.checkInterfaceDeclForIdenticalTypeParameters(interfaceDeclAST, context)) {
+                this.semanticInfoChain.addDiagnosticFromAST(interfaceDeclAST.identifier, DiagnosticCode.All_declarations_of_an_interface_must_have_identical_type_parameters);
+            }
+        }
+
+        // Spec section 7.2:
+        // When a generic interface has multiple declarations, all declarations must have identical type parameter lists,
+        // i.e.identical type parameter names with identical constraints in identical order.
+        private checkInterfaceDeclForIdenticalTypeParameters(interfaceDeclAST: InterfaceDeclaration, context: PullTypeResolutionContext) {
+            var interfaceDecl = this.semanticInfoChain.getDeclForAST(interfaceDeclAST);
+            var interfaceDeclSymbol = <PullTypeSymbol>interfaceDecl.getSymbol();
+
+            // Only generic symbols need the type parameter verification
+            if (!interfaceDeclSymbol.isGeneric()) {
+                return true;
+            }
+
+            // Verify against the first interface declaration only
+            var firstInterfaceDecl = interfaceDeclSymbol.getDeclarations()[0];
+            if (firstInterfaceDecl == interfaceDecl) {
+                return true;
+            }
+
+            var typeParameters = interfaceDecl.getTypeParameters();
+            var firstInterfaceDeclTypeParameters = firstInterfaceDecl.getTypeParameters();
+
+            // Type parameter length should match
+            if (typeParameters.length != firstInterfaceDeclTypeParameters.length) {
+                return false;
+            }
+
+            for (var i = 0; i < typeParameters.length; i++) {
+                var typeParameter = typeParameters[i];
+                var firstInterfaceDeclTypeParameter = firstInterfaceDeclTypeParameters[i];
+                // Type parameter names should be identical
+                if (typeParameter.name != firstInterfaceDeclTypeParameter.name) {
+                    return false;
+                }
+
+                var typeParameterSymbol = <PullTypeParameterSymbol>typeParameter.getSymbol();
+                var typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameter);
+                var firstInterfaceDeclTypeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(firstInterfaceDeclTypeParameter);
+
+                // Constraint should be present or absent in both the decls
+                if (!!typeParameterAST.constraint != !!firstInterfaceDeclTypeParameterAST.constraint) {
+                    return false;
+                }
+
+                // If the constraint is present, it should be identical
+                if (typeParameterAST.constraint) {
+                    var typeParameterConstraint = <PullTypeSymbol>this.resolveAST(typeParameterAST.constraint, /*isContexuallyTyped*/ false, context);
+                    if (!this.typesAreIdentical(typeParameterConstraint, typeParameterSymbol.getConstraint())) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         // November 18, 2013: Section 3.7.4:
@@ -3249,12 +3308,23 @@ module TypeScript {
             var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
             var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
 
+            // Always resolve the first type parameter declaration to make sure we have the constraint set from the first decl
+            this.resolveFirstTypeParameterDeclaration(typeParameterSymbol, context);
+
+            if (typeParameterSymbol.isResolved && this.canTypeCheckAST(typeParameterAST, context)) {
+                this.typeCheckTypeParameterDeclaration(typeParameterAST, context);
+            }
+
+            return typeParameterSymbol;
+        }
+
+        private resolveFirstTypeParameterDeclaration(typeParameterSymbol: PullTypeParameterSymbol, context: PullTypeResolutionContext) {
+            var typeParameterDecl = typeParameterSymbol.getDeclarations()[0];
+            var typeParameterAST = <TypeParameter>this.semanticInfoChain.getASTForDecl(typeParameterDecl);
+
             // REVIEW: We shouldn't bail if we're specializing
             if (typeParameterSymbol.isResolved || typeParameterSymbol.inResolution) {
-                if (typeParameterSymbol.isResolved && this.canTypeCheckAST(typeParameterAST, context)) {
-                    this.typeCheckTypeParameterDeclaration(typeParameterAST, context);
-                }
-                return typeParameterSymbol;
+                return;
             }
 
             typeParameterSymbol.startResolving();
@@ -3272,8 +3342,6 @@ module TypeScript {
             if (this.canTypeCheckAST(typeParameterAST, context)) {
                 this.setTypeChecked(typeParameterAST, context);
             }
-
-            return typeParameterSymbol;
         }
 
         private typeCheckTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext) {

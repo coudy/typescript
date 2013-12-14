@@ -315,6 +315,7 @@ module TypeScript {
         Parameter_0_cannot_be_referenced_in_its_initializer: "Parameter '{0}' cannot be referenced in its initializer.",
         Duplicate_string_index_signature: "Duplicate string index signature.",
         Duplicate_number_index_signature: "Duplicate number index signature.",
+        All_declarations_of_an_interface_must_have_identical_type_parameters: "All declarations of an interface must have identical type parameters.",
         Type_0_is_missing_property_1_from_type_2: "Type '{0}' is missing property '{1}' from type '{2}'.",
         Types_of_property_0_of_types_1_and_2_are_incompatible: "Types of property '{0}' of types '{1}' and '{2}' are incompatible.",
         Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3: "Types of property '{0}' of types '{1}' and '{2}' are incompatible:{NL}{3}",
