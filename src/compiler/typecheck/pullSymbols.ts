@@ -1174,6 +1174,21 @@ module TypeScript {
             return this._stringConstantOverload;
         }
 
+        public getParameterTypeAtIndex(iParam: number) {
+            if (iParam < this.parameters.length - 1 || (iParam < this.parameters.length && !this.hasVarArgs)) {
+                return this.parameters[iParam].type;
+            }
+            else if (this.hasVarArgs) {
+                var paramType = this.parameters[this.parameters.length - 1].type;
+                if (paramType.isArrayNamedTypeReference()) {
+                    paramType = paramType.getElementType();
+                }
+                return paramType
+            }
+
+            return null;
+        }
+
         static getSignatureTypeMemberName(candidateSignature: PullSignatureSymbol, signatures: PullSignatureSymbol[], scopeSymbol: PullSymbol) {
             var allMemberNames = new MemberNameArray();
             var signatureMemberName = PullSignatureSymbol.getSignaturesTypeNameEx(signatures, /*prefix*/ "", /*shortform*/ false, /*brackets*/ false, scopeSymbol, /*getPrettyName*/ true, candidateSignature);
@@ -3347,7 +3362,7 @@ module TypeScript {
 
         if (instantiatingType.isNamedTypeSymbol()) {
             // Get Name with typeArgumentIds
-            var typeParameters = this.getTypeParameters();
+            var typeParameters = instantiatingType.getTypeParameters();
             for (var i = 0; i < typeParameters.length; i++) {
                 substitution += getIDForTypeSubstitutionsOfType(typeArgumentMap[typeParameters[i].pullSymbolID])
             }

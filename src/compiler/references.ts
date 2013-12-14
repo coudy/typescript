@@ -24,6 +24,7 @@
 ///<reference path='typecheck\pullFlags.ts' />
 ///<reference path='typecheck\pullDecls.ts' />
 ///<reference path='typecheck\pullSymbols.ts' />
+///<reference path='typecheck\pullTypeEnclosingTypeWalker.ts' />
 ///<reference path='typecheck\pullTypeResolutionContext.ts' />
 ///<reference path='typecheck\pullTypeResolution.ts' />
 ///<reference path='typecheck\pullSemanticInfo.ts' />
