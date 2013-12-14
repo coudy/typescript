@@ -985,8 +985,9 @@ module TypeScript {
             var childDecls = parentDecl.getChildDecls();
             return ArrayUtilities.any(childDecls, (childDecl: PullDecl) => {
                 var childAST = this.semanticInfoChain.getASTForDecl(childDecl);
+                // Enum member it can never conflict with module name as it is property of the enum
                 // Only if this child would be emitted we need to look further in
-                if (this.shouldEmit(childAST)) {
+                if (childDecl.kind != PullElementKind.EnumMember && this.shouldEmit(childAST)) {
                     // same name child
                     if (childDecl.name === moduleName) {
                         // collision if the parent was not class
@@ -1020,7 +1021,7 @@ module TypeScript {
 
             // If the decl is in stack it may need name change in the js file
             moduleDecl = this.getModuleDeclToVerifyChildNameCollision(moduleDecl, changeNameIfAnyDeclarationInContext);
-            if (moduleDecl) {
+            if (moduleDecl && moduleDecl.kind != PullElementKind.Enum) {
                 // If there is any child that would be emitted with same name as module, js files would need to use rename for the module
                 while (this.hasChildNameCollision(moduleName, moduleDecl)) {
                     // there was name collision with member which could result in faulty codegen, try rename with prepend of '_'
