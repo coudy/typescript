@@ -1788,29 +1788,34 @@ module TypeScript {
                 this.isArrayNamedTypeReference();
         }
 
-        private canUseSimpleInstantiationCache(substitutingTypes: PullTypeSymbol[]): boolean {
-            return substitutingTypes.length === 1 && substitutingTypes[0].kind !== PullElementKind.ObjectType;
+        private canUseSimpleInstantiationCache(typeArgumentMap: PullTypeSymbol[]): boolean {
+            var typeParameters = this.getTypeParameters();
+            return this.isNamedTypeSymbol() && typeParameters.length === 1 && typeArgumentMap[typeParameters[0].pullSymbolID].kind !== PullElementKind.ObjectType;
         }
 
-        public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, substitutingTypes: PullTypeSymbol[]): void {
+        private getSimpleInstantiationCacheId(typeArgumentMap: PullTypeSymbol[]) {
+            return typeArgumentMap[this.getTypeParameters()[0].pullSymbolID].pullSymbolID;
+        }
 
-            if (!substitutingTypes || !substitutingTypes.length) {
+        public addSpecialization(specializedVersionOfThisType: PullTypeSymbol, typeArgumentMap: PullTypeSymbol[]): void {
+
+            if (!typeArgumentMap || !typeArgumentMap.length) {
                 return;
             }
 
-            if (this.canUseSimpleInstantiationCache(substitutingTypes)) {
+            if (this.canUseSimpleInstantiationCache(typeArgumentMap)) {
                 if (!this._simpleInstantiationCache) {
                     this._simpleInstantiationCache = [];
                 }
 
-                this._simpleInstantiationCache[substitutingTypes[0].pullSymbolID] = specializedVersionOfThisType;
+                this._simpleInstantiationCache[this.getSimpleInstantiationCacheId(typeArgumentMap)] = specializedVersionOfThisType;
             }
             else {
                 if (!this._complexInstantiationCache) {
                     this._complexInstantiationCache = createIntrinsicsObject<PullTypeSymbol>();
                 }
 
-                this._complexInstantiationCache[getIDForTypeSubstitutions(substitutingTypes)] = specializedVersionOfThisType;
+                this._complexInstantiationCache[getIDForTypeSubstitutions(this, typeArgumentMap)] = specializedVersionOfThisType;
             }
 
             if (!this._specializedVersionsOfThisType) {
@@ -1820,18 +1825,18 @@ module TypeScript {
             this._specializedVersionsOfThisType.push(specializedVersionOfThisType);
         }
 
-        public getSpecialization(substitutingTypes: PullTypeSymbol[]): PullTypeSymbol {
+        public getSpecialization(typeArgumentMap: PullTypeSymbol[]): PullTypeSymbol {
 
-            if (!substitutingTypes || !substitutingTypes.length) {
+            if (!typeArgumentMap || !typeArgumentMap.length) {
                 return null;
             }
 
-            if (this.canUseSimpleInstantiationCache(substitutingTypes)) {
+            if (this.canUseSimpleInstantiationCache(typeArgumentMap)) {
                 if (!this._simpleInstantiationCache) {
                     return null;
                 }
 
-                var result = this._simpleInstantiationCache[substitutingTypes[0].pullSymbolID];
+                var result = this._simpleInstantiationCache[this.getSimpleInstantiationCacheId(typeArgumentMap)];
                 return result || null;
             }
             else {
@@ -1839,7 +1844,7 @@ module TypeScript {
                     return null;
                 }
 
-                var result = this._complexInstantiationCache[getIDForTypeSubstitutions(substitutingTypes)];
+                var result = this._complexInstantiationCache[getIDForTypeSubstitutions(this, typeArgumentMap)];
                 return result || null;
             }
         }
@@ -2895,7 +2900,7 @@ module TypeScript {
 
     export class PullErrorTypeSymbol extends PullPrimitiveTypeSymbol {
 
-        constructor(private anyType: PullTypeSymbol, name: string) {
+        constructor(public _anyType: PullTypeSymbol, name: string) {
             super(name);
 
             this.isResolved = true;
@@ -2906,15 +2911,15 @@ module TypeScript {
         }
 
         public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {
-            return this.anyType.getName(scopeSymbol, useConstraintInName);
+            return this._anyType.getName(scopeSymbol, useConstraintInName);
         }
 
         public getDisplayName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean, skipInternalAliasName?: boolean): string {
-            return this.anyType.getName(scopeSymbol, useConstraintInName);
+            return this._anyType.getName(scopeSymbol, useConstraintInName);
         }
 
         public toString(scopeSymbol?: PullSymbol, useConstraintInName?: boolean) {
-            return this.anyType.getName(scopeSymbol, useConstraintInName);
+            return this._anyType.getName(scopeSymbol, useConstraintInName);
         }
     }
 
@@ -3336,24 +3341,27 @@ module TypeScript {
         }
     }
 
-    export function getIDForTypeSubstitutions(types: PullTypeSymbol[]): string {
+    export function getIDForTypeSubstitutions(instantiatingType: PullTypeSymbol, typeArgumentMap: PullTypeSymbol[]): string {
         var substitution = "";
         var members: PullSymbol[] = null;
 
-        for (var i = 0; i < types.length; i++) {
-
-            // Cache object types structurally
-            if (types[i].kind !== PullElementKind.ObjectType) {
-                substitution += types[i].pullSymbolID + "#";
+        if (instantiatingType.isNamedTypeSymbol()) {
+            // Get Name with typeArgumentIds
+            var typeParameters = this.getTypeParameters();
+            for (var i = 0; i < typeParameters.length; i++) {
+                substitution += getIDForTypeSubstitutionsOfType(typeArgumentMap[typeParameters[i].pullSymbolID])
             }
-            else {
-                var structure = getIDForTypeSubstitutionsFromObjectType(types[i]);
+        } else {
+            // what should it be, - should this be type parameters defined in this type + enclosingType
+            var tyArg: PullTypeSymbol = null;
 
-                if (structure) {
-                    substitution += structure;
-                }
-                else {
-                    substitution += types[i].pullSymbolID + "#";
+            for (var typeParameterID in typeArgumentMap) {
+                if (typeArgumentMap.hasOwnProperty(typeParameterID)) {
+                    tyArg = typeArgumentMap[typeParameterID];
+
+                    if (tyArg) {
+                        substitution += getIDForTypeSubstitutionsOfType(tyArg);
+                    }
                 }
             }
         }
@@ -3361,58 +3369,59 @@ module TypeScript {
         return substitution;
     }
 
-    function getIDForTypeSubstitutionsFromObjectType(type: PullTypeSymbol): string {
-        var structure = "";
-
-        if (type.isResolved) {
-            var members = type.getMembers();
-            if (members && members.length) {
-                for (var j = 0; j < members.length; j++) {
-                    structure += members[j].name + "@" + getIDForTypeSubstitutions([members[j].type]);
-                }
-            }
-
-            var callSignatures = type.getCallSignatures();
-            if (callSignatures && callSignatures.length) {
-                for (var j = 0; j < callSignatures.length; j++) {
-                    structure += getIDForTypeSubstitutionFromSignature(callSignatures[j]);
-                }
-            }
-
-            var constructSignatures = type.getConstructSignatures();
-            if (constructSignatures && constructSignatures.length) {
-                for (var j = 0; j < constructSignatures.length; j++) {
-                    structure += "new" + getIDForTypeSubstitutionFromSignature(constructSignatures[j]);
-                }
-            }
-
-            var indexSignatures = type.getIndexSignatures();
-            if (indexSignatures && indexSignatures.length) {
-                for (var j = 0; j < indexSignatures.length; j++) {
-                    structure += "[]" + getIDForTypeSubstitutionFromSignature(indexSignatures[j]);
-                }
-            }
+    function getIDForTypeSubstitutionsOfType(type: PullTypeSymbol): string {
+        var structure: string;
+        if (type.isError()) {
+            structure = "E" + getIDForTypeSubstitutionsOfType((<PullErrorTypeSymbol>type)._anyType);
+        }
+        else if (!type.isNamedTypeSymbol()) {
+            structure = this.getIDForTypeSubstitutionsFromObjectType(type);
         }
 
-        if (structure !== "") {
-            return "{" + structure + "}";
+        if (!structure) {
+            structure = type.pullSymbolID + "#";
+        }
+
+        return structure;
+    }
+
+    function getIDForTypeSubstitutionsFromObjectType(type: PullTypeSymbol): string {
+        if (type.isResolved) {
+            var getIDForTypeSubStitutionWalker = new GetIDForTypeSubStitutionWalker();
+            PullHelpers.walkPullTypeSymbolStructure(type, getIDForTypeSubStitutionWalker);
         }
 
         return null;
     }
 
-    function getIDForTypeSubstitutionFromSignature(signature: PullSignatureSymbol): string {
-        var structure = "(";
-        var parameters = signature.parameters;
-        if (parameters && parameters.length) {
-            for (var k = 0; k < parameters.length; k++) {
-                structure += parameters[k].name + "@" + getIDForTypeSubstitutions([parameters[k].type]);
-            }
+    class GetIDForTypeSubStitutionWalker implements PullHelpers.PullTypeSymbolStructureWalker {
+        public structure = "";
+        memberSymbolWalk(memberSymbol: PullSymbol) {
+            this.structure += memberSymbol.name + "@" + getIDForTypeSubstitutionsOfType(memberSymbol.type);
+            return true;
         }
-
-        structure += ")" + getIDForTypeSubstitutions([signature.returnType]);
-        return structure;
+        callSignatureWalk(signatureSymbol: PullSignatureSymbol) {
+            this.structure += "(";
+            return true;
+        }
+        constructSignatureWalk(signatureSymbol: PullSignatureSymbol) {
+            this.structure += "new(";
+            return true;
+        }
+        indexSignatureWalk(signatureSymbol: PullSignatureSymbol) {
+            this.structure += "[](";
+            return true;
+        }
+        signatureParameterWalk(parameterSymbol: PullSymbol) {
+            this.structure += parameterSymbol.name + "@" + getIDForTypeSubstitutionsOfType(parameterSymbol.type);
+            return true;
+        }
+        signatureReturnTypeWalk(returnType: PullTypeSymbol) {
+            this.structure += ")" + getIDForTypeSubstitutionsOfType(returnType);
+            return true;
+        }
     }
+
 
     export enum GetAllMembersVisiblity {
         // All properties of the type regardless of their accessibility level

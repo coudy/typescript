@@ -142,5 +142,69 @@ module TypeScript {
 
             return false;
         }
+
+        export interface PullTypeSymbolStructureWalker {
+            memberSymbolWalk(memberSymbol: PullSymbol): boolean;
+            callSignatureWalk(signatureSymbol: PullSignatureSymbol): boolean;
+            constructSignatureWalk(signatureSymbol: PullSignatureSymbol): boolean;
+            indexSignatureWalk(signatureSymbol: PullSignatureSymbol): boolean;
+            signatureParameterWalk(parameterSymbol: PullSymbol): boolean;
+            signatureReturnTypeWalk(returnType: PullTypeSymbol): boolean;
+        }
+
+        function walkSignatureSymbol(signatureSymbol: PullSignatureSymbol, walker: PullTypeSymbolStructureWalker) {
+            var continueWalk = true;
+            var parameters = signatureSymbol.parameters;
+            if (parameters) {
+                for (var i = 0; continueWalk && i < parameters.length; i++) {
+                    continueWalk = walker.signatureParameterWalk(parameters[i]);
+                }
+            }
+
+            if (continueWalk) {
+                continueWalk = walker.signatureReturnTypeWalk(signatureSymbol.returnType);
+            }
+
+            return continueWalk;
+        }
+
+        export function walkPullTypeSymbolStructure(typeSymbol: PullTypeSymbol, walker: PullTypeSymbolStructureWalker) {
+            var continueWalk = true;
+            var members = typeSymbol.getMembers();
+            for (var i = 0; continueWalk && i < members.length; i++) {
+                continueWalk = walker.memberSymbolWalk(members[i]);
+            }
+
+            if (continueWalk) {
+                var callSigantures = typeSymbol.getCallSignatures();
+                for (var i = 0; continueWalk && i < callSigantures.length; i++) {
+                    continueWalk = walker.callSignatureWalk(callSigantures[i]);
+                    if (continueWalk) {
+                        continueWalk = walkSignatureSymbol(callSigantures[i], walker);
+                    }
+                }
+            }
+
+            if (continueWalk) {
+                var constructSignatures = typeSymbol.getConstructSignatures();
+                for (var i = 0; continueWalk && i < constructSignatures.length; i++) {
+                    continueWalk = walker.constructSignatureWalk(constructSignatures[i]);
+                    if (continueWalk) {
+                        continueWalk = walkSignatureSymbol(constructSignatures[i], walker);
+                    }
+
+                }
+            }
+
+            if (continueWalk) {
+                var indexSignatures = typeSymbol.getIndexSignatures();
+                for (var i = 0; continueWalk && i < indexSignatures.length; i++) {
+                    continueWalk = walker.indexSignatureWalk(indexSignatures[i]);
+                    if (continueWalk) {
+                        continueWalk = walkSignatureSymbol(indexSignatures[i], walker);
+                    }
+                }
+            }
+        }
     }
 }

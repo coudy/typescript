@@ -338,13 +338,10 @@ module TypeScript {
         private _instantiatedCallSignatures: PullSignatureSymbol[] = null;
         private _instantiatedConstructSignatures: PullSignatureSymbol[] = null;
         private _instantiatedIndexSignatures: PullSignatureSymbol[] = null;
-        private _typeArgumentReferences: PullTypeSymbol[] = null;
+        private _typeArgumentReferences: PullTypeSymbol[] = undefined;
         private _instantiatedConstructorMethod: PullSymbol = null;
         private _instantiatedAssociatedContainerType: PullTypeSymbol = null;
         private _isArray:boolean = undefined;
-
-        public isInstanceReferenceType: boolean = false;
-
         public getIsSpecialized() { return !this.isInstanceReferenceType; }
 
         private _generativeTypeClassification: GenerativeTypeClassification[] = [];
@@ -470,170 +467,116 @@ module TypeScript {
 
             // check for an existing instantiation
             var rootType = <PullTypeSymbol>type.getRootSymbol();
-
-            var reconstructedTypeArgumentList: PullTypeSymbol[] = [];
             var typeArguments = type.getTypeArguments();
             var typeParameters = rootType.getTypeParameters();
 
-            // if the type is already specialized, we need to create a new type argument map that represents the mapping of type arguments we've just received
-            // to type arguments as previously passed through
-            if (type.getIsSpecialized() && typeArguments && typeArguments.length) {
-                for (var i = 0; i < typeArguments.length; i++) {
-                    reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = resolver.instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
-                }
-                
-                for (var i = 0; i < typeArguments.length; i++) {
-                    typeParameterArgumentMap[typeArguments[i].pullSymbolID] = reconstructedTypeArgumentList[i];
-                }
-            }
-            else {
-                var tyArg: PullTypeSymbol = null;
-
-                for (var typeParameterID in typeParameterArgumentMap) {
-                    if (typeParameterArgumentMap.hasOwnProperty(typeParameterID)) {
-                        tyArg = typeParameterArgumentMap[typeParameterID];
-
-                        if (tyArg) {
-                            reconstructedTypeArgumentList[reconstructedTypeArgumentList.length] = tyArg;
+            // If the typeArgument map is going to change, we need to create copy so that 
+            // we dont polute the map entry passed in by the caller. 
+            // (eg. when getting the member type using enclosing types type argument map)
+            var createdDuplicateTypeArgumentMap = false;
+            var ensureTypeArgumentCopy = () => {
+                if (!createdDuplicateTypeArgumentMap) {
+                    var passedInTypeArgumentMap = typeParameterArgumentMap;
+                    typeParameterArgumentMap = [];
+                    for (var typeParameterID in passedInTypeArgumentMap) {
+                        if (passedInTypeArgumentMap.hasOwnProperty(typeParameterID)) {
+                            typeParameterArgumentMap[typeParameterID] = passedInTypeArgumentMap[typeParameterID];
                         }
+                    }
+                    createdDuplicateTypeArgumentMap = true;
+                }
+
+            };
+
+            // if the type is already specialized, we need to create a new type argument map that represents 
+            // the mapping of type arguments we've just received to type arguments as previously passed through
+            // If we have below sample
+            //interface IList<T> {
+            //    owner: IList<IList<T>>;
+            //}
+            //class List<U> implements IList<U> {
+            //    owner: IList<IList<U>>;
+            //}
+            //class List2<V> extends List<V> {
+            //    owner: List2<List2<V>>;
+            //}
+            // When instantiating List<V> with U = V and trying to get owner property we would have the map that
+            // says U = V, but when creating the IList<V> we want to updates its type argument maps to say T = V because 
+            // IList<T>  would now be instantiated with V
+            if (type.getIsSpecialized() && typeArguments && typeArguments.length) {
+                var reconstructedTypeArgumentList: PullTypeSymbol[] = [];
+                for (var i = 0; i < typeArguments.length; i++) {
+                    reconstructedTypeArgumentList[i] = resolver.instantiateType(typeArguments[i], typeParameterArgumentMap, instantiateFunctionTypeParameters);
+                }
+
+                // We are repeating this loop just to make sure we arent poluting the typeParameterArgumentMap passed in
+                // when we are insantiating the type arguments
+                for (var i = 0; i < typeParameters.length; i++) {
+                    if (typeParameterArgumentMap[typeParameters[i].pullSymbolID] != reconstructedTypeArgumentList[i]) {
+                        ensureTypeArgumentCopy();
+                        typeParameterArgumentMap[typeParameters[i].pullSymbolID] = reconstructedTypeArgumentList[i];
                     }
                 }
             }
 
+
+            // Lookup in cache if this specialization already exists
             if (!instantiateFunctionTypeParameters) {
-                var instantiation = <PullInstantiatedTypeReferenceSymbol>rootType.getSpecialization(reconstructedTypeArgumentList);
+                var instantiation = <PullInstantiatedTypeReferenceSymbol>rootType.getSpecialization(typeParameterArgumentMap);
 
                 if (instantiation) {
                     return instantiation;
                 }
             }
 
+            // For named type symbols, the typeparameter map should only contain information about the typearguments 
+            // corresponding to them, so remove unnecessary entries, eg. from above sample we need to remove entry U = V
+            // and keep only T = V
+            var typeIsNamedType = type.isNamedTypeSymbol();
+            if (typeIsNamedType) {
+                for (var typeParameterID in typeParameterArgumentMap) {
+                    if (typeParameterArgumentMap.hasOwnProperty(typeParameterID)) {
+                        if (!ArrayUtilities.any(typeParameters, (typeParameter) => typeParameter.pullSymbolID == typeParameterID)) {
+                            ensureTypeArgumentCopy();
+                            delete typeParameterArgumentMap[typeParameterID];
+                        }
+                    }
+                }
+            }
+
             // If the reference is made to itself (e.g., referring to Array<T> within the declaration of Array<T>,
             // We want to special-case the reference so later calls to getMember, etc., will delegate directly
             // to the referenced declaration type, and not force any additional instantiation
-            var isReferencedType = (type.kind & PullElementKind.SomeInstantiatableType) !== 0;
-
-            if (isReferencedType) {
-                if (typeParameters && reconstructedTypeArgumentList) {
-                    if (typeParameters.length === reconstructedTypeArgumentList.length) {
-                        for (var i = 0; i < typeParameters.length; i++) {
-                            if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], reconstructedTypeArgumentList[i])) {
-                                isReferencedType = false;
-                                break;
-                            }
-                        }
-
-                        if (isReferencedType) {
-                            typeParameterArgumentMap = [];
-                        }
-                    }
-                    else {
-                        isReferencedType = false; // the same number of type parameters are not shared
-                    }
-                }
-            }
-
-            var instantiateRoot = isReferencedType;
-
-            // if we're re-specializing a generic type (say, if a signature parameter gets specialized
-            // from 'Array<S>' to 'Array<foo>', then we'll need to create a new initialization map.  This helps
-            // us get the type argument list right when it's requested via getTypeArguments
-            if (type.isTypeReference() && type.isGeneric()) {
-                var initializationMap: PullTypeSymbol[] = [];
-
-                // first, initialize the argument map
-                for (var typeParameterID in typeParameterArgumentMap) {
-                    if (typeParameterArgumentMap.hasOwnProperty(typeParameterID)) {
-                        initializationMap[typeParameterID] = typeParameterArgumentMap[typeParameterID];
+            var isInstanceReferenceType = (type.kind & PullElementKind.SomeInstantiatableType) != 0;
+            var passedInTypeArgumentMap = typeParameterArgumentMap;
+            if (isInstanceReferenceType) {
+                for (var i = 0; i < typeParameters.length; i++) {
+                    if (!PullHelpers.typeSymbolsAreIdentical(typeParameters[i], typeParameterArgumentMap[typeParameters[i].pullSymbolID])) {
+                        isInstanceReferenceType = false;
+                        break;
                     }
                 }
 
-                var oldMap = typeParameterArgumentMap;
-
-                var outerTypeMap = (<PullInstantiatedTypeReferenceSymbol>type)._typeParameterArgumentMap;
-                var innerSubstitution: PullTypeSymbol = null;
-                var outerSubstitution: PullTypeSymbol = null;
-                var canRelatePreInstantiatedTypeParametersToRootTypeParameters = true;
-
-                for (var typeParameterID in outerTypeMap) {
-                    if (outerTypeMap.hasOwnProperty(typeParameterID)) {
-
-                        outerSubstitution = outerTypeMap[typeParameterID];
-                        innerSubstitution = typeParameterArgumentMap[outerSubstitution.pullSymbolID];
-
-                        // Consider the following case
-                        //
-                        // interface A<StringArgPos1, NumberArgPos2> {
-                        //    xPos1 : StringArgPos1
-                        //    yPos2 : NumberArgPos2
-                        //    zPos2Pos1 : A<NumberArgPos2, StringArgPos1>
-                        // }
-                        //   
-                        // In such a situation where we want to instantiate A (say, "A<string, number>"),
-                        // we need to be careful that in instantiating zPos2Pos1, we don't improperly 
-                        // condense NumberArgPos2 to StringArgPos1.  Because the type parameters of zPos2Pos1
-                        // are a re-ordering of the type parameters for A, re-specializing one will cause the other
-                        // to be respecialized in the instantiation map.  (So, in this case, zPos2Pos1 would end
-                        // up with a type of 'A<string, number>', when we wanted A<number, string>.
-                        //
-                        // We do the check below to prevent dependent type parameters from being re-instantiated up-front.
-                        // Instead, we preserve the instantiation info, and let substitution occur lazily.
-                       
-                        if (innerSubstitution &&
-                            (!outerSubstitution.isTypeParameter() ||
-                            !outerTypeMap[innerSubstitution.pullSymbolID] ||
-                            !outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] ||
-                            (outerTypeMap[outerTypeMap[typeParameterID].pullSymbolID] === outerSubstitution))) {
-
-                            initializationMap[typeParameterID] = typeParameterArgumentMap[outerTypeMap[typeParameterID].pullSymbolID];
-
-                            // In cases where we're testing for infinitely expanding generic types, a non-type parameter value may
-                            // can be added to the substitution map.  In these cases, we do not want to re-map all type arguments
-                            // to the root's type parameters - doing so would prevent us from properly checking for wrapped nested
-                            // types later on (because the checks depend on wrapped instantiations *not* being an instantiation of
-                            // the root type.  See getGenerativeTypeClassification
-                            if (!outerSubstitution.isTypeParameter()) {
-                                canRelatePreInstantiatedTypeParametersToRootTypeParameters = false;
-                            }
-                        }
-                        else {
-                            canRelatePreInstantiatedTypeParametersToRootTypeParameters = false;
-                        }
-                    }
-                }
-
-                // If the type being instantiated has takes type parameters, rather than passing in the entire type substitution context,
-                // we limit the substitutions to those that affect the root named type.  This prevents us from over-instantiating types
-                // in a generic function signature
-                if (canRelatePreInstantiatedTypeParametersToRootTypeParameters && typeParameters.length) {
+                if (isInstanceReferenceType) {
                     typeParameterArgumentMap = [];
-
-                    for (var i = 0; i < typeParameters.length; i++) {
-                        typeParameterArgumentMap[typeParameters[i].pullSymbolID] = initializationMap[typeParameters[i].pullSymbolID];
-                    }
-
-                    instantiateRoot = true;
                 }
-                else {
-                    typeParameterArgumentMap = initializationMap;
-                }
-                
             }
 
-            instantiation = new PullInstantiatedTypeReferenceSymbol(instantiateRoot ? rootType : type, typeParameterArgumentMap);
+            // Create the type using typeArgument map
+            var instantiateRoot = typeIsNamedType || isInstanceReferenceType;
+            instantiation = new PullInstantiatedTypeReferenceSymbol(instantiateRoot ? rootType : type,
+                typeParameterArgumentMap, isInstanceReferenceType);
 
+            // Store in the cache
             if (!instantiateFunctionTypeParameters) {
-                rootType.addSpecialization(instantiation, reconstructedTypeArgumentList);
-            }
-
-            if (isReferencedType) {
-                instantiation.isInstanceReferenceType = true;
+                rootType.addSpecialization(instantiation, passedInTypeArgumentMap);
             }
 
             return instantiation;
         }
 
-        constructor(public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: PullTypeSymbol[]) {
+        constructor(public referencedTypeSymbol: PullTypeSymbol, private _typeParameterArgumentMap: PullTypeSymbol[],
+            public isInstanceReferenceType: boolean) {
             super(referencedTypeSymbol);
 
             nSpecializationsCreated++;
@@ -653,7 +596,7 @@ module TypeScript {
                 return this.getTypeParameters();
             }
 
-            if (!this._typeArgumentReferences) {
+            if (this._typeArgumentReferences === undefined) {
                 var typeParameters = this.referencedTypeSymbol.getTypeParameters();
 
                 if (typeParameters.length) {
@@ -673,6 +616,9 @@ module TypeScript {
                     }
 
                     this._typeArgumentReferences = typeArguments;
+                }
+                else {
+                    this._typeArgumentReferences = null;
                 }
             }
 
