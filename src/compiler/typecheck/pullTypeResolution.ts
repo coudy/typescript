@@ -7361,6 +7361,14 @@ module TypeScript {
 
             return false;
         }
+        private isFunctionAccessorOrNonArrowFunctionExpression(decl: PullDecl): boolean {
+
+            if (decl.kind === PullElementKind.GetAccessor || decl.kind === PullElementKind.SetAccessor) {
+                return true;
+            }
+
+            return this.isFunctionOrNonArrowFunctionExpression(decl);
+        }
 
         private isFunctionOrNonArrowFunctionExpression(decl: PullDecl): boolean {
             if (decl.kind === PullElementKind.Function) {
@@ -7405,7 +7413,7 @@ module TypeScript {
             // In all other contexts it is a compile - time error to reference this.
 
             for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
-                if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
+                if (this.isFunctionAccessorOrNonArrowFunctionExpression(currentDecl)) {
                     // 'this' is always ok in a function.  It just has the 'any' type.
                     return;
                 }
@@ -7544,6 +7552,7 @@ module TypeScript {
                 //      In a static member function or static member accessor of a derived class, a 
                 //      super property access must specify a public static member function of the base
                 //      class.
+
                 for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
                     if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
                         // TODO: quote relevant spec section once it is in place.
@@ -7586,6 +7595,7 @@ module TypeScript {
                 //      The containing class is a derived class.
                 //      The constructor declares parameter properties or the containing class 
                 //      declares instance member variables with initializers.
+
                 for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
                     if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
                         break;
