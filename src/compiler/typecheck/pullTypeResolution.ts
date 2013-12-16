@@ -12981,12 +12981,12 @@ module TypeScript {
 
             if (isExtendedType) {
                 // Verify all own overriding members are subtype
-                this.typeCheckIfTypeExtendsType(classOrInterface, name, typeSymbol, baseType, enclosingDecl, context);
+                this.typeCheckCallBacks.push(context => this.typeCheckIfTypeExtendsType(classOrInterface, name, typeSymbol, baseType, enclosingDecl, context));
             }
             else {
                 Debug.assert(classOrInterface.kind() === SyntaxKind.ClassDeclaration);
                 // If class implementes interface or class, verify all the public members are implemented
-                this.typeCheckIfClassImplementsType(<ClassDeclaration>classOrInterface, typeSymbol, baseType, enclosingDecl, context);
+                this.typeCheckCallBacks.push(context => this.typeCheckIfClassImplementsType(<ClassDeclaration>classOrInterface, typeSymbol, baseType, enclosingDecl, context));
             }
 
             // Privacy error:
