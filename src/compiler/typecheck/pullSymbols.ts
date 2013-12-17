@@ -215,11 +215,14 @@ module TypeScript {
             var externalAliases = this.getExternalAliasedSymbols(scopeSymbol);
             // Use only alias symbols to the dynamic module
             if (externalAliases && this.isExternalModuleReferenceAlias(externalAliases[externalAliases.length - 1])) {
-                var aliasFullName = "";
+                var aliasFullName = aliasNameGetter(externalAliases[0]);
+                if (!aliasFullName) {
+                    return null;
+                }
                 for (var i = 1, symbolsLen = externalAliases.length; i < symbolsLen; i++) {
                     aliasFullName = aliasFullName + "." + aliasPartsNameGetter(externalAliases[i]);
                 }
-                return aliasNameGetter(externalAliases[0]) + aliasFullName;
+                return aliasFullName;
             }
 
             return null;
@@ -465,7 +468,7 @@ module TypeScript {
             }
 
             for (var i = 1; i < path.length; i++) {
-                var aliasFullName = path[i].getAliasSymbolName(scopeSymbol, (symbol) => symbol.fullName(scopeSymbol), (symbol) => symbol.getNamePartForFullName());
+                var aliasFullName = path[i].getAliasSymbolName(scopeSymbol, (symbol) => symbol === this ? null : symbol.fullName(scopeSymbol), (symbol) => symbol.getNamePartForFullName());
                 if (aliasFullName) {
                     fullName = aliasFullName + "." + fullName;
                     break;
