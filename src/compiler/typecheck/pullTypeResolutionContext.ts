@@ -334,7 +334,7 @@ module TypeScript {
                     }
                 }
 
-                return resolver.instantiateType(type, typeParameterArgumentMap, /*instantiateFunctionTypeParameters*/ true);
+                return resolver.instantiateType(type, typeParameterArgumentMap);
             }
 
             return type;

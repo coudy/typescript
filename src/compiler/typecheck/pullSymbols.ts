@@ -1105,9 +1105,6 @@ module TypeScript {
 
         public hasVarArgs = false;
 
-        // GTODO
-        public hasAGenericParameterOrReturnType = false;
-
         private _allowedToReferenceTypeParameters: PullTypeParameterSymbol[] = null;
         private _instantiationCache: IIndexable<PullSignatureSymbol> = null;
 
@@ -1123,10 +1120,6 @@ module TypeScript {
 
         // GTODO
         public isGeneric() {
-            if (this.hasAGenericParameterOrReturnType) {
-                return true;
-            }
-
             var typeParameters = this.getTypeParameters();
             return typeParameters && typeParameters.length !== 0;
         }

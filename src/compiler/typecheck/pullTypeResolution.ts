@@ -4580,10 +4580,6 @@ module TypeScript {
                 //      with a single parameter and a Void return type. 
                 signature.returnType = this.semanticInfoChain.voidTypeSymbol;
 
-                if (signature.hasAGenericParameterOrReturnType) {
-                    setterTypeSymbol.setHasGenericSignature();
-                }
-
                 if (!hadError) {
                     signature.setResolved();
                 }
@@ -8745,6 +8741,7 @@ module TypeScript {
 
                 this.resolveAST(callEx.argumentList.arguments, /*isContextuallyTyped:*/ false, context);
 
+                // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                 if (!couldNotFindGenericOverload) {
                     // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
                     if (this.cachedFunctionInterfaceType() && this.sourceIsSubtypeOfTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), targetAST, context)) {
@@ -8796,12 +8793,13 @@ module TypeScript {
                 signature = signatures[0];
             }
 
-            if (!signature.isGeneric() && callEx.argumentList.typeArgumentList) {
+            var rootSignature = <PullSignatureSymbol>signature.getRootSymbol();
+            if (!rootSignature.isGeneric() && callEx.argumentList.typeArgumentList) {
                 this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
                     additionalResults, context);
             }
-            else if (signature.isGeneric() && callEx.argumentList.typeArgumentList && signature.getTypeParameters() && (callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount() !== signature.getTypeParameters().length)) {
-                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [signature.getTypeParameters().length, callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount()]),
+            else if (rootSignature.isGeneric() && callEx.argumentList.typeArgumentList && rootSignature.getTypeParameters() && (callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount() !== rootSignature.getTypeParameters().length)) {
+                this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead, [rootSignature.getTypeParameters().length, callEx.argumentList.typeArgumentList.typeArguments.nonSeparatorCount()]),
                     additionalResults, context);
             }
 
@@ -11153,7 +11151,8 @@ module TypeScript {
                     return false;
                 }
                 // Filter out nongeneric signatures if type arguments are supplied
-                if (haveTypeArgumentsAtCallSite && !signature.isGeneric()) {
+                var rootSignature = <PullSignatureSymbol>signature.getRootSymbol();
+                if (haveTypeArgumentsAtCallSite && !rootSignature.isGeneric()) {
                     return false;
                 }
 
@@ -11547,12 +11546,12 @@ module TypeScript {
             }
 
             var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(expressionType, parameterType);
-            this.relateTypeToTypeParametersWorker(expressionType, parameterType, shouldFix, argContext, context);
+            this.relateTypeToTypeParametersWorker(expressionType, parameterType, argContext, context);
             context.endWalkingTypes(symbolsWhenStartedWalkingTypes);
         }
 
         private relateTypeToTypeParametersWorker(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            shouldFix: boolean, argContext: ArgumentInferenceContext, context: PullTypeResolutionContext): void {
+            argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext): void {
             if (expressionType.isArrayNamedTypeReference() && parameterType.isArrayNamedTypeReference()) {
                 this.relateArrayTypeToTypeParameters(expressionType, parameterType, argContext, context);
 
@@ -11784,7 +11783,7 @@ module TypeScript {
 
                 // Create new type with just the given call signature
                 var newType = new PullTypeSymbol("", PullElementKind.FunctionType);
-                newType.addCallSignature(instantiatedSignature);
+                newType.appendCallSignature(instantiatedSignature);
                 return newType;
             }
 

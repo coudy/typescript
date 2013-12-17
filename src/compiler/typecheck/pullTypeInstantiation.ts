@@ -833,7 +833,10 @@ module TypeScript {
             if (!this._typeParameters) {
                 var rootSymbol = <PullSignatureSymbol>this.getRootSymbol();
                 var typeParameters = rootSymbol.getTypeParameters();
-                if (typeParameters.length) {
+                var hasInstantiatedTypeParametersOfThisSignature = ArrayUtilities.all(typeParameters, typeParameter =>
+                    this._typeParameterArgumentMap[typeParameter.pullSymbolID] !== undefined);
+
+                if (!hasInstantiatedTypeParametersOfThisSignature && typeParameters.length) {
                     // Type parameteres are the instantiated version of the rootTypeparmeters with our own type parameter argument map
                     this._typeParameters = [];
                     for (var i = 0; i < typeParameters.length; i++) {
