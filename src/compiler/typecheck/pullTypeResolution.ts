@@ -4941,8 +4941,6 @@ module TypeScript {
                 this.resolveAST(commaExpression.left, /*isContextuallyTyped:*/ false, context);
             }
 
-            var rhsType = this.resolveAST(commaExpression.right, /*isContextuallyTyped:*/ false, context).type;
-
             // September 17, 2013: The comma operator permits the operands to be of any type and
             // produces a result that is of the same type as the second operand.
             return this.resolveAST(commaExpression.right, /*isContextuallyTyped:*/ false, context).type;
@@ -5655,6 +5653,10 @@ module TypeScript {
                 return symbol;
             }
 
+            if (ast.isExpression()) {
+                return this.resolveExpressionAST(ast, isContextuallyTyped, context);
+            }
+
             var nodeType = ast.kind();
 
             switch (nodeType) {
@@ -5720,9 +5722,6 @@ module TypeScript {
                 case SyntaxKind.ImportDeclaration:
                     return this.resolveImportDeclaration(<ImportDeclaration>ast, context);
 
-                case SyntaxKind.ObjectLiteralExpression:
-                    return this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, isContextuallyTyped, context);
-
                 case SyntaxKind.SimplePropertyAssignment:
                     return this.resolveSimplePropertyAssignment(<SimplePropertyAssignment>ast, isContextuallyTyped, context);
 
@@ -5730,15 +5729,8 @@ module TypeScript {
                     return this.resolveFunctionPropertyAssignment(<FunctionPropertyAssignment>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.IdentifierName:
-                    if (isTypesOnlyLocation(ast)) {
-                        return this.resolveTypeNameExpression(<Identifier>ast, context);
-                    }
-                    else {
-                        return this.resolveNameExpression(<Identifier>ast, context);
-                    }
-
-                case SyntaxKind.MemberAccessExpression:
-                    return this.resolveMemberAccessExpression(<MemberAccessExpression>ast, context);
+                    Debug.assert(isTypesOnlyLocation(ast));
+                    return this.resolveTypeNameExpression(<Identifier>ast, context);
 
                 case SyntaxKind.QualifiedName:
                     return this.resolveQualifiedName(<QualifiedName>ast, context);
@@ -5771,149 +5763,17 @@ module TypeScript {
                 case SyntaxKind.FunctionDeclaration:
                     return this.resolveAnyFunctionDeclaration(<FunctionDeclaration>ast, context);
 
-                case SyntaxKind.FunctionExpression:
-                    return this.resolveFunctionExpression(<FunctionExpression>ast, isContextuallyTyped, context);
-
-                case SyntaxKind.SimpleArrowFunctionExpression:
-                    return this.resolveSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast, isContextuallyTyped, context);
-
-                case SyntaxKind.ParenthesizedArrowFunctionExpression:
-                    return this.resolveParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast, isContextuallyTyped, context);
-
-                case SyntaxKind.ArrayLiteralExpression:
-                    return this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
-
-                case SyntaxKind.ThisKeyword:
-                    return this.resolveThisExpression(<ThisExpression>ast, context);
-
-                case SyntaxKind.SuperKeyword:
-                    return this.resolveSuperExpression(<SuperExpression>ast, context);
-
-                case SyntaxKind.InvocationExpression:
-                    return this.resolveInvocationExpression(<InvocationExpression>ast, context);
-
-                case SyntaxKind.ObjectCreationExpression:
-                    return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context);
-
-                case SyntaxKind.CastExpression:
-                    return this.resolveCastExpression(<CastExpression>ast, context);
-
                 case SyntaxKind.TypeAnnotation:
                     return this.resolveTypeAnnotation(<TypeAnnotation>ast, context);
 
                 case SyntaxKind.ExportAssignment:
                     return this.resolveExportAssignmentStatement(<ExportAssignment>ast, context);
 
-                // primitives
-                case SyntaxKind.NumericLiteral:
-                    return this.semanticInfoChain.numberTypeSymbol;
-
-                case SyntaxKind.StringLiteral:
-                    return this.semanticInfoChain.stringTypeSymbol;
-
-                case SyntaxKind.NullKeyword:
-                    return this.semanticInfoChain.nullTypeSymbol;
-
-                case SyntaxKind.TrueKeyword:
-                case SyntaxKind.FalseKeyword:
-                    return this.semanticInfoChain.booleanTypeSymbol;
-
-                case SyntaxKind.VoidExpression:
-                    return this.resolveVoidExpression(<VoidExpression>ast, context);
-
-                // assignment
-                case SyntaxKind.AssignmentExpression:
-                    return this.resolveAssignmentExpression(<BinaryExpression>ast, context);
-
-                // boolean operations
-                case SyntaxKind.LogicalNotExpression:
-                    return this.resolveLogicalNotExpression(<PrefixUnaryExpression>ast, context);
-
-                case SyntaxKind.NotEqualsWithTypeConversionExpression:
-                case SyntaxKind.EqualsWithTypeConversionExpression:
-                case SyntaxKind.EqualsExpression:
-                case SyntaxKind.NotEqualsExpression:
-                case SyntaxKind.LessThanExpression:
-                case SyntaxKind.LessThanOrEqualExpression:
-                case SyntaxKind.GreaterThanOrEqualExpression:
-                case SyntaxKind.GreaterThanExpression:
-                    return this.resolveLogicalOperation(<BinaryExpression>ast, context);
-
-                case SyntaxKind.AddExpression:
-                case SyntaxKind.AddAssignmentExpression:
-                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, context);
-
-                case SyntaxKind.PlusExpression:
-                case SyntaxKind.NegateExpression:
-                case SyntaxKind.BitwiseNotExpression:
-                case SyntaxKind.PreIncrementExpression:
-                case SyntaxKind.PreDecrementExpression:
-                    return this.resolveUnaryArithmeticOperation(<PrefixUnaryExpression>ast, context);
-
-                case SyntaxKind.PostIncrementExpression:
-                case SyntaxKind.PostDecrementExpression:
-                    return this.resolvePostfixUnaryExpression(<PostfixUnaryExpression>ast, context);
-
-                case SyntaxKind.SubtractExpression:
-                case SyntaxKind.MultiplyExpression:
-                case SyntaxKind.DivideExpression:
-                case SyntaxKind.ModuloExpression:
-                case SyntaxKind.BitwiseOrExpression:
-                case SyntaxKind.BitwiseAndExpression:
-                case SyntaxKind.LeftShiftExpression:
-                case SyntaxKind.SignedRightShiftExpression:
-                case SyntaxKind.UnsignedRightShiftExpression:
-                case SyntaxKind.BitwiseExclusiveOrExpression:
-                case SyntaxKind.ExclusiveOrAssignmentExpression:
-                case SyntaxKind.LeftShiftAssignmentExpression:
-                case SyntaxKind.SignedRightShiftAssignmentExpression:
-                case SyntaxKind.UnsignedRightShiftAssignmentExpression:
-                case SyntaxKind.SubtractAssignmentExpression:
-                case SyntaxKind.MultiplyAssignmentExpression:
-                case SyntaxKind.DivideAssignmentExpression:
-                case SyntaxKind.ModuloAssignmentExpression:
-                case SyntaxKind.OrAssignmentExpression:
-                case SyntaxKind.AndAssignmentExpression:
-                    return this.resolveBinaryArithmeticExpression(<BinaryExpression>ast, context);
-
-                case SyntaxKind.ElementAccessExpression:
-                    return this.resolveElementAccessExpression(<ElementAccessExpression>ast, context);
-
-                case SyntaxKind.LogicalOrExpression:
-                    return this.resolveLogicalOrExpression(<BinaryExpression>ast, isContextuallyTyped, context);
-
-                case SyntaxKind.LogicalAndExpression:
-                    return this.resolveLogicalAndExpression(<BinaryExpression>ast, context);
-
-                case SyntaxKind.TypeOfExpression:
-                    return this.resolveTypeOfExpression(<TypeOfExpression>ast, context);
-
                 case SyntaxKind.ThrowStatement:
                     return this.resolveThrowStatement(<ThrowStatement>ast, context);
 
-                case SyntaxKind.DeleteExpression:
-                    return this.resolveDeleteExpression(<DeleteExpression>ast, context);
-
-                case SyntaxKind.ConditionalExpression:
-                    return this.resolveConditionalExpression(<ConditionalExpression>ast, isContextuallyTyped, context);
-
-                case SyntaxKind.RegularExpressionLiteral:
-                    return this.resolveRegularExpressionLiteral();
-
-                case SyntaxKind.ParenthesizedExpression:
-                    return this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, context);
-
                 case SyntaxKind.ExpressionStatement:
                     return this.resolveExpressionStatement(<ExpressionStatement>ast, context);
-
-                case SyntaxKind.InstanceOfExpression:
-                    return this.resolveInstanceOfExpression(<BinaryExpression>ast, context);
-
-                case SyntaxKind.CommaExpression:
-                    return this.resolveCommaExpression(<BinaryExpression>ast, context);
-
-                case SyntaxKind.InExpression:
-                    return this.resolveInExpression(<BinaryExpression>ast, context);
 
                 case SyntaxKind.ForStatement:
                     return this.resolveForStatement(<ForStatement>ast, context);
@@ -5968,6 +5828,209 @@ module TypeScript {
             }
 
             return this.semanticInfoChain.anyTypeSymbol;
+        }
+
+        private resolveExpressionAST(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
+            var expressionSymbol: PullSymbol = null;
+            switch (ast.kind()) {
+                case SyntaxKind.ObjectLiteralExpression:
+                    expressionSymbol = this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.IdentifierName:
+                    // We already know we are in an expression, so there is no need
+                    // to decide between resolveNameExpression and resolveTypeNameExpression
+                    expressionSymbol = this.resolveNameExpression(<Identifier>ast, context);
+                    break;
+
+                case SyntaxKind.MemberAccessExpression:
+                    expressionSymbol = this.resolveMemberAccessExpression(<MemberAccessExpression>ast, context);
+                    break;
+
+                case SyntaxKind.FunctionExpression:
+                    expressionSymbol = this.resolveFunctionExpression(<FunctionExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.SimpleArrowFunctionExpression:
+                    expressionSymbol = this.resolveSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.ParenthesizedArrowFunctionExpression:
+                    expressionSymbol = this.resolveParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.ArrayLiteralExpression:
+                    expressionSymbol = this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.ThisKeyword:
+                    expressionSymbol = this.resolveThisExpression(<ThisExpression>ast, context);
+                    break;
+
+                case SyntaxKind.SuperKeyword:
+                    expressionSymbol = this.resolveSuperExpression(<SuperExpression>ast, context);
+                    break;
+
+                case SyntaxKind.InvocationExpression:
+                    expressionSymbol = this.resolveInvocationExpression(<InvocationExpression>ast, context);
+                    break;
+
+                case SyntaxKind.ObjectCreationExpression:
+                    expressionSymbol = this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context);
+                    break;
+
+                case SyntaxKind.CastExpression:
+                    expressionSymbol = this.resolveCastExpression(<CastExpression>ast, context);
+                    break;
+
+                // primitives
+                case SyntaxKind.NumericLiteral:
+                    expressionSymbol = this.semanticInfoChain.numberTypeSymbol;
+                    break;
+
+                case SyntaxKind.StringLiteral:
+                    expressionSymbol = this.semanticInfoChain.stringTypeSymbol;
+                    break;
+
+                case SyntaxKind.NullKeyword:
+                    expressionSymbol = this.semanticInfoChain.nullTypeSymbol;
+                    break;
+
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                    expressionSymbol = this.semanticInfoChain.booleanTypeSymbol;
+                    break;
+
+                case SyntaxKind.VoidExpression:
+                    expressionSymbol = this.resolveVoidExpression(<VoidExpression>ast, context);
+                    break;
+
+                // assignment
+                case SyntaxKind.AssignmentExpression:
+                    expressionSymbol = this.resolveAssignmentExpression(<BinaryExpression>ast, context);
+                    break;
+
+                // boolean operations
+                case SyntaxKind.LogicalNotExpression:
+                    expressionSymbol = this.resolveLogicalNotExpression(<PrefixUnaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.NotEqualsWithTypeConversionExpression:
+                case SyntaxKind.EqualsWithTypeConversionExpression:
+                case SyntaxKind.EqualsExpression:
+                case SyntaxKind.NotEqualsExpression:
+                case SyntaxKind.LessThanExpression:
+                case SyntaxKind.LessThanOrEqualExpression:
+                case SyntaxKind.GreaterThanOrEqualExpression:
+                case SyntaxKind.GreaterThanExpression:
+                    expressionSymbol = this.resolveLogicalOperation(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.AddExpression:
+                case SyntaxKind.AddAssignmentExpression:
+                    expressionSymbol = this.resolveBinaryAdditionOperation(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.PlusExpression:
+                case SyntaxKind.NegateExpression:
+                case SyntaxKind.BitwiseNotExpression:
+                case SyntaxKind.PreIncrementExpression:
+                case SyntaxKind.PreDecrementExpression:
+                    expressionSymbol = this.resolveUnaryArithmeticOperation(<PrefixUnaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.PostIncrementExpression:
+                case SyntaxKind.PostDecrementExpression:
+                    expressionSymbol = this.resolvePostfixUnaryExpression(<PostfixUnaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.SubtractExpression:
+                case SyntaxKind.MultiplyExpression:
+                case SyntaxKind.DivideExpression:
+                case SyntaxKind.ModuloExpression:
+                case SyntaxKind.BitwiseOrExpression:
+                case SyntaxKind.BitwiseAndExpression:
+                case SyntaxKind.LeftShiftExpression:
+                case SyntaxKind.SignedRightShiftExpression:
+                case SyntaxKind.UnsignedRightShiftExpression:
+                case SyntaxKind.BitwiseExclusiveOrExpression:
+                case SyntaxKind.ExclusiveOrAssignmentExpression:
+                case SyntaxKind.LeftShiftAssignmentExpression:
+                case SyntaxKind.SignedRightShiftAssignmentExpression:
+                case SyntaxKind.UnsignedRightShiftAssignmentExpression:
+                case SyntaxKind.SubtractAssignmentExpression:
+                case SyntaxKind.MultiplyAssignmentExpression:
+                case SyntaxKind.DivideAssignmentExpression:
+                case SyntaxKind.ModuloAssignmentExpression:
+                case SyntaxKind.OrAssignmentExpression:
+                case SyntaxKind.AndAssignmentExpression:
+                    expressionSymbol = this.resolveBinaryArithmeticExpression(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.ElementAccessExpression:
+                    expressionSymbol = this.resolveElementAccessExpression(<ElementAccessExpression>ast, context);
+                    break;
+
+                case SyntaxKind.LogicalOrExpression:
+                    expressionSymbol = this.resolveLogicalOrExpression(<BinaryExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.LogicalAndExpression:
+                    expressionSymbol = this.resolveLogicalAndExpression(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.TypeOfExpression:
+                    expressionSymbol = this.resolveTypeOfExpression(<TypeOfExpression>ast, context);
+                    break;
+
+                case SyntaxKind.DeleteExpression:
+                    expressionSymbol = this.resolveDeleteExpression(<DeleteExpression>ast, context);
+                    break;
+
+                case SyntaxKind.ConditionalExpression:
+                    expressionSymbol = this.resolveConditionalExpression(<ConditionalExpression>ast, isContextuallyTyped, context);
+                    break;
+
+                case SyntaxKind.RegularExpressionLiteral:
+                    expressionSymbol = this.resolveRegularExpressionLiteral();
+                    break;
+
+                case SyntaxKind.ParenthesizedExpression:
+                    expressionSymbol = this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, context);
+                    break;
+
+                case SyntaxKind.InstanceOfExpression:
+                    expressionSymbol = this.resolveInstanceOfExpression(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.CommaExpression:
+                    expressionSymbol = this.resolveCommaExpression(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.InExpression:
+                    expressionSymbol = this.resolveInExpression(<BinaryExpression>ast, context);
+                    break;
+
+                case SyntaxKind.OmittedExpression:
+                    expressionSymbol = this.semanticInfoChain.undefinedTypeSymbol;
+                    break;
+            }
+
+            Debug.assert(expressionSymbol, "resolveExpressionAST: Missing expression kind");
+
+            // November 18, 2013, Section 4.12.2:
+            // If e is an expression of a function type that contains exactly one generic call signature
+            // and no other members, and T is a function type with exactly one non-generic call signature
+            // and no other members, then any inferences made for type parameters referenced by the
+            // parameters of T's call signature are fixed and, if e's call signature can successfully be
+            // instantiated in the context of T's call signature(section 3.8.5), e's type is changed to
+            // a function type with that instantiated signature.
+            if (isContextuallyTyped && context.isInferentiallyTyping()) {
+                return this.alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionSymbol, context);
+            }
+            else {
+                return expressionSymbol;
+            }
         }
 
         private typeCheckAST(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
@@ -11759,13 +11822,10 @@ module TypeScript {
         // parameters of T's call signature are fixed and, if e's call signature can successfully be
         // instantiated in the context of T's call signature(section 3.8.5), e's type is changed to
         // a function type with that instantiated signature.
-        private alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionType: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            if (!context.isInferentiallyTyping()) {
-                return expressionType;
-            }
-
+        private alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionSymbol: PullSymbol, context: PullTypeResolutionContext): PullSymbol {
             var contextualType = context.getContextualType();
             Debug.assert(contextualType);
+            var expressionType = expressionSymbol.type;
             if (this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(expressionType, /*callSignatureShouldBeGeneric*/ true) &&
                 this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(contextualType, /*callSignatureShouldBeGeneric*/ false)) {
                 // Here we overwrite contextualType because we will want to use the version of the type
@@ -11778,7 +11838,7 @@ module TypeScript {
                 // We pass true so that the parameters of the contextual signature will be fixed per the spec.
                 var instantiatedSignature = this.instantiateSignatureInContext(genericExpressionSignature, contextualSignature, context, /*shouldFixContextualSignatureParameterTypes*/ true);
                 if (instantiatedSignature === null) {
-                    return expressionType;
+                    return expressionSymbol;
                 }
 
                 // Create new type with just the given call signature
@@ -11787,7 +11847,7 @@ module TypeScript {
                 return newType;
             }
 
-            return expressionType;
+            return expressionSymbol;
         }
 
         private isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(type: PullTypeSymbol, callSignatureShouldBeGeneric: boolean): boolean {

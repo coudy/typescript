@@ -1121,7 +1121,7 @@ module TypeScript {
         // GTODO
         public isGeneric() {
             var typeParameters = this.getTypeParameters();
-            return typeParameters && typeParameters.length !== 0;
+            return !!typeParameters && typeParameters.length !== 0;
         }
 
         public addParameter(parameter: PullSymbol, isOptional = false) {
@@ -3301,7 +3301,9 @@ module TypeScript {
             return this._constraint;
         }
 
-        public getCallSignatures(): PullSignatureSymbol[]{
+        // Note: This is a deviation from the spec. Using the constraint to get signatures is only
+        // warranted when we explicitly ask for an apparent type.
+        public getCallSignatures(): PullSignatureSymbol[] {
             if (this._constraint) {
                 return this._constraint.getCallSignatures();
             }

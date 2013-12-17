@@ -162,6 +162,10 @@ module TypeScript {
             return commentArrayStructuralEquals(this.preComments(), ast.preComments(), includingPosition) &&
                    commentArrayStructuralEquals(this.postComments(), ast.postComments(), includingPosition);
         }
+
+        public isExpression() {
+            return false;
+        }
     }
 
     export interface IASTToken extends AST {
@@ -322,6 +326,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                    this._text === ast._text;
         }
+
+        public isExpression() {
+            return !isTypesOnlyLocation(this);
+        }
     }
 
     export class LiteralExpression extends AST {
@@ -343,6 +351,10 @@ module TypeScript {
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -366,6 +378,10 @@ module TypeScript {
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class SuperExpression extends AST implements IASTToken {
@@ -387,6 +403,10 @@ module TypeScript {
 
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -410,6 +430,10 @@ module TypeScript {
                    (this._value === ast._value || (isNaN(this._value) && isNaN(ast._value))) &&
                    this._text === ast._text;
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class RegularExpressionLiteral extends AST implements IASTToken {
@@ -427,6 +451,10 @@ module TypeScript {
 
         public kind(): SyntaxKind {
             return SyntaxKind.RegularExpressionLiteral;
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -447,6 +475,10 @@ module TypeScript {
         public structuralEquals(ast: StringLiteral, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                    this._text === ast._text;
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -715,6 +747,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.operand, ast.operand, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class ArrayLiteralExpression extends AST {
@@ -731,6 +767,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expressions, ast.expressions, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class OmittedExpression extends AST {
@@ -740,6 +780,10 @@ module TypeScript {
 
         public structuralEquals(ast: CatchClause, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -756,6 +800,10 @@ module TypeScript {
         public structuralEquals(ast: ParenthesizedExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -775,6 +823,10 @@ module TypeScript {
         public kind(): SyntaxKind {
             return SyntaxKind.SimpleArrowFunctionExpression;
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class ParenthesizedArrowFunctionExpression extends AST {
@@ -787,6 +839,10 @@ module TypeScript {
 
         public kind(): SyntaxKind {
             return SyntaxKind.ParenthesizedArrowFunctionExpression;
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -967,6 +1023,10 @@ module TypeScript {
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
                 structuralEquals(this.name, ast.name, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class PostfixUnaryExpression extends AST {
@@ -982,6 +1042,10 @@ module TypeScript {
         public structuralEquals(ast: PostfixUnaryExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.operand, ast.operand, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -1001,6 +1065,10 @@ module TypeScript {
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
                 structuralEquals(this.argumentExpression, ast.argumentExpression, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class InvocationExpression extends AST implements ICallExpression {
@@ -1018,6 +1086,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
                 structuralEquals(this.argumentList, ast.argumentList, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -1053,6 +1125,10 @@ module TypeScript {
                 structuralEquals(this.left, ast.left, includingPosition) &&
                 structuralEquals(this.right, ast.right, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class ConditionalExpression extends AST {
@@ -1072,6 +1148,10 @@ module TypeScript {
                 structuralEquals(this.condition, ast.condition, includingPosition) &&
                 structuralEquals(this.whenTrue, ast.whenTrue, includingPosition) &&
                 structuralEquals(this.whenFalse, ast.whenFalse, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -1338,6 +1418,10 @@ module TypeScript {
                 structuralEquals(this.expression, ast.expression, includingPosition) &&
                 structuralEquals(this.argumentList, ast.argumentList, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class SwitchStatement extends AST {
@@ -1540,6 +1624,10 @@ module TypeScript {
                 structuralEquals(this.type, ast.type, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class ObjectLiteralExpression extends AST {
@@ -1555,6 +1643,10 @@ module TypeScript {
         public structuralEquals(ast: ObjectLiteralExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.propertyAssignments, ast.propertyAssignments, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -1593,6 +1685,10 @@ module TypeScript {
 
         public kind(): SyntaxKind {
             return SyntaxKind.FunctionExpression;
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
@@ -1712,6 +1808,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class DeleteExpression extends AST {
@@ -1728,6 +1828,10 @@ module TypeScript {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
         }
+
+        public isExpression() {
+            return true;
+        }
     }
 
     export class VoidExpression extends AST {
@@ -1743,6 +1847,10 @@ module TypeScript {
         public structuralEquals(ast: VoidExpression, includingPosition: boolean): boolean {
             return super.structuralEquals(ast, includingPosition) &&
                 structuralEquals(this.expression, ast.expression, includingPosition);
+        }
+
+        public isExpression() {
+            return true;
         }
     }
 
