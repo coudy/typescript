@@ -635,6 +635,34 @@ module TypeScript {
             }
         }
 
+        // Preserves required binding order for a declaration with given name to prevent cases like:
+        // module A { export module B { var x = 1} }
+        // module A { export class B { c } }
+        // Here if class declaration is bound before module declaration (i.e. because of IDE activities)
+        // we won't report expected 'duplicate identifier' error for the class.
+        private ensurePriorDeclarationsAreBound(container: PullSymbol, currentDecl: PullDecl) {
+            if (!container) {
+                return;
+            }
+            
+            var parentDecls = container.getDeclarations();
+            for (var i = 0; i < parentDecls.length; ++i) {
+                var parentDecl = parentDecls[i];
+                var childDecls = parentDecl.getChildDecls();
+                for (var j = 0; j < childDecls.length; ++j) {
+
+                    var childDecl = childDecls[j];
+                    if (childDecl === currentDecl) {
+                        return;
+                    }
+
+                    if (childDecl.name === currentDecl.name) {
+                        childDecl.ensureSymbolIsBound();
+                    }
+                }
+            }
+        }
+
         // classes
         private bindClassDeclarationToPullSymbol(classDecl: PullDecl) {
 
@@ -647,6 +675,9 @@ module TypeScript {
             var classAST = <ClassDeclaration>this.semanticInfoChain.getASTForDecl(classDecl);
 
             var parent = this.getParent(classDecl);
+
+            this.ensurePriorDeclarationsAreBound(parent, classDecl);
+
             var parentDecl = classDecl.getParentDecl();
             var isExported = classDecl.flags & PullElementFlags.Exported;
             var isGeneric = false;
@@ -1388,6 +1419,9 @@ module TypeScript {
             var isSignature: boolean = (declFlags & PullElementFlags.Signature) !== 0;
 
             var parent = this.getParent(functionDeclaration, true);
+
+            this.ensurePriorDeclarationsAreBound(parent, functionDeclaration);
+
             var parentDecl = functionDeclaration.getParentDecl();
             var parentHadSymbol = false;
 

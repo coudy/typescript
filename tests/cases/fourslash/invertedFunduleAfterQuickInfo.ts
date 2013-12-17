@@ -4,9 +4,7 @@
 ////    module A {
 ////        var o;
 ////    }
-////    class A {
-////        /**/c
-////    }
+////    function A(/**/x: number): void { }
 ////}
 
 goTo.marker();
