@@ -1861,13 +1861,10 @@ module TypeScript {
             return this.getTypeParameters();
         }
 
-        public addCallSignature(callSignature: PullSignatureSymbol): void {
-
+        private addCallSignaturePrerequisite(callSignature: PullSignatureSymbol): void {
             if (!this._callSignatures) {
                 this._callSignatures = [];
             }
-
-            this._callSignatures[this._callSignatures.length] = callSignature;
 
             if (callSignature.isGeneric()) {
                 this._hasGenericSignature = true;
@@ -1876,19 +1873,48 @@ module TypeScript {
             callSignature.functionType = this;
         }
 
-        public addConstructSignature(constructSignature: PullSignatureSymbol): void {
+        public appendCallSignature(callSignature: PullSignatureSymbol): void {
+            this.addCallSignaturePrerequisite(callSignature);
+            this._callSignatures.push(callSignature);
+        }
 
+        public insertCallSignatureAtIndex(callSignature: PullSignatureSymbol, index: number): void {
+            this.addCallSignaturePrerequisite(callSignature);
+            Debug.assert(index <= this._callSignatures.length);
+            if (index === this._callSignatures.length) {
+                this._callSignatures.push(callSignature);
+            }
+            else {
+                this._callSignatures.splice(index, /*deleteCount*/ 0, callSignature);
+            }
+        }
+
+        private addConstructSignaturePrerequisite(constructSignature: PullSignatureSymbol): void {
             if (!this._constructSignatures) {
                 this._constructSignatures = [];
             }
-
-            this._constructSignatures[this._constructSignatures.length] = constructSignature;
 
             if (constructSignature.isGeneric()) {
                 this._hasGenericSignature = true;
             }
 
             constructSignature.functionType = this;
+        }
+
+        public appendConstructSignature(constructSignature: PullSignatureSymbol): void {
+            this.addConstructSignaturePrerequisite(constructSignature);
+            this._constructSignatures.push(constructSignature);
+        }
+
+        public insertConstructSignatureAtIndex(constructSignature: PullSignatureSymbol, index: number): void {
+            this.addConstructSignaturePrerequisite(constructSignature);
+            Debug.assert(index <= this._constructSignatures.length);
+            if (index === this._constructSignatures.length) {
+                this._constructSignatures.push(constructSignature);
+            }
+            else {
+                this._constructSignatures.splice(index, /*deleteCount*/ 0, constructSignature);
+            }
         }
 
         public addIndexSignature(indexSignature: PullSignatureSymbol): void {
@@ -1907,6 +1933,10 @@ module TypeScript {
 
         public hasOwnCallSignatures(): boolean {
             return this._callSignatures !== null;
+        }
+
+        public getOwnCallSignatures(): PullSignatureSymbol[] {
+            return this._callSignatures || sentinelEmptyArray;
         }
 
         public getCallSignatures(): PullSignatureSymbol[] {
@@ -1942,6 +1972,10 @@ module TypeScript {
 
         public hasOwnConstructSignatures(): boolean {
             return this._constructSignatures !== null;
+        }
+
+        public getOwnConstructSignatures(): PullSignatureSymbol[] {
+            return this._constructSignatures || sentinelEmptyArray;
         }
 
         public getConstructSignatures(): PullSignatureSymbol[]{

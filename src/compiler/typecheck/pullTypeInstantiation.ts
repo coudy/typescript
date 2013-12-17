@@ -194,11 +194,17 @@ module TypeScript {
             return this.referencedTypeSymbol.getTypeArgumentsOrTypeParameters();
         }
 
-        public addCallSignature(callSignature: PullSignatureSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolID + ": addCallSignature");
+        public appendCallSignature(callSignature: PullSignatureSymbol): void {
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": appendCallSignature");
         }
-        public addConstructSignature(constructSignature: PullSignatureSymbol): void {
-            Debug.fail("Reference symbol " + this.pullSymbolID + ": addConstructSignature");
+        public insertCallSignatureAtIndex(callSignature: PullSignatureSymbol, index: number): void {
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": insertCallSignatureAtIndex");
+        }
+        public appendConstructSignature(callSignature: PullSignatureSymbol): void {
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": appendConstructSignature");
+        }
+        public insertConstructSignatureAtIndex(callSignature: PullSignatureSymbol, index: number): void {
+            Debug.fail("Reference symbol " + this.pullSymbolID + ": insertConstructSignatureAtIndex");
         }
         public addIndexSignature(indexSignature: PullSignatureSymbol): void {
             Debug.fail("Reference symbol " + this.pullSymbolID + ": addIndexSignature");

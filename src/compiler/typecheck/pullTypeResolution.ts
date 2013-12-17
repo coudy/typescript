@@ -1540,7 +1540,7 @@ module TypeScript {
 
                                 parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                                 parentConstructSignature.returnType = parentType;
-                                parentConstructorType.addConstructSignature(parentConstructSignature);
+                                parentConstructorType.appendConstructSignature(parentConstructSignature);
                                 parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
 
                                 var parentTypeParameters = parentConstructorType.getTypeParameters();
@@ -1571,14 +1571,14 @@ module TypeScript {
                                     constructorSignature.addTypeParameter(typeParameters[j]);
                                 }
 
-                                constructorTypeSymbol.addConstructSignature(constructorSignature);
+                                constructorTypeSymbol.appendConstructSignature(constructorSignature);
                                 constructorSignature.addDeclaration(classDecl);
                             }
                         }
                         else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
                             constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                             constructorSignature.returnType = classDeclSymbol;
-                            constructorTypeSymbol.addConstructSignature(constructorSignature);
+                            constructorTypeSymbol.appendConstructSignature(constructorSignature);
                             constructorSignature.addDeclaration(classDecl);
 
                             var typeParameters = constructorTypeSymbol.getTypeParameters();
@@ -11722,9 +11722,16 @@ module TypeScript {
 
             if (!signature.isDefinition()) {
                 // Check for if the signatures are identical, check with the signatures before the current current one
+                var signatureParentDecl = signature.getDeclarations()[0].getParentDecl();
                 for (var i = 0; i < allSignatures.length; i++) {
                     if (allSignatures[i] === signature) {
                         break;
+                    }
+
+                    // Make sure they are in the same declaration
+                    var allSignaturesParentDecl = allSignatures[i].getDeclarations()[0].getParentDecl();
+                    if (allSignaturesParentDecl !== signatureParentDecl) {
+                        continue;
                     }
 
                     if (this.signaturesAreIdentical(allSignatures[i], signature, /*includingReturnType*/ false)) {
