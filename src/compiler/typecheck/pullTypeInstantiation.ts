@@ -258,10 +258,6 @@ module TypeScript {
             return this.referencedTypeSymbol.getTypesThatExplicitlyImplementThisType();
         }
 
-        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
-            this.ensureReferencedTypeIsResolved();
-            return this.referencedTypeSymbol.hasBase(potentialBase, visited);
-        }
         public isValidBaseKind(baseType: PullTypeSymbol, isExtendedType: boolean): boolean {
             this.ensureReferencedTypeIsResolved();
             return this.referencedTypeSymbol.isValidBaseKind(baseType, isExtendedType);
@@ -942,10 +938,6 @@ module TypeScript {
             }
 
             return this._instantiatedIndexSignatures;
-        }
-
-        public hasBase(potentialBase: PullTypeSymbol, visited: PullSymbol[]= []): boolean {
-            return this.referencedTypeSymbol.hasBase(potentialBase, visited);
         }
     }
 }
