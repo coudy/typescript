@@ -1022,6 +1022,8 @@ module TypeScript {
             var containerDecl = this.semanticInfoChain.getDeclForAST(ast);
             this.validateVariableDeclarationGroups(containerDecl, context);
 
+            this.typeCheckCallBacks.push(context => this.checkInitializersInEnumDeclarations(containerDecl, context))
+
             if (!enumIsElided(ast)) {
                 this.checkNameForCompilerGeneratedDeclarationCollision(ast, /*isDeclaration*/ true, ast.identifier, context);
             }
@@ -1029,6 +1031,39 @@ module TypeScript {
 
         private postTypeCheckEnumDeclaration(ast: EnumDeclaration, context: PullTypeResolutionContext) {
             this.checkThisCaptureVariableCollides(ast, /*isDeclaration*/ true, context);
+        }
+
+        private checkInitializersInEnumDeclarations(decl: PullDecl, context: PullTypeResolutionContext) {
+            var symbol = decl.getSymbol();
+
+            // check should be executed just once so run it only for one decl
+            var declarations = symbol.getDeclarations();
+            if (decl !== declarations[0]) {
+                return;
+            }
+
+            // SPEC: NOV 18
+            // It isn’t possible for one enum declaration to continue the automatic numbering sequence of another, 
+            // and when an enum type has multiple declarations, only one declaration is permitted to omit a value for the first member.            
+            var seenEnumDeclWithNoFirstMember = false;
+            for (var i = 0; i < declarations.length; ++i) {
+                var currentDecl = declarations[i];
+
+                var ast = <EnumDeclaration>currentDecl.ast();
+                if (ast.enumElements.nonSeparatorCount() === 0) {
+                    continue;
+                }
+
+                var firstVariable = <EnumElement>ast.enumElements.nonSeparatorAt(0);
+                if (!firstVariable.equalsValueClause) {
+                    if (!seenEnumDeclWithNoFirstMember) {
+                        seenEnumDeclWithNoFirstMember = true;
+                    }
+                    else {
+                        this.semanticInfoChain.addDiagnosticFromAST(firstVariable, DiagnosticCode.In_enums_with_multiple_declarations_only_one_declaration_can_omit_an_initializer_for_the_first_enum_element);
+                    }
+                }
+            }
         }
 
         //

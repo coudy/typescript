@@ -305,21 +305,6 @@ module TypeScript {
                 }
             }
 
-            // If we have an enum with more than one declaration, then this enum's first element
-            // must have an initializer.
-            var moduleDeclarations = enumContainerSymbol.getDeclarations();
-
-            if (moduleDeclarations.length > 1 && enumAST.enumElements.nonSeparatorCount() > 0) {
-                var multipleEnums = ArrayUtilities.where(moduleDeclarations, d => d.kind === PullElementKind.Enum).length > 1;
-                if (multipleEnums) {
-                    var firstVariable = <EnumElement>enumAST.enumElements.nonSeparatorAt(0);
-                    if (!firstVariable.equalsValueClause) {
-                        this.semanticInfoChain.addDiagnosticFromAST(
-                            firstVariable, DiagnosticCode.Enums_with_multiple_declarations_must_provide_an_initializer_for_the_first_enum_element, null);
-                    }
-                }
-            }
-
             if (createdNewSymbol && parent) {
                 if (enumContainerDecl.flags & PullElementFlags.Exported) {
                     parent.addEnclosedMemberType(enumContainerSymbol);
