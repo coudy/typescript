@@ -26,6 +26,24 @@ module TypeScript {
             }
         }
 
+        // Instantiate the type arguments
+        // This instantiates all the type parameters the symbol can reference and the type argument in the end
+        // will contain the final instantiated version for each typeparameter
+        // eg. if the type is already specialized, we need to create a new type argument map that represents 
+        // the mapping of type arguments we've just received to type arguments as previously passed through
+        // If we have below sample
+        //interface IList<T> {
+        //    owner: IList<IList<T>>;
+        //}
+        //class List<U> implements IList<U> {
+        //    owner: IList<IList<U>>;
+        //}
+        //class List2<V> extends List<V> {
+        //    owner: List2<List2<V>>;
+        //}
+        // When instantiating List<V> with U = V and trying to get owner property we would have the map that
+        // says U = V, but when creating the IList<V> we want to updates its type argument maps to say T = V because 
+        // IList<T>  would now be instantiated with V
         export function instantiateTypeArgument(resolver: PullTypeResolver, symbol: InstantiableSymbol,
             mutableTypeParameterMap: MutableTypeArgumentMap) {
             if (symbol.getIsSpecialized()) {
@@ -53,6 +71,10 @@ module TypeScript {
             }
         }
 
+        // Removes any entries that this instantiable symbol cannot reference
+        // eg. In any type, typeparameter map should only contain information about the allowed to reference type parameters 
+        // so remove unnecessary entries that are outside these scope, eg. from above sample we need to remove entry U = V
+        // and keep only T = V
         export function cleanUpTypeArgumentMap(symbol: InstantiableSymbol, mutableTypeArgumentMap: MutableTypeArgumentMap) {
             var allowedToReferenceTypeParameters = symbol.getAllowedToReferenceTypeParameters();
             for (var typeParameterID in mutableTypeArgumentMap.typeParameterArgumentMap) {
@@ -65,7 +87,13 @@ module TypeScript {
             }
         }
 
-        export function getAllowedToReferenceTypeParametersFromDecl(decl: PullDecl): PullTypeParameterSymbol[] {
+        // This method get the allowed to reference type parameter in any decl
+        // eg. in below code 
+        // interface IList<T> {
+        //     owner: /*Any type here can only refere to type parameter T*/;
+        //     map<U>(a: /*any type parameter here can only refere to U and T*/
+        // }
+        export function getAllowedToReferenceTypeParametersFromDecl(decl: PullDecl): PullTypeParameterSymbol[]{
             var allowedToReferenceTypeParameters: PullTypeParameterSymbol[] = [];
 
             var allowedToUseDeclTypeParameters = false;

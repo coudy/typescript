@@ -834,6 +834,7 @@ module TypeScript {
                 var rootSymbol = <PullSignatureSymbol>this.getRootSymbol();
                 var typeParameters = rootSymbol.getTypeParameters();
                 if (typeParameters.length) {
+                    // Type parameteres are the instantiated version of the rootTypeparmeters with our own type parameter argument map
                     this._typeParameters = [];
                     for (var i = 0; i < typeParameters.length; i++) {
                         this._typeParameters[this._typeParameters.length] = this._getResolver().instantiateTypeParameter(typeParameters[i], this._typeParameterArgumentMap);
@@ -853,6 +854,7 @@ module TypeScript {
         }
     }
 
+    // Instantiated type parameter symbol is the type parameter with the instantiated version of the constraint
     export class PullInstantiatedTypeParameterSymbol extends PullTypeParameterSymbol {
         constructor(rootTypeParameter: PullTypeSymbol, constraintType: PullTypeSymbol) {
             super(rootTypeParameter.name);

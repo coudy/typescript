@@ -156,6 +156,7 @@ module TypeScript {
             return false;
         }
 
+        // Caller of walkPullTypeSymbolStructure should implement this interface to walk the members, signatures
         export interface PullTypeSymbolStructureWalker {
             memberSymbolWalk(memberSymbol: PullSymbol): boolean;
             callSignatureWalk(signatureSymbol: PullSignatureSymbol): boolean;
@@ -165,6 +166,7 @@ module TypeScript {
             signatureReturnTypeWalk(returnType: PullTypeSymbol): boolean;
         }
 
+        // Walks the signature
         function walkSignatureSymbol(signatureSymbol: PullSignatureSymbol, walker: PullTypeSymbolStructureWalker) {
             var continueWalk = true;
             var parameters = signatureSymbol.parameters;
@@ -181,14 +183,17 @@ module TypeScript {
             return continueWalk;
         }
 
+        // Walk the type symbol structure
         export function walkPullTypeSymbolStructure(typeSymbol: PullTypeSymbol, walker: PullTypeSymbolStructureWalker) {
             var continueWalk = true;
+            // Members
             var members = typeSymbol.getMembers();
             for (var i = 0; continueWalk && i < members.length; i++) {
                 continueWalk = walker.memberSymbolWalk(members[i]);
             }
 
             if (continueWalk) {
+                // Call signatures
                 var callSigantures = typeSymbol.getCallSignatures();
                 for (var i = 0; continueWalk && i < callSigantures.length; i++) {
                     continueWalk = walker.callSignatureWalk(callSigantures[i]);
@@ -199,6 +204,7 @@ module TypeScript {
             }
 
             if (continueWalk) {
+                // Construct signatures
                 var constructSignatures = typeSymbol.getConstructSignatures();
                 for (var i = 0; continueWalk && i < constructSignatures.length; i++) {
                     continueWalk = walker.constructSignatureWalk(constructSignatures[i]);
@@ -210,6 +216,7 @@ module TypeScript {
             }
 
             if (continueWalk) {
+                // Index signatures
                 var indexSignatures = typeSymbol.getIndexSignatures();
                 for (var i = 0; continueWalk && i < indexSignatures.length; i++) {
                     continueWalk = walker.indexSignatureWalk(indexSignatures[i]);

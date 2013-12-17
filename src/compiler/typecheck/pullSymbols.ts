@@ -1071,9 +1071,20 @@ module TypeScript {
         }
     }
 
+    // This interface should be implemented by symbols that can be instantiated. (eg. PullTypeSymbol, PullSignatureSymbol)
     export interface InstantiableSymbol {
+        // Is the symbol specialized
         getIsSpecialized(): boolean;
+
+        // Type parameters this symbol can reference
+        // eg. in below code 
+        // interface IList<T> {
+        //     owner: /*Any type here can only refere to type parameter T*/;
+        //     map<U>(a: /*any type parameter here can only refere to U and T*/
+        // }
         getAllowedToReferenceTypeParameters(): PullTypeParameterSymbol[];
+
+        // Type parameter argument map for this symbol
         getTypeParameterArgumentMap(): PullTypeSymbol[];
     }
 
@@ -1227,6 +1238,7 @@ module TypeScript {
             return this._stringConstantOverload;
         }
 
+        // Gets the type of parameter at given index
         public getParameterTypeAtIndex(iParam: number) {
             if (iParam < this.parameters.length - 1 || (iParam < this.parameters.length && !this.hasVarArgs)) {
                 return this.parameters[iParam].type;

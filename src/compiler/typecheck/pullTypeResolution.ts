@@ -9642,9 +9642,9 @@ module TypeScript {
             }
 
             this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, true);
-            var startedWalkingTypeInfos = context.startWalkingTypes(t1, t2);
+            var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(t1, t2);
             isIdentical = this.typesAreIdenticalWorker(t1, t2, context);
-            context.endWalkingTypes(startedWalkingTypeInfos);
+            context.endWalkingTypes(symbolsWhenStartedWalkingTypes);
             this.identicalCache.setValueAt(t1.pullSymbolID, t2.pullSymbolID, isIdentical);
 
             return isIdentical;
@@ -10378,7 +10378,7 @@ module TypeScript {
 
             comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
 
-            var startedWalkingTypeInfos = context.startWalkingTypes(sourceSubstitution, target);
+            var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(sourceSubstitution, target);
             // If we were walking source and sourceSubstitution do not match, replace them in the currentSymbols
             var needsSourceSubstitutionUpdate = source != sourceSubstitution
                 && context.enclosingTypeWalker1._canWalkStructure()
@@ -10393,7 +10393,7 @@ module TypeScript {
             if (needsSourceSubstitutionUpdate) {
                 context.enclosingTypeWalker1.setCurrentSymbol(source);
             }
-            context.endWalkingTypes(startedWalkingTypeInfos);
+            context.endWalkingTypes(symbolsWhenStartedWalkingTypes);
 
             comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, isRelatable);
             return isRelatable;
@@ -11549,9 +11549,9 @@ module TypeScript {
                 this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, shouldFix, argContext, context);
             }
 
-            var startedWalkingTypeInfos = context.startWalkingTypes(expressionType, parameterType);
+            var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(expressionType, parameterType);
             this.relateTypeToTypeParametersWorker(expressionType, parameterType, shouldFix, argContext, context);
-            context.endWalkingTypes(startedWalkingTypeInfos);
+            context.endWalkingTypes(symbolsWhenStartedWalkingTypes);
         }
 
         private relateTypeToTypeParametersWorker(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
@@ -13635,23 +13635,30 @@ module TypeScript {
             return type;
         }
 
+        // Instantiates the type parameter
         public instantiateTypeParameter(typeParameter: PullTypeParameterSymbol, typeParameterArgumentMap: PullTypeSymbol[]): PullTypeParameterSymbol {
+            // if the type parameter doesnot contain constraint the instantiated version of it is identical to itself
             var constraint = typeParameter.getConstraint();
             if (!constraint) {
                 return typeParameter;
             }
 
+            // Instantiate the constraint
             var instantiatedConstraint = this.instantiateType(constraint, typeParameterArgumentMap);
+
+            // If the instantiated constraint == constraint of the type parameter, the instantiated type parameter is type parameter itself
             if (instantiatedConstraint == constraint) {
                 return typeParameter;
             }
 
+            // Look in cache
             var rootTypeParameter = <PullTypeParameterSymbol>typeParameter.getRootSymbol();
             var instantiation = <PullInstantiatedTypeParameterSymbol>rootTypeParameter.getSpecialization([instantiatedConstraint]);
             if (instantiation) {
                 return instantiation;
             }
 
+            // Create new instantiation of the type paramter with the constraint
             instantiation = new PullInstantiatedTypeParameterSymbol(rootTypeParameter, instantiatedConstraint);
             return instantiation;
         }

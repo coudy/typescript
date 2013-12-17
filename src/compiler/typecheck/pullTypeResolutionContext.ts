@@ -387,16 +387,17 @@ module TypeScript {
             if (!this.enclosingTypeWalker1) {
                 this.enclosingTypeWalker1 = new PullTypeEnclosingTypeWalker();
             }
-            var startedWalkingTypeInfo1 = this.enclosingTypeWalker1.startWalkingType(symbol1);
+            var symbolsWhenStartedWalkingTypes1 = this.enclosingTypeWalker1.startWalkingType(symbol1);
             if (!this.enclosingTypeWalker2) {
                 this.enclosingTypeWalker2 = new PullTypeEnclosingTypeWalker();
             }
-            var startedWalkingTypeInfo2 = this.enclosingTypeWalker2.startWalkingType(symbol2);            
-            return { startedWalkingTypeInfo1: startedWalkingTypeInfo1, startedWalkingTypeInfo2: startedWalkingTypeInfo2 };
+            var symbolsWhenStartedWalkingTypes2 = this.enclosingTypeWalker2.startWalkingType(symbol2);            
+            return { symbolsWhenStartedWalkingTypes1: symbolsWhenStartedWalkingTypes1, symbolsWhenStartedWalkingTypes2: symbolsWhenStartedWalkingTypes2 };
         }
-        public endWalkingTypes(startedWalkingTypeInfos: { startedWalkingTypeInfo1: StartEnclosingTypeWalkerInfo; startedWalkingTypeInfo2: StartEnclosingTypeWalkerInfo; }) {
-            this.enclosingTypeWalker1.endWalkingType(startedWalkingTypeInfos.startedWalkingTypeInfo1);
-            this.enclosingTypeWalker2.endWalkingType(startedWalkingTypeInfos.startedWalkingTypeInfo2);
+
+        public endWalkingTypes(symbolsWhenStartedWalkingTypes: { symbolsWhenStartedWalkingTypes1: PullSymbol[]; symbolsWhenStartedWalkingTypes2: PullSymbol[]; }) {
+            this.enclosingTypeWalker1.endWalkingType(symbolsWhenStartedWalkingTypes.symbolsWhenStartedWalkingTypes1);
+            this.enclosingTypeWalker2.endWalkingType(symbolsWhenStartedWalkingTypes.symbolsWhenStartedWalkingTypes2);
         }
 
         public setEnclosingTypes(symbol1: PullSymbol, symbol2: PullSymbol) {
@@ -414,6 +415,7 @@ module TypeScript {
             this.enclosingTypeWalker1.walkMemberType(memberName, this.resolver);
             this.enclosingTypeWalker2.walkMemberType(memberName, this.resolver);
         }
+
         public postWalkMemberTypes() {
             this.enclosingTypeWalker1.postWalkMemberType();
             this.enclosingTypeWalker2.postWalkMemberType();
@@ -423,6 +425,7 @@ module TypeScript {
             this.enclosingTypeWalker1.walkSignature(kind, index);
             this.enclosingTypeWalker2.walkSignature(kind, index2 == undefined ? index : index2);
         }
+
         public postWalkSignatures() {
             this.enclosingTypeWalker1.postWalkSignature();
             this.enclosingTypeWalker2.postWalkSignature();
@@ -432,6 +435,7 @@ module TypeScript {
             this.enclosingTypeWalker1.walkTypeParameterConstraint(index);
             this.enclosingTypeWalker2.walkTypeParameterConstraint(index);
         }
+
         public postWalkTypeParameterConstraints() {
             this.enclosingTypeWalker1.postWalkTypeParameterConstraint();
             this.enclosingTypeWalker2.postWalkTypeParameterConstraint();
@@ -441,6 +445,7 @@ module TypeScript {
             this.enclosingTypeWalker1.walkReturnType();
             this.enclosingTypeWalker2.walkReturnType();
         }
+
         public postWalkReturnTypes() {
             this.enclosingTypeWalker1.postWalkReturnType();
             this.enclosingTypeWalker2.postWalkReturnType();
@@ -450,6 +455,7 @@ module TypeScript {
             this.enclosingTypeWalker1.walkParameterType(iParam);
             this.enclosingTypeWalker2.walkParameterType(iParam);
         }
+
         public postWalkParameterTypes() {
             this.enclosingTypeWalker1.postWalkParameterType();
             this.enclosingTypeWalker2.postWalkParameterType();
@@ -466,6 +472,7 @@ module TypeScript {
             this.enclosingTypeWalker1.walkIndexSignatureReturnType(indexSigs.indexSigs1, useStringIndexSignature1, onlySignature);
             this.enclosingTypeWalker2.walkIndexSignatureReturnType(indexSigs.indexSigs2, useStringIndexSignature2, onlySignature);
         }
+
         public postWalkIndexSignatureReturnTypes(onlySignature?: boolean) {
             this.enclosingTypeWalker1.postWalkIndexSignatureReturnType(onlySignature);
             this.enclosingTypeWalker2.postWalkIndexSignatureReturnType(onlySignature);
@@ -493,6 +500,7 @@ module TypeScript {
                 enclosingTypeWalker2: enclosingTypeWalker2
             }
         }
+
         public setEnclosingTypeWalkers(enclosingTypeWalkers: { enclosingTypeWalker1: PullTypeEnclosingTypeWalker; enclosingTypeWalker2: PullTypeEnclosingTypeWalker; }) {
             this.enclosingTypeWalker1 = enclosingTypeWalkers.enclosingTypeWalker1;
             this.enclosingTypeWalker2 = enclosingTypeWalkers.enclosingTypeWalker2;
