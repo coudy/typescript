@@ -385,6 +385,7 @@ module TypeScript {
                                     // Some value
                                     var valueSymbol = aliasSymbol.getExportAssignedValueSymbol();
                                     if (valueSymbol) {
+                                        aliasSymbol.setIsUsedAsValue();
                                         return valueSymbol;
                                     }
                                 }
@@ -2046,8 +2047,9 @@ module TypeScript {
                     this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type);
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
-                else if ((<PullContainerSymbol>aliasedType).getExportAssignedValueSymbol()) {
-                    importDeclSymbol.setIsUsedAsValue(true);
+                else if (importDeclSymbol.anyDeclHasFlag(PullElementFlags.Exported) &&
+                    (<PullContainerSymbol>aliasedType).getExportAssignedValueSymbol()) {
+                    importDeclSymbol.setIsUsedAsValue();
                 }
 
                 if (aliasedType.isContainer()) {
@@ -2211,6 +2213,9 @@ module TypeScript {
                     typeSymbol = aliasedAssignedType;
                     containerSymbol = aliasedAssignedContainer;
                     aliasSymbol.setTypeUsedExternally(true);
+                    if (valueSymbol) {
+                        aliasSymbol.setIsUsedAsValue();
+                    }
                     acceptableAlias = true;
                 }
             }
@@ -6394,7 +6399,7 @@ module TypeScript {
             if (nameSymbol.isType() && nameSymbol.isAlias()) {
                 aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
                 if (!this.inTypeQuery(nameAST)) {
-                    aliasSymbol.setIsUsedAsValue(true);
+                    aliasSymbol.setIsUsedAsValue();
                 }
 
                 this.resolveDeclaredSymbol(nameSymbol, context);
@@ -6489,7 +6494,7 @@ module TypeScript {
             if (lhs.isAlias()) {
                 var lhsAlias = <PullTypeAliasSymbol>lhs;
                 if (!this.inTypeQuery(expression)) {
-                    lhsAlias.setIsUsedAsValue(true);
+                    lhsAlias.setIsUsedAsValue();
                 }
                 lhsType = lhsAlias.getExportAssignedTypeSymbol();
             }
@@ -6707,6 +6712,10 @@ module TypeScript {
             }
 
             if (genericTypeSymbol.isAlias()) {
+                if (this.inClassExtendsHeritageClause(genericTypeAST) &&
+                    !this.inTypeArgumentList(genericTypeAST)) {
+                    (<PullTypeAliasSymbol>genericTypeSymbol).setIsUsedAsValue();
+                }
                 genericTypeSymbol = (<PullTypeAliasSymbol>genericTypeSymbol).getExportAssignedTypeSymbol();
             }
 
@@ -6861,7 +6870,7 @@ module TypeScript {
             if (this.inClassExtendsHeritageClause(dottedNameAST) &&
                 !this.inTypeArgumentList(dottedNameAST)) {
                 if (lhs.isAlias()) {
-                    (<PullTypeAliasSymbol>lhs).setIsUsedAsValue(true);
+                    (<PullTypeAliasSymbol>lhs).setIsUsedAsValue();
                 }
             }
 

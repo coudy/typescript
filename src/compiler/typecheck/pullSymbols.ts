@@ -3064,13 +3064,13 @@ module TypeScript {
             }
         }
 
-        public setIsUsedAsValue(value: boolean): void {
-            this._isUsedAsValue = value;
+        public setIsUsedAsValue(): void {
+            this._isUsedAsValue = true;
 
             // Set other aliases as used - this would happen if this alias comes from the another alias
             if (this.contingentValueSymbols && this.contingentValueSymbols.length > 0) {
                 for (var i = 0, len = this.contingentValueSymbols.length; i < len; i++) {
-                    this.contingentValueSymbols[i].setIsUsedAsValue(value);
+                    this.contingentValueSymbols[i].setIsUsedAsValue();
                 }
             }
         }
