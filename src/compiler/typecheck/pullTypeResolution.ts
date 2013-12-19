@@ -5653,7 +5653,10 @@ module TypeScript {
                 return symbol;
             }
 
-            if (ast.isExpression()) {
+            // We also have to check isTypesOnlyLocation because an identifier representing a type reference
+            // is considered an expression at the AST level, yet we only want to resolve it as an expression
+            // if it is in an expression position.
+            if (ast.isExpression() && !isTypesOnlyLocation(ast)) {
                 return this.resolveExpressionAST(ast, isContextuallyTyped, context);
             }
 
@@ -5830,90 +5833,88 @@ module TypeScript {
             return this.semanticInfoChain.anyTypeSymbol;
         }
 
-        private resolveExpressionAST(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
-            var expressionSymbol: PullSymbol = null;
+        private resolveExpressionAST(ast: AST, isContextuallyOrInferentiallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
+            var expressionSymbol = this.resolveExpressionWorker(ast, isContextuallyOrInferentiallyTyped, context);
+
+            // November 18, 2013, Section 4.12.2:
+            // If e is an expression of a function type that contains exactly one generic call signature
+            // and no other members, and T is a function type with exactly one non-generic call signature
+            // and no other members, then any inferences made for type parameters referenced by the
+            // parameters of T's call signature are fixed and, if e's call signature can successfully be
+            // instantiated in the context of T's call signature(section 3.8.5), e's type is changed to
+            // a function type with that instantiated signature.
+            if (isContextuallyOrInferentiallyTyped && context.isInferentiallyTyping()) {
+                return this.alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionSymbol, context);
+            }
+            else {
+                return expressionSymbol;
+            }
+        }
+
+        private resolveExpressionWorker(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): PullSymbol {
             switch (ast.kind()) {
                 case SyntaxKind.ObjectLiteralExpression:
-                    expressionSymbol = this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveObjectLiteralExpression(<ObjectLiteralExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.IdentifierName:
                     // We already know we are in an expression, so there is no need
                     // to decide between resolveNameExpression and resolveTypeNameExpression
-                    expressionSymbol = this.resolveNameExpression(<Identifier>ast, context);
-                    break;
+                    return this.resolveNameExpression(<Identifier>ast, context);
 
                 case SyntaxKind.MemberAccessExpression:
-                    expressionSymbol = this.resolveMemberAccessExpression(<MemberAccessExpression>ast, context);
-                    break;
+                    return this.resolveMemberAccessExpression(<MemberAccessExpression>ast, context);
 
                 case SyntaxKind.FunctionExpression:
-                    expressionSymbol = this.resolveFunctionExpression(<FunctionExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveFunctionExpression(<FunctionExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.SimpleArrowFunctionExpression:
-                    expressionSymbol = this.resolveSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveSimpleArrowFunctionExpression(<SimpleArrowFunctionExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.ParenthesizedArrowFunctionExpression:
-                    expressionSymbol = this.resolveParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveParenthesizedArrowFunctionExpression(<ParenthesizedArrowFunctionExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.ArrayLiteralExpression:
-                    expressionSymbol = this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveArrayLiteralExpression(<ArrayLiteralExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.ThisKeyword:
-                    expressionSymbol = this.resolveThisExpression(<ThisExpression>ast, context);
-                    break;
+                    return this.resolveThisExpression(<ThisExpression>ast, context);
 
                 case SyntaxKind.SuperKeyword:
-                    expressionSymbol = this.resolveSuperExpression(<SuperExpression>ast, context);
-                    break;
+                    return this.resolveSuperExpression(<SuperExpression>ast, context);
 
                 case SyntaxKind.InvocationExpression:
-                    expressionSymbol = this.resolveInvocationExpression(<InvocationExpression>ast, context);
-                    break;
+                    return this.resolveInvocationExpression(<InvocationExpression>ast, context);
 
                 case SyntaxKind.ObjectCreationExpression:
-                    expressionSymbol = this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context);
-                    break;
+                    return this.resolveObjectCreationExpression(<ObjectCreationExpression>ast, context);
 
                 case SyntaxKind.CastExpression:
-                    expressionSymbol = this.resolveCastExpression(<CastExpression>ast, context);
-                    break;
+                    return this.resolveCastExpression(<CastExpression>ast, context);
 
                 // primitives
                 case SyntaxKind.NumericLiteral:
-                    expressionSymbol = this.semanticInfoChain.numberTypeSymbol;
-                    break;
+                    return this.semanticInfoChain.numberTypeSymbol;
 
                 case SyntaxKind.StringLiteral:
-                    expressionSymbol = this.semanticInfoChain.stringTypeSymbol;
-                    break;
+                    return this.semanticInfoChain.stringTypeSymbol;
 
                 case SyntaxKind.NullKeyword:
-                    expressionSymbol = this.semanticInfoChain.nullTypeSymbol;
-                    break;
+                    return this.semanticInfoChain.nullTypeSymbol;
 
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
-                    expressionSymbol = this.semanticInfoChain.booleanTypeSymbol;
-                    break;
+                    return this.semanticInfoChain.booleanTypeSymbol;
 
                 case SyntaxKind.VoidExpression:
-                    expressionSymbol = this.resolveVoidExpression(<VoidExpression>ast, context);
-                    break;
+                    return this.resolveVoidExpression(<VoidExpression>ast, context);
 
                 // assignment
                 case SyntaxKind.AssignmentExpression:
-                    expressionSymbol = this.resolveAssignmentExpression(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveAssignmentExpression(<BinaryExpression>ast, context);
 
                 // boolean operations
                 case SyntaxKind.LogicalNotExpression:
-                    expressionSymbol = this.resolveLogicalNotExpression(<PrefixUnaryExpression>ast, context);
-                    break;
+                    return this.resolveLogicalNotExpression(<PrefixUnaryExpression>ast, context);
 
                 case SyntaxKind.NotEqualsWithTypeConversionExpression:
                 case SyntaxKind.EqualsWithTypeConversionExpression:
@@ -5923,26 +5924,22 @@ module TypeScript {
                 case SyntaxKind.LessThanOrEqualExpression:
                 case SyntaxKind.GreaterThanOrEqualExpression:
                 case SyntaxKind.GreaterThanExpression:
-                    expressionSymbol = this.resolveLogicalOperation(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveLogicalOperation(<BinaryExpression>ast, context);
 
                 case SyntaxKind.AddExpression:
                 case SyntaxKind.AddAssignmentExpression:
-                    expressionSymbol = this.resolveBinaryAdditionOperation(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveBinaryAdditionOperation(<BinaryExpression>ast, context);
 
                 case SyntaxKind.PlusExpression:
                 case SyntaxKind.NegateExpression:
                 case SyntaxKind.BitwiseNotExpression:
                 case SyntaxKind.PreIncrementExpression:
                 case SyntaxKind.PreDecrementExpression:
-                    expressionSymbol = this.resolveUnaryArithmeticOperation(<PrefixUnaryExpression>ast, context);
-                    break;
+                    return this.resolveUnaryArithmeticOperation(<PrefixUnaryExpression>ast, context);
 
                 case SyntaxKind.PostIncrementExpression:
                 case SyntaxKind.PostDecrementExpression:
-                    expressionSymbol = this.resolvePostfixUnaryExpression(<PostfixUnaryExpression>ast, context);
-                    break;
+                    return this.resolvePostfixUnaryExpression(<PostfixUnaryExpression>ast, context);
 
                 case SyntaxKind.SubtractExpression:
                 case SyntaxKind.MultiplyExpression:
@@ -5964,73 +5961,46 @@ module TypeScript {
                 case SyntaxKind.ModuloAssignmentExpression:
                 case SyntaxKind.OrAssignmentExpression:
                 case SyntaxKind.AndAssignmentExpression:
-                    expressionSymbol = this.resolveBinaryArithmeticExpression(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveBinaryArithmeticExpression(<BinaryExpression>ast, context);
 
                 case SyntaxKind.ElementAccessExpression:
-                    expressionSymbol = this.resolveElementAccessExpression(<ElementAccessExpression>ast, context);
-                    break;
+                    return this.resolveElementAccessExpression(<ElementAccessExpression>ast, context);
 
                 case SyntaxKind.LogicalOrExpression:
-                    expressionSymbol = this.resolveLogicalOrExpression(<BinaryExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveLogicalOrExpression(<BinaryExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.LogicalAndExpression:
-                    expressionSymbol = this.resolveLogicalAndExpression(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveLogicalAndExpression(<BinaryExpression>ast, context);
 
                 case SyntaxKind.TypeOfExpression:
-                    expressionSymbol = this.resolveTypeOfExpression(<TypeOfExpression>ast, context);
-                    break;
+                    return this.resolveTypeOfExpression(<TypeOfExpression>ast, context);
 
                 case SyntaxKind.DeleteExpression:
-                    expressionSymbol = this.resolveDeleteExpression(<DeleteExpression>ast, context);
-                    break;
+                    return this.resolveDeleteExpression(<DeleteExpression>ast, context);
 
                 case SyntaxKind.ConditionalExpression:
-                    expressionSymbol = this.resolveConditionalExpression(<ConditionalExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return this.resolveConditionalExpression(<ConditionalExpression>ast, isContextuallyTyped, context);
 
                 case SyntaxKind.RegularExpressionLiteral:
-                    expressionSymbol = this.resolveRegularExpressionLiteral();
-                    break;
+                    return this.resolveRegularExpressionLiteral();
 
                 case SyntaxKind.ParenthesizedExpression:
-                    expressionSymbol = this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, context);
-                    break;
+                    return this.resolveParenthesizedExpression(<ParenthesizedExpression>ast, context);
 
                 case SyntaxKind.InstanceOfExpression:
-                    expressionSymbol = this.resolveInstanceOfExpression(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveInstanceOfExpression(<BinaryExpression>ast, context);
 
                 case SyntaxKind.CommaExpression:
-                    expressionSymbol = this.resolveCommaExpression(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveCommaExpression(<BinaryExpression>ast, context);
 
                 case SyntaxKind.InExpression:
-                    expressionSymbol = this.resolveInExpression(<BinaryExpression>ast, context);
-                    break;
+                    return this.resolveInExpression(<BinaryExpression>ast, context);
 
                 case SyntaxKind.OmittedExpression:
-                    expressionSymbol = this.semanticInfoChain.undefinedTypeSymbol;
-                    break;
+                    return this.semanticInfoChain.undefinedTypeSymbol;
             }
 
-            Debug.assert(expressionSymbol, "resolveExpressionAST: Missing expression kind");
-
-            // November 18, 2013, Section 4.12.2:
-            // If e is an expression of a function type that contains exactly one generic call signature
-            // and no other members, and T is a function type with exactly one non-generic call signature
-            // and no other members, then any inferences made for type parameters referenced by the
-            // parameters of T's call signature are fixed and, if e's call signature can successfully be
-            // instantiated in the context of T's call signature(section 3.8.5), e's type is changed to
-            // a function type with that instantiated signature.
-            if (isContextuallyTyped && context.isInferentiallyTyping()) {
-                return this.alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionSymbol, context);
-            }
-            else {
-                return expressionSymbol;
-            }
+            Debug.fail("resolveExpressionASTWorker: Missing expression kind: " + SyntaxKind[ast.kind()]);
         }
 
         private typeCheckAST(ast: AST, isContextuallyTyped: boolean, context: PullTypeResolutionContext): void {
@@ -8706,8 +8676,8 @@ module TypeScript {
                         }
                     }
                     else if (!typeArgs && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
-                        var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, callEx.argumentList.arguments);
-                        inferredTypeArgs = this.inferArgumentTypesForSignature(signatures[i], typeArgumentInferenceContext, new TypeComparisonInfo(), context);
+                        var typeArgumentInferenceContext = new InvocationTypeArgumentInferenceContext(this, context, signatures[i], callEx.argumentList.arguments);
+                        inferredTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
                     else {
@@ -9086,8 +9056,8 @@ module TypeScript {
                                 }
                             }
                             else if (!typeArgs && callEx.argumentList && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
-                                var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, callEx.argumentList.arguments);
-                                inferredTypeArgs = this.inferArgumentTypesForSignature(constructSignatures[i], typeArgumentInferenceContext, new TypeComparisonInfo(), context);
+                                var typeArgumentInferenceContext = new InvocationTypeArgumentInferenceContext(this, context, constructSignatures[i], callEx.argumentList.arguments);
+                                inferredTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
                             else {
@@ -9345,8 +9315,8 @@ module TypeScript {
             var typeParameters: PullTypeParameterSymbol[] = signatureAToInstantiate.getTypeParameters();
             var typeConstraint: PullTypeSymbol = null;
 
-            var typeArgumentInferenceContext = new TypeArgumentInferenceContext(this, context, contextualSignatureB, shouldFixContextualSignatureParameterTypes);
-            inferredTypeArgs = this.inferArgumentTypesForSignature(signatureAToInstantiate, typeArgumentInferenceContext, new TypeComparisonInfo(), context);
+            var typeArgumentInferenceContext = new ContextualSignatureInstantiationTypeArgumentInferenceContext(this, context, signatureAToInstantiate, contextualSignatureB, shouldFixContextualSignatureParameterTypes);
+            inferredTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
 
             var functionTypeA = signatureAToInstantiate.functionType;
             var functionTypeB = contextualSignatureB.functionType;
@@ -11500,20 +11470,8 @@ module TypeScript {
             return OverloadApplicabilityStatus.NotAssignable;
         }
 
-        private inferArgumentTypesForSignature(signature: PullSignatureSymbol, argContext: TypeArgumentInferenceContext, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
-            var inferenceResults = argContext.inferTypeArguments(signature);
-
-            var resultTypes: PullTypeSymbol[] = [];
-            var typeParameters = signature.getTypeParameters();
-            // match inferred types in-order to type parameters
-            for (var i = 0; i < typeParameters.length; i++) {
-                for (var j = 0; j < inferenceResults.length; j++) {
-                    if ((inferenceResults[j].param === typeParameters[i]) && inferenceResults[j].type) {
-                        resultTypes[resultTypes.length] = inferenceResults[j].type;
-                        break;
-                    }
-                }
-            }
+        private inferArgumentTypesForSignature(argContext: TypeArgumentInferenceContext, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
+            var inferenceResultTypes = argContext.inferTypeArguments();
 
             //  Do not let local type parameters escape at call sites
             //  Because we're comparing for equality between two signatures (where one is instantiated
@@ -11526,23 +11484,21 @@ module TypeScript {
 
             // We know that if we are inferring at a call expression we are not doing
             // contextual signature instantiation
-            var inferringAtCallExpression = argContext.argumentASTs && argContext.argumentASTs.parent && argContext.argumentASTs.parent.kind() === SyntaxKind.ArgumentList &&
-                (argContext.argumentASTs.parent.parent.kind() === SyntaxKind.InvocationExpression || argContext.argumentASTs.parent.parent.kind() === SyntaxKind.ObjectCreationExpression);
-
-            if (inferringAtCallExpression) {
+            if (argContext.isInvocationInferenceContext()) {
                 // Need to know if the type parameters are in scope. If not, they are not legal inference
                 // candidates unless we are in contextual signature instantiation
-                if (!this.typeParametersAreInScopeAtArgumentList(typeParameters, argContext.argumentASTs)) {
-                    for (var i = 0; i < resultTypes.length; i++) {
+                var invocationContext = <InvocationTypeArgumentInferenceContext>argContext;
+                if (!this.typeParametersAreInScopeAtArgumentList(argContext.signatureBeingInferred.getTypeParameters(), invocationContext.argumentASTs)) {
+                    for (var i = 0; i < inferenceResultTypes.length; i++) {
                         // Check if the inferred type wraps any one of the type parameters
-                        if (resultTypes[i].wrapsSomeTypeParameter(argContext.candidateCache)) {
-                            resultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
+                        if (inferenceResultTypes[i].wrapsSomeTypeParameter(argContext.candidateCache)) {
+                            inferenceResultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
                         }
                     }
                 }
             }
 
-            return resultTypes;
+            return inferenceResultTypes;
         }
 
         private typeParametersAreInScopeAtArgumentList(typeParameters: PullTypeParameterSymbol[], args: ISeparatedSyntaxList2): boolean {
@@ -11823,16 +11779,17 @@ module TypeScript {
         // instantiated in the context of T's call signature(section 3.8.5), e's type is changed to
         // a function type with that instantiated signature.
         private alterPotentialGenericFunctionTypeToInstantiatedFunctionTypeForTypeArgumentInference(expressionSymbol: PullSymbol, context: PullTypeResolutionContext): PullSymbol {
-            var contextualType = context.getContextualType();
-            Debug.assert(contextualType);
+            // In this case getContextualType will give us the inferential type
+            var inferentialType = context.getContextualType();
+            Debug.assert(inferentialType);
             var expressionType = expressionSymbol.type;
             if (this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(expressionType, /*callSignatureShouldBeGeneric*/ true) &&
-                this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(contextualType, /*callSignatureShouldBeGeneric*/ false)) {
+                this.isFunctionTypeWithExactlyOneCallSignatureAndNoOtherMembers(inferentialType, /*callSignatureShouldBeGeneric*/ false)) {
                 // Here we overwrite contextualType because we will want to use the version of the type
                 // that was instantiated with the fixed type parameters from the argument inference
                 // context
                 var genericExpressionSignature = expressionType.getCallSignatures()[0];
-                var contextualSignature = contextualType.getCallSignatures()[0];
+                var contextualSignature = inferentialType.getCallSignatures()[0];
 
                 // Contextual signature instantiation will return null if the instantiation is unsuccessful
                 // We pass true so that the parameters of the contextual signature will be fixed per the spec.
@@ -11861,11 +11818,11 @@ module TypeScript {
                 return false;
             }
 
-            var expressionTypeHasOtherMembers =
+            var typeHasOtherMembers =
                 type.getConstructSignatures().length ||
                 type.getIndexSignatures().length ||
                 type.getAllMembers(PullElementKind.SomeValue, GetAllMembersVisiblity.all).length;
-            if (expressionTypeHasOtherMembers) {
+            if (typeHasOtherMembers) {
                 return false;
             }
 

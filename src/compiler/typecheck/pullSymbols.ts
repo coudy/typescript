@@ -1393,26 +1393,19 @@ module TypeScript {
             return builder;
         }
 
-        public forEachParameterType(length: number, resolver: PullTypeResolver, callBack: (parameterType: PullTypeSymbol, iterationIndex: number) => void): void {
+        public forEachParameterType(length: number, callBack: (parameterType: PullTypeSymbol, iterationIndex: number) => void): void {
             if (this.parameters.length < length && !this.hasVarArgs) {
                 length = this.parameters.length;
             }
 
             for (var i = 0; i < length; i++) {
-                var currentParam = this.parameters[i < this.parameters.length ? i : this.parameters.length - 1];
-                if (currentParam.isVarArg) {
-                    var paramType = currentParam.type.getElementType() || resolver.getNewErrorTypeSymbol();
-                }
-                else {
-                    var paramType = currentParam.type;
-                }
+                var paramType = this.getParameterTypeAtIndex(i);
                 callBack(paramType, i);
             }
         }
 
         public forCorrespondingParameterTypesInThisAndOtherSignature(
             otherSignature: PullSignatureSymbol,
-            resolver: PullTypeResolver,
             callBack: (thisSignatureParameterType: PullTypeSymbol, otherSignatureParameterType: PullTypeSymbol) => void): void {
             // First determine the length
             var length: number;
@@ -1428,24 +1421,9 @@ module TypeScript {
             }
 
             for (var i = 0; i < length; i++) {
-                // Get the current parameters for each signature
-                // When computing the length, we already accounted for rest params,
-                // so now it suffices to only care about the length of the list
-                var thisSignatureParam = this.parameters[i < this.parameters.length ? i : this.parameters.length - 1];
-                var otherSignatureParam = otherSignature.parameters[i < otherSignature.parameters.length ? i : otherSignature.parameters.length - 1];
-
                 // Finally, call the callback using the knowledge of whether each param is a rest param
-                var thisParamType = thisSignatureParam.type;
-                var otherParamType = otherSignatureParam.type;
-                if (thisSignatureParam.isVarArg !== otherSignatureParam.isVarArg) {
-                    // Their rest-param-hood doesn't agree. One of them needs to be normalized.
-                    if (thisSignatureParam.isVarArg) {
-                        thisParamType = thisParamType.getElementType() || resolver.getNewErrorTypeSymbol();
-                    }
-                    else {
-                        otherParamType = otherParamType.getElementType() || resolver.getNewErrorTypeSymbol();
-                    }
-                }
+                var thisParamType = this.getParameterTypeAtIndex(i);
+                var otherParamType = otherSignature.getParameterTypeAtIndex(i);
                 callBack(thisParamType, otherParamType);
             }
         }

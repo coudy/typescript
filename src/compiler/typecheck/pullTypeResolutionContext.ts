@@ -39,31 +39,11 @@ module TypeScript {
     export class TypeArgumentInferenceContext {
         public inferenceCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ false);
         public candidateCache: CandidateInferenceInfo[] = [];
-        public contextualSignature: PullSignatureSymbol = null;
-        private shouldFixContextualSignatureParameterTypes: boolean = null;
-        private resolver: PullTypeResolver = null;
-        private context: PullTypeResolutionContext = null;
-        public argumentASTs: ISeparatedSyntaxList2 = null;
 
-
-        // When inferences are being performed at function call sites, use this overloads
-        constructor(resolver: PullTypeResolver, context: PullTypeResolutionContext, argumentASTs: ISeparatedSyntaxList2);
-
-        // during contextual instantiation, use this overload
-        // for the shouldFixContextualSignatureParameterTypes flag, pass true during inferential typing
-        // and false during signature relation checking
-        constructor(resolver: PullTypeResolver, context: PullTypeResolutionContext, contextualSignature: PullSignatureSymbol, shouldFixContextualSignatureParameterTypes: boolean);
-        constructor(resolver: PullTypeResolver, context: PullTypeResolutionContext, argumentsOrContextualSignature: any, shouldFixContextualSignatureParameterTypes?: boolean) {
-            this.resolver = resolver;
-            this.context = context;
-
-            if (argumentsOrContextualSignature.nonSeparatorAt !== undefined) {
-                this.argumentASTs = argumentsOrContextualSignature;
-            }
-            else {
-                this.contextualSignature = argumentsOrContextualSignature;
-                this.shouldFixContextualSignatureParameterTypes = shouldFixContextualSignatureParameterTypes;
-                Debug.assert(shouldFixContextualSignatureParameterTypes !== undefined);
+        constructor(public resolver: PullTypeResolver, public context: PullTypeResolutionContext, public signatureBeingInferred: PullSignatureSymbol) {
+            var typeParameters = signatureBeingInferred.getTypeParameters();
+            for (var i = 0; i < typeParameters.length; i++) {
+                this.addInferenceRoot(typeParameters[i]);
             }
         }
 
@@ -106,43 +86,8 @@ module TypeScript {
             }
         }
 
-        public inferTypeArguments(signatureBeingInferred: PullSignatureSymbol): { param: PullTypeParameterSymbol; type: PullTypeSymbol }[] {
-            var typeParameters = signatureBeingInferred.getTypeParameters();
-            for (var i = 0; i < typeParameters.length; i++) {
-                this.addInferenceRoot(typeParameters[i]);
-            }
-
-            if (this.contextualSignature) {
-                // We are in contextual signature instantiation. This callback will be executed
-                // for each parameter we are trying to relate in order to infer type arguments.
-                var relateTypesCallback = (parameterTypeBeingInferred: PullTypeSymbol, contextualParameterType: PullTypeSymbol) => {
-                    if (this.shouldFixContextualSignatureParameterTypes) {
-                        // Need to modify the callback to cause fixing. Per spec section 4.12.2
-                        // 4th bullet of inferential typing:
-                        // ... then any inferences made for type parameters referenced by the
-                        // parameters of T's call signature are fixed
-                        // (T here is the contextual signature)
-                        contextualParameterType = this.context.fixAllTypeParametersReferencedByType(contextualParameterType, this.resolver);
-                    }
-                    this.resolver.relateTypeToTypeParametersWithNewEnclosingTypes(contextualParameterType, parameterTypeBeingInferred, this, this.context);
-                };
-
-                signatureBeingInferred.forCorrespondingParameterTypesInThisAndOtherSignature(this.contextualSignature, this.resolver, relateTypesCallback);
-            }
-            else {
-                Debug.assert(this.argumentASTs);
-                // Resolve all of the argument ASTs in the callback
-                signatureBeingInferred.forEachParameterType(/*length*/ this.argumentASTs.nonSeparatorCount(), this.resolver, (parameterType, argumentIndex) => {
-                    var argumentAST = this.argumentASTs.nonSeparatorAt(argumentIndex);
-
-                    this.context.pushInferentialType(parameterType, this);
-                    var argumentType = this.resolver.resolveAST(argumentAST, /*isContextuallyTyped*/ true, this.context).type;
-                    this.resolver.relateTypeToTypeParametersWithNewEnclosingTypes(argumentType, parameterType, this, this.context);
-                    this.context.popAnyContextualType();
-                });
-            }
-
-            return this.finalizeInferredTypeArguments();
+        public inferTypeArguments(): PullTypeSymbol[] {
+            throw Errors.abstract();
         }
 
         public fixTypeParameter(typeParameter: PullTypeParameterSymbol) {
@@ -165,27 +110,94 @@ module TypeScript {
             return fixedTypeParametersToTypesMap;
         }
 
-        private finalizeInferredTypeArguments(): { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[] {
-            var results: { param: PullTypeParameterSymbol; type: PullTypeSymbol; }[] = [];
+        public _finalizeInferredTypeArguments(): PullTypeSymbol[]{
+            var results: PullTypeSymbol[] = [];
+            var typeParameters = this.signatureBeingInferred.getTypeParameters();
+            for (var i = 0; i < typeParameters.length; i++) {
+                var info = this.candidateCache[typeParameters[i].pullSymbolID];
 
-            for (var infoKey in this.candidateCache) {
-                if (this.candidateCache.hasOwnProperty(infoKey)) {
-                    var info = this.candidateCache[infoKey];
+                info.fixTypeParameter(this.resolver, this.context);
 
-                    info.fixTypeParameter(this.resolver, this.context);
-
-                    // is there already a substitution for this type?
-                    for (var i = 0; i < results.length; i++) {
-                        if (results[i].type === info.typeParameter) {
-                            results[i].type = info._inferredTypeAfterFixing;
-                        }
+                // is there already a substitution for this type?
+                for (var i = 0; i < results.length; i++) {
+                    if (results[i].type === info.typeParameter) {
+                        results[i].type = info._inferredTypeAfterFixing;
                     }
-
-                    results.push({ param: info.typeParameter, type: info._inferredTypeAfterFixing });
                 }
+
+                results.push(info._inferredTypeAfterFixing);
             }
 
             return results;
+        }
+
+        public isInvocationInferenceContext(): boolean {
+            throw Errors.abstract();
+        }
+    }
+
+    export class InvocationTypeArgumentInferenceContext extends TypeArgumentInferenceContext {
+        constructor(
+            resolver: PullTypeResolver,
+            context: PullTypeResolutionContext,
+            signatureBeingInferred: PullSignatureSymbol,
+            public argumentASTs: ISeparatedSyntaxList2) {
+            super(resolver, context, signatureBeingInferred);
+        }
+
+        public isInvocationInferenceContext() {
+            return true;
+        }
+
+        public inferTypeArguments(): PullTypeSymbol[] {
+            // Resolve all of the argument ASTs in the callback
+            this.signatureBeingInferred.forEachParameterType(/*length*/ this.argumentASTs.nonSeparatorCount(), (parameterType, argumentIndex) => {
+                var argumentAST = this.argumentASTs.nonSeparatorAt(argumentIndex);
+
+                this.context.pushInferentialType(parameterType, this);
+                var argumentType = this.resolver.resolveAST(argumentAST, /*isContextuallyTyped*/ true, this.context).type;
+                this.resolver.relateTypeToTypeParametersWithNewEnclosingTypes(argumentType, parameterType, this, this.context);
+                this.context.popAnyContextualType();
+            });
+
+            return this._finalizeInferredTypeArguments();
+        }
+    }
+
+    export class ContextualSignatureInstantiationTypeArgumentInferenceContext extends TypeArgumentInferenceContext {
+        // for the shouldFixContextualSignatureParameterTypes flag, pass true during inferential typing
+        // and false during signature relation checking
+        constructor(
+            resolver: PullTypeResolver,
+            context: PullTypeResolutionContext,
+            signatureBeingInferred: PullSignatureSymbol,
+            private contextualSignature: PullSignatureSymbol,
+            private shouldFixContextualSignatureParameterTypes: boolean) {
+            super(resolver, context, signatureBeingInferred);
+        }
+
+        public isInvocationInferenceContext() {
+            return false;
+        }
+
+        public inferTypeArguments(): PullTypeSymbol[] {
+            // We are in contextual signature instantiation. This callback will be executed
+            // for each parameter we are trying to relate in order to infer type arguments.
+            var relateTypesCallback = (parameterTypeBeingInferred: PullTypeSymbol, contextualParameterType: PullTypeSymbol) => {
+                if (this.shouldFixContextualSignatureParameterTypes) {
+                    // Need to modify the callback to cause fixing. Per spec section 4.12.2
+                    // 4th bullet of inferential typing:
+                    // ... then any inferences made for type parameters referenced by the
+                    // parameters of T's call signature are fixed
+                    // (T here is the contextual signature)
+                    contextualParameterType = this.context.fixAllTypeParametersReferencedByType(contextualParameterType, this.resolver, this);
+                }
+                this.resolver.relateTypeToTypeParametersWithNewEnclosingTypes(contextualParameterType, parameterTypeBeingInferred, this, this.context);
+            };
+
+            this.signatureBeingInferred.forCorrespondingParameterTypesInThisAndOtherSignature(this.contextualSignature, relateTypesCallback);
+
+            return this._finalizeInferredTypeArguments();
         }
     }
 
@@ -265,7 +277,7 @@ module TypeScript {
         // Use this when propagating a contextual type from a parent contextual type to a subexpression.
         // This corresponds to the second series of bullets in section 4.19 of the spec.
         public propagateContextualType(type: PullTypeSymbol) {
-            this._pushAnyContextualType(type, this.inProvisionalResolution(), this.isInferentiallyTyping(), null);
+            this._pushAnyContextualType(type, this.inProvisionalResolution(), this.isInferentiallyTyping(), this.getCurrentTypeArgumentInferenceContext());
         }
 
         // Use this if you are trying to infer type arguments.
@@ -298,6 +310,7 @@ module TypeScript {
             return this.contextStack.length ? this.contextStack[this.contextStack.length - 1].hasProvisionalErrors : false;
         }
 
+        // Gets the current contextual or inferential type
         public getContextualType(): PullTypeSymbol {
             var context = !this.contextStack.length ? null : this.contextStack[this.contextStack.length - 1];
             
@@ -314,7 +327,7 @@ module TypeScript {
             return null;
         }
 
-        public fixAllTypeParametersReferencedByType(type: PullTypeSymbol, resolver: PullTypeResolver): PullTypeSymbol {
+        public fixAllTypeParametersReferencedByType(type: PullTypeSymbol, resolver: PullTypeResolver, argContext?: TypeArgumentInferenceContext): PullTypeSymbol {
             var argContext = this.getCurrentTypeArgumentInferenceContext();
             if (type.wrapsSomeTypeParameter(argContext.candidateCache)) {
                 // Build up a type parameter argument map with which we will instantiate this type
@@ -322,7 +335,7 @@ module TypeScript {
                 var typeParameterArgumentMap: PullTypeSymbol[] = [];
                 // Iterate over all the type parameters and fix any one that is wrapped
                 for (var n in argContext.candidateCache) {
-                    var typeParameter = argContext.candidateCache[n].typeParameter;
+                    var typeParameter = argContext.candidateCache[n] && argContext.candidateCache[n].typeParameter;
                     if (typeParameter) {
                         var dummyMap: PullTypeSymbol[] = [];
                         dummyMap[typeParameter.pullSymbolID] = typeParameter;
@@ -340,14 +353,11 @@ module TypeScript {
             return type;
         }
 
+        // If we are not in inferential typing, this will return null
         private getCurrentTypeArgumentInferenceContext() {
-            for (var i = this.contextStack.length - 1; i >= 0; i--) {
-                if (this.contextStack[i].typeArgumentInferenceContext) {
-                    return this.contextStack[i].typeArgumentInferenceContext;
-                }
-            }
-
-            return null;
+            return this.contextStack.length
+                ? this.contextStack[this.contextStack.length - 1].typeArgumentInferenceContext
+                : null;
         }
 
         public isInferentiallyTyping(): boolean {

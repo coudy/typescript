@@ -328,7 +328,7 @@ module TypeScript {
         }
 
         public isExpression() {
-            return !isTypesOnlyLocation(this);
+            return true;
         }
     }
 
