@@ -1548,7 +1548,7 @@ module TypeScript {
                                 constructorSignature.addDeclaration(classDecl);
                             }
                         }
-                        else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues   
+                        else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues
                             constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
                             constructorSignature.returnType = classDeclSymbol;
                             constructorSignature.addTypeParametersFromReturnType();
@@ -10076,27 +10076,6 @@ module TypeScript {
             // if one is generic and the other is not, we'll need to do a member-wise comparison
             if (source.isGeneric() !== target.isGeneric()) {
                 return false;
-            }
-
-            // if these are two type references referencing the same base type, then they must be two different instantiations of a generic
-            // type (if they were not, we never would have gotten to this point)
-            if (source.isTypeReference() && target.isTypeReference()) {
-                if ((<PullTypeReferenceSymbol>source).referencedTypeSymbol.hasBase((<PullTypeReferenceSymbol>target).referencedTypeSymbol)) {
-                    var sourceTypeArguments = (<PullTypeReferenceSymbol>source).getTypeArguments();
-                    var targetTypeArguments = (<PullTypeReferenceSymbol>target).getTypeArguments();
-
-                    if (!(sourceTypeArguments && targetTypeArguments) || sourceTypeArguments.length !== targetTypeArguments.length) {
-                        return false;
-                    }
-
-                    for (var i = 0; i < targetTypeArguments.length; i++) {
-                        if (!this.sourceExtendsTarget(sourceTypeArguments[i], targetTypeArguments[i], context)) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
             }
 
             if (source.hasBase(target)) {
