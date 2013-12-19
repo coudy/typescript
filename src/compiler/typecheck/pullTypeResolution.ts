@@ -3598,20 +3598,32 @@ module TypeScript {
         }
 
         private typeCheckCallSignature(funcDecl: CallSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, /*isStatic:*/ false,
+            this.typeCheckAnyFunctionDeclaration(funcDecl, /*isStatic:*/ false,
                 null, funcDecl.typeParameterList, funcDecl.parameterList, getType(funcDecl), null, context);
         }
 
         private typeCheckConstructSignature(funcDecl: ConstructSignature, context: PullTypeResolutionContext): void {
-            this.typeCheckFunctionDeclaration(funcDecl, /*isStatic:*/ false,
+            this.typeCheckAnyFunctionDeclaration(funcDecl, /*isStatic:*/ false,
                 null, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList, getType(funcDecl), null, context);
+        }
+
+        private typeCheckMethodSignature(funcDecl: MethodSignature, context: PullTypeResolutionContext): void {
+            this.typeCheckAnyFunctionDeclaration(funcDecl, /*isStatic:*/ false,
+                funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList,
+                getType(funcDecl), null, context);
+        }
+
+        private typeCheckMemberFunctionDeclaration(funcDecl: MemberFunctionDeclaration, context: PullTypeResolutionContext): void {
+            this.typeCheckAnyFunctionDeclaration(funcDecl, hasModifier(funcDecl.modifiers, PullElementFlags.Static),
+                funcDecl.propertyName, funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList,
+                getType(funcDecl), funcDecl.block, context);
         }
 
         private containsSingleThrowStatement(block: Block): boolean {
             return block !== null && block.statements.childCount() === 1 && block.statements.childAt(0).kind() === SyntaxKind.ThrowStatement;
         }
 
-        private typeCheckFunctionDeclaration(
+        private typeCheckAnyFunctionDeclaration(
             funcDeclAST: AST,
             isStatic: boolean,
             name: IASTToken,
@@ -4055,7 +4067,7 @@ module TypeScript {
             if (signature) {
                 if (signature.isResolved) {
                     if (this.canTypeCheckAST(funcDeclAST, context)) {
-                        this.typeCheckFunctionDeclaration(
+                        this.typeCheckAnyFunctionDeclaration(
                             funcDeclAST, isStatic, name, typeParameters,
                             parameterList, returnTypeAnnotation, block, context);
                     }
@@ -4207,7 +4219,7 @@ module TypeScript {
             }
 
             if (this.canTypeCheckAST(funcDeclAST, context)) {
-                this.typeCheckFunctionDeclaration(
+                this.typeCheckAnyFunctionDeclaration(
                     funcDeclAST, isStatic, name, typeParameters,
                     parameterList, returnTypeAnnotation, block, context);
             }
@@ -6032,7 +6044,24 @@ module TypeScript {
 
                 case SyntaxKind.FunctionExpression:
                     this.typeCheckFunctionExpression(<FunctionExpression>ast, isContextuallyTyped, context);
-                    break;
+                    return;
+
+                case SyntaxKind.ConstructorDeclaration:
+                    this.typeCheckConstructorDeclaration(<ConstructorDeclaration>ast, context);
+                    return;
+
+                case SyntaxKind.GetAccessor:
+                case SyntaxKind.SetAccessor:
+                    this.typeCheckAccessorDeclaration(ast, context);
+                    return;
+
+                case SyntaxKind.MemberFunctionDeclaration:
+                    this.typeCheckMemberFunctionDeclaration(<MemberFunctionDeclaration>ast, context);
+                    return;
+
+                case SyntaxKind.MethodSignature:
+                    this.typeCheckMethodSignature(<MethodSignature>ast, context);
+                    return;
 
                 case SyntaxKind.IndexSignature:
                     this.typeCheckIndexSignature(<IndexSignature>ast, context);
@@ -6040,16 +6069,16 @@ module TypeScript {
                 
                 case SyntaxKind.CallSignature:
                     this.typeCheckCallSignature(<CallSignature>ast, context);
-                    break;
+                    return;
 
                 case SyntaxKind.ConstructSignature:
                     this.typeCheckConstructSignature(<ConstructSignature>ast, context);
-                    break;
+                    return;
 
                 case SyntaxKind.FunctionDeclaration:
                     {
                         var funcDecl = <FunctionDeclaration>ast;
-                        this.typeCheckFunctionDeclaration(
+                        this.typeCheckAnyFunctionDeclaration(
                             funcDecl, hasModifier(funcDecl.modifiers, PullElementFlags.Static), funcDecl.identifier,
                             funcDecl.callSignature.typeParameterList, funcDecl.callSignature.parameterList,
                             getType(funcDecl), funcDecl.block, context);
