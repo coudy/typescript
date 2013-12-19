@@ -79,6 +79,7 @@ module TypeScript {
         private assignableCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
         private subtypeCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
         private identicalCache: IBitMatrix = BitMatrix.getBitMatrix(/*allowUndefinedValues:*/ true);
+        private inResolvingOtherDeclsWalker = new PullHelpers.OtherPullDeclsWalker();
 
         constructor(private compilationSettings: ImmutableCompilationSettings, public semanticInfoChain: SemanticInfoChain) { }
 
@@ -934,24 +935,24 @@ module TypeScript {
             return symbol;
         }
 
+        private resolveOtherDecl(otherDecl: PullDecl, context: PullTypeResolutionContext) {
+            var astForOtherDecl = this.getASTForDecl(otherDecl);
+            var moduleDecl = getEnclosingModuleDeclaration(astForOtherDecl);
+            if (isAnyNameOfModule(moduleDecl, astForOtherDecl)) {
+                this.resolveSingleModuleDeclaration(moduleDecl, astForOtherDecl, context);
+            }
+            else {
+                this.resolveAST(astForOtherDecl, false, context);
+            }
+        }
+
         private resolveOtherDeclarations(astName: AST, context: PullTypeResolutionContext) {
             var resolvedDecl = this.semanticInfoChain.getDeclForAST(astName);
             var symbol = resolvedDecl.getSymbol();
 
             var allDecls = symbol.getDeclarations();
-            for (var i = 0; i < allDecls.length; i++) {
-                var currentDecl = allDecls[i];
-                var astForCurrentDecl = this.getASTForDecl(currentDecl);
-                if (astForCurrentDecl !== astName) {
-                    var moduleDecl = getEnclosingModuleDeclaration(astForCurrentDecl);
-                    if (isAnyNameOfModule(moduleDecl, astForCurrentDecl)) {
-                        this.resolveSingleModuleDeclaration(moduleDecl, astForCurrentDecl, context);
-                    }
-                    else {
-                        this.resolveAST(astForCurrentDecl, false, context);
-                    }
-                }
-            }
+            this.inResolvingOtherDeclsWalker.walkOtherPullDecls(resolvedDecl, symbol.getDeclarations(),
+                otherDecl => this.resolveOtherDecl(otherDecl, context));
         }
 
         private resolveSourceUnit(sourceUnit: SourceUnit, context: PullTypeResolutionContext): PullSymbol {
