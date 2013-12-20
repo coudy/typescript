@@ -1589,24 +1589,23 @@ module TypeScript {
         }
 
         private typeCheckTypeParametersOfTypeDeclaration(classOrInterface: AST, context: PullTypeResolutionContext) {
-            var typeDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
-            var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
-            var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
+            var typeParametersList = classOrInterface.kind() == SyntaxKind.ClassDeclaration ?
+                (<ClassDeclaration>classOrInterface).typeParameterList : (<InterfaceDeclaration>classOrInterface).typeParameterList;
 
+            if (typeParametersList) {
+                var typeDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classOrInterface);
+                var typeDeclSymbol = <PullTypeSymbol>typeDecl.getSymbol();
 
-            for (var i = 0; i < typeDeclTypeParameters.length; i++) {
-                var typeParameter = typeDeclTypeParameters[i];
+                for (var i = 0; i < typeParametersList.typeParameters.nonSeparatorCount(); i++) {
+                    // Resolve the type parameter
+                    var typeParameterAST = <TypeParameter>typeParametersList.typeParameters.nonSeparatorAt(i);
+                    this.resolveTypeParameterDeclaration(typeParameterAST, context);
 
-                this.checkSymbolPrivacy(typeDeclSymbol, typeParameter, (symbol: PullSymbol) =>
-                    this.typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface, i, typeDeclTypeParameters[i], symbol, context));
+                    var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
+                    var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
 
-                if (this.isTypeParameterConstraintHasSelfReference(typeParameter)) {
-                    var typeParameters = classOrInterface.kind() === SyntaxKind.ClassDeclaration
-                        ? (<ClassDeclaration>classOrInterface).typeParameterList
-                        : (<InterfaceDeclaration>classOrInterface).typeParameterList;
-
-                    var typeParameterAST = typeParameters.typeParameters.nonSeparatorAt(i);
-                    this.reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameter, typeDeclSymbol, typeParameterAST, context);
+                    this.checkSymbolPrivacy(typeDeclSymbol, typeParameterSymbol, (symbol: PullSymbol) =>
+                        this.typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface, typeParameterAST, typeParameterSymbol, symbol, context));
                 }
             }
         }
@@ -2278,8 +2277,6 @@ module TypeScript {
                 for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
                     this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
-
-                this.checkTypeParameterListForSelfReferencesInConstraints(typeParameters.typeParameters, funcDeclSymbol, context);
             }
 
             // link parameters and resolve their annotations
@@ -3354,16 +3351,30 @@ module TypeScript {
             }
 
             typeParameterSymbol.setResolved();
-
-            if (this.canTypeCheckAST(typeParameterAST, context)) {
-                this.setTypeChecked(typeParameterAST, context);
-            }
         }
 
         private typeCheckTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext) {
             this.setTypeChecked(typeParameterAST, context);
 
-            this.resolveAST(typeParameterAST.constraint, /*isContextuallyTyped:*/ false, context);
+            var constraint = <PullTypeSymbol>this.resolveAST(typeParameterAST.constraint, /*isContextuallyTyped:*/ false, context);
+
+            if (constraint) {
+                // Get all type parameters and create a map that has entries at pullSymbolID for each of the type parameter
+                // The value doesnt matter, the entry needs to be present for the wrapsSomeTypeParameter to be able to give the correct answer
+                var typeParametersAST = <ISeparatedSyntaxList2>typeParameterAST.parent;
+                var typeParameters: PullTypeSymbol[] = [];
+                for (var i = 0; i < typeParametersAST.nonSeparatorCount(); i++) {
+                    var currentTypeParameterAST = typeParametersAST.nonSeparatorAt(i);
+                    var currentTypeParameterDecl = this.semanticInfoChain.getDeclForAST(currentTypeParameterAST);
+                    var currentTypeParameter = <PullTypeParameterSymbol>this.semanticInfoChain.getSymbolForDecl(currentTypeParameterDecl);
+                    typeParameters[currentTypeParameter.pullSymbolID] = currentTypeParameter;
+                }
+
+                // If constraint wraps any of the type parameter from the type parameters list report error
+                if (constraint.wrapsSomeTypeParameter(typeParameters)) {
+                    this.semanticInfoChain.addDiagnosticFromAST(typeParameterAST, DiagnosticCode.Constraint_of_a_type_parameter_cannot_reference_any_type_parameter_from_the_same_type_parameter_list);
+                }
+            }
         }
 
         private resolveConstraint(constraint: Constraint, context: PullTypeResolutionContext): PullSymbol {
@@ -3656,10 +3667,6 @@ module TypeScript {
 
             this.resolveAST(block, false, context);
                 var enclosingDecl = this.getEnclosingDecl(funcDecl);
-
-            if (typeParameters) {
-                this.checkTypeParameterListForSelfReferencesInConstraints(typeParameters.typeParameters, funcDecl.getSymbol(), context);
-            }
 
             this.resolveReturnTypeAnnotationOfFunctionDeclaration(funcDeclAST, returnTypeAnnotation, context);
             this.validateVariableDeclarationGroups(funcDecl, context);
@@ -7242,8 +7249,6 @@ module TypeScript {
                 for (var i = 0; i < typeParameters.typeParameters.nonSeparatorCount(); i++) {
                     this.resolveTypeParameterDeclaration(<TypeParameter>typeParameters.typeParameters.nonSeparatorAt(i), context);
                 }
-
-                this.checkTypeParameterListForSelfReferencesInConstraints(typeParameters.typeParameters, funcDeclSymbol, context);
             }
 
             this.resolveAnyFunctionExpressionParameters(funcDeclAST, typeParameters, parameters, returnTypeAnnotation, isContextuallyTyped, context);
@@ -12067,54 +12072,6 @@ module TypeScript {
             }
         }
 
-        private isTypeParameterConstraintHasSelfReference(originalTypeParameter: PullTypeParameterSymbol): boolean {
-            var seen: {[value: number]: boolean}= {};
-
-            var checkConstraints = (typeParameter: PullTypeParameterSymbol): boolean => {
-                if (seen[typeParameter.pullSymbolID] !== undefined) {
-                    return false;
-                }
-
-                seen[typeParameter.pullSymbolID] = true;
-
-                var isSelfReferenced = false;
-                var constraint = typeParameter.getConstraint();
-
-                if (constraint && constraint.isTypeParameter()) {
-                    if (constraint === originalTypeParameter) {
-                        isSelfReferenced = true;
-                    }
-                    else {
-                        isSelfReferenced = checkConstraints(<PullTypeParameterSymbol>constraint);
-                    }
-                }
-
-                seen[typeParameter.pullSymbolID] = false;
-                return isSelfReferenced;
-            }
-            var isSelfReferenced = checkConstraints(originalTypeParameter);
-
-            return isSelfReferenced;
-        }
-
-        private reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameterSymbol: PullSymbol, enclosingSymbol:PullSymbol, typeParameterAST: AST, context: PullTypeResolutionContext) {
-            var typeParameterName = typeParameterSymbol.getScopedName(enclosingSymbol);
-            context.postDiagnostic(
-                this.semanticInfoChain.diagnosticFromAST(typeParameterAST, DiagnosticCode.Type_parameter_0_cannot_be_a_direct_or_indirect_constraint_for_itself, [typeParameterName]));
-        }
-
-        private checkTypeParameterListForSelfReferencesInConstraints(typeParameters: ISeparatedSyntaxList2, enclosingSymbol: PullSymbol, context: PullTypeResolutionContext): void {
-            for (var i = 0; i < typeParameters.nonSeparatorCount(); i++) {
-                var typeParameterAST = typeParameters.nonSeparatorAt(i);
-                var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
-                var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
-
-                if (this.isTypeParameterConstraintHasSelfReference(typeParameterSymbol)) {
-                    this.reportErrorThatTypeParameterReferencesItselfInConstraint(typeParameterSymbol, enclosingSymbol, typeParameterAST, context);
-                }
-            }
-        }
-
         // Privacy checking
 
         private checkSymbolPrivacy(declSymbol: PullSymbol, symbol: PullSymbol, privacyErrorReporter: (symbol: PullSymbol) => void) {
@@ -12237,7 +12194,7 @@ module TypeScript {
             }
         }
 
-        private typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface: AST, indexOfTypeParameter: number, typeParameter: PullTypeParameterSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
+        private typeParameterOfTypeDeclarationPrivacyErrorReporter(classOrInterface: AST, typeParameterAST: TypeParameter, typeParameter: PullTypeParameterSymbol, symbol: PullSymbol, context: PullTypeResolutionContext) {
             var decl = this.semanticInfoChain.getDeclForAST(classOrInterface);
             var enclosingDecl = this.getEnclosingDecl(decl);
             var enclosingSymbol = enclosingDecl ? enclosingDecl.getSymbol() : null;
@@ -12246,8 +12203,6 @@ module TypeScript {
             var typeParameters = classOrInterface.kind() === SyntaxKind.ClassDeclaration
                 ? (<ClassDeclaration>classOrInterface).typeParameterList
                 : (<InterfaceDeclaration>classOrInterface).typeParameterList;
-
-            var typeParameterAST = typeParameters.typeParameters.nonSeparatorAt(indexOfTypeParameter);
 
             var typeSymbol = <PullTypeSymbol>symbol;
             var typeSymbolName = typeSymbol.getScopedName(enclosingSymbol);

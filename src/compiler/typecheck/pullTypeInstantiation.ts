@@ -373,7 +373,7 @@ module TypeScript {
                     // - A type reference that references any of G's type parameters in a type argument is 
                     //      classified as an open type reference.
                     if (typeArguments[i].wrapsSomeTypeParameter(enclosingTypeParameterMap, /*skipTypeArgumentCheck*/ true)) {
-                        // This type wraps type parameter of the enclosing type so it is alteast open
+                        // This type wraps type parameter of the enclosing type so it is at least open
                         generativeTypeClassification = GenerativeTypeClassification.Open;
                         break;
                     }
