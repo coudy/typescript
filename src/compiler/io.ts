@@ -145,7 +145,7 @@ module TypeScript {
 
             return {
                 appendFile: function (path: string, content: string) {
-                    var txtFile = fso.OpenTextFile(path, 8, true, 0);
+                    var txtFile = fso.OpenTextFile(path, 8 /* append */, true /* create if file doesn't exist */);
                     txtFile.Write(content);
                     txtFile.Close();
                 },

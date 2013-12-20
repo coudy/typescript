@@ -387,13 +387,12 @@ module TypeScript {
                 }
             });
 
-            opts.flag('createFileLog', {
+            opts.flag('logFile', {
                 experimental: true,
                 set: () => {
-                    mutableSettings.gatherDiagnostics = true;
                     mutableSettings.createFileLog = true;
                 }
-            }, 'fl');
+            });
 
             opts.option('target', {
                 usage: {
