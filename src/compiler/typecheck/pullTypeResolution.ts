@@ -10688,23 +10688,47 @@ module TypeScript {
             ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo,
             isComparingInstantiatedSignatures: boolean): boolean {
 
+            var sourceAndTargetAreConstructors = source.isConstructor() && target.isConstructor();
+
+            // source\target are not always equivalent to getContainer(). 
+            // i.e.in cases of inheritance chains source will be derived type and getContainer() will yield some type from the middle of hierarchy
+            var getNames = (takeTypesFromPropertyContainers: boolean) => {
+                var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
+                var sourceType = takeTypesFromPropertyContainers ? sourceProp.getContainer() : source;
+                var targetType = takeTypesFromPropertyContainers ? targetProp.getContainer() : target;
+                if (sourceAndTargetAreConstructors) {
+                    sourceType = sourceType.getAssociatedContainerType();
+                    targetType = targetType.getAssociatedContainerType();
+                }
+                return {
+                    propertyName: targetProp.getScopedNameEx().toString(),
+                    sourceTypeName: sourceType.toString(enclosingSymbol),
+                    targetTypeName: targetType.toString(enclosingSymbol)
+                }
+            };
+
             var targetPropIsPrivate = targetProp.anyDeclHasFlag(PullElementFlags.Private);
             var sourcePropIsPrivate = sourceProp.anyDeclHasFlag(PullElementFlags.Private);
 
             // if visibility doesn't match, the types don't match
             if (targetPropIsPrivate !== sourcePropIsPrivate) {
                 if (comparisonInfo) { // only surface the first error
-                    var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
+                    var names = getNames(/*takeTypesFromPropertyContainers*/ true);
+                    var code: string;
                     if (targetPropIsPrivate) {
                         // Overshadowing property in source that is already defined as private in target
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property_0_defined_as_public_in_type_1_is_defined_as_private_in_type_2,
-                            [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(enclosingSymbol), targetProp.getContainer().toString(enclosingSymbol)]));
+                        code = sourceAndTargetAreConstructors
+                            ? DiagnosticCode.Static_property_0_defined_as_public_in_type_1_is_defined_as_private_in_type_2
+                            : DiagnosticCode.Property_0_defined_as_public_in_type_1_is_defined_as_private_in_type_2;
                     }
                     else {
                         // Public property of target is private in source
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property_0_defined_as_private_in_type_1_is_defined_as_public_in_type_2,
-                            [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(enclosingSymbol), targetProp.getContainer().toString(enclosingSymbol)]));
+                        code =
+                            sourceAndTargetAreConstructors
+                            ? DiagnosticCode.Static_property_0_defined_as_private_in_type_1_is_defined_as_public_in_type_2
+                            : DiagnosticCode.Property_0_defined_as_private_in_type_1_is_defined_as_public_in_type_2
                     }
+                    comparisonInfo.addMessage(getDiagnosticMessage(code, [names.propertyName, names.sourceTypeName, names.targetTypeName]));
                     comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
                 }
                 return false;
@@ -10716,11 +10740,13 @@ module TypeScript {
 
                 if (targetDecl !== sourceDecl) {
                     if (comparisonInfo) {
-                        var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
+                        var names = getNames(/*takeTypesFromPropertyContainers*/ true);
                         // Both types define property with same name as private
                         comparisonInfo.flags |= TypeRelationshipFlags.InconsistantPropertyAccesibility;
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_define_property_2_as_private,
-                            [sourceProp.getContainer().toString(enclosingSymbol), targetProp.getContainer().toString(enclosingSymbol), targetProp.getScopedNameEx().toString()]));
+                        var code = sourceAndTargetAreConstructors
+                            ? DiagnosticCode.Types_0_and_1_define_static_property_2_as_private
+                            : DiagnosticCode.Types_0_and_1_define_property_2_as_private;
+                        comparisonInfo.addMessage(getDiagnosticMessage(code, [names.sourceTypeName, names.targetTypeName, names.propertyName]));
                     }
 
                     return false;
@@ -10730,10 +10756,10 @@ module TypeScript {
             // If the target property is required, and the source property is optional, they are not compatible
             if (sourceProp.isOptional && !targetProp.isOptional) {
                 if (comparisonInfo) {
-                    var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
+                    var names = getNames(/*takeTypesFromPropertyContainers*/ true);
                     comparisonInfo.flags |= TypeRelationshipFlags.RequiredPropertyIsMissing;
                     comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Property_0_defined_as_optional_in_type_1_but_is_required_in_type_2,
-                        [targetProp.getScopedNameEx().toString(), sourceProp.getContainer().toString(enclosingSymbol), targetProp.getContainer().toString(enclosingSymbol)]));
+                        [names.propertyName, names.sourceTypeName, names.targetTypeName]));
                 }
                 return false;
             }
@@ -10765,13 +10791,19 @@ module TypeScript {
                 var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
                 comparisonInfo.flags |= TypeRelationshipFlags.IncompatiblePropertyTypes;
                 var message: string;
+                var names = getNames(/*takeTypesFromPropertyContainers*/ false);
                 if (comparisonInfoPropertyTypeCheck && comparisonInfoPropertyTypeCheck.message) {
-                    message = getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3,
-                        [targetProp.getScopedNameEx().toString(), source.toString(enclosingSymbol), target.toString(enclosingSymbol), comparisonInfoPropertyTypeCheck.message]);
+                    var code = sourceAndTargetAreConstructors
+                        ? DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible_NL_3
+                        : DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible_NL_3;
+                    message = getDiagnosticMessage(code, [names.propertyName, names.sourceTypeName, names.targetTypeName, comparisonInfoPropertyTypeCheck.message]);
                 }
                 else {
-                    message = getDiagnosticMessage(DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible,
-                        [targetProp.getScopedNameEx().toString(), source.toString(enclosingSymbol), target.toString(enclosingSymbol)]);
+                    var code =
+                        sourceAndTargetAreConstructors
+                        ? DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible
+                        : DiagnosticCode.Types_of_property_0_of_types_1_and_2_are_incompatible;
+                    message = getDiagnosticMessage(code, [names.propertyName, names.sourceTypeName, names.targetTypeName]);
                 }
                 comparisonInfo.addMessage(message);
             }
@@ -13058,21 +13090,7 @@ module TypeScript {
                                 this.resolveDeclaredSymbol(extendedConstructorTypeProp, context);
                             }
 
-                            // check if type of property is subtype of extended type's property type
-                            var typeConstructorTypePropType = typeConstructorTypeMembers[i].type;
-                            var extendedConstructorTypePropType = extendedConstructorTypeProp.type;
-                            if (!this.sourceIsSubtypeOfTarget(typeConstructorTypePropType, extendedConstructorTypePropType, classOrInterface, context, comparisonInfoForPropTypeCheck)) {
-                                var propMessage: string;
-                                var enclosingSymbol = this.getEnclosingSymbolForAST(classOrInterface);
-                                if (comparisonInfoForPropTypeCheck.message) {
-                                    propMessage = getDiagnosticMessage(DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible_NL_3,
-                                        [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(enclosingSymbol), extendedType.toString(enclosingSymbol), comparisonInfoForPropTypeCheck.message]);
-                                }
-                                else {
-                                    propMessage = getDiagnosticMessage(DiagnosticCode.Types_of_static_property_0_of_class_1_and_class_2_are_incompatible,
-                                        [extendedConstructorTypeProp.getScopedNameEx().toString(), typeSymbol.toString(enclosingSymbol), extendedType.toString(enclosingSymbol)]);
-                                }
-                                comparisonInfo.addMessage(propMessage);
+                            if (!this.sourcePropertyIsSubtypeOfTargetProperty(typeConstructorType, extendedConstructorType, typeConstructorTypeMembers[i], extendedConstructorTypeProp, classOrInterface, context, comparisonInfo)) {
                                 foundError = true;
                                 break;
                             }

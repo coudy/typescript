@@ -1414,6 +1414,18 @@ module TypeScript {
     "code": 4037,
     "category": DiagnosticCategory.NoPrefix
   },
+  "Static property '{0}' defined as private in type '{1}' is defined as public in type '{2}'.": {
+    "code": 4038,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "Static property '{0}' defined as public in type '{1}' is defined as private in type '{2}'.": {
+    "code": 4039,
+    "category": DiagnosticCategory.NoPrefix
+  },
+  "Types '{0}' and '{1}' define static property '{2}' as private.": {
+    "code": 4040,
+    "category": DiagnosticCategory.NoPrefix
+  },
   "Current host does not support '{0}' option.": {
     "code": 5001,
     "category": DiagnosticCategory.Error
