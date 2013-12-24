@@ -982,7 +982,7 @@ module TypeScript {
                 var prevIsClassConstructorVariable = variableSymbol.anyDeclHasFlag(PullElementFlags.ClassConstructorVariable);
                 var prevIsModuleValue = variableSymbol.allDeclsHaveFlag(PullElementFlags.InitializedModule);
                 var prevIsImplicit = variableSymbol.anyDeclHasFlag(PullElementFlags.ImplicitVariable);
-                var prevIsFunction = prevKind === PullElementKind.Function;
+                var prevIsFunction = ArrayUtilities.any(variableSymbol.getDeclarations(), decl => decl.kind === PullElementKind.Function);
                 var prevIsAmbient = variableSymbol.allDeclsHaveFlag(PullElementFlags.Ambient);
                 var isAmbientOrPrevIsAmbient = prevIsAmbient || (variableDeclaration.flags & PullElementFlags.Ambient) !== 0;
                 var prevDecl = variableSymbol.getDeclarations()[0];
@@ -1419,11 +1419,30 @@ module TypeScript {
             functionSymbol = this.getExistingSymbol(functionDeclaration, PullElementKind.SomeValue, parent);
 
             if (functionSymbol) {
+                // SPEC: Nov 18
+                // When merging a non-ambient function or class declaration and a non-ambient internal module declaration, 
+                // the function or class declaration must be located prior to the internal module declaration in the same source file. 
+                // => when any of components is ambient - order doesn't matter                
+                var acceptableRedeclaration: boolean;
+                
                 // Duplicate is acceptable if it is another signature (not a duplicate implementation), or an ambient fundule
-                var previousIsAmbient = functionSymbol.allDeclsHaveFlag(PullElementFlags.Ambient);
-                var isAmbientOrPreviousIsAmbient = previousIsAmbient || functionDeclaration.flags & PullElementFlags.Ambient;
-                var acceptableRedeclaration = functionSymbol.kind === PullElementKind.Function && (isSignature || functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature)) ||
-                    functionSymbol.allDeclsHaveFlag(PullElementFlags.InitializedModule) && isAmbientOrPreviousIsAmbient;
+                if (functionSymbol.kind === PullElementKind.Function) {
+                    // normal fundule - duplicates are allowed for another signatures
+                    acceptableRedeclaration = isSignature || functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature);
+                }
+                else {
+                    // check if this is ambient fundule?
+                    var isCurrentDeclAmbient = hasFlag(functionDeclaration.flags, PullElementFlags.Ambient);
+                    acceptableRedeclaration = ArrayUtilities.all(functionSymbol.getDeclarations(), (decl) => {
+                        // allowed elements for ambient fundules
+                        // - signatures
+                        // - initialized modules that can be ambient or not depending on whether current decl is ambient                       
+                        var isInitializedModule = hasFlag(decl.flags, PullElementFlags.InitializedModule) && (isCurrentDeclAmbient || hasFlag(decl.flags, PullElementFlags.Ambient));
+                        var isSignature = hasFlag(decl.flags, PullElementFlags.Signature);
+                        return isInitializedModule || isSignature;
+                    });
+                }
+
                 if (!acceptableRedeclaration) {
                     this.semanticInfoChain.addDuplicateIdentifierDiagnosticFromAST(
                         funcDeclAST.identifier, functionDeclaration.getDisplayName(), functionSymbol.getDeclarations()[0].ast());
