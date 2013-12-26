@@ -12144,14 +12144,15 @@ interface IDBKeyRange {
     upperOpen: boolean;
     lower: any;
     lowerOpen: boolean;
-    bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;
-    only(value: any): IDBKeyRange;
-    lowerBound(bound: any, open?: boolean): IDBKeyRange;
-    upperBound(bound: any, open?: boolean): IDBKeyRange;
+
 }
 declare var IDBKeyRange: {
     prototype: IDBKeyRange;
     new (): IDBKeyRange;
+    only(value: any): IDBKeyRange;
+    lowerBound(bound: any, open?: boolean): IDBKeyRange;
+    upperBound(bound: any, open?: boolean): IDBKeyRange;
+    bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;
 }
 
 interface WindowConsole {
