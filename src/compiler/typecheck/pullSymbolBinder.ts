@@ -1427,7 +1427,7 @@ module TypeScript {
                 
                 // Duplicate is acceptable if it is another signature (not a duplicate implementation), or an ambient fundule
                 if (functionSymbol.kind === PullElementKind.Function) {
-                    // normal fundule - duplicates are allowed for another signatures
+                    // normal fundule - we are allowed to add overloads
                     acceptableRedeclaration = isSignature || functionSymbol.allDeclsHaveFlag(PullElementFlags.Signature);
                 }
                 else {
@@ -1437,9 +1437,9 @@ module TypeScript {
                         // allowed elements for ambient fundules
                         // - signatures
                         // - initialized modules that can be ambient or not depending on whether current decl is ambient                       
-                        var isInitializedModule = hasFlag(decl.flags, PullElementFlags.InitializedModule) && (isCurrentDeclAmbient || hasFlag(decl.flags, PullElementFlags.Ambient));
+                        var isInitializedModuleOrAmbientDecl = hasFlag(decl.flags, PullElementFlags.InitializedModule) && (isCurrentDeclAmbient || hasFlag(decl.flags, PullElementFlags.Ambient));
                         var isSignature = hasFlag(decl.flags, PullElementFlags.Signature);
-                        return isInitializedModule || isSignature;
+                        return isInitializedModuleOrAmbientDecl || isSignature;
                     });
                 }
 
