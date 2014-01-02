@@ -3062,11 +3062,17 @@ module TypeScript {
 
         private _isUsedAsValue = false;
         private _typeUsedExternally = false;
+        private _isUsedInExportAlias = false;
         private retrievingExportAssignment = false;
-        private contingentValueSymbols: PullTypeAliasSymbol[] = null;
+        private linkedAliasSymbols: PullTypeAliasSymbol[] = null;
 
         constructor(name: string) {
             super(name, PullElementKind.TypeAlias);
+        }
+
+        public isUsedInExportedAlias(): boolean {
+            this._resolveDeclaredSymbol();
+            return this._isUsedInExportAlias;
         }
 
         public typeUsedExternally(): boolean {
@@ -3079,27 +3085,30 @@ module TypeScript {
             return this._isUsedAsValue;
         }
 
-        public setTypeUsedExternally(value: boolean): void {
-            this._typeUsedExternally = value;
+        public setTypeUsedExternally(): void {
+            this._typeUsedExternally = true;
         }
 
-        public addContingentValueSymbol(contingentValueSymbol: PullTypeAliasSymbol) {
-            if (!this.contingentValueSymbols) {
-                this.contingentValueSymbols = [contingentValueSymbol];
+        public setIsUsedInExportedAlias(): void {
+            this._isUsedInExportAlias = true;
+            if (this.linkedAliasSymbols) {
+                this.linkedAliasSymbols.forEach(s => s.setIsUsedInExportedAlias());
+            }
+        }
+
+        public addLinkedAliasSymbol(contingentValueSymbol: PullTypeAliasSymbol) {
+            if (!this.linkedAliasSymbols) {
+                this.linkedAliasSymbols = [contingentValueSymbol];
             }
             else {
-                this.contingentValueSymbols.push(contingentValueSymbol);
+                this.linkedAliasSymbols.push(contingentValueSymbol);
             }
         }
 
         public setIsUsedAsValue(): void {
             this._isUsedAsValue = true;
-
-            // Set other aliases as used - this would happen if this alias comes from the another alias
-            if (this.contingentValueSymbols && this.contingentValueSymbols.length > 0) {
-                for (var i = 0, len = this.contingentValueSymbols.length; i < len; i++) {
-                    this.contingentValueSymbols[i].setIsUsedAsValue();
-                }
+            if (this.linkedAliasSymbols) {
+                this.linkedAliasSymbols.forEach(s => s.setIsUsedAsValue());
             }
         }
 

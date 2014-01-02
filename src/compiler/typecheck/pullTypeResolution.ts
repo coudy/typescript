@@ -1936,7 +1936,7 @@ module TypeScript {
                         if (resolvedModuleNameSymbol.isAlias()) {
                             this.semanticInfoChain.setAliasSymbolForAST(moduleNameExpr, <PullTypeAliasSymbol>resolvedModuleNameSymbol);
                             var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
-                            importDeclSymbol.addContingentValueSymbol(<PullTypeAliasSymbol>resolvedModuleNameSymbol);
+                            importDeclSymbol.addLinkedAliasSymbol(<PullTypeAliasSymbol>resolvedModuleNameSymbol);
                         }
                     }
                     else {
@@ -2047,9 +2047,12 @@ module TypeScript {
                     this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type);
                     aliasedType = this.semanticInfoChain.anyTypeSymbol;
                 }
-                else if (importDeclSymbol.anyDeclHasFlag(PullElementFlags.Exported) &&
-                    (<PullContainerSymbol>aliasedType).getExportAssignedValueSymbol()) {
-                    importDeclSymbol.setIsUsedAsValue();
+                else if (importDeclSymbol.anyDeclHasFlag(PullElementFlags.Exported)) {
+                    importDeclSymbol.setIsUsedInExportedAlias();
+
+                    if ((<PullContainerSymbol>aliasedType).getExportAssignedValueSymbol()) {
+                        importDeclSymbol.setIsUsedAsValue();
+                    }
                 }
 
                 if (aliasedType.isContainer()) {
@@ -2212,7 +2215,7 @@ module TypeScript {
                     valueSymbol = aliasedAssignedValue;
                     typeSymbol = aliasedAssignedType;
                     containerSymbol = aliasedAssignedContainer;
-                    aliasSymbol.setTypeUsedExternally(true);
+                    aliasSymbol.setTypeUsedExternally();
                     if (valueSymbol) {
                         aliasSymbol.setIsUsedAsValue();
                     }
@@ -12151,7 +12154,7 @@ module TypeScript {
                             if (aliasSymbols) {
                                 // Visible type.
                                 symbolIsVisible = true;
-                                aliasSymbols[0].setTypeUsedExternally(true);
+                                aliasSymbols[0].setTypeUsedExternally();
                                 break;
                             }
                         }
@@ -12161,7 +12164,7 @@ module TypeScript {
                 else if (symbol.kind === PullElementKind.TypeAlias) {
                     var aliasSymbol = <PullTypeAliasSymbol>symbol;
                     symbolIsVisible = true;
-                    aliasSymbol.setTypeUsedExternally(true);
+                    aliasSymbol.setTypeUsedExternally();
                 }
 
                 if (!symbolIsVisible) {
