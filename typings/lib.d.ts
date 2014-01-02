@@ -9422,7 +9422,7 @@ declare var SVGRectElement: {
 
 interface ErrorEventHandler {
     (event: Event, source: string, fileno: number, columnNumber: number): void;
-    (message: any, uri: string, lineNumber: number, columnNumber?: number): boolean;
+    (message: any, uri: string, lineNumber: number, columnNumber?: number): void;
 }
 
 interface HTMLDivElement extends HTMLElement, MSDataBindingExtensions {
