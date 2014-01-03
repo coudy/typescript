@@ -10432,11 +10432,18 @@ module TypeScript {
             }
 
             if (target.isTypeParameter()) {
-
-                // if the source is another type parameter (with no constraints), they can only be assignable if they share
-                // a declaration
-                if (source.isTypeParameter() && (source === sourceSubstitution)) {
-                    return this.typesAreIdentical(target, source, context);
+                if (source.isTypeParameter()) {
+                    // SPEC Nov 18
+                    // S is assignable to a type T, and T is assignable from S, if ...
+                    // S and T are type parameters, and S is directly or indirectly constrained to T.
+                    if (!(<PullTypeParameterSymbol>source).getConstraint()) {
+                        // if the source is another type parameter (with no constraints), they can only be assignable if they share
+                        // a declaration
+                        return this.typesAreIdentical(target, source, context)
+                    }
+                    else {
+                        return this.isSourceTypeParameterConstrainedToTargetTypeParameter(<PullTypeParameterSymbol>source, <PullTypeParameterSymbol>target);
+                    }
                 }
                 else {
                     // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
@@ -10471,6 +10478,18 @@ module TypeScript {
 
             comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, isRelatable);
             return isRelatable;
+        }
+
+        private isSourceTypeParameterConstrainedToTargetTypeParameter(source: PullTypeParameterSymbol, target: PullTypeParameterSymbol): boolean {
+            var current: PullTypeSymbol = source;
+            while (current && current.isTypeParameter()) {
+                if (current === target) {
+                    return true;
+                }
+
+                current = (<PullTypeParameterSymbol>current).getConstraint();
+            }
+            return false;
         }
 
         private sourceIsRelatableToTargetWorker(source: PullTypeSymbol, target: PullTypeSymbol, sourceSubstitution: PullTypeSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
@@ -10609,7 +10628,7 @@ module TypeScript {
                 for (var i = 0; i < sourceTypeArguments.length; i++) {
                     //  -	the relationship in question must be true for each corresponding pair of type arguments
                     //      in the type argument lists of S and T.
-                    if (!this.sourceIsRelatableToTargetWithNewEnclosingTypes(sourceTypeArguments[i], targetTypeArguments[i], assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures)) {
+                    if (!this.sourceIsRelatableToTargetWithNewEnclosingTypes(sourceTypeArguments[i], targetTypeArguments[i], assignableTo, comparisonCache, ast, context, comparisonInfoTypeArgumentsCheck, isComparingInstantiatedSignatures)) {
                         if (comparisonInfo) {
                             var message: string;
                             var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
