@@ -1393,20 +1393,24 @@ module TypeScript {
             return builder;
         }
 
-        public forEachParameterType(length: number, callBack: (parameterType: PullTypeSymbol, iterationIndex: number) => void): void {
+        public forAllParameterTypes(length: number, predicate: (parameterType: PullTypeSymbol, iterationIndex: number) => boolean): boolean {
             if (this.parameters.length < length && !this.hasVarArgs) {
                 length = this.parameters.length;
             }
 
             for (var i = 0; i < length; i++) {
                 var paramType = this.getParameterTypeAtIndex(i);
-                callBack(paramType, i);
+                if (!predicate(paramType, i)) {
+                    return false;
+                }
             }
+
+            return true;
         }
 
-        public forCorrespondingParameterTypesInThisAndOtherSignature(
+        public forAllCorrespondingParameterTypesInThisAndOtherSignature(
             otherSignature: PullSignatureSymbol,
-            callBack: (thisSignatureParameterType: PullTypeSymbol, otherSignatureParameterType: PullTypeSymbol) => void): void {
+            predicate: (thisSignatureParameterType: PullTypeSymbol, otherSignatureParameterType: PullTypeSymbol, iterationIndex: number) => boolean): boolean {
             // First determine the length
             var length: number;
             if (this.hasVarArgs) {
@@ -1424,8 +1428,12 @@ module TypeScript {
                 // Finally, call the callback using the knowledge of whether each param is a rest param
                 var thisParamType = this.getParameterTypeAtIndex(i);
                 var otherParamType = otherSignature.getParameterTypeAtIndex(i);
-                callBack(thisParamType, otherParamType);
+                if (!predicate(thisParamType, otherParamType, i)) {
+                    return false;
+                }
             }
+
+            return true;
         }
 
         public wrapsSomeTypeParameter(typeParameterArgumentMap: PullTypeSymbol[]): boolean {

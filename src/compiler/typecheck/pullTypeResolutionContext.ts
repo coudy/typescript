@@ -151,13 +151,15 @@ module TypeScript {
 
         public inferTypeArguments(): PullTypeSymbol[] {
             // Resolve all of the argument ASTs in the callback
-            this.signatureBeingInferred.forEachParameterType(/*length*/ this.argumentASTs.nonSeparatorCount(), (parameterType, argumentIndex) => {
+            this.signatureBeingInferred.forAllParameterTypes(/*length*/ this.argumentASTs.nonSeparatorCount(), (parameterType, argumentIndex) => {
                 var argumentAST = this.argumentASTs.nonSeparatorAt(argumentIndex);
 
                 this.context.pushInferentialType(parameterType, this);
                 var argumentType = this.resolver.resolveAST(argumentAST, /*isContextuallyTyped*/ true, this.context).type;
                 this.resolver.relateTypeToTypeParametersWithNewEnclosingTypes(argumentType, parameterType, this, this.context);
                 this.context.popAnyContextualType();
+
+                return true; // Continue iterating
             });
 
             return this._finalizeInferredTypeArguments();
@@ -193,9 +195,11 @@ module TypeScript {
                     contextualParameterType = this.context.fixAllTypeParametersReferencedByType(contextualParameterType, this.resolver, this);
                 }
                 this.resolver.relateTypeToTypeParametersWithNewEnclosingTypes(contextualParameterType, parameterTypeBeingInferred, this, this.context);
+
+                return true; // continue iterating
             };
 
-            this.signatureBeingInferred.forCorrespondingParameterTypesInThisAndOtherSignature(this.contextualSignature, relateTypesCallback);
+            this.signatureBeingInferred.forAllCorrespondingParameterTypesInThisAndOtherSignature(this.contextualSignature, relateTypesCallback);
 
             return this._finalizeInferredTypeArguments();
         }

@@ -11116,13 +11116,13 @@ module TypeScript {
                 return false;
             }
 
-            var targetVarArgCount = targetSig.nonOptionalParamCount;
-            var sourceVarArgCount = sourceSig.nonOptionalParamCount;
+            var targetNonOptionalParamCount = targetSig.nonOptionalParamCount;
+            var sourceNonOptionalParamCount = sourceSig.nonOptionalParamCount;
 
-            if (sourceVarArgCount > targetVarArgCount) {
+            if (sourceNonOptionalParamCount > targetNonOptionalParamCount) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= TypeRelationshipFlags.SourceSignatureHasTooManyParameters;
-                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Call_signature_expects_0_or_fewer_parameters, [targetVarArgCount]));
+                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Call_signature_expects_0_or_fewer_parameters, [targetNonOptionalParamCount]));
                 }
                 return false;
             }
@@ -11140,12 +11140,6 @@ module TypeScript {
                     return false;
                 }
             }
-
-            var targetVarArgCount = targetSig.nonOptionalParamCount;
-            var sourceVarArgCount = sourceSig.nonOptionalParamCount;
-
-            var sourceParameters = sourceSig.parameters;
-            var targetParameters = targetSig.parameters;
 
             var sourceReturnType = sourceSig.returnType;
             var targetReturnType = targetSig.returnType;
@@ -11167,20 +11161,7 @@ module TypeScript {
                 }
             }
 
-            // the clause 'sourceParameters.length > sourceVarArgCount' covers optional parameters, since even though the parameters are optional
-            // they need to agree with the target params
-            var len = (sourceVarArgCount < targetVarArgCount && (sourceSig.hasVarArgs || (sourceParameters.length > sourceVarArgCount))) ? targetVarArgCount : sourceVarArgCount;
-
-            if (!len) {
-                len = (sourceParameters.length < targetParameters.length) ? sourceParameters.length : targetParameters.length;
-            }
-
-            var sourceParamType: PullTypeSymbol = null;
-            var targetParamType: PullTypeSymbol = null;
-            for (var iParam = 0; iParam < len; iParam++) {
-                sourceParamType = sourceSig.getParameterTypeAtIndex(iParam);
-                targetParamType = targetSig.getParameterTypeAtIndex(iParam);
-
+            return targetSig.forAllCorrespondingParameterTypesInThisAndOtherSignature(sourceSig, (targetParamType, sourceParamType, iParam) => {
                 context.walkParameterTypes(iParam);
                 var areParametersRelatable = this.sourceIsRelatableToTargetInEnclosingTypes(sourceParamType, targetParamType,
                     assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
@@ -11197,12 +11178,10 @@ module TypeScript {
                     if (comparisonInfo) {
                         comparisonInfo.flags |= TypeRelationshipFlags.IncompatibleParameterTypes;
                     }
-
-                    return false;
                 }
-            }
 
-            return true;
+                return areParametersRelatable;
+            });
         }
 
         // Overload resolution
