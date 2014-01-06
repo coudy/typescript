@@ -6234,7 +6234,7 @@ module TypeScript {
                 if (this.canTypeCheckAST(nameAST, context)) {
                     this.typeCheckNameExpression(nameAST, context);
                 }
-                nameSymbol = this.computeNameExpression(nameAST, context, /*reportDiagnostics:*/ true);
+                nameSymbol = this.computeNameExpression(nameAST, context);
             }
 
             this.resolveDeclaredSymbol(nameSymbol, context);
@@ -6344,7 +6344,7 @@ module TypeScript {
             return null;
         }
 
-        private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext, reportDiagnostics: boolean): PullSymbol {
+        private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext): PullSymbol {
             var id = nameAST.valueText();
             if (id.length === 0) {
                 return this.semanticInfoChain.anyTypeSymbol;
@@ -6405,13 +6405,8 @@ module TypeScript {
             }
 
             if (!nameSymbol) {
-                if (!reportDiagnostics) {
-                    return null;
-                }
-                else {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
-                    return this.getNewErrorTypeSymbol(id);
-                }
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
+                return this.getNewErrorTypeSymbol(id);
             }
             else if (diagnosticForInitializer) {
                 context.postDiagnostic(diagnosticForInitializer);
@@ -6566,6 +6561,16 @@ module TypeScript {
 
             // assemble the dotted name path
             var lhs = this.resolveAST(expression, /*isContextuallyTyped*/false, context);
+            return this.computeDottedNameExpressionFromLHS(lhs, expression, name, context, checkSuperPrivateAndStaticAccess);
+        }
+
+        private computeDottedNameExpressionFromLHS(lhs: PullSymbol, expression: AST, name: Identifier, context: PullTypeResolutionContext, checkSuperPrivateAndStaticAccess: boolean): PullSymbol {
+            // This can be case if incomplete qualified name
+            var rhsName = name.valueText();
+            if (rhsName.length === 0) {
+                return this.semanticInfoChain.anyTypeSymbol;
+            }
+
             var lhsType = lhs.type;
 
             if (lhs.isAlias()) {
@@ -13101,19 +13106,52 @@ module TypeScript {
             }
         }
 
-        private hasClassTypeSymbolConflictAsValue(
-            valueDeclAST: Identifier,
-            typeSymbol: PullTypeSymbol,
-            enclosingDecl: PullDecl,
-            context: PullTypeResolutionContext) {
+        private computeValueSymbolFromAST(valueDeclAST: AST, context: PullTypeResolutionContext): {
+            symbol: PullSymbol;
+            alias: PullTypeAliasSymbol;
+        } {
 
+            // Disable type check because we do not want to report errors about missing symbols when resolving the
+            // expression as the value expression
+            var prevInTypeCheck = context.inTypeCheck;
+            context.inTypeCheck = false;
+            
             var typeSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(valueDeclAST);
-            var valueSymbol = this.computeNameExpression(valueDeclAST, context, /*reportDiagnostics:*/ false);
+
+            if (valueDeclAST.kind() == SyntaxKind.IdentifierName) {
+                var valueSymbol = this.computeNameExpression(<Identifier>valueDeclAST, context);
+            }
+            else {
+                Debug.assert(valueDeclAST.kind() == SyntaxKind.QualifiedName);
+                var qualifiedName = <QualifiedName>valueDeclAST;
+                // Compute lhs so we can compute dotted expression of the lhs. 
+                // We cant directly resolve this expression because otherwise we would end up using cached value of lhs
+                // and that might not be the right one when resolving this expression as value expression
+                var lhs = this.computeValueSymbolFromAST(qualifiedName.left, context);
+                var valueSymbol = this.computeDottedNameExpressionFromLHS(lhs.symbol, qualifiedName.left, <Identifier>qualifiedName.right, context, /*checkSuperPrivateAndStaticAccess*/ false);
+            }
             var valueSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(valueDeclAST);
 
             // Reset the alias value 
             this.semanticInfoChain.setAliasSymbolForAST(valueDeclAST, typeSymbolAlias);
+            context.inTypeCheck = prevInTypeCheck;
 
+            return { symbol: valueSymbol, alias: valueSymbolAlias };
+        }
+
+        private hasClassTypeSymbolConflictAsValue(
+            baseDeclAST: AST,
+            typeSymbol: PullTypeSymbol,
+            enclosingDecl: PullDecl,
+            context: PullTypeResolutionContext) {
+
+            var typeSymbolAlias = this.semanticInfoChain.getAliasSymbolForAST(baseDeclAST);
+
+            var valueDeclAST = baseDeclAST.kind() == SyntaxKind.GenericType ? (<GenericType>baseDeclAST).name : baseDeclAST;
+            var valueSymbolInfo = this.computeValueSymbolFromAST(valueDeclAST, context);
+            var valueSymbol = valueSymbolInfo.symbol;
+            var valueSymbolAlias = valueSymbolInfo.alias;
+            
             // If aliases are same
             if (typeSymbolAlias && valueSymbolAlias) {
                 return typeSymbolAlias !== valueSymbolAlias;
@@ -13174,11 +13212,13 @@ module TypeScript {
                 }
                 return;
             }
-            else if (typeDeclIsClass && isExtendedType && baseDeclAST.kind() === SyntaxKind.IdentifierName) {
+            else if (typeDeclIsClass && isExtendedType) {
                 // Verify if the class extends another class verify the value position resolves to the same type expression
-                if (this.hasClassTypeSymbolConflictAsValue(<Identifier>baseDeclAST, baseType, enclosingDecl, context)) {
+                if (this.hasClassTypeSymbolConflictAsValue(baseDeclAST, baseType, enclosingDecl, context)) {
                     // Report error
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST, DiagnosticCode.Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1, [(<Identifier>baseDeclAST).text(), baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(baseDeclAST,
+                        DiagnosticCode.Type_name_0_in_extends_clause_does_not_reference_constructor_function_for_1,
+                        [PullHelpers.getNameOfIdenfierOrQualifiedName(baseDeclAST.kind() == SyntaxKind.GenericType ? (<GenericType>baseDeclAST).name : baseDeclAST), baseType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                 }
             }
 
@@ -13213,8 +13253,6 @@ module TypeScript {
             if (!extendsClause && !implementsClause) {
                 return;
             }
-
-            var typeDeclIsClass = classOrInterface.kind() === SyntaxKind.ClassDeclaration;
 
             if (extendsClause) {
                 for (var i = 0; i < extendsClause.typeNames.nonSeparatorCount(); i++) {

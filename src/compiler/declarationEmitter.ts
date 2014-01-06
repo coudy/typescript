@@ -966,18 +966,8 @@ module TypeScript {
                     this.declFile.WriteLine("require(" + (<ExternalModuleReference>importDeclAST.moduleReference).stringLiteral.text() + ");");
                 }
                 else {
-                    this.declFile.WriteLine(this.getFullName((<ModuleNameModuleReference>importDeclAST.moduleReference).moduleName) + ";");
+                    this.declFile.WriteLine(PullHelpers.getNameOfIdenfierOrQualifiedName((<ModuleNameModuleReference>importDeclAST.moduleReference).moduleName) + ";");
                 }
-            }
-        }
-
-        public getFullName(name: AST): string {
-            if (name.kind() === SyntaxKind.IdentifierName) {
-                return (<Identifier>name).text();
-            }
-            else {
-                var dotExpr = <QualifiedName>name;
-                return this.getFullName(dotExpr.left) + "." + this.getFullName(dotExpr.right);
             }
         }
 
@@ -1026,7 +1016,7 @@ module TypeScript {
                 this.declFile.Write(moduleDecl.stringLiteral.text());
             }
             else {
-                this.declFile.Write(this.getFullName(moduleDecl.name));
+                this.declFile.Write(PullHelpers.getNameOfIdenfierOrQualifiedName(moduleDecl.name));
             }
 
             this.declFile.WriteLine(" {");

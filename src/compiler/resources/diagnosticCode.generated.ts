@@ -267,7 +267,7 @@ module TypeScript {
         Exported_import_declaration_0_is_assigned_type_that_has_or_is_using_private_type_1: "Exported import declaration '{0}' is assigned type that has or is using private type '{1}'.",
         Exported_import_declaration_0_is_assigned_type_that_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned type that is using inaccessible module '{1}'.",
         Exported_import_declaration_0_is_assigned_container_that_is_or_is_using_inaccessible_module_1: "Exported import declaration '{0}' is assigned container that is or is using inaccessible module '{1}'.",
-        Type_reference_0_in_extends_clause_does_not_reference_constructor_function_for_1: "Type reference '{0}' in extends clause does not reference constructor function for '{1}'.",
+        Type_name_0_in_extends_clause_does_not_reference_constructor_function_for_1: "Type name '{0}' in extends clause does not reference constructor function for '{1}'.",
         Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1: "Internal module reference '{0}' in import declaration does not reference module instance for '{1}'.",
         Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2: "Module '{0}' cannot merge with previous declaration of '{1}' in a different file '{2}'.",
         Interface_0_cannot_simultaneously_extend_types_1_and_2_NL_3: "Interface '{0}' cannot simultaneously extend types '{1}' and '{2}':{NL}{3}",

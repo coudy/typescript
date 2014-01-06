@@ -1066,7 +1066,7 @@ module TypeScript {
     "code": 2185,
     "category": DiagnosticCategory.Error
   },
-  "Type reference '{0}' in extends clause does not reference constructor function for '{1}'.": {
+  "Type name '{0}' in extends clause does not reference constructor function for '{1}'.": {
     "code": 2186,
     "category": DiagnosticCategory.Error
   },
