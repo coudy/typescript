@@ -11124,10 +11124,10 @@ module TypeScript {
             var targetNonOptionalParamCount = targetSig.nonOptionalParamCount;
             var sourceNonOptionalParamCount = sourceSig.nonOptionalParamCount;
 
-            if (sourceNonOptionalParamCount > targetNonOptionalParamCount) {
+            if (!targetSig.hasVarArgs && sourceNonOptionalParamCount > targetParameters.length) {
                 if (comparisonInfo) {
                     comparisonInfo.flags |= TypeRelationshipFlags.SourceSignatureHasTooManyParameters;
-                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Call_signature_expects_0_or_fewer_parameters, [targetNonOptionalParamCount]));
+                    comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Call_signature_expects_0_or_fewer_parameters, [targetParameters.length]));
                 }
                 return false;
             }
