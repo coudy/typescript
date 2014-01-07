@@ -10700,7 +10700,11 @@ module TypeScript {
 
                 for (var i = 0; i < sourceTypeArguments.length; i++) {
                     // Each pair of type argument needs to be identical for the type to be identical
-                    if (!this.typesAreIdenticalWithNewEnclosingTypes(sourceTypeArguments[i], targetTypeArguments[i], context)) {
+                    context.walkTypeArgument(i)
+                    var areIdentical = this.typesAreIdenticalInEnclosingTypes(sourceTypeArguments[i], targetTypeArguments[i], context);
+                    context.postWalkTypeArgument();
+
+                    if (!areIdentical) {
                         this.identicalCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
                         return false;
                     }
