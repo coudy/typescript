@@ -9,6 +9,6 @@ var C = (function () {
 
 var r = C.prototype;
 
-// should be any
+// should be {}
 var r2 = r.x;
 var r3 = r.foo(null);

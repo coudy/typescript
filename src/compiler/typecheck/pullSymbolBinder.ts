@@ -706,24 +706,34 @@ module TypeScript {
                 }
             }
 
-            var typeParameters = classDecl.getTypeParameters();
+            var typeParameterDecls = classDecl.getTypeParameters();
 
             // PULLREVIEW: Now that we clean type parameters, searching is redundant
-            for (var i = 0; i < typeParameters.length; i++) {
+            for (var i = 0; i < typeParameterDecls.length; i++) {
 
-                var typeParameter = classSymbol.findTypeParameter(typeParameters[i].name);
+                var typeParameterSymbol = classSymbol.findTypeParameter(typeParameterDecls[i].name);
 
-                if (typeParameter) {
-                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameter.getDeclarations()[0]);
-                    this.semanticInfoChain.addDiagnosticFromAST(typeParameterAST, DiagnosticCode.Duplicate_identifier_0, [typeParameter.getName()]);
+                if (typeParameterSymbol) {
+                    var typeParameterAST = this.semanticInfoChain.getASTForDecl(typeParameterSymbol.getDeclarations()[0]);
+                    this.semanticInfoChain.addDiagnosticFromAST(typeParameterAST, DiagnosticCode.Duplicate_identifier_0, [typeParameterSymbol.getName()]);
                 }
 
-                typeParameter = new PullTypeParameterSymbol(typeParameters[i].name);
+                typeParameterSymbol = new PullTypeParameterSymbol(typeParameterDecls[i].name);
 
-                classSymbol.addTypeParameter(typeParameter);
-                typeParameter.addDeclaration(typeParameters[i]);
-                typeParameters[i].setSymbol(typeParameter);
+                classSymbol.addTypeParameter(typeParameterSymbol);
+                typeParameterSymbol.addDeclaration(typeParameterDecls[i]);
+                typeParameterDecls[i].setSymbol(typeParameterSymbol);
             }
+
+            //var resolver = this.semanticInfoChain.getResolver();
+            //var typeParameterResolutionContext = new PullTypeResolutionContext(resolver);
+            //for (var i = 0; i < typeParameterDecls.length; i++) {
+            //    // Resolve the type parameter early, so that we can bind its constraint. This is
+            //    // necessary for binding the prototype member of a generic class, since its type
+            //    // relies on the constraints. We do this in a separate loop so that all type
+            //    // parameters in this list are bound before we try to resolve any of them.
+            //    resolver.resolveFirstTypeParameterDeclaration(<PullTypeParameterSymbol>typeParameterDecls[i].getSymbol(), typeParameterResolutionContext);
+            //}
 
             constructorSymbol = classSymbol.getConstructorMethod();
             constructorTypeSymbol = constructorSymbol ? constructorSymbol.type : null;
@@ -770,7 +780,7 @@ module TypeScript {
             }
 
             // Create the constructorTypeSymbol
-            this.bindStaticPrototypePropertyOfClass(classSymbol, constructorTypeSymbol);
+            this.bindStaticPrototypePropertyOfClass(classAST, classSymbol, constructorTypeSymbol);
         }
 
         // interfaces
@@ -1730,7 +1740,7 @@ module TypeScript {
             methodTypeSymbol.insertCallSignatureAtIndex(signature, signatureIndex);
         }
 
-        private bindStaticPrototypePropertyOfClass(classTypeSymbol: PullTypeSymbol, constructorTypeSymbol: PullTypeSymbol) {
+        private bindStaticPrototypePropertyOfClass(classAST: ClassDeclaration, classTypeSymbol: PullTypeSymbol, constructorTypeSymbol: PullTypeSymbol) {
             var prototypeStr = "prototype";
 
             var prototypeSymbol = constructorTypeSymbol.findMember(prototypeStr, /*lookInParent*/ false);
@@ -1753,8 +1763,10 @@ module TypeScript {
                 constructorTypeSymbol.addMember(prototypeSymbol);
 
                 if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
+                    var typeParameterASTs = classAST.typeParameterList && classAST.typeParameterList.typeParameters;
+                    Debug.assert(typeParameterASTs);
                     var resolver = this.semanticInfoChain.getResolver();
-                    prototypeSymbol.type = resolver.instantiateTypeToAny(prototypeSymbol.type, new PullTypeResolutionContext(resolver));
+                    prototypeSymbol.type = resolver.instantiateTypeToBaseConstraints(prototypeSymbol.type, typeParameterASTs, new PullTypeResolutionContext(resolver));
                 }
                 prototypeSymbol.setResolved();
             }
@@ -1834,8 +1846,6 @@ module TypeScript {
 
             constructorTypeSymbol.appendConstructSignature(constructSignature);
 
-            // Create the constructorTypeSymbol
-            this.bindStaticPrototypePropertyOfClass(parent, constructorTypeSymbol);
         }
 
         private bindConstructSignatureDeclarationToPullSymbol(constructSignatureDeclaration: PullDecl) {

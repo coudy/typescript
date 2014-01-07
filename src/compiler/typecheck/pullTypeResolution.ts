@@ -3423,7 +3423,7 @@ module TypeScript {
             this.checkThisCaptureVariableCollides(varDeclOrParameter, /*isDeclaration:*/ true, context);
         }
 
-        private resolveTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext): PullTypeSymbol {
+        private resolveTypeParameterDeclaration(typeParameterAST: TypeParameter, context: PullTypeResolutionContext): PullTypeParameterSymbol {
             var typeParameterDecl = this.semanticInfoChain.getDeclForAST(typeParameterAST);
             var typeParameterSymbol = <PullTypeParameterSymbol>typeParameterDecl.getSymbol();
 
@@ -11913,6 +11913,18 @@ module TypeScript {
             }
 
             return true;
+        }
+
+        public instantiateTypeToBaseConstraints(typeToInstantiate: PullTypeSymbol, typeParameterASTs: ISeparatedSyntaxList2, context: PullTypeResolutionContext): PullTypeSymbol {
+            var typeParameterCount = typeParameterASTs.nonSeparatorCount();
+            var typeArguments = new Array<PullTypeSymbol>(typeParameterCount);
+            for (var i = 0; i < typeParameterCount; i++) {
+                var typeParameterAST = typeParameterASTs.nonSeparatorAt(i);
+                var resolvedTypeParameterSymbol = this.resolveTypeParameterDeclaration(<TypeParameter>typeParameterAST, context);
+                typeArguments[i] = resolvedTypeParameterSymbol.getBaseConstraint(this.semanticInfoChain);
+            }
+
+            return this.createInstantiatedType(typeToInstantiate, typeArguments);
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
