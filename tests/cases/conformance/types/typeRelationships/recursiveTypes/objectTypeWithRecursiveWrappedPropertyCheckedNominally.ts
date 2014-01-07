@@ -39,7 +39,6 @@ function foo<T extends List<number>, U extends MyList<number>>(t: T, u: U) {
 }
 
 function foo2<T extends U, U extends MyList<number>>(t: T, u: U) {
-    // BUG 821629?
     t = u; // error
     u = t; // error
 

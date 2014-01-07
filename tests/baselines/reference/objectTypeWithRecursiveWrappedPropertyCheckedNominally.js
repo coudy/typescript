@@ -40,7 +40,6 @@ function foo(t, u) {
 }
 
 function foo2(t, u) {
-    // BUG 821629?
     t = u; // error
     u = t; // error
 
