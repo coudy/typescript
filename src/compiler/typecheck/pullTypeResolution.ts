@@ -9661,12 +9661,7 @@ module TypeScript {
                 //  -	S and T must both be type references to the same named type, and
                 //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
 
-                var generativeClassifications = context.getGenerativeClassifications();
-
-                var t1GenerativeTypeKind = generativeClassifications.generativeClassification1;
-                var t2GenerativeTypeKind = generativeClassifications.generativeClassification2;
-                if (t1GenerativeTypeKind === GenerativeTypeClassification.InfinitelyExpanding ||
-                    t2GenerativeTypeKind === GenerativeTypeClassification.InfinitelyExpanding) {
+                if (context.oneOfClassificationsIsInfinitelyExpanding()) {
                     return this.infinitelyExpandingTypesAreIdentical(t1, t2, context);
                 }
             }
@@ -10238,12 +10233,7 @@ module TypeScript {
                 //  -	S and T must both be type references to the same named type, and
                 //  -	the relationship in question must be true for each corresponding pair of type arguments in the type argument lists of S and T.
 
-                var generativeClassifications = context.getGenerativeClassifications();
-
-                var sourceGenerativeTypeKind = generativeClassifications.generativeClassification1;
-                var targetGenerativeTypeKind = generativeClassifications.generativeClassification2;
-                if (sourceGenerativeTypeKind === GenerativeTypeClassification.InfinitelyExpanding ||
-                    targetGenerativeTypeKind === GenerativeTypeClassification.InfinitelyExpanding) {
+                if (context.oneOfClassificationsIsInfinitelyExpanding()) {
                     return this.infinitelyExpandingSourceTypeIsRelatableToTargetType(source, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
                 }
             }
@@ -10598,7 +10588,7 @@ module TypeScript {
                     comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
                     if (comparisonInfo) {
                         var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_do_not_refer_to_same_named_type,
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_infinitely_expanding_type_reference_do_not_refer_to_same_named_type,
                             [sourceType.getScopedNameEx(enclosingSymbol).toString(), targetType.toString(enclosingSymbol)]));
                     }
                     return false;
@@ -10620,7 +10610,7 @@ module TypeScript {
                     comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, false);
                     if (comparisonInfo) {
                         var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
-                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_have_incompatible_type_arguments,
+                        comparisonInfo.addMessage(getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_infinitely_expanding_type_reference_have_incompatible_type_arguments,
                             [sourceType.toString(enclosingSymbol), targetType.toString(enclosingSymbol)]));
                     }
                     return false;
@@ -10630,31 +10620,37 @@ module TypeScript {
                 if (comparisonInfo && !comparisonInfo.onlyCaptureFirstError) {
                     comparisonInfoTypeArgumentsCheck = new TypeComparisonInfo(comparisonInfo);
                 }
-                for (var i = 0; i < sourceTypeArguments.length; i++) {
+                var isRelatable = true;
+                for (var i = 0; i < sourceTypeArguments.length && isRelatable; i++) {
                     //  -	the relationship in question must be true for each corresponding pair of type arguments
                     //      in the type argument lists of S and T.
-                    if (!this.sourceIsRelatableToTargetWithNewEnclosingTypes(sourceTypeArguments[i], targetTypeArguments[i], assignableTo, comparisonCache, ast, context, comparisonInfoTypeArgumentsCheck, isComparingInstantiatedSignatures)) {
+                    context.walkTypeArgument(i);
+
+                    if (!this.sourceIsRelatableToTargetInEnclosingTypes(sourceTypeArguments[i], targetTypeArguments[i], assignableTo, comparisonCache, ast, context, comparisonInfoTypeArgumentsCheck, isComparingInstantiatedSignatures)) {
+                        isRelatable = false;
                         if (comparisonInfo) {
                             var message: string;
                             var enclosingSymbol = this.getEnclosingSymbolForAST(ast);
 
                             if (comparisonInfoTypeArgumentsCheck && comparisonInfoTypeArgumentsCheck.message) {
-                                message = getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_have_incompatible_type_arguments_NL_2,
+                                message = getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_infinitely_expanding_type_reference_have_incompatible_type_arguments_NL_2,
                                     [sourceType.toString(enclosingSymbol), targetType.toString(enclosingSymbol), comparisonInfoTypeArgumentsCheck.message]);
                             }
                             else {
-                                message = getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_inifinitely_expanding_type_reference_have_incompatible_type_arguments,
+                                message = getDiagnosticMessage(DiagnosticCode.Types_0_and_1_originating_in_infinitely_expanding_type_reference_have_incompatible_type_arguments,
                                     [sourceType.toString(enclosingSymbol), targetType.toString(enclosingSymbol)]);
                             }
                             comparisonInfo.addMessage(message);
                         }
 
                     }
+
+                    context.postWalkTypeArgument();
                 }
             }
 
-            comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, true);
-            return true;
+            comparisonCache.setValueAt(sourceType.pullSymbolID, targetType.pullSymbolID, isRelatable);
+            return isRelatable;
         }
 
         private infinitelyExpandingTypesAreIdentical(sourceType: PullTypeSymbol, targetType: PullTypeSymbol,
@@ -11535,11 +11531,7 @@ module TypeScript {
         private relateTypeToTypeParametersInEnclosingType(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
             argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext) {
             if (expressionType && parameterType) {
-                var generativeClassifications = context.getGenerativeClassifications();
-                var expressionTypeGenerativeTypeClassification = generativeClassifications.generativeClassification1;
-                var parameterTypeGenerativeTypeClassification = generativeClassifications.generativeClassification2;
-                if (expressionTypeGenerativeTypeClassification === GenerativeTypeClassification.InfinitelyExpanding ||
-                    parameterTypeGenerativeTypeClassification === GenerativeTypeClassification.InfinitelyExpanding) {
+                if (context.oneOfClassificationsIsInfinitelyExpanding()) {
                     this.relateInifinitelyExpandingTypeToTypeParameters(expressionType, parameterType, argContext, context);
                     return;
                 }

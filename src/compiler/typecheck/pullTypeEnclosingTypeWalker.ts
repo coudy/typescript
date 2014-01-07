@@ -195,6 +195,24 @@ module TypeScript {
             }
         }
 
+        public walkTypeArgument(index: number): void {
+            if (this._canWalkStructure()) {
+                var typeArgument: PullTypeSymbol = null;
+                var currentType = <PullTypeSymbol>this._getCurrentSymbol();
+                if (currentType) {
+                    var typeArguments = currentType.getTypeArguments();
+                    typeArgument = typeArguments ? typeArguments[index] : null;
+                }
+                this._pushSymbol(typeArgument);
+            }
+        }
+
+        public postWalkTypeArgument(): void {
+            if (this._canWalkStructure()) {
+                this._popSymbol();
+            }
+        }
+
         // Walk type parameter constraint
         public walkTypeParameterConstraint(index: number) {
             if (this._canWalkStructure()) {
