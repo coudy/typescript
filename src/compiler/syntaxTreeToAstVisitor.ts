@@ -244,8 +244,8 @@ module TypeScript {
             Debug.assert(start === 0);
 
             var bod = this.visitSyntaxList(node.moduleElements);
-
-            var result = new SourceUnit(bod, this.fileName);
+            var comments = this.convertTokenLeadingComments(node.endOfFileToken, Syntax.childOffset(node, node.endOfFileToken));
+            var result = new SourceUnit(bod, comments, this.fileName);
             this.setSpanExplicit(result, start, start + node.fullWidth());
 
             return result;

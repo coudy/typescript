@@ -3343,6 +3343,8 @@ module TypeScript {
                 this.pushDecl(pullDecl);
                 this.emitScriptElements(sourceUnit);
                 this.popDecl(pullDecl);
+
+                this.emitCommentsArray(sourceUnit.endOfFileTokenLeadingComments, /*trailing:*/ false);
             }
         }
 

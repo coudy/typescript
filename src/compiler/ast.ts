@@ -263,6 +263,7 @@ module TypeScript {
 
     export class SourceUnit extends AST {
         constructor(public moduleElements: ISyntaxList2,
+                    public endOfFileTokenLeadingComments: Comment[],
                     private _fileName: string) {
             super();
             moduleElements && (moduleElements.parent = this);
