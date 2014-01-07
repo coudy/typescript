@@ -1001,7 +1001,7 @@ module TypeScript {
                 // if the previous declaration is a non-ambient class, it must be located in the same file as this declaration
                 if (acceptableRedeclaration && (prevIsClassConstructorVariable || prevIsFunction) && !isAmbientOrPrevIsAmbient) {
                     if (prevDecl.fileName() !== variableDeclaration.fileName()) {
-                        this.semanticInfoChain.addDiagnostic(diagnosticFromDecl(variableDeclaration,
+                        this.semanticInfoChain.addDiagnostic(PullHelpers.diagnosticFromDecl(variableDeclaration,
                             DiagnosticCode.Module_0_cannot_merge_with_previous_declaration_of_1_in_a_different_file_2, [declName, declName, prevDecl.fileName()]));
                         variableSymbol.type = this.semanticInfoChain.getResolver().getNewErrorTypeSymbol(declName);
                     }
@@ -1769,7 +1769,7 @@ module TypeScript {
                 // Report duplicate symbol error on existing prototype symbol since class has explicit prototype symbol
                 // This kind of scenario can happen with augmented module and class with module member named prototype
                 this.semanticInfoChain.addDiagnostic(
-                    diagnosticFromDecl(prototypeSymbol.getDeclarations()[0], DiagnosticCode.Duplicate_identifier_0, [prototypeSymbol.getDisplayName()]));
+                    PullHelpers.diagnosticFromDecl(prototypeSymbol.getDeclarations()[0], DiagnosticCode.Duplicate_identifier_0, [prototypeSymbol.getDisplayName()]));
             }
 
             // Add synthetic prototype decl and symbol
