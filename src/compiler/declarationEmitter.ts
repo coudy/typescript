@@ -171,7 +171,7 @@ module TypeScript {
                     // We may have been in the 'name' portion of an module declaration.  If so, we want the actual 
                     // container of *that* module declaration.  
                     if (container.kind() === SyntaxKind.ModuleDeclaration &&
-                        isAnyNameOfModule(<ModuleDeclaration>container, declAST)) {
+                        ASTHelpers.isAnyNameOfModule(<ModuleDeclaration>container, declAST)) {
 
                         container = this.getEnclosingContainer(container);
                     }
@@ -304,7 +304,7 @@ module TypeScript {
                 return;
             }
 
-            var declComments: Comment[] = astOrSymbol.docComments ? astOrSymbol.docComments() : docComments(astOrSymbol);
+            var declComments: Comment[] = astOrSymbol.docComments ? astOrSymbol.docComments() : ASTHelpers.docComments(astOrSymbol);
             this.writeDeclarationComments(declComments, endLine);
         }
 
@@ -364,7 +364,7 @@ module TypeScript {
 
                 this.declFile.Write(varDecl.propertyName.text());
 
-                if (!hasModifier(getVariableDeclaratorModifiers(varDecl), PullElementFlags.Private)) {
+                if (!hasModifier(ASTHelpers.getVariableDeclaratorModifiers(varDecl), PullElementFlags.Private)) {
                     this.emitTypeOfVariableDeclaratorOrParameter(varDecl);
                 }
 
@@ -478,14 +478,14 @@ module TypeScript {
             this.declFile.Write("constructor");
 
             this.declFile.Write("(");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
             this.declFile.WriteLine(";");
         }
 
         private emitParameterList(isPrivate: boolean, parameterList: ParameterList): void {
             this.declFile.Write("(");
-            this.emitParameters(isPrivate, Parameters.fromParameterList(parameterList));
+            this.emitParameters(isPrivate, ASTHelpers.parametersFromParameterList(parameterList));
             this.declFile.Write(")");
         }
 
@@ -581,7 +581,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("(");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, ASTHelpers.parametersFromParameterList(funcDecl.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -613,7 +613,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -648,7 +648,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -702,7 +702,7 @@ module TypeScript {
             this.emitTypeParameters(funcDecl.callSignature.typeParameterList, funcSignature);
 
             this.declFile.Write("(");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameterList(funcDecl.callSignature.parameterList));
+            this.emitParameters(/*isPrivate:*/ false, ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList));
             this.declFile.Write(")");
 
             var returnType = funcSignature.returnType;
@@ -730,7 +730,7 @@ module TypeScript {
 
             this.emitIndent();
             this.declFile.Write("[");
-            this.emitParameters(/*isPrivate:*/ false, Parameters.fromParameter(funcDecl.parameter));
+            this.emitParameters(/*isPrivate:*/ false, ASTHelpers.parametersFromParameter(funcDecl.parameter));
             this.declFile.Write("]");
 
             var funcPullDecl = this.semanticInfoChain.getDeclForAST(funcDecl);
@@ -769,10 +769,10 @@ module TypeScript {
 
             var comments: Comment[] = [];
             if (accessors.getter) {
-                comments = comments.concat(docComments(accessors.getter));
+                comments = comments.concat(ASTHelpers.docComments(accessors.getter));
             }
             if (accessors.setter) {
-                comments = comments.concat(docComments(accessors.setter));
+                comments = comments.concat(ASTHelpers.docComments(accessors.setter));
             }
 
             this.writeDeclarationComments(comments);
@@ -966,7 +966,7 @@ module TypeScript {
                     this.declFile.WriteLine("require(" + (<ExternalModuleReference>importDeclAST.moduleReference).stringLiteral.text() + ");");
                 }
                 else {
-                    this.declFile.WriteLine(PullHelpers.getNameOfIdenfierOrQualifiedName((<ModuleNameModuleReference>importDeclAST.moduleReference).moduleName) + ";");
+                    this.declFile.WriteLine(ASTHelpers.getNameOfIdenfierOrQualifiedName((<ModuleNameModuleReference>importDeclAST.moduleReference).moduleName) + ";");
                 }
             }
         }
@@ -1016,7 +1016,7 @@ module TypeScript {
                 this.declFile.Write(moduleDecl.stringLiteral.text());
             }
             else {
-                this.declFile.Write(PullHelpers.getNameOfIdenfierOrQualifiedName(moduleDecl.name));
+                this.declFile.Write(ASTHelpers.getNameOfIdenfierOrQualifiedName(moduleDecl.name));
             }
 
             this.declFile.WriteLine(" {");

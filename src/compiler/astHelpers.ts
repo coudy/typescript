@@ -16,6 +16,19 @@
 ///<reference path='references.ts' />
 
 module TypeScript {
+    export interface IParameters {
+        length: number;
+        lastParameterIsRest(): boolean;
+        ast: AST;
+        astAt(index: number): AST;
+        identifierAt(index: number): Identifier;
+        typeAt(index: number): AST;
+        initializerAt(index: number): EqualsValueClause;
+        isOptionalAt(index: number): boolean;
+    }
+}
+
+module TypeScript.ASTHelpers {
     export function scriptIsElided(sourceUnit: SourceUnit): boolean {
         return isDTSFile(sourceUnit.fileName()) || moduleMembersAreElided(sourceUnit.moduleElements);
     }
@@ -239,13 +252,13 @@ module TypeScript {
                     // exit early
                     return null;
             }
-            
+
             current = current.parent;
         }
         return null;
     }
 
-    export function getEnclosingMemberVariableDeclaration (ast: AST): MemberVariableDeclaration {
+    export function getEnclosingMemberVariableDeclaration(ast: AST): MemberVariableDeclaration {
         var current = ast;
 
         while (current) {
@@ -304,60 +317,47 @@ module TypeScript {
         return false;
     }
 
-    export interface IParameters {
-        length: number;
-        lastParameterIsRest(): boolean;
-        ast: AST;
-        astAt(index: number): AST;
-        identifierAt(index: number): Identifier;
-        typeAt(index: number): AST;
-        initializerAt(index: number): EqualsValueClause;
-        isOptionalAt(index: number): boolean;
+    export function parametersFromIdentifier(id: Identifier): IParameters {
+        return {
+            length: 1,
+            lastParameterIsRest: () => false,
+            ast: id,
+            astAt: (index: number) => id,
+            identifierAt: (index: number) => id,
+            typeAt: (index: number): AST => null,
+            initializerAt: (index: number): EqualsValueClause => null,
+            isOptionalAt: (index: number) => false,
+        };
     }
 
-    export module Parameters {
-        export function fromIdentifier(id: Identifier): IParameters {
-            return {
-                length: 1,
-                lastParameterIsRest: () => false,
-                ast: id,
-                astAt: (index: number) => id,
-                identifierAt: (index: number) => id,
-                typeAt: (index: number): AST => null,
-                initializerAt: (index: number): EqualsValueClause => null,
-                isOptionalAt: (index: number) => false,
-            }
-        }
+    export function parametersFromParameter(parameter: Parameter): IParameters {
+        return {
+            length: 1,
+            lastParameterIsRest: () => parameter.dotDotDotToken !== null,
+            ast: parameter,
+            astAt: (index: number) => parameter,
+            identifierAt: (index: number) => parameter.identifier,
+            typeAt: (index: number) => getType(parameter),
+            initializerAt: (index: number) => parameter.equalsValueClause,
+            isOptionalAt: (index: number) => parameterIsOptional(parameter),
+        };
+    }
 
-        export function fromParameter(parameter: Parameter): IParameters {
-            return {
-                length: 1,
-                lastParameterIsRest: () => parameter.dotDotDotToken !== null,
-                ast: parameter,
-                astAt: (index: number) => parameter,
-                identifierAt: (index: number) => parameter.identifier,
-                typeAt: (index: number) => getType(parameter),
-                initializerAt: (index: number) => parameter.equalsValueClause,
-                isOptionalAt: (index: number) => parameterIsOptional(parameter),
-            }
-        }
+    function parameterIsOptional(parameter: Parameter): boolean {
+        return parameter.questionToken !== null || parameter.equalsValueClause !== null;
+    }
 
-        function parameterIsOptional(parameter: Parameter): boolean {
-            return parameter.questionToken !== null || parameter.equalsValueClause !== null;
-        }
-
-        export function fromParameterList(list: ParameterList): IParameters {
-            return {
-                length: list.parameters.nonSeparatorCount(),
-                lastParameterIsRest: () => lastParameterIsRest(list),
-                ast: list.parameters,
-                astAt: (index: number) => list.parameters.nonSeparatorAt(index),
-                identifierAt: (index: number) => (<Parameter>list.parameters.nonSeparatorAt(index)).identifier,
-                typeAt: (index: number) => getType(list.parameters.nonSeparatorAt(index)),
-                initializerAt: (index: number) => (<Parameter>list.parameters.nonSeparatorAt(index)).equalsValueClause,
-                isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.parameters.nonSeparatorAt(index)),
-            }
-        }
+    export function parametersFromParameterList(list: ParameterList): IParameters {
+        return {
+            length: list.parameters.nonSeparatorCount(),
+            lastParameterIsRest: () => lastParameterIsRest(list),
+            ast: list.parameters,
+            astAt: (index: number) => list.parameters.nonSeparatorAt(index),
+            identifierAt: (index: number) => (<Parameter>list.parameters.nonSeparatorAt(index)).identifier,
+            typeAt: (index: number) => getType(list.parameters.nonSeparatorAt(index)),
+            initializerAt: (index: number) => (<Parameter>list.parameters.nonSeparatorAt(index)).equalsValueClause,
+            isOptionalAt: (index: number) => parameterIsOptional(<Parameter>list.parameters.nonSeparatorAt(index)),
+        };
     }
 
     export function isDeclarationAST(ast: AST): boolean {
@@ -526,7 +526,7 @@ module TypeScript {
         return null;
     }
 
-    export function getVariableDeclaratorModifiers(variableDeclarator: VariableDeclarator): PullElementFlags[]{
+    export function getVariableDeclaratorModifiers(variableDeclarator: VariableDeclarator): PullElementFlags[] {
         var variableStatement = getVariableStatement(variableDeclarator);
         return variableStatement ? variableStatement.modifiers : sentinelEmptyArray;
     }
@@ -595,5 +595,16 @@ module TypeScript {
         }
 
         return false;
+    }
+
+    export function getNameOfIdenfierOrQualifiedName(name: AST): string {
+        if (name.kind() === SyntaxKind.IdentifierName) {
+            return (<Identifier>name).text();
+        }
+        else {
+            Debug.assert(name.kind() == SyntaxKind.QualifiedName);
+            var dotExpr = <QualifiedName>name;
+            return getNameOfIdenfierOrQualifiedName(dotExpr.left) + "." + getNameOfIdenfierOrQualifiedName(dotExpr.right);
+        }
     }
 }

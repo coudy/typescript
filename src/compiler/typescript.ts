@@ -773,7 +773,7 @@ module TypeScript {
                             var contextualType: PullTypeSymbol = null;
 
                             if (enclosingDecl && (enclosingDecl.kind & PullElementKind.SomeFunction)) {
-                                var typeAnnotation = getType(enclosingDeclAST);
+                                var typeAnnotation = ASTHelpers.getType(enclosingDeclAST);
                                 if (typeAnnotation) {
                                     // The containing function has a type annotation, propagate it as the contextual type
                                     var returnTypeSymbol = resolver.resolveTypeReference(typeAnnotation, resolutionContext);

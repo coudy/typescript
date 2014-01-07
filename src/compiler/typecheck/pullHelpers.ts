@@ -274,16 +274,5 @@ module TypeScript {
                 }
             }
         }
-
-        export function getNameOfIdenfierOrQualifiedName(name: AST): string {
-            if (name.kind() === SyntaxKind.IdentifierName) {
-                return (<Identifier>name).text();
-            }
-            else {
-                Debug.assert(name.kind() == SyntaxKind.QualifiedName);
-                var dotExpr = <QualifiedName>name;
-                return getNameOfIdenfierOrQualifiedName(dotExpr.left) + "." + getNameOfIdenfierOrQualifiedName(dotExpr.right);
-            }
-        }
     }
 }

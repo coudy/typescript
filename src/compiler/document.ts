@@ -229,7 +229,7 @@ module TypeScript {
             if (!this._bloomFilter) {
                 var identifiers = createIntrinsicsObject<boolean>();
                 var pre = function (cur: TypeScript.AST) {
-                    if (isValidAstNode(cur)) {
+                    if (ASTHelpers.isValidAstNode(cur)) {
                         if (cur.kind() === SyntaxKind.IdentifierName) {
                             var nodeText = (<TypeScript.Identifier>cur).valueText();
 

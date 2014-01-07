@@ -664,7 +664,7 @@ module TypeScript {
         private emitParameterList(list: ParameterList): void {
             this.writeToOutput("(");
             this.emitCommentsArray(list.openParenTrailingComments, /*trailing:*/ true);
-            this.emitFunctionParameters(Parameters.fromParameterList(list));
+            this.emitFunctionParameters(ASTHelpers.parametersFromParameterList(list));
             this.writeToOutput(")");
         }
 
@@ -1056,7 +1056,7 @@ module TypeScript {
         }
 
         public emitSingleModuleDeclaration(moduleDecl: ModuleDeclaration, moduleName: IASTToken) {
-            var isLastName = isLastNameOfModule(moduleDecl, moduleName);
+            var isLastName = ASTHelpers.isLastNameOfModule(moduleDecl, moduleName);
 
             if (isLastName) {
                 // Doc Comments on the ast belong to the innermost module being emitted.
@@ -1236,12 +1236,12 @@ module TypeScript {
 
         public emitSimpleArrowFunctionExpression(arrowFunction: SimpleArrowFunctionExpression): void {
             this.emitAnyArrowFunctionExpression(arrowFunction, null /*arrowFunction.getNameText()*/,
-                Parameters.fromIdentifier(arrowFunction.identifier), arrowFunction.block, arrowFunction.expression);
+                ASTHelpers.parametersFromIdentifier(arrowFunction.identifier), arrowFunction.block, arrowFunction.expression);
         }
 
         public emitParenthesizedArrowFunctionExpression(arrowFunction: ParenthesizedArrowFunctionExpression): void {
             this.emitAnyArrowFunctionExpression(arrowFunction, null /* arrowFunction.getNameText() */,
-                Parameters.fromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.block, arrowFunction.expression);
+                ASTHelpers.parametersFromParameterList(arrowFunction.callSignature.parameterList), arrowFunction.block, arrowFunction.expression);
         }
 
         private emitAnyArrowFunctionExpression(arrowFunction: AST, funcName: string, parameters: IParameters, block: Block, expression: AST): void {
@@ -1295,7 +1295,7 @@ module TypeScript {
             this.writeToOutput("function ");
             this.writeToOutput(this.thisClassNode.identifier.text());
             this.writeToOutput("(");
-            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeLineToOutput(") {");
 
@@ -1350,7 +1350,7 @@ module TypeScript {
             this.writeToOutput("(");
             this.writeToOutput(")");
 
-            this.emitFunctionBodyStatements(null, accessor, Parameters.fromParameterList(accessor.parameterList), accessor.block, /*bodyExpression:*/ null);
+            this.emitFunctionBodyStatements(null, accessor, ASTHelpers.parametersFromParameterList(accessor.parameterList), accessor.block, /*bodyExpression:*/ null);
 
             this.recordSourceMappingEnd(accessor);
 
@@ -1383,7 +1383,7 @@ module TypeScript {
             this.writeToOutput(accessor.propertyName.text());
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(accessor.parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(accessor.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -1424,7 +1424,7 @@ module TypeScript {
 
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -1480,7 +1480,7 @@ module TypeScript {
 
             this.emitParameterList(funcDecl.callSignature.parameterList);
 
-            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionBodyStatements(funcDecl.identifier.text(), funcDecl, parameters, funcDecl.block, /*bodyExpression:*/ null);
 
             this.recordSourceMappingEnd(funcDecl);
@@ -1896,7 +1896,7 @@ module TypeScript {
         }
 
         public recordSourceMappingStart(ast: IASTSpan) {
-            if (this.sourceMapper && isValidAstNode(ast)) {
+            if (this.sourceMapper && ASTHelpers.isValidAstNode(ast)) {
                 var lineCol = { line: -1, character: -1 };
                 var sourceMapping = new SourceMapping();
                 sourceMapping.start.emittedColumn = this.emitState.column;
@@ -1929,7 +1929,7 @@ module TypeScript {
         }
 
         public recordSourceMappingEnd(ast: IASTSpan) {
-            if (this.sourceMapper && isValidAstNode(ast)) {
+            if (this.sourceMapper && ASTHelpers.isValidAstNode(ast)) {
                 // Pop source mapping childs
                 this.sourceMapper.currentMappings.pop();
 
@@ -2214,7 +2214,7 @@ module TypeScript {
             this.emitPrologue(sourceUnit);
 
             var isExternalModule = this.document.isExternalModule();
-            var isNonElidedExternalModule = isExternalModule && !scriptIsElided(sourceUnit);
+            var isNonElidedExternalModule = isExternalModule && !ASTHelpers.scriptIsElided(sourceUnit);
             if (isNonElidedExternalModule) {
                 this.recordSourceMappingStart(sourceUnit);
 
@@ -2301,7 +2301,7 @@ module TypeScript {
 
             this.emitComments(list, true);
 
-            var emitPropertyAssignmentsAfterSuperCall = getExtendsHeritageClause(this.thisClassNode.heritageClauses) !== null;
+            var emitPropertyAssignmentsAfterSuperCall = ASTHelpers.getExtendsHeritageClause(this.thisClassNode.heritageClauses) !== null;
             var propertyAssignmentIndex = emitPropertyAssignmentsAfterSuperCall ? 1 : 0;
             var lastEmittedNode: AST = null;
 
@@ -2415,7 +2415,7 @@ module TypeScript {
 
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -2441,7 +2441,7 @@ module TypeScript {
             this.recordSourceMappingStart(classDecl);
             this.writeToOutput("var " + className);
 
-            var hasBaseClass = getExtendsHeritageClause(classDecl.heritageClauses) !== null;
+            var hasBaseClass = ASTHelpers.getExtendsHeritageClause(classDecl.heritageClauses) !== null;
             var baseTypeReference: AST = null;
             var varDecl: VariableDeclarator = null;
 
@@ -2456,7 +2456,7 @@ module TypeScript {
             this.indenter.increaseIndent();
 
             if (hasBaseClass) {
-                baseTypeReference = getExtendsHeritageClause(classDecl.heritageClauses).typeNames.nonSeparatorAt(0);
+                baseTypeReference = ASTHelpers.getExtendsHeritageClause(classDecl.heritageClauses).typeNames.nonSeparatorAt(0);
                 this.emitIndent();
                 this.writeLineToOutput("__extends(" + className + ", _super);");
             }
@@ -2621,7 +2621,7 @@ module TypeScript {
 
             this.emitParameterList(funcDecl.callSignature.parameterList);
 
-            var parameters = Parameters.fromParameterList(funcDecl.callSignature.parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(funcDecl.callSignature.parameterList);
             this.emitFunctionBodyStatements(funcDecl.propertyName.text(), funcDecl, parameters, funcDecl.block, /*bodyExpression:*/ null);
 
             this.recordSourceMappingEnd(funcDecl);
@@ -2648,7 +2648,7 @@ module TypeScript {
                 else if (moduleElement.kind() === SyntaxKind.ClassDeclaration) {
                     var classDeclaration = <ClassDeclaration>moduleElement;
 
-                    if (!hasModifier(classDeclaration.modifiers, PullElementFlags.Ambient) && getExtendsHeritageClause(classDeclaration.heritageClauses) !== null) {
+                    if (!hasModifier(classDeclaration.modifiers, PullElementFlags.Ambient) && ASTHelpers.getExtendsHeritageClause(classDeclaration.heritageClauses) !== null) {
                         return true;
                     }
                 }
@@ -2996,7 +2996,7 @@ module TypeScript {
 
             this.writeToOutput("(");
 
-            var parameters = Parameters.fromParameterList(funcProp.callSignature.parameterList);
+            var parameters = ASTHelpers.parametersFromParameterList(funcProp.callSignature.parameterList);
             this.emitFunctionParameters(parameters);
             this.writeToOutput(")");
 
@@ -3347,11 +3347,11 @@ module TypeScript {
         }
 
         public shouldEmitEnumDeclaration(declaration: EnumDeclaration): boolean {
-            return declaration.preComments() !== null || ! enumIsElided(declaration);
+            return declaration.preComments() !== null || !ASTHelpers.enumIsElided(declaration);
         }
 
         public emitEnumDeclaration(declaration: EnumDeclaration): void {
-            if (!enumIsElided(declaration)) {
+            if (!ASTHelpers.enumIsElided(declaration)) {
                 this.emitComments(declaration, true);
                 this.emitEnum(declaration);
                 this.emitComments(declaration, false);
@@ -3362,11 +3362,11 @@ module TypeScript {
         }
 
         public shouldEmitModuleDeclaration(declaration: ModuleDeclaration): boolean {
-            return declaration.preComments() !== null || !moduleIsElided(declaration);
+            return declaration.preComments() !== null || !ASTHelpers.moduleIsElided(declaration);
         }
 
         private emitModuleDeclaration(declaration: ModuleDeclaration): void {
-            if (!moduleIsElided(declaration)) {
+            if (!ASTHelpers.moduleIsElided(declaration)) {
                 this.emitModuleDeclarationWorker(declaration);
             }
             else {

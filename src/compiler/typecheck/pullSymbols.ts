@@ -717,13 +717,13 @@ module TypeScript {
             var ast = decl.ast();
 
             if (ast) {
-                var enclosingModuleDeclaration = getEnclosingModuleDeclaration(ast);
-                if (isLastNameOfModule(enclosingModuleDeclaration, ast)) {
-                    return docComments(enclosingModuleDeclaration);
+                var enclosingModuleDeclaration = ASTHelpers.getEnclosingModuleDeclaration(ast);
+                if (ASTHelpers.isLastNameOfModule(enclosingModuleDeclaration, ast)) {
+                    return ASTHelpers.docComments(enclosingModuleDeclaration);
                 }
 
                 if (ast.kind() !== TypeScript.SyntaxKind.ModuleDeclaration || decl.kind !== TypeScript.PullElementKind.Variable) {
-                    return docComments(ast);
+                    return ASTHelpers.docComments(ast);
                 }
             }
 
