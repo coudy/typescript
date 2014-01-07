@@ -5250,10 +5250,10 @@ module TypeScript {
                     // No type annotation, check if there is a contextual type enforced on the function, and propagate that
                     var currentContextualType = context.getContextualType();
                     if (currentContextualType && currentContextualType.isFunction()) {
-                        var currentContextTypeDecls = currentContextualType.getDeclarations();
-                        var currentContextualTypeSignatureSymbol = currentContextTypeDecls && currentContextTypeDecls.length > 0
-                            ? currentContextTypeDecls[0].getSignatureSymbol()
-                            : currentContextualType.getCallSignatures()[0];
+                        var contextualSignatures = currentContextualType.kind == PullElementKind.ConstructorType
+                            ? currentContextualType.getConstructSignatures()
+                            : currentContextualType.getCallSignatures();
+                        var currentContextualTypeSignatureSymbol = contextualSignatures[0];
 
                         var currentContextualTypeReturnTypeSymbol = currentContextualTypeSignatureSymbol.returnType;
                         if (currentContextualTypeReturnTypeSymbol) {
