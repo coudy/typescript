@@ -928,23 +928,21 @@ module TypeScript {
         private checkEnumElements(node: EnumDeclarationSyntax): boolean {
             var enumElementFullStart = this.childFullStart(node, node.enumElements);
 
-            var seenComputedValue = false;
+            var previousValueWasComputed = false;
             for (var i = 0, n = node.enumElements.childCount(); i < n; i++) {
                 var child = node.enumElements.childAt(i);
 
                 if (i % 2 === 0) {
                     var enumElement = <EnumElementSyntax>child;
 
-                    if (!enumElement.equalsValueClause && seenComputedValue) {
+                    if (!enumElement.equalsValueClause && previousValueWasComputed) {
                         this.pushDiagnostic1(enumElementFullStart, enumElement, DiagnosticCode.Enum_member_must_have_initializer, null);
                         return true;
                     }
 
                     if (enumElement.equalsValueClause) {
                         var value = enumElement.equalsValueClause.value;
-                        if (!Syntax.isIntegerLiteral(value)) {
-                            seenComputedValue = true;
-                        }
+                        previousValueWasComputed = !Syntax.isIntegerLiteral(value);
                     }
                 }
 
