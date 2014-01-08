@@ -518,10 +518,30 @@ module TypeScript {
                             inFunctionOverloadChain = functionDeclaration.block === null;
                             functionOverloadChainName = functionDeclaration.identifier.valueText();
 
-                            if (lastElement && inFunctionOverloadChain) {
-                                this.pushDiagnostic1(moduleElementFullStart, moduleElement.firstToken(),
-                                    DiagnosticCode.Function_implementation_expected);
-                                return true;
+                            if (inFunctionOverloadChain) {
+                                if (lastElement) {
+                                    this.pushDiagnostic1(moduleElementFullStart, moduleElement.firstToken(),
+                                        DiagnosticCode.Function_implementation_expected);
+                                    return true;
+                                }
+                                else {
+                                    // We're a function without a body, and there's another element 
+                                    // after us.  If it's another overload that doesn't have a body,
+                                    // then report an error that we're missing an implementation here.
+
+                                    var nextElement = moduleElements.childAt(i + 1);
+                                    if (nextElement.kind() === SyntaxKind.FunctionDeclaration) {
+                                        var nextFunction = <FunctionDeclarationSyntax>nextElement;
+
+                                        if (nextFunction.identifier.valueText() !== functionOverloadChainName &&
+                                            nextFunction.block === null) {
+
+                                            var identifierFullStart = moduleElementFullStart + Syntax.childOffset(moduleElement, functionDeclaration.identifier);
+                                            this.pushDiagnostic1(identifierFullStart, functionDeclaration.identifier, DiagnosticCode.Function_implementation_expected);
+                                            return true;
+                                        }
+                                    }
+                                }
                             }
                         }
                         else {
@@ -567,9 +587,10 @@ module TypeScript {
                                 DiagnosticCode.Function_overload_name_must_be_0, [functionOverloadChainName]);
                             return true;
                         }
+
                         isStaticOverload = SyntaxUtilities.containsToken(memberFunctionDeclaration.modifiers, SyntaxKind.StaticKeyword);
                         if (isStaticOverload !== isInStaticOverloadChain) {
-                            propertyNameFullStart = classElementFullStart + Syntax.childOffset(classElement, memberFunctionDeclaration.propertyName);
+                            var propertyNameFullStart = classElementFullStart + Syntax.childOffset(classElement, memberFunctionDeclaration.propertyName);
                             var diagnostic = isInStaticOverloadChain ? DiagnosticCode.Function_overload_must_be_static : DiagnosticCode.Function_overload_must_not_be_static;
                             this.pushDiagnostic1(propertyNameFullStart, memberFunctionDeclaration.propertyName,
                                 diagnostic, null);
@@ -591,10 +612,30 @@ module TypeScript {
                         functionOverloadChainName = memberFunctionDeclaration.propertyName.valueText();
                         isInStaticOverloadChain = SyntaxUtilities.containsToken(memberFunctionDeclaration.modifiers, SyntaxKind.StaticKeyword);
 
-                        if (lastElement && inFunctionOverloadChain) {
-                            this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
-                                DiagnosticCode.Function_implementation_expected);
-                            return true;
+                        if (inFunctionOverloadChain) {
+                            if (lastElement) {
+                                this.pushDiagnostic1(classElementFullStart, classElement.firstToken(),
+                                    DiagnosticCode.Function_implementation_expected);
+                                return true;
+                            }
+                            else {
+                                // We're a function without a body, and there's another element 
+                                // after us.  If it's another overload that doesn't have a body,
+                                // then report an error that we're missing an implementation here.
+
+                                var nextElement = node.classElements.childAt(i + 1);
+                                if (nextElement.kind() === SyntaxKind.MemberFunctionDeclaration) {
+                                    var nextMemberFunction = <MemberFunctionDeclarationSyntax>nextElement;
+
+                                    if (nextMemberFunction.propertyName.valueText() !== functionOverloadChainName &&
+                                        nextMemberFunction.block === null) {
+
+                                        var propertyNameFullStart = classElementFullStart + Syntax.childOffset(classElement, memberFunctionDeclaration.propertyName);
+                                        this.pushDiagnostic1(propertyNameFullStart, memberFunctionDeclaration.propertyName, DiagnosticCode.Function_implementation_expected);
+                                        return true;
+                                    }
+                                }
+                            }
                         }
                     }
                     else if (classElement.kind() === SyntaxKind.ConstructorDeclaration) {
