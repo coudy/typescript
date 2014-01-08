@@ -22,7 +22,7 @@
 goTo.marker('1');
 verify.quickInfoIs("c1", undefined, "c1.prototype", "property");
 goTo.marker('2');
-verify.quickInfoIs("c2<{}>", undefined, "c2<T>.prototype", "property");
+verify.quickInfoIs("c2<any>", undefined, "c2<T>.prototype", "property");
 goTo.marker('3');
 verify.quickInfoIs("c3", undefined, "c3.prototype", "property");
 goTo.marker('4');

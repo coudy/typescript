@@ -10,4 +10,4 @@ goTo.marker('1');
 verify.quickInfoIs('(): C<any>');
 
 goTo.marker('2');
-verify.quickInfoIs('C<{}>');
+verify.quickInfoIs('C<any>');

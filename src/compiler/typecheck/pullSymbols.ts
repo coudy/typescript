@@ -3311,7 +3311,7 @@ module TypeScript {
         }
 
         public getBaseConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
-            return this._constraint || semanticInfoChain.emptyTypeSymbol;
+            return this._constraint || semanticInfoChain.anyTypeSymbol;
         }
 
         // Note: This is a deviation from the spec. Using the constraint to get signatures is only

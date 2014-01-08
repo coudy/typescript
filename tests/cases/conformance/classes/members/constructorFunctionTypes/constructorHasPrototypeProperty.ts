@@ -24,8 +24,8 @@ module Generic {
         bing: U;
     }
 
-    var r = C.prototype; // C<{}, {}>
-    var ra = r.foo; // {}
-    var r2 = D.prototype; // D<{}, {}>
-    var rb = r2.baz; // {}
+    var r = C.prototype; // C<any, any>
+    var ra = r.foo; // any
+    var r2 = D.prototype; // D<any, any>
+    var rb = r2.baz; // any
 }

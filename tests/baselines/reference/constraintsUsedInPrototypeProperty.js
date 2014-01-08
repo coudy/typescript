@@ -3,4 +3,4 @@ var Foo = (function () {
     }
     return Foo;
 })();
-Foo.prototype; // Foo<number, {}, string>
+Foo.prototype; // Foo<number, any, string>
