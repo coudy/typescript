@@ -816,6 +816,10 @@ module TypeScript {
                     case SyntaxKind.WithStatement:
                         inWithBlock = true;
                         break;
+
+                    case SyntaxKind.Block:
+                        inContextuallyTypedAssignment = false;
+                        break;
                 }
 
                 // Record enclosing Decl
