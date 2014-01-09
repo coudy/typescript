@@ -9442,34 +9442,6 @@ module TypeScript {
             for (var i = 0; i < typeParameters.length; i++) {
                 typeReplacementMap[typeParameters[i].pullSymbolID] = inferredTypeArgs[i];
             }
-            for (var i = 0; i < typeParameters.length; i++) {
-                typeConstraint = typeParameters[i].getConstraint();
-
-                // test specialization type for assignment compatibility with the constraint
-                if (typeConstraint) {
-                    if (typeConstraint.isTypeParameter()) {
-                        for (var j = 0; j < typeParameters.length && j < inferredTypeArgs.length; j++) {
-                            if (typeParameters[j] === typeConstraint) {
-                                typeConstraint = inferredTypeArgs[j];
-                            }
-                        }
-                    }
-                    else if (typeConstraint.isGeneric()) {
-                        typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
-                    }
-
-                    if (!this.sourceIsSubtypeOfTargetWithNewEnclosingTypes(inferredTypeArgs[i], typeConstraint, /*ast*/ null, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
-                        // if the signature is not assignable due to a constraint mismatch, it may be because the two signatures are identical
-                        // (hence, no inferences could be made for the signature's type parameters)
-                        if (this.signaturesAreIdenticalWithNewEnclosingTypes(signatureAToInstantiate, contextualSignatureB, context)) {
-                            return signatureAToInstantiate;
-                        }
-                        else {
-                            return null;
-                        }
-                    }
-                }
-            }
 
             return this.instantiateSignature(signatureAToInstantiate, typeReplacementMap);
         }
@@ -11573,12 +11545,18 @@ module TypeScript {
             var typeParameters = argContext.signatureBeingInferred.getTypeParameters();
             Debug.assert(typeParameters.length == inferenceResultTypes.length);
 
+            var typeReplacementMapForConstraints = new Array<PullTypeSymbol>(inferenceResultTypes.length);
+            for (var i = 0; i < inferenceResultTypes.length; i++) {
+                typeReplacementMapForConstraints[typeParameters[i].pullSymbolID] = inferenceResultTypes[i];
+            }
+
             // Fall back to constraints if constraints are not satisfied
             for (var i = 0; i < inferenceResultTypes.length; i++) {
-                var associatedConstraint = typeParameters[i].getConstraint();
-                if (associatedConstraint !== null &&
-                    !this.sourceIsSubtypeOfTargetWithNewEnclosingTypes(inferenceResultTypes[i], associatedConstraint, /*ast*/ null, context, /*comparisonInfo*/ null, /*isComparingInstantiatedSignatures*/ false)) {
-                    inferenceResultTypes[i] = associatedConstraint;
+                if (typeParameters[i].getConstraint()) {
+                    var associatedConstraint = this.instantiateType(typeParameters[i].getConstraint(), typeReplacementMapForConstraints);
+                    if (!this.sourceIsSubtypeOfTargetWithNewEnclosingTypes(inferenceResultTypes[i], associatedConstraint, /*ast*/ null, context, /*comparisonInfo*/ null, /*isComparingInstantiatedSignatures*/ false)) {
+                        inferenceResultTypes[i] = associatedConstraint;
+                    }
                 }
             }
 
