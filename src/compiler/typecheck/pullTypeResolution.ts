@@ -6968,13 +6968,6 @@ module TypeScript {
                     if (typeArg.inResolution || (typeArg.isTypeReference() && (<PullTypeReferenceSymbol>typeArg).referencedTypeSymbol.inResolution)) {
                         return specializedSymbol;
                     }
-
-                    // Section 3.4.2 (November 18, 2013): 
-                    // A type argument satisfies a type parameter constraint if the type argument is assignable
-                    // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
-                    // The code here uses subtype instead of assignment compatibility (reflected in the next spec
-                    // version), because passing "any" is likely to cause an error later, so we prefer to disallow
-                    // it all together if there is a constraint.
                     if (!this.sourceIsSubtypeOfTarget(typeArg, typeConstraint, genericTypeAST, context)) {
                         var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[iArg].toString(enclosingSymbol, /*useConstraintInName*/ true)]));
