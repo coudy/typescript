@@ -10186,8 +10186,12 @@ module TypeScript {
             return false;
         }
 
-        private sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean) {
+        private sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean): boolean {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+        }
+
+        private sourceIsSubtypeOfTargetWithNewEnclosingTypes(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean): boolean {
+            return this.sourceIsRelatableToTargetWithNewEnclosingTypes(source, target, false, this.subtypeCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
         }
 
         private sourceMembersAreSubtypeOfTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean) {
@@ -11562,6 +11566,17 @@ module TypeScript {
 
         private inferArgumentTypesForSignature(argContext: TypeArgumentInferenceContext, comparisonInfo: TypeComparisonInfo, context: PullTypeResolutionContext): PullTypeSymbol[] {
             var inferenceResultTypes = argContext.inferTypeArguments();
+            var typeParameters = argContext.signatureBeingInferred.getTypeParameters();
+            Debug.assert(typeParameters.length == inferenceResultTypes.length);
+
+            // Fall back to constraints if constraints are not satisfied
+            for (var i = 0; i < inferenceResultTypes.length; i++) {
+                var associatedConstraint = typeParameters[i].getConstraint();
+                if (associatedConstraint !== null &&
+                    !this.sourceIsSubtypeOfTargetWithNewEnclosingTypes(inferenceResultTypes[i], associatedConstraint, /*ast*/ null, context, /*comparisonInfo*/ null, /*isComparingInstantiatedSignatures*/ false)) {
+                    inferenceResultTypes[i] = associatedConstraint;
+                }
+            }
 
             //  Do not let local type parameters escape at call sites
             //  Because we're comparing for equality between two signatures (where one is instantiated
@@ -11578,11 +11593,11 @@ module TypeScript {
                 // Need to know if the type parameters are in scope. If not, they are not legal inference
                 // candidates unless we are in contextual signature instantiation
                 var invocationContext = <InvocationTypeArgumentInferenceContext>argContext;
-                if (!this.typeParametersAreInScopeAtArgumentList(argContext.signatureBeingInferred.getTypeParameters(), invocationContext.argumentASTs)) {
+                if (!this.typeParametersAreInScopeAtArgumentList(typeParameters, invocationContext.argumentASTs)) {
                     for (var i = 0; i < inferenceResultTypes.length; i++) {
                         // Check if the inferred type wraps any one of the type parameters
                         if (inferenceResultTypes[i].wrapsSomeTypeParameter(argContext.candidateCache)) {
-                            inferenceResultTypes[i] = this.semanticInfoChain.emptyTypeSymbol;
+                            inferenceResultTypes[i] = this.semanticInfoChain.anyTypeSymbol;
                         }
                     }
                 }

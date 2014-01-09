@@ -54,7 +54,7 @@ var Errors;
         b2 = a2; // error
 
         var b7;
-        a7 = b7; // error, no inferences for V so it doesn't satisfy its constraints and contextual signature instantiation fails
+        a7 = b7; // valid, no inferences for V so it defaults to Derived2
         b7 = a7; // error
 
         var b8;
@@ -62,15 +62,15 @@ var Errors;
         b8 = a8; // error
 
         var b10;
-        a10 = b10; // error, more specific type in derived parameter type
+        a10 = b10; // valid, parameter covariance works even after contextual signature instantiation
         b10 = a10; // error
 
         var b11;
-        a11 = b11; // error
+        a11 = b11; // valid, even though x is a Base, parameter covariance works even after contextual signature instantiation
         b11 = a11; // error
 
         var b12;
-        a12 = b12; // error, no inferences for T, fails constraint satisfaction, fails contextual signature instantiation
+        a12 = b12; // valid, no inferences for T, defaults to Array<Derived2>
         b12 = a12; // error
 
         var b15;
@@ -78,7 +78,7 @@ var Errors;
         b15 = a15; // error
 
         var b15a;
-        a15 = b15a; // error, T is {} which doesn't satisfy constraint check
+        a15 = b15a; // error, T defaults to Base, which is not compatible with number or string
         b15a = a15; // error
 
         var b16;

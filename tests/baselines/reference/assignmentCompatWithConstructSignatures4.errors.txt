@@ -6,8 +6,6 @@ assignmentCompatWithConstructSignatures4.ts(47,9): error TS2012: Cannot convert 
 	Construct signatures of types 'new(x: number) => string[]' and 'new<T, U>(x: T) => U[]' are incompatible:
 		Types of property 'concat' of types 'string[]' and 'U[]' are incompatible:
 			Call signatures of types '{ <U extends string[]>(...items: U[]): string[]; (...items: string[]): string[]; }' and '{ <U extends U[]>(...items: U[]): U[]; (...items: U[]): U[]; }' are incompatible.
-assignmentCompatWithConstructSignatures4.ts(50,9): error TS2012: Cannot convert 'new<T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V' to 'new(x: (arg: Base) => Derived) => (r: Base) => Derived2':
-	Construct signatures of types 'new<T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V' and 'new(x: (arg: Base) => Derived) => (r: Base) => Derived2' are incompatible.
 assignmentCompatWithConstructSignatures4.ts(51,9): error TS2012: Cannot convert 'new(x: (arg: Base) => Derived) => (r: Base) => Derived2' to 'new<T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V':
 	Construct signatures of types 'new(x: (arg: Base) => Derived) => (r: Base) => Derived2' and 'new<T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V' are incompatible:
 		Call signatures of types '(r: Base) => Derived2' and '(r: T) => V' are incompatible.
@@ -22,16 +20,10 @@ assignmentCompatWithConstructSignatures4.ts(54,9): error TS2012: Cannot convert 
 assignmentCompatWithConstructSignatures4.ts(55,9): error TS2012: Cannot convert 'new(x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => Derived' to 'new<T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U':
 	Construct signatures of types 'new(x: (arg: Base) => Derived, y: (arg2: Base) => Derived) => (r: Base) => Derived' and 'new<T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U' are incompatible:
 		Call signatures of types '(r: Base) => Derived' and '(r: T) => U' are incompatible.
-assignmentCompatWithConstructSignatures4.ts(59,9): error TS2012: Cannot convert 'new<T extends Derived>(...x: T[]) => T' to 'new(...x: Base[]) => Base':
-	Construct signatures of types 'new<T extends Derived>(...x: T[]) => T' and 'new(...x: Base[]) => Base' are incompatible.
 assignmentCompatWithConstructSignatures4.ts(60,9): error TS2012: Cannot convert 'new(...x: Base[]) => Base' to 'new<T extends Derived>(...x: T[]) => T':
 	Construct signatures of types 'new(...x: Base[]) => Base' and 'new<T extends Derived>(...x: T[]) => T' are incompatible.
-assignmentCompatWithConstructSignatures4.ts(63,9): error TS2012: Cannot convert 'new<T extends Derived>(x: T, y: T) => T' to 'new(x: { foo: string; }, y: { foo: string; bar: string; }) => Base':
-	Construct signatures of types 'new<T extends Derived>(x: T, y: T) => T' and 'new(x: { foo: string; }, y: { foo: string; bar: string; }) => Base' are incompatible.
 assignmentCompatWithConstructSignatures4.ts(64,9): error TS2012: Cannot convert 'new(x: { foo: string; }, y: { foo: string; bar: string; }) => Base' to 'new<T extends Derived>(x: T, y: T) => T':
 	Construct signatures of types 'new(x: { foo: string; }, y: { foo: string; bar: string; }) => Base' and 'new<T extends Derived>(x: T, y: T) => T' are incompatible.
-assignmentCompatWithConstructSignatures4.ts(67,9): error TS2012: Cannot convert 'new<T extends Derived2[]>(x: Base[], y: Base[]) => T' to 'new(x: Base[], y: Derived2[]) => Derived[]':
-	Construct signatures of types 'new<T extends Derived2[]>(x: Base[], y: Base[]) => T' and 'new(x: Base[], y: Derived2[]) => Derived[]' are incompatible.
 assignmentCompatWithConstructSignatures4.ts(68,9): error TS2012: Cannot convert 'new(x: Base[], y: Derived2[]) => Derived[]' to 'new<T extends Derived2[]>(x: Base[], y: Base[]) => T':
 	Construct signatures of types 'new(x: Base[], y: Derived2[]) => Derived[]' and 'new<T extends Derived2[]>(x: Base[], y: Base[]) => T' are incompatible.
 assignmentCompatWithConstructSignatures4.ts(71,9): error TS2012: Cannot convert 'new<T>(x: { a: T; b: T; }) => T' to 'new(x: { a: string; b: number; }) => number':
@@ -39,7 +31,10 @@ assignmentCompatWithConstructSignatures4.ts(71,9): error TS2012: Cannot convert 
 assignmentCompatWithConstructSignatures4.ts(72,9): error TS2012: Cannot convert 'new(x: { a: string; b: number; }) => number' to 'new<T>(x: { a: T; b: T; }) => T':
 	Construct signatures of types 'new(x: { a: string; b: number; }) => number' and 'new<T>(x: { a: T; b: T; }) => T' are incompatible.
 assignmentCompatWithConstructSignatures4.ts(75,9): error TS2012: Cannot convert 'new<T extends Base>(x: { a: T; b: T; }) => number' to 'new(x: { a: string; b: number; }) => number':
-	Construct signatures of types 'new<T extends Base>(x: { a: T; b: T; }) => number' and 'new(x: { a: string; b: number; }) => number' are incompatible.
+	Construct signatures of types 'new<T extends Base>(x: { a: T; b: T; }) => number' and 'new(x: { a: string; b: number; }) => number' are incompatible:
+		Types of property 'a' of types '{ a: Base; b: Base; }' and '{ a: string; b: number; }' are incompatible.
+		Types of property 'a' of types '{ a: string; b: number; }' and '{ a: Base; b: Base; }' are incompatible:
+			Type 'String' is missing property 'foo' from type 'Base'.
 assignmentCompatWithConstructSignatures4.ts(76,9): error TS2012: Cannot convert 'new(x: { a: string; b: number; }) => number' to 'new<T extends Base>(x: { a: T; b: T; }) => number':
 	Construct signatures of types 'new(x: { a: string; b: number; }) => number' and 'new<T extends Base>(x: { a: T; b: T; }) => number' are incompatible:
 		Types of property 'a' of types '{ a: string; b: number; }' and '{ a: T; b: T; }' are incompatible.

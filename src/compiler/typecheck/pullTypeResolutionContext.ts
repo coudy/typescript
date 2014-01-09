@@ -97,19 +97,6 @@ module TypeScript {
             }
         }
 
-        public getFixedTypeParameterSubstitutions(): PullTypeSymbol[] {
-            var fixedTypeParametersToTypesMap: PullTypeSymbol[] = [];
-
-            for (var infoKey in this.candidateCache) {
-                if (this.candidateCache.hasOwnProperty(infoKey)) {
-                    var info = this.candidateCache[infoKey];
-                    fixedTypeParametersToTypesMap[info.typeParameter.pullSymbolID] = info._inferredTypeAfterFixing;
-                }
-            }
-
-            return fixedTypeParametersToTypesMap;
-        }
-
         public _finalizeInferredTypeArguments(): PullTypeSymbol[]{
             var results: PullTypeSymbol[] = [];
             var typeParameters = this.signatureBeingInferred.getTypeParameters();

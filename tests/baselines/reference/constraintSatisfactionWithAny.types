@@ -20,14 +20,14 @@ Line 5 col 43 IdentifierName "x" = T
 Line 5 col 46 IdentifierName "T" = T
 Line 5 col 50 IdentifierName "T" = T
 Line 6 col 4 IdentifierName "a" = any
-Line 7 col 0 InvocationExpression "foo(a)" = any
+Line 7 col 0 InvocationExpression "foo(a)" = String
 Line 7 col 0 IdentifierName "foo" = typeof foo
 Line 7 col 4 IdentifierName "a" = any
-Line 8 col 0 InvocationExpression "foo2(a)" = any
+Line 8 col 0 InvocationExpression "foo2(a)" = { x: number; }
 Line 8 col 0 IdentifierName "foo2" = typeof foo2
 Line 8 col 5 IdentifierName "a" = any
 Line 9 col 0 InvocationExpression "//foo3(a);
-foo4(a)" = any
+foo4(a)" = <T>(x: T) => void
 Line 9 col 0 IdentifierName "//foo3(a);
 foo4" = typeof foo4
 Line 10 col 5 IdentifierName "a" = any
@@ -48,8 +48,8 @@ Line 22 col 8 IdentifierName "T" = T
 Line 22 col 18 IdentifierName "String" = String
 Line 23 col 23 IdentifierName "x" = T
 Line 23 col 26 IdentifierName "T" = T
-Line 26 col 4 IdentifierName "c1" = C<any>
-Line 26 col 9 ObjectCreationExpression "new C(a)" = C<any>
+Line 26 col 4 IdentifierName "c1" = C<String>
+Line 26 col 9 ObjectCreationExpression "new C(a)" = C<String>
 Line 26 col 13 IdentifierName "C" = typeof C
 Line 26 col 15 IdentifierName "a" = any
 Line 27 col 4 IdentifierName "c2" = C<any>
@@ -61,8 +61,8 @@ Line 29 col 9 IdentifierName "T" = T
 Line 29 col 21 IdentifierName "x" = number
 Line 30 col 23 IdentifierName "x" = T
 Line 30 col 26 IdentifierName "T" = T
-Line 33 col 4 IdentifierName "c3" = C2<any>
-Line 33 col 9 ObjectCreationExpression "new C2(a)" = C2<any>
+Line 33 col 4 IdentifierName "c3" = C2<{ x: number; }>
+Line 33 col 9 ObjectCreationExpression "new C2(a)" = C2<{ x: number; }>
 Line 33 col 13 IdentifierName "C2" = typeof C2
 Line 33 col 16 IdentifierName "a" = any
 Line 34 col 4 IdentifierName "c4" = C2<any>
@@ -77,8 +77,8 @@ Line 43 col 25 IdentifierName "T" = T
 Line 43 col 31 IdentifierName "T" = T
 Line 44 col 23 IdentifierName "x" = T
 Line 44 col 26 IdentifierName "T" = T
-Line 47 col 4 IdentifierName "c7" = C4<any>
-Line 47 col 9 ObjectCreationExpression "new C4(a)" = C4<any>
+Line 47 col 4 IdentifierName "c7" = C4<<T>(x: T) => T>
+Line 47 col 9 ObjectCreationExpression "new C4(a)" = C4<<T>(x: T) => T>
 Line 47 col 13 IdentifierName "C4" = typeof C4
 Line 47 col 16 IdentifierName "a" = any
 Line 48 col 4 IdentifierName "c8" = C4<any>

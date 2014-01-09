@@ -47,7 +47,7 @@ module Errors {
         b2 = a2; // error
 
         var b7: <T extends Base, U extends Derived, V extends Derived2>(x: (arg: T) => U) => (r: T) => V;
-        a7 = b7; // error, no inferences for V so it doesn't satisfy its constraints and contextual signature instantiation fails
+        a7 = b7; // valid, no inferences for V so it defaults to Derived2
         b7 = a7; // error
 
         var b8: <T extends Base, U extends Derived>(x: (arg: T) => U, y: (arg2: { foo: number; }) => U) => (r: T) => U; 
@@ -56,15 +56,15 @@ module Errors {
 
         
         var b10: <T extends Derived>(...x: T[]) => T; 
-        a10 = b10; // error, more specific type in derived parameter type
+        a10 = b10; // valid, parameter covariance works even after contextual signature instantiation
         b10 = a10; // error
 
         var b11: <T extends Derived>(x: T, y: T) => T; 
-        a11 = b11; // error
+        a11 = b11; // valid, even though x is a Base, parameter covariance works even after contextual signature instantiation
         b11 = a11; // error
 
         var b12: <T extends Array<Derived2>>(x: Array<Base>, y: Array<Base>) => T; 
-        a12 = b12; // error, no inferences for T, fails constraint satisfaction, fails contextual signature instantiation
+        a12 = b12; // valid, no inferences for T, defaults to Array<Derived2>
         b12 = a12; // error
 
         var b15: <T>(x: { a: T; b: T }) => T; 
@@ -72,7 +72,7 @@ module Errors {
         b15 = a15; // error
 
         var b15a: <T extends Base>(x: { a: T; b: T }) => number; 
-        a15 = b15a; // error, T is {} which doesn't satisfy constraint check
+        a15 = b15a; // error, T defaults to Base, which is not compatible with number or string
         b15a = a15; // error
 
         var b16: <T>(x: (a: T) => T) => T[];
@@ -80,7 +80,7 @@ module Errors {
         b16 = a16; // error
 
         var b17: <T>(x: (a: T) => T) => any[];
-        a17 = b17; // error
+        a17 = b17; // valid, target is more constrained than source, so it is safe in the traditional constraint-contravariant fashion
         b17 = a17;
     }
 
