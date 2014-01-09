@@ -230,7 +230,7 @@ module TypeScript {
 
         public _getResolver(): PullTypeResolver {
             Debug.assert(this._declarations && this._declarations.length > 0);
-            return this._declarations[0].semanticInfoChain().getResolver();
+            return this._declarations[0].semanticInfoChain.getResolver();
         }
 
         public _resolveDeclaredSymbol() {

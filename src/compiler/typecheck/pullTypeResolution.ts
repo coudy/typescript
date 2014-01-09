@@ -2711,7 +2711,7 @@ module TypeScript {
                 var enclosingDecl = this.getEnclosingDeclForAST(term);
                 typeDeclSymbol = new PullStringConstantTypeSymbol(stringConstantAST.text());
                 var decl = new PullSynthesizedDecl(stringConstantAST.text(), stringConstantAST.text(),
-                    typeDeclSymbol.kind, null, enclosingDecl, enclosingDecl.semanticInfoChain());
+                    typeDeclSymbol.kind, null, enclosingDecl, enclosingDecl.semanticInfoChain);
                 typeDeclSymbol.addDeclaration(decl);
             }
             else if (term.kind() === SyntaxKind.TypeQuery) {
