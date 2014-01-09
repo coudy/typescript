@@ -1,1 +1,2 @@
 recursiveIdenticalAssignment.ts(5,13): error TS2229: Constraint of a type parameter cannot reference any type parameter from the same type parameter list.
+recursiveIdenticalAssignment.ts(10,10): error TS2086: Type 'any' does not satisfy the constraint 'B<B<any>>' for type parameter 'T extends B<B<T>>'.

@@ -6990,7 +6990,7 @@ module TypeScript {
                     if (typeArg.inResolution || (typeArg.isTypeReference() && (<PullTypeReferenceSymbol>typeArg).referencedTypeSymbol.inResolution)) {
                         return specializedSymbol;
                     }
-                    if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
+                    if (!this.sourceIsSubtypeOfTarget(typeArg, typeConstraint, genericTypeAST, context)) {
                         var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[iArg].toString(enclosingSymbol, /*useConstraintInName*/ true)]));
                     }
@@ -8801,22 +8801,24 @@ module TypeScript {
                                 }
                             }
                             typeReplacementMap = mutableTypeReplacementMap.typeParameterArgumentMap;
-                                                    
-                            for (var j = 0; j < typeParameters.length; j++) {
-                                typeConstraint = typeParameters[j].getConstraint();
 
-                                // test specialization type for assignment compatibility with the constraint
-                                if (typeConstraint) {
-                                    typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
+                            if (typeArgs) {
+                                for (var j = 0; j < typeParameters.length; j++) {
+                                    typeConstraint = typeParameters[j].getConstraint();
 
-                                    if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, targetAST, context, /*comparisonInfo:*/ null, /*isComparingInstantiatedSignatures:*/ true)) {
-                                        var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
-                                        constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
-                                        couldNotAssignToConstraint = true;
-                                    }
+                                    // test specialization type for assignment compatibility with the constraint
+                                    if (typeConstraint) {
+                                        typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
 
-                                    if (couldNotAssignToConstraint) {
-                                        break;
+                                        if (!this.sourceIsSubtypeOfTarget(inferredTypeArgs[j], typeConstraint, targetAST, context, /*comparisonInfo:*/ null, /*isComparingInstantiatedSignatures:*/ true)) {
+                                            var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
+                                            constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
+                                            couldNotAssignToConstraint = true;
+                                        }
+
+                                        if (couldNotAssignToConstraint) {
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -9185,35 +9187,37 @@ module TypeScript {
                                     for (var j = 0; j < typeParameters.length; j++) {
                                         typeReplacementMap[typeParameters[j].pullSymbolID] = inferredTypeArgs[j];
                                     }
-                                    for (var j = 0; j < typeParameters.length; j++) {
-                                        typeConstraint = typeParameters[j].getConstraint();
+                                    if (typeArgs) {
+                                        for (var j = 0; j < typeParameters.length; j++) {
+                                            typeConstraint = typeParameters[j].getConstraint();
 
-                                        // test specialization type for assignment compatibility with the constraint
-                                        if (typeConstraint) {
-                                            if (typeConstraint.isTypeParameter()) {
-                                                for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
-                                                    if (typeParameters[k] === typeConstraint) {
-                                                        typeConstraint = inferredTypeArgs[k];
-                                                    }
-                                                    else {
-                                                        typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
+                                            // test specialization type for assignment compatibility with the constraint
+                                            if (typeConstraint) {
+                                                if (typeConstraint.isTypeParameter()) {
+                                                    for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
+                                                        if (typeParameters[k] === typeConstraint) {
+                                                            typeConstraint = inferredTypeArgs[k];
+                                                        }
+                                                        else {
+                                                            typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
+                                                        }
                                                     }
                                                 }
-                                            }
-                                            else if (typeConstraint.isGeneric()) {
-                                                typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
-                                            }
+                                                else if (typeConstraint.isGeneric()) {
+                                                    typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
+                                                }
 
-                                            if (!this.sourceIsAssignableToTarget(inferredTypeArgs[j], typeConstraint, targetAST, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
-                                                var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
-                                                constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
-                                                couldNotAssignToConstraint = true;
-                                            }
+                                                if (!this.sourceIsSubtypeOfTarget(inferredTypeArgs[j], typeConstraint, targetAST, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
+                                                    var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
+                                                    constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
+                                                    couldNotAssignToConstraint = true;
+                                                }
 
-                                            if (couldNotAssignToConstraint) {
-                                                break;
-                                            }
+                                                if (couldNotAssignToConstraint) {
+                                                    break;
+                                                }
 
+                                            }
                                         }
                                     }
                                 }
@@ -9454,7 +9458,7 @@ module TypeScript {
                         typeConstraint = PullInstantiatedTypeReferenceSymbol.create(this, typeConstraint, typeReplacementMap);
                     }
 
-                    if (!this.sourceIsAssignableToTargetWithNewEnclosingTypes(inferredTypeArgs[i], typeConstraint, /*ast*/ null, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
+                    if (!this.sourceIsSubtypeOfTargetWithNewEnclosingTypes(inferredTypeArgs[i], typeConstraint, /*ast*/ null, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
                         // if the signature is not assignable due to a constraint mismatch, it may be because the two signatures are identical
                         // (hence, no inferences could be made for the signature's type parameters)
                         if (this.signaturesAreIdenticalWithNewEnclosingTypes(signatureAToInstantiate, contextualSignatureB, context)) {
