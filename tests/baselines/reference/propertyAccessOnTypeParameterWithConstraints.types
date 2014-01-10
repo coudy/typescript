@@ -55,10 +55,10 @@ Line 24 col 9 InvocationExpression "a<Date>()" = Date
 Line 24 col 9 IdentifierName "a" = <T extends Date>() => T
 Line 24 col 11 IdentifierName "Date" = Date
 Line 24 col 19 IdentifierName "getDate" = () => number
-Line 25 col 4 IdentifierName "r3b" = any
-Line 25 col 10 InvocationExpression "a()['getDate']()" = any
-Line 25 col 10 ElementAccessExpression "a()['getDate']" = any
-Line 25 col 10 InvocationExpression "a()" = {}
+Line 25 col 4 IdentifierName "r3b" = number
+Line 25 col 10 InvocationExpression "a()['getDate']()" = number
+Line 25 col 10 ElementAccessExpression "a()['getDate']" = () => number
+Line 25 col 10 InvocationExpression "a()" = Date
 Line 25 col 10 IdentifierName "a" = <T extends Date>() => T
 Line 27 col 4 IdentifierName "b" = { foo: <T extends Date>(x: T) => any; }
 Line 27 col 8 ObjectLiteralExpression "{

@@ -8738,7 +8738,7 @@ module TypeScript {
             // otherwise, try to specialize to the type arguments above
 
             var resolvedSignatures: PullSignatureSymbol[] = [];
-            var inferredTypeArgs: PullTypeSymbol[];
+            var inferredOrExplicitTypeArgs: PullTypeSymbol[];
             var specializedSignature: PullSignatureSymbol;
             var typeParameters: PullTypeParameterSymbol[];
             var typeConstraint: PullTypeSymbol = null;
@@ -8763,7 +8763,7 @@ module TypeScript {
                         // the type argument list
                         // ...
                         if (typeArgs.length === typeParameters.length) {
-                            inferredTypeArgs = typeArgs;
+                            inferredOrExplicitTypeArgs = typeArgs;
                         }
                         else {
                             typeArgumentCountDiagnostic = typeArgumentCountDiagnostic ||
@@ -8772,82 +8772,59 @@ module TypeScript {
                             continue;
                         }
                     }
-                    else if (!typeArgs && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
+                    else if (callEx.argumentList) {
                         var typeArgumentInferenceContext = new InvocationTypeArgumentInferenceContext(this, context, signatures[i], callEx.argumentList.arguments);
-                        inferredTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
+                        inferredOrExplicitTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
                         triedToInferTypeArgs = true;
                     }
                     else {
-                        inferredTypeArgs = [];
+                        // Pretend to infer the constraints
+                        inferredOrExplicitTypeArgs = ArrayUtilities.select(typeParameters, typeParameter => typeParameter.getConstraint() || this.semanticInfoChain.emptyTypeSymbol);
                     }
 
                     // if we could infer Args, or we have type arguments, then attempt to specialize the signature
-                    if (inferredTypeArgs) {
+                    Debug.assert(inferredOrExplicitTypeArgs && inferredOrExplicitTypeArgs.length == typeParameters.length);
+                    // When specializing the constraints, seed the replacement map with any substitutions already specified by
+                    // the target function's type
+                    var mutableTypeReplacementMap = new PullInstantiationHelpers.MutableTypeArgumentMap(targetTypeReplacementMap ? targetTypeReplacementMap : []);
+                    for (var j = 0; j < typeParameters.length; j++) {
+                        var typeParameterId = typeParameters[j].getRootSymbol().pullSymbolID;
+                        if (mutableTypeReplacementMap.typeParameterArgumentMap[typeParameterId] != inferredOrExplicitTypeArgs[j]) {
+                            mutableTypeReplacementMap.ensureTypeArgumentCopy();
+                            mutableTypeReplacementMap.typeParameterArgumentMap[typeParameterId] = inferredOrExplicitTypeArgs[j];
+                        }
+                    }
+                    typeReplacementMap = mutableTypeReplacementMap.typeParameterArgumentMap;
 
-                        if (inferredTypeArgs.length) {
+                    if (typeArgs) {
+                        for (var j = 0; j < typeParameters.length; j++) {
+                            typeConstraint = typeParameters[j].getConstraint();
 
-                            if (inferredTypeArgs.length !== typeParameters.length) {
-                                continue;
-                            }
+                            // test specialization type for assignment compatibility with the constraint
+                            if (typeConstraint) {
+                                typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
 
-                            // When specializing the constraints, seed the replacement map with any substitutions already specified by
-                            // the target function's type
-                            var mutableTypeReplacementMap = new PullInstantiationHelpers.MutableTypeArgumentMap(targetTypeReplacementMap ? targetTypeReplacementMap : []);
-                            for (var j = 0; j < typeParameters.length; j++) {
-                                var typeParameterId = typeParameters[j].getRootSymbol().pullSymbolID;
-                                if (mutableTypeReplacementMap.typeParameterArgumentMap[typeParameterId] != inferredTypeArgs[j]) {
-                                    mutableTypeReplacementMap.ensureTypeArgumentCopy();
-                                    mutableTypeReplacementMap.typeParameterArgumentMap[typeParameterId] = inferredTypeArgs[j];
+                                if (!this.sourceIsSubtypeOfTarget(inferredOrExplicitTypeArgs[j], typeConstraint, targetAST, context, /*comparisonInfo:*/ null, /*isComparingInstantiatedSignatures:*/ true)) {
+                                    var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
+                                    constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredOrExplicitTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
+                                    couldNotAssignToConstraint = true;
                                 }
-                            }
-                            typeReplacementMap = mutableTypeReplacementMap.typeParameterArgumentMap;
 
-                            if (typeArgs) {
-                                for (var j = 0; j < typeParameters.length; j++) {
-                                    typeConstraint = typeParameters[j].getConstraint();
-
-                                    // test specialization type for assignment compatibility with the constraint
-                                    if (typeConstraint) {
-                                        typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
-
-                                        if (!this.sourceIsSubtypeOfTarget(inferredTypeArgs[j], typeConstraint, targetAST, context, /*comparisonInfo:*/ null, /*isComparingInstantiatedSignatures:*/ true)) {
-                                            var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
-                                            constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
-                                            couldNotAssignToConstraint = true;
-                                        }
-
-                                        if (couldNotAssignToConstraint) {
-                                            break;
-                                        }
-                                    }
+                                if (couldNotAssignToConstraint) {
+                                    break;
                                 }
                             }
                         }
-                        else {
+                    }
 
-                            // if we tried to infer type arguments but could not, this overload should not be considered to be a candidate
-                            if (triedToInferTypeArgs) {
-                                    continue;
-                            }
+                    if (couldNotAssignToConstraint) {
+                        continue;
+                    }
 
-                            // otherwise, use "{}" for each parameter
-                            typeReplacementMap = [];
+                    specializedSignature = this.instantiateSignature(signatures[i], typeReplacementMap);
 
-                            for (var j = 0; j < typeParameters.length; j++) {
-                                var typeParameterId = typeParameters[j].getRootSymbol().pullSymbolID;
-                                typeReplacementMap[typeParameterId] = this.semanticInfoChain.emptyTypeSymbol;
-                            }
-                        }
-
-                        if (couldNotAssignToConstraint) {
-                            continue;
-                        }
-
-                        specializedSignature = this.instantiateSignature(signatures[i], typeReplacementMap);
-
-                        if (specializedSignature) {
-                            resolvedSignatures[resolvedSignatures.length] = specializedSignature;
-                        }
+                    if (specializedSignature) {
+                        resolvedSignatures[resolvedSignatures.length] = specializedSignature;
                     }
                 }
                 else {
@@ -9124,7 +9101,7 @@ module TypeScript {
                 // otherwise, try to specialize to the type arguments above
                 if (targetTypeSymbol.isGeneric()) {
                     var resolvedSignatures: PullSignatureSymbol[] = [];
-                    var inferredTypeArgs: PullTypeSymbol[];
+                    var inferredOrExplicitTypeArgs: PullTypeSymbol[];
                     var specializedSignature: PullSignatureSymbol;
                     var typeParameters: PullTypeParameterSymbol[];
                     var typeConstraint: PullTypeSymbol = null;
@@ -9145,103 +9122,85 @@ module TypeScript {
                                 // the type argument list
                                 // ...
                                 if (typeArgs.length === typeParameters.length) {
-                                    inferredTypeArgs = typeArgs;
+                                    inferredOrExplicitTypeArgs = typeArgs;
                                 }
                                 else {
                                     typeArgumentCountDiagnostic = typeArgumentCountDiagnostic ||
-                                        this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead,
-                                            [typeParameters.length, typeArgs.length]);
+                                    this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Signature_expected_0_type_arguments_got_1_instead,
+                                        [typeParameters.length, typeArgs.length]);
                                     continue;
                                 }
                             }
-                            else if (!typeArgs && callEx.argumentList && callEx.argumentList.arguments && callEx.argumentList.arguments.nonSeparatorCount()) {
+                            else if (callEx.argumentList) {
                                 var typeArgumentInferenceContext = new InvocationTypeArgumentInferenceContext(this, context, constructSignatures[i], callEx.argumentList.arguments);
-                                inferredTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
+                                inferredOrExplicitTypeArgs = this.inferArgumentTypesForSignature(typeArgumentInferenceContext, new TypeComparisonInfo(), context);
                                 triedToInferTypeArgs = true;
                             }
                             else {
-                                inferredTypeArgs = [];
+                                // Pretend to infer the constraints
+                                inferredOrExplicitTypeArgs = ArrayUtilities.select(typeParameters, typeParameter => typeParameter.getConstraint() || this.semanticInfoChain.emptyTypeSymbol);
                             }
 
                             // if we could infer Args, or we have type arguments, then attempt to specialize the signature
-                            if (inferredTypeArgs) {
+                            typeReplacementMap = [];
+                            Debug.assert(inferredOrExplicitTypeArgs && inferredOrExplicitTypeArgs.length == typeParameters.length);
 
-                                typeReplacementMap = [];
-
-                                if (inferredTypeArgs.length) {
-
-                                    if (inferredTypeArgs.length < typeParameters.length) {
-                                        continue;
+                            // When specializing the constraints, seed the replacement map with any substitutions already specified by
+                            // the target function's type
+                            if (targetTypeReplacementMap) {
+                                for (var symbolID in targetTypeReplacementMap) {
+                                    if (targetTypeReplacementMap.hasOwnProperty(symbolID)) {
+                                        typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
                                     }
+                                }
+                            }
 
-                                    // When specializing the constraints, seed the replacement map with any substitutions already specified by
-                                    // the target function's type
-                                    if (targetTypeReplacementMap) {
-                                        for (var symbolID in targetTypeReplacementMap) {
-                                            if (targetTypeReplacementMap.hasOwnProperty(symbolID)) {
-                                                typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
-                                            }
-                                        }
-                                    }
+                            for (var j = 0; j < typeParameters.length; j++) {
+                                typeReplacementMap[typeParameters[j].pullSymbolID] = inferredOrExplicitTypeArgs[j];
+                            }
 
-                                    for (var j = 0; j < typeParameters.length; j++) {
-                                        typeReplacementMap[typeParameters[j].pullSymbolID] = inferredTypeArgs[j];
-                                    }
-                                    if (typeArgs) {
-                                        for (var j = 0; j < typeParameters.length; j++) {
-                                            typeConstraint = typeParameters[j].getConstraint();
+                            if (typeArgs) {
+                                for (var j = 0; j < typeParameters.length; j++) {
+                                    typeConstraint = typeParameters[j].getConstraint();
 
-                                            // test specialization type for assignment compatibility with the constraint
-                                            if (typeConstraint) {
-                                                if (typeConstraint.isTypeParameter()) {
-                                                    for (var k = 0; k < typeParameters.length && k < inferredTypeArgs.length; k++) {
-                                                        if (typeParameters[k] === typeConstraint) {
-                                                            typeConstraint = inferredTypeArgs[k];
-                                                        }
-                                                        else {
-                                                            typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
-                                                        }
-                                                    }
+                                    // test specialization type for assignment compatibility with the constraint
+                                    if (typeConstraint) {
+                                        if (typeConstraint.isTypeParameter()) {
+                                            for (var k = 0; k < typeParameters.length && k < inferredOrExplicitTypeArgs.length; k++) {
+                                                if (typeParameters[k] === typeConstraint) {
+                                                    typeConstraint = inferredOrExplicitTypeArgs[k];
                                                 }
-                                                else if (typeConstraint.isGeneric()) {
+                                                else {
                                                     typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
                                                 }
-
-                                                if (!this.sourceIsSubtypeOfTarget(inferredTypeArgs[j], typeConstraint, targetAST, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
-                                                    var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
-                                                    constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
-                                                    couldNotAssignToConstraint = true;
-                                                }
-
-                                                if (couldNotAssignToConstraint) {
-                                                    break;
-                                                }
-
                                             }
                                         }
-                                    }
-                                }
-                                else {
-
-                                    if (triedToInferTypeArgs) {
-                                            continue;
-                                    }
-                                    else {
-                                        for (var j = 0; j < typeParameters.length; j++) {
-                                            typeReplacementMap[typeParameters[j].pullSymbolID] = this.semanticInfoChain.emptyTypeSymbol;
+                                        else if (typeConstraint.isGeneric()) {
+                                            typeConstraint = this.instantiateType(typeConstraint, typeReplacementMap);
                                         }
+
+                                        if (!this.sourceIsSubtypeOfTarget(inferredOrExplicitTypeArgs[j], typeConstraint, targetAST, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
+                                            var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
+                                            constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredOrExplicitTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
+                                            couldNotAssignToConstraint = true;
+                                        }
+
+                                        if (couldNotAssignToConstraint) {
+                                            break;
+                                        }
+
                                     }
                                 }
+                            }
 
-                                if (couldNotAssignToConstraint) {
-                                    continue;
-                                }
+                            if (couldNotAssignToConstraint) {
+                                continue;
+                            }
 
-                                specializedSignature = this.instantiateSignature(constructSignatures[i], typeReplacementMap);
+                            specializedSignature = this.instantiateSignature(constructSignatures[i], typeReplacementMap);
 
-                                if (specializedSignature) {
-                                    resolvedSignatures[resolvedSignatures.length] = specializedSignature;
-                                }
+                            if (specializedSignature) {
+                                resolvedSignatures[resolvedSignatures.length] = specializedSignature;
                             }
                         }
                         else {
