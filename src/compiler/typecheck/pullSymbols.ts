@@ -3310,7 +3310,9 @@ module TypeScript {
             return this._constraint;
         }
 
-        public getBaseConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
+        // This is just a one step fallback to any if there is no constraint
+        // It is used for instantiating the prototype member
+        public getDefaultConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
             return this._constraint || semanticInfoChain.anyTypeSymbol;
         }
 

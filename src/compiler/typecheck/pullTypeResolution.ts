@@ -85,11 +85,7 @@ module TypeScript {
 
         private cachedArrayInterfaceType() {
             if (!this._cachedArrayInterfaceType) {
-                this._cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface);
-            }
-
-            if (!this._cachedArrayInterfaceType) {
-                this._cachedArrayInterfaceType = this.semanticInfoChain.anyTypeSymbol;
+                this._cachedArrayInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Array", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (!this._cachedArrayInterfaceType.isResolved) {
@@ -107,7 +103,7 @@ module TypeScript {
 
         private cachedNumberInterfaceType() {
             if (!this._cachedNumberInterfaceType) {
-                this._cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface);
+                this._cachedNumberInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Number", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (this._cachedNumberInterfaceType && !this._cachedNumberInterfaceType.isResolved) {
@@ -119,7 +115,7 @@ module TypeScript {
 
         private cachedStringInterfaceType() {
             if (!this._cachedStringInterfaceType) {
-                this._cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface);
+                this._cachedStringInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("String", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (this._cachedStringInterfaceType && !this._cachedStringInterfaceType.isResolved) {
@@ -131,7 +127,7 @@ module TypeScript {
 
         private cachedBooleanInterfaceType() {
             if (!this._cachedBooleanInterfaceType) {
-                this._cachedBooleanInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Boolean", [], PullElementKind.Interface);
+                this._cachedBooleanInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Boolean", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (this._cachedBooleanInterfaceType && !this._cachedBooleanInterfaceType.isResolved) {
@@ -143,7 +139,7 @@ module TypeScript {
 
         private cachedObjectInterfaceType() {
             if (!this._cachedObjectInterfaceType) {
-                this._cachedObjectInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Object", [], PullElementKind.Interface);
+                this._cachedObjectInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Object", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (!this._cachedObjectInterfaceType) {
@@ -159,7 +155,7 @@ module TypeScript {
 
         private cachedFunctionInterfaceType() {
             if (!this._cachedFunctionInterfaceType) {
-                this._cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface);
+                this._cachedFunctionInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("Function", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (this._cachedFunctionInterfaceType && !this._cachedFunctionInterfaceType.isResolved) {
@@ -171,7 +167,7 @@ module TypeScript {
 
         private cachedIArgumentsInterfaceType() {
             if (!this._cachedIArgumentsInterfaceType) {
-                this._cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface);
+                this._cachedIArgumentsInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("IArguments", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (this._cachedIArgumentsInterfaceType && !this._cachedIArgumentsInterfaceType.isResolved) {
@@ -183,7 +179,7 @@ module TypeScript {
 
         private cachedRegExpInterfaceType() {
             if (!this._cachedRegExpInterfaceType) {
-                this._cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface);
+                this._cachedRegExpInterfaceType = <PullTypeSymbol>this.getSymbolFromDeclPath("RegExp", [], PullElementKind.Interface) || this.semanticInfoChain.emptyTypeSymbol;
             }
 
             if (this._cachedRegExpInterfaceType && !this._cachedRegExpInterfaceType.isResolved) {
@@ -205,6 +201,53 @@ module TypeScript {
             }
 
             return this._cachedFunctionArgumentsSymbol;
+        }
+
+        // Section 3.8.1: November 18, 2013
+        // If T is the primitive type Number, Boolean, or String, the apparent type 
+        // of T is the augmented form(as defined below) of the global interface type
+        // 'Number', 'Boolean', or 'String'.
+        // If T is an enum type, the apparent type of T is the augmented form of the
+        // global interface type 'Number'.
+        // If T is an object type, the apparent type of T is the augmented form of T.
+        // If T is a type parameter, the apparent type of T is the augmented form
+        // of the base constraint(section 3.4.1) of T.
+        // Otherwise, the apparent type of T is T itself.
+        // Note, the upper bound here is one step before the base constraint.
+        private getApparentType(type: PullTypeSymbol, isForSubtypeRelation: boolean): PullTypeSymbol {
+            if (type.isTypeParameter()) {
+                var upperBound = this.getUpperBound(type);
+                if (upperBound.isTypeParameter()) {
+                    // Now choose a base constraint based on whether it is for subtype. This is not
+                    // yet in the spec.
+                    if (isForSubtypeRelation) {
+                        return this.semanticInfoChain.anyTypeSymbol;
+                    }
+                    else {
+                        return this.semanticInfoChain.emptyTypeSymbol
+                    }
+                }
+                else {
+                    // Don't return. We need to feed the resulting type thru the rest of the method
+                    type = upperBound;
+                }
+            }
+            if (type.isPrimitive()) {
+                if (type === this.semanticInfoChain.numberTypeSymbol) {
+                    return this.cachedNumberInterfaceType();
+                }
+                if (type === this.semanticInfoChain.booleanTypeSymbol) {
+                    return this.cachedBooleanInterfaceType();
+                }
+                if (type === this.semanticInfoChain.stringTypeSymbol) {
+                    return this.cachedStringInterfaceType();
+                }
+                return type;
+            }
+            if (type.isEnum()) {
+                return this.cachedNumberInterfaceType();
+            }
+            return type;
         }
 
         private setTypeChecked(ast: AST, context: PullTypeResolutionContext) {
@@ -715,7 +758,7 @@ module TypeScript {
         public getVisibleMembersFromExpression(expression: AST, enclosingDecl: PullDecl, context: PullTypeResolutionContext): PullSymbol[] {
             var lhs = this.resolveAST(expression, false, context);
 
-            if (isTypesOnlyLocation(expression) && (lhs.kind === PullElementKind.Class || lhs.kind === PullElementKind.Interface)) {
+            if (isTypesOnlyLocation(expression) && (lhs.kind === PullElementKind.Class || lhs.kind === PullElementKind.Interface || lhs.kind === PullElementKind.Enum)) {
                 // No more sub types in these types
                 return null;
             }
@@ -729,17 +772,6 @@ module TypeScript {
 
             if (lhsType.isContainer() && lhsType.isAlias()) {
                 lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
-            }
-
-            // Check if the type is a type parameter. Memebers of the type parameter will be these of its constraint 
-            // if one exits. 
-            // Also, handle the case where a constraint is itself a type parameter e.g.: foo<T extends Date, U extends T>
-            while (lhsType.isTypeParameter()) {
-                lhsType = (<PullTypeParameterSymbol>lhsType).getConstraint();
-                if (!lhsType) {
-                    // Nothing to look up at this point, no constraint found
-                    return null;
-                }
             }
 
             if (this.isAnyOrEquivalent(lhsType)) {
@@ -778,73 +810,46 @@ module TypeScript {
                 }
             }
 
-            // could be a type parameter with a contraint
-            if (lhsType.isTypeParameter()) {
-                var constraint = (<PullTypeParameterSymbol>lhsType).getConstraint();
+            lhsType = this.getApparentType(lhsType, /*isForSubtypeRelation*/ false);
 
-                if (constraint) {
-                    lhsType = constraint;
-                    members = lhsType.getAllMembers(declSearchKind, GetAllMembersVisiblity.externallyVisible);
+            if (!lhsType.isResolved) {
+                var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, context);
+
+                if (potentiallySpecializedType !== lhsType) {
+                    if (!lhs.isType()) {
+                        context.setTypeInContext(lhs, potentiallySpecializedType);
+                    }
+
+                    lhsType = potentiallySpecializedType;
                 }
             }
-            else {
-                // could be a value of an enum type, treat it as a number
-                if (lhsType.kind === PullElementKind.Enum && !isTypesOnlyLocation(expression)) {
-                    lhsType = this.semanticInfoChain.numberTypeSymbol;
+
+            members = lhsType.getAllMembers(declSearchKind, memberVisibilty);
+
+            // In order to show all members in type or value positions, query the associated symbol for members 
+            // on modules.
+            if (lhsType.isContainer()) {
+                var associatedInstance = (<PullContainerSymbol>lhsType).getInstanceSymbol();
+                if (associatedInstance) {
+                    var instanceType = associatedInstance.type;
+                    this.resolveDeclaredSymbol(instanceType, context);
+                    var instanceMembers = instanceType.getAllMembers(declSearchKind, memberVisibilty);
+                    members = members.concat(instanceMembers);
                 }
 
-                // could be a number
-                if (lhsType === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType()) {
-                    lhsType = this.cachedNumberInterfaceType();
+                var exportedContainer = (<PullContainerSymbol>lhsType).getExportAssignedContainerSymbol();
+                if (exportedContainer) {
+                    var exportedContainerMembers = exportedContainer.getAllMembers(declSearchKind, memberVisibilty);
+                    members = members.concat(exportedContainerMembers);
                 }
-                // could be a string
-                else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
-                    lhsType = this.cachedStringInterfaceType();
-                }
-                // could be a boolean
-                else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
-                    lhsType = this.cachedBooleanInterfaceType();
-                }
-
-                if (!lhsType.isResolved) {
-                    var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, context);
-
-                    if (potentiallySpecializedType !== lhsType) {
-                        if (!lhs.isType()) {
-                            context.setTypeInContext(lhs, potentiallySpecializedType);
-                        }
-
-                        lhsType = potentiallySpecializedType;
-                    }
-                }
-
-                members = lhsType.getAllMembers(declSearchKind, memberVisibilty);
-
-                // In order to show all members in type or value positions, query the associated symbol for members 
-                // on modules.
-                if (lhsType.isContainer()) {
-                    var associatedInstance = (<PullContainerSymbol>lhsType).getInstanceSymbol();
-                    if (associatedInstance) {
-                        var instanceType = associatedInstance.type;
-                        this.resolveDeclaredSymbol(instanceType, context);
-                        var instanceMembers = instanceType.getAllMembers(declSearchKind, memberVisibilty);
-                        members = members.concat(instanceMembers);
-                    }
-
-                    var exportedContainer = (<PullContainerSymbol>lhsType).getExportAssignedContainerSymbol();
-                    if (exportedContainer) {
-                        var exportedContainerMembers = exportedContainer.getAllMembers(declSearchKind, memberVisibilty);
-                        members = members.concat(exportedContainerMembers);
-                    }
-                }
-                else if (!lhsType.isConstructor() && !lhsType.isEnum()) {
-                    var associatedContainerSymbol = lhsType.getAssociatedContainerType();
-                    if (associatedContainerSymbol) {
-                        var containerType = associatedContainerSymbol.type;
-                        this.resolveDeclaredSymbol(containerType, context);
-                        var containerMembers = containerType.getAllMembers(declSearchKind, memberVisibilty);
-                        members = members.concat(containerMembers);
-                    }
+            }
+            else if (!lhsType.isConstructor() && !lhsType.isEnum()) {
+                var associatedContainerSymbol = lhsType.getAssociatedContainerType();
+                if (associatedContainerSymbol) {
+                    var containerType = associatedContainerSymbol.type;
+                    this.resolveDeclaredSymbol(containerType, context);
+                    var containerMembers = containerType.getAllMembers(declSearchKind, memberVisibilty);
+                    members = members.concat(containerMembers);
                 }
             }
 
@@ -5406,22 +5411,6 @@ module TypeScript {
                         var comparisonInfo = new TypeComparisonInfo();
                         var upperBound: PullTypeSymbol = null;
 
-                        if (expressionType.isTypeParameter()) {
-                            upperBound = (<PullTypeParameterSymbol>expressionType).getConstraint();
-
-                            if (upperBound) {
-                                expressionType = upperBound;
-                            }
-                        }
-
-                        if (sigReturnType.isTypeParameter()) {
-                            upperBound = (<PullTypeParameterSymbol>sigReturnType).getConstraint();
-
-                            if (upperBound) {
-                                sigReturnType = upperBound;
-                            }
-                        }
-
                         this.resolveDeclaredSymbol(expressionType, context);
                         this.resolveDeclaredSymbol(sigReturnType, context);
 
@@ -6717,20 +6706,7 @@ module TypeScript {
                 }
             }
 
-            // If the type parameter has a constraint, we'll need to sub it in
-            if (lhsType.isTypeParameter()) {
-                lhsType = this.substituteUpperBoundForType(lhsType);
-            }
-
-            if ((lhsType === this.semanticInfoChain.numberTypeSymbol || lhsType.isEnum()) && this.cachedNumberInterfaceType()) {
-                lhsType = this.cachedNumberInterfaceType();
-            }
-            else if (lhsType === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
-                lhsType = this.cachedStringInterfaceType();
-            }
-            else if (lhsType === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
-                lhsType = this.cachedBooleanInterfaceType();
-            }
+            lhsType = this.getApparentType(lhsType, /*isForSubtypeRelation*/ false);
 
             // November 18, 2013, Section 4.10:
             // If Name denotes a property member in the apparent type of ObjExpr, the property access
@@ -8199,6 +8175,8 @@ module TypeScript {
                 return { symbol: elementType };
             }
 
+            targetTypeSymbol = this.getApparentType(targetTypeSymbol, /*isForSubtypeRelation*/ false);
+
             // if the index expression is a string literal or a numberic literal and the object expression has
             // a property with that name,  the property access is the type of that property
             if (callEx.argumentExpression.kind() === SyntaxKind.StringLiteral || callEx.argumentExpression.kind() === SyntaxKind.NumericLiteral) {
@@ -8219,11 +8197,6 @@ module TypeScript {
 
                     return { symbol: member.type };
                 }
-            }
-
-            // Substitute the String interface type if the target type is a string (it has a numeric index signature)
-            if (targetTypeSymbol === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
-                targetTypeSymbol = this.cachedStringInterfaceType();
             }
 
             var signatures = this.getBothKindsOfIndexSignaturesIncludingAugmentedType(targetTypeSymbol, context);
@@ -10058,15 +10031,15 @@ module TypeScript {
 
         // Assignment Compatibility and Subtyping
 
-        private substituteUpperBoundForType(type: PullTypeSymbol) {
-            if (!type || !type.isTypeParameter()) {
+        private getUpperBound(type: PullTypeSymbol) {
+            if (!type.isTypeParameter()) {
                 return type;
             }
 
             var constraint = (<PullTypeParameterSymbol>type).getConstraint();
 
             if (constraint && (constraint !== type)) {
-                return this.substituteUpperBoundForType(constraint);
+                return this.getUpperBound(constraint);
             }
 
             return type;
@@ -10284,31 +10257,9 @@ module TypeScript {
                 return true;
             }
 
-            var sourceSubstitution: PullTypeSymbol = source;
-
-            // We substitute for the source in the following ways:
-            //  - When source is the primitive type Number, Boolean, or String, sourceSubstitution is the global interface type
-            //      'Number', 'Boolean', or 'String'
-            //  - When source is an enum type, sourceSubstitution is the global interface type 'Number'
-            //  - When source is a type parameter, sourceSubstituion is the constraint of that type parameter
-            if (source === this.semanticInfoChain.stringTypeSymbol && this.cachedStringInterfaceType()) {
-                this.resolveDeclaredSymbol(this.cachedStringInterfaceType(), context);
-                sourceSubstitution = this.cachedStringInterfaceType();
-            }
-            else if (source === this.semanticInfoChain.numberTypeSymbol && this.cachedNumberInterfaceType()) {
-                this.resolveDeclaredSymbol(this.cachedNumberInterfaceType(), context);
-                sourceSubstitution = this.cachedNumberInterfaceType();
-            }
-            else if (source === this.semanticInfoChain.booleanTypeSymbol && this.cachedBooleanInterfaceType()) {
-                this.resolveDeclaredSymbol(this.cachedBooleanInterfaceType(), context);
-                sourceSubstitution = this.cachedBooleanInterfaceType();
-            }
-            else if (PullHelpers.symbolIsEnum(source) && this.cachedNumberInterfaceType()) {
-                sourceSubstitution = this.cachedNumberInterfaceType();
-            }
-            else if (source.isTypeParameter()) {
-                sourceSubstitution = this.substituteUpperBoundForType(source);
-            }
+            // Note, for subtype the apparent type rules are different for type parameters. This
+            // is not yet reflected in the spec.
+            var sourceApparentType: PullTypeSymbol = this.getApparentType(source, !assignableTo);
 
             // In the case of a 'false', we want to short-circuit a recursive typecheck
             var isRelatableInfo = this.sourceIsRelatableToTargetInCache(source, target, comparisonCache, comparisonInfo);
@@ -10425,13 +10376,6 @@ module TypeScript {
                 }
             }
 
-            // this check ensures that we only operate on object types from this point forward,
-            // since the checks involving primitives occurred above
-            if (sourceSubstitution.isPrimitive() || target.isPrimitive()) {
-                // we already know that they're not the same, and that neither is 'any'
-                return false;
-            }
-
             if (target.isTypeParameter()) {
                 if (source.isTypeParameter()) {
                     // SPEC Nov 18
@@ -10450,26 +10394,33 @@ module TypeScript {
                     // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
                     // target to be a subtype of its constraint
                     if (isComparingInstantiatedSignatures) {
-                        target = this.substituteUpperBoundForType(target);
+                        target = this.getUpperBound(target);
                     }
                     else {
-                        return this.typesAreIdentical(target, sourceSubstitution, context);
+                        return this.typesAreIdentical(target, sourceApparentType, context);
                     }
                 }
             }
 
-            comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
-
-            var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(sourceSubstitution, target);
-            // If we were walking source and sourceSubstitution do not match, replace them in the currentSymbols
-            var needsSourceSubstitutionUpdate = source != sourceSubstitution
-                && context.enclosingTypeWalker1._canWalkStructure()
-                && context.enclosingTypeWalker1._getCurrentSymbol() != sourceSubstitution;
-            if (needsSourceSubstitutionUpdate) {
-                context.enclosingTypeWalker1.setCurrentSymbol(sourceSubstitution);
+            // this check ensures that we only operate on object types from this point forward,
+            // since the checks involving primitives occurred above
+            if (sourceApparentType.isPrimitive() || target.isPrimitive()) {
+                // we already know that they're not the same, and that neither is 'any'
+                return false;
             }
 
-            var isRelatable = this.sourceIsRelatableToTargetWorker(source, target, sourceSubstitution, assignableTo,
+            comparisonCache.setValueAt(source.pullSymbolID, target.pullSymbolID, true);
+
+            var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(sourceApparentType, target);
+            // If we were walking source and sourceSubstitution do not match, replace them in the currentSymbols
+            var needsSourceSubstitutionUpdate = source != sourceApparentType
+                && context.enclosingTypeWalker1._canWalkStructure()
+                && context.enclosingTypeWalker1._getCurrentSymbol() != sourceApparentType;
+            if (needsSourceSubstitutionUpdate) {
+                context.enclosingTypeWalker1.setCurrentSymbol(sourceApparentType);
+            }
+
+            var isRelatable = this.sourceIsRelatableToTargetWorker(source, target, sourceApparentType, assignableTo,
                 comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
 
             if (needsSourceSubstitutionUpdate) {
@@ -11871,13 +11822,13 @@ module TypeScript {
             return true;
         }
 
-        public instantiateTypeToBaseConstraints(typeToInstantiate: PullTypeSymbol, typeParameterASTs: ISeparatedSyntaxList2, context: PullTypeResolutionContext): PullTypeSymbol {
+        public instantiateTypeToDefaultConstraints(typeToInstantiate: PullTypeSymbol, typeParameterASTs: ISeparatedSyntaxList2, context: PullTypeResolutionContext): PullTypeSymbol {
             var typeParameterCount = typeParameterASTs.nonSeparatorCount();
             var typeArguments = new Array<PullTypeSymbol>(typeParameterCount);
             for (var i = 0; i < typeParameterCount; i++) {
                 var typeParameterAST = typeParameterASTs.nonSeparatorAt(i);
                 var resolvedTypeParameterSymbol = this.resolveTypeParameterDeclaration(<TypeParameter>typeParameterAST, context);
-                typeArguments[i] = resolvedTypeParameterSymbol.getBaseConstraint(this.semanticInfoChain);
+                typeArguments[i] = resolvedTypeParameterSymbol.getDefaultConstraint(this.semanticInfoChain);
             }
 
             return this.createInstantiatedType(typeToInstantiate, typeArguments);

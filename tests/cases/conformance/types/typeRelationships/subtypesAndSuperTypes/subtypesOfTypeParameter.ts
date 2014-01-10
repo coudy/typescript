@@ -97,8 +97,8 @@ function f2<T, U>(x: T, y: U) {
         var r18 = true ? a : x;
     }
 
-    var r19 = true ? new Object() : x; // ok
-    var r19 = true ? x : new Object(); // ok
+    var r19 = true ? new Object() : x; // error because unconstrained type parameter and Object are not related via subtype
+    var r19 = true ? x : new Object(); // error because unconstrained type parameter and Object are not related via subtype
 
     var r20 = true ? {} : x; // ok
     var r20 = true ? x : {}; // ok

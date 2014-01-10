@@ -47,10 +47,3 @@ var r8 = true ? function (x) {
 };
 var r10 = true ? derived : derived2;
 var r11 = true ? base : derived2;
-
-function foo5(t, u) {
-    return true ? t : u;
-}
-//function foo2<T extends U, U>(t: T, u: U) {
-//    return true ? t : u;
-//}

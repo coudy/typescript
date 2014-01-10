@@ -1766,7 +1766,7 @@ module TypeScript {
                     var typeParameterASTs = classAST.typeParameterList && classAST.typeParameterList.typeParameters;
                     Debug.assert(typeParameterASTs);
                     var resolver = this.semanticInfoChain.getResolver();
-                    prototypeSymbol.type = resolver.instantiateTypeToBaseConstraints(prototypeSymbol.type, typeParameterASTs, new PullTypeResolutionContext(resolver));
+                    prototypeSymbol.type = resolver.instantiateTypeToDefaultConstraints(prototypeSymbol.type, typeParameterASTs, new PullTypeResolutionContext(resolver));
                 }
                 prototypeSymbol.setResolved();
             }
