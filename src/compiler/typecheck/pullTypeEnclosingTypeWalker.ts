@@ -56,7 +56,10 @@ module TypeScript {
                     // This may occur if we are trying to walk type parameter in the original declaration
                     return GenerativeTypeClassification.Unknown;
                 }
-                return currentType.getGenerativeTypeClassification(this.getEnclosingType());
+
+                var variableNeededToFixNodeJitterBug = this.getEnclosingType();
+
+                return currentType.getGenerativeTypeClassification(variableNeededToFixNodeJitterBug);
             }
 
             return GenerativeTypeClassification.Closed;
