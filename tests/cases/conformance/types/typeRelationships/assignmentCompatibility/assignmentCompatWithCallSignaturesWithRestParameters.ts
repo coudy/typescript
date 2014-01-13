@@ -32,8 +32,8 @@ var a3: (x: number, y?: string, ...z: number[]) => number;
     a3 = (x?: number) => 1; // ok, fewer required params
     a3 = (x: number) => 1; // ok, same number of required params
     a3 = (x: number, y: string) => 1;  // ok, all present params match
-    a3 = (x: number, y?: number, z?: number) => 1;  // should be error
-    a3 = (x: number, ...z: number[]) => 1;  // should be error
+    a3 = (x: number, y?: number, z?: number) => 1;  // error
+    a3 = (x: number, ...z: number[]) => 1;  // error
     a3 = (x: string, y?: string, z?: string) => 1;  // error
 
 var a4: (x?: number, y?: string, ...z: number[]) => number;

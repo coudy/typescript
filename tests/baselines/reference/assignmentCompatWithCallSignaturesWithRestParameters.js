@@ -84,14 +84,14 @@ a3 = function (x, y) {
 }; // ok, all present params match
 a3 = function (x, y, z) {
     return 1;
-}; // should be error
+}; // error
 a3 = function (x) {
     var z = [];
     for (var _i = 0; _i < (arguments.length - 1); _i++) {
         z[_i] = arguments[_i + 1];
     }
     return 1;
-}; // should be error
+}; // error
 a3 = function (x, y, z) {
     return 1;
 }; // error
