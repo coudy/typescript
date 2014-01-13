@@ -6,13 +6,12 @@
     },
     "sourceUnit": {
         "kind": "SourceUnit",
-        "fullWidth": 17,
+        "fullWidth": 20,
         "isIncrementallyUnusable": true,
         "moduleElements": [
             {
                 "kind": "VariableStatement",
-                "fullWidth": 17,
-                "isIncrementallyUnusable": true,
+                "fullWidth": 20,
                 "modifiers": [],
                 "variableDeclaration": {
                     "kind": "VariableDeclaration",
@@ -39,9 +38,9 @@
                             "propertyName": {
                                 "kind": "IdentifierName",
                                 "width": 1,
-                                "text": "v",
-                                "value": "v",
-                                "valueText": "v"
+                                "text": "s",
+                                "value": "s",
+                                "valueText": "s"
                             },
                             "typeAnnotation": {
                                 "kind": "TypeAnnotation",
@@ -111,8 +110,19 @@
                 },
                 "semicolonToken": {
                     "kind": "SemicolonToken",
-                    "width": 0,
-                    "text": ""
+                    "width": 1,
+                    "fullWidth": 3,
+                    "text": ";",
+                    "value": ";",
+                    "valueText": ";",
+                    "hasTrailingTrivia": true,
+                    "hasTrailingNewLine": true,
+                    "trailingTrivia": [
+                        {
+                            "kind": "NewLineTrivia",
+                            "text": "\r\n"
+                        }
+                    ]
                 }
             }
         ],
@@ -124,8 +134,9 @@
     },
     "lineMap": {
         "lineStarts": [
-            0
+            0,
+            20
         ],
-        "length": 17
+        "length": 20
     }
 }
