@@ -40,7 +40,7 @@ function foo<T extends List<number>, U extends MyList<number>>(t: T, u: U) {
 
 function foo2<T extends U, U extends MyList<number>>(t: T, u: U) {
     t = u; // error
-    u = t; // error
+    u = t; // was error, ok after constraint made illegal, doesn't matter
 
     var a: List<number>;
     var b: MyList<number>;
