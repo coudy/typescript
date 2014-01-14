@@ -82,7 +82,7 @@ module Errors {
         }
 
         interface I8 extends A {
-            // error, cannot make inferences for T because multiple signatures to infer from, {} not compatible with base signature
+            // ok, we relate each signature of a16 to b16, and within that, we make inferences from two different signatures in the respective A.a16 signature
             a16: <T>(x: (a: T) => T) => T[];
         }
 

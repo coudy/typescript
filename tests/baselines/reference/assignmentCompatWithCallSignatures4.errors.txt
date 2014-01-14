@@ -39,10 +39,6 @@ assignmentCompatWithCallSignatures4.ts(76,9): error TS2012: Cannot convert '(x: 
 	Call signatures of types '(x: { a: string; b: number; }) => number' and '<T extends Base>(x: { a: T; b: T; }) => number' are incompatible:
 		Types of property 'a' of types '{ a: string; b: number; }' and '{ a: T; b: T; }' are incompatible.
 		Types of property 'a' of types '{ a: T; b: T; }' and '{ a: string; b: number; }' are incompatible.
-assignmentCompatWithCallSignatures4.ts(79,9): error TS2012: Cannot convert '<T>(x: (a: T) => T) => T[]' to '{ (x: { (a: number): number; (a?: number): number; }): number[]; (x: { (a: boolean): boolean; (a?: boolean): boolean; }): boolean[]; }':
-	Call signatures of types '<T>(x: (a: T) => T) => T[]' and '{ (x: { (a: number): number; (a?: number): number; }): number[]; (x: { (a: boolean): boolean; (a?: boolean): boolean; }): boolean[]; }' are incompatible:
-		Types of property 'pop' of types '{}[]' and 'number[]' are incompatible:
-			Call signatures of types '() => {}' and '() => number' are incompatible.
 assignmentCompatWithCallSignatures4.ts(80,9): error TS2012: Cannot convert '{ (x: { (a: number): number; (a?: number): number; }): number[]; (x: { (a: boolean): boolean; (a?: boolean): boolean; }): boolean[]; }' to '<T>(x: (a: T) => T) => T[]':
 	Call signatures of types '{ (x: { (a: number): number; (a?: number): number; }): number[]; (x: { (a: boolean): boolean; (a?: boolean): boolean; }): boolean[]; }' and '<T>(x: (a: T) => T) => T[]' are incompatible.
 assignmentCompatWithCallSignatures4.ts(84,9): error TS2012: Cannot convert '{ (x: { <T extends Derived>(a: T): T; <T extends Base>(a: T): T; }): any[]; (x: { <T extends Derived2>(a: T): T; <T extends Base>(a: T): T; }): any[]; }' to '<T>(x: (a: T) => T) => any[]':

@@ -21,7 +21,7 @@ module GenericParameter {
         return cb;
     }
 
-    var r5 = foo5(x => x); // {} => string (+1 overload)
+    var r5 = foo5(x => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
     var a: { <T>(x: T): string; <T>(x: number): T; }
     var r7 = foo5(a); // {} => string (+1 overload)
 
@@ -29,7 +29,7 @@ module GenericParameter {
         return cb;
     }
 
-    var r8 = foo6(x => x); // {} => string (+1 overload)
+    var r8 = foo6(x => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
     var r9 = foo6(<T>(x: T) => ''); // {} => string (+1 overload)
     var r11 = foo6(<T>(x: T, y?: T) => ''); // {} => string (+1 overload)
 
@@ -37,8 +37,8 @@ module GenericParameter {
         return cb;
     }
 
-    var r12 = foo7(1, (x) => x); // number => string (+1 overload)
-    var r13 = foo7(1, <T>(x: T) => ''); // number => string (+1 overload)
+    var r12 = foo7(1, (x) => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
+    var r13 = foo7(1, <T>(x: T) => ''); // {} => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
     var a: { <T>(x: T): string; <T>(x: number): T; }
-    var r14 = foo7(1, a); // number => string (+1 overload)
+    var r14 = foo7(1, a); // {} => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
 }

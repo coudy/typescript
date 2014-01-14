@@ -11667,47 +11667,19 @@ module TypeScript {
                 }
             }
 
-            parameterSignatures = parameterType.getCallSignatures();
-            objectSignatures = objectType.getCallSignatures();
+            // If M is a call signature then for each call signature N in S, if the number of non-optional
+            // parameters in N is greater than or equal to that of M, N is instantiated with each of its
+            // type parameter constraints as type arguments (if any) and inferences are made from parameter
+            // types in N to parameter types in the same position in M, and from the return type of N to the
+            // return type of M.
+            this.relateSignatureGroupToTypeParameters(parameterType.getCallSignatures(), objectType.getCallSignatures(), PullElementKind.CallSignature, argContext, context);
 
-            // if: 
-            //  - M is a call signature
-            //  - no other call signatures exist in T
-            //  - exactly one call signature N exists in S
-            //  - N is non - generic, and
-            //  - the number of required parameters in N is greater than or equal to that of M,
-            // then inferences are made from parameter types in N to parameter types in the same position in M, 
-            // and from the return type of N to the return type of M.
-            if ((parameterSignatures.length === 1) &&
-                (objectSignatures.length === 1) &&
-                !objectSignatures[0].isGeneric() &&
-                (parameterSignatures[0].nonOptionalParamCount >= objectSignatures[0].nonOptionalParamCount)) {
-
-                context.walkSignatures(PullElementKind.CallSignature, 0);
-                this.relateFunctionSignatureToTypeParameters(objectSignatures[0], parameterSignatures[0], argContext, context);
-                context.postWalkSignatures();
-            }
-
-            parameterSignatures = parameterType.getConstructSignatures();
-            objectSignatures = objectType.getConstructSignatures();
-
-            // if: 
-            //  - M is a call signature
-            //  - no other call signatures exist in T
-            //  - exactly one call signature N exists in S
-            //  - N is non - generic, and
-            //  - the number of required parameters in N is greater than or equal to that of M,
-            // then inferences are made from parameter types in N to parameter types in the same position in M, 
-            // and from the return type of N to the return type of M.
-            if ((parameterSignatures.length === 1) &&
-                (objectSignatures.length === 1) &&
-                !objectSignatures[0].isGeneric() &&
-                (parameterSignatures[0].nonOptionalParamCount >= objectSignatures[0].nonOptionalParamCount)) {
-
-                context.walkSignatures(PullElementKind.ConstructSignature, 0);
-                this.relateFunctionSignatureToTypeParameters(objectSignatures[0], parameterSignatures[0], argContext, context);
-                context.postWalkSignatures();
-            }
+            // If M is a construct signature then for each construct signature N in S, if the number of non-optional
+            // parameters in N is greater than or equal to that of M, N is instantiated with each of its
+            // type parameter constraints as type arguments (if any) and inferences are made from parameter
+            // types in N to parameter types in the same position in M, and from the return type of N to the
+            // return type of M.
+            this.relateSignatureGroupToTypeParameters(parameterType.getConstructSignatures(), objectType.getConstructSignatures(), PullElementKind.ConstructSignature, argContext, context);
 
             var parameterIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(parameterType, context);
             var objectIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(objectType, context);
@@ -11725,6 +11697,56 @@ module TypeScript {
                 this.relateFunctionSignatureToTypeParameters(objectIndexSignatures.numericSignature, parameterIndexSignatures.numericSignature, argContext, context);
                 context.postWalkIndexSignatureReturnTypes(/*onlySignature*/ true);
             }
+        }
+
+        // If M is a call/construct signature then for each call/construct signature N in S, if the number of non-optional
+        // parameters in N is greater than or equal to that of M, N is instantiated with each of its
+        // type parameter constraints as type arguments (if any) and inferences are made from parameter
+        // types in N to parameter types in the same position in M, and from the return type of N to the
+        // return type of M.
+        private relateSignatureGroupToTypeParameters(
+            parameterSignatures: PullSignatureSymbol[],
+            argumentSignatures: PullSignatureSymbol[],
+            signatureKind: PullElementKind, // Call or construct
+            argContext: TypeArgumentInferenceContext,
+            context: PullTypeResolutionContext): void {
+     //       if (parameterSignatures.length != 1 || argumentSignatures.length != 1) return;
+            for (var i = 0; i < parameterSignatures.length; i++) {
+                var paramSignature = parameterSignatures[i];
+                if (argumentSignatures.length > 0 && paramSignature.isGeneric()) {
+                    paramSignature = this.instantiateSignatureToBaseConstraints(paramSignature);
+                }
+                for (var j = 0; j < argumentSignatures.length; j++) {
+                    var argumentSignature = argumentSignatures[j];
+                    if (argumentSignature.nonOptionalParamCount > paramSignature.nonOptionalParamCount) {
+                        continue;
+                    }
+
+                    if (argumentSignature.isGeneric()) {
+                        argumentSignature = this.instantiateSignatureToBaseConstraints(argumentSignature);
+                    }
+
+                    // In relateTypeToTypeParameters, the argument type (expressionType) is passed in first
+                    // (before the parameter type), so the correct order here is j, i
+                    context.walkSignatures(signatureKind, j, i);
+                    this.relateFunctionSignatureToTypeParameters(argumentSignature, paramSignature, argContext, context); 
+                    context.postWalkSignatures();
+                }
+            }
+        }
+
+        private instantiateSignatureToBaseConstraints(signature: PullSignatureSymbol): PullSignatureSymbol {
+            // Instantiate the signature with it's constraints
+            var typeParameters = signature.getTypeParameters();
+            var typeParameterToConstraintMap: { [n: number]: PullTypeSymbol } = {};
+            for (var i = 0; i < typeParameters.length; i++) {
+                var baseConstraint = typeParameters[i].getBaseConstraint(this.semanticInfoChain);
+                if (baseConstraint === this.semanticInfoChain.anyTypeSymbol) {
+                    baseConstraint = this.semanticInfoChain.emptyTypeSymbol;
+                }
+                typeParameterToConstraintMap[typeParameters[i].pullSymbolID] = baseConstraint;
+            }
+            return this.instantiateSignature(signature, typeParameterToConstraintMap);
         }
 
         private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,

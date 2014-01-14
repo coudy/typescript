@@ -82,7 +82,7 @@ var Errors;
         b15a = a15; // error
 
         var b16;
-        a16 = b16; // error, cannot make inferences for T because multiple signatures to infer from, {} not compatible with base signature
+        a16 = b16; // ok, we relate each signature of a16 to b16, and within that, we make inferences from two different signatures in the respective a16 signature
         b16 = a16; // error
 
         var b17;
