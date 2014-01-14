@@ -3312,8 +3312,24 @@ module TypeScript {
 
         // This is just a one step fallback to any if there is no constraint
         // It is used for instantiating the prototype member
-        public getDefaultConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
-            return this._constraint || semanticInfoChain.anyTypeSymbol;
+        public getBaseConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
+            return this.getConstraintRecursively() || semanticInfoChain.anyTypeSymbol;
+        }
+
+        // Base case of the recursion is when you hit yourself or no constraint, or not a type parameter
+        private getConstraintRecursively() {
+            var constraint = this.getConstraint();
+
+            if (constraint && (constraint !== this)) {
+                if (constraint.isTypeParameter()) {
+                    return (<PullTypeParameterSymbol>constraint).getConstraintRecursively();
+                }
+                else {
+                    return constraint;
+                }
+            }
+
+            return null;
         }
 
         // Note: This is a deviation from the spec. Using the constraint to get signatures is only

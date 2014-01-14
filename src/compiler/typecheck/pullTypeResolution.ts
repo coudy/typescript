@@ -216,20 +216,20 @@ module TypeScript {
         // Note, the upper bound here is one step before the base constraint.
         private getApparentType(type: PullTypeSymbol, isForSubtypeRelation: boolean): PullTypeSymbol {
             if (type.isTypeParameter()) {
-                var upperBound = this.getUpperBound(type);
-                if (upperBound.isTypeParameter()) {
+                var baseConstraint = (<PullTypeParameterSymbol>type).getBaseConstraint(this.semanticInfoChain);
+                if (baseConstraint === this.semanticInfoChain.anyTypeSymbol) {
                     // Now choose a base constraint based on whether it is for subtype. This is not
                     // yet in the spec.
                     if (isForSubtypeRelation) {
                         return this.semanticInfoChain.anyTypeSymbol;
                     }
                     else {
-                        return this.semanticInfoChain.emptyTypeSymbol
+                        return this.semanticInfoChain.emptyTypeSymbol;
                     }
                 }
                 else {
                     // Don't return. We need to feed the resulting type thru the rest of the method
-                    type = upperBound;
+                    type = baseConstraint;
                 }
             }
             if (type.isPrimitive()) {
@@ -6673,12 +6673,6 @@ module TypeScript {
                 lhsType = (<PullTypeAliasSymbol>lhsType).getExportAssignedTypeSymbol();
             }
 
-            lhsType = lhsType.widenedType(this, expression, context);
-
-            if (this.isAnyOrEquivalent(lhsType)) {
-                return lhsType;
-            }
-
             if (!lhsType) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.Could_not_find_enclosing_symbol_for_dotted_name_0, [name.text()]));
                 return this.getNewErrorTypeSymbol();
@@ -6706,7 +6700,13 @@ module TypeScript {
                 }
             }
 
-            lhsType = this.getApparentType(lhsType, /*isForSubtypeRelation*/ false);
+            var originalLhsTypeForErrorReporting = lhsType;
+
+            lhsType = this.getApparentType(lhsType, /*isForSubtypeRelation*/ false).widenedType(this, expression, context);
+
+            if (this.isAnyOrEquivalent(lhsType)) {
+                return lhsType;
+            }
 
             // November 18, 2013, Section 4.10:
             // If Name denotes a property member in the apparent type of ObjExpr, the property access
@@ -6738,7 +6738,7 @@ module TypeScript {
 
                 if (!nameSymbol) {
                     var enclosingDecl = this.getEnclosingDeclForAST(expression);
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [name.text(), lhsType.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(name, DiagnosticCode.The_property_0_does_not_exist_on_value_of_type_1, [name.text(), originalLhsTypeForErrorReporting.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                     return this.getNewErrorTypeSymbol(rhsName);
                 }
             }
@@ -8163,6 +8163,8 @@ module TypeScript {
 
             var targetTypeSymbol = targetSymbol.type;
 
+            targetTypeSymbol = this.getApparentType(targetTypeSymbol, /*isForSubtypeRelation*/ false);
+
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 return { symbol: targetTypeSymbol }
             }
@@ -8174,8 +8176,6 @@ module TypeScript {
             if (elementType && isNumberIndex) {
                 return { symbol: elementType };
             }
-
-            targetTypeSymbol = this.getApparentType(targetTypeSymbol, /*isForSubtypeRelation*/ false);
 
             // if the index expression is a string literal or a numberic literal and the object expression has
             // a property with that name,  the property access is the type of that property
@@ -10031,20 +10031,6 @@ module TypeScript {
 
         // Assignment Compatibility and Subtyping
 
-        private getUpperBound(type: PullTypeSymbol) {
-            if (!type.isTypeParameter()) {
-                return type;
-            }
-
-            var constraint = (<PullTypeParameterSymbol>type).getConstraint();
-
-            if (constraint && (constraint !== type)) {
-                return this.getUpperBound(constraint);
-            }
-
-            return type;
-        }
-
         private symbolsShareDeclaration(symbol1: PullSymbol, symbol2: PullSymbol) {
             var decls1 = symbol1.getDeclarations();
             var decls2 = symbol2.getDeclarations();
@@ -10394,7 +10380,7 @@ module TypeScript {
                     // if the source is not another type parameter, and we're specializing at a constraint site, we consider the
                     // target to be a subtype of its constraint
                     if (isComparingInstantiatedSignatures) {
-                        target = this.getUpperBound(target);
+                        target = (<PullTypeParameterSymbol>target).getBaseConstraint(this.semanticInfoChain);
                     }
                     else {
                         return this.typesAreIdentical(target, sourceApparentType, context);
@@ -11828,7 +11814,7 @@ module TypeScript {
             for (var i = 0; i < typeParameterCount; i++) {
                 var typeParameterAST = typeParameterASTs.nonSeparatorAt(i);
                 var resolvedTypeParameterSymbol = this.resolveTypeParameterDeclaration(<TypeParameter>typeParameterAST, context);
-                typeArguments[i] = resolvedTypeParameterSymbol.getDefaultConstraint(this.semanticInfoChain);
+                typeArguments[i] = resolvedTypeParameterSymbol.getBaseConstraint(this.semanticInfoChain);
             }
 
             return this.createInstantiatedType(typeToInstantiate, typeArguments);
