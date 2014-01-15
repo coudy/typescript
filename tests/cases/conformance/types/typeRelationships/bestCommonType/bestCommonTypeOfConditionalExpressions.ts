@@ -20,3 +20,7 @@ var r7: (x: Object) => void = true ? (x: number) => { } : (x: Object) => { };
 var r8 = true ? (x: Object) => { } : (x: number) => { }; // returns Object => void
 var r10: Base = true ? derived : derived2; // no error since we use the contextual type in BCT
 var r11 = true ? base : derived2;
+
+function foo5<T, U>(t: T, u: U): Object {
+    return true ? t : u; // BCT is Object
+}

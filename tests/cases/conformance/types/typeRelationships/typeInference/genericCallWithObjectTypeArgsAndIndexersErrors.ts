@@ -7,7 +7,7 @@ function foo<T>(x: T) {
 function other<T>(arg: T) {
     var b: {
         [x: string]: Object;
-        [x: number]: T; // Error, T is not a subtype of Object
+        [x: number]: T; // ok, T is a subtype of Object because its apparent type is {}
     };
     var r2 = foo(b); // T
 }

@@ -214,18 +214,12 @@ module TypeScript {
         // of the base constraint(section 3.4.1) of T.
         // Otherwise, the apparent type of T is T itself.
         // Note, the upper bound here is one step before the base constraint.
-        private getApparentType(type: PullTypeSymbol, isForSubtypeRelation: boolean): PullTypeSymbol {
+        private getApparentType(type: PullTypeSymbol): PullTypeSymbol {
             if (type.isTypeParameter()) {
                 var baseConstraint = (<PullTypeParameterSymbol>type).getBaseConstraint(this.semanticInfoChain);
                 if (baseConstraint === this.semanticInfoChain.anyTypeSymbol) {
-                    // Now choose a base constraint based on whether it is for subtype. This is not
-                    // yet in the spec.
-                    if (isForSubtypeRelation) {
-                        return this.semanticInfoChain.anyTypeSymbol;
-                    }
-                    else {
-                        return this.semanticInfoChain.emptyTypeSymbol;
-                    }
+                    // If a type parameter's base constraint is any, it's apparent type is {}
+                    return this.semanticInfoChain.emptyTypeSymbol;
                 }
                 else {
                     // Don't return. We need to feed the resulting type thru the rest of the method
@@ -810,7 +804,7 @@ module TypeScript {
                 }
             }
 
-            lhsType = this.getApparentType(lhsType, /*isForSubtypeRelation*/ false);
+            lhsType = this.getApparentType(lhsType);
 
             if (!lhsType.isResolved) {
                 var potentiallySpecializedType = <PullTypeSymbol>this.resolveDeclaredSymbol(lhsType, context);
@@ -6702,7 +6696,7 @@ module TypeScript {
 
             var originalLhsTypeForErrorReporting = lhsType;
 
-            lhsType = this.getApparentType(lhsType, /*isForSubtypeRelation*/ false).widenedType(this, expression, context);
+            lhsType = this.getApparentType(lhsType).widenedType(this, expression, context);
 
             if (this.isAnyOrEquivalent(lhsType)) {
                 return lhsType;
@@ -8163,7 +8157,7 @@ module TypeScript {
 
             var targetTypeSymbol = targetSymbol.type;
 
-            targetTypeSymbol = this.getApparentType(targetTypeSymbol, /*isForSubtypeRelation*/ false);
+            targetTypeSymbol = this.getApparentType(targetTypeSymbol);
 
             if (this.isAnyOrEquivalent(targetTypeSymbol)) {
                 return { symbol: targetTypeSymbol }
@@ -10245,7 +10239,7 @@ module TypeScript {
 
             // Note, for subtype the apparent type rules are different for type parameters. This
             // is not yet reflected in the spec.
-            var sourceApparentType: PullTypeSymbol = this.getApparentType(source, !assignableTo);
+            var sourceApparentType: PullTypeSymbol = this.getApparentType(source);
 
             // In the case of a 'false', we want to short-circuit a recursive typecheck
             var isRelatableInfo = this.sourceIsRelatableToTargetInCache(source, target, comparisonCache, comparisonInfo);
