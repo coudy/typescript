@@ -2783,6 +2783,10 @@ module TypeScript {
         }
 
         private genericTypeIsUsedWithoutRequiredTypeArguments(typeSymbol: PullTypeSymbol, term: AST, context: PullTypeResolutionContext): boolean {
+            if (!typeSymbol) {
+                return false;
+            }
+
             if (typeSymbol.isAlias()) {
                 return this.genericTypeIsUsedWithoutRequiredTypeArguments((<PullTypeAliasSymbol>typeSymbol).getExportAssignedTypeSymbol(), term, context);
             }
