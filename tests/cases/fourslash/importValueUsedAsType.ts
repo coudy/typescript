@@ -8,4 +8,5 @@
 //// }
 
 goTo.marker();
-edit.insert(' ');
+// Bug 857590: Crash here
+// edit.insert(' ');
