@@ -8678,7 +8678,7 @@ module TypeScript {
             }
 
             var typeArgs: PullTypeSymbol[] = null;
-            var typeReplacementMap: PullTypeSymbol[] = null;
+            var typeReplacementMap: TypeArgumentMap = null;
             var couldNotFindGenericOverload = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
@@ -9347,7 +9347,7 @@ module TypeScript {
 
             var functionTypeA = signatureAToInstantiate.functionType;
             var functionTypeB = contextualSignatureB.functionType;
-            var enclosingTypeParameterMap: PullTypeSymbol[];
+            var enclosingTypeParameterMap: TypeArgumentMap;
 
             if (functionTypeA) {
                 enclosingTypeParameterMap = functionTypeA.getTypeParameterArgumentMap();
@@ -11730,7 +11730,6 @@ module TypeScript {
                 this.relateFunctionSignatureToTypeParameters(objectIndexSignatures.numericSignature, parameterIndexSignatures.numericSignature, argContext, context);
                 context.postWalkIndexSignatureReturnTypes(/*onlySignature*/ true);
             }
-
         }
 
         private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,
@@ -13631,7 +13630,7 @@ module TypeScript {
             return false;
         }
 
-        public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: PullTypeSymbol[]): PullTypeSymbol {
+        public instantiateType(type: PullTypeSymbol, typeParameterArgumentMap: TypeArgumentMap): PullTypeSymbol {
             // if the type is a primitive type, nothing to do here
             if (type.isPrimitive()) {
                 return type;
@@ -13659,7 +13658,7 @@ module TypeScript {
         }
 
         // Instantiates the type parameter
-        public instantiateTypeParameter(typeParameter: PullTypeParameterSymbol, typeParameterArgumentMap: PullTypeSymbol[]): PullTypeParameterSymbol {
+        public instantiateTypeParameter(typeParameter: PullTypeParameterSymbol, typeParameterArgumentMap: TypeArgumentMap): PullTypeParameterSymbol {
             // if the type parameter doesnot contain constraint the instantiated version of it is identical to itself
             var constraint = typeParameter.getConstraint();
             if (!constraint) {
@@ -13698,7 +13697,7 @@ module TypeScript {
         //
         // In the code above, we don't want to cache the invocation of 'm' in 'n' against 'any', since the
         // signature to 'm' is only partially specialized 
-        public instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: PullTypeSymbol[]): PullSignatureSymbol {
+        public instantiateSignature(signature: PullSignatureSymbol, typeParameterArgumentMap: TypeArgumentMap): PullSignatureSymbol {
             if (!signature.wrapsSomeTypeParameter(typeParameterArgumentMap)) {
                 return signature;
             }

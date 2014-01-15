@@ -10,7 +10,7 @@ module TypeScript {
         // 0 indicates that it does not wrap type parameter
         // undefined indicates that the info wasnt available from cache
         // rest indicates the valid type parameter id
-        public getWrapsTypeParameter(typeParameterArgumentMap: PullTypeSymbol[]): number {
+        public getWrapsTypeParameter(typeParameterArgumentMap: TypeArgumentMap): number {
             // Find result from cache
             var mapHasTypeParameterNotCached = false;
             for (var typeParameterID in typeParameterArgumentMap) {
@@ -32,7 +32,7 @@ module TypeScript {
             return undefined;
         }
 
-        public setWrapsTypeParameter(typeParameterArgumentMap: PullTypeSymbol[], wrappingTypeParameterID: number) {
+        public setWrapsTypeParameter(typeParameterArgumentMap: TypeArgumentMap, wrappingTypeParameterID: number) {
             if (wrappingTypeParameterID) {
                 // wrappingTypeParameterID is the known type parameter that is wrapped
                 // We dont know about other type parameters present in the map and hence we cant set their values
@@ -56,7 +56,7 @@ module TypeScript {
         // helping in not modifying entried in the existing map
         export class MutableTypeArgumentMap {
             public createdDuplicateTypeArgumentMap = false;
-            constructor(public typeParameterArgumentMap: PullTypeSymbol[]) {
+            constructor(public typeParameterArgumentMap: TypeArgumentMap) {
             }
             public ensureTypeArgumentCopy() {
                 if (!this.createdDuplicateTypeArgumentMap) {
