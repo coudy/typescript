@@ -82,26 +82,6 @@ Line 39 col 4 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 39 col 11 IdentifierName "fn" = (...a: Derived[]) => void
 Line 39 col 17 IdentifierName "a" = Derived[]
 Line 39 col 20 IdentifierName "Derived" = Derived
-Line 41 col 4 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 41 col 11 IdentifierName "fn" = <T, U extends T>(t: T, u: U) => T[]
-Line 41 col 14 IdentifierName "T" = T
-Line 41 col 17 IdentifierName "U" = U
-Line 41 col 27 IdentifierName "T" = T
-Line 41 col 30 IdentifierName "t" = T
-Line 41 col 33 IdentifierName "T" = T
-Line 41 col 36 IdentifierName "u" = U
-Line 41 col 39 IdentifierName "U" = U
-Line 41 col 43 IdentifierName "T" = T
-Line 42 col 4 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 42 col 11 IdentifierName "fn" = <A, B extends A>(a: A, b: B) => A[]
-Line 42 col 14 IdentifierName "A" = A
-Line 42 col 17 IdentifierName "B" = B
-Line 42 col 27 IdentifierName "A" = A
-Line 42 col 30 IdentifierName "a" = A
-Line 42 col 33 IdentifierName "A" = A
-Line 42 col 36 IdentifierName "b" = B
-Line 42 col 39 IdentifierName "B" = B
-Line 42 col 43 IdentifierName "A" = A
 Line 45 col 4 IdentifierName "r1a1" = boolean
 Line 45 col 11 LessThanExpression "a1 < b1" = boolean
 Line 45 col 11 IdentifierName "a1" = { fn(): void; }
@@ -146,10 +126,6 @@ Line 55 col 4 IdentifierName "r1a11" = boolean
 Line 55 col 12 LessThanExpression "a11 < b11" = boolean
 Line 55 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 55 col 18 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 56 col 4 IdentifierName "r1a12" = boolean
-Line 56 col 12 LessThanExpression "a12 < b12" = boolean
-Line 56 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 56 col 18 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 58 col 4 IdentifierName "r1b1" = boolean
 Line 58 col 11 LessThanExpression "b1 < a1" = boolean
 Line 58 col 11 IdentifierName "b1" = { fn(): void; }
@@ -194,10 +170,6 @@ Line 68 col 4 IdentifierName "r1b11" = boolean
 Line 68 col 12 LessThanExpression "b11 < a11" = boolean
 Line 68 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 68 col 18 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 69 col 4 IdentifierName "r1b12" = boolean
-Line 69 col 12 LessThanExpression "b12 < a12" = boolean
-Line 69 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 69 col 18 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 72 col 4 IdentifierName "r2a1" = boolean
 Line 72 col 11 GreaterThanExpression "a1 > b1" = boolean
 Line 72 col 11 IdentifierName "a1" = { fn(): void; }
@@ -242,10 +214,6 @@ Line 82 col 4 IdentifierName "r2a11" = boolean
 Line 82 col 12 GreaterThanExpression "a11 > b11" = boolean
 Line 82 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 82 col 18 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 83 col 4 IdentifierName "r2a12" = boolean
-Line 83 col 12 GreaterThanExpression "a12 > b12" = boolean
-Line 83 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 83 col 18 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 85 col 4 IdentifierName "r2b1" = boolean
 Line 85 col 11 GreaterThanExpression "b1 > a1" = boolean
 Line 85 col 11 IdentifierName "b1" = { fn(): void; }
@@ -290,10 +258,6 @@ Line 95 col 4 IdentifierName "r2b11" = boolean
 Line 95 col 12 GreaterThanExpression "b11 > a11" = boolean
 Line 95 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 95 col 18 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 96 col 4 IdentifierName "r2b12" = boolean
-Line 96 col 12 GreaterThanExpression "b12 > a12" = boolean
-Line 96 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 96 col 18 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 99 col 4 IdentifierName "r3a1" = boolean
 Line 99 col 11 LessThanOrEqualExpression "a1 <= b1" = boolean
 Line 99 col 11 IdentifierName "a1" = { fn(): void; }
@@ -338,10 +302,6 @@ Line 109 col 4 IdentifierName "r3a11" = boolean
 Line 109 col 12 LessThanOrEqualExpression "a11 <= b11" = boolean
 Line 109 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 109 col 19 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 110 col 4 IdentifierName "r3a12" = boolean
-Line 110 col 12 LessThanOrEqualExpression "a12 <= b12" = boolean
-Line 110 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 110 col 19 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 112 col 4 IdentifierName "r3b1" = boolean
 Line 112 col 11 LessThanOrEqualExpression "b1 <= a1" = boolean
 Line 112 col 11 IdentifierName "b1" = { fn(): void; }
@@ -386,10 +346,6 @@ Line 122 col 4 IdentifierName "r3b11" = boolean
 Line 122 col 12 LessThanOrEqualExpression "b11 <= a11" = boolean
 Line 122 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 122 col 19 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 123 col 4 IdentifierName "r3b12" = boolean
-Line 123 col 12 LessThanOrEqualExpression "b12 <= a12" = boolean
-Line 123 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 123 col 19 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 126 col 4 IdentifierName "r4a1" = boolean
 Line 126 col 11 GreaterThanOrEqualExpression "a1 >= b1" = boolean
 Line 126 col 11 IdentifierName "a1" = { fn(): void; }
@@ -434,10 +390,6 @@ Line 136 col 4 IdentifierName "r4a11" = boolean
 Line 136 col 12 GreaterThanOrEqualExpression "a11 >= b11" = boolean
 Line 136 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 136 col 19 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 137 col 4 IdentifierName "r4a12" = boolean
-Line 137 col 12 GreaterThanOrEqualExpression "a12 >= b12" = boolean
-Line 137 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 137 col 19 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 139 col 4 IdentifierName "r4b1" = boolean
 Line 139 col 11 GreaterThanOrEqualExpression "b1 >= a1" = boolean
 Line 139 col 11 IdentifierName "b1" = { fn(): void; }
@@ -482,10 +434,6 @@ Line 149 col 4 IdentifierName "r4b11" = boolean
 Line 149 col 12 GreaterThanOrEqualExpression "b11 >= a11" = boolean
 Line 149 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 149 col 19 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 150 col 4 IdentifierName "r4b12" = boolean
-Line 150 col 12 GreaterThanOrEqualExpression "b12 >= a12" = boolean
-Line 150 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 150 col 19 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 153 col 4 IdentifierName "r5a1" = boolean
 Line 153 col 11 EqualsWithTypeConversionExpression "a1 == b1" = boolean
 Line 153 col 11 IdentifierName "a1" = { fn(): void; }
@@ -530,10 +478,6 @@ Line 163 col 4 IdentifierName "r5a11" = boolean
 Line 163 col 12 EqualsWithTypeConversionExpression "a11 == b11" = boolean
 Line 163 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 163 col 19 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 164 col 4 IdentifierName "r5a12" = boolean
-Line 164 col 12 EqualsWithTypeConversionExpression "a12 == b12" = boolean
-Line 164 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 164 col 19 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 166 col 4 IdentifierName "r5b1" = boolean
 Line 166 col 11 EqualsWithTypeConversionExpression "b1 == a1" = boolean
 Line 166 col 11 IdentifierName "b1" = { fn(): void; }
@@ -578,10 +522,6 @@ Line 176 col 4 IdentifierName "r5b11" = boolean
 Line 176 col 12 EqualsWithTypeConversionExpression "b11 == a11" = boolean
 Line 176 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 176 col 19 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 177 col 4 IdentifierName "r5b12" = boolean
-Line 177 col 12 EqualsWithTypeConversionExpression "b12 == a12" = boolean
-Line 177 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 177 col 19 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 180 col 4 IdentifierName "r6a1" = boolean
 Line 180 col 11 NotEqualsWithTypeConversionExpression "a1 != b1" = boolean
 Line 180 col 11 IdentifierName "a1" = { fn(): void; }
@@ -626,10 +566,6 @@ Line 190 col 4 IdentifierName "r6a11" = boolean
 Line 190 col 12 NotEqualsWithTypeConversionExpression "a11 != b11" = boolean
 Line 190 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 190 col 19 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 191 col 4 IdentifierName "r6a12" = boolean
-Line 191 col 12 NotEqualsWithTypeConversionExpression "a12 != b12" = boolean
-Line 191 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 191 col 19 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 193 col 4 IdentifierName "r6b1" = boolean
 Line 193 col 11 NotEqualsWithTypeConversionExpression "b1 != a1" = boolean
 Line 193 col 11 IdentifierName "b1" = { fn(): void; }
@@ -674,10 +610,6 @@ Line 203 col 4 IdentifierName "r6b11" = boolean
 Line 203 col 12 NotEqualsWithTypeConversionExpression "b11 != a11" = boolean
 Line 203 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 203 col 19 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 204 col 4 IdentifierName "r6b12" = boolean
-Line 204 col 12 NotEqualsWithTypeConversionExpression "b12 != a12" = boolean
-Line 204 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 204 col 19 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 207 col 4 IdentifierName "r7a1" = boolean
 Line 207 col 11 EqualsExpression "a1 === b1" = boolean
 Line 207 col 11 IdentifierName "a1" = { fn(): void; }
@@ -722,10 +654,6 @@ Line 217 col 4 IdentifierName "r7a11" = boolean
 Line 217 col 12 EqualsExpression "a11 === b11" = boolean
 Line 217 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 217 col 20 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 218 col 4 IdentifierName "r7a12" = boolean
-Line 218 col 12 EqualsExpression "a12 === b12" = boolean
-Line 218 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 218 col 20 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 220 col 4 IdentifierName "r7b1" = boolean
 Line 220 col 11 EqualsExpression "b1 === a1" = boolean
 Line 220 col 11 IdentifierName "b1" = { fn(): void; }
@@ -770,10 +698,6 @@ Line 230 col 4 IdentifierName "r7b11" = boolean
 Line 230 col 12 EqualsExpression "b11 === a11" = boolean
 Line 230 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 230 col 20 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 231 col 4 IdentifierName "r7b12" = boolean
-Line 231 col 12 EqualsExpression "b12 === a12" = boolean
-Line 231 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 231 col 20 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
 Line 234 col 4 IdentifierName "r8a1" = boolean
 Line 234 col 11 NotEqualsExpression "a1 !== b1" = boolean
 Line 234 col 11 IdentifierName "a1" = { fn(): void; }
@@ -818,10 +742,6 @@ Line 244 col 4 IdentifierName "r8a11" = boolean
 Line 244 col 12 NotEqualsExpression "a11 !== b11" = boolean
 Line 244 col 12 IdentifierName "a11" = { fn(...a: Base[]): void; }
 Line 244 col 20 IdentifierName "b11" = { fn(...a: Derived[]): void; }
-Line 245 col 4 IdentifierName "r8a12" = boolean
-Line 245 col 12 NotEqualsExpression "a12 !== b12" = boolean
-Line 245 col 12 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }
-Line 245 col 20 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
 Line 247 col 4 IdentifierName "r8b1" = boolean
 Line 247 col 11 NotEqualsExpression "b1 !== a1" = boolean
 Line 247 col 11 IdentifierName "b1" = { fn(): void; }
@@ -866,7 +786,3 @@ Line 257 col 4 IdentifierName "r8b11" = boolean
 Line 257 col 12 NotEqualsExpression "b11 !== a11" = boolean
 Line 257 col 12 IdentifierName "b11" = { fn(...a: Derived[]): void; }
 Line 257 col 20 IdentifierName "a11" = { fn(...a: Base[]): void; }
-Line 258 col 4 IdentifierName "r8b12" = boolean
-Line 258 col 12 NotEqualsExpression "b12 !== a12" = boolean
-Line 258 col 12 IdentifierName "b12" = { fn<A, B extends A>(a: A, b: B): A[]; }
-Line 258 col 20 IdentifierName "a12" = { fn<T, U extends T>(t: T, u: U): T[]; }

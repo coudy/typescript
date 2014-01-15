@@ -1,7 +1,8 @@
 var a: {};
 var b: Object;
 
-function foo<T, U extends T, V extends U>(t: T, u: U, v: V) {
+function foo<T, U/* extends T*/, V/* extends U*/>(t: T, u: U, v: V) {
+    // errors
     var ra1 = t < u;
     var ra2 = t > u;
     var ra3 = t <= u;
@@ -38,6 +39,7 @@ function foo<T, U extends T, V extends U>(t: T, u: U, v: V) {
     var rd7 = v === t;
     var rd8 = v !== t;
 
+    // ok
     var re1 = t < a;
     var re2 = t > a;
     var re3 = t <= a;

@@ -2,6 +2,7 @@ var a;
 var b;
 
 function foo(t, u, v) {
+    // errors
     var ra1 = t < u;
     var ra2 = t > u;
     var ra3 = t <= u;
@@ -38,6 +39,7 @@ function foo(t, u, v) {
     var rd7 = v === t;
     var rd8 = v !== t;
 
+    // ok
     var re1 = t < a;
     var re2 = t > a;
     var re3 = t <= a;

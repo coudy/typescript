@@ -45,9 +45,8 @@ var b8;
 var a9;
 var b9;
 
-var a10;
-var b10;
-
+//var a10: { <T, U extends T>(t: T, u: U): T[] };
+//var b10: { <A, B extends A>(a: A, b: B): A[] };
 // operator <
 var r1a1 = a1 < b1;
 var r1a2 = a2 < b2;
@@ -58,8 +57,8 @@ var r1a6 = a6 < b6;
 var r1a7 = a7 < b7;
 var r1a8 = a8 < b8;
 var r1a9 = a9 < b9;
-var r1a10 = a10 < b10;
 
+//var r1a10 = a10 < b10;
 var r1b1 = b1 < a1;
 var r1b2 = b2 < a2;
 var r1b3 = b3 < a3;
@@ -69,8 +68,8 @@ var r1b6 = b6 < a6;
 var r1b7 = b7 < a7;
 var r1b8 = b8 < a8;
 var r1b9 = b9 < a9;
-var r1b10 = b10 < a10;
 
+//var r1b10 = b10 < a10;
 // operator >
 var r2a1 = a1 > b1;
 var r2a2 = a2 > b2;
@@ -81,8 +80,8 @@ var r2a6 = a6 > b6;
 var r2a7 = a7 > b7;
 var r2a8 = a8 > b8;
 var r2a9 = a9 > b9;
-var r2a10 = a10 > b10;
 
+//var r2a10 = a10 > b10;
 var r2b1 = b1 > a1;
 var r2b2 = b2 > a2;
 var r2b3 = b3 > a3;
@@ -92,8 +91,8 @@ var r2b6 = b6 > a6;
 var r2b7 = b7 > a7;
 var r2b8 = b8 > a8;
 var r2b9 = b9 > a9;
-var r2b10 = b10 > a10;
 
+//var r2b10 = b10 > a10;
 // operator <=
 var r3a1 = a1 <= b1;
 var r3a2 = a2 <= b2;
@@ -104,8 +103,8 @@ var r3a6 = a6 <= b6;
 var r3a7 = a7 <= b7;
 var r3a8 = a8 <= b8;
 var r3a9 = a9 <= b9;
-var r3a10 = a10 <= b10;
 
+//var r3a10 = a10 <= b10;
 var r3b1 = b1 <= a1;
 var r3b2 = b2 <= a2;
 var r3b3 = b3 <= a3;
@@ -115,8 +114,8 @@ var r3b6 = b6 <= a6;
 var r3b7 = b7 <= a7;
 var r3b8 = b8 <= a8;
 var r3b9 = b9 <= a9;
-var r3b10 = b10 <= a10;
 
+//var r3b10 = b10 <= a10;
 // operator >=
 var r4a1 = a1 >= b1;
 var r4a2 = a2 >= b2;
@@ -127,8 +126,8 @@ var r4a6 = a6 >= b6;
 var r4a7 = a7 >= b7;
 var r4a8 = a8 >= b8;
 var r4a9 = a9 >= b9;
-var r4a10 = a10 >= b10;
 
+//var r4a10 = a10 >= b10;
 var r4b1 = b1 >= a1;
 var r4b2 = b2 >= a2;
 var r4b3 = b3 >= a3;
@@ -138,8 +137,8 @@ var r4b6 = b6 >= a6;
 var r4b7 = b7 >= a7;
 var r4b8 = b8 >= a8;
 var r4b9 = b9 >= a9;
-var r4b10 = b10 >= a10;
 
+//var r4b10 = b10 >= a10;
 // operator ==
 var r5a1 = a1 == b1;
 var r5a2 = a2 == b2;
@@ -150,8 +149,8 @@ var r5a6 = a6 == b6;
 var r5a7 = a7 == b7;
 var r5a8 = a8 == b8;
 var r5a9 = a9 == b9;
-var r5a10 = a10 == b10;
 
+//var r5a10 = a10 == b10;
 var r5b1 = b1 == a1;
 var r5b2 = b2 == a2;
 var r5b3 = b3 == a3;
@@ -161,8 +160,8 @@ var r5b6 = b6 == a6;
 var r5b7 = b7 == a7;
 var r5b8 = b8 == a8;
 var r5b9 = b9 == a9;
-var r5b10 = b10 == a10;
 
+//var r5b10 = b10 == a10;
 // operator !=
 var r6a1 = a1 != b1;
 var r6a2 = a2 != b2;
@@ -173,8 +172,8 @@ var r6a6 = a6 != b6;
 var r6a7 = a7 != b7;
 var r6a8 = a8 != b8;
 var r6a9 = a9 != b9;
-var r6a10 = a10 != b10;
 
+//var r6a10 = a10 != b10;
 var r6b1 = b1 != a1;
 var r6b2 = b2 != a2;
 var r6b3 = b3 != a3;
@@ -184,8 +183,8 @@ var r6b6 = b6 != a6;
 var r6b7 = b7 != a7;
 var r6b8 = b8 != a8;
 var r6b9 = b9 != a9;
-var r6b10 = b10 != a10;
 
+//var r6b10 = b10 != a10;
 // operator ===
 var r7a1 = a1 === b1;
 var r7a2 = a2 === b2;
@@ -196,8 +195,8 @@ var r7a6 = a6 === b6;
 var r7a7 = a7 === b7;
 var r7a8 = a8 === b8;
 var r7a9 = a9 === b9;
-var r7a10 = a10 === b10;
 
+//var r7a10 = a10 === b10;
 var r7b1 = b1 === a1;
 var r7b2 = b2 === a2;
 var r7b3 = b3 === a3;
@@ -207,8 +206,8 @@ var r7b6 = b6 === a6;
 var r7b7 = b7 === a7;
 var r7b8 = b8 === a8;
 var r7b9 = b9 === a9;
-var r7b10 = b10 === a10;
 
+//var r7b10 = b10 === a10;
 // operator !==
 var r8a1 = a1 !== b1;
 var r8a2 = a2 !== b2;
@@ -219,8 +218,8 @@ var r8a6 = a6 !== b6;
 var r8a7 = a7 !== b7;
 var r8a8 = a8 !== b8;
 var r8a9 = a9 !== b9;
-var r8a10 = a10 !== b10;
 
+//var r8a10 = a10 !== b10;
 var r8b1 = b1 !== a1;
 var r8b2 = b2 !== a2;
 var r8b3 = b3 !== a3;
@@ -230,4 +229,4 @@ var r8b6 = b6 !== a6;
 var r8b7 = b7 !== a7;
 var r8b8 = b8 !== a8;
 var r8b9 = b9 !== a9;
-var r8b10 = b10 !== a10;
+//var r8b10 = b10 !== a10;

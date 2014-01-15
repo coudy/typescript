@@ -54,15 +54,6 @@ Line 23 col 31 IdentifierName "T" = T
 Line 24 col 4 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 24 col 15 IdentifierName "x" = string
 Line 24 col 26 IdentifierName "y" = number
-Line 26 col 4 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 26 col 15 IdentifierName "T" = T
-Line 26 col 18 IdentifierName "U" = U
-Line 26 col 28 IdentifierName "T" = T
-Line 26 col 31 IdentifierName "x" = T
-Line 26 col 34 IdentifierName "T" = T
-Line 26 col 37 IdentifierName "y" = U
-Line 26 col 40 IdentifierName "U" = U
-Line 26 col 44 IdentifierName "T" = T
 Line 27 col 4 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 27 col 15 IdentifierName "x" = Base
 Line 27 col 18 IdentifierName "Base" = Base
@@ -93,10 +84,6 @@ Line 35 col 4 IdentifierName "r1a6" = boolean
 Line 35 col 11 LessThanExpression "a6 < b6" = boolean
 Line 35 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 35 col 16 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 36 col 4 IdentifierName "r1a7" = boolean
-Line 36 col 11 LessThanExpression "a7 < b7" = boolean
-Line 36 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 36 col 16 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 38 col 4 IdentifierName "r1b1" = boolean
 Line 38 col 11 LessThanExpression "b1 < a1" = boolean
 Line 38 col 11 IdentifierName "b1" = new(x: string) => string
@@ -121,10 +108,6 @@ Line 43 col 4 IdentifierName "r1b6" = boolean
 Line 43 col 11 LessThanExpression "b6 < a6" = boolean
 Line 43 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 43 col 16 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 44 col 4 IdentifierName "r1b7" = boolean
-Line 44 col 11 LessThanExpression "b7 < a7" = boolean
-Line 44 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 44 col 16 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 47 col 4 IdentifierName "r2a1" = boolean
 Line 47 col 11 GreaterThanExpression "a1 > b1" = boolean
 Line 47 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -149,10 +132,6 @@ Line 52 col 4 IdentifierName "r2a6" = boolean
 Line 52 col 11 GreaterThanExpression "a6 > b6" = boolean
 Line 52 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 52 col 16 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 53 col 4 IdentifierName "r2a7" = boolean
-Line 53 col 11 GreaterThanExpression "a7 > b7" = boolean
-Line 53 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 53 col 16 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 55 col 4 IdentifierName "r2b1" = boolean
 Line 55 col 11 GreaterThanExpression "b1 > a1" = boolean
 Line 55 col 11 IdentifierName "b1" = new(x: string) => string
@@ -177,10 +156,6 @@ Line 60 col 4 IdentifierName "r2b6" = boolean
 Line 60 col 11 GreaterThanExpression "b6 > a6" = boolean
 Line 60 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 60 col 16 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 61 col 4 IdentifierName "r2b7" = boolean
-Line 61 col 11 GreaterThanExpression "b7 > a7" = boolean
-Line 61 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 61 col 16 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 64 col 4 IdentifierName "r3a1" = boolean
 Line 64 col 11 LessThanOrEqualExpression "a1 <= b1" = boolean
 Line 64 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -205,10 +180,6 @@ Line 69 col 4 IdentifierName "r3a6" = boolean
 Line 69 col 11 LessThanOrEqualExpression "a6 <= b6" = boolean
 Line 69 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 69 col 17 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 70 col 4 IdentifierName "r3a7" = boolean
-Line 70 col 11 LessThanOrEqualExpression "a7 <= b7" = boolean
-Line 70 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 70 col 17 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 72 col 4 IdentifierName "r3b1" = boolean
 Line 72 col 11 LessThanOrEqualExpression "b1 <= a1" = boolean
 Line 72 col 11 IdentifierName "b1" = new(x: string) => string
@@ -233,10 +204,6 @@ Line 77 col 4 IdentifierName "r3b6" = boolean
 Line 77 col 11 LessThanOrEqualExpression "b6 <= a6" = boolean
 Line 77 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 77 col 17 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 78 col 4 IdentifierName "r3b7" = boolean
-Line 78 col 11 LessThanOrEqualExpression "b7 <= a7" = boolean
-Line 78 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 78 col 17 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 81 col 4 IdentifierName "r4a1" = boolean
 Line 81 col 11 GreaterThanOrEqualExpression "a1 >= b1" = boolean
 Line 81 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -261,10 +228,6 @@ Line 86 col 4 IdentifierName "r4a6" = boolean
 Line 86 col 11 GreaterThanOrEqualExpression "a6 >= b6" = boolean
 Line 86 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 86 col 17 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 87 col 4 IdentifierName "r4a7" = boolean
-Line 87 col 11 GreaterThanOrEqualExpression "a7 >= b7" = boolean
-Line 87 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 87 col 17 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 89 col 4 IdentifierName "r4b1" = boolean
 Line 89 col 11 GreaterThanOrEqualExpression "b1 >= a1" = boolean
 Line 89 col 11 IdentifierName "b1" = new(x: string) => string
@@ -289,10 +252,6 @@ Line 94 col 4 IdentifierName "r4b6" = boolean
 Line 94 col 11 GreaterThanOrEqualExpression "b6 >= a6" = boolean
 Line 94 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 94 col 17 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 95 col 4 IdentifierName "r4b7" = boolean
-Line 95 col 11 GreaterThanOrEqualExpression "b7 >= a7" = boolean
-Line 95 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 95 col 17 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 98 col 4 IdentifierName "r5a1" = boolean
 Line 98 col 11 EqualsWithTypeConversionExpression "a1 == b1" = boolean
 Line 98 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -317,10 +276,6 @@ Line 103 col 4 IdentifierName "r5a6" = boolean
 Line 103 col 11 EqualsWithTypeConversionExpression "a6 == b6" = boolean
 Line 103 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 103 col 17 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 104 col 4 IdentifierName "r5a7" = boolean
-Line 104 col 11 EqualsWithTypeConversionExpression "a7 == b7" = boolean
-Line 104 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 104 col 17 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 106 col 4 IdentifierName "r5b1" = boolean
 Line 106 col 11 EqualsWithTypeConversionExpression "b1 == a1" = boolean
 Line 106 col 11 IdentifierName "b1" = new(x: string) => string
@@ -345,10 +300,6 @@ Line 111 col 4 IdentifierName "r5b6" = boolean
 Line 111 col 11 EqualsWithTypeConversionExpression "b6 == a6" = boolean
 Line 111 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 111 col 17 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 112 col 4 IdentifierName "r5b7" = boolean
-Line 112 col 11 EqualsWithTypeConversionExpression "b7 == a7" = boolean
-Line 112 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 112 col 17 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 115 col 4 IdentifierName "r6a1" = boolean
 Line 115 col 11 NotEqualsWithTypeConversionExpression "a1 != b1" = boolean
 Line 115 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -373,10 +324,6 @@ Line 120 col 4 IdentifierName "r6a6" = boolean
 Line 120 col 11 NotEqualsWithTypeConversionExpression "a6 != b6" = boolean
 Line 120 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 120 col 17 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 121 col 4 IdentifierName "r6a7" = boolean
-Line 121 col 11 NotEqualsWithTypeConversionExpression "a7 != b7" = boolean
-Line 121 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 121 col 17 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 123 col 4 IdentifierName "r6b1" = boolean
 Line 123 col 11 NotEqualsWithTypeConversionExpression "b1 != a1" = boolean
 Line 123 col 11 IdentifierName "b1" = new(x: string) => string
@@ -401,10 +348,6 @@ Line 128 col 4 IdentifierName "r6b6" = boolean
 Line 128 col 11 NotEqualsWithTypeConversionExpression "b6 != a6" = boolean
 Line 128 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 128 col 17 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 129 col 4 IdentifierName "r6b7" = boolean
-Line 129 col 11 NotEqualsWithTypeConversionExpression "b7 != a7" = boolean
-Line 129 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 129 col 17 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 132 col 4 IdentifierName "r7a1" = boolean
 Line 132 col 11 EqualsExpression "a1 === b1" = boolean
 Line 132 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -429,10 +372,6 @@ Line 137 col 4 IdentifierName "r7a6" = boolean
 Line 137 col 11 EqualsExpression "a6 === b6" = boolean
 Line 137 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 137 col 18 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 138 col 4 IdentifierName "r7a7" = boolean
-Line 138 col 11 EqualsExpression "a7 === b7" = boolean
-Line 138 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 138 col 18 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 140 col 4 IdentifierName "r7b1" = boolean
 Line 140 col 11 EqualsExpression "b1 === a1" = boolean
 Line 140 col 11 IdentifierName "b1" = new(x: string) => string
@@ -457,10 +396,6 @@ Line 145 col 4 IdentifierName "r7b6" = boolean
 Line 145 col 11 EqualsExpression "b6 === a6" = boolean
 Line 145 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 145 col 18 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 146 col 4 IdentifierName "r7b7" = boolean
-Line 146 col 11 EqualsExpression "b7 === a7" = boolean
-Line 146 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 146 col 18 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
 Line 149 col 4 IdentifierName "r8a1" = boolean
 Line 149 col 11 NotEqualsExpression "a1 !== b1" = boolean
 Line 149 col 11 IdentifierName "a1" = new<T>(x: T) => T
@@ -485,10 +420,6 @@ Line 154 col 4 IdentifierName "r8a6" = boolean
 Line 154 col 11 NotEqualsExpression "a6 !== b6" = boolean
 Line 154 col 11 IdentifierName "a6" = new<T>(x: T, y: T) => T
 Line 154 col 18 IdentifierName "b6" = new(x: string, y: number) => {}
-Line 155 col 4 IdentifierName "r8a7" = boolean
-Line 155 col 11 NotEqualsExpression "a7 !== b7" = boolean
-Line 155 col 11 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T
-Line 155 col 18 IdentifierName "b7" = new(x: Base, y: Derived) => Base
 Line 157 col 4 IdentifierName "r8b1" = boolean
 Line 157 col 11 NotEqualsExpression "b1 !== a1" = boolean
 Line 157 col 11 IdentifierName "b1" = new(x: string) => string
@@ -513,7 +444,3 @@ Line 162 col 4 IdentifierName "r8b6" = boolean
 Line 162 col 11 NotEqualsExpression "b6 !== a6" = boolean
 Line 162 col 11 IdentifierName "b6" = new(x: string, y: number) => {}
 Line 162 col 18 IdentifierName "a6" = new<T>(x: T, y: T) => T
-Line 163 col 4 IdentifierName "r8b7" = boolean
-Line 163 col 11 NotEqualsExpression "b7 !== a7" = boolean
-Line 163 col 11 IdentifierName "b7" = new(x: Base, y: Derived) => Base
-Line 163 col 18 IdentifierName "a7" = new<T, U extends T>(x: T, y: U) => T

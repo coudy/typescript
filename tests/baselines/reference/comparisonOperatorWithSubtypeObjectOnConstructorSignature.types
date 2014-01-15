@@ -69,24 +69,6 @@ Line 33 col 4 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 33 col 18 IdentifierName "a" = Derived[]
 Line 33 col 21 IdentifierName "Derived" = Derived
 Line 33 col 33 IdentifierName "Base" = Base
-Line 35 col 4 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 35 col 12 IdentifierName "T" = T
-Line 35 col 15 IdentifierName "U" = U
-Line 35 col 25 IdentifierName "T" = T
-Line 35 col 28 IdentifierName "t" = T
-Line 35 col 31 IdentifierName "T" = T
-Line 35 col 34 IdentifierName "u" = U
-Line 35 col 37 IdentifierName "U" = U
-Line 35 col 41 IdentifierName "T" = T
-Line 36 col 4 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 36 col 12 IdentifierName "A" = A
-Line 36 col 15 IdentifierName "B" = B
-Line 36 col 25 IdentifierName "A" = A
-Line 36 col 28 IdentifierName "a" = A
-Line 36 col 31 IdentifierName "A" = A
-Line 36 col 34 IdentifierName "b" = B
-Line 36 col 37 IdentifierName "B" = B
-Line 36 col 41 IdentifierName "A" = A
 Line 39 col 4 IdentifierName "r1a1" = boolean
 Line 39 col 11 LessThanExpression "a1 < b1" = boolean
 Line 39 col 11 IdentifierName "a1" = new() => Base
@@ -123,10 +105,6 @@ Line 47 col 4 IdentifierName "r1a9" = boolean
 Line 47 col 11 LessThanExpression "a9 < b9" = boolean
 Line 47 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 47 col 16 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 48 col 4 IdentifierName "r1a10" = boolean
-Line 48 col 12 LessThanExpression "a10 < b10" = boolean
-Line 48 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 48 col 18 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 50 col 4 IdentifierName "r1b1" = boolean
 Line 50 col 11 LessThanExpression "b1 < a1" = boolean
 Line 50 col 11 IdentifierName "b1" = new() => Base
@@ -163,10 +141,6 @@ Line 58 col 4 IdentifierName "r1b9" = boolean
 Line 58 col 11 LessThanExpression "b9 < a9" = boolean
 Line 58 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 58 col 16 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 59 col 4 IdentifierName "r1b10" = boolean
-Line 59 col 12 LessThanExpression "b10 < a10" = boolean
-Line 59 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 59 col 18 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 62 col 4 IdentifierName "r2a1" = boolean
 Line 62 col 11 GreaterThanExpression "a1 > b1" = boolean
 Line 62 col 11 IdentifierName "a1" = new() => Base
@@ -203,10 +177,6 @@ Line 70 col 4 IdentifierName "r2a9" = boolean
 Line 70 col 11 GreaterThanExpression "a9 > b9" = boolean
 Line 70 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 70 col 16 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 71 col 4 IdentifierName "r2a10" = boolean
-Line 71 col 12 GreaterThanExpression "a10 > b10" = boolean
-Line 71 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 71 col 18 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 73 col 4 IdentifierName "r2b1" = boolean
 Line 73 col 11 GreaterThanExpression "b1 > a1" = boolean
 Line 73 col 11 IdentifierName "b1" = new() => Base
@@ -243,10 +213,6 @@ Line 81 col 4 IdentifierName "r2b9" = boolean
 Line 81 col 11 GreaterThanExpression "b9 > a9" = boolean
 Line 81 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 81 col 16 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 82 col 4 IdentifierName "r2b10" = boolean
-Line 82 col 12 GreaterThanExpression "b10 > a10" = boolean
-Line 82 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 82 col 18 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 85 col 4 IdentifierName "r3a1" = boolean
 Line 85 col 11 LessThanOrEqualExpression "a1 <= b1" = boolean
 Line 85 col 11 IdentifierName "a1" = new() => Base
@@ -283,10 +249,6 @@ Line 93 col 4 IdentifierName "r3a9" = boolean
 Line 93 col 11 LessThanOrEqualExpression "a9 <= b9" = boolean
 Line 93 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 93 col 17 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 94 col 4 IdentifierName "r3a10" = boolean
-Line 94 col 12 LessThanOrEqualExpression "a10 <= b10" = boolean
-Line 94 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 94 col 19 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 96 col 4 IdentifierName "r3b1" = boolean
 Line 96 col 11 LessThanOrEqualExpression "b1 <= a1" = boolean
 Line 96 col 11 IdentifierName "b1" = new() => Base
@@ -323,10 +285,6 @@ Line 104 col 4 IdentifierName "r3b9" = boolean
 Line 104 col 11 LessThanOrEqualExpression "b9 <= a9" = boolean
 Line 104 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 104 col 17 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 105 col 4 IdentifierName "r3b10" = boolean
-Line 105 col 12 LessThanOrEqualExpression "b10 <= a10" = boolean
-Line 105 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 105 col 19 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 108 col 4 IdentifierName "r4a1" = boolean
 Line 108 col 11 GreaterThanOrEqualExpression "a1 >= b1" = boolean
 Line 108 col 11 IdentifierName "a1" = new() => Base
@@ -363,10 +321,6 @@ Line 116 col 4 IdentifierName "r4a9" = boolean
 Line 116 col 11 GreaterThanOrEqualExpression "a9 >= b9" = boolean
 Line 116 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 116 col 17 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 117 col 4 IdentifierName "r4a10" = boolean
-Line 117 col 12 GreaterThanOrEqualExpression "a10 >= b10" = boolean
-Line 117 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 117 col 19 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 119 col 4 IdentifierName "r4b1" = boolean
 Line 119 col 11 GreaterThanOrEqualExpression "b1 >= a1" = boolean
 Line 119 col 11 IdentifierName "b1" = new() => Base
@@ -403,10 +357,6 @@ Line 127 col 4 IdentifierName "r4b9" = boolean
 Line 127 col 11 GreaterThanOrEqualExpression "b9 >= a9" = boolean
 Line 127 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 127 col 17 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 128 col 4 IdentifierName "r4b10" = boolean
-Line 128 col 12 GreaterThanOrEqualExpression "b10 >= a10" = boolean
-Line 128 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 128 col 19 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 131 col 4 IdentifierName "r5a1" = boolean
 Line 131 col 11 EqualsWithTypeConversionExpression "a1 == b1" = boolean
 Line 131 col 11 IdentifierName "a1" = new() => Base
@@ -443,10 +393,6 @@ Line 139 col 4 IdentifierName "r5a9" = boolean
 Line 139 col 11 EqualsWithTypeConversionExpression "a9 == b9" = boolean
 Line 139 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 139 col 17 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 140 col 4 IdentifierName "r5a10" = boolean
-Line 140 col 12 EqualsWithTypeConversionExpression "a10 == b10" = boolean
-Line 140 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 140 col 19 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 142 col 4 IdentifierName "r5b1" = boolean
 Line 142 col 11 EqualsWithTypeConversionExpression "b1 == a1" = boolean
 Line 142 col 11 IdentifierName "b1" = new() => Base
@@ -483,10 +429,6 @@ Line 150 col 4 IdentifierName "r5b9" = boolean
 Line 150 col 11 EqualsWithTypeConversionExpression "b9 == a9" = boolean
 Line 150 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 150 col 17 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 151 col 4 IdentifierName "r5b10" = boolean
-Line 151 col 12 EqualsWithTypeConversionExpression "b10 == a10" = boolean
-Line 151 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 151 col 19 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 154 col 4 IdentifierName "r6a1" = boolean
 Line 154 col 11 NotEqualsWithTypeConversionExpression "a1 != b1" = boolean
 Line 154 col 11 IdentifierName "a1" = new() => Base
@@ -523,10 +465,6 @@ Line 162 col 4 IdentifierName "r6a9" = boolean
 Line 162 col 11 NotEqualsWithTypeConversionExpression "a9 != b9" = boolean
 Line 162 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 162 col 17 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 163 col 4 IdentifierName "r6a10" = boolean
-Line 163 col 12 NotEqualsWithTypeConversionExpression "a10 != b10" = boolean
-Line 163 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 163 col 19 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 165 col 4 IdentifierName "r6b1" = boolean
 Line 165 col 11 NotEqualsWithTypeConversionExpression "b1 != a1" = boolean
 Line 165 col 11 IdentifierName "b1" = new() => Base
@@ -563,10 +501,6 @@ Line 173 col 4 IdentifierName "r6b9" = boolean
 Line 173 col 11 NotEqualsWithTypeConversionExpression "b9 != a9" = boolean
 Line 173 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 173 col 17 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 174 col 4 IdentifierName "r6b10" = boolean
-Line 174 col 12 NotEqualsWithTypeConversionExpression "b10 != a10" = boolean
-Line 174 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 174 col 19 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 177 col 4 IdentifierName "r7a1" = boolean
 Line 177 col 11 EqualsExpression "a1 === b1" = boolean
 Line 177 col 11 IdentifierName "a1" = new() => Base
@@ -603,10 +537,6 @@ Line 185 col 4 IdentifierName "r7a9" = boolean
 Line 185 col 11 EqualsExpression "a9 === b9" = boolean
 Line 185 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 185 col 18 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 186 col 4 IdentifierName "r7a10" = boolean
-Line 186 col 12 EqualsExpression "a10 === b10" = boolean
-Line 186 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 186 col 20 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 188 col 4 IdentifierName "r7b1" = boolean
 Line 188 col 11 EqualsExpression "b1 === a1" = boolean
 Line 188 col 11 IdentifierName "b1" = new() => Base
@@ -643,10 +573,6 @@ Line 196 col 4 IdentifierName "r7b9" = boolean
 Line 196 col 11 EqualsExpression "b9 === a9" = boolean
 Line 196 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 196 col 18 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 197 col 4 IdentifierName "r7b10" = boolean
-Line 197 col 12 EqualsExpression "b10 === a10" = boolean
-Line 197 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 197 col 20 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
 Line 200 col 4 IdentifierName "r8a1" = boolean
 Line 200 col 11 NotEqualsExpression "a1 !== b1" = boolean
 Line 200 col 11 IdentifierName "a1" = new() => Base
@@ -683,10 +609,6 @@ Line 208 col 4 IdentifierName "r8a9" = boolean
 Line 208 col 11 NotEqualsExpression "a9 !== b9" = boolean
 Line 208 col 11 IdentifierName "a9" = new(...a: Base[]) => Base
 Line 208 col 18 IdentifierName "b9" = new(...a: Derived[]) => Base
-Line 209 col 4 IdentifierName "r8a10" = boolean
-Line 209 col 12 NotEqualsExpression "a10 !== b10" = boolean
-Line 209 col 12 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
-Line 209 col 20 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
 Line 211 col 4 IdentifierName "r8b1" = boolean
 Line 211 col 11 NotEqualsExpression "b1 !== a1" = boolean
 Line 211 col 11 IdentifierName "b1" = new() => Base
@@ -723,7 +645,3 @@ Line 219 col 4 IdentifierName "r8b9" = boolean
 Line 219 col 11 NotEqualsExpression "b9 !== a9" = boolean
 Line 219 col 11 IdentifierName "b9" = new(...a: Derived[]) => Base
 Line 219 col 18 IdentifierName "a9" = new(...a: Base[]) => Base
-Line 220 col 4 IdentifierName "r8b10" = boolean
-Line 220 col 12 NotEqualsExpression "b10 !== a10" = boolean
-Line 220 col 12 IdentifierName "b10" = <A, B extends A>(a: A, b: B) => A[]
-Line 220 col 20 IdentifierName "a10" = <T, U extends T>(t: T, u: U) => T[]
