@@ -2664,6 +2664,24 @@ module TypeScript {
             return type;
         }
 
+        private getArrayType(elementType: PullTypeSymbol) {
+            var arraySymbol = elementType.getArrayType();
+
+            // ...But in case we haven't...
+            if (!arraySymbol) {
+
+                arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
+
+                if (!arraySymbol) {
+                    arraySymbol = this.semanticInfoChain.anyTypeSymbol;
+                }
+
+                elementType.setArrayType(arraySymbol);
+            }
+
+            return arraySymbol;
+        }
+
         private computeTypeReferenceSymbol(term: AST, context: PullTypeResolutionContext): PullTypeSymbol {
             // the type reference can be
             // a name
@@ -2746,20 +2764,7 @@ module TypeScript {
             else if (term.kind() === SyntaxKind.ArrayType) {
                 var arrayType = <ArrayType>term;
                 var underlying = this.resolveTypeReference(arrayType.type, context);
-                var arraySymbol: PullTypeSymbol = underlying.getArrayType();
-
-                // otherwise, create a new array symbol
-                if (!arraySymbol) {
-                    // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-
-                    arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [underlying]);
-
-                    if (!arraySymbol) {
-                        arraySymbol = this.semanticInfoChain.anyTypeSymbol;
-                    }
-                }
-
-                typeDeclSymbol = arraySymbol;
+                typeDeclSymbol = this.getArrayType(underlying);
             }
             else {
                 throw Errors.invalidOperation("unknown type");
@@ -8073,21 +8078,7 @@ module TypeScript {
                 elementType = this.semanticInfoChain.undefinedTypeSymbol;
             }
 
-            var arraySymbol = elementType.getArrayType();
-
-            // ...But in case we haven't...
-            if (!arraySymbol) {
-
-                arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
-
-                if (!arraySymbol) {
-                    arraySymbol = this.semanticInfoChain.anyTypeSymbol;
-                }
-
-                elementType.setArrayType(arraySymbol);
-            }
-
-            return arraySymbol;
+            return this.getArrayType(elementType);
         }
 
         private resolveElementAccessExpression(callEx: ElementAccessExpression, context: PullTypeResolutionContext): PullSymbol {
@@ -9536,23 +9527,7 @@ module TypeScript {
                 }
             }
 
-
-            var arraySymbol = elementType.getArrayType();
-
-            // otherwise, create a new array symbol
-            if (!arraySymbol) {
-                // for each member in the array interface symbol, substitute in the the typeDecl symbol for "_element"
-
-                arraySymbol = this.createInstantiatedType(this.cachedArrayInterfaceType(), [elementType]);
-
-                if (!arraySymbol) {
-                    arraySymbol = this.semanticInfoChain.anyTypeSymbol;
-                }
-
-                elementType.setArrayType(arraySymbol);
-            }
-
-            return arraySymbol;
+            return this.getArrayType(elementType);
         }
 
         private widenObjectLiteralType(type: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): PullTypeSymbol {
