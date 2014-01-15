@@ -419,18 +419,80 @@ module TypeScript {
             var instanceType: PullTypeSymbol = null;
             var childSymbol: PullSymbol = null;
 
+            // if search kind allows searching for enum members - expand search space to enums
+            var allowedContainerDeclKind = PullElementKind.Container | PullElementKind.DynamicModule;
+            if (TypeScript.hasFlag(declSearchKind, PullElementKind.EnumMember)) {
+                allowedContainerDeclKind |= PullElementKind.Enum;
+            }
+
+            var isAcceptableAlias = (symbol: PullSymbol): boolean => {
+                if (symbol.isAlias()) {
+                    this.resolveDeclaredSymbol(symbol);
+                    if (hasFlag(declSearchKind, PullElementKind.SomeContainer)) {
+                        if ((<PullTypeAliasSymbol>symbol).assignedContainer() || (<PullTypeAliasSymbol>symbol).getExportAssignedContainerSymbol()) {
+                            return true;
+                        }
+                    }
+                    else if (hasFlag(declSearchKind, PullElementKind.SomeType)) {
+                        // check if alias points to dynamic module - it should not be returned if type is requested
+                        var type = (<PullTypeAliasSymbol>symbol).getExportAssignedTypeSymbol();
+                        if (type && type.kind !== PullElementKind.DynamicModule) {
+                            return true;
+                        }
+
+                        // check if alias points to dynamic module - if should not be returned if type is requested
+                        var type = (<PullTypeAliasSymbol>symbol).assignedType();
+                        if (type && type.kind !== PullElementKind.DynamicModule) {
+                            return true;
+                        }
+                    }
+                    // search for value might exclude EnumMember element from the declSearchKind
+                    else if (hasFlag(declSearchKind, PullElementKind.SomeValue & ~PullElementKind.EnumMember)) {
+                        // if alias is dereferenced to unresolved module - be conservative and treat it as value
+                        if ((<PullTypeAliasSymbol>symbol).assignedType() && (<PullTypeAliasSymbol>symbol).assignedType().isError()) {
+                            return true;
+                        }
+                        else if ((<PullTypeAliasSymbol>symbol).assignedValue() || (<PullTypeAliasSymbol>symbol).getExportAssignedValueSymbol()) {
+                            return true;
+                        }
+                        else {
+                            // alias is dereferenced to container with existing instance side - return alias
+                            var assignedType = (<PullTypeAliasSymbol>symbol).assignedType();
+                            if (assignedType && assignedType.isContainer() && (<PullContainerSymbol>assignedType).getInstanceType()) {
+                                return true;
+                            }
+
+                            // Spec Nov 18:
+                            // 11.2.3 Unlike a non-instantiated internal module (section 10.1), 
+                            // an external module containing only interface types and non-instantiated internal modules still has a module instance associated with it, albeit one with no members.
+                            var decls = symbol.getDeclarations();
+                            var ast = <ImportDeclaration>decls[0].ast();
+                            return ast.moduleReference.kind() === SyntaxKind.ExternalModuleReference;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            var tryFindAlias = (decl: PullDecl): PullSymbol => {
+                var childDecls = decl.searchChildDecls(symbolName, PullElementKind.TypeAlias);
+
+                if (childDecls.length) {
+                    var sym = childDecls[0].getSymbol();
+                    if (isAcceptableAlias(sym)) {
+                        return sym;
+                    }
+                }
+                return null;
+            }
+
             for (var i = declPath.length - 1; i >= 0; i--) {
                 decl = declPath[i];
                 pathDeclKind = decl.kind;
 
                 if (decl.flags & PullElementFlags.DeclaredInAWithBlock) {
                     return this.semanticInfoChain.anyTypeSymbol;
-                }
-
-                // if search kind allows searching for enum members - expand search space to enums
-                var allowedContainerDeclKind = PullElementKind.Container | PullElementKind.DynamicModule;
-                if (TypeScript.hasFlag(declSearchKind, PullElementKind.EnumMember)) {
-                    allowedContainerDeclKind |= PullElementKind.Enum;
                 }
                 
                 if (pathDeclKind & allowedContainerDeclKind) {
@@ -442,21 +504,15 @@ module TypeScript {
                         return childDecls[0].getSymbol();
                     }
 
+                    var alias = tryFindAlias(decl);
+                    if (alias) {
+                        return alias;
+                    }
+
                     if (declSearchKind & PullElementKind.SomeValue) {
 
                         // search "split" exported members
                         instanceSymbol = (<PullContainerSymbol>decl.getSymbol()).getInstanceSymbol();
-
-                        // Maybe there's an import statement aliasing an initalized value?
-                        childDecls = decl.searchChildDecls(symbolName, PullElementKind.TypeAlias);
-
-                        if (childDecls.length) {
-                            var sym = childDecls[0].getSymbol();
-
-                            if (sym.isAlias()) {
-                                return sym;
-                            }
-                        }
 
                         if (instanceSymbol) {
                             instanceType = instanceSymbol.type;
@@ -510,24 +566,28 @@ module TypeScript {
                         return candidateSymbol;
                     }
 
-                    if (declSearchKind & PullElementKind.SomeValue) {
-                        childDecls = decl.searchChildDecls(symbolName, PullElementKind.TypeAlias);
-
-                        if (childDecls.length) {
-                            var sym = childDecls[0].getSymbol();
-
-                            if (sym.isAlias()) {
-                                return sym;
-                            }
-                        }
+                    var alias = tryFindAlias(decl);
+                    if (alias) {
+                        return alias;
                     }
                 }
             }
 
             // otherwise, search globally
             symbol = this.semanticInfoChain.findSymbol([symbolName], declSearchKind);
+            if (symbol) {
+                return symbol;
+            }
 
-            return symbol;
+            // if element was not found and we were not searching for aliases- try to find globally defined type alias
+            if (!hasFlag(declSearchKind, PullElementKind.TypeAlias)) {
+                symbol = this.semanticInfoChain.findSymbol([symbolName], PullElementKind.TypeAlias);
+                if (symbol && isAcceptableAlias(symbol)) {
+                    return symbol;
+                }
+            }
+
+            return null;
         }
 
         private getVisibleDeclsFromDeclPath(declPath: PullDecl[], declSearchKind: PullElementKind): PullDecl[] {
@@ -1961,6 +2021,7 @@ module TypeScript {
 
             var declPath = enclosingDecl.getParentPath();
             var aliasedType: PullTypeSymbol = null;
+            var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
 
             if (aliasExpr.kind() === SyntaxKind.IdentifierName || aliasExpr.kind() === SyntaxKind.StringLiteral) {
                 var moduleSymbol = this.resolveModuleReference(importDecl, aliasExpr, enclosingDecl, context, declPath);
@@ -1977,18 +2038,16 @@ module TypeScript {
                             context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(aliasExpr, DiagnosticCode.Internal_module_reference_0_in_import_declaration_does_not_reference_module_instance_for_1, [text, moduleSymbol.type.toString(enclosingDecl ? enclosingDecl.getSymbol() : null)]));
                         }
                         else {
-                            // Set value symbol, type and container setting will be taken care of later using aliasedType
-                            var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
+                            // Set value symbol, type and container setting will be taken care of later using aliasedType                            
                             importDeclSymbol.setAssignedValueSymbol(valueSymbol);
                         }
                     }
                 }
                 else {
-                    aliasedType = this.semanticInfoChain.anyTypeSymbol;
+                    aliasedType = this.getNewErrorTypeSymbol();
                 }
             }
             else if (aliasExpr.kind() === SyntaxKind.QualifiedName) {
-                var importDeclSymbol = <PullTypeAliasSymbol>importDecl.getSymbol();
                 var dottedNameAST = <QualifiedName>aliasExpr;
                 var moduleSymbol = this.resolveModuleReference(importDecl, dottedNameAST.left, enclosingDecl, context, declPath);
                 if (moduleSymbol) {
@@ -2001,9 +2060,11 @@ module TypeScript {
                         return null;
                     }
                 }
+            }
 
-                // Error in resolving the indentifier
-                importDeclSymbol.setAssignedTypeSymbol(this.semanticInfoChain.anyTypeSymbol);
+            if (!aliasedType){
+                // unresolved alias - set error as assigned type
+                importDeclSymbol.setAssignedTypeSymbol(this.getNewErrorTypeSymbol());
             }
 
             return aliasedType;
@@ -2035,7 +2096,8 @@ module TypeScript {
                 if (!aliasedType) {
                     var path = (<ExternalModuleReference>importStatementAST.moduleReference).stringLiteral.text();
                     this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Unable_to_resolve_external_module_0, [path]);
-                    aliasedType = this.semanticInfoChain.anyTypeSymbol;
+                    aliasedType = this.getNewErrorTypeSymbol();
+
                 }
             }
             else {
@@ -2045,13 +2107,8 @@ module TypeScript {
             if (aliasedType) {
                 if (!aliasedType.isContainer()) {
                     this.semanticInfoChain.addDiagnosticFromAST(importStatementAST, DiagnosticCode.Module_cannot_be_aliased_to_a_non_module_type);
-                    aliasedType = this.semanticInfoChain.anyTypeSymbol;
-                }
-                else if (importDeclSymbol.anyDeclHasFlag(PullElementFlags.Exported)) {
-                    importDeclSymbol.setIsUsedInExportedAlias();
-
-                    if ((<PullContainerSymbol>aliasedType).getExportAssignedValueSymbol()) {
-                        importDeclSymbol.setIsUsedAsValue();
+                    if (!aliasedType.isError()) {
+                        aliasedType = this.getNewErrorTypeSymbol();
                     }
                 }
 
@@ -2069,6 +2126,16 @@ module TypeScript {
             this.resolveDeclaredSymbol(importDeclSymbol.assignedValue(), context);
             this.resolveDeclaredSymbol(importDeclSymbol.assignedType(), context);
             this.resolveDeclaredSymbol(importDeclSymbol.assignedContainer(), context);
+            
+            // these checks should be made after 'resolveDeclaredSymbol' calls.since 'resolveDeclaredSymbol' can set 'assignedValue' to aliasedType
+            if (aliasedType && importDeclSymbol.anyDeclHasFlag(PullElementFlags.Exported)) {
+                importDeclSymbol.setIsUsedInExportedAlias();
+
+                if (aliasedType.isContainer() && (<PullContainerSymbol>aliasedType).getExportAssignedValueSymbol()) {
+                    importDeclSymbol.setIsUsedAsValue();
+                }
+            }
+
 
             if (this.canTypeCheckAST(importStatementAST, context)) {
                 this.typeCheckImportDeclaration(importStatementAST, context);
@@ -6392,16 +6459,6 @@ module TypeScript {
                 }
 
                 var nameSymbol = this.getSymbolFromDeclPath(id, declPath, searchKind);
-            }
-
-            // Try looking up a type alias with an associated instance type
-            if (!nameSymbol) {
-                nameSymbol = this.getSymbolFromDeclPath(id, declPath, PullElementKind.TypeAlias);
-
-                // Modules are also picked up when searching for aliases
-                if (nameSymbol && !nameSymbol.isAlias()) {
-                    nameSymbol = null;
-                }
             }
 
             // arguments is resolved to local variable in the function or the arguments list that runtime passes and never to any other symbol
