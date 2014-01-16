@@ -201,5 +201,13 @@ module TypeScript {
 
             return allowedToReferenceTypeParameters;
         }
+
+        export function createTypeParameterArgumentMap(typeParameters: PullTypeParameterSymbol[], typeArguments: PullTypeSymbol[]): TypeArgumentMap {
+            var typeArgumentMap: TypeArgumentMap = {};
+            for (var i = 0; i < typeParameters.length; i++) {
+                typeArgumentMap[typeParameters[i].pullSymbolID] = typeArguments[i];
+            }
+            return typeArgumentMap;
+        }
     }
 }

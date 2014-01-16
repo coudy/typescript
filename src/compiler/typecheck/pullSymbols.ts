@@ -3309,24 +3309,30 @@ module TypeScript {
             return this._constraint;
         }
 
-        // This is just a one step fallback to any if there is no constraint
-        // It is used for instantiating the prototype member
+        // Section 3.4.1 (November 18, 2013):
+        // The base constraint of a type parameter T is defined as follows:
+        //  If T has no declared constraint, T's base constraint is the global interface type 'Object'.
+        //  If T's declared constraint is a type parameter, T's base constraint is that of the type parameter.
+        //  Otherwise, T's base constraint is T's declared constraint.
+        // The following code deviates from the spec in that if T has no declared constraint,
+        // we default to "any" instead of "Object". This is because we allow "any" to be passed
+        // as a type argument when there is no constraint, so specifying no constraint is like
+        // specifying "any".
         public getBaseConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
-            return this.getConstraintRecursively({}) || semanticInfoChain.anyTypeSymbol;
+            var preBaseConstraint = this.getConstraintRecursively({});
+            Debug.assert(preBaseConstraint === null || !preBaseConstraint.isTypeParameter());
+            return preBaseConstraint || semanticInfoChain.anyTypeSymbol;
         }
 
         // Returns null if you hit a cycle or no constraint
         // The visitedTypeParameters bag is for catching cycles
-        private getConstraintRecursively(visitedTypeParameters: { [n: number]: PullTypeParameterSymbol }) {
+        private getConstraintRecursively(visitedTypeParameters: { [n: number]: PullTypeParameterSymbol }): PullTypeSymbol {
             var constraint = this.getConstraint();
 
             if (constraint) {
                 if (constraint.isTypeParameter()) {
                     var constraintAsTypeParameter = <PullTypeParameterSymbol>constraint;
-                    if (visitedTypeParameters[constraintAsTypeParameter.pullSymbolID]) {
-                        return null;
-                    }
-                    else {
+                    if (!visitedTypeParameters[constraintAsTypeParameter.pullSymbolID]) {
                         visitedTypeParameters[constraintAsTypeParameter.pullSymbolID] = constraintAsTypeParameter;
                         return constraintAsTypeParameter.getConstraintRecursively(visitedTypeParameters);
                     }
@@ -3337,6 +3343,14 @@ module TypeScript {
             }
 
             return null;
+        }
+
+        // This is to mimic the effect of infering type arguments for a type parameter with
+        // no inference candidates. It is useful in the following case:
+        // class C<T extends number, U> { }
+        // var c = new C; // c should have type C<number, {}>, just like calling it with new C()
+        public getDefaultConstraintForInference(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
+            return this._constraint || semanticInfoChain.emptyTypeSymbol;
         }
 
         // Note: This is a deviation from the spec. Using the constraint to get signatures is only

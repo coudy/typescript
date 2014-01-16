@@ -725,16 +725,6 @@ module TypeScript {
                 typeParameterDecls[i].setSymbol(typeParameterSymbol);
             }
 
-            //var resolver = this.semanticInfoChain.getResolver();
-            //var typeParameterResolutionContext = new PullTypeResolutionContext(resolver);
-            //for (var i = 0; i < typeParameterDecls.length; i++) {
-            //    // Resolve the type parameter early, so that we can bind its constraint. This is
-            //    // necessary for binding the prototype member of a generic class, since its type
-            //    // relies on the constraints. We do this in a separate loop so that all type
-            //    // parameters in this list are bound before we try to resolve any of them.
-            //    resolver.resolveFirstTypeParameterDeclaration(<PullTypeParameterSymbol>typeParameterDecls[i].getSymbol(), typeParameterResolutionContext);
-            //}
-
             constructorSymbol = classSymbol.getConstructorMethod();
             constructorTypeSymbol = constructorSymbol ? constructorSymbol.type : null;
 
@@ -1766,7 +1756,7 @@ module TypeScript {
                     var typeParameterASTs = classAST.typeParameterList && classAST.typeParameterList.typeParameters;
                     Debug.assert(typeParameterASTs);
                     var resolver = this.semanticInfoChain.getResolver();
-                    prototypeSymbol.type = resolver.instantiateTypeToDefaultConstraints(prototypeSymbol.type, typeParameterASTs, new PullTypeResolutionContext(resolver));
+                    prototypeSymbol.type = resolver.instantiateTypeToBaseConstraints(prototypeSymbol.type, new PullTypeResolutionContext(resolver));
                 }
                 prototypeSymbol.setResolved();
             }
