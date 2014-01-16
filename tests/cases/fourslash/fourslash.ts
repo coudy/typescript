@@ -449,8 +449,8 @@ module FourSlashInterface {
             FourSlash.currentTestState.printErrorList();
         }
 
-        public printNavigationItems(searchValue?: string) {
-            FourSlash.currentTestState.printNavigationItems();
+        public printNavigationItems(searchValue: string = ".*") {
+            FourSlash.currentTestState.printNavigationItems(searchValue);
         }
 
         public printScriptLexicalStructureItems() {

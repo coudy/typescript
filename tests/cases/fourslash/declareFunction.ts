@@ -2,6 +2,5 @@
 
 //// /**/declare function
 
-// Bug 856400
 goTo.marker();
-// fs.debug.printNavigationItems();
+//fs.debug.printNavigationItems();
