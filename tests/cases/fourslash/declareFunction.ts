@@ -3,4 +3,6 @@
 //// /**/declare function
 
 goTo.marker();
+//verify there is no empty navigation item.
+verify.navigationItemsListCount(0, "^$"/*empty string*/)
 //fs.debug.printNavigationItems();
