@@ -11073,13 +11073,12 @@ module TypeScript {
                 return true;
             }
 
-            if (sourceSig.isGeneric()) {
-                // TODO : what should be done here for enclosingtypes
-                sourceSig = this.instantiateSignatureInContext(sourceSig, targetSig, context, /*shouldFixContextualSignatureParameterTypes*/ false);
+            if (targetSig.isGeneric()) {
+                targetSig = this.instantiateSignatureToAny(targetSig);
+            }
 
-                if (!sourceSig) {
-                    return false;
-                }
+            if (sourceSig.isGeneric()) {
+                sourceSig = this.instantiateSignatureToAny(sourceSig);
             }
 
             var sourceReturnType = sourceSig.returnType;
@@ -11843,6 +11842,34 @@ module TypeScript {
             var type = this.createInstantiatedType(typeToSpecialize, typeArguments);
 
             return type;
+        }
+
+        public instantiateSignatureToAny(signature: PullSignatureSymbol) {
+            var typeParameters = signature.getTypeParameters();
+            if (!this._cachedAnyTypeArgs) {
+                this._cachedAnyTypeArgs = [
+                    [this.semanticInfoChain.anyTypeSymbol],
+                    [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                    [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                    [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol],
+                    [this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol, this.semanticInfoChain.anyTypeSymbol]
+                ];
+            }
+
+            if (typeParameters.length < this._cachedAnyTypeArgs.length) {
+                var typeArguments = this._cachedAnyTypeArgs[typeParameters.length - 1];
+            }
+            else {
+                // REVIEW: might want to cache these arg lists
+                var typeArguments: PullTypeSymbol[] = [];
+
+                for (var i = 0; i < typeParameters.length; i++) {
+                    typeArguments[typeArguments.length] = this.semanticInfoChain.anyTypeSymbol;
+                }
+            }
+
+            var typeParameterArgumentMap = PullInstantiationHelpers.createTypeParameterArgumentMap(typeParameters, typeArguments);
+            return this.instantiateSignature(signature, typeParameterArgumentMap);
         }
 
         public static globalTypeCheckPhase = 0;
