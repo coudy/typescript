@@ -83,11 +83,12 @@ module TypeScript {
             var end = this.slidingWindow.absoluteIndex();
 
             var trailingTriviaInfo = this.scanTriviaInfo(diagnostics,/*isTrailing: */true);
+            var fullEnd = this.slidingWindow.absoluteIndex();
 
             var isVariableWidthKeyword = (kindAndFlags & SyntaxConstants.IsVariableWidthKeyword) !== 0;
             var kind = kindAndFlags & ~SyntaxConstants.IsVariableWidthKeyword;
 
-            var token = this.createToken(fullStart, leadingTriviaInfo, start, kind, end, trailingTriviaInfo, isVariableWidthKeyword);
+            var token = this.createToken(fullStart, leadingTriviaInfo, start, kind, end, fullEnd, trailingTriviaInfo, isVariableWidthKeyword);
 
             // If we produced any diagnostics while creating this token, then realize the token so 
             // it won't be reused in incremental scenarios.
@@ -102,6 +103,7 @@ module TypeScript {
             start: number,
             kind: SyntaxKind,
             end: number,
+            fullEnd: number,
             trailingTriviaInfo: number,
             isVariableWidthKeyword: boolean): ISyntaxToken {
 
@@ -111,31 +113,38 @@ module TypeScript {
                         return new Syntax.FixedWidthTokenWithNoTrivia(kind);
                     }
                     else {
-                        return new Syntax.FixedWidthTokenWithTrailingTrivia(this.text, fullStart, kind, trailingTriviaInfo);
+                        var fullText = this.text.substr(fullStart, fullEnd - fullStart, false);
+                        return new Syntax.FixedWidthTokenWithTrailingTrivia(fullText, kind, trailingTriviaInfo);
                     }
                 }
                 else if (trailingTriviaInfo === 0) {
-                    return new Syntax.FixedWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo);
+                    var fullText = this.text.substr(fullStart, fullEnd - fullStart, false);
+                    return new Syntax.FixedWidthTokenWithLeadingTrivia(fullText, kind, leadingTriviaInfo);
                 }
                 else {
-                    return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);
+                    var fullText = this.text.substr(fullStart, fullEnd - fullStart, false);
+                    return new Syntax.FixedWidthTokenWithLeadingAndTrailingTrivia(fullText, kind, leadingTriviaInfo, trailingTriviaInfo);
                 }
             }
             else {
                 var width = end - start;
+
+                var fullText = this.text.substr(fullStart, fullEnd - fullStart, false);
+                var text = start == fullStart && end == fullEnd ? fullText : this.text.substr(start, end - start, false);
+
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
-                        return new Syntax.VariableWidthTokenWithNoTrivia(this.text, fullStart, kind, width);
+                        return new Syntax.VariableWidthTokenWithNoTrivia(fullText, text, kind);
                     }
                     else {
-                        return new Syntax.VariableWidthTokenWithTrailingTrivia(this.text, fullStart, kind, width, trailingTriviaInfo);
+                        return new Syntax.VariableWidthTokenWithTrailingTrivia(fullText, text, kind, trailingTriviaInfo);
                     }
                 }
                 else if (trailingTriviaInfo === 0) {
-                    return new Syntax.VariableWidthTokenWithLeadingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width);
+                    return new Syntax.VariableWidthTokenWithLeadingTrivia(fullText, text, kind, leadingTriviaInfo);
                 }
                 else {
-                    return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(this.text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);
+                    return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(fullText, text, kind, leadingTriviaInfo, trailingTriviaInfo);
                 }
             }
         }

@@ -2113,8 +2113,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     var hasAnyTrivia = leading || trailing;
 
     var result = "    export class ";
-
-    var needsSourcetext = hasAnyTrivia || isVariableWidth;
+    var needsText = hasAnyTrivia || isVariableWidth;
 
     var className = isFixedWidth ? "FixedWidthToken" : "VariableWidthToken";
     className += leading && trailing ? "WithLeadingAndTrailingTrivia" :
@@ -2122,12 +2121,14 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
              !leading && trailing ? "WithTrailingTrivia" : "WithNoTrivia";
 
     result += className;
-
     result += " implements ISyntaxToken {\r\n";
 
-    if (needsSourcetext) {
-        result += "        private _sourceText: ISimpleText;\r\n";
-        result += "        private _fullStart: number;\r\n";
+    if (needsText) {
+        result += "        private _fullText: string;\r\n";
+    }
+
+    if (!isFixedWidth) {
+        result += "        private _text: string;\r\n";
     }
 
     result += "        public tokenKind: SyntaxKind;\r\n";
@@ -2137,21 +2138,21 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
         result += "        private _leadingTriviaInfo: number;\r\n";
     }
 
-    if (isVariableWidth) {
-        result += "        private _textOrWidth: any;\r\n";
-    }
-
     if (trailing) {
         result += "        private _trailingTriviaInfo: number;\r\n";
     }
 
     result += "\r\n";
 
-    if (needsSourcetext) {
-        result += "        constructor(sourceText: ISimpleText, fullStart: number,";
+    if (needsText) {
+        result += "        constructor(fullText: string, ";
     }
     else {
         result += "        constructor(";
+    }
+
+    if (!isFixedWidth) {
+        result += "text: string, "
     }
 
     result += "kind: SyntaxKind";
@@ -2160,29 +2161,24 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
         result += ", leadingTriviaInfo: number";
     }
 
-    if (isVariableWidth) {
-        result += ", textOrWidth: any";
-    }
-
     if (trailing) {
         result += ", trailingTriviaInfo: number";
     }
 
     result += ") {\r\n";
 
-    if (needsSourcetext) {
-        result += "            this._sourceText = sourceText;\r\n";
-        result += "            this._fullStart = fullStart;\r\n";
+    if (needsText) {
+        result += "            this._fullText = fullText;\r\n";
+    }
+
+    if (!isFixedWidth) {
+        result += "            this._text = text;\r\n";
     }
 
     result += "            this.tokenKind = kind;\r\n";
 
     if (leading) {
         result += "            this._leadingTriviaInfo = leadingTriviaInfo;\r\n";
-    }
-
-    if (isVariableWidth) {
-        result += "            this._textOrWidth = textOrWidth;\r\n";
     }
 
     if (trailing) {
@@ -2194,9 +2190,12 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     result += "        public clone(): ISyntaxToken {\r\n";
     result += "            return new " + className + "(\r\n";
 
-    if (needsSourcetext) {
-        result += "                this._sourceText,\r\n";
-        result += "                this._fullStart,\r\n";
+    if (needsText) {
+        result += "                this._fullText,\r\n";
+    }
+
+    if (!isFixedWidth) {
+        result += "                this._text,\r\n";
     }
 
     //if (isKeyword) {
@@ -2209,10 +2208,6 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
 
     if (leading) {
         result += ",\r\n                this._leadingTriviaInfo";
-    }
-
-    if (isVariableWidth) {
-        result += ",\r\n                this._textOrWidth";
     }
 
     if (trailing) {
@@ -2249,7 +2244,8 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
         result += "        public fullWidth(): number { return this.width(); }\r\n";
     }
 
-    if (needsSourcetext) {
+    /*
+    if (needsText) {
         if (leading) {
             result += "        private start(): number { return this._fullStart + " + leadingTriviaWidth + "; }\r\n";
         }
@@ -2259,12 +2255,13 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
 
         result += "        private end(): number { return this.start() + this.width(); }\r\n\r\n";
     }
+    */
 
     if (isFixedWidth) {
         result += "        public width(): number { return this.text().length; }\r\n";
     }
     else {
-        result += "        public width(): number { return typeof this._textOrWidth === 'number' ? this._textOrWidth : this._textOrWidth.length; }\r\n";
+        result += "        public width(): number { return this._text.length; }\r\n";
     }
 
     if (isFixedWidth) {
@@ -2273,17 +2270,12 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     else {
         result += "\r\n";
         result += "        public text(): string {\r\n";
-        result += "            if (typeof this._textOrWidth === 'number') {\r\n";
-        result += "                this._textOrWidth = this._sourceText.substr(\r\n";
-        result += "                    this.start(), this._textOrWidth, /*intern:*/ this.tokenKind === SyntaxKind.IdentifierName);\r\n";
-        result += "            }\r\n";
-        result += "\r\n";
-        result += "            return this._textOrWidth;\r\n";
+        result += "            return this._text;\r\n";
         result += "        }\r\n\r\n";
     }
 
-    if (needsSourcetext) {
-        result += "        public fullText(): string { return this._sourceText.substr(this._fullStart, this.fullWidth(), /*intern:*/ false); }\r\n\r\n";
+    if (needsText) {
+        result += "        public fullText(): string { return this._fullText; }\r\n\r\n";
     }
     else {
         result += "        public fullText(): string { return this.text(); }\r\n\r\n";
@@ -2316,7 +2308,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     result += "        public hasLeadingSkippedText(): boolean { return false; }\r\n";
     result += "        public leadingTriviaWidth(): number { return " + (leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public leadingTrivia(): ISyntaxTriviaList { return " + (leading
-        ? "Scanner.scanTrivia(this._sourceText, this._fullStart, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
+        ? "Scanner.scanTrivia(SimpleText.fromString(this._fullText), 0, getTriviaWidth(this._leadingTriviaInfo), /*isTrailing:*/ false)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
 
     result += "        public hasTrailingTrivia(): boolean { return " + (trailing ? "true" : "false") + "; }\r\n";
@@ -2325,7 +2317,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     result += "        public hasTrailingSkippedText(): boolean { return false; }\r\n";
     result += "        public trailingTriviaWidth(): number { return " + (trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0") + "; }\r\n";
     result += "        public trailingTrivia(): ISyntaxTriviaList { return " + (trailing
-        ? "Scanner.scanTrivia(this._sourceText, this.end(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
+        ? "Scanner.scanTrivia(SimpleText.fromString(this._fullText), this.leadingTriviaWidth() + this.width(), getTriviaWidth(this._trailingTriviaInfo), /*isTrailing:*/ true)"
         : "Syntax.emptyTriviaList") + "; }\r\n\r\n";
     result += "        public hasSkippedToken(): boolean { return false; }\r\n";
 
@@ -2403,54 +2395,54 @@ function generateTokens(): string {
     result += generateToken(/*isFixedWidth:*/ true, /*leading:*/ true, /*trailing:*/ true);
     result += "\r\n";
 
-    result += 
-"    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" +
-"        token.leadingTrivia().collectTextElements(elements);\r\n" +
-"        elements.push(token.text());\r\n" +
-"        token.trailingTrivia().collectTextElements(elements);\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +
-"        kind: SyntaxKind,\r\n" +
-"        leadingTriviaInfo: number,\r\n" +
-"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-"\r\n" +
-"        if (leadingTriviaInfo === 0) {\r\n" +
-"            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new FixedWidthTokenWithNoTrivia(kind);\r\n" +
-"            }\r\n" +
-"            else {\r\n" +
-"                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);\r\n" +
-"            }\r\n" +
-"        }\r\n" +
-"        else if (trailingTriviaInfo === 0) {\r\n" +
-"            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);\r\n" +
-"        }\r\n" +
-"        else {\r\n" +
-"            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
-"        }\r\n" +
-"    }\r\n" +
-"\r\n" +
-"    export function variableWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +
-"        kind: SyntaxKind,\r\n" +
-"        leadingTriviaInfo: number,\r\n" +
-"        width: number,\r\n" +
-"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
-"\r\n" +
-"        if (leadingTriviaInfo === 0) {\r\n" +
-"            if (trailingTriviaInfo === 0) {\r\n" +
-"                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);\r\n" +
-"            }\r\n" +
-"            else {\r\n" +
-"                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);\r\n" +
-"            }\r\n" +
-"        }\r\n" +
-"        else if (trailingTriviaInfo === 0) {\r\n" +
-"            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);\r\n" +
-"        }\r\n" +
-"        else {\r\n" +
-"            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
-"        }\r\n" +
+    result +=
+    "    function collectTokenTextElements(token: ISyntaxToken, elements: string[]): void {\r\n" +
+    "        token.leadingTrivia().collectTextElements(elements);\r\n" +
+    "        elements.push(token.text());\r\n" +
+    "        token.trailingTrivia().collectTextElements(elements);\r\n" +
+    "    }\r\n" +
+    "\r\n";// +
+//"    export function fixedWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +
+//"        kind: SyntaxKind,\r\n" +
+//"        leadingTriviaInfo: number,\r\n" +
+//"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
+//"\r\n" +
+//"        if (leadingTriviaInfo === 0) {\r\n" +
+//"            if (trailingTriviaInfo === 0) {\r\n" +
+//"                return new FixedWidthTokenWithNoTrivia(kind);\r\n" +
+//"            }\r\n" +
+//"            else {\r\n" +
+//"                return new FixedWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, trailingTriviaInfo);\r\n" +
+//"            }\r\n" +
+//"        }\r\n" +
+//"        else if (trailingTriviaInfo === 0) {\r\n" +
+//"            return new FixedWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo);\r\n" +
+//"        }\r\n" +
+//"        else {\r\n" +
+//"            return new FixedWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, trailingTriviaInfo);\r\n" +
+//"        }\r\n" +
+//"    }\r\n" +
+//"\r\n" +
+//"    export function variableWidthToken(sourceText: ISimpleText, fullStart: number,\r\n" +
+//"        kind: SyntaxKind,\r\n" +
+//"        leadingTriviaInfo: number,\r\n" +
+//"        width: number,\r\n" +
+//"        trailingTriviaInfo: number): ISyntaxToken {\r\n" +
+//"\r\n" +
+//"        if (leadingTriviaInfo === 0) {\r\n" +
+//"            if (trailingTriviaInfo === 0) {\r\n" +
+//"                return new VariableWidthTokenWithNoTrivia(sourceText, fullStart, kind, width);\r\n" +
+//"            }\r\n" +
+//"            else {\r\n" +
+//"                return new VariableWidthTokenWithTrailingTrivia(sourceText, fullStart, kind, width, trailingTriviaInfo);\r\n" +
+//"            }\r\n" +
+//"        }\r\n" +
+//"        else if (trailingTriviaInfo === 0) {\r\n" +
+//"            return new VariableWidthTokenWithLeadingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width);\r\n" +
+//"        }\r\n" +
+//"        else {\r\n" +
+//"            return new VariableWidthTokenWithLeadingAndTrailingTrivia(sourceText, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
+//"        }\r\n" +
 //"    }\r\n" +
 //"\r\n" +
 //"    export function tokenFromText(text: IText, fullStart: number,\r\n" +
@@ -2464,7 +2456,7 @@ function generateTokens(): string {
 //"        else {\r\n" +
 //"            return variableWidthToken(text, fullStart, kind, leadingTriviaInfo, width, trailingTriviaInfo);\r\n" +
 //"        }\r\n" +
-"    }\r\n\r\n"
+//"    }\r\n\r\n"
 
     result += 
 "    function getTriviaWidth(value: number): number {\r\n" +
