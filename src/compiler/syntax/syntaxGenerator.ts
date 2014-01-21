@@ -2127,10 +2127,6 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
         result += "        private _fullText: string;\r\n";
     }
 
-    if (!isFixedWidth) {
-        result += "        private _text: string;\r\n";
-    }
-
     result += "        public tokenKind: SyntaxKind;\r\n";
     // result += "        public tokenKeywordKind: SyntaxKind;\r\n";
 
@@ -2151,10 +2147,6 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
         result += "        constructor(";
     }
 
-    if (!isFixedWidth) {
-        result += "text: string, "
-    }
-
     result += "kind: SyntaxKind";
 
     if (leading) {
@@ -2169,10 +2161,6 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
 
     if (needsText) {
         result += "            this._fullText = fullText;\r\n";
-    }
-
-    if (!isFixedWidth) {
-        result += "            this._text = text;\r\n";
     }
 
     result += "            this.tokenKind = kind;\r\n";
@@ -2194,16 +2182,6 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
         result += "                this._fullText,\r\n";
     }
 
-    if (!isFixedWidth) {
-        result += "                this._text,\r\n";
-    }
-
-    //if (isKeyword) {
-    //    result += "                this.tokenKeywordKind";
-    //}
-    //else {
-    //    result += "                this.tokenKind";
-    //}
     result += "                this.tokenKind";
 
     if (leading) {
@@ -2231,6 +2209,9 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     var leadingTriviaWidth = leading ? "getTriviaWidth(this._leadingTriviaInfo)" : "0";
     var trailingTriviaWidth = trailing ? "getTriviaWidth(this._trailingTriviaInfo)" : "0";
 
+    result += "        public fullWidth(): number { return this.fullText().length; }\r\n";
+
+    /*
     if (leading && trailing) {
         result += "        public fullWidth(): number { return " + leadingTriviaWidth + " + this.width() + " + trailingTriviaWidth + "; }\r\n";
     }
@@ -2243,6 +2224,7 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     else {
         result += "        public fullWidth(): number { return this.width(); }\r\n";
     }
+    */
 
     /*
     if (needsText) {
@@ -2258,20 +2240,17 @@ function generateToken(isFixedWidth: boolean, leading: boolean, trailing: boolea
     */
 
     if (isFixedWidth) {
-        result += "        public width(): number { return this.text().length; }\r\n";
+        result += "        public width(): number { return this.text().length; }\r\n\r\n";
     }
     else {
-        result += "        public width(): number { return this._text.length; }\r\n";
+        result += "        public width(): number { return this.fullWidth() - this.leadingTriviaWidth() - this.trailingTriviaWidth(); }\r\n\r\n";
     }
 
     if (isFixedWidth) {
         result += "        public text(): string { return SyntaxFacts.getText(this.tokenKind); }\r\n";
     }
     else {
-        result += "\r\n";
-        result += "        public text(): string {\r\n";
-        result += "            return this._text;\r\n";
-        result += "        }\r\n\r\n";
+        result += "        public text(): string { return this.fullText().substr(this.leadingTriviaWidth(), this.width()); }\r\n";
     }
 
     if (needsText) {

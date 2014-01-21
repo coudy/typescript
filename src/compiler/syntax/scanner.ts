@@ -130,21 +130,20 @@ module TypeScript {
                 var width = end - start;
 
                 var fullText = this.text.substr(fullStart, fullEnd - fullStart, false);
-                var text = start == fullStart && end == fullEnd ? fullText : this.text.substr(start, end - start, false);
 
                 if (leadingTriviaInfo === 0) {
                     if (trailingTriviaInfo === 0) {
-                        return new Syntax.VariableWidthTokenWithNoTrivia(fullText, text, kind);
+                        return new Syntax.VariableWidthTokenWithNoTrivia(fullText, kind);
                     }
                     else {
-                        return new Syntax.VariableWidthTokenWithTrailingTrivia(fullText, text, kind, trailingTriviaInfo);
+                        return new Syntax.VariableWidthTokenWithTrailingTrivia(fullText, kind, trailingTriviaInfo);
                     }
                 }
                 else if (trailingTriviaInfo === 0) {
-                    return new Syntax.VariableWidthTokenWithLeadingTrivia(fullText, text, kind, leadingTriviaInfo);
+                    return new Syntax.VariableWidthTokenWithLeadingTrivia(fullText, kind, leadingTriviaInfo);
                 }
                 else {
-                    return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(fullText, text, kind, leadingTriviaInfo, trailingTriviaInfo);
+                    return new Syntax.VariableWidthTokenWithLeadingAndTrailingTrivia(fullText, kind, leadingTriviaInfo, trailingTriviaInfo);
                 }
             }
         }
