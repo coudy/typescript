@@ -3766,9 +3766,9 @@ module TypeScript {
             // statement somewhere in its body.An exception to this rule is if the function 
             // implementation consists of a single ‘throw’ statement.
             if (block !== null && returnTypeAnnotation !== null && !hasReturn) {
-                var isVoidOrError = signature.returnType === this.semanticInfoChain.voidTypeSymbol || signature.returnType.isError();
+                var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
 
-                if (!isVoidOrError && !this.containsSingleThrowStatement(block)) {
+                if (!isVoidOrAny && !this.containsSingleThrowStatement(block)) {
                     var funcName = funcDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
 
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
