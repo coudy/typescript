@@ -1,6 +1,0 @@
-genericFunctions3.ts(5,1): error TS2149: Overload signature is not compatible with function definition:
-	Types of property 'foo' of types 'Query<{}>' and 'Query<T>' are incompatible:
-		Call signatures of types '(x: string) => Query<{}[]>' and '(x: string) => Query<T[]>' are incompatible:
-			Types 'Query<{}[]>' and 'Query<T[]>' originating in infinitely expanding type reference have incompatible type arguments:
-				Types of property 'pop' of types '{}[]' and 'T[]' are incompatible:
-					Call signatures of types '() => {}' and '() => T' are incompatible.

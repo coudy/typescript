@@ -74,5 +74,5 @@ verify.numberOfErrorsInCurrentFile(0);
 goTo.marker('2');
 edit.deleteAtCaret("Cookie".length);
 edit.insert("any");
-verify.numberOfErrorsInCurrentFile(1);
+verify.numberOfErrorsInCurrentFile(0);
 edit.insertLine('var narnia = new GenericPlanet2<Cookie, string>('); // shouldn't crash at this point

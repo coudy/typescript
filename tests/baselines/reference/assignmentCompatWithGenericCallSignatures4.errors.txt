@@ -1,5 +1,2 @@
 assignmentCompatWithGenericCallSignatures4.ts(7,9): error TS2229: Constraint of a type parameter cannot reference any type parameter from the same type parameter list.
 assignmentCompatWithGenericCallSignatures4.ts(8,9): error TS2229: Constraint of a type parameter cannot reference any type parameter from the same type parameter list.
-assignmentCompatWithGenericCallSignatures4.ts(12,1): error TS2012: Cannot convert '<T extends I2<T>>(z: T) => void' to '<T extends I2<I2<T>>>(z: T) => void':
-	Call signatures of types '<T extends I2<T>>(z: T) => void' and '<T extends I2<I2<T>>>(z: T) => void' are incompatible:
-		Types of property 'p' of types 'I2<I2<T>>' and 'I2<T>' are incompatible.
