@@ -288,5 +288,18 @@ module TypeScript {
                 }
             }
         }
+
+        export function twoTypesAreInstantiationsOfSameNamedGenericType(type1: PullTypeSymbol, type2: PullTypeSymbol) {
+            var type1IsGeneric = type1.isGeneric() && type1.getTypeArguments() !== null;
+            var type2IsGeneric = type2.isGeneric() && type2.getTypeArguments() !== null;
+
+            if (type1IsGeneric && type2IsGeneric) {
+                var type1Root = getRootType(type1);
+                var type2Root = getRootType(type2);
+                return type1Root === type2Root;
+            }
+
+            return false;
+        }
     }
 }

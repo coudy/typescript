@@ -27,22 +27,22 @@ module GenericParameter {
     }
     var r5 = foo5(a); // new{} => string; new(x:number) => {}
     var b: { new<T>(x: T): string; new<T>(x: number): T; }
-    var r7 = foo5(b); // new{} => string; new(x:number) => {}
+    var r7 = foo5(b); // new any => string; new(x:number) => any
 
     function foo6<T>(cb: { new(x: T): string; new(x: T, y?: T): string }) {
         return cb;
     }
 
     var r8 = foo6(a); // new{} => string; new(x:{}, y?:{}) => {}
-    var r9 = foo6(b); // new{} => string; new(x:{}, y?:{}) => {}
+    var r9 = foo6(b); // new any => string; new(x:any, y?:any) => any
 
     function foo7<T>(x:T, cb: { new(x: T): string; new(x: T, y?: T): string }) {
         return cb;
     }
 
-    var r13 = foo7(1, b); // new{} => string; new(x:{}, y?:{}) => {}
+    var r13 = foo7(1, b); // new any => string; new(x:any, y?:any) => any
     var c: { new <T>(x: T): string; <T>(x: number): T; }
     var c2: { new <T>(x: T): string; new<T>(x: number): T; }
-    var r14 = foo7(1, c); // new{} => string; new(x:{}, y?:{}) => {}
-    var r15 = foo7(1, c2); // new{} => string; new(x:{}, y?:{}) => {}
+    var r14 = foo7(1, c); // new any => string; new(x:any, y?:any) => any
+    var r15 = foo7(1, c2); // new any => string; new(x:any, y?:any) => any
 }

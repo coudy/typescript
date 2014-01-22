@@ -11519,54 +11519,26 @@ module TypeScript {
                 return;
             }
 
-            var parameterDeclarations = parameterType.getDeclarations();
-            var expressionDeclarations = expressionType.getDeclarations();
-
-            if (!parameterType.isArrayNamedTypeReference() &&
-                parameterDeclarations.length &&
-                expressionDeclarations.length &&
-                !(parameterType.isTypeParameter() || expressionType.isTypeParameter()) &&
-                (parameterDeclarations[0] === expressionDeclarations[0] || (expressionType.isGeneric() && parameterType.isGeneric() &&
-                this.sourceIsSubtypeOfTarget(this.instantiateTypeToAny(expressionType, context), this.instantiateTypeToAny(parameterType, context), /*ast*/ null, context, null))) &&
-                expressionType.isGeneric()) {
+            // As an optimization, if both types are generic and the same type, relate their type arguments
+            if (PullHelpers.twoTypesAreInstantiationsOfSameNamedGenericType(expressionType, parameterType)) {
                 this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, argContext, context);
             }
-
-            var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(expressionType, parameterType);
-            this.relateTypeToTypeParametersWorker(expressionType, parameterType, argContext, context);
-            context.endWalkingTypes(symbolsWhenStartedWalkingTypes);
-        }
-
-        private relateTypeToTypeParametersWorker(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
-            argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext): void {
-            if (expressionType.isArrayNamedTypeReference() && parameterType.isArrayNamedTypeReference()) {
-                this.relateArrayTypeToTypeParameters(expressionType, parameterType, argContext, context);
-
-                return;
+            else {
+                // Relate structurally
+                var symbolsWhenStartedWalkingTypes = context.startWalkingTypes(expressionType, parameterType);
+                this.relateObjectTypeToTypeParameters(expressionType, parameterType, argContext, context);
+                context.endWalkingTypes(symbolsWhenStartedWalkingTypes);
             }
-
-            this.relateObjectTypeToTypeParameters(expressionType, parameterType, argContext, context);
         }
 
         private relateTypeArgumentsOfTypeToTypeParameters(expressionType: PullTypeSymbol, parameterType: PullTypeSymbol,
             argContext: TypeArgumentInferenceContext, context: PullTypeResolutionContext) {
-            var typeParameters: PullTypeSymbol[] = parameterType.getTypeArgumentsOrTypeParameters();
-            var typeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
+            var parameterSideTypeArguments: PullTypeSymbol[] = parameterType.getTypeArguments();
+            var argumentSideTypeArguments: PullTypeSymbol[] = expressionType.getTypeArguments();
 
-            // If we're relating an out-of-order resolution of a function call within the body
-            // of a generic type's method, the relationship will actually be in reverse.
-            if (!typeArguments) {
-                typeParameters = parameterType.getTypeArguments();
-                typeArguments = expressionType.getTypeArgumentsOrTypeParameters();
-            }
-
-            if (typeParameters && typeArguments && typeParameters.length === typeArguments.length) {
-                for (var i = 0; i < typeParameters.length; i++) {
-                    if (typeArguments[i] !== typeParameters[i]) {
-                        // relate and fix
-                        this.relateTypeToTypeParametersWithNewEnclosingTypes(typeArguments[i], typeParameters[i], argContext, context);
-                    }
-                }
+            Debug.assert(parameterSideTypeArguments && argumentSideTypeArguments && parameterSideTypeArguments.length === argumentSideTypeArguments.length);
+            for (var i = 0; i < parameterSideTypeArguments.length; i++) {
+                this.relateTypeToTypeParametersWithNewEnclosingTypes(argumentSideTypeArguments[i], parameterSideTypeArguments[i], argContext, context);
             }
         }
 
@@ -11587,9 +11559,9 @@ module TypeScript {
             }
 
             var expressionTypeTypeArguments = expressionType.getTypeArguments();
-            var parameterTypeParameters = parameterType.getTypeParameters();
+            var parameterTypeArguments = parameterType.getTypeArguments();
 
-            if (expressionTypeTypeArguments && parameterTypeParameters && expressionTypeTypeArguments.length === parameterTypeParameters.length) {
+            if (expressionTypeTypeArguments && parameterTypeArguments && expressionTypeTypeArguments.length === parameterTypeArguments.length) {
                 for (var i = 0; i < expressionTypeTypeArguments.length; i++) {
                     this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, argContext, context);
                 }
@@ -11636,24 +11608,6 @@ module TypeScript {
 
             if (argContext.alreadyRelatingTypes(objectType, parameterType)) {
                 return;
-            }
-
-            var objectTypeArguments = objectType.getTypeArguments();
-            var parameterTypeParameters = parameterType.getTypeParameters();
-
-            if (objectTypeArguments) {
-                if (objectTypeArguments.length === parameterTypeParameters.length) {
-                    for (var i = 0; i < objectTypeArguments.length; i++) {
-                        // PULLREVIEW: This may lead to duplicate inferences for type argument parameters, if the two are the same
-                        // (which could occur via mutually recursive method calls within a generic class declaration)
-                        argContext.addCandidateForInference(parameterTypeParameters[i], objectTypeArguments[i]);
-                    }
-                }
-                else if (parameterType === this.semanticInfoChain.anyTypeSymbol) {
-                    for (var i = 0; i < objectTypeArguments.length; i++) {
-                        this.relateTypeToTypeParametersWithNewEnclosingTypes(parameterType, objectTypeArguments[i], argContext, context);
-                    }
-                }
             }
 
             // - If M is a property and S contains a property N with the same name as M, inferences are made from the type of N to the type of M.
@@ -11710,7 +11664,6 @@ module TypeScript {
             signatureKind: PullElementKind, // Call or construct
             argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
-     //       if (parameterSignatures.length != 1 || argumentSignatures.length != 1) return;
             for (var i = 0; i < parameterSignatures.length; i++) {
                 var paramSignature = parameterSignatures[i];
                 if (argumentSignatures.length > 0 && paramSignature.isGeneric()) {
@@ -11741,9 +11694,6 @@ module TypeScript {
             var typeParameterToConstraintMap: { [n: number]: PullTypeSymbol } = {};
             for (var i = 0; i < typeParameters.length; i++) {
                 var baseConstraint = typeParameters[i].getBaseConstraint(this.semanticInfoChain);
-                if (baseConstraint === this.semanticInfoChain.anyTypeSymbol) {
-                    baseConstraint = this.semanticInfoChain.emptyTypeSymbol;
-                }
                 typeParameterToConstraintMap[typeParameters[i].pullSymbolID] = baseConstraint;
             }
             return this.instantiateSignature(signature, typeParameterToConstraintMap);
