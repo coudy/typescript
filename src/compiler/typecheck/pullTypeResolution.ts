@@ -11573,20 +11573,16 @@ module TypeScript {
             argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
 
-            var expressionParams = expressionSignature.parameters;
             var expressionReturnType = expressionSignature.returnType;
-
-            var parameterParams = parameterSignature.parameters;
             var parameterReturnType = parameterSignature.returnType;
 
-            var len = parameterParams.length < expressionParams.length ? parameterParams.length : expressionParams.length;
-
-            for (var i = 0; i < len; i++) {
+            parameterSignature.forAllCorrespondingParameterTypesInThisAndOtherSignature(expressionSignature, (parameterSignatureParameterType, expressionSignatureParameterType, i) => {
                 context.walkParameterTypes(i);
-                this.relateTypeToTypeParametersInEnclosingType(expressionParams[i].type, parameterParams[i].type,
+                this.relateTypeToTypeParametersInEnclosingType(expressionSignatureParameterType, parameterSignatureParameterType,
                     argContext, context);
                 context.postWalkParameterTypes();
-            }
+                return true; // Keep going
+            });
 
             context.walkReturnTypes();
             this.relateTypeToTypeParametersInEnclosingType(expressionReturnType, parameterReturnType,
@@ -11691,23 +11687,12 @@ module TypeScript {
         private instantiateSignatureToBaseConstraints(signature: PullSignatureSymbol): PullSignatureSymbol {
             // Instantiate the signature with it's constraints
             var typeParameters = signature.getTypeParameters();
-            var typeParameterToConstraintMap: { [n: number]: PullTypeSymbol } = {};
+            var typeParameterToConstraintMap: TypeArgumentMap = {};
             for (var i = 0; i < typeParameters.length; i++) {
                 var baseConstraint = typeParameters[i].getBaseConstraint(this.semanticInfoChain);
                 typeParameterToConstraintMap[typeParameters[i].pullSymbolID] = baseConstraint;
             }
             return this.instantiateSignature(signature, typeParameterToConstraintMap);
-        }
-
-        private relateArrayTypeToTypeParameters(argArrayType: PullTypeSymbol,
-            parameterArrayType: PullTypeSymbol,
-            argContext: TypeArgumentInferenceContext,
-            context: PullTypeResolutionContext): void {
-
-            var argElement = argArrayType.getElementType();
-            var paramElement = parameterArrayType.getElementType();
-
-            this.relateTypeToTypeParametersWithNewEnclosingTypes(argElement, paramElement, argContext, context);
         }
 
         // November 18, 2013, Section 4.12.2:
