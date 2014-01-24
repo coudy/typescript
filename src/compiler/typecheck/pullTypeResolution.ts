@@ -11519,6 +11519,14 @@ module TypeScript {
                 return;
             }
 
+            // This is an optimization. Essentially the only way we can make an inference by diving
+            // into a type is if our type parameters T occur inside that type. Because we don't have
+            // nested named types, this can only occur if the type is anonymous, or if it is generic
+            // and T is a type argument to that type.
+            if (parameterType.isNamedTypeSymbol() && !parameterType.isGeneric() && !parameterType.getTypeArguments()) {
+                return;
+            }
+
             // As an optimization, if both types are generic and the same type, relate their type arguments
             if (PullHelpers.twoTypesAreInstantiationsOfSameNamedGenericType(expressionType, parameterType)) {
                 this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, argContext, context);
