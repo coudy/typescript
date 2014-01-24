@@ -11610,6 +11610,10 @@ module TypeScript {
             for (var i = 0; i < parameterTypeMembers.length; i++) {
                 objectMember = this.getNamedPropertySymbol(parameterTypeMembers[i].name, PullElementKind.SomeValue, objectType);
                 if (objectMember) {
+                    // TODO: resolveDeclaredSymbol shouldn't be necessary here, but full fix requires changing underlying
+                    // symbols to resolve themselves, which should be done at a later time.
+                    this.resolveDeclaredSymbol(objectMember);
+                    this.resolveDeclaredSymbol(parameterTypeMembers[i]);
                     context.walkMemberTypes(parameterTypeMembers[i].name);
                     this.relateTypeToTypeParametersInEnclosingType(objectMember.type, parameterTypeMembers[i].type,
                         argContext, context);
