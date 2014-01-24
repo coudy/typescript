@@ -11664,10 +11664,10 @@ module TypeScript {
             signatureKind: PullElementKind, // Call or construct
             argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
-            for (var i = 0; i < parameterSignatures.length; i++) {
+            for (var i = 0; i < parameterSignatures.length; i++) { 
                 var paramSignature = parameterSignatures[i];
                 if (argumentSignatures.length > 0 && paramSignature.isGeneric()) {
-                    paramSignature = this.instantiateSignatureToBaseConstraints(paramSignature);
+                    paramSignature = this.instantiateSignatureToAny(paramSignature);
                 }
                 for (var j = 0; j < argumentSignatures.length; j++) {
                     var argumentSignature = argumentSignatures[j];
@@ -11676,7 +11676,7 @@ module TypeScript {
                     }
 
                     if (argumentSignature.isGeneric()) {
-                        argumentSignature = this.instantiateSignatureToBaseConstraints(argumentSignature);
+                        argumentSignature = this.instantiateSignatureToAny(argumentSignature);
                     }
 
                     // In relateTypeToTypeParameters, the argument type (expressionType) is passed in first
