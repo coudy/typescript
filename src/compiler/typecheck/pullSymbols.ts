@@ -3311,17 +3311,13 @@ module TypeScript {
 
         // Section 3.4.1 (November 18, 2013):
         // The base constraint of a type parameter T is defined as follows:
-        //  If T has no declared constraint, T's base constraint is the global interface type 'Object'.
+        //  If T has no declared constraint, T's base constraint is the empty object type {}
         //  If T's declared constraint is a type parameter, T's base constraint is that of the type parameter.
         //  Otherwise, T's base constraint is T's declared constraint.
-        // The following code deviates from the spec in that if T has no declared constraint,
-        // we default to "any" instead of "Object". This is because we allow "any" to be passed
-        // as a type argument when there is no constraint, so specifying no constraint is like
-        // specifying "any".
         public getBaseConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
             var preBaseConstraint = this.getConstraintRecursively({});
             Debug.assert(preBaseConstraint === null || !preBaseConstraint.isTypeParameter());
-            return preBaseConstraint || semanticInfoChain.anyTypeSymbol;
+            return preBaseConstraint || semanticInfoChain.emptyTypeSymbol;
         }
 
         // Returns null if you hit a cycle or no constraint
@@ -3345,11 +3341,9 @@ module TypeScript {
             return null;
         }
 
-        // This is to mimic the effect of infering type arguments for a type parameter with
-        // no inference candidates. It is useful in the following case:
-        // class C<T extends number, U> { }
-        // var c = new C; // c should have type C<number, {}>, just like calling it with new C()
-        public getDefaultConstraintForInference(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
+        // The default constraint is just like the base constraint, but without recursively traversing
+        // type parameters.
+        public getDefaultConstraint(semanticInfoChain: SemanticInfoChain): PullTypeSymbol {
             return this._constraint || semanticInfoChain.emptyTypeSymbol;
         }
 

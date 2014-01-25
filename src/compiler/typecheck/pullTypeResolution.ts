@@ -9120,7 +9120,7 @@ module TypeScript {
                                 // Pretend to infer the constraints. This is useful for the following case:
                                 // class C<T extends number, U> { }
                                 // var c = new C; // c should have type C<number, {}>, just like calling it with new C()
-                                inferredOrExplicitTypeArgs = ArrayUtilities.select(typeParameters, typeParameter => typeParameter.getDefaultConstraintForInference(this.semanticInfoChain));
+                                inferredOrExplicitTypeArgs = ArrayUtilities.select(typeParameters, typeParameter => typeParameter.getDefaultConstraint(this.semanticInfoChain));
                             }
 
                             // if we could infer Args, or we have type arguments, then attempt to specialize the signature
@@ -11634,14 +11634,14 @@ module TypeScript {
             // type parameter constraints as type arguments (if any) and inferences are made from parameter
             // types in N to parameter types in the same position in M, and from the return type of N to the
             // return type of M.
-            this.relateSignatureGroupToTypeParameters(parameterType.getCallSignatures(), objectType.getCallSignatures(), PullElementKind.CallSignature, argContext, context);
+            this.relateSignatureGroupToTypeParameters(objectType.getCallSignatures(), parameterType.getCallSignatures(), PullElementKind.CallSignature, argContext, context);
 
             // If M is a construct signature then for each construct signature N in S, if the number of non-optional
             // parameters in N is greater than or equal to that of M, N is instantiated with each of its
             // type parameter constraints as type arguments (if any) and inferences are made from parameter
             // types in N to parameter types in the same position in M, and from the return type of N to the
             // return type of M.
-            this.relateSignatureGroupToTypeParameters(parameterType.getConstructSignatures(), objectType.getConstructSignatures(), PullElementKind.ConstructSignature, argContext, context);
+            this.relateSignatureGroupToTypeParameters(objectType.getConstructSignatures(), parameterType.getConstructSignatures(), PullElementKind.ConstructSignature, argContext, context);
 
             var parameterIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(parameterType, context);
             var objectIndexSignatures = this.getBothKindsOfIndexSignaturesExcludingAugmentedType(objectType, context);
@@ -11667,8 +11667,8 @@ module TypeScript {
         // types in N to parameter types in the same position in M, and from the return type of N to the
         // return type of M.
         private relateSignatureGroupToTypeParameters(
-            parameterSignatures: PullSignatureSymbol[],
             argumentSignatures: PullSignatureSymbol[],
+            parameterSignatures: PullSignatureSymbol[],
             signatureKind: PullElementKind, // Call or construct
             argContext: TypeArgumentInferenceContext,
             context: PullTypeResolutionContext): void {
@@ -11694,17 +11694,6 @@ module TypeScript {
                     context.postWalkSignatures();
                 }
             }
-        }
-
-        private instantiateSignatureToBaseConstraints(signature: PullSignatureSymbol): PullSignatureSymbol {
-            // Instantiate the signature with it's constraints
-            var typeParameters = signature.getTypeParameters();
-            var typeParameterToConstraintMap: TypeArgumentMap = {};
-            for (var i = 0; i < typeParameters.length; i++) {
-                var baseConstraint = typeParameters[i].getBaseConstraint(this.semanticInfoChain);
-                typeParameterToConstraintMap[typeParameters[i].pullSymbolID] = baseConstraint;
-            }
-            return this.instantiateSignature(signature, typeParameterToConstraintMap);
         }
 
         // November 18, 2013, Section 4.12.2:
@@ -11763,17 +11752,6 @@ module TypeScript {
             }
 
             return true;
-        }
-
-        public instantiateTypeToBaseConstraints(typeToInstantiate: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
-            var typeParameters = typeToInstantiate.getTypeParameters();
-            var typeArguments = new Array<PullTypeSymbol>(typeParameters.length);
-            for (var i = 0; i < typeParameters.length; i++) {
-                var resolvedTypeParameterSymbol = this.resolveDeclaredSymbol(typeParameters[i], context);
-                typeArguments[i] = resolvedTypeParameterSymbol.getBaseConstraint(this.semanticInfoChain);
-            }
-
-            return this.createInstantiatedType(typeToInstantiate, typeArguments);
         }
 
         public instantiateTypeToAny(typeToSpecialize: PullTypeSymbol, context: PullTypeResolutionContext): PullTypeSymbol {
