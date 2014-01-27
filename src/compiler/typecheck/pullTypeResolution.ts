@@ -10047,44 +10047,6 @@ module TypeScript {
             return false;
         }
 
-        private sourceExtendsTarget(source: PullTypeSymbol, target: PullTypeSymbol, context: PullTypeResolutionContext) {
-            // if one is generic and the other is not, we'll need to do a member-wise comparison
-            if (source.isGeneric() !== target.isGeneric()) {
-                return false;
-            }
-
-            if (source.hasBase(target)) {
-                return true;
-            }
-
-            // We need to jump through hoops here because, if we're type checking, we may attempt to compare a child type against
-            // its parent before we've finished resolving either.  (Say, through a recursive resolution of the return type of a
-            // child type's method)
-            if (context.isInBaseTypeResolution() &&
-                (source.kind & (PullElementKind.Interface | PullElementKind.Class)) &&
-                (target.kind & (PullElementKind.Interface | PullElementKind.Class))) {
-                var sourceDecls = source.getDeclarations();
-                var extendsSymbol: PullTypeSymbol = null;
-
-                for (var i = 0; i < sourceDecls.length; i++) {
-                    var sourceAST = <ClassDeclaration>this.semanticInfoChain.getASTForDecl(sourceDecls[i]);
-                    var extendsClause = ASTHelpers.getExtendsHeritageClause(sourceAST.heritageClauses);
-
-                    if (extendsClause) {
-                        for (var j = 0; j < extendsClause.typeNames.nonSeparatorCount(); j++) {
-                            extendsSymbol = <PullTypeSymbol>this.semanticInfoChain.getSymbolForAST(extendsClause.typeNames.nonSeparatorAt(j));
-
-                            if (extendsSymbol && (extendsSymbol === target || this.sourceExtendsTarget(extendsSymbol, target, context))) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean): boolean {
             return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
         }
@@ -10424,12 +10386,6 @@ module TypeScript {
         }
 
         private sourceIsRelatableToTargetWorker(source: PullTypeSymbol, target: PullTypeSymbol, sourceSubstitution: PullTypeSymbol, assignableTo: boolean, comparisonCache: IBitMatrix, ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures: boolean): boolean {
-            // This is an optimization that is a deviation from the spec. The spec sections 3.8.3 and 3.8.4 say to compare structurally,
-            // but we know that if a type nominally extends another type, it is both a subtype and assignable.
-            if ((source.kind & PullElementKind.SomeInstantiatableType) && (target.kind & PullElementKind.SomeInstantiatableType) && this.sourceExtendsTarget(source, target, context)) {
-                return true;
-            }
-
             if (target.hasMembers() && !this.sourceMembersAreRelatableToTargetMembers(sourceSubstitution, target, assignableTo, comparisonCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures)) {
                 return false;
             }
