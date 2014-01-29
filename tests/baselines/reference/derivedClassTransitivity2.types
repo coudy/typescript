@@ -1,0 +1,33 @@
+=== tests/cases/compiler/derivedClassTransitivity2.ts ===
+Line 2 col 6 IdentifierName "C" = C
+Line 3 col 0 IdentifierName "foo" = (x: number, y: number) => void
+Line 3 col 8 IdentifierName "x" = number
+Line 3 col 19 IdentifierName "y" = number
+Line 6 col 6 IdentifierName "D" = D
+Line 6 col 16 IdentifierName "C" = C
+Line 7 col 0 IdentifierName "foo" = (x: number) => void
+Line 7 col 8 IdentifierName "x" = number
+Line 10 col 6 IdentifierName "E" = E
+Line 10 col 16 IdentifierName "D" = D
+Line 11 col 0 IdentifierName "foo" = (x: number, y?: string) => void
+Line 11 col 8 IdentifierName "x" = number
+Line 11 col 19 IdentifierName "y" = string
+Line 14 col 4 IdentifierName "c" = C
+Line 14 col 7 IdentifierName "C" = C
+Line 15 col 4 IdentifierName "d" = D
+Line 15 col 7 IdentifierName "D" = D
+Line 16 col 4 IdentifierName "e" = E
+Line 16 col 7 IdentifierName "E" = E
+Line 17 col 0 AssignmentExpression "c = e" = E
+Line 17 col 0 IdentifierName "c" = C
+Line 17 col 4 IdentifierName "e" = E
+Line 18 col 4 IdentifierName "r" = void
+Line 18 col 8 InvocationExpression "c.foo(1, 1)" = void
+Line 18 col 8 MemberAccessExpression "c.foo" = (x: number, y: number) => void
+Line 18 col 8 IdentifierName "c" = C
+Line 18 col 10 IdentifierName "foo" = (x: number, y: number) => void
+Line 19 col 4 IdentifierName "r2" = void
+Line 19 col 9 InvocationExpression "e.foo(1, '')" = void
+Line 19 col 9 MemberAccessExpression "e.foo" = (x: number, y?: string) => void
+Line 19 col 9 IdentifierName "e" = E
+Line 19 col 11 IdentifierName "foo" = (x: number, y?: string) => void
