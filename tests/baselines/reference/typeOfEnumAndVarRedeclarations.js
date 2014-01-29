@@ -9,4 +9,4 @@ var E;
 var x = E;
 var x;
 var y = E;
-var y; // two errors: the types are not identical and duplcate signatures
+var y; // two errors: the types are not identical and duplicate signatures
