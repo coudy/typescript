@@ -274,10 +274,16 @@ module TypeScript {
         public setRootSymbol(symbol: PullSymbol) { this.rootSymbol = symbol; }
 
         public setIsSynthesized(value = true) {
+            Debug.assert(this.rootSymbol == null);
             this.isSynthesized = value;
         }
 
-        public getIsSynthesized() { return this.isSynthesized; }
+        public getIsSynthesized() {
+            if (this.rootSymbol) {
+                return this.rootSymbol.getIsSynthesized();
+            }
+            return this.isSynthesized;
+        }
 
         public setEnclosingSignature(signature: PullSignatureSymbol) {
             this._enclosingSignature = signature;
@@ -2970,11 +2976,16 @@ module TypeScript {
         constructor(public _anyType: PullTypeSymbol, name: string) {
             super(name);
 
+            Debug.assert(this._anyType);
             this.isResolved = true;
         }
 
         public isError() {
             return true;
+        }
+
+        public _getResolver(): PullTypeResolver {
+            return this._anyType._getResolver();
         }
 
         public getName(scopeSymbol?: PullSymbol, useConstraintInName?: boolean): string {

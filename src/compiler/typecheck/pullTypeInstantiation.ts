@@ -697,6 +697,9 @@ module TypeScript {
             if (!this._instantiatedConstructorMethod) {
                 var referencedConstructorMethod = this.referencedTypeSymbol.getConstructorMethod();
                 this._instantiatedConstructorMethod = new PullSymbol(referencedConstructorMethod.name, referencedConstructorMethod.kind);
+                this._instantiatedConstructorMethod.setRootSymbol(referencedConstructorMethod);
+                this._instantiatedConstructorMethod.setResolved();
+
                 this._instantiatedConstructorMethod.type = PullInstantiatedTypeReferenceSymbol.create(this._getResolver(), referencedConstructorMethod.type, this._typeParameterArgumentMap);
             }
 
