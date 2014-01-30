@@ -2602,7 +2602,8 @@ module TypeScript {
             // typeof Function
             var functionSymbol = this.getFunctionSymbol();
             if (functionSymbol && functionSymbol.kind === PullElementKind.Function && !PullHelpers.isSymbolLocal(functionSymbol)) {
-                return functionSymbol;
+                // workaround for missing 'bindAllDeclsInOrder' for classes: do not return typeof symbol for functions defined in module part of clodules (they are considered non-local)
+                return PullHelpers.isExportedSymbolInClodule(functionSymbol) ? null : functionSymbol;
             }
 
             return null;
