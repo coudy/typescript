@@ -969,6 +969,19 @@ module Harness {
 
             public getContentForFile(fileName: string) {
                 var snapshot: TypeScript.IScriptSnapshot = this.fileNameToScriptSnapshot.lookup(fileName)
+
+                TypeScript.Debug.assert(!!snapshot, 'Unable to get snapshot for the file "' + fileName + '"', () => {
+                    var verboseInfo = [
+                        '\r\nScriptSnapshots available:',
+                        this.fileNameToScriptSnapshot.getAllKeys().join(', '),
+                        '\r\nInput Files:',
+                        this.inputFiles.join(', '),
+                        '\r\nResolved Files:',
+                        this.resolvedFiles.join(', ')
+                    ].join(' ');
+                    return verboseInfo;
+                });
+
                 return snapshot.getText(0, snapshot.getLength());
             }
 

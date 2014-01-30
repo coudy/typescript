@@ -183,20 +183,23 @@ module FourSlash {
             }
 
             harnessCompiler.addInputFiles(inputFiles);
-            var resolvedFiles = harnessCompiler.resolve();
+            try {
+                var resolvedFiles = harnessCompiler.resolve();
 
-            resolvedFiles.forEach(file => {
-                if (file.path.indexOf('lib.d.ts') === -1) {
-                    var fixedPath = file.path.substr(file.path.indexOf('tests/'));
-                    var content = harnessCompiler.getContentForFile(fixedPath);
-                    this.languageServiceShimHost.addScript(fixedPath, content);
-                }
-            });
+                resolvedFiles.forEach(file => {
+                    if (file.path.indexOf('lib.d.ts') === -1) {
+                        var fixedPath = file.path.substr(file.path.indexOf('tests/'));
+                        var content = harnessCompiler.getContentForFile(fixedPath);
+                        this.languageServiceShimHost.addScript(fixedPath, content);
+                    }
+                });
 
-            this.languageServiceShimHost.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
-
-            // harness no longer needs the results of the above work, make sure the next test operations are in a clean state
-            harnessCompiler.reset();
+                this.languageServiceShimHost.addScript('lib.d.ts', Harness.Compiler.libTextMinimal);
+            }
+            finally {
+                // harness no longer needs the results of the above work, make sure the next test operations are in a clean state
+                harnessCompiler.reset();
+            }
 
             // Sneak into the language service and get its compiler so we can examine the syntax trees
             this.languageService = this.languageServiceShimHost.getLanguageService().languageService;
