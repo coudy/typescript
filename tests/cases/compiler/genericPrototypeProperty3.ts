@@ -2,7 +2,7 @@ class BaseEvent {
     target: {};
 }
 
-class MyEvent<T> extends BaseEvent { // Cannot extend BaseEvent because T is instantiated to any in the prototype
+class MyEvent<T> extends BaseEvent { // T is instantiated to any in the prototype, which is assignable to {}
     target: T;
 }
 class BaseEventWrapper {

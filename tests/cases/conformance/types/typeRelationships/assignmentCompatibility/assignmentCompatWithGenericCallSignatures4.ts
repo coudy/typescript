@@ -1,4 +1,4 @@
-// some complex cases of assignment compat of generic signatures that stress contextual signature instantiation
+// some complex cases of assignment compat of generic signatures.
 
 interface I2<T> {
     p: T

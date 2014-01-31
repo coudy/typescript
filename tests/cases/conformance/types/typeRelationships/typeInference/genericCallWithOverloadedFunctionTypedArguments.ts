@@ -1,5 +1,5 @@
 // Function typed arguments with multiple signatures must be passed an implementation that matches all of them
-// No inferences are made to or from such types
+// Inferences are made quadratic-pairwise to and from these overload sets
 
 module NonGenericParameter {
     var a: {
@@ -21,7 +21,7 @@ module GenericParameter {
         return cb;
     }
 
-    var r5 = foo5(x => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
+    var r5 = foo5(x => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]. T is any
     var a: { <T>(x: T): string; <T>(x: number): T; }
     var r7 = foo5(a); // any => string (+1 overload)
 
@@ -29,7 +29,7 @@ module GenericParameter {
         return cb;
     }
 
-    var r8 = foo6(x => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]
+    var r8 = foo6(x => x); // any => string (+1 overload) [inferences are made for T, but lambda not contextually typed]. T is any
     var r9 = foo6(<T>(x: T) => ''); // any => string (+1 overload)
     var r11 = foo6(<T>(x: T, y?: T) => ''); // any => string (+1 overload)
 

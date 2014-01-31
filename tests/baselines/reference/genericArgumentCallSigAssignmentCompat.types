@@ -25,25 +25,28 @@ Line 7 col 31 IdentifierName "T" = T
 Line 11 col 12 IdentifierName "_" = Underscore.Static
 Line 11 col 15 IdentifierName "Underscore" = Underscore
 Line 11 col 26 IdentifierName "Static" = Underscore.Static
-Line 12 col 0 InvocationExpression "// Correct -> Error: Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<{}, boolean>' are incompatible.
+Line 12 col 0 InvocationExpression "// No error, Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<{}, boolean>' are compatible when instantiated with any.
+// Ideally, we would not have a generic signature here, because it should be instantiated with {} during inferential typing
 _.all([true, 1, null, 'yes'], _.identity)" = boolean
-Line 12 col 0 MemberAccessExpression "// Correct -> Error: Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<{}, boolean>' are incompatible.
+Line 12 col 0 MemberAccessExpression "// No error, Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<{}, boolean>' are compatible when instantiated with any.
+// Ideally, we would not have a generic signature here, because it should be instantiated with {} during inferential typing
 _.all" = <T>(list: T[], iterator?: Underscore.Iterator<T, boolean>, context?: any) => boolean
-Line 12 col 0 IdentifierName "// Correct -> Error: Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<{}, boolean>' are incompatible.
+Line 12 col 0 IdentifierName "// No error, Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<{}, boolean>' are compatible when instantiated with any.
+// Ideally, we would not have a generic signature here, because it should be instantiated with {} during inferential typing
 _" = Underscore.Static
-Line 14 col 2 IdentifierName "all" = <T>(list: T[], iterator?: Underscore.Iterator<T, boolean>, context?: any) => boolean
-Line 14 col 6 ArrayLiteralExpression "[true, 1, null, 'yes']" = {}[]
-Line 14 col 30 MemberAccessExpression "_.identity" = <T>(value: T) => T
-Line 14 col 30 IdentifierName "_" = Underscore.Static
-Line 14 col 32 IdentifierName "identity" = <T>(value: T) => T
-Line 15 col 0 InvocationExpression "// Incorrect -> Error: Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<boolean, boolean>' are incompatible.
+Line 15 col 2 IdentifierName "all" = <T>(list: T[], iterator?: Underscore.Iterator<T, boolean>, context?: any) => boolean
+Line 15 col 6 ArrayLiteralExpression "[true, 1, null, 'yes']" = {}[]
+Line 15 col 30 MemberAccessExpression "_.identity" = <T>(value: T) => T
+Line 15 col 30 IdentifierName "_" = Underscore.Static
+Line 15 col 32 IdentifierName "identity" = <T>(value: T) => T
+Line 16 col 0 InvocationExpression "// Ok, because fixing makes us infer boolean for T
 _.all([true], _.identity)" = boolean
-Line 15 col 0 MemberAccessExpression "// Incorrect -> Error: Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<boolean, boolean>' are incompatible.
+Line 16 col 0 MemberAccessExpression "// Ok, because fixing makes us infer boolean for T
 _.all" = <T>(list: T[], iterator?: Underscore.Iterator<T, boolean>, context?: any) => boolean
-Line 15 col 0 IdentifierName "// Incorrect -> Error: Call signatures of types '<T>(value: T) => T' and 'Underscore.Iterator<boolean, boolean>' are incompatible.
+Line 16 col 0 IdentifierName "// Ok, because fixing makes us infer boolean for T
 _" = Underscore.Static
-Line 17 col 2 IdentifierName "all" = <T>(list: T[], iterator?: Underscore.Iterator<T, boolean>, context?: any) => boolean
-Line 17 col 6 ArrayLiteralExpression "[true]" = boolean[]
-Line 17 col 14 MemberAccessExpression "_.identity" = <T>(value: T) => T
-Line 17 col 14 IdentifierName "_" = Underscore.Static
-Line 17 col 16 IdentifierName "identity" = <T>(value: T) => T
+Line 18 col 2 IdentifierName "all" = <T>(list: T[], iterator?: Underscore.Iterator<T, boolean>, context?: any) => boolean
+Line 18 col 6 ArrayLiteralExpression "[true]" = boolean[]
+Line 18 col 14 MemberAccessExpression "_.identity" = <T>(value: T) => T
+Line 18 col 14 IdentifierName "_" = Underscore.Static
+Line 18 col 16 IdentifierName "identity" = <T>(value: T) => T
