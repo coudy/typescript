@@ -3841,7 +3841,10 @@ module TypeScript {
                 var numberIndexSignature = allIndexSignatures.numericSignature;
                 var isNumericIndexer = numberIndexSignature === signature;
 
-                // Check that the number signature is a subtype of the string index signature. To ensure that we only check this once,
+                // Section 3.7.4 (November 18, 2013): 
+                // Specifically, in a type with a string index signature of type T, all properties and numeric index signatures must
+                // have types that are subtypes of T.
+                // Check that the number signature is assignable to the string index signature. To ensure that we only check this once,
                 // we make sure that if the two signatures share a container, we only check this when type checking the number signature.
                 if (numberIndexSignature && stringIndexSignature &&
                     (isNumericIndexer || stringIndexSignature.getDeclarations()[0].getParentDecl() !== numberIndexSignature.getDeclarations()[0].getParentDecl())) {
@@ -5036,9 +5039,12 @@ module TypeScript {
         private typeCheckInstanceOfExpression(binaryExpression: BinaryExpression, context: PullTypeResolutionContext) {
             this.setTypeChecked(binaryExpression, context);
 
+            // Section 4.15.4:
             // September 17, 2013: The instanceof operator requires the left operand to be of type 
             // Any, an object type, or a type parameter type, and the right operand to be of type 
             // Any or a subtype of the ‘Function’ interface type. 
+            // We are using assignability instead of subtype here, which will be reflected in the
+            // new spec.
             var lhsType = this.resolveAST(binaryExpression.left, false, context).type;
             var rhsType = this.resolveAST(binaryExpression.right, false, context).type;
 
@@ -6968,6 +6974,10 @@ module TypeScript {
                     if (typeArg.inResolution || (typeArg.isTypeReference() && (<PullTypeReferenceSymbol>typeArg).referencedTypeSymbol.inResolution)) {
                         return specializedSymbol;
                     }
+
+                    // Section 3.4.2 (November 18, 2013): 
+                    // A type argument satisfies a type parameter constraint if the type argument is assignable
+                    // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
                     if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
                         var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[iArg].toString(enclosingSymbol, /*useConstraintInName*/ true)]));
@@ -8781,9 +8791,6 @@ module TypeScript {
                                 // Section 3.4.2 (November 18, 2013): 
                                 // A type argument satisfies a type parameter constraint if the type argument is assignable
                                 // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
-                                // The code here uses subtype instead of assignment compatibility (reflected in the next spec
-                                // version), because passing "any" is likely to cause an error later, so we prefer to disallow
-                                // it all together if there is a constraint.
                                 if (!this.sourceIsAssignableToTarget(inferredOrExplicitTypeArgs[j], typeConstraint, targetAST, context, /*comparisonInfo:*/ null, /*isComparingInstantiatedSignatures:*/ true)) {
                                     var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
                                     constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredOrExplicitTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
@@ -8830,9 +8837,9 @@ module TypeScript {
 
                 this.resolveAST(callEx.argumentList.arguments, /*isContextuallyTyped:*/ false, context);
 
-                // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
+                // if there are no call signatures, but the target is assignable to 'Function', return 'any'
                 if (!couldNotFindGenericOverload) {
-                    // if there are no call signatures, but the target is a subtype of 'Function', return 'any'
+                    // if there are no call signatures, but the target is assignable to 'Function', return 'any'
                     if (this.cachedFunctionInterfaceType() && this.sourceIsAssignableToTarget(targetTypeSymbol, this.cachedFunctionInterfaceType(), targetAST, context)) {
                         if (callEx.argumentList.typeArgumentList) {
                             this.postOverloadResolutionDiagnostics(this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Non_generic_functions_may_not_accept_type_arguments),
@@ -9154,9 +9161,6 @@ module TypeScript {
                                         // Section 3.4.2 (November 18, 2013): 
                                         // A type argument satisfies a type parameter constraint if the type argument is assignable
                                         // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
-                                        // The code here uses subtype instead of assignment compatibility (reflected in the next spec
-                                        // version), because passing "any" is likely to cause an error later, so we prefer to disallow
-                                        // it all together if there is a constraint.
                                         if (!this.sourceIsAssignableToTarget(inferredOrExplicitTypeArgs[j], typeConstraint, targetAST, context, null, /*isComparingInstantiatedSignatures:*/ true)) {
                                             var enclosingSymbol = this.getEnclosingSymbolForAST(targetAST);
                                             constraintDiagnostic = this.semanticInfoChain.diagnosticFromAST(targetAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [inferredOrExplicitTypeArgs[j].toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[j].toString(enclosingSymbol, /*useConstraintInName*/ true)]);
@@ -10048,15 +10052,16 @@ module TypeScript {
         }
 
         private sourceIsSubtypeOfTarget(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean): boolean {
-            return this.sourceIsRelatableToTarget(source, target, false, this.subtypeCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            return this.sourceIsRelatableToTarget(source, target, /*assignableTo*/false, this.subtypeCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
         }
 
         private sourceMembersAreAssignableToTargetMembers(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean) {
             var enclosingWalkers = context.resetEnclosingTypeWalkers();
             context.setEnclosingTypes(source, target);
-            var areSourceMembersAreSubtypeOfTargetMembers = this.sourceMembersAreRelatableToTargetMembers(source, target, true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            var areSourceMembersAreAssignableToTargetMembers = this.sourceMembersAreRelatableToTargetMembers(source, target,
+                /*assignableTo*/true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
             context.setEnclosingTypeWalkers(enclosingWalkers);
-            return areSourceMembersAreSubtypeOfTargetMembers;
+            return areSourceMembersAreAssignableToTargetMembers;
         }
 
         private sourcePropertyIsAssignableToTargetProperty(source: PullTypeSymbol, target: PullTypeSymbol,
@@ -10065,10 +10070,10 @@ module TypeScript {
 
             var enclosingWalkers = context.resetEnclosingTypeWalkers();
             context.setEnclosingTypes(source, target);
-            var isSourcePropertyIsSubTypeOfTargetProperty = this.sourcePropertyIsRelatableToTargetProperty(source, target, sourceProp, targetProp,
-                true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            var isSourcePropertyIsAssignableToTargetProperty = this.sourcePropertyIsRelatableToTargetProperty(source, target, sourceProp, targetProp,
+                /*assignableTo*/true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
             context.setEnclosingTypeWalkers(enclosingWalkers);
-            return isSourcePropertyIsSubTypeOfTargetProperty;
+            return isSourcePropertyIsAssignableToTargetProperty;
         }
 
         private sourceCallSignaturesAreAssignableToTargetCallSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
@@ -10077,9 +10082,10 @@ module TypeScript {
             
             var enclosingWalkers = context.resetEnclosingTypeWalkers();
             context.setEnclosingTypes(source, target);
-            var areSourceCallSignaturesSubTypeOfTargetCallSignatures = this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target, true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            var areSourceCallSignaturesAssignableToTargetCallSignatures = this.sourceCallSignaturesAreRelatableToTargetCallSignatures(source, target,
+                /*assignableTo*/true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
             context.setEnclosingTypeWalkers(enclosingWalkers);
-            return areSourceCallSignaturesSubTypeOfTargetCallSignatures;
+            return areSourceCallSignaturesAssignableToTargetCallSignatures;
         }
 
         private sourceConstructSignaturesAreAssignableToTargetConstructSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
@@ -10087,23 +10093,27 @@ module TypeScript {
 
             var enclosingWalkers = context.resetEnclosingTypeWalkers();
             context.setEnclosingTypes(source, target);
-            var areSourceConstructSignaturesSubTypeOfTargetConstructSignatures = this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source, target, true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            var areSourceConstructSignaturesAssignableToTargetConstructSignatures = this.sourceConstructSignaturesAreRelatableToTargetConstructSignatures(source, target,
+                /*assignableTo*/true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
             context.setEnclosingTypeWalkers(enclosingWalkers);
-            return areSourceConstructSignaturesSubTypeOfTargetConstructSignatures;
+            return areSourceConstructSignaturesAssignableToTargetConstructSignatures;
         }
 
         private sourceIndexSignaturesAreAssignableToTargetIndexSignatures(source: PullTypeSymbol, target: PullTypeSymbol,
             ast: AST, context: PullTypeResolutionContext, comparisonInfo: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean) {
             var enclosingWalkers = context.resetEnclosingTypeWalkers();
             context.setEnclosingTypes(source, target);
-            var areSourceIndexSignaturesSubTypeOfTargetIndexSignatures = this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target, true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            var areSourceIndexSignaturesAssignableToTargetIndexSignatures = this.sourceIndexSignaturesAreRelatableToTargetIndexSignatures(source, target,
+                /*assignableTo*/true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
             context.setEnclosingTypeWalkers(enclosingWalkers);
-            return areSourceIndexSignaturesSubTypeOfTargetIndexSignatures;
+            return areSourceIndexSignaturesAssignableToTargetIndexSignatures;
         }
 
         private typeIsAssignableToFunction(source: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext): boolean {
             // Note that object types containing one or more call or construct signatures are 
-            // automatically subtypes of the ‘Function’ interface type, as described in section 3.3.
+            // automatically assignable to Function, provided they do not hide properties of
+            // Function, giving them incompatible types. This is a result of the apparent type
+            // rules in section 3.1.
             if (source.isFunctionType()) {
                 return true;
             }
@@ -10115,9 +10125,10 @@ module TypeScript {
         private signatureIsAssignableToTarget(s1: PullSignatureSymbol, s2: PullSignatureSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean) {
             var enclosingWalkers = context.resetEnclosingTypeWalkers();
             context.setEnclosingTypes(s1, s2);
-            var isSignatureIsSubtypeOfTarget = this.signatureIsRelatableToTarget(s1, s2, true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
+            var isSignatureIsAssignableToTarget = this.signatureIsRelatableToTarget(s1, s2,
+                /*assignableTo*/true, this.assignableCache, ast, context, comparisonInfo, isComparingInstantiatedSignatures);
             context.setEnclosingTypeWalkers(enclosingWalkers);
-            return isSignatureIsSubtypeOfTarget;
+            return isSignatureIsAssignableToTarget;
         }
 
         private sourceIsAssignableToTarget(source: PullTypeSymbol, target: PullTypeSymbol, ast: AST, context: PullTypeResolutionContext, comparisonInfo?: TypeComparisonInfo, isComparingInstantiatedSignatures?: boolean): boolean {
@@ -11029,6 +11040,10 @@ module TypeScript {
                 return true;
             }
 
+            // From the January 23 version of the spec, following the design change:
+            // Section 3.8.3 + 3.8.4: M is a non-specialized call or construct signature and S'
+            // contains a call or construct signature N where, when M and N are instantiated using
+            // type Any as the type argument for all type parameters declared by M and N (if any)
             if (targetSig.isGeneric()) {
                 targetSig = this.instantiateSignatureToAny(targetSig);
             }
@@ -11484,7 +11499,7 @@ module TypeScript {
             }
 
             // As an optimization, if both types are generic and the same type, relate their type arguments
-            if (PullHelpers.twoTypesAreInstantiationsOfSameNamedGenericType(expressionType, parameterType)) {
+            if (PullInstantiationHelpers.twoTypesAreInstantiationsOfSameNamedGenericType(expressionType, parameterType)) {
                 this.relateTypeArgumentsOfTypeToTypeParameters(expressionType, parameterType, argContext, context);
             }
             else {

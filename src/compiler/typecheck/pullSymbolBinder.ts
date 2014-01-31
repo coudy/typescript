@@ -1753,8 +1753,6 @@ module TypeScript {
                 constructorTypeSymbol.addMember(prototypeSymbol);
 
                 if (prototypeSymbol.type && prototypeSymbol.type.isGeneric()) {
-                    var typeParameterASTs = classAST.typeParameterList && classAST.typeParameterList.typeParameters;
-                    Debug.assert(typeParameterASTs);
                     var resolver = this.semanticInfoChain.getResolver();
                     prototypeSymbol.type = resolver.instantiateTypeToAny(prototypeSymbol.type, new PullTypeResolutionContext(resolver));
                 }
