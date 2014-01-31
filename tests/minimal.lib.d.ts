@@ -985,3 +985,18 @@ declare var Array: {
     isArray(arg: any): boolean;
     prototype: Array<any>;
 }
+
+interface String {
+    localeCompare(that: string, locales: string[], options?: Intl.CollatorOptions): number;
+    localeCompare(that: string, locale: string, options?: Intl.CollatorOptions): number;
+}
+
+interface Number {
+    toLocaleString(locales?: string[], options?: Intl.NumberFormatOptions): string;
+    toLocaleString(locale?: string, options?: Intl.NumberFormatOptions): string;
+}
+
+interface Date {
+    toLocaleString(locales?: string[], options?: Intl.DateTimeFormatOptions): string;
+    toLocaleString(locale?: string, options?: Intl.DateTimeFormatOptions): string;
+}

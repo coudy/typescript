@@ -23,4 +23,4 @@ verify.memberListCount(2);
 goTo.marker('enumValueReference');
 verify.memberListContains("toString");
 verify.memberListContains("toFixed");
-verify.memberListCount(4);
+verify.memberListCount(5);
