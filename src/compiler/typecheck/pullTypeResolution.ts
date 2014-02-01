@@ -6894,6 +6894,12 @@ module TypeScript {
                 genericTypeSymbol = (<PullTypeAliasSymbol>genericTypeSymbol).getExportAssignedTypeSymbol();
             }
 
+            var typeParameters = genericTypeSymbol.getTypeParameters();
+            if (typeParameters.length === 0) {
+                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_have_type_parameters, [genericTypeSymbol.toString()]));
+                return this.getNewErrorTypeSymbol();
+            }
+
             // specialize the type arguments
             var typeArgs: PullTypeSymbol[] = [];
 
@@ -6906,8 +6912,6 @@ module TypeScript {
                     }
                 }
             }
-
-            var typeParameters = genericTypeSymbol.getTypeParameters()
 
             if (typeArgs.length && typeArgs.length !== typeParameters.length) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Generic_type_0_requires_1_type_argument_s, [genericTypeSymbol.toString(), genericTypeSymbol.getTypeParameters().length]));

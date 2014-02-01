@@ -1266,6 +1266,10 @@ module TypeScript {
     "code": 2235,
     "category": DiagnosticCategory.Error
   },
+  "Type '{0}' does not have type parameters.": {
+    "code": 2236,
+    "category": DiagnosticCategory.Error
+  },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {
     "code": 4000,
     "category": DiagnosticCategory.NoPrefix
