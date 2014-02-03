@@ -398,7 +398,8 @@ module TypeScript {
                 var parentDecl = this.parentDecl;
 
                 while (parentDecl) {
-                    if (parentDecl && path[path.length - 1] !== parentDecl && !(parentDecl.kind & PullElementKind.ObjectLiteral)) {
+                    if (parentDecl && path[path.length - 1] !== parentDecl
+                        && !(parentDecl.kind & (PullElementKind.ObjectLiteral | PullElementKind.ObjectType))) {
                         path.unshift(parentDecl);
                     }
 

@@ -3302,7 +3302,7 @@ module TypeScript {
                     }
                 }
                 // varDecl is a property in object type
-                else if (wrapperDecl.kind === TypeScript.PullElementKind.ObjectType) {
+                else if (decl.kind === TypeScript.PullElementKind.Property && !declSymbol.getContainer().isNamedTypeSymbol()) {
                     context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                         DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.text()]));
                 }
