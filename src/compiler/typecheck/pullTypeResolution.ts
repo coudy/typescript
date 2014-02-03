@@ -7566,6 +7566,11 @@ module TypeScript {
                         return;
                     }
                 }
+                else if (currentDecl.kind === PullElementKind.Enum)
+                {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(thisExpression, DiagnosticCode.this_cannot_be_referenced_in_current_location));
+                    return;
+                }
                 else if (currentDecl.kind === PullElementKind.ConstructorMethod) {
                     // October 11, 2013
                     // The first statement in the body of a constructor must be a super call if 
