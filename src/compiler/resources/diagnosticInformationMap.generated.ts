@@ -838,7 +838,7 @@ module TypeScript {
     "code": 2124,
     "category": DiagnosticCategory.Error
   },
-  "Function '{0}' declared a non-void return type, but has no return expression.": {
+  "Type '{0}' does not have type parameters.": {
     "code": 2125,
     "category": DiagnosticCategory.Error
   },
@@ -1264,10 +1264,6 @@ module TypeScript {
   },
   "Expression resolves to variable declaration '_i' that compiler uses to initialize rest parameter.": {
     "code": 2235,
-    "category": DiagnosticCategory.Error
-  },
-  "Type '{0}' does not have type parameters.": {
-    "code": 2236,
     "category": DiagnosticCategory.Error
   },
   "Type '{0}' is missing property '{1}' from type '{2}'.": {

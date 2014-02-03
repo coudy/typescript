@@ -3787,23 +3787,7 @@ module TypeScript {
             this.checkFunctionTypePrivacy(
                 funcDeclAST, isStatic, typeParameters, ASTHelpers.parametersFromParameterList(parameters), returnTypeAnnotation, block, context);
 
-            var signature: PullSignatureSymbol = funcDecl.getSignatureSymbol();
-
-            var hasReturn = hasFlag(funcDecl.flags, PullElementFlags.HasReturnStatement);
-
-            // November 18, 2013
-            // An explicitly typed function returning a non-void type must have at least one return 
-            // statement somewhere in its body.An exception to this rule is if the function 
-            // implementation consists of a single ‘throw’ statement.
-            if (block !== null && returnTypeAnnotation !== null && !hasReturn) {
-                var isVoidOrAny = this.isAnyOrEquivalent(signature.returnType) || signature.returnType === this.semanticInfoChain.voidTypeSymbol;
-
-                if (!isVoidOrAny && !this.containsSingleThrowStatement(block)) {
-                    var funcName = funcDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
-
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
-                }
-            }
+            this.checkThatNonVoidFunctionHasReturnExpressionOrThrowStatement(funcDecl, returnTypeAnnotation, funcDecl.getSignatureSymbol().returnType, block, context);
 
             if (funcDecl.kind === PullElementKind.Function) {
                 this.checkNameForCompilerGeneratedDeclarationCollision(funcDeclAST, /*isDeclaration*/ true, name, context);
@@ -3813,6 +3797,29 @@ module TypeScript {
                 // Function or constructor
                 this.typeCheckFunctionOverloads(funcDeclAST, context);
             });
+        }
+
+        private checkThatNonVoidFunctionHasReturnExpressionOrThrowStatement(
+            functionDecl: PullDecl,
+            returnTypeAnnotation: AST,
+            returnTypeSymbol: PullTypeSymbol,
+            block: Block,
+            context: PullTypeResolutionContext): void {
+            var hasReturn = hasFlag(functionDecl.flags, PullElementFlags.HasReturnStatement);
+
+            // November 18, 2013
+            // An explicitly typed function returning a non-void type must have at least one return 
+            // statement somewhere in its body. An exception to this rule is if the function 
+            // implementation consists of a single 'throw' statement.
+            if (block !== null && returnTypeAnnotation !== null && !hasReturn) {
+                var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
+
+                if (!isVoidOrAny && !this.containsSingleThrowStatement(block)) {
+                    var funcName = functionDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
+
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_declared_a_non_void_return_type_but_has_no_return_expression));
+                }
+            }
         }
 
         private typeCheckIndexSignature(funcDeclAST: IndexSignature, context: PullTypeResolutionContext): void {
@@ -4295,7 +4302,7 @@ module TypeScript {
                 }
                 // if there's no return-type annotation
                 //     - if it's not a definition signature, set the return type to 'any'
-                //     - if it's a definition sigature, take the best common type of all return expressions
+                //     - if it's a definition signature, take the best common type of all return expressions
                 //     - if it's a constructor, we set the return type link during binding
                 else if (funcDecl.kind !== PullElementKind.ConstructSignature) {
                     if (hasFlag(funcDecl.flags, PullElementFlags.Signature)) {
@@ -7358,17 +7365,7 @@ module TypeScript {
 
             context.popAnyContextualType();
 
-            var hasReturn = (functionDecl.flags & (PullElementFlags.Signature | PullElementFlags.HasReturnStatement)) !== 0;
-
-            if (block && returnTypeAnnotation !== null && !hasReturn) {
-                var isVoidOrAny = this.isAnyOrEquivalent(returnTypeSymbol) || returnTypeSymbol === this.semanticInfoChain.voidTypeSymbol;
-
-                if (!isVoidOrAny && !this.containsSingleThrowStatement(block)) {
-                    var funcName = functionDecl.getDisplayName() || getLocalizedText(DiagnosticCode.expression, null);
-
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(returnTypeAnnotation, DiagnosticCode.Function_0_declared_a_non_void_return_type_but_has_no_return_expression, [funcName]));
-                }
-            }
+            this.checkThatNonVoidFunctionHasReturnExpressionOrThrowStatement(functionDecl, returnTypeAnnotation, returnTypeSymbol, block, context);
 
             this.validateVariableDeclarationGroups(functionDecl, context);
 
