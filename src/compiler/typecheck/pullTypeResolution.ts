@@ -13263,6 +13263,8 @@ module TypeScript {
                     continue;
                 }
 
+                this.resolveDeclaredSymbol(member, context);
+
                 // Error if there is already a member in the bag with that name, and it doesn't have the same type
                 if (inheritedMembersMap[memberName]) {
                     var prevMember = inheritedMembersMap[memberName];
