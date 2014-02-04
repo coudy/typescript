@@ -1,18 +1,9 @@
-module MyLibrary {
-    export class Point {
-        static X = 0;
-        // Y previously caused a runtime error, 
-        // becuase Point was not assigned to module MyLibrary when initialized
-        static Y = MyLibrary.Point.X;
-    }
+enum TopLevelEnum {
+    ThisWasAllowedButShouldNotBe = this // Should not be allowed
 }
-module Mod2 {
-    export module MyLibrary {
-        export class Point {
-            static X = 0;
-            static Y = MyLibrary.Point.X;
-        }
 
-        var m = Mod2.MyLibrary.Point.X;
+module ModuleEnum {
+    enum EnumInModule {
+        WasADifferentError = this // this was handled as if this was in a module
     }
 }

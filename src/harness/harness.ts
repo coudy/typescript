@@ -148,12 +148,12 @@ module Harness {
             }
         }
 
-        export function noDiff(text1: string, text2: string) {
+        export function noDiff(text1: string, text2: string, ondifference?: () => string) {
             text1 = text1.replace(/^\s+|\s+$/g, "").replace(/\r\n?/g, "\n");
             text2 = text2.replace(/^\s+|\s+$/g, "").replace(/\r\n?/g, "\n");
 
             if (text1 !== text2) {
-                var errorString = "";
+                var errorString = ondifference ? ondifference() + "\n" : "";
                 var text1Lines = text1.split(/\n/);
                 var text2Lines = text2.split(/\n/);
                 for (var i = 0; i < text1Lines.length; i++) {

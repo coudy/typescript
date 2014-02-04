@@ -1,28 +1,12 @@
-var MyLibrary;
-(function (MyLibrary) {
-    var Point = (function () {
-        function Point() {
-        }
-        return Point;
-    })();
-    MyLibrary.Point = Point;
-    Point.X = 0;
+var TopLevelEnum;
+(function (TopLevelEnum) {
+    TopLevelEnum[TopLevelEnum["ThisWasAllowedButShouldNotBe"] = this] = "ThisWasAllowedButShouldNotBe";
+})(TopLevelEnum || (TopLevelEnum = {}));
 
-    Point.Y = MyLibrary.Point.X;
-})(MyLibrary || (MyLibrary = {}));
-var Mod2;
-(function (Mod2) {
-    (function (MyLibrary) {
-        var Point = (function () {
-            function Point() {
-            }
-            return Point;
-        })();
-        MyLibrary.Point = Point;
-        Point.X = 0;
-        Point.Y = MyLibrary.Point.X;
-
-        var m = Mod2.MyLibrary.Point.X;
-    })(Mod2.MyLibrary || (Mod2.MyLibrary = {}));
-    var MyLibrary = Mod2.MyLibrary;
-})(Mod2 || (Mod2 = {}));
+var ModuleEnum;
+(function (ModuleEnum) {
+    var EnumInModule;
+    (function (EnumInModule) {
+        EnumInModule[EnumInModule["WasADifferentError"] = this] = "WasADifferentError";
+    })(EnumInModule || (EnumInModule = {}));
+})(ModuleEnum || (ModuleEnum = {}));
