@@ -1435,14 +1435,6 @@ module TypeScript {
             var wasResolving = typeDeclSymbol.inResolution;
             typeDeclSymbol.startResolving();
 
-            // Resolve Type Parameters
-            if (!typeDeclSymbol.isResolved) {
-                var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
-                for (var i = 0; i < typeDeclTypeParameters.length; i++) {
-                    this.resolveDeclaredSymbol(typeDeclTypeParameters[i], context);
-                }
-            }
-
             // ensure that all members are bound
             var typeRefDecls = typeDeclSymbol.getDeclarations();
 
@@ -1452,6 +1444,14 @@ module TypeScript {
 
                 for (var j = 0; j < childDecls.length; j++) {
                     childDecls[j].ensureSymbolIsBound();
+                }
+            }
+
+            // Resolve Type Parameters
+            if (!typeDeclSymbol.isResolved) {
+                var typeDeclTypeParameters = typeDeclSymbol.getTypeParameters();
+                for (var i = 0; i < typeDeclTypeParameters.length; i++) {
+                    this.resolveDeclaredSymbol(typeDeclTypeParameters[i], context);
                 }
             }
 
@@ -1550,6 +1550,7 @@ module TypeScript {
         private resolveClassDeclaration(classDeclAST: ClassDeclaration, context: PullTypeResolutionContext): PullTypeSymbol {
             var classDecl: PullDecl = this.semanticInfoChain.getDeclForAST(classDeclAST);
             var classDeclSymbol = <PullTypeSymbol>classDecl.getSymbol();
+
             if (!classDeclSymbol.isResolved) {
                 this.resolveReferenceTypeDeclaration(classDeclAST, classDeclAST.identifier, classDeclAST.heritageClauses, context);
 
