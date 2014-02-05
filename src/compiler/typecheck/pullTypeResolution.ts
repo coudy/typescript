@@ -8699,7 +8699,6 @@ module TypeScript {
             }
 
             var explicitTypeArgs: PullTypeSymbol[] = null;
-            var typeReplacementMap: TypeArgumentMap = null;
             var couldNotFindGenericOverload = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
@@ -8772,14 +8771,8 @@ module TypeScript {
                     // When specializing the constraints, seed the replacement map with any substitutions already specified by
                     // the target function's type
                     var mutableTypeReplacementMap = new PullInstantiationHelpers.MutableTypeArgumentMap(targetTypeReplacementMap ? targetTypeReplacementMap : []);
-                    for (var j = 0; j < typeParameters.length; j++) {
-                        var typeParameterId = typeParameters[j].getRootSymbol().pullSymbolID;
-                        if (mutableTypeReplacementMap.typeParameterArgumentMap[typeParameterId] != inferredOrExplicitTypeArgs[j]) {
-                            mutableTypeReplacementMap.ensureTypeArgumentCopy();
-                            mutableTypeReplacementMap.typeParameterArgumentMap[typeParameterId] = inferredOrExplicitTypeArgs[j];
-                        }
-                    }
-                    typeReplacementMap = mutableTypeReplacementMap.typeParameterArgumentMap;
+                    PullInstantiationHelpers.updateMutableTypeParameterArgumentMap(typeParameters, inferredOrExplicitTypeArgs, mutableTypeReplacementMap);
+                    var typeReplacementMap = mutableTypeReplacementMap.typeParameterArgumentMap;
 
                     if (explicitTypeArgs) {
                         for (var j = 0; j < typeParameters.length; j++) {
@@ -9045,7 +9038,6 @@ module TypeScript {
             var constructSignatures = targetTypeSymbol.getConstructSignatures();
 
             var explicitTypeArgs: PullTypeSymbol[] = null;
-            var typeReplacementMap: PullTypeSymbol[] = null;
             var usedCallSignaturesInstead = false;
             var couldNotAssignToConstraint: boolean;
             var constraintDiagnostic: Diagnostic = null;
@@ -9134,22 +9126,13 @@ module TypeScript {
                             }
 
                             // if we could infer Args, or we have type arguments, then attempt to specialize the signature
-                            typeReplacementMap = [];
                             Debug.assert(inferredOrExplicitTypeArgs && inferredOrExplicitTypeArgs.length == typeParameters.length);
 
                             // When specializing the constraints, seed the replacement map with any substitutions already specified by
                             // the target function's type
-                            if (targetTypeReplacementMap) {
-                                for (var symbolID in targetTypeReplacementMap) {
-                                    if (targetTypeReplacementMap.hasOwnProperty(symbolID)) {
-                                        typeReplacementMap[symbolID] = targetTypeReplacementMap[symbolID];
-                                    }
-                                }
-                            }
-
-                            for (var j = 0; j < typeParameters.length; j++) {
-                                typeReplacementMap[typeParameters[j].pullSymbolID] = inferredOrExplicitTypeArgs[j];
-                            }
+                            var mutableTypeReplacementMap = new PullInstantiationHelpers.MutableTypeArgumentMap(targetTypeReplacementMap ? targetTypeReplacementMap : []);
+                            PullInstantiationHelpers.updateMutableTypeParameterArgumentMap(typeParameters, inferredOrExplicitTypeArgs, mutableTypeReplacementMap);
+                            var typeReplacementMap = mutableTypeReplacementMap.typeParameterArgumentMap;
 
                             if (explicitTypeArgs) {
                                 for (var j = 0; j < typeParameters.length; j++) {
@@ -9383,9 +9366,7 @@ module TypeScript {
                 }
             }
 
-            for (var i = 0; i < typeParameters.length; i++) {
-                typeReplacementMap[typeParameters[i].pullSymbolID] = inferredTypeArgs[i];
-            }
+            PullInstantiationHelpers.updateTypeParameterArgumentMap(typeParameters, inferredTypeArgs, typeReplacementMap);
 
             return this.instantiateSignature(signatureAToInstantiate, typeReplacementMap);
         }
