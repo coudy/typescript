@@ -349,7 +349,7 @@ module TypeScript {
         Types_0_and_1_originating_in_infinitely_expanding_type_reference_do_not_refer_to_same_named_type: "Types '{0}' and '{1}' originating in infinitely expanding type reference do not refer to same named type.",
         Types_0_and_1_originating_in_infinitely_expanding_type_reference_have_incompatible_type_arguments: "Types '{0}' and '{1}' originating in infinitely expanding type reference have incompatible type arguments.",
         Types_0_and_1_originating_in_infinitely_expanding_type_reference_have_incompatible_type_arguments_NL_2: "Types '{0}' and '{1}' originating in infinitely expanding type reference have incompatible type arguments:{NL}{2}",
-        Types_of_property_0_of_types_1_and_2_are_not_identical: "Types of property '{0}' of types '{1}' and '{2}' are not identical.",
+        Named_properties_0_of_types_1_and_2_are_not_identical: "Named properties '{0}' of types '{1}' and '{2}' are not identical.",
         Types_of_string_indexer_of_types_0_and_1_are_not_identical: "Types of string indexer of types '{0}' and '{1}' are not identical.",
         Types_of_number_indexer_of_types_0_and_1_are_not_identical: "Types of number indexer of types '{0}' and '{1}' are not identical.",
         Type_of_number_indexer_in_type_0_is_not_assignable_to_string_indexer_type_in_type_1_NL_2: "Type of number indexer in type '{0}' is not assignable to string indexer type in type '{1}'.{NL}{2}",

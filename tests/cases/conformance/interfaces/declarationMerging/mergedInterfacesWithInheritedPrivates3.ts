@@ -10,7 +10,6 @@ interface A extends C {
     y: string;
 }
 
-// BUG 858986
 interface A extends C2 { // should be error
     z: string;
 }

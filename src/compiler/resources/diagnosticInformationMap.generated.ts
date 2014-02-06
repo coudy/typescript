@@ -1394,7 +1394,7 @@ module TypeScript {
     "code": 4031,
     "category": DiagnosticCategory.NoPrefix
   },
-  "Types of property '{0}' of types '{1}' and '{2}' are not identical.": {
+  "Named properties '{0}' of types '{1}' and '{2}' are not identical.": {
     "code": 4032,
     "category": DiagnosticCategory.NoPrefix
   },
