@@ -8974,8 +8974,8 @@ declare var CSSImportRule: {
 }
 
 interface CustomEvent extends Event {
-    detail: Object;
-    initCustomEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, detailArg: Object): void;
+    detail: any;
+    initCustomEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, detailArg: any): void;
 }
 declare var CustomEvent: {
     prototype: CustomEvent;
