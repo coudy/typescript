@@ -13383,8 +13383,6 @@ interface Window extends GlobalEventHandlers {
     msCrypto: Crypto;
     ondeviceorientation: (ev: DeviceOrientationEvent) => any;
     addEventListener(type: "deviceorientation", listener: (ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
-    oncompassneedscalibration: (ev: any) => any;
-    addEventListener(type: "compassneedscalibration", listener: (ev: any) => any, useCapture?: boolean): void;
     doNotTrack: string;
     onmspointerenter: (ev: any) => any;
     addEventListener(type: "mspointerenter", listener: (ev: any) => any, useCapture?: boolean): void;
@@ -13575,7 +13573,7 @@ interface MSMediaKeys {
 }
 declare var MSMediaKeys: {
     prototype: MSMediaKeys;
-    new (): MSMediaKeys;
+    new(): MSMediaKeys;
 }
 
 interface MSMediaKeyMessageEvent extends Event {
@@ -13738,7 +13736,7 @@ interface MediaSource extends EventTarget {
 }
 declare var MediaSource: {
     prototype: MediaSource;
-    new (): MediaSource;
+    new(): MediaSource;
 }
 
 interface MediaError {
@@ -13808,7 +13806,7 @@ interface MutationObserver {
 }
 declare var MutationObserver: {
     prototype: MutationObserver;
-    new (): MutationObserver;
+    new(): MutationObserver;
 }
 
 interface AudioTrackList {
@@ -13968,7 +13966,6 @@ interface PerfWidgetExternal {
     getRecentPaintRequests(last: number): any;
 }
 
-
 interface PageTransitionEvent extends Event {
     persisted: boolean;
 }
@@ -14061,8 +14058,6 @@ declare var devicePixelRatio: number;
 declare var msCrypto: Crypto;
 declare var ondeviceorientation: (ev: DeviceOrientationEvent) => any;
 declare function addEventListener(type: "deviceorientation", listener: (ev: DeviceOrientationEvent) => any, useCapture?: boolean): void;
-declare var oncompassneedscalibration: (ev: any) => any;
-declare function addEventListener(type: "compassneedscalibration", listener: (ev: any) => any, useCapture?: boolean): void;
 declare var doNotTrack: string;
 declare var onmspointerenter: (ev: any) => any;
 declare function addEventListener(type: "mspointerenter", listener: (ev: any) => any, useCapture?: boolean): void;
