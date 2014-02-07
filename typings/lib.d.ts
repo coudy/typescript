@@ -11744,6 +11744,7 @@ interface URL {
     revokeObjectURL(url: string): void;
     createObjectURL(object: any, options?: ObjectURLOptions): string;
 }
+declare var URL: URL;
 
 interface RangeException {
     name: string;
