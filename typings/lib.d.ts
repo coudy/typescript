@@ -11125,7 +11125,6 @@ declare function setInterval(handler: any, timeout?: any, ...args: any[]): numbe
 /////////////////////////////
 
 
-
 interface ObjectURLOptions {
     oneTimeOnly?: boolean;
 }
@@ -11161,8 +11160,6 @@ interface MSGestureEvent extends UIEvent {
     MSGESTURE_FLAG_NONE: number;
 }
 declare var MSGestureEvent: {
-    prototype: MSGestureEvent;
-    new (): MSGestureEvent;
     MSGESTURE_FLAG_BEGIN: number;
     MSGESTURE_FLAG_END: number;
     MSGESTURE_FLAG_CANCEL: number;
@@ -11282,13 +11279,10 @@ interface HTMLInputElement {
 interface ErrorEvent extends Event {
     colno: number;
     filename: string;
+    error: any;
     lineno: number;
     message: string;
     initErrorEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, messageArg: string, filenameArg: string, linenoArg: number): void;
-}
-declare var ErrorEvent: {
-    prototype: ErrorEvent;
-    new (): ErrorEvent;
 }
 
 interface SVGFilterElement extends SVGElement, SVGUnitTypes, SVGStylable, SVGLangSpace, SVGURIReference, SVGExternalResourcesRequired {
@@ -11302,32 +11296,16 @@ interface SVGFilterElement extends SVGElement, SVGUnitTypes, SVGStylable, SVGLan
     filterResY: SVGAnimatedInteger;
     setFilterRes(filterResX: number, filterResY: number): void;
 }
-declare var SVGFilterElement: {
-    prototype: SVGFilterElement;
-    new (): SVGFilterElement;
-}
 
 interface TrackEvent extends Event {
     track: any;
-}
-declare var TrackEvent: {
-    prototype: TrackEvent;
-    new (): TrackEvent;
 }
 
 interface SVGFEMergeNodeElement extends SVGElement {
     in1: SVGAnimatedString;
 }
-declare var SVGFEMergeNodeElement: {
-    prototype: SVGFEMergeNodeElement;
-    new (): SVGFEMergeNodeElement;
-}
 
 interface SVGFEFloodElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
-}
-declare var SVGFEFloodElement: {
-    prototype: SVGFEFloodElement;
-    new (): SVGFEFloodElement;
 }
 
 interface MSGesture {
@@ -11337,7 +11315,7 @@ interface MSGesture {
 }
 declare var MSGesture: {
     prototype: MSGesture;
-    new (): MSGesture;
+    new(): MSGesture;
 }
 
 interface TextTrackCue extends EventTarget {
@@ -11356,7 +11334,7 @@ interface TextTrackCue extends EventTarget {
 }
 declare var TextTrackCue: {
     prototype: TextTrackCue;
-    new (): TextTrackCue;
+    new(): TextTrackCue;
 }
 
 interface MSStreamReader extends MSBaseReader {
@@ -11368,7 +11346,7 @@ interface MSStreamReader extends MSBaseReader {
 }
 declare var MSStreamReader: {
     prototype: MSStreamReader;
-    new (): MSStreamReader;
+    new(): MSStreamReader;
 }
 
 interface DOMTokenList {
@@ -11381,10 +11359,6 @@ interface DOMTokenList {
     [index: number]: string;
     toString(): string;
 }
-declare var DOMTokenList: {
-    prototype: DOMTokenList;
-    new (): DOMTokenList;
-}
 
 interface EventException {
     name: string;
@@ -11396,17 +11370,9 @@ interface Performance {
 
 interface SVGFEFuncAElement extends SVGComponentTransferFunctionElement {
 }
-declare var SVGFEFuncAElement: {
-    prototype: SVGFEFuncAElement;
-    new (): SVGFEFuncAElement;
-}
 
 interface SVGFETileElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
     in1: SVGAnimatedString;
-}
-declare var SVGFETileElement: {
-    prototype: SVGFETileElement;
-    new (): SVGFETileElement;
 }
 
 interface SVGFEBlendElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
@@ -11421,8 +11387,6 @@ interface SVGFEBlendElement extends SVGElement, SVGFilterPrimitiveStandardAttrib
     SVG_FEBLEND_MODE_LIGHTEN: number;
 }
 declare var SVGFEBlendElement: {
-    prototype: SVGFEBlendElement;
-    new (): SVGFEBlendElement;
     SVG_FEBLEND_MODE_DARKEN: number;
     SVG_FEBLEND_MODE_UNKNOWN: number;
     SVG_FEBLEND_MODE_MULTIPLY: number;
@@ -11432,10 +11396,6 @@ declare var SVGFEBlendElement: {
 }
 
 interface WindowTimers extends WindowTimersExtension {
-}
-declare var WindowTimers: {
-    prototype: WindowTimers;
-    new (): WindowTimers;
 }
 
 interface CSSStyleDeclaration {
@@ -11562,14 +11522,10 @@ interface MessageChannel {
 }
 declare var MessageChannel: {
     prototype: MessageChannel;
-    new (): MessageChannel;
+    new(): MessageChannel;
 }
 
 interface SVGFEMergeElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
-}
-declare var SVGFEMergeElement: {
-    prototype: SVGFEMergeElement;
-    new (): SVGFEMergeElement;
 }
 
 interface Navigator extends MSFileSaver {
@@ -11584,10 +11540,6 @@ interface TransitionEvent extends Event {
     elapsedTime: number;
     initTransitionEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, propertyNameArg: string, elapsedTimeArg: number): void;
 }
-declare var TransitionEvent: {
-    prototype: TransitionEvent;
-    new (): TransitionEvent;
-}
 
 interface MediaQueryList {
     matches: boolean;
@@ -11595,18 +11547,10 @@ interface MediaQueryList {
     addListener(listener: MediaQueryListListener): void;
     removeListener(listener: MediaQueryListListener): void;
 }
-declare var MediaQueryList: {
-    prototype: MediaQueryList;
-    new (): MediaQueryList;
-}
 
 interface DOMError {
     name: string;
     toString(): string;
-}
-declare var DOMError: {
-    prototype: DOMError;
-    new (): DOMError;
 }
 
 interface CloseEvent extends Event {
@@ -11614,10 +11558,6 @@ interface CloseEvent extends Event {
     reason: string;
     code: number;
     initCloseEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, wasCleanArg: boolean, codeArg: number, reasonArg: string): void;
-}
-declare var CloseEvent: {
-    prototype: CloseEvent;
-    new (): CloseEvent;
 }
 
 interface WebSocket extends EventTarget {
@@ -11659,20 +11599,12 @@ interface SVGFEPointLightElement extends SVGElement {
     x: SVGAnimatedNumber;
     z: SVGAnimatedNumber;
 }
-declare var SVGFEPointLightElement: {
-    prototype: SVGFEPointLightElement;
-    new (): SVGFEPointLightElement;
-}
 
 interface ProgressEvent extends Event {
     loaded: number;
     lengthComputable: boolean;
     total: number;
     initProgressEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, lengthComputableArg: boolean, loadedArg: number, totalArg: number): void;
-}
-declare var ProgressEvent: {
-    prototype: ProgressEvent;
-    new (): ProgressEvent;
 }
 
 interface IDBObjectStore {
@@ -11691,10 +11623,6 @@ interface IDBObjectStore {
     get(key: any): IDBRequest;
     delete(key: any): IDBRequest;
 }
-declare var IDBObjectStore: {
-    prototype: IDBObjectStore;
-    new (): IDBObjectStore;
-}
 
 interface HTMLCanvasElement {
     /**
@@ -11708,10 +11636,6 @@ interface SVGFEGaussianBlurElement extends SVGElement, SVGFilterPrimitiveStandar
     in1: SVGAnimatedString;
     stdDeviationY: SVGAnimatedNumber;
     setStdDeviation(stdDeviationX: number, stdDeviationY: number): void;
-}
-declare var SVGFEGaussianBlurElement: {
-    prototype: SVGFEGaussianBlurElement;
-    new (): SVGFEGaussianBlurElement;
 }
 
 interface SVGFilterPrimitiveStandardAttributes extends SVGStylable {
@@ -11767,10 +11691,6 @@ interface IDBVersionChangeEvent extends Event {
     newVersion: number;
     oldVersion: number;
 }
-declare var IDBVersionChangeEvent: {
-    prototype: IDBVersionChangeEvent;
-    new (): IDBVersionChangeEvent;
-}
 
 interface IDBIndex {
     unique: boolean;
@@ -11783,10 +11703,6 @@ interface IDBIndex {
     get(key: any): IDBRequest;
     openCursor(range?: IDBKeyRange, direction?: string): IDBRequest;
 }
-declare var IDBIndex: {
-    prototype: IDBIndex;
-    new (): IDBIndex;
-}
 
 interface WheelEvent {
     getCurrentPoint(element: Element): void;
@@ -11796,10 +11712,6 @@ interface FileList {
     length: number;
     item(index: number): File;
     [index: number]: File;
-}
-declare var FileList: {
-    prototype: FileList;
-    new (): FileList;
 }
 
 interface IDBCursor {
@@ -11811,18 +11723,6 @@ interface IDBCursor {
     delete(): IDBRequest;
     continue(key?: any): void;
     update(value: any): IDBRequest;
-    PREV: string;
-    PREV_NO_DUPLICATE: string;
-    NEXT: string;
-    NEXT_NO_DUPLICATE: string;
-}
-declare var IDBCursor: {
-    prototype: IDBCursor;
-    new (): IDBCursor;
-    PREV: string;
-    PREV_NO_DUPLICATE: string;
-    NEXT: string;
-    NEXT_NO_DUPLICATE: string;
 }
 
 interface SVGFESpecularLightingElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
@@ -11833,25 +11733,16 @@ interface SVGFESpecularLightingElement extends SVGElement, SVGFilterPrimitiveSta
     kernelUnitLengthX: SVGAnimatedNumber;
     specularConstant: SVGAnimatedNumber;
 }
-declare var SVGFESpecularLightingElement: {
-    prototype: SVGFESpecularLightingElement;
-    new (): SVGFESpecularLightingElement;
-}
 
 interface File extends Blob {
     lastModifiedDate: any;
     name: string;
-}
-declare var File: {
-    prototype: File;
-    new (): File;
 }
 
 interface URL {
     revokeObjectURL(url: string): void;
     createObjectURL(object: any, options?: ObjectURLOptions): string;
 }
-declare var URL: URL;
 
 interface RangeException {
     name: string;
@@ -11859,10 +11750,6 @@ interface RangeException {
 
 interface IDBCursorWithValue extends IDBCursor {
     value: any;
-}
-declare var IDBCursorWithValue: {
-    prototype: IDBCursorWithValue;
-    new (): IDBCursorWithValue;
 }
 
 interface HTMLTextAreaElement {
@@ -11922,10 +11809,6 @@ interface XMLHttpRequestEventTarget extends EventTarget {
     addEventListener(type: "loadend", listener: (ev: ProgressEvent) => any, useCapture?: boolean): void;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var XMLHttpRequestEventTarget: {
-    prototype: XMLHttpRequestEventTarget;
-    new (): XMLHttpRequestEventTarget;
-}
 
 interface IDBEnvironment {
     msIndexedDB: IDBFactory;
@@ -11942,10 +11825,6 @@ interface AudioTrackList extends EventTarget {
     item(index: number): AudioTrack;
     [index: number]: AudioTrack;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
-}
-declare var AudioTrackList: {
-    prototype: AudioTrackList;
-    new (): AudioTrackList;
 }
 
 interface MSBaseReader extends EventTarget {
@@ -11986,8 +11865,6 @@ interface SVGFEMorphologyElement extends SVGElement, SVGFilterPrimitiveStandardA
     SVG_MORPHOLOGY_OPERATOR_DILATE: number;
 }
 declare var SVGFEMorphologyElement: {
-    prototype: SVGFEMorphologyElement;
-    new (): SVGFEMorphologyElement;
     SVG_MORPHOLOGY_OPERATOR_UNKNOWN: number;
     SVG_MORPHOLOGY_OPERATOR_ERODE: number;
     SVG_MORPHOLOGY_OPERATOR_DILATE: number;
@@ -12031,17 +11908,12 @@ interface CSSRule {
     VIEWPORT_RULE: number;
 }
 //declare var CSSRule: {
-//    prototype: CSSRule;
 //    KEYFRAMES_RULE: number;
 //    KEYFRAME_RULE: number;
 //    VIEWPORT_RULE: number;
 //}
 
 interface SVGFEFuncRElement extends SVGComponentTransferFunctionElement {
-}
-declare var SVGFEFuncRElement: {
-    prototype: SVGFEFuncRElement;
-    new (): SVGFEFuncRElement;
 }
 
 interface WindowTimersExtension {
@@ -12064,8 +11936,6 @@ interface SVGFEDisplacementMapElement extends SVGElement, SVGFilterPrimitiveStan
     SVG_CHANNEL_A: number;
 }
 declare var SVGFEDisplacementMapElement: {
-    prototype: SVGFEDisplacementMapElement;
-    new (): SVGFEDisplacementMapElement;
     SVG_CHANNEL_B: number;
     SVG_CHANNEL_R: number;
     SVG_CHANNEL_G: number;
@@ -12077,10 +11947,6 @@ interface AnimationEvent extends Event {
     animationName: string;
     elapsedTime: number;
     initAnimationEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, animationNameArg: string, elapsedTimeArg: number): void;
-}
-declare var AnimationEvent: {
-    prototype: AnimationEvent;
-    new (): AnimationEvent;
 }
 
 interface SVGComponentTransferFunctionElement extends SVGElement {
@@ -12099,8 +11965,6 @@ interface SVGComponentTransferFunctionElement extends SVGElement {
     SVG_FECOMPONENTTRANSFER_TYPE_LINEAR: number;
 }
 declare var SVGComponentTransferFunctionElement: {
-    prototype: SVGComponentTransferFunctionElement;
-    new (): SVGComponentTransferFunctionElement;
     SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN: number;
     SVG_FECOMPONENTTRANSFER_TYPE_TABLE: number;
     SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY: number;
@@ -12114,18 +11978,10 @@ interface MSRangeCollection {
     item(index: number): Range;
     [index: number]: Range;
 }
-declare var MSRangeCollection: {
-    prototype: MSRangeCollection;
-    new (): MSRangeCollection;
-}
 
 interface SVGFEDistantLightElement extends SVGElement {
     azimuth: SVGAnimatedNumber;
     elevation: SVGAnimatedNumber;
-}
-declare var SVGFEDistantLightElement: {
-    prototype: SVGFEDistantLightElement;
-    new (): SVGFEDistantLightElement;
 }
 
 interface SVGException {
@@ -12134,25 +11990,16 @@ interface SVGException {
 
 interface SVGFEFuncBElement extends SVGComponentTransferFunctionElement {
 }
-declare var SVGFEFuncBElement: {
-    prototype: SVGFEFuncBElement;
-    new (): SVGFEFuncBElement;
-}
 
 interface IDBKeyRange {
     upper: any;
     upperOpen: boolean;
     lower: any;
     lowerOpen: boolean;
-
-}
-declare var IDBKeyRange: {
-    prototype: IDBKeyRange;
-    new (): IDBKeyRange;
+    bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;
     only(value: any): IDBKeyRange;
     lowerBound(bound: any, open?: boolean): IDBKeyRange;
     upperBound(bound: any, open?: boolean): IDBKeyRange;
-    bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;
 }
 
 interface WindowConsole {
@@ -12172,16 +12019,6 @@ interface IDBTransaction extends EventTarget {
     abort(): void;
     objectStore(name: string): IDBObjectStore;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
-    READ_ONLY: string;
-    VERSION_CHANGE: string;
-    READ_WRITE: string;
-}
-declare var IDBTransaction: {
-    prototype: IDBTransaction;
-    new (): IDBTransaction;
-    READ_ONLY: string;
-    VERSION_CHANGE: string;
-    READ_WRITE: string;
 }
 
 interface AudioTrack {
@@ -12190,10 +12027,6 @@ interface AudioTrack {
     id: string;
     label: string;
     enabled: boolean;
-}
-declare var AudioTrack: {
-    prototype: AudioTrack;
-    new (): AudioTrack;
 }
 
 interface SVGFEConvolveMatrixElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
@@ -12215,8 +12048,6 @@ interface SVGFEConvolveMatrixElement extends SVGElement, SVGFilterPrimitiveStand
     SVG_EDGEMODE_NONE: number;
 }
 declare var SVGFEConvolveMatrixElement: {
-    prototype: SVGFEConvolveMatrixElement;
-    new (): SVGFEConvolveMatrixElement;
     SVG_EDGEMODE_WRAP: number;
     SVG_EDGEMODE_DUPLICATE: number;
     SVG_EDGEMODE_UNKNOWN: number;
@@ -12229,10 +12060,6 @@ interface TextTrackCueList {
     [index: number]: TextTrackCue;
     getCueById(id: string): TextTrackCue;
 }
-declare var TextTrackCueList: {
-    prototype: TextTrackCueList;
-    new (): TextTrackCueList;
-}
 
 interface CSSKeyframesRule extends CSSRule {
     name: string;
@@ -12240,10 +12067,6 @@ interface CSSKeyframesRule extends CSSRule {
     findRule(rule: string): CSSKeyframeRule;
     deleteRule(rule: string): void;
     appendRule(rule: string): void;
-}
-declare var CSSKeyframesRule: {
-    prototype: CSSKeyframesRule;
-    new (): CSSKeyframesRule;
 }
 
 interface Window extends WindowBase64, IDBEnvironment, WindowConsole {
@@ -12304,8 +12127,6 @@ interface SVGFETurbulenceElement extends SVGElement, SVGFilterPrimitiveStandardA
     SVG_STITCHTYPE_STITCH: number;
 }
 declare var SVGFETurbulenceElement: {
-    prototype: SVGFETurbulenceElement;
-    new (): SVGFETurbulenceElement;
     SVG_STITCHTYPE_UNKNOWN: number;
     SVG_STITCHTYPE_NOSTITCH: number;
     SVG_TURBULENCE_TYPE_UNKNOWN: number;
@@ -12319,16 +12140,8 @@ interface TextTrackList {
     item(index: number): TextTrack;
     [index: number]: TextTrack;
 }
-declare var TextTrackList: {
-    prototype: TextTrackList;
-    new (): TextTrackList;
-}
 
 interface SVGFEFuncGElement extends SVGComponentTransferFunctionElement {
-}
-declare var SVGFEFuncGElement: {
-    prototype: SVGFEFuncGElement;
-    new (): SVGFEFuncGElement;
 }
 
 interface SVGFEColorMatrixElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
@@ -12342,8 +12155,6 @@ interface SVGFEColorMatrixElement extends SVGElement, SVGFilterPrimitiveStandard
     SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA: number;
 }
 declare var SVGFEColorMatrixElement: {
-    prototype: SVGFEColorMatrixElement;
-    new (): SVGFEColorMatrixElement;
     SVG_FECOLORMATRIX_TYPE_SATURATE: number;
     SVG_FECOLORMATRIX_TYPE_UNKNOWN: number;
     SVG_FECOLORMATRIX_TYPE_MATRIX: number;
@@ -12363,10 +12174,6 @@ interface Console {
     log(message?: any, ...optionalParams: any[]): void;
     profileEnd(): void;
 }
-declare var Console: {
-    prototype: Console;
-    new (): Console;
-}
 
 interface SVGFESpotLightElement extends SVGElement {
     pointsAtY: SVGAnimatedNumber;
@@ -12377,10 +12184,6 @@ interface SVGFESpotLightElement extends SVGElement {
     pointsAtZ: SVGAnimatedNumber;
     z: SVGAnimatedNumber;
     pointsAtX: SVGAnimatedNumber;
-}
-declare var SVGFESpotLightElement: {
-    prototype: SVGFESpotLightElement;
-    new (): SVGFESpotLightElement;
 }
 
 interface HTMLImageElement {
@@ -12417,20 +12220,12 @@ interface IDBDatabase extends EventTarget {
     deleteObjectStore(name: string): void;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var IDBDatabase: {
-    prototype: IDBDatabase;
-    new (): IDBDatabase;
-}
 
 interface DOMStringList {
     length: number;
     contains(str: string): boolean;
     item(index: number): string;
     [index: number]: string;
-}
-declare var DOMStringList: {
-    prototype: DOMStringList;
-    new (): DOMStringList;
 }
 
 interface HTMLButtonElement {
@@ -12488,10 +12283,6 @@ interface IDBOpenDBRequest extends IDBRequest {
     addEventListener(type: "blocked", listener: (ev: Event) => any, useCapture?: boolean): void;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var IDBOpenDBRequest: {
-    prototype: IDBOpenDBRequest;
-    new (): IDBOpenDBRequest;
-}
 
 interface HTMLProgressElement extends HTMLElement {
     /**
@@ -12511,10 +12302,6 @@ interface HTMLProgressElement extends HTMLElement {
       */
     form: HTMLFormElement;
 }
-declare var HTMLProgressElement: {
-    prototype: HTMLProgressElement;
-    new (): HTMLProgressElement;
-}
 
 interface MSLaunchUriCallback {
     (): void;
@@ -12524,10 +12311,6 @@ interface SVGFEOffsetElement extends SVGElement, SVGFilterPrimitiveStandardAttri
     dy: SVGAnimatedNumber;
     in1: SVGAnimatedString;
     dx: SVGAnimatedNumber;
-}
-declare var SVGFEOffsetElement: {
-    prototype: SVGFEOffsetElement;
-    new (): SVGFEOffsetElement;
 }
 
 interface HTMLFormElement {
@@ -12668,8 +12451,6 @@ interface TextTrack extends EventTarget {
     DISABLED: number;
 }
 declare var TextTrack: {
-    prototype: TextTrack;
-    new (): TextTrack;
     ERROR: number;
     SHOWING: number;
     LOADING: number;
@@ -12695,22 +12476,14 @@ interface IDBRequest extends EventTarget {
     result: any;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
 }
-declare var IDBRequest: {
-    prototype: IDBRequest;
-    new (): IDBRequest;
-}
 
 interface MessagePort extends EventTarget {
     onmessage: (ev: any) => any;
     addEventListener(type: "message", listener: (ev: any) => any, useCapture?: boolean): void;
     close(): void;
-    postMessage(message: any, ports?: any): void;
+    postMessage(message?: any, ports?: any): void;
     start(): void;
     addEventListener(type: string, listener: EventListener, useCapture?: boolean): void;
-}
-declare var MessagePort: {
-    prototype: MessagePort;
-    new (): MessagePort;
 }
 
 interface FileReader extends MSBaseReader {
@@ -12721,7 +12494,7 @@ interface FileReader extends MSBaseReader {
 }
 declare var FileReader: {
     prototype: FileReader;
-    new (): FileReader;
+    new(): FileReader;
 }
 
 interface BlobPropertyBag {
@@ -12734,7 +12507,6 @@ interface Blob {
     size: number;
     msDetachStream(): any;
     slice(start?: number, end?: number, contentType?: string): Blob;
-    close(): void;
     msClose(): void;
 }
 declare var Blob: {
@@ -12772,8 +12544,6 @@ interface ApplicationCache extends EventTarget {
     OBSOLETE: number;
 }
 declare var ApplicationCache: {
-    prototype: ApplicationCache;
-    new (): ApplicationCache;
     CHECKING: number;
     UNCACHED: number;
     UPDATEREADY: number;
@@ -12807,18 +12577,10 @@ interface PopStateEvent extends Event {
     state: any;
     initPopStateEvent(typeArg: string, canBubbleArg: boolean, cancelableArg: boolean, stateArg: any): void;
 }
-declare var PopStateEvent: {
-    prototype: PopStateEvent;
-    new (): PopStateEvent;
-}
 
 interface CSSKeyframeRule extends CSSRule {
     keyText: string;
     style: CSSStyleDeclaration;
-}
-declare var CSSKeyframeRule: {
-    prototype: CSSKeyframeRule;
-    new (): CSSKeyframeRule;
 }
 
 interface MSFileSaver {
@@ -12830,10 +12592,6 @@ interface MSStream {
     type: string;
     msDetachStream(): any;
     msClose(): void;
-}
-declare var MSStream: {
-    prototype: MSStream;
-    new (): MSStream;
 }
 
 interface MediaError {
@@ -12870,7 +12628,7 @@ interface MSBlobBuilder {
 }
 declare var MSBlobBuilder: {
     prototype: MSBlobBuilder;
-    new (): MSBlobBuilder;
+    new(): MSBlobBuilder;
 }
 
 interface HTMLElement {
@@ -12893,19 +12651,11 @@ interface DataTransfer {
 interface DOMSettableTokenList extends DOMTokenList {
     value: string;
 }
-declare var DOMSettableTokenList: {
-    prototype: DOMSettableTokenList;
-    new (): DOMSettableTokenList;
-}
 
 interface IDBFactory {
     open(name: string, version?: number): IDBOpenDBRequest;
     cmp(first: any, second: any): number;
     deleteDatabase(name: string): IDBOpenDBRequest;
-}
-declare var IDBFactory: {
-    prototype: IDBFactory;
-    new (): IDBFactory;
 }
 
 interface Range {
@@ -12957,8 +12707,6 @@ interface MSPointerEvent extends MouseEvent {
     MSPOINTER_TYPE_TOUCH: number;
 }
 declare var MSPointerEvent: {
-    prototype: MSPointerEvent;
-    new (): MSPointerEvent;
     MSPOINTER_TYPE_PEN: number;
     MSPOINTER_TYPE_MOUSE: number;
     MSPOINTER_TYPE_TOUCH: number;
@@ -12971,7 +12719,6 @@ interface DOMException {
     TIMEOUT_ERR: number;
 }
 //declare var DOMException: {
-//    prototype: DOMException;
 //    INVALID_NODE_TYPE_ERR: number;
 //    DATA_CLONE_ERR: number;
 //    TIMEOUT_ERR: number;
@@ -12986,8 +12733,6 @@ interface MSManipulationEvent extends UIEvent {
     MS_MANIPULATION_STATE_INERTIA: number;
 }
 declare var MSManipulationEvent: {
-    prototype: MSManipulationEvent;
-    new (): MSManipulationEvent;
     MS_MANIPULATION_STATE_STOPPED: number;
     MS_MANIPULATION_STATE_ACTIVE: number;
     MS_MANIPULATION_STATE_INERTIA: number;
@@ -13004,17 +12749,9 @@ declare var FormData: {
 interface HTMLDataListElement extends HTMLElement {
     options: HTMLCollection;
 }
-declare var HTMLDataListElement: {
-    prototype: HTMLDataListElement;
-    new (): HTMLDataListElement;
-}
 
 interface SVGFEImageElement extends SVGElement, SVGLangSpace, SVGFilterPrimitiveStandardAttributes, SVGURIReference, SVGExternalResourcesRequired {
     preserveAspectRatio: SVGAnimatedPreserveAspectRatio;
-}
-declare var SVGFEImageElement: {
-    prototype: SVGFEImageElement;
-    new (): SVGFEImageElement;
 }
 
 interface AbstractWorker extends EventTarget {
@@ -13040,8 +12777,6 @@ interface SVGFECompositeElement extends SVGElement, SVGFilterPrimitiveStandardAt
     SVG_FECOMPOSITE_OPERATOR_ATOP: number;
 }
 declare var SVGFECompositeElement: {
-    prototype: SVGFECompositeElement;
-    new (): SVGFECompositeElement;
     SVG_FECOMPOSITE_OPERATOR_OUT: number;
     SVG_FECOMPOSITE_OPERATOR_OVER: number;
     SVG_FECOMPOSITE_OPERATOR_XOR: number;
@@ -13062,10 +12797,6 @@ interface ValidityState {
     tooLong: boolean;
     valid: boolean;
 }
-declare var ValidityState: {
-    prototype: ValidityState;
-    new (): ValidityState;
-}
 
 interface HTMLTrackElement extends HTMLElement {
     kind: string;
@@ -13074,10 +12805,6 @@ interface HTMLTrackElement extends HTMLElement {
     track: TextTrack;
     label: string;
     default: boolean;
-}
-declare var HTMLTrackElement: {
-    prototype: HTMLTrackElement;
-    new (): HTMLTrackElement;
 }
 
 interface MSApp {
@@ -13115,10 +12842,6 @@ interface HTMLVideoElement {
 interface SVGFEComponentTransferElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
     in1: SVGAnimatedString;
 }
-declare var SVGFEComponentTransferElement: {
-    prototype: SVGFEComponentTransferElement;
-    new (): SVGFEComponentTransferElement;
-}
 
 interface SVGFEDiffuseLightingElement extends SVGElement, SVGFilterPrimitiveStandardAttributes {
     kernelUnitLengthY: SVGAnimatedNumber;
@@ -13126,10 +12849,6 @@ interface SVGFEDiffuseLightingElement extends SVGElement, SVGFilterPrimitiveStan
     in1: SVGAnimatedString;
     kernelUnitLengthX: SVGAnimatedNumber;
     diffuseConstant: SVGAnimatedNumber;
-}
-declare var SVGFEDiffuseLightingElement: {
-    prototype: SVGFEDiffuseLightingElement;
-    new (): SVGFEDiffuseLightingElement;
 }
 
 interface MSCSSMatrix {
@@ -13232,6 +12951,7 @@ declare function atob(encodedString: string): string;
 declare var msIndexedDB: IDBFactory;
 declare var indexedDB: IDBFactory;
 declare var console: Console;
+
 
 /////////////////////////////
 /// IE11 DOM APIs 
