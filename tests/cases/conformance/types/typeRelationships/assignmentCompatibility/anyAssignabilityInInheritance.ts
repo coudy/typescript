@@ -5,125 +5,84 @@ interface I {
     foo: any; // ok, any identical to itself
 }
 
+var a: any;
 
-interface I2 {
-    [x: string]: number;
-    foo: any;
-}
+declare function foo2(x: number): number;
+declare function foo2(x: any): any;
+var r3 = foo2(a); // any, not a subtype of number so it skips that overload, is a subtype of itself so it picks second (if truly ambiguous it would pick first overload)
 
+declare function foo3(x: string): string;
+declare function foo3(x: any): any;
+var r3 = foo3(a); // any
 
-interface I3 {
-    [x: string]: string;
-    foo: any;
-}
+declare function foo4(x: boolean): boolean;
+declare function foo4(x: any): any;
+var r3 = foo3(a); // any
 
+declare function foo5(x: Date): Date;
+declare function foo5(x: any): any;
+var r3 = foo3(a); // any
 
-interface I4 {
-    [x: string]: boolean;
-    foo: any;
-}
+declare function foo6(x: RegExp): RegExp;
+declare function foo6(x: any): any;
+var r3 = foo3(a); // any
 
+declare function foo7(x: { bar: number }): { bar: number };
+declare function foo7(x: any): any;
+var r3 = foo3(a); // any
 
-interface I5 {
-    [x: string]: Date;
-    foo: any;
-}
+declare function foo8(x: number[]): number[];
+declare function foo8(x: any): any;
+var r3 = foo3(a); // any
 
-
-interface I6 {
-    [x: string]: RegExp;
-    foo: any;
-}
-
-
-interface I7 {
-    [x: string]: { bar: number };
-    foo: any;
-}
-
-
-interface I8 {
-    [x: string]: number[];
-    foo: any;
-}
-
-
-interface I9 {
-    [x: string]: I8;
-    foo: any;
-}
+interface I8 { foo: string }
+declare function foo9(x: I8): I8;
+declare function foo9(x: any): any;
+var r3 = foo3(a); // any
 
 class A { foo: number; }
-interface I10 {
-    [x: string]: A;
-    foo: any;
-}
+declare function foo10(x: A): A;
+declare function foo10(x: any): any;
+var r3 = foo3(a); // any
 
 class A2<T> { foo: T; }
-interface I11 {
-    [x: string]: A2<number>;
-    foo: any;
-}
+declare function foo11(x: A2<string>): A2<string>;
+declare function foo11(x: any): any;
+var r3 = foo3(a); // any
 
+declare function foo12(x: (x) => number): (x) => number;
+declare function foo12(x: any): any;
+var r3 = foo3(a); // any
 
-interface I12 {
-    [x: string]: (x) => number;
-    foo: any;
-}
-
-
-interface I13 {
-    [x: string]: <T>(x: T) => T;
-    foo: any;
-}
-
+declare function foo13(x: <T>(x: T) => T): <T>(x: T) => T;
+declare function foo13(x: any): any;
+var r3 = foo3(a); // any
 
 enum E { A }
-interface I14 {
-    [x: string]: E;
-    foo: any;
-}
-
+declare function foo14(x: E): E;
+declare function foo14(x: any): any;
+var r3 = foo3(a); // any
 
 function f() { }
 module f {
     export var bar = 1;
 }
-interface I15 {
-    [x: string]: typeof f;
-    foo: any;
-}
+declare function foo15(x: typeof f): typeof f;
+declare function foo15(x: any): any;
+var r3 = foo3(a); // any
 
-
-class c { baz: string }
-module c {
+class CC { baz: string }
+module CC {
     export var bar = 1;
 }
-interface I16 {
-    [x: string]: typeof c;
-    foo: any;
-}
+declare function foo16(x: CC): CC;
+declare function foo16(x: any): any;
+var r3 = foo3(a); // any
 
+declare function foo17(x: Object): Object;
+declare function foo17(x: any): any;
+var r3 = foo3(a); // any
 
-interface I17<T> {
-    [x: string]: T;
-    foo: any;
-}
-
-
-interface I18<T, U extends T> {
-    [x: string]: U;
-    foo: any;
-}
-
-
-interface I19 {
-    [x: string]: Object;
-    foo: any;
-}
-
-
-interface I20 {
-    [x: string]: {};
-    foo: any;
-}
+declare function foo18(x: {}): {};
+declare function foo18(x: any): any;
+var r3 = foo3(a); // any
