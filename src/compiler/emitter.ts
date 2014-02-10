@@ -2478,7 +2478,8 @@ module TypeScript {
             if (hasBaseClass) {
                 baseTypeReference = ASTHelpers.getExtendsHeritageClause(classDecl.heritageClauses).typeNames.nonSeparatorAt(0);
                 this.emitIndent();
-                this.writeLineToOutput("__extends(" + className + ", _super);");
+                this.writeToOutputWithSourceMapRecord("__extends(" + className + ", _super)", baseTypeReference);
+                this.writeLineToOutput(";");
             }
 
             this.emitIndent();
@@ -2499,7 +2500,8 @@ module TypeScript {
                 this.recordSourceMappingNameStart("constructor");
                 if (hasBaseClass) {
                     this.emitIndent();
-                    this.writeLineToOutput("_super.apply(this, arguments);");
+                    this.writeToOutputWithSourceMapRecord("_super.apply(this, arguments)", baseTypeReference);
+                    this.writeLineToOutput(";");
                 }
 
                 if (this.shouldCaptureThis(classDecl)) {
@@ -2510,7 +2512,8 @@ module TypeScript {
 
                 this.indenter.decreaseIndent();
                 this.emitIndent();
-                this.writeLineToOutput("}");
+                this.writeToOutputWithSourceMapRecord("}", classDecl.closeBraceToken);
+                this.writeLineToOutput("");
 
                 this.recordSourceMappingNameEnd();
                 this.recordSourceMappingEnd(classDecl);
