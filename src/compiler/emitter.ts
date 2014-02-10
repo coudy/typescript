@@ -216,7 +216,7 @@ module TypeScript {
         public captureThisStmtString = "var _this = this;";
         private currentVariableDeclaration: VariableDeclaration;
         private declStack: PullDecl[] = [];
-        private exportAssignmentIdentifier: string = null;
+        private exportAssignment: ExportAssignment = null;
         private inWithBlock = false;
 
         public document: Document = null;
@@ -250,12 +250,12 @@ module TypeScript {
             return enclosingDecl;
         }
 
-        public setExportAssignmentIdentifier(id: string) {
-            this.exportAssignmentIdentifier = id;
+        public setExportAssignment(exportAssignment: ExportAssignment) {
+            this.exportAssignment = exportAssignment;
         }
 
-        public getExportAssignmentIdentifier() {
-            return this.exportAssignmentIdentifier;
+        public getExportAssignment() {
+            return this.exportAssignment;
         }
 
         public setDocument(document: Document) {
@@ -2258,7 +2258,7 @@ module TypeScript {
 
                 // if the external module has an "export =" identifier, we'll
                 // set it in the ExportAssignment emit method
-                this.setExportAssignmentIdentifier(null);
+                this.setExportAssignment(null);
 
                 if(this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) {
                     this.indenter.increaseIndent();
@@ -2281,22 +2281,25 @@ module TypeScript {
                 }
 
                 if (isNonElidedExternalModule) {
-                    var exportAssignmentIdentifier = this.getExportAssignmentIdentifier();
+                    var exportAssignment = this.getExportAssignment();
+                    var exportAssignmentIdentifierText = exportAssignment ? exportAssignment.identifier.text() : null;
                     var exportAssignmentValueSymbol = (<PullContainerSymbol>externalModule.getSymbol()).getExportAssignedValueSymbol();
 
                     if (this.emitOptions.compilationSettings().moduleGenTarget() === ModuleGenTarget.Asynchronous) { // AMD
-                        if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
+                        if (exportAssignmentIdentifierText && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
                             // indent was decreased for AMD above
                             this.indenter.increaseIndent();
                             this.emitIndent();
-                            this.writeLineToOutput("return " + exportAssignmentIdentifier + ";");
+                            this.writeToOutputWithSourceMapRecord("return " + exportAssignmentIdentifierText, exportAssignment);
+                            this.writeLineToOutput(";");
                             this.indenter.decreaseIndent();
                         }
                         this.writeToOutput("});");
                     }
-                    else if (exportAssignmentIdentifier && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
+                    else if (exportAssignmentIdentifierText && exportAssignmentValueSymbol && !(exportAssignmentValueSymbol.kind & PullElementKind.SomeTypeReference)) {
                         this.emitIndent();
-                        this.writeToOutput("module.exports = " + exportAssignmentIdentifier + ";");
+                        this.writeToOutputWithSourceMapRecord("module.exports = " + exportAssignmentIdentifierText, exportAssignment);
+                        this.writeToOutput(";");
                     }
 
                     this.recordSourceMappingEnd(sourceUnit);
@@ -3484,7 +3487,7 @@ module TypeScript {
                 case SyntaxKind.ImportDeclaration:
                     return this.emitImportDeclaration(<ImportDeclaration>ast);
                 case SyntaxKind.ExportAssignment:
-                    return this.setExportAssignmentIdentifier((<ExportAssignment>ast).identifier.text());
+                    return this.setExportAssignment(<ExportAssignment>ast);
                 case SyntaxKind.ClassDeclaration:
                     return this.emitClassDeclaration(<ClassDeclaration>ast);
                 case SyntaxKind.InterfaceDeclaration:
