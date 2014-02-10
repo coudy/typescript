@@ -3522,7 +3522,8 @@ module TypeScript {
                     case SyntaxKind.SimpleArrowFunctionExpression:
                     case SyntaxKind.ParenthesizedArrowFunctionExpression:
                     case SyntaxKind.FunctionExpression:
-                        // don't recurse into a function decl - we don't want to confuse a nested
+                    case SyntaxKind.ObjectLiteralExpression:
+                        // don't recurse into a function\object literal decl - we don't want to confuse a nested
                         // return type with the top-level function's return type
                         go = false;
                         break;
