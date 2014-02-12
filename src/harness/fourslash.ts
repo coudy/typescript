@@ -1487,7 +1487,13 @@ module FourSlash {
             Verify that returned navigationItems from getNavigateToItems have matched searchValue, matchKind, and kind.
             Report an error if getNavigateToItems does not find any matched searchValue.
         */
-        public verifyNavigationItemsListContains(name: string, kind: string, searchValue: string, matchKind: string, fileName?: string, parentName?: string) {
+        public verifyNavigationItemsListContains(
+            name: string,
+            kind: string,
+            searchValue: string,
+            matchKind: string,
+            fileName?: string,
+            parentName?: string) {
             this.taoInvalidReason = 'verifyNavigationItemsListContains NYI';
 
             var items = this.languageService.getNavigateToItems(searchValue);
@@ -1498,11 +1504,18 @@ module FourSlash {
 
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
-                if (item && item.name === name && item.kind === kind && item.matchKind === matchKind &&
+                if (item && item.name === name && item.kind === kind &&
+                    (matchKind === undefined || item.matchKind === matchKind) &&
                     (fileName === undefined || item.fileName === fileName) &&
                     (parentName === undefined || item.containerName === parentName)) {
                     return;
                 }
+            }
+
+            // if there was an explicit match kind specified, then it should be validated.
+            if (matchKind !== undefined) {
+                var missingItem = { name: name, kind: kind, searchValue: searchValue, matchKind: matchKind, fileName: fileName, parentName: parentName };
+                throw new Error('verifyNavigationItemsListContains failed - could not find the item: ' + JSON.stringify(missingItem) + ' in the returned list: (' + JSON.stringify(items) + ')');
             }
         }
 
@@ -1516,7 +1529,13 @@ module FourSlash {
             }
         }
 
-        public verifGetScriptLexicalStructureListContains(name: string, kind: string, fileName?: string, parentName?: string) {
+        public verifGetScriptLexicalStructureListContains(
+            name: string,
+            kind: string,
+            fileName?: string,
+            parentName?: string,
+            isAdditionalSpan?: boolean,
+            markerPosition?: number) {
             this.taoInvalidReason = 'verifGetScriptLexicalStructureListContains impossible';
 
             var items = this.languageService.getScriptLexicalStructure(this.activeFile.fileName);
@@ -1530,7 +1549,38 @@ module FourSlash {
                 if (item && item.name === name && item.kind === kind &&
                     (fileName === undefined || item.fileName === fileName) &&
                     (parentName === undefined || item.containerName === parentName)) {
-                    return;
+                    if (markerPosition !== undefined || isAdditionalSpan !== undefined) {
+                        if (isAdditionalSpan) {
+                            if (item.additionalSpans &&
+                                item.additionalSpans.some(span => span.minChar <= markerPosition && markerPosition <= span.limChar)) {
+                                // marker is in an additional span for this item.
+                                return;
+                            }
+                            else {
+                                throw new Error(
+                                    'verifGetScriptLexicalStructureListContains failed - ' +
+                                    'no additional span was found that contained the position: ' + JSON.stringify(markerPosition) +
+                                    ' in the item: ' + JSON.stringify(item));
+                            }
+                        }
+                        else if (!isAdditionalSpan)
+                        {
+                            if (item.minChar <= markerPosition &&
+                                markerPosition <= item.minChar) {
+                                // marker is in span normal item's span
+                                return;
+                            }
+                            else {
+                                throw new Error(
+                                    'verifGetScriptLexicalStructureListContains failed - ' +
+                                    'marker was positioned: ' + JSON.stringify(markerPosition) +
+                                    ' which is not in the item: ' + JSON.stringify(item));
+                            }
+                        }
+                    }
+                    else {
+                        return;
+                    }
                 }
             }
 
