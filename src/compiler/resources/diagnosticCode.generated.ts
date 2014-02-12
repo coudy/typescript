@@ -193,7 +193,7 @@ module TypeScript {
         super_cannot_be_referenced_in_non_derived_classes: "'super' cannot be referenced in non-derived classes.",
         A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties: "A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.",
         Constructors_for_derived_classes_must_contain_a_super_call: "Constructors for derived classes must contain a 'super' call.",
-        Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: "Super calls are not permitted outside constructors or in local functions inside constructors.",
+        Super_calls_are_not_permitted_outside_constructors_or_in_nested_functions_inside_constructors: "Super calls are not permitted outside constructors or in nested functions inside constructors.",
         _0_1_is_inaccessible: "'{0}.{1}' is inaccessible.",
         this_cannot_be_referenced_within_module_bodies: "'this' cannot be referenced within module bodies.",
         Invalid_expression_types_not_known_to_support_the_addition_operator: "Invalid '+' expression - types not known to support the addition operator.",
