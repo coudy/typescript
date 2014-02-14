@@ -293,7 +293,7 @@ var TypeScript;
         super_cannot_be_referenced_in_non_derived_classes: "'super' cannot be referenced in non-derived classes.",
         A_super_call_must_be_the_first_statement_in_the_constructor_when_a_class_contains_initialized_properties_or_has_parameter_properties: "A 'super' call must be the first statement in the constructor when a class contains initialized properties or has parameter properties.",
         Constructors_for_derived_classes_must_contain_a_super_call: "Constructors for derived classes must contain a 'super' call.",
-        Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors: "Super calls are not permitted outside constructors or in local functions inside constructors.",
+        Super_calls_are_not_permitted_outside_constructors_or_in_nested_functions_inside_constructors: "Super calls are not permitted outside constructors or in nested functions inside constructors.",
         _0_1_is_inaccessible: "'{0}.{1}' is inaccessible.",
         this_cannot_be_referenced_within_module_bodies: "'this' cannot be referenced within module bodies.",
         Invalid_expression_types_not_known_to_support_the_addition_operator: "Invalid '+' expression - types not known to support the addition operator.",
@@ -2980,7 +2980,7 @@ var TypeScript;
             "code": 2105,
             "category": 1 /* Error */
         },
-        "Super calls are not permitted outside constructors or in local functions inside constructors.": {
+        "Super calls are not permitted outside constructors or in nested functions inside constructors.": {
             "code": 2106,
             "category": 1 /* Error */
         },
@@ -35827,54 +35827,61 @@ var TypeScript;
             return path;
         };
 
-        PullSymbol.prototype.findCommonAncestorPath = function (b) {
-            var aPath = this.pathToRoot();
-            if (aPath.length === 1) {
-                return aPath;
-            }
+        PullSymbol.unqualifiedNameReferencesDifferentSymbolInScope = function (symbol, scopePath, endScopePathIndex) {
+            var declPath = scopePath[0].getDeclarations()[0].getParentPath();
+            for (var i = 0, declIndex = declPath.length - 1; i <= endScopePathIndex; i++, declIndex--) {
+                if (symbol.isContainer() && scopePath[i].isContainer()) {
+                    var scopeType = scopePath[i];
 
-            var bPath;
-            if (b) {
-                bPath = b.pathToRoot();
-            } else {
-                return aPath;
-            }
+                    var memberSymbol = scopeType.findContainedNonMemberContainer(symbol.name, 164 /* SomeContainer */);
+                    if (memberSymbol && memberSymbol != symbol && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
+                        return true;
+                    }
 
-            var commonNodeIndex = -1;
-            for (var i = 0, aLen = aPath.length; i < aLen; i++) {
-                var aNode = aPath[i];
-                for (var j = 0, bLen = bPath.length; j < bLen; j++) {
-                    var bNode = bPath[j];
-                    if (aNode === bNode) {
-                        var aDecl = null;
-                        if (i > 0) {
-                            var decls = aPath[i - 1].getDeclarations();
-                            if (decls.length) {
-                                aDecl = decls[0].getParentDecl();
-                            }
-                        }
-                        var bDecl = null;
-                        if (j > 0) {
-                            var decls = bPath[j - 1].getDeclarations();
-                            if (decls.length) {
-                                bDecl = decls[0].getParentDecl();
-                            }
-                        }
-                        if (!aDecl || !bDecl || aDecl === bDecl) {
-                            commonNodeIndex = i;
-                            break;
-                        }
+                    var memberSymbol = scopeType.findNestedContainer(symbol.name, 164 /* SomeContainer */);
+                    if (memberSymbol && memberSymbol != symbol) {
+                        return true;
                     }
                 }
-                if (commonNodeIndex >= 0) {
-                    break;
+            }
+
+            return false;
+        };
+
+        PullSymbol.prototype.findQualifyingSymbolPathInScopeSymbol = function (scopeSymbol) {
+            var thisPath = this.pathToRoot();
+            if (thisPath.length === 1) {
+                return thisPath;
+            }
+
+            var scopeSymbolPath;
+            if (scopeSymbol) {
+                scopeSymbolPath = scopeSymbol.pathToRoot();
+            } else {
+                return thisPath;
+            }
+
+            var thisCommonAncestorIndex = TypeScript.ArrayUtilities.indexOf(thisPath, function (thisNode) {
+                return TypeScript.ArrayUtilities.contains(scopeSymbolPath, thisNode);
+            });
+            if (thisCommonAncestorIndex > 0) {
+                var thisCommonAncestor = thisPath[thisCommonAncestorIndex];
+                var scopeCommonAncestorIndex = TypeScript.ArrayUtilities.indexOf(scopeSymbolPath, function (scopeNode) {
+                    return scopeNode === thisCommonAncestor;
+                });
+                TypeScript.Debug.assert(thisPath.length - thisCommonAncestorIndex === scopeSymbolPath.length - scopeCommonAncestorIndex);
+
+                for (; thisCommonAncestorIndex < thisPath.length; thisCommonAncestorIndex++, scopeCommonAncestorIndex++) {
+                    if (!PullSymbol.unqualifiedNameReferencesDifferentSymbolInScope(thisPath[thisCommonAncestorIndex - 1], scopeSymbolPath, scopeCommonAncestorIndex)) {
+                        break;
+                    }
                 }
             }
 
-            if (commonNodeIndex >= 0) {
-                return aPath.slice(0, commonNodeIndex);
+            if (thisCommonAncestorIndex >= 0 && thisCommonAncestorIndex < thisPath.length) {
+                return thisPath.slice(0, thisCommonAncestorIndex);
             } else {
-                return aPath;
+                return thisPath;
             }
         };
 
@@ -35929,7 +35936,7 @@ var TypeScript;
         };
 
         PullSymbol.prototype.getScopedName = function (scopeSymbol, skipTypeParametersInName, useConstraintInName, skipInternalAliasName) {
-            var path = this.findCommonAncestorPath(scopeSymbol);
+            var path = this.findQualifyingSymbolPathInScopeSymbol(scopeSymbol);
             var fullName = "";
 
             var aliasFullName = this.getAliasSymbolName(scopeSymbol, function (symbol) {
@@ -42716,9 +42723,18 @@ var TypeScript;
             if (constructorDecl.block) {
                 var foundSuperCall = false;
                 var pre = function (ast, walker) {
-                    if (_this.isSuperInvocationExpression(ast)) {
-                        foundSuperCall = true;
-                        walker.options.stopWalking = true;
+                    switch (ast.kind()) {
+                        case 129 /* FunctionDeclaration */:
+                        case 219 /* SimpleArrowFunctionExpression */:
+                        case 218 /* ParenthesizedArrowFunctionExpression */:
+                        case 222 /* FunctionExpression */:
+                        case 215 /* ObjectLiteralExpression */:
+                            walker.options.goChildren = false;
+                        default:
+                            if (_this.isSuperInvocationExpression(ast)) {
+                                foundSuperCall = true;
+                                walker.options.stopWalking = true;
+                            }
                     }
                 };
 
@@ -46099,29 +46115,22 @@ var TypeScript;
                         return;
                     }
                 }
-
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class));
                 return;
             } else {
-                for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
-                    if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
-                        break;
-                    } else if (currentDecl.kind === 32768 /* ConstructorMethod */) {
-                        var classDecl = currentDecl.getParentDecl();
+                if (enclosingDecl.kind === 32768 /* ConstructorMethod */) {
+                    var classDecl = enclosingDecl.getParentDecl();
 
-                        if (!this.enclosingClassIsDerived(classDecl)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
-                            return;
-                        } else if (this.inConstructorParameterList(ast)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
-                            return;
-                        }
-
+                    if (!this.enclosingClassIsDerived(classDecl)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
+                        return;
+                    } else if (this.inConstructorParameterList(ast)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
                         return;
                     }
+                } else {
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_nested_functions_inside_constructors));
                 }
-
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, TypeScript.DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors));
             }
         };
 
