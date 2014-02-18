@@ -409,23 +409,44 @@ module TypeScript {
             // while declPath = A B C W
             var declPath = scopePath[0].getDeclarations()[0].getParentPath();
             for (var i = 0, declIndex = declPath.length - 1; i <= endScopePathIndex; i++, declIndex--) {
-                // We should be doing this for all that is type/namespace/value kinds but for now we do this only for container
-                if (symbol.isContainer() && scopePath[i].isContainer()) {
-                    var scopeType = <PullContainerSymbol>scopePath[i];
-                    // Non exported container 
-                    var memberSymbol = scopeType.findContainedNonMemberContainer(symbol.name, PullElementKind.SomeContainer);
-                    if (memberSymbol
-                        && memberSymbol != symbol
-                        && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
-                        // If we found different non exported symbol that is originating in same parent
-                        // So symbol with this name would refer to the memberSymbol instead of symbol
-                        return true;
-                    }
+                // We should be doing this for all that is type/namespace/value kinds but for now we do this only for 
+                // containers and types in another container
+                if (scopePath[i].isContainer()) {
+                    var scopeContainer = <PullContainerSymbol>scopePath[i];
+                    if (symbol.isContainer()) {
+                        // Non exported container 
+                        var memberSymbol = scopeContainer.findContainedNonMemberContainer(symbol.name, PullElementKind.SomeContainer);
+                        if (memberSymbol
+                            && memberSymbol != symbol
+                            && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
+                            // If we found different non exported symbol that is originating in same parent
+                            // So symbol with this name would refer to the memberSymbol instead of symbol
+                            return true;
+                        }
 
-                    // Exported container
-                    var memberSymbol = scopeType.findNestedContainer(symbol.name, PullElementKind.SomeContainer);
-                    if (memberSymbol && memberSymbol != symbol) {
-                        return true;
+                        // Exported container
+                        var memberSymbol = scopeContainer.findNestedContainer(symbol.name, PullElementKind.SomeContainer);
+                        if (memberSymbol && memberSymbol != symbol) {
+                            return true;
+                        }
+                    }
+                    else if (symbol.isType()) {
+                        // Non exported type 
+                        var memberSymbol = scopeContainer.findContainedNonMemberType(symbol.name, PullElementKind.SomeType);
+                        var symbolRootType = PullHelpers.getRootType(<PullTypeSymbol>symbol);
+                        if (memberSymbol
+                            && PullHelpers.getRootType(memberSymbol) != symbolRootType
+                            && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
+                            // If we found different non exported symbol that is originating in same parent
+                            // So symbol with this name would refer to the memberSymbol instead of symbol
+                            return true;
+                        }
+
+                        // Exported type
+                        var memberSymbol = scopeContainer.findNestedType(symbol.name, PullElementKind.SomeType);
+                        if (memberSymbol && PullHelpers.getRootType(memberSymbol) != symbolRootType) {
+                            return true;
+                        }
                     }
                 }
             }
