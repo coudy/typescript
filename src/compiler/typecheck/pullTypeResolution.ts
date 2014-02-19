@@ -3278,6 +3278,18 @@ module TypeScript {
                 var wrapperDecl = this.getEnclosingDecl(decl);
                 wrapperDecl = wrapperDecl || enclosingDecl;
 
+                // error should be reported if
+                // - container decl is not ambient
+                // OR
+                // - container decl is ambient and self decl is not private (is provided)
+                var needReportError = (containerDecl: PullDecl, selfDecl?: PullDecl) => {
+                    if (!hasFlag(containerDecl.flags, PullElementFlags.Ambient)) {
+                        return true;
+                    }
+
+                    return selfDecl && !hasFlag(selfDecl.flags, PullElementFlags.Private)
+                };
+
                 // check what enclosingDecl the varDecl is in and report an appropriate error message
                 // varDecl is a function/constructor/constructor-signature parameter
                 if ((wrapperDecl.kind === TypeScript.PullElementKind.Function ||
@@ -3291,35 +3303,29 @@ module TypeScript {
                     // check if the parent of wrapperDecl is ambient class declaration
                     var parentDecl = wrapperDecl.getParentDecl();
                     // parentDecl is not an ambient declaration; so report an error
-                    if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
-                    }
-                    // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
-                    else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                        !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
+                    // OR
+                    //parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
+                    if (needReportError(parentDecl, wrapperDecl)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                             DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
                     }
                 }
                 // varDecl is a property in object type
                 else if (decl.kind === TypeScript.PullElementKind.Property && !declSymbol.getContainer().isNamedTypeSymbol()) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                        DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.text()]));
+                    if (needReportError(wrapperDecl, decl)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
+                            DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.text()]));
+                    }
                 }
-                // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
+                // varDecl is a variable declaration or class/interface property; Ignore variable in catch block or in the ForIn Statement
                 else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
                     // varDecl is not declared in ambient declaration; so report an error
-                    if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
+                    // OR
+                    // varDecl is declared in ambient declaration but it is not private; so report an error
+                    if (needReportError(wrapperDecl) || !hasModifier(modifiers, PullElementFlags.Private)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
-                    }
-                    // varDecl is delcared in ambient declaration but it is not private; so report an error
-                    else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                        !TypeScript.hasModifier(modifiers, PullElementFlags.Private)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
-                    }
+                    }                    
                 }
             }
 
