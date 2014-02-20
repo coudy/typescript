@@ -770,7 +770,7 @@ module TypeScript {
     "code": 2105,
     "category": DiagnosticCategory.Error
   },
-  "Super calls are not permitted outside constructors or in local functions inside constructors.": {
+  "Super calls are not permitted outside constructors or in nested functions inside constructors.": {
     "code": 2106,
     "category": DiagnosticCategory.Error
   },

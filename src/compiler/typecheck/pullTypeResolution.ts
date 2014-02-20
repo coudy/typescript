@@ -3714,14 +3714,24 @@ module TypeScript {
             // functions inside constructors.
             if (constructorDecl.block) {
                 var foundSuperCall = false;
-                var pre = (ast: AST, walker: IAstWalker) => {
-                    // If we hit a super invocation, then we're done.  Stop everything we're doing.
-                    // Note 1: there is no restriction on there being multiple super calls.
-                    // Note 2: The restriction about super calls not being permitted in a local 
-                    // function is checked in typeCheckSuperExpression
-                    if (this.isSuperInvocationExpression(ast)) {
-                        foundSuperCall = true;
-                        walker.options.stopWalking = true;
+                var pre = (ast: AST, walker: IAstWalker) => {                    
+                    switch (ast.kind()) {
+                        // do not dive inside functions/object literals - super calls inside them are illegal and should not be considered valid search results
+                        case SyntaxKind.FunctionDeclaration:
+                        case SyntaxKind.SimpleArrowFunctionExpression:
+                        case SyntaxKind.ParenthesizedArrowFunctionExpression:
+                        case SyntaxKind.FunctionExpression:
+                        case SyntaxKind.ObjectLiteralExpression:
+                            walker.options.goChildren = false;
+                        default:
+                            // If we hit a super invocation, then we're done.  Stop everything we're doing.
+                            // Note 1: there is no restriction on there being multiple super calls.
+                            // Note 2: The restriction about super calls not being permitted in a local 
+                            // function is checked in typeCheckSuperExpression
+                            if (this.isSuperInvocationExpression(ast)) {
+                                foundSuperCall = true;
+                                walker.options.stopWalking = true;
+                            }
                     }
                 }
 
@@ -7730,7 +7740,6 @@ module TypeScript {
                         return;
                     }
                 }
-
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_property_access_is_permitted_only_in_a_constructor_member_function_or_member_accessor_of_a_derived_class));
                 return;
             }
@@ -7747,30 +7756,26 @@ module TypeScript {
                 //      The constructor declares parameter properties or the containing class 
                 //      declares instance member variables with initializers.
 
-                for (var currentDecl = enclosingDecl; currentDecl !== null; currentDecl = currentDecl.getParentDecl()) {
-                    if (this.isFunctionOrNonArrowFunctionExpression(currentDecl)) {
-                        break;
-                    }
-                    else if (currentDecl.kind === PullElementKind.ConstructorMethod) {
-                        // We were in a constructor.  That's good.
-                        var classDecl = currentDecl.getParentDecl();
+                if (enclosingDecl.kind === PullElementKind.ConstructorMethod) {
+                    // We were in a constructor.  That's good.
+                    var classDecl = enclosingDecl.getParentDecl();
 
-                        if (!this.enclosingClassIsDerived(classDecl)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
-                            return;
-                        }
-                        else if (this.inConstructorParameterList(ast)) {
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
-                            return;
-                        }
-
-                        // Nothing wrong with how we were referenced.  Note: the check if we're the
-                        // first statement in the constructor happens in typeCheckConstructorDeclaration.
+                    if (!this.enclosingClassIsDerived(classDecl)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_non_derived_classes));
                         return;
                     }
+                    else if (this.inConstructorParameterList(ast)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.super_cannot_be_referenced_in_constructor_arguments));
+                        return;
+                    }
+
+                    // Nothing wrong with how we were referenced.  Note: the check if we're the
+                    // first statement in the constructor happens in typeCheckConstructorDeclaration.
                 }
-                
-                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_local_functions_inside_constructors));
+                else {
+                    // SPEC NOV 18: Super calls are not permitted outside constructors or in local functions inside constructors.
+                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(ast, DiagnosticCode.Super_calls_are_not_permitted_outside_constructors_or_in_nested_functions_inside_constructors));
+                }
             }
         }
 
