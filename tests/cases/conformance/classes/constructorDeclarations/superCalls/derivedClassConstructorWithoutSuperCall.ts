@@ -14,14 +14,13 @@ class Base2<T> {
 }
 
 class Derived2<T> extends Base2<T> {
-    constructor() {
-        // BUG 879122
-        var r2 = () => super(); // no error
+    constructor() { // error for no super call (nested scopes don't count)
+        var r2 = () => super(); // error for misplaced super call (nested function)
     }
 }
 
 class Derived3<T> extends Base2<T> {
-    constructor() {
+    constructor() { // error
         var r = function () { super() } // error
     }
 }

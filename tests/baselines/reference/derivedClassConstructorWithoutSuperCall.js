@@ -28,7 +28,6 @@ var Derived2 = (function (_super) {
     __extends(Derived2, _super);
     function Derived2() {
         var _this = this;
-        // BUG 879122
         var r2 = function () {
             return _super.prototype();
         };
