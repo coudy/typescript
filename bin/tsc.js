@@ -35750,17 +35750,29 @@ var TypeScript;
         PullSymbol.unqualifiedNameReferencesDifferentSymbolInScope = function (symbol, scopePath, endScopePathIndex) {
             var declPath = scopePath[0].getDeclarations()[0].getParentPath();
             for (var i = 0, declIndex = declPath.length - 1; i <= endScopePathIndex; i++, declIndex--) {
-                if (symbol.isContainer() && scopePath[i].isContainer()) {
-                    var scopeType = scopePath[i];
+                if (scopePath[i].isContainer()) {
+                    var scopeContainer = scopePath[i];
+                    if (symbol.isContainer()) {
+                        var memberSymbol = scopeContainer.findContainedNonMemberContainer(symbol.name, 164 /* SomeContainer */);
+                        if (memberSymbol && memberSymbol != symbol && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
+                            return true;
+                        }
 
-                    var memberSymbol = scopeType.findContainedNonMemberContainer(symbol.name, 164 /* SomeContainer */);
-                    if (memberSymbol && memberSymbol != symbol && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
-                        return true;
-                    }
+                        var memberSymbol = scopeContainer.findNestedContainer(symbol.name, 164 /* SomeContainer */);
+                        if (memberSymbol && memberSymbol != symbol) {
+                            return true;
+                        }
+                    } else if (symbol.isType()) {
+                        var memberSymbol = scopeContainer.findContainedNonMemberType(symbol.name, 58728795 /* SomeType */);
+                        var symbolRootType = TypeScript.PullHelpers.getRootType(symbol);
+                        if (memberSymbol && TypeScript.PullHelpers.getRootType(memberSymbol) != symbolRootType && memberSymbol.getDeclarations()[0].getParentDecl() == declPath[declIndex]) {
+                            return true;
+                        }
 
-                    var memberSymbol = scopeType.findNestedContainer(symbol.name, 164 /* SomeContainer */);
-                    if (memberSymbol && memberSymbol != symbol) {
-                        return true;
+                        var memberSymbol = scopeContainer.findNestedType(symbol.name, 58728795 /* SomeType */);
+                        if (memberSymbol && TypeScript.PullHelpers.getRootType(memberSymbol) != symbolRootType) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -62090,7 +62102,7 @@ var TypeScript;
     var BatchCompiler = (function () {
         function BatchCompiler(ioHost) {
             this.ioHost = ioHost;
-            this.compilerVersion = "0.9.7.0";
+            this.compilerVersion = "1.0.0.0";
             this.inputFiles = [];
             this.resolvedFiles = [];
             this.fileNameToSourceFile = new TypeScript.StringHashTable();
