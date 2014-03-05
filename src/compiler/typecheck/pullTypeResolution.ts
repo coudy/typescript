@@ -6871,15 +6871,13 @@ module TypeScript {
             var specializedSymbol = this.createInstantiatedType(genericTypeSymbol, typeArgs);
 
             // check constraints, if appropriate
-            var typeConstraint: PullTypeSymbol = null;
             var upperBound: PullTypeSymbol = null;
 
             // Get the instantiated versions of the type parameters (in case their constraints were generic)
             typeParameters = specializedSymbol.getTypeParameters();
 
             var typeConstraintSubstitutionMap: PullTypeSymbol[] = [];
-            var typeArg: PullTypeSymbol = null;
-
+            
             var instantiatedSubstitutionMap = specializedSymbol.getTypeParameterArgumentMap();
 
 
@@ -6894,10 +6892,11 @@ module TypeScript {
             }
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
-                typeArg = typeArgs[iArg];
-                typeConstraint = typeParameters[iArg].getConstraint();
+                var typeArg = typeArgs[iArg];
+                var typeParameter = typeParameters[iArg];
+                var typeConstraint = typeParameter.getConstraint();
 
-                typeConstraintSubstitutionMap[typeParameters[iArg].pullSymbolID] = typeArg;
+                typeConstraintSubstitutionMap[typeParameter.pullSymbolID] = typeArg;
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
@@ -6927,13 +6926,15 @@ module TypeScript {
                         return specializedSymbol;
                     }
 
-                    // Section 3.4.2 (November 18, 2013): 
-                    // A type argument satisfies a type parameter constraint if the type argument is assignable
-                    // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
-                    if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
-                        var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[iArg].toString(enclosingSymbol, /*useConstraintInName*/ true)]));
-                    }
+                    this.typeCheckCallBacks.push(context => {
+                        // Section 3.4.2 (November 18, 2013): 
+                        // A type argument satisfies a type parameter constraint if the type argument is assignable
+                        // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
+                        if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
+                            var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
+                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameter.toString(enclosingSymbol, /*useConstraintInName*/ true)]));
+                        }
+                    });
                 }
             }
 
