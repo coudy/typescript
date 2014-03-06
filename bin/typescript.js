@@ -28453,7 +28453,7 @@ var TypeScript;
                 if (ast.stringLiteral) {
                     return astName === ast.stringLiteral;
                 } else {
-                    var moduleNames = TypeScript.getModuleNames(ast.name);
+                    var moduleNames = getModuleNames(ast.name);
                     var nameIndex = moduleNames.indexOf(astName);
 
                     return nameIndex === (moduleNames.length - 1);
@@ -28469,7 +28469,7 @@ var TypeScript;
                 if (ast.stringLiteral) {
                     return ast.stringLiteral === astName;
                 } else {
-                    var moduleNames = TypeScript.getModuleNames(ast.name);
+                    var moduleNames = getModuleNames(ast.name);
                     var nameIndex = moduleNames.indexOf(astName);
 
                     return nameIndex >= 0;
@@ -28490,6 +28490,20 @@ var TypeScript;
             }
         }
         ASTHelpers.getNameOfIdenfierOrQualifiedName = getNameOfIdenfierOrQualifiedName;
+
+        function getModuleNames(name, result) {
+            result = result || [];
+
+            if (name.kind() === 121 /* QualifiedName */) {
+                getModuleNames(name.left, result);
+                result.push(name.right);
+            } else {
+                result.push(name);
+            }
+
+            return result;
+        }
+        ASTHelpers.getModuleNames = getModuleNames;
     })(TypeScript.ASTHelpers || (TypeScript.ASTHelpers = {}));
     var ASTHelpers = TypeScript.ASTHelpers;
 })(TypeScript || (TypeScript = {}));
@@ -30417,7 +30431,7 @@ var TypeScript;
             if (moduleDecl.stringLiteral) {
                 this.emitSingleModuleDeclaration(moduleDecl, moduleDecl.stringLiteral);
             } else {
-                var moduleNames = TypeScript.getModuleNames(moduleDecl.name);
+                var moduleNames = TypeScript.ASTHelpers.getModuleNames(moduleDecl.name);
                 this.emitSingleModuleDeclaration(moduleDecl, moduleNames[0]);
             }
         };
@@ -30476,7 +30490,7 @@ var TypeScript;
             if (moduleName === moduleDecl.stringLiteral) {
                 this.emitList(moduleDecl.moduleElements);
             } else {
-                var moduleNames = TypeScript.getModuleNames(moduleDecl.name);
+                var moduleNames = TypeScript.ASTHelpers.getModuleNames(moduleDecl.name);
                 var nameIndex = moduleNames.indexOf(moduleName);
                 TypeScript.Debug.assert(nameIndex >= 0);
 
@@ -33693,10 +33707,6 @@ var TypeScript;
                     var declAST = this.semanticInfoChain.getASTForDecl(pullDecl);
                     var container = this.getEnclosingContainer(declAST);
 
-                    if (container.kind() === 130 /* ModuleDeclaration */ && TypeScript.ASTHelpers.isAnyNameOfModule(container, declAST)) {
-                        container = this.getEnclosingContainer(container);
-                    }
-
                     var isExternalModule = container.kind() === 120 /* SourceUnit */ && this.document.isExternalModule();
 
                     if (isExternalModule && TypeScript.hasFlag(pullFlags, 1 /* Exported */)) {
@@ -34360,6 +34370,11 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.getEnclosingContainer = function (ast) {
+            var enclosingModule = TypeScript.ASTHelpers.getEnclosingModuleDeclaration(ast);
+            if (TypeScript.ASTHelpers.isAnyNameOfModule(enclosingModule, ast)) {
+                ast = enclosingModule;
+            }
+
             ast = ast.parent;
             while (ast) {
                 if (ast.kind() === 131 /* ClassDeclaration */ || ast.kind() === 128 /* InterfaceDeclaration */ || ast.kind() === 130 /* ModuleDeclaration */ || ast.kind() === 120 /* SourceUnit */) {
@@ -34481,14 +34496,12 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.emitDeclarationsForModuleDeclaration = function (moduleDecl) {
-            if (!this.canEmitDeclarations(moduleDecl)) {
+            var name = moduleDecl.stringLiteral || TypeScript.ArrayUtilities.first(TypeScript.ASTHelpers.getModuleNames(moduleDecl.name));
+            if (!this.canEmitDeclarations(name)) {
                 return;
             }
 
-            var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
             this.emitDeclarationComments(moduleDecl);
-
-            var name = moduleDecl.stringLiteral || TypeScript.ArrayUtilities.first(TypeScript.getModuleNames(moduleDecl.name));
             this.emitDeclFlags(name, "module");
 
             if (moduleDecl.stringLiteral) {
@@ -40475,7 +40488,7 @@ var TypeScript;
             if (ast.stringLiteral) {
                 result = this.resolveSingleModuleDeclaration(ast, ast.stringLiteral, context);
             } else {
-                var moduleNames = TypeScript.getModuleNames(ast.name);
+                var moduleNames = TypeScript.ASTHelpers.getModuleNames(ast.name);
                 for (var i = 0, n = moduleNames.length; i < n; i++) {
                     result = this.resolveSingleModuleDeclaration(ast, moduleNames[i], context);
                 }
@@ -40553,7 +40566,7 @@ var TypeScript;
             if (ast.stringLiteral) {
                 this.typeCheckSingleModuleDeclaration(ast, ast.stringLiteral, context);
             } else {
-                var moduleNames = TypeScript.getModuleNames(ast.name);
+                var moduleNames = TypeScript.ASTHelpers.getModuleNames(ast.name);
                 for (var i = 0, n = moduleNames.length; i < n; i++) {
                     this.typeCheckSingleModuleDeclaration(ast, moduleNames[i], context);
                 }
@@ -51611,7 +51624,7 @@ var TypeScript;
 
             context.pushParent(decl);
         } else {
-            var moduleNames = getModuleNames(moduleDecl.name);
+            var moduleNames = TypeScript.ASTHelpers.getModuleNames(moduleDecl.name);
             for (var i = 0, n = moduleNames.length; i < n; i++) {
                 var moduleName = moduleNames[i];
 
@@ -51634,20 +51647,6 @@ var TypeScript;
             }
         }
     }
-
-    function getModuleNames(name, result) {
-        result = result || [];
-
-        if (name.kind() === 121 /* QualifiedName */) {
-            getModuleNames(name.left, result);
-            result.push(name.right);
-        } else {
-            result.push(name);
-        }
-
-        return result;
-    }
-    TypeScript.getModuleNames = getModuleNames;
 
     function createModuleVariableDecl(decl, moduleNameAST, context) {
         decl.setFlags(decl.flags | getInitializationFlag(decl));
@@ -52387,7 +52386,7 @@ var TypeScript;
                 TypeScript.Debug.assert(currentDecl.ast() === moduleDeclaration.stringLiteral);
                 context.popParent();
             } else {
-                var moduleNames = getModuleNames(moduleDeclaration.name);
+                var moduleNames = TypeScript.ASTHelpers.getModuleNames(moduleDeclaration.name);
                 for (var i = moduleNames.length - 1; i >= 0; i--) {
                     var moduleName = moduleNames[i];
                     TypeScript.Debug.assert(currentDecl.ast() === moduleName);
@@ -55427,8 +55426,8 @@ var TypeScript;
             return errors;
         };
 
-        TypeScriptCompiler.prototype.getCompilerOptionsDiagnostics = function () {
-            var emitOptions = new TypeScript.EmitOptions(this, null);
+        TypeScriptCompiler.prototype.getCompilerOptionsDiagnostics = function (resolvePath) {
+            var emitOptions = new TypeScript.EmitOptions(this, resolvePath);
             var emitDiagnostic = emitOptions.diagnostic();
             if (emitDiagnostic) {
                 return [emitDiagnostic];
