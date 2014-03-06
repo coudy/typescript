@@ -117,7 +117,7 @@ module TypeScript {
                                 return aliasSymbols;
                             }
 
-                            if (!skipScopeSymbolAliasesLookIn && this.isExternalModuleReferenceAlias(symbol) &&
+                            if (!skipScopeSymbolAliasesLookIn && PullSymbol._isExternalModuleReferenceAlias(symbol) &&
                                 (!symbol.assignedContainer().hasExportAssignment() ||
                                 (symbol.assignedContainer().getExportAssignedContainerSymbol() && symbol.assignedContainer().getExportAssignedContainerSymbol().kind === PullElementKind.DynamicModule))) {// It is a dynamic module)) {
                                 scopeSymbolAliasesToLookIn.push(symbol);
@@ -160,7 +160,7 @@ module TypeScript {
             return null;
         }
 
-        private isExternalModuleReferenceAlias(aliasSymbol: PullTypeAliasSymbol) {
+        public static _isExternalModuleReferenceAlias(aliasSymbol: PullTypeAliasSymbol) {
             if (aliasSymbol) {
                 // Has value symbol
                 if (aliasSymbol.assignedValue()) {
@@ -216,7 +216,7 @@ module TypeScript {
 
             var externalAliases = this.getExternalAliasedSymbols(scopeSymbol);
             // Use only alias symbols to the dynamic module
-            if (externalAliases && this.isExternalModuleReferenceAlias(externalAliases[externalAliases.length - 1])) {
+            if (externalAliases && PullSymbol._isExternalModuleReferenceAlias(externalAliases[externalAliases.length - 1])) {
                 var aliasFullName = aliasNameGetter(externalAliases[0]);
                 if (!aliasFullName) {
                     return null;
@@ -3218,10 +3218,14 @@ module TypeScript {
             }
 
             if (this._assignedContainer) {
-                this.retrievingExportAssignment = true;
-                var sym = this._assignedContainer.getExportAssignedValueSymbol();
-                this.retrievingExportAssignment = false;
-                return sym;
+                if (PullSymbol._isExternalModuleReferenceAlias(this) && this._assignedContainer.hasExportAssignment()) {
+                    this.retrievingExportAssignment = true;
+                    var sym = this._assignedContainer.getExportAssignedValueSymbol();
+                    this.retrievingExportAssignment = false;
+                    return sym;
+                }
+
+                return this._assignedContainer.getInstanceSymbol();
             }
 
             return null;
