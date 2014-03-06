@@ -1,15 +1,15 @@
 === tests/cases/compiler/usingModuleWithExportImportInValuePosition.ts ===
 Line 0 col 7 IdentifierName "A" = A
 Line 1 col 11 IdentifierName "x" = string
-Line 2 col 13 IdentifierName "Point" = A.Point
+Line 2 col 13 IdentifierName "Point" = Point
 Line 3 col 27 IdentifierName "x" = number
 Line 3 col 45 IdentifierName "y" = number
-Line 5 col 18 IdentifierName "B" = A.B
-Line 6 col 25 IdentifierName "Id" = A.B.Id
+Line 5 col 18 IdentifierName "B" = B
+Line 6 col 25 IdentifierName "Id" = Id
 Line 7 col 0 IdentifierName "name" = string
 Line 11 col 7 IdentifierName "C" = C
-Line 12 col 18 IdentifierName "a" = typeof A
-Line 12 col 22 IdentifierName "A" = A
+Line 12 col 18 IdentifierName "a" = typeof a
+Line 12 col 22 IdentifierName "A" = a
 Line 15 col 4 IdentifierName "a" = string
 Line 15 col 16 MemberAccessExpression "C.a.x" = string
 Line 15 col 16 MemberAccessExpression "C.a" = typeof A
