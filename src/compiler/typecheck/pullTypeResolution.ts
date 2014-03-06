@@ -6518,6 +6518,24 @@ module TypeScript {
                 }
             }
 
+            var aliasSymbol: PullTypeAliasSymbol = null;
+            if (nameSymbol && nameSymbol.isType() && nameSymbol.isAlias()) {
+                aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
+                if (!this.inTypeQuery(nameAST)) {
+                    aliasSymbol.setIsUsedAsValue();
+                }
+
+                this.resolveDeclaredSymbol(nameSymbol, context);
+
+                this.resolveDeclaredSymbol(aliasSymbol.assignedValue(), context);
+                this.resolveDeclaredSymbol(aliasSymbol.assignedContainer(), context);
+
+                nameSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedValueSymbol();
+                if (!nameSymbol) {
+                    aliasSymbol = null;
+                }
+            }
+
             if (!nameSymbol) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
                 return this.getNewErrorTypeSymbol(id);
@@ -6576,29 +6594,6 @@ module TypeScript {
                         return this.getNewErrorTypeSymbol(id);
 
                     }
-                }
-            }
-
-            var aliasSymbol: PullTypeAliasSymbol = null;
-
-            if (nameSymbol.isType() && nameSymbol.isAlias()) {
-                aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
-                if (!this.inTypeQuery(nameAST)) {
-                    aliasSymbol.setIsUsedAsValue();
-                }
-
-                this.resolveDeclaredSymbol(nameSymbol, context);
-
-                this.resolveDeclaredSymbol(aliasSymbol.assignedValue(), context);
-                this.resolveDeclaredSymbol(aliasSymbol.assignedContainer(), context);
-
-                var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedValueSymbol();
-
-                if (exportAssignmentSymbol) {
-                    nameSymbol = exportAssignmentSymbol;
-                }
-                else {
-                    aliasSymbol = null;
                 }
             }
 
