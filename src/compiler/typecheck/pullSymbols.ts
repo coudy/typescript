@@ -2667,13 +2667,13 @@ module TypeScript {
             var constructSignatures = this.getConstructSignatures();
             var indexSignatures = this.getIndexSignatures();
 
-            if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
-                var typeOfSymbol = this.getTypeOfSymbol();
-                if (typeOfSymbol) {
-                    var nameForTypeOf = typeOfSymbol.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ true);
-                    return MemberName.create(nameForTypeOf, "typeof ", "");
-                }
+            var typeOfSymbol = this.getTypeOfSymbol();
+            if (typeOfSymbol) {
+                var nameForTypeOf = typeOfSymbol.getScopedNameEx(scopeSymbol, /*skipTypeParametersInName*/ true);
+                return MemberName.create(nameForTypeOf, "typeof ", "");
+            }
 
+            if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
                 if (this._inMemberTypeNameEx) {
                     // If recursive without type name possible if function expression type
                     return MemberName.create("any");
