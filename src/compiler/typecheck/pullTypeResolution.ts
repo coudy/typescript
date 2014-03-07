@@ -6926,15 +6926,17 @@ module TypeScript {
                         return specializedSymbol;
                     }
 
-                    this.typeCheckCallBacks.push(context => {
-                        // Section 3.4.2 (November 18, 2013): 
-                        // A type argument satisfies a type parameter constraint if the type argument is assignable
-                        // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
-                        if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
-                            var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
-                            context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameter.toString(enclosingSymbol, /*useConstraintInName*/ true)]));
-                        }
-                    });
+                    if (context.canTypeCheckAST(genericTypeAST)) {
+                        this.typeCheckCallBacks.push(context => {
+                            // Section 3.4.2 (November 18, 2013): 
+                            // A type argument satisfies a type parameter constraint if the type argument is assignable
+                            // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
+                            if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
+                                var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
+                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameter.toString(enclosingSymbol, /*useConstraintInName*/ true)]));
+                            }
+                        });
+                    }
                 }
             }
 

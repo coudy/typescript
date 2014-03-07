@@ -2063,16 +2063,20 @@ module TypeScript {
             return this.getTypeParameters();
         }
 
+        private addCallOrConstructSignaturePrerequisiteBase(signature: PullSignatureSymbol): void {
+            if (signature.isGeneric()) {
+                this._hasGenericSignature = true;
+            }
+
+            signature.functionType = this;
+        }
+
         private addCallSignaturePrerequisite(callSignature: PullSignatureSymbol): void {
             if (!this._callSignatures) {
                 this._callSignatures = [];
             }
 
-            if (callSignature.isGeneric()) {
-                this._hasGenericSignature = true;
-            }
-
-            callSignature.functionType = this;
+            this.addCallOrConstructSignaturePrerequisiteBase(callSignature);
         }
 
         public appendCallSignature(callSignature: PullSignatureSymbol): void {
@@ -2096,11 +2100,7 @@ module TypeScript {
                 this._constructSignatures = [];
             }
 
-            if (constructSignature.isGeneric()) {
-                this._hasGenericSignature = true;
-            }
-
-            constructSignature.functionType = this;
+            this.addCallOrConstructSignaturePrerequisiteBase(constructSignature);
         }
 
         public appendConstructSignature(constructSignature: PullSignatureSymbol): void {
@@ -2176,7 +2176,7 @@ module TypeScript {
             return this._constructSignatures !== null;
         }
 
-        public getOwnConstructSignatures(): PullSignatureSymbol[] {
+        public getOwnDeclaredConstructSignatures(): PullSignatureSymbol[] {
             return this._constructSignatures || sentinelEmptyArray;
         }
 
@@ -2196,7 +2196,6 @@ module TypeScript {
                 }
                 else {
                     signatures = [this.getDefaultClassConstructSignature()];
-                    this._constructSignatures = signatures;
                 }
             }
 
@@ -2316,6 +2315,8 @@ module TypeScript {
 
         private getBaseClassConstructSignatures(baseType: PullTypeSymbol): PullSignatureSymbol[] {
             Debug.assert(this.isConstructor() && baseType.isConstructor());
+            var instanceTypeSymbol = this.getAssociatedContainerType();
+            Debug.assert(instanceTypeSymbol.getDeclarations().length === 1);
             if (baseType.hasBase(this)) {
                 return null;
             }
@@ -2325,10 +2326,8 @@ module TypeScript {
             for (var i = 0; i < baseConstructSignatures.length; i++) {
                 var baseSignature = baseConstructSignatures[i];
                 var currentSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature, baseSignature.isDefinition());
-                var instanceTypeSymbol = this.getAssociatedContainerType();
                 currentSignature.returnType = instanceTypeSymbol;
                 currentSignature.addTypeParametersFromReturnType();
-                currentSignature.functionType = this;
                 for (var j = 0; j < baseSignature.parameters.length; j++) {
                     currentSignature.addParameter(baseSignature.parameters[j], baseSignature.parameters[j].isOptional);
                 }
@@ -2338,30 +2337,22 @@ module TypeScript {
 
                 // Assume the class has only one decl, since it can't mix with anything
                 currentSignature.addDeclaration(instanceTypeSymbol.getDeclarations()[0]);
+                this.addCallOrConstructSignaturePrerequisiteBase(currentSignature);
                 signatures.push(currentSignature);
             }
 
-            if (instanceTypeSymbol.isGeneric()) {
-                this.setHasGenericSignature();
-            }
-
-            Debug.assert(instanceTypeSymbol.getDeclarations().length === 1, "Too many/few decls on the class symbol");
             return signatures;
         }
 
         private getDefaultClassConstructSignature(): PullSignatureSymbol {
             Debug.assert(this.isConstructor());
-            var signature = new PullSignatureSymbol(PullElementKind.ConstructSignature, /*isDefinition*/ true);
             var instanceTypeSymbol = this.getAssociatedContainerType();
-            Debug.assert(instanceTypeSymbol.getDeclarations().length == 1, "Too many/few decls on the class symbol");
+            Debug.assert(instanceTypeSymbol.getDeclarations().length == 1);
+            var signature = new PullSignatureSymbol(PullElementKind.ConstructSignature, /*isDefinition*/ true);
             signature.returnType = instanceTypeSymbol;
             signature.addTypeParametersFromReturnType();
-            signature.functionType = this;
             signature.addDeclaration(instanceTypeSymbol.getDeclarations()[0]);
-
-            if (instanceTypeSymbol.isGeneric()) {
-                this.setHasGenericSignature();
-            }
+            this.addCallOrConstructSignaturePrerequisiteBase(signature);
 
             return signature;
         }
