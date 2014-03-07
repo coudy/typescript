@@ -1784,7 +1784,7 @@ module TypeScript {
                 constructorSymbol.type.hasOwnConstructSignatures()))) {
 
                 var hasDefinitionSignature = false;
-                var constructorSigs = constructorSymbol.type.getConstructSignatures();
+                var constructorSigs = constructorSymbol.type.getOwnConstructSignatures();
 
                 for (var i = 0; i < constructorSigs.length; i++) {
                     if (!constructorSigs[i].anyDeclHasFlag(PullElementFlags.Signature)) {
