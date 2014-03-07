@@ -6488,7 +6488,8 @@ module TypeScript {
             }
 
             // First check if this is the name child of a declaration. If it is, no need to search for a name in scope since this is not a reference.
-            if (ASTHelpers.isDeclarationASTOrDeclarationNameAST(nameAST)) {
+            var isDeclarationASTOrNameAST = ASTHelpers.isDeclarationASTOrDeclarationNameAST(nameAST);
+            if (isDeclarationASTOrNameAST) {
                 nameSymbol = this.semanticInfoChain.getDeclForAST(nameAST.parent).getSymbol();
             }
 
@@ -6519,7 +6520,7 @@ module TypeScript {
             }
 
             var aliasSymbol: PullTypeAliasSymbol = null;
-            if (nameSymbol && nameSymbol.isType() && nameSymbol.isAlias()) {
+            if (nameSymbol && nameSymbol.isAlias() && !isDeclarationASTOrNameAST) {
                 aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
                 if (!this.inTypeQuery(nameAST)) {
                     aliasSymbol.setIsUsedAsValue();
