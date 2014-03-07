@@ -3218,7 +3218,7 @@ module TypeScript {
             }
 
             if (this._assignedContainer) {
-                if (PullSymbol._isExternalModuleReferenceAlias(this) && this._assignedContainer.hasExportAssignment()) {
+                if (this._assignedContainer.hasExportAssignment()) {
                     this.retrievingExportAssignment = true;
                     var sym = this._assignedContainer.getExportAssignedValueSymbol();
                     this.retrievingExportAssignment = false;
