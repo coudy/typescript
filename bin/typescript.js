@@ -7512,11 +7512,11 @@ var TypeScript;
             };
 
             EmptySeparatedSyntaxList.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             EmptySeparatedSyntaxList.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             EmptySeparatedSyntaxList.prototype.leadingTriviaWidth = function () {
@@ -8044,7 +8044,7 @@ var TypeScript;
 (function (TypeScript) {
     (function (Syntax) {
         function emptySourceUnit() {
-            return TypeScript.Syntax.normalModeFactory.sourceUnit(TypeScript.Syntax.emptyList, TypeScript.Syntax.token(10 /* EndOfFileToken */, { text: "" }));
+            return Syntax.normalModeFactory.sourceUnit(Syntax.emptyList, Syntax.token(10 /* EndOfFileToken */, { text: "" }));
         }
         Syntax.emptySourceUnit = emptySourceUnit;
 
@@ -8067,7 +8067,7 @@ var TypeScript;
 
         function isInModuleOrTypeContext(positionedToken) {
             if (positionedToken !== null) {
-                var positionedNodeOrToken = TypeScript.Syntax.getStandaloneExpression(positionedToken);
+                var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
                 var parent = positionedNodeOrToken.containingNode();
 
                 if (parent !== null) {
@@ -8087,7 +8087,7 @@ var TypeScript;
         Syntax.isInModuleOrTypeContext = isInModuleOrTypeContext;
 
         function isInTypeOnlyContext(positionedToken) {
-            var positionedNodeOrToken = TypeScript.Syntax.getStandaloneExpression(positionedToken);
+            var positionedNodeOrToken = Syntax.getStandaloneExpression(positionedToken);
             var positionedParent = positionedNodeOrToken.containingNode();
 
             var parent = positionedParent.node();
@@ -8188,7 +8188,7 @@ var TypeScript;
                 return false;
             }
 
-            return token1.kind() === token2.kind() && token1.width() === token2.width() && token1.fullWidth() === token2.fullWidth() && token1.text() === token2.text() && TypeScript.Syntax.triviaListStructuralEquals(token1.leadingTrivia(), token2.leadingTrivia()) && TypeScript.Syntax.triviaListStructuralEquals(token1.trailingTrivia(), token2.trailingTrivia());
+            return token1.kind() === token2.kind() && token1.width() === token2.width() && token1.fullWidth() === token2.fullWidth() && token1.text() === token2.text() && Syntax.triviaListStructuralEquals(token1.leadingTrivia(), token2.leadingTrivia()) && Syntax.triviaListStructuralEquals(token1.trailingTrivia(), token2.trailingTrivia());
         }
         Syntax.tokenStructuralEquals = tokenStructuralEquals;
 
@@ -8198,7 +8198,7 @@ var TypeScript;
             }
 
             for (var i = 0, n = triviaList1.count(); i < n; i++) {
-                if (!TypeScript.Syntax.triviaStructuralEquals(triviaList1.syntaxTriviaAt(i), triviaList2.syntaxTriviaAt(i))) {
+                if (!Syntax.triviaStructuralEquals(triviaList1.syntaxTriviaAt(i), triviaList2.syntaxTriviaAt(i))) {
                     return false;
                 }
             }
@@ -8221,7 +8221,7 @@ var TypeScript;
                 var child1 = list1.childAt(i);
                 var child2 = list2.childAt(i);
 
-                if (!TypeScript.Syntax.nodeOrTokenStructuralEquals(child1, child2)) {
+                if (!Syntax.nodeOrTokenStructuralEquals(child1, child2)) {
                     return false;
                 }
             }
@@ -8238,7 +8238,7 @@ var TypeScript;
             for (var i = 0, n = list1.childCount(); i < n; i++) {
                 var element1 = list1.childAt(i);
                 var element2 = list2.childAt(i);
-                if (!TypeScript.Syntax.nodeOrTokenStructuralEquals(element1, element2)) {
+                if (!Syntax.nodeOrTokenStructuralEquals(element1, element2)) {
                     return false;
                 }
             }
@@ -8276,27 +8276,27 @@ var TypeScript;
 
         function identifierName(text, info) {
             if (typeof info === "undefined") { info = null; }
-            return TypeScript.Syntax.identifier(text);
+            return Syntax.identifier(text);
         }
         Syntax.identifierName = identifierName;
 
         function trueExpression() {
-            return TypeScript.Syntax.token(37 /* TrueKeyword */);
+            return Syntax.token(37 /* TrueKeyword */);
         }
         Syntax.trueExpression = trueExpression;
 
         function falseExpression() {
-            return TypeScript.Syntax.token(24 /* FalseKeyword */);
+            return Syntax.token(24 /* FalseKeyword */);
         }
         Syntax.falseExpression = falseExpression;
 
         function numericLiteralExpression(text) {
-            return TypeScript.Syntax.token(13 /* NumericLiteral */, { text: text });
+            return Syntax.token(13 /* NumericLiteral */, { text: text });
         }
         Syntax.numericLiteralExpression = numericLiteralExpression;
 
         function stringLiteralExpression(text) {
-            return TypeScript.Syntax.token(14 /* StringLiteral */, { text: text });
+            return Syntax.token(14 /* StringLiteral */, { text: text });
         }
         Syntax.stringLiteralExpression = stringLiteralExpression;
 
@@ -8321,7 +8321,7 @@ var TypeScript;
         Syntax.isSuperMemberAccessInvocationExpression = isSuperMemberAccessInvocationExpression;
 
         function assignmentExpression(left, token, right) {
-            return TypeScript.Syntax.normalModeFactory.binaryExpression(174 /* AssignmentExpression */, left, token, right);
+            return Syntax.normalModeFactory.binaryExpression(174 /* AssignmentExpression */, left, token, right);
         }
         Syntax.assignmentExpression = assignmentExpression;
 
@@ -8526,7 +8526,7 @@ var TypeScript;
         Syntax.getAncestorOfKind = getAncestorOfKind;
 
         function hasAncestorOfKind(positionedToken, kind) {
-            return TypeScript.Syntax.getAncestorOfKind(positionedToken, kind) !== null;
+            return Syntax.getAncestorOfKind(positionedToken, kind) !== null;
         }
         Syntax.hasAncestorOfKind = hasAncestorOfKind;
 
@@ -9110,7 +9110,7 @@ var TypeScript;
 
         function isIdentifierNameOrAnyKeyword(token) {
             var tokenKind = token.tokenKind;
-            return tokenKind === 11 /* IdentifierName */ || TypeScript.SyntaxFacts.isAnyKeyword(tokenKind);
+            return tokenKind === 11 /* IdentifierName */ || SyntaxFacts.isAnyKeyword(tokenKind);
         }
         SyntaxFacts.isIdentifierNameOrAnyKeyword = isIdentifierNameOrAnyKeyword;
     })(TypeScript.SyntaxFacts || (TypeScript.SyntaxFacts = {}));
@@ -9176,11 +9176,11 @@ var TypeScript;
             };
 
             EmptySyntaxList.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             EmptySyntaxList.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             EmptySyntaxList.prototype.leadingTriviaWidth = function () {
@@ -18186,7 +18186,7 @@ var TypeScript;
 
             VariableWidthTokenWithNoTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = TypeScript.Syntax.value(this);
+                    this._value = Syntax.value(this);
                 }
 
                 return this._value;
@@ -18194,7 +18194,7 @@ var TypeScript;
 
             VariableWidthTokenWithNoTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = TypeScript.Syntax.valueText(this);
+                    this._valueText = Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18216,7 +18216,7 @@ var TypeScript;
                 return 0;
             };
             VariableWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             VariableWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
@@ -18235,14 +18235,14 @@ var TypeScript;
                 return 0;
             };
             VariableWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             VariableWidthTokenWithNoTrivia.prototype.hasSkippedToken = function () {
                 return false;
             };
             VariableWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.firstToken = function () {
                 return this;
@@ -18260,7 +18260,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18279,7 +18279,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithNoTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             VariableWidthTokenWithNoTrivia.prototype.isPrimaryExpression = function () {
@@ -18351,7 +18351,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = TypeScript.Syntax.value(this);
+                    this._value = Syntax.value(this);
                 }
 
                 return this._value;
@@ -18359,7 +18359,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = TypeScript.Syntax.valueText(this);
+                    this._valueText = Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18400,14 +18400,14 @@ var TypeScript;
                 return 0;
             };
             VariableWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.hasSkippedToken = function () {
                 return false;
             };
             VariableWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18425,7 +18425,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18444,7 +18444,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             VariableWidthTokenWithLeadingTrivia.prototype.isPrimaryExpression = function () {
@@ -18516,7 +18516,7 @@ var TypeScript;
 
             VariableWidthTokenWithTrailingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = TypeScript.Syntax.value(this);
+                    this._value = Syntax.value(this);
                 }
 
                 return this._value;
@@ -18524,7 +18524,7 @@ var TypeScript;
 
             VariableWidthTokenWithTrailingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = TypeScript.Syntax.valueText(this);
+                    this._valueText = Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18546,7 +18546,7 @@ var TypeScript;
                 return 0;
             };
             VariableWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
@@ -18572,7 +18572,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18590,7 +18590,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18609,7 +18609,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             VariableWidthTokenWithTrailingTrivia.prototype.isPrimaryExpression = function () {
@@ -18682,7 +18682,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
                 if (this._value === undefined) {
-                    this._value = TypeScript.Syntax.value(this);
+                    this._value = Syntax.value(this);
                 }
 
                 return this._value;
@@ -18690,7 +18690,7 @@ var TypeScript;
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
                 if (this._valueText === undefined) {
-                    this._valueText = TypeScript.Syntax.valueText(this);
+                    this._valueText = Syntax.valueText(this);
                 }
 
                 return this._valueText;
@@ -18738,7 +18738,7 @@ var TypeScript;
                 return false;
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -18756,7 +18756,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18775,7 +18775,7 @@ var TypeScript;
             };
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             VariableWidthTokenWithLeadingAndTrailingTrivia.prototype.isPrimaryExpression = function () {
@@ -18844,10 +18844,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.value = function () {
-                return TypeScript.Syntax.value(this);
+                return Syntax.value(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.valueText = function () {
-                return TypeScript.Syntax.valueText(this);
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -18865,7 +18865,7 @@ var TypeScript;
                 return 0;
             };
             FixedWidthTokenWithNoTrivia.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.hasTrailingTrivia = function () {
@@ -18884,14 +18884,14 @@ var TypeScript;
                 return 0;
             };
             FixedWidthTokenWithNoTrivia.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.hasSkippedToken = function () {
                 return false;
             };
             FixedWidthTokenWithNoTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.firstToken = function () {
                 return this;
@@ -18909,7 +18909,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithNoTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -18928,7 +18928,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithNoTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             FixedWidthTokenWithNoTrivia.prototype.isPrimaryExpression = function () {
@@ -18999,10 +18999,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.value = function () {
-                return TypeScript.Syntax.value(this);
+                return Syntax.value(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.valueText = function () {
-                return TypeScript.Syntax.valueText(this);
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -19039,14 +19039,14 @@ var TypeScript;
                 return 0;
             };
             FixedWidthTokenWithLeadingTrivia.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.hasSkippedToken = function () {
                 return false;
             };
             FixedWidthTokenWithLeadingTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19064,7 +19064,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19083,7 +19083,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             FixedWidthTokenWithLeadingTrivia.prototype.isPrimaryExpression = function () {
@@ -19154,10 +19154,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.value = function () {
-                return TypeScript.Syntax.value(this);
+                return Syntax.value(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.valueText = function () {
-                return TypeScript.Syntax.valueText(this);
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return false;
@@ -19175,7 +19175,7 @@ var TypeScript;
                 return 0;
             };
             FixedWidthTokenWithTrailingTrivia.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.hasTrailingTrivia = function () {
@@ -19201,7 +19201,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithTrailingTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19219,7 +19219,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19238,7 +19238,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             FixedWidthTokenWithTrailingTrivia.prototype.isPrimaryExpression = function () {
@@ -19310,10 +19310,10 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.value = function () {
-                return TypeScript.Syntax.value(this);
+                return Syntax.value(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.valueText = function () {
-                return TypeScript.Syntax.valueText(this);
+                return Syntax.valueText(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.hasLeadingTrivia = function () {
                 return true;
@@ -19357,7 +19357,7 @@ var TypeScript;
                 return false;
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.toJSON = function (key) {
-                return TypeScript.Syntax.tokenToJSON(this);
+                return Syntax.tokenToJSON(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.firstToken = function () {
                 return this;
@@ -19375,7 +19375,7 @@ var TypeScript;
                 return visitor.visitToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.realize = function () {
-                return TypeScript.Syntax.realizeToken(this);
+                return Syntax.realizeToken(this);
             };
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.collectTextElements = function (elements) {
                 collectTokenTextElements(this, elements);
@@ -19394,7 +19394,7 @@ var TypeScript;
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isExpression = function () {
-                return TypeScript.Syntax.isExpression(this);
+                return Syntax.isExpression(this);
             };
 
             FixedWidthTokenWithLeadingAndTrailingTrivia.prototype.isPrimaryExpression = function () {
@@ -19815,10 +19815,10 @@ var TypeScript;
                 return 0;
             };
             EmptyToken.prototype.leadingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
             EmptyToken.prototype.trailingTrivia = function () {
-                return TypeScript.Syntax.emptyTriviaList;
+                return Syntax.emptyTriviaList;
             };
             EmptyToken.prototype.realize = function () {
                 return realizeToken(this);
@@ -20033,7 +20033,7 @@ var TypeScript;
             if (typeof info === "undefined") { info = null; }
             var text = (info !== null && info.text !== undefined) ? info.text : TypeScript.SyntaxFacts.getText(kind);
 
-            return new RealizedToken(kind, TypeScript.Syntax.triviaList(info === null ? null : info.leadingTrivia), text, value1(kind, text), valueText1(kind, text), TypeScript.Syntax.triviaList(info === null ? null : info.trailingTrivia));
+            return new RealizedToken(kind, Syntax.triviaList(info === null ? null : info.leadingTrivia), text, value1(kind, text), valueText1(kind, text), Syntax.triviaList(info === null ? null : info.trailingTrivia));
         }
         Syntax.token = token;
 
@@ -20532,7 +20532,7 @@ var TypeScript;
         }
         Syntax.triviaList = triviaList;
 
-        Syntax.spaceTriviaList = triviaList([TypeScript.Syntax.spaceTrivia]);
+        Syntax.spaceTriviaList = triviaList([Syntax.spaceTrivia]);
     })(TypeScript.Syntax || (TypeScript.Syntax = {}));
     var Syntax = TypeScript.Syntax;
 })(TypeScript || (TypeScript = {}));
@@ -33615,7 +33615,7 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.canEmitDeclarations = function (declAST) {
-            var container = this.getEnclosingContainer(declAST);
+            var container = DeclarationEmitter.getEnclosingContainer(declAST);
             if (container.kind() === 130 /* ModuleDeclaration */ || container.kind() === 120 /* SourceUnit */) {
                 var pullDecl = this.semanticInfoChain.getDeclForAST(declAST);
                 if (!TypeScript.hasFlag(pullDecl.flags, 1 /* Exported */)) {
@@ -33649,7 +33649,7 @@ var TypeScript;
                     var emitDeclare = !TypeScript.hasFlag(pullFlags, 1 /* Exported */);
 
                     var declAST = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    var container = this.getEnclosingContainer(declAST);
+                    var container = DeclarationEmitter.getEnclosingContainer(declAST);
 
                     var isExternalModule = container.kind() === 120 /* SourceUnit */ && this.document.isExternalModule();
 
@@ -33720,7 +33720,7 @@ var TypeScript;
         };
 
         DeclarationEmitter.prototype.emitTypeSignature = function (ast, type) {
-            var declarationContainerAst = this.getEnclosingContainer(ast);
+            var declarationContainerAst = DeclarationEmitter.getEnclosingContainer(ast);
 
             var start = new Date().getTime();
             var declarationContainerDecl = this.semanticInfoChain.getDeclForAST(declarationContainerAst);
@@ -34313,7 +34313,7 @@ var TypeScript;
             this.emitBaseList(clause.typeNames, clause.kind() === 230 /* ExtendsHeritageClause */);
         };
 
-        DeclarationEmitter.prototype.getEnclosingContainer = function (ast) {
+        DeclarationEmitter.getEnclosingContainer = function (ast) {
             var enclosingModule = TypeScript.ASTHelpers.getEnclosingModuleDeclaration(ast);
             if (TypeScript.ASTHelpers.isAnyNameOfModule(enclosingModule, ast)) {
                 ast = enclosingModule;
@@ -34337,7 +34337,7 @@ var TypeScript;
             }
 
             this.declFile.Write("<");
-            var containerAst = this.getEnclosingContainer(typeParams);
+            var containerAst = DeclarationEmitter.getEnclosingContainer(typeParams);
 
             var start = new Date().getTime();
             var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst);
@@ -35431,7 +35431,7 @@ var TypeScript;
                                 return aliasSymbols;
                             }
 
-                            if (!skipScopeSymbolAliasesLookIn && this.isExternalModuleReferenceAlias(symbol) && (!symbol.assignedContainer().hasExportAssignment() || (symbol.assignedContainer().getExportAssignedContainerSymbol() && symbol.assignedContainer().getExportAssignedContainerSymbol().kind === 32 /* DynamicModule */))) {
+                            if (!skipScopeSymbolAliasesLookIn && PullSymbol._isExternalModuleReferenceAlias(symbol) && (!symbol.assignedContainer().hasExportAssignment() || (symbol.assignedContainer().getExportAssignedContainerSymbol() && symbol.assignedContainer().getExportAssignedContainerSymbol().kind === 32 /* DynamicModule */))) {
                                 scopeSymbolAliasesToLookIn.push(symbol);
                             }
                         }
@@ -35468,7 +35468,7 @@ var TypeScript;
             return null;
         };
 
-        PullSymbol.prototype.isExternalModuleReferenceAlias = function (aliasSymbol) {
+        PullSymbol._isExternalModuleReferenceAlias = function (aliasSymbol) {
             if (aliasSymbol) {
                 if (aliasSymbol.assignedValue()) {
                     return false;
@@ -35515,7 +35515,7 @@ var TypeScript;
 
             var externalAliases = this.getExternalAliasedSymbols(scopeSymbol);
 
-            if (externalAliases && this.isExternalModuleReferenceAlias(externalAliases[externalAliases.length - 1])) {
+            if (externalAliases && PullSymbol._isExternalModuleReferenceAlias(externalAliases[externalAliases.length - 1])) {
                 var aliasFullName = aliasNameGetter(externalAliases[0]);
                 if (!aliasFullName) {
                     return null;
@@ -37745,13 +37745,13 @@ var TypeScript;
             var constructSignatures = this.getConstructSignatures();
             var indexSignatures = this.getIndexSignatures();
 
-            if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
-                var typeOfSymbol = this.getTypeOfSymbol();
-                if (typeOfSymbol) {
-                    var nameForTypeOf = typeOfSymbol.getScopedNameEx(scopeSymbol, true);
-                    return TypeScript.MemberName.create(nameForTypeOf, "typeof ", "");
-                }
+            var typeOfSymbol = this.getTypeOfSymbol();
+            if (typeOfSymbol) {
+                var nameForTypeOf = typeOfSymbol.getScopedNameEx(scopeSymbol, true);
+                return TypeScript.MemberName.create(nameForTypeOf, "typeof ", "");
+            }
 
+            if (members.length > 0 || callSignatures.length > 0 || constructSignatures.length > 0 || indexSignatures.length > 0) {
                 if (this._inMemberTypeNameEx) {
                     return TypeScript.MemberName.create("any");
                 }
@@ -38257,10 +38257,14 @@ var TypeScript;
             }
 
             if (this._assignedContainer) {
-                this.retrievingExportAssignment = true;
-                var sym = this._assignedContainer.getExportAssignedValueSymbol();
-                this.retrievingExportAssignment = false;
-                return sym;
+                if (this._assignedContainer.hasExportAssignment()) {
+                    this.retrievingExportAssignment = true;
+                    var sym = this._assignedContainer.getExportAssignedValueSymbol();
+                    this.retrievingExportAssignment = false;
+                    return sym;
+                }
+
+                return this._assignedContainer.getInstanceSymbol();
             }
 
             return null;
@@ -45012,7 +45016,8 @@ var TypeScript;
                 }
             }
 
-            if (TypeScript.ASTHelpers.isDeclarationASTOrDeclarationNameAST(nameAST)) {
+            var isDeclarationASTOrDeclarationNameAST = TypeScript.ASTHelpers.isDeclarationASTOrDeclarationNameAST(nameAST);
+            if (isDeclarationASTOrDeclarationNameAST) {
                 nameSymbol = this.semanticInfoChain.getDeclForAST(nameAST.parent).getSymbol();
             }
 
@@ -45035,6 +45040,24 @@ var TypeScript;
                         nameSymbol = this.cachedFunctionArgumentsSymbol();
                         this.resolveDeclaredSymbol(this.cachedIArgumentsInterfaceType(), context);
                     }
+                }
+            }
+
+            var aliasSymbol = null;
+            if (nameSymbol && nameSymbol.isAlias() && !isDeclarationASTOrDeclarationNameAST) {
+                aliasSymbol = nameSymbol;
+                if (!this.inTypeQuery(nameAST)) {
+                    aliasSymbol.setIsUsedAsValue();
+                }
+
+                this.resolveDeclaredSymbol(nameSymbol, context);
+
+                this.resolveDeclaredSymbol(aliasSymbol.assignedValue(), context);
+                this.resolveDeclaredSymbol(aliasSymbol.assignedContainer(), context);
+
+                nameSymbol = aliasSymbol.getExportAssignedValueSymbol();
+                if (!nameSymbol) {
+                    aliasSymbol = null;
                 }
             }
 
@@ -45072,28 +45095,6 @@ var TypeScript;
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, TypeScript.DiagnosticCode.Parameter_0_cannot_be_referenced_in_its_initializer, [parameterList.parameters.nonSeparatorAt(currentParameterIndex).identifier.text()]));
                         return this.getNewErrorTypeSymbol(id);
                     }
-                }
-            }
-
-            var aliasSymbol = null;
-
-            if (nameSymbol.isType() && nameSymbol.isAlias()) {
-                aliasSymbol = nameSymbol;
-                if (!this.inTypeQuery(nameAST)) {
-                    aliasSymbol.setIsUsedAsValue();
-                }
-
-                this.resolveDeclaredSymbol(nameSymbol, context);
-
-                this.resolveDeclaredSymbol(aliasSymbol.assignedValue(), context);
-                this.resolveDeclaredSymbol(aliasSymbol.assignedContainer(), context);
-
-                var exportAssignmentSymbol = nameSymbol.getExportAssignedValueSymbol();
-
-                if (exportAssignmentSymbol) {
-                    nameSymbol = exportAssignmentSymbol;
-                } else {
-                    aliasSymbol = null;
                 }
             }
 
@@ -51413,19 +51414,21 @@ var TypeScript;
         return DeclCollectionContext;
     })();
 
+    function moduleElementsHasExportAssignment(moduleElements) {
+        return moduleElements.any(function (m) {
+            return m.kind() === 134 /* ExportAssignment */;
+        });
+    }
+
     function containingModuleHasExportAssignment(ast) {
         ast = ast.parent;
         while (ast) {
             if (ast.kind() === 130 /* ModuleDeclaration */) {
                 var moduleDecl = ast;
-                return moduleDecl.moduleElements.any(function (m) {
-                    return m.kind() === 134 /* ExportAssignment */;
-                });
+                return moduleElementsHasExportAssignment(moduleDecl.moduleElements);
             } else if (ast.kind() === 120 /* SourceUnit */) {
                 var sourceUnit = ast;
-                return sourceUnit.moduleElements.any(function (m) {
-                    return m.kind() === 134 /* ExportAssignment */;
-                });
+                return moduleElementsHasExportAssignment(sourceUnit.moduleElements);
             }
 
             ast = ast.parent;
@@ -51493,7 +51496,7 @@ var TypeScript;
 
             context.semanticInfoChain.setDeclForAST(sourceUnit, decl);
 
-            if (moduleContainsExecutableCode) {
+            if (!moduleElementsHasExportAssignment(sourceUnit.moduleElements) || moduleContainsExecutableCode) {
                 createModuleVariableDecl(decl, sourceUnit, context);
             }
 
@@ -51562,7 +51565,7 @@ var TypeScript;
             context.semanticInfoChain.setDeclForAST(moduleDecl.stringLiteral, decl);
             context.semanticInfoChain.setASTForDecl(decl, moduleDecl.stringLiteral);
 
-            if (moduleContainsExecutableCode) {
+            if (!moduleElementsHasExportAssignment(moduleDecl.moduleElements) || moduleContainsExecutableCode) {
                 createModuleVariableDecl(decl, moduleDecl.stringLiteral, context);
             }
 
@@ -51614,7 +51617,7 @@ var TypeScript;
                 if (TypeScript.hasModifier(member.modifiers, 1 /* Exported */)) {
                     return true;
                 }
-            } else if (member.kind() !== 128 /* InterfaceDeclaration */) {
+            } else if (member.kind() !== 128 /* InterfaceDeclaration */ && member.kind() !== 134 /* ExportAssignment */) {
                 return true;
             }
         }
