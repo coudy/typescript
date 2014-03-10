@@ -36856,6 +36856,7 @@ var TypeScript;
             this._callSignatures = null;
             this._allCallSignatures = null;
             this._constructSignatures = null;
+            this._allConstructSignatures = null;
             this._indexSignatures = null;
             this._allIndexSignatures = null;
             this._allIndexSignaturesOfAugmentedType = null;
@@ -36916,7 +36917,7 @@ var TypeScript;
             return (this.kind & (33554432 /* ConstructorType */ | 16777216 /* FunctionType */)) !== 0;
         };
         PullTypeSymbol.prototype.isConstructor = function () {
-            return this.kind === 33554432 /* ConstructorType */;
+            return this.kind === 33554432 /* ConstructorType */ || (this._associatedContainerTypeSymbol && this._associatedContainerTypeSymbol.isClass());
         };
         PullTypeSymbol.prototype.isTypeParameter = function () {
             return false;
@@ -37300,16 +37301,20 @@ var TypeScript;
             return this.getTypeParameters();
         };
 
+        PullTypeSymbol.prototype.addCallOrConstructSignaturePrerequisiteBase = function (signature) {
+            if (signature.isGeneric()) {
+                this._hasGenericSignature = true;
+            }
+
+            signature.functionType = this;
+        };
+
         PullTypeSymbol.prototype.addCallSignaturePrerequisite = function (callSignature) {
             if (!this._callSignatures) {
                 this._callSignatures = [];
             }
 
-            if (callSignature.isGeneric()) {
-                this._hasGenericSignature = true;
-            }
-
-            callSignature.functionType = this;
+            this.addCallOrConstructSignaturePrerequisiteBase(callSignature);
         };
 
         PullTypeSymbol.prototype.appendCallSignature = function (callSignature) {
@@ -37332,11 +37337,7 @@ var TypeScript;
                 this._constructSignatures = [];
             }
 
-            if (constructSignature.isGeneric()) {
-                this._hasGenericSignature = true;
-            }
-
-            constructSignature.functionType = this;
+            this.addCallOrConstructSignaturePrerequisiteBase(constructSignature);
         };
 
         PullTypeSymbol.prototype.appendConstructSignature = function (constructSignature) {
@@ -37406,15 +37407,25 @@ var TypeScript;
             return this._constructSignatures !== null;
         };
 
-        PullTypeSymbol.prototype.getOwnConstructSignatures = function () {
+        PullTypeSymbol.prototype.getOwnDeclaredConstructSignatures = function () {
             return this._constructSignatures || TypeScript.sentinelEmptyArray;
         };
 
         PullTypeSymbol.prototype.getConstructSignatures = function () {
+            if (this._allConstructSignatures) {
+                return this._allConstructSignatures;
+            }
+
             var signatures = [];
 
             if (this._constructSignatures) {
                 signatures = signatures.concat(this._constructSignatures);
+            } else if (this.isConstructor()) {
+                if (this._extendedTypes && this._extendedTypes.length > 0) {
+                    signatures = this.getBaseClassConstructSignatures(this._extendedTypes[0]);
+                } else {
+                    signatures = [this.getDefaultClassConstructSignature()];
+                }
             }
 
             if (this._extendedTypes && this.kind === 16 /* Interface */) {
@@ -37426,6 +37437,8 @@ var TypeScript;
                     this._getResolver()._addUnhiddenSignaturesFromBaseType(this._constructSignatures, this._extendedTypes[i].getConstructSignatures(), signatures);
                 }
             }
+
+            this._allConstructSignatures = signatures;
 
             return signatures;
         };
@@ -37501,6 +37514,49 @@ var TypeScript;
             }
 
             return this._allIndexSignaturesOfAugmentedType;
+        };
+
+        PullTypeSymbol.prototype.getBaseClassConstructSignatures = function (baseType) {
+            TypeScript.Debug.assert(this.isConstructor() && baseType.isConstructor());
+            var instanceTypeSymbol = this.getAssociatedContainerType();
+            TypeScript.Debug.assert(instanceTypeSymbol.getDeclarations().length === 1);
+            if (baseType.hasBase(this)) {
+                return null;
+            }
+
+            var baseConstructSignatures = baseType.getConstructSignatures();
+            var signatures = [];
+            for (var i = 0; i < baseConstructSignatures.length; i++) {
+                var baseSignature = baseConstructSignatures[i];
+                var currentSignature = new PullSignatureSymbol(2097152 /* ConstructSignature */, baseSignature.isDefinition());
+                currentSignature.returnType = instanceTypeSymbol;
+                currentSignature.addTypeParametersFromReturnType();
+                for (var j = 0; j < baseSignature.parameters.length; j++) {
+                    currentSignature.addParameter(baseSignature.parameters[j], baseSignature.parameters[j].isOptional);
+                }
+                if (baseSignature.parameters.length > 0) {
+                    currentSignature.hasVarArgs = baseSignature.parameters[baseSignature.parameters.length - 1].isVarArg;
+                }
+
+                currentSignature.addDeclaration(instanceTypeSymbol.getDeclarations()[0]);
+                this.addCallOrConstructSignaturePrerequisiteBase(currentSignature);
+                signatures.push(currentSignature);
+            }
+
+            return signatures;
+        };
+
+        PullTypeSymbol.prototype.getDefaultClassConstructSignature = function () {
+            TypeScript.Debug.assert(this.isConstructor());
+            var instanceTypeSymbol = this.getAssociatedContainerType();
+            TypeScript.Debug.assert(instanceTypeSymbol.getDeclarations().length == 1);
+            var signature = new PullSignatureSymbol(2097152 /* ConstructSignature */, true);
+            signature.returnType = instanceTypeSymbol;
+            signature.addTypeParametersFromReturnType();
+            signature.addDeclaration(instanceTypeSymbol.getDeclarations()[0]);
+            this.addCallOrConstructSignaturePrerequisiteBase(signature);
+
+            return signature;
         };
 
         PullTypeSymbol.prototype.addImplementedType = function (implementedType) {
@@ -40878,70 +40934,20 @@ var TypeScript;
                 var parentType = extendedTypes.length ? extendedTypes[0] : null;
 
                 if (constructorMethod) {
-                    var constructorTypeSymbol = constructorMethod.type;
-
-                    var constructSignatures = constructorTypeSymbol.getConstructSignatures();
-
-                    if (!constructSignatures.length) {
-                        var constructorSignature;
-
-                        var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
-
-                        if (parentConstructor) {
-                            this.resolveDeclaredSymbol(parentConstructor, context);
-                            var parentConstructorType = parentConstructor.type;
-                            var parentConstructSignatures = parentConstructorType.getConstructSignatures();
-
-                            var parentConstructSignature;
-                            var parentParameters;
-
-                            if (!parentConstructSignatures.length) {
-                                parentConstructSignature = new TypeScript.PullSignatureSymbol(2097152 /* ConstructSignature */);
-                                parentConstructSignature.returnType = parentType;
-                                parentConstructSignature.addTypeParametersFromReturnType();
-                                parentConstructorType.appendConstructSignature(parentConstructSignature);
-                                parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
-                                parentConstructSignatures = [parentConstructSignature];
-                            }
-
-                            for (var i = 0; i < parentConstructSignatures.length; i++) {
-                                parentConstructSignature = parentConstructSignatures[i];
-                                parentParameters = parentConstructSignature.parameters;
-
-                                constructorSignature = new TypeScript.PullSignatureSymbol(2097152 /* ConstructSignature */, parentConstructSignature.isDefinition());
-                                constructorSignature.returnType = classDeclSymbol;
-                                constructorSignature.addTypeParametersFromReturnType();
-
-                                for (var j = 0; j < parentParameters.length; j++) {
-                                    constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
-                                }
-
-                                constructorTypeSymbol.appendConstructSignature(constructorSignature);
-                                constructorSignature.addDeclaration(classDecl);
-                            }
-                        } else {
-                            constructorSignature = new TypeScript.PullSignatureSymbol(2097152 /* ConstructSignature */);
-                            constructorSignature.returnType = classDeclSymbol;
-                            constructorSignature.addTypeParametersFromReturnType();
-                            constructorTypeSymbol.appendConstructSignature(constructorSignature);
-                            constructorSignature.addDeclaration(classDecl);
-                        }
-                    }
-
-                    if (!classDeclSymbol.isResolved) {
-                        return classDeclSymbol;
-                    }
-
                     if (parentType) {
                         var parentConstructorSymbol = parentType.getConstructorMethod();
 
                         if (parentConstructorSymbol) {
                             var parentConstructorTypeSymbol = parentConstructorSymbol.type;
-
+                            var constructorTypeSymbol = constructorMethod.type;
                             if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
                                 constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
                             }
                         }
+                    }
+
+                    if (!classDeclSymbol.isResolved) {
+                        return classDeclSymbol;
                     }
                 }
 
@@ -45420,6 +45426,7 @@ var TypeScript;
         };
 
         PullTypeResolver.prototype.resolveGenericTypeReference = function (genericTypeAST, context) {
+            var _this = this;
             var genericTypeSymbol = this.resolveAST(genericTypeAST.name, false, context).type;
 
             if (genericTypeSymbol.isError()) {
@@ -45475,13 +45482,11 @@ var TypeScript;
 
             var specializedSymbol = this.createInstantiatedType(genericTypeSymbol, typeArgs);
 
-            var typeConstraint = null;
             var upperBound = null;
 
             typeParameters = specializedSymbol.getTypeParameters();
 
             var typeConstraintSubstitutionMap = [];
-            var typeArg = null;
 
             var instantiatedSubstitutionMap = specializedSymbol.getTypeParameterArgumentMap();
 
@@ -45494,10 +45499,11 @@ var TypeScript;
             }
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
-                typeArg = typeArgs[iArg];
-                typeConstraint = typeParameters[iArg].getConstraint();
+                var typeArg = typeArgs[iArg];
+                var typeParameter = typeParameters[iArg];
+                var typeConstraint = typeParameter.getConstraint();
 
-                typeConstraintSubstitutionMap[typeParameters[iArg].pullSymbolID] = typeArg;
+                typeConstraintSubstitutionMap[typeParameter.pullSymbolID] = typeArg;
 
                 if (typeConstraint) {
                     if (typeConstraint.isTypeParameter()) {
@@ -45522,9 +45528,13 @@ var TypeScript;
                         return specializedSymbol;
                     }
 
-                    if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
-                        var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, TypeScript.DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, true), typeConstraint.toString(enclosingSymbol, true), typeParameters[iArg].toString(enclosingSymbol, true)]));
+                    if (context.canTypeCheckAST(genericTypeAST)) {
+                        this.typeCheckCallBacks.push(function (context) {
+                            if (!_this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
+                                var enclosingSymbol = _this.getEnclosingSymbolForAST(genericTypeAST);
+                                context.postDiagnostic(_this.semanticInfoChain.diagnosticFromAST(genericTypeAST, TypeScript.DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, true), typeConstraint.toString(enclosingSymbol, true), typeParameter.toString(enclosingSymbol, true)]));
+                            }
+                        });
                     }
                 }
             }
@@ -54052,7 +54062,7 @@ var TypeScript;
 
             if (constructorSymbol && (constructorSymbol.kind !== 32768 /* ConstructorMethod */ || (!isSignature && constructorSymbol.type && constructorSymbol.type.hasOwnConstructSignatures()))) {
                 var hasDefinitionSignature = false;
-                var constructorSigs = constructorSymbol.type.getConstructSignatures();
+                var constructorSigs = constructorSymbol.type.getOwnDeclaredConstructSignatures();
 
                 for (var i = 0; i < constructorSigs.length; i++) {
                     if (!constructorSigs[i].anyDeclHasFlag(2048 /* Signature */)) {
@@ -54137,7 +54147,7 @@ var TypeScript;
 
             this.semanticInfoChain.setSymbolForAST(this.semanticInfoChain.getASTForDecl(constructSignatureDeclaration), constructSignature);
 
-            var signatureIndex = this.getIndexForInsertingSignatureAtEndOfEnclosingDeclInSignatureList(constructSignature, parent.getOwnConstructSignatures());
+            var signatureIndex = this.getIndexForInsertingSignatureAtEndOfEnclosingDeclInSignatureList(constructSignature, parent.getOwnDeclaredConstructSignatures());
             parent.insertConstructSignatureAtIndex(constructSignature, signatureIndex);
         };
 
