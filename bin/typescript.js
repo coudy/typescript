@@ -38756,7 +38756,7 @@ var TypeScript;
                 if (this._canWalkStructure()) {
                     var symbol = decl.getSymbol();
                     if (symbol) {
-                        if (symbol.kind == 2048 /* Parameter */ || symbol.kind == 4096 /* Property */ || symbol.kind == 65536 /* Method */ || symbol.kind == 32768 /* ConstructorMethod */ || symbol.kind == 131072 /* FunctionExpression */) {
+                        if (!symbol.isType() && !symbol.isSignature()) {
                             symbol = symbol.type;
                         }
 
