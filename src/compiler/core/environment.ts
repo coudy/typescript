@@ -6,6 +6,13 @@ declare var Buffer: {
     new (str: string, encoding?: string): any;
 }
 
+// JDK8 Nashorn stuff
+declare module Java {
+    export function type(t: string): any;
+}
+declare var arguments: string[];
+var nashornCmdArgs = typeof arguments !== 'undefined' ? arguments : [];
+
 module TypeScript {
     export var nodeMakeDirectoryTime = 0;
     export var nodeCreateBufferTime = 0;
@@ -377,11 +384,108 @@ module TypeScript {
             };
         };
 
+
+        function getNashornEnvironment(): IEnvironment {
+            var PrintWriter = Java.type("java.io.PrintWriter");
+            var BufferedWriter = Java.type("java.io.BufferedWriter");
+            var FileReader = Java.type("java.io.FileReader");
+            var Files = Java.type("java.nio.file.Files");
+            var Paths = Java.type("java.nio.file.Paths");
+            var StandardOpenOption = Java.type("java.nio.file.StandardOpenOption");
+            var System = Java.type("java.lang.System");
+            var JavaString = Java.type("java.lang.String");
+
+            return {
+                newLine: System.lineSeparator(),
+
+                currentDirectory: (): string => {
+                    return Paths.get("").toAbsolutePath().toString();
+                },
+
+                supportsCodePage: () => false,
+
+                readFile: function (file: string, codepage: number): FileInformation {
+                    // Note: non-UTF8 encodings & BOM not supported atm
+                    if (codepage !== null) {
+                        throw new Error(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.codepage_option_not_supported_on_current_platform, null));
+                    }
+
+                    var bytes = Files.readAllBytes(Paths.get(file));
+                    return new FileInformation(new JavaString(bytes, "UTF-8"), ByteOrderMark.None);
+                },
+
+                writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
+                    var filePath = Paths.get(path);
+                    Files.createDirectories(filePath.getParent());
+                    Files.write(filePath, new JavaString(contents).getBytes("utf-8"),
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.TRUNCATE_EXISTING);
+                },
+
+                fileExists: function (path: string): boolean {
+                    return Files.exists(Paths.get(path));
+                },
+
+                deleteFile: function (path) {
+                    try {
+                        Files.delete(path);
+                    } catch (e) {
+                        // Swallowing like the node implementation
+                    }
+                },
+
+                directoryExists: function (path: string): boolean {
+                    var dirPath = Paths.get(path);
+                    return Files.exists(dirPath) && Files.isDirectory(dirPath);
+                },
+
+                listFiles: function dir(path: string, spec?: RegExp, options?: { recursive? : boolean; }) {
+                    options = options || <{ recursive?: boolean; }>{};
+
+                    function filesInFolder(folder: any /* Path */): string[] {
+                        var paths: string[] = [];
+
+                        try {
+                            var files = Files.list(folder);
+                            files.forEach((file: any) => {
+                                Environment.standardOut.WriteLine("P; "+file);
+                                var filename: string = file.getFileName().toString();
+                                if (options.recursive && Files.isDirectory(file)) {
+                                    paths.concat(filesInFolder(file));
+                                } else if (Files.isRegularFile(file) &&
+                                    (!spec || filename.match(spec))) {
+                                    paths.push(file.toString());
+                                }
+                            });
+                        } catch (err) {
+                            /*
+                             *   Skip folders that are inaccessible
+                             */
+                        }
+
+                        return paths;
+                    }
+                    return filesInFolder(path);
+                },
+
+                arguments: nashornCmdArgs,
+
+                standardOut: {
+                    Write: function (str) { System.out.print(str); },
+                    WriteLine: function (str) { System.out.println(str); },
+                    Close: function () { }
+                },
+            };
+        }
+
         if (typeof WScript !== "undefined" && typeof ActiveXObject === "function") {
             return getWindowsScriptHostEnvironment();
         }
         else if (typeof module !== 'undefined' && module.exports) {
             return getNodeEnvironment();
+        }
+        else if (typeof Java !== 'undefined') {
+            return getNashornEnvironment();
         }
         else {
             return null; // Unsupported host

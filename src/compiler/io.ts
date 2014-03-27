@@ -17,6 +17,8 @@
 ///<reference path='process.ts' />
 ///<reference path='core\references.ts' />
 
+declare var __FILE__: string;
+
 module TypeScript {
 
     export interface IFindFileResult {
@@ -453,10 +455,111 @@ module TypeScript {
             }
     };
 
+    function getNashornIO() {
+        var PrintWriter = Java.type("java.io.PrintWriter");
+        var BufferedWriter = Java.type("java.io.BufferedWriter");
+        var FileWriter = Java.type("java.io.FileWriter");
+        var Files = Java.type("java.nio.file.Files");
+        var Paths = Java.type("java.nio.file.Paths");
+        var System = Java.type("java.lang.System");
+
+        return {
+            appendFile: function (path: string, content: string) {
+                var append = true;
+                var out = new PrintWriter(new BufferedWriter(new FileWriter(path, append)));
+                out.print(content);
+                out.close();
+            },
+            readFile: function (file: string, codepage: number): FileInformation {
+                return Environment.readFile(file, codepage);
+            },
+
+            writeFile: function (path: string, contents: string, writeByteOrderMark: boolean) {
+                Environment.writeFile(path, contents, writeByteOrderMark);
+            },
+
+            deleteFile: function (path: string) {
+                try {
+                    Files.delete(path);
+                } catch (e) {
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_delete_file_0, [path]), e);
+                }
+            },
+            fileExists: Environment.fileExists,
+
+            dir: Environment.listFiles,
+            createDirectory: function (path: string): void {
+                try {
+                    if (!this.directoryExists(path)) {
+                        Files.createDirectory(path);
+                    }
+                } catch (e) {
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Could_not_create_directory_0, [path]), e);
+                }
+            },
+
+            directoryExists: Environment.directoryExists,
+            resolvePath: function (path: string): string {
+                var resolved = Paths.get(path).toAbsolutePath().toString();
+                return resolved;
+            },
+            dirName: function (path: string): string {
+                return Paths.get(path).getParent().toString();
+            },
+            findFile: function (rootPath: string, partialFilePath: string): IFindFileResult {
+                Environment.standardOut.WriteLine('findF '+ rootPath + "||" + partialFilePath);
+                var path = Paths.get(rootPath + "/" + partialFilePath);
+
+                while (true) {
+                    if (Files.exists(path)) {
+                        return { fileInformation: this.readFile(path), path: path };
+                    } else {
+                        var parentPath = Paths.get(rootPath).getParent();
+
+                        if (!parentPath) {
+                            // Reached root
+                            return null;
+                        } else {
+                            rootPath = parentPath;
+                            path = Paths.get(rootPath + "/" + partialFilePath);
+                        }
+                    }
+                }
+            },
+            print: Environment.standardOut.Write,
+            printLine: Environment.standardOut.WriteLine,
+            arguments: Environment.arguments,
+            stderr: {
+                Write: function (str: string) { System.err.print(str); },
+                WriteLine: function (str: string) { System.err.println(str); },
+                Close: function () { }
+            },
+            stdout: Environment.standardOut,
+            watchFile: function (fileName: string, callback: (x: string) => void): IFileWatcher {
+                throw new Error("Watching not implemented yet for Nashorn");
+            },
+            run: function (source: string, fileName: string) {
+                try {
+                    eval(source);
+                } catch (e) {
+                    IOUtils.throwIOError(TypeScript.getDiagnosticMessage(TypeScript.DiagnosticCode.Error_while_executing_file_0, [fileName]), e);
+                }
+            },
+            getExecutingFilePath: function () {
+                return Paths.get(__FILE__).toAbsolutePath().toString();
+            },
+            quit: function (code: number = 0) {
+                System.exit(code);
+            }
+        }
+    }
+
         if (typeof WScript !== "undefined" && typeof ActiveXObject === "function")
             return getWindowsScriptHostIO();
         else if (typeof module !== 'undefined' && module.exports)
             return getNodeIO();
+        else if (typeof Java !== 'undefined')
+            return getNashornIO();
         else
             return null; // Unsupported host
     })();
