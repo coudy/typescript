@@ -1151,7 +1151,7 @@ module TypeScript {
             }
             else {
 
-                var moduleNames = getModuleNames(ast.name);
+                var moduleNames = ASTHelpers.getModuleNames(ast.name);
                 for (var i = 0, n = moduleNames.length; i < n; i++) {
                     result = this.resolveSingleModuleDeclaration(ast, moduleNames[i], context);
                 }
@@ -1232,7 +1232,7 @@ module TypeScript {
                 this.typeCheckSingleModuleDeclaration(ast, ast.stringLiteral, context);
             }
             else {
-                var moduleNames = getModuleNames(ast.name);
+                var moduleNames = ASTHelpers.getModuleNames(ast.name);
                 for (var i = 0, n = moduleNames.length; i < n; i++) {
                     this.typeCheckSingleModuleDeclaration(ast, moduleNames[i], context);
                 }
@@ -1559,77 +1559,6 @@ module TypeScript {
                 var parentType = extendedTypes.length ? extendedTypes[0] : null;
 
                 if (constructorMethod) {
-                    var constructorTypeSymbol = constructorMethod.type;
-
-                    var constructSignatures = constructorTypeSymbol.getConstructSignatures();
-
-                    if (!constructSignatures.length) {
-                        var constructorSignature: PullSignatureSymbol;
-
-                        var parentConstructor = parentType ? parentType.getConstructorMethod() : null;
-
-                        // inherit parent's constructor signatures   
-                        if (parentConstructor) {
-                            // There are cases where we need the parent's constructor resolved
-                            // when it is not already resolved. The common case is a class with
-                            // no explicit constructor inheriting an explicit constructor from
-                            // a base class.
-                            // class A extends B {}
-                            // class B { constructor(p: string) {} }
-                            // This should really be the responsibility of the symbol internally
-                            // when we call getConstructorMethod(). It fits into the larger notion
-                            // of making symbols resolve their own components when they are queried.
-                            this.resolveDeclaredSymbol(parentConstructor, context);
-                            var parentConstructorType = parentConstructor.type;
-                            var parentConstructSignatures = parentConstructorType.getConstructSignatures();
-
-                            var parentConstructSignature: PullSignatureSymbol;
-                            var parentParameters: PullSymbol[];
-
-                            if (!parentConstructSignatures.length) {
-                                // If neither we nor our parent have a construct signature then we've entered this call recursively,
-                                // so just create the parent's constructor now rather than later.
-                                // (We'll have begun resolving this symbol because of the call to resolveReferenceTypeDeclaration above, so this
-                                // is safe to do here and now.)
-
-                                parentConstructSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                                parentConstructSignature.returnType = parentType;
-                                parentConstructSignature.addTypeParametersFromReturnType();
-                                parentConstructorType.appendConstructSignature(parentConstructSignature);
-                                parentConstructSignature.addDeclaration(parentType.getDeclarations()[0]);
-                                parentConstructSignatures = [parentConstructSignature];
-                            }
-
-                            for (var i = 0; i < parentConstructSignatures.length; i++) {
-                                // create a new signature for each parent constructor   
-                                parentConstructSignature = parentConstructSignatures[i];
-                                parentParameters = parentConstructSignature.parameters;
-
-                                constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature, parentConstructSignature.isDefinition());
-                                constructorSignature.returnType = classDeclSymbol;
-                                constructorSignature.addTypeParametersFromReturnType();
-
-                                for (var j = 0; j < parentParameters.length; j++) {
-                                    constructorSignature.addParameter(parentParameters[j], parentParameters[j].isOptional);
-                                }
-
-                                constructorTypeSymbol.appendConstructSignature(constructorSignature);
-                                constructorSignature.addDeclaration(classDecl);
-                            }
-                        }
-                        else { // PULLREVIEW: This likely won't execute, unless there's some serious out-of-order resolution issues
-                            constructorSignature = new PullSignatureSymbol(PullElementKind.ConstructSignature);
-                            constructorSignature.returnType = classDeclSymbol;
-                            constructorSignature.addTypeParametersFromReturnType();
-                            constructorTypeSymbol.appendConstructSignature(constructorSignature);
-                            constructorSignature.addDeclaration(classDecl);
-                        }
-                    }
-
-                    if (!classDeclSymbol.isResolved) {
-                        return classDeclSymbol;
-                    }
-
                     // Need to ensure our constructor type can properly see our parent type's 
                     // constructor type before going and resolving our members.
                     if (parentType) {
@@ -1638,11 +1567,15 @@ module TypeScript {
                         // this will only be null if we have upstream errors
                         if (parentConstructorSymbol) {
                             var parentConstructorTypeSymbol = parentConstructorSymbol.type;
-
+                            var constructorTypeSymbol = constructorMethod.type;
                             if (!constructorTypeSymbol.hasBase(parentConstructorTypeSymbol)) {
                                 constructorTypeSymbol.addExtendedType(parentConstructorTypeSymbol);
                             }
                         }
+                    }
+
+                    if (!classDeclSymbol.isResolved) {
+                        return classDeclSymbol;
                     }
                 }
 
@@ -3278,6 +3211,18 @@ module TypeScript {
                 var wrapperDecl = this.getEnclosingDecl(decl);
                 wrapperDecl = wrapperDecl || enclosingDecl;
 
+                // error should be reported if
+                // - container decl is not ambient
+                // OR
+                // - container decl is ambient and self decl is not private (is provided)
+                var needReportError = (containerDecl: PullDecl, selfDecl?: PullDecl) => {
+                    if (!hasFlag(containerDecl.flags, PullElementFlags.Ambient)) {
+                        return true;
+                    }
+
+                    return selfDecl && !hasFlag(selfDecl.flags, PullElementFlags.Private)
+                };
+
                 // check what enclosingDecl the varDecl is in and report an appropriate error message
                 // varDecl is a function/constructor/constructor-signature parameter
                 if ((wrapperDecl.kind === TypeScript.PullElementKind.Function ||
@@ -3291,35 +3236,29 @@ module TypeScript {
                     // check if the parent of wrapperDecl is ambient class declaration
                     var parentDecl = wrapperDecl.getParentDecl();
                     // parentDecl is not an ambient declaration; so report an error
-                    if (!TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
-                    }
-                    // parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
-                    else if (TypeScript.hasFlag(parentDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                        !TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Private)) {
+                    // OR
+                    //parentDecl is an ambient declaration, but the wrapperDecl(method) is a not private; so report an error
+                    if (needReportError(parentDecl, wrapperDecl)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                             DiagnosticCode.Parameter_0_of_1_implicitly_has_an_any_type, [name.text(), enclosingDecl.name]));
                     }
                 }
                 // varDecl is a property in object type
                 else if (decl.kind === TypeScript.PullElementKind.Property && !declSymbol.getContainer().isNamedTypeSymbol()) {
-                    context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                        DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.text()]));
+                    if (needReportError(wrapperDecl, decl)) {
+                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
+                            DiagnosticCode.Member_0_of_object_type_implicitly_has_an_any_type, [name.text()]));
+                    }
                 }
-                // varDecl is a variable declartion or class/interface property; Ignore variable in catch block or in the ForIn Statement
+                // varDecl is a variable declaration or class/interface property; Ignore variable in catch block or in the ForIn Statement
                 else if (wrapperDecl.kind !== TypeScript.PullElementKind.CatchBlock) {
                     // varDecl is not declared in ambient declaration; so report an error
-                    if (!TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient)) {
+                    // OR
+                    // varDecl is declared in ambient declaration but it is not private; so report an error
+                    if (needReportError(wrapperDecl) || !hasModifier(modifiers, PullElementFlags.Private)) {
                         context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
                             DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
-                    }
-                    // varDecl is delcared in ambient declaration but it is not private; so report an error
-                    else if (TypeScript.hasFlag(wrapperDecl.flags, TypeScript.PullElementFlags.Ambient) &&
-                        !TypeScript.hasModifier(modifiers, PullElementFlags.Private)) {
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(varDeclOrParameter,
-                            DiagnosticCode.Variable_0_implicitly_has_an_any_type, [name.text()]));
-                    }
+                    }                    
                 }
             }
 
@@ -6426,10 +6365,11 @@ module TypeScript {
             return null;
         }
 
-        private checkNameAsPartOfInitializerExpressionForInstanceMemberVariable(nameAST: Identifier): Diagnostic {
+        private checkNameAsPartOfInitializerExpressionForInstanceMemberVariable(nameAST: Identifier,
+            nameSymbol: PullSymbol, context: PullTypeResolutionContext): boolean {
             var id = nameAST.valueText();
             if (id.length === 0) {
-                return null;
+                return false;
             }
 
             // SPEC: Nov 18, 2013
@@ -6446,21 +6386,21 @@ module TypeScript {
 
                     if (constructorDecl) {
                         var childDecls = constructorDecl.searchChildDecls(id, PullElementKind.SomeValue);
-
                         if (childDecls.length) {
-                            var memberVariableSymbol = memberVariableDecl.getSymbol();
-                            // name that was used in initializer was resolved in the scope of constructor.
-                            // delay error reporting:
-                            // - if this name won't be found in other scopes then we'll print normal 'Could not find symbol' error
-                            // - otherwise we'll report more specific error about shadowing value from the outer scope
-                            return this.semanticInfoChain.diagnosticFromAST(nameAST,
-                                DiagnosticCode.Initializer_of_instance_member_variable_0_cannot_reference_identifier_1_declared_in_the_constructor,
-                                [memberVariableSymbol.getScopedName(constructorDecl.getSymbol()), nameAST.text()])
+                            // Check if symbol is from scope that is outer to constructor's outer scope
+                            if (PullHelpers.isSymbolDeclaredInScopeChain(nameSymbol, constructorDecl.getSymbol().getContainer())) {
+                                var memberVariableSymbol = memberVariableDecl.getSymbol();
+                                // Currently name was resolved to something from outerscope of the class                                // But constructor contains same parameter name, and hence this member initializer                                // when moved into constructor function in generated js would resolve to the constructor                                 // parameter but thats not what user intended. Report error
+                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST,
+                                    DiagnosticCode.Initializer_of_instance_member_variable_0_cannot_reference_identifier_1_declared_in_the_constructor,
+                                    [memberVariableSymbol.getScopedName(constructorDecl.getSymbol()), nameAST.text()]));
+                                return true;
+                            }
                         }
                     }
                 }
             }
-            return null;
+            return false;
         }
 
         private computeNameExpression(nameAST: Identifier, context: PullTypeResolutionContext): PullSymbol {
@@ -6480,10 +6420,9 @@ module TypeScript {
                 }
             }
 
-            var diagnosticForInitializer = this.checkNameAsPartOfInitializerExpressionForInstanceMemberVariable(nameAST);
-
             // First check if this is the name child of a declaration. If it is, no need to search for a name in scope since this is not a reference.
-            if (ASTHelpers.isDeclarationASTOrDeclarationNameAST(nameAST)) {
+            var isDeclarationASTOrDeclarationNameAST = ASTHelpers.isDeclarationASTOrDeclarationNameAST(nameAST);
+            if (isDeclarationASTOrDeclarationNameAST) {
                 nameSymbol = this.semanticInfoChain.getDeclForAST(nameAST.parent).getSymbol();
             }
 
@@ -6513,12 +6452,29 @@ module TypeScript {
                 }
             }
 
+            var aliasSymbol: PullTypeAliasSymbol = null;
+            if (nameSymbol && nameSymbol.isAlias() && !isDeclarationASTOrDeclarationNameAST) {
+                aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
+                if (!this.inTypeQuery(nameAST)) {
+                    aliasSymbol.setIsUsedAsValue();
+                }
+
+                this.resolveDeclaredSymbol(nameSymbol, context);
+
+                this.resolveDeclaredSymbol(aliasSymbol.assignedValue(), context);
+                this.resolveDeclaredSymbol(aliasSymbol.assignedContainer(), context);
+
+                nameSymbol = aliasSymbol.getExportAssignedValueSymbol();
+                if (!nameSymbol) {
+                    aliasSymbol = null;
+                }
+            }
+
             if (!nameSymbol) {
                 context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(nameAST, DiagnosticCode.Could_not_find_symbol_0, [nameAST.text()]));
                 return this.getNewErrorTypeSymbol(id);
             }
-            else if (diagnosticForInitializer) {
-                context.postDiagnostic(diagnosticForInitializer);
+            else if (this.checkNameAsPartOfInitializerExpressionForInstanceMemberVariable(nameAST, nameSymbol, context)) {
                 return this.getNewErrorTypeSymbol(id);
             }
 
@@ -6572,29 +6528,6 @@ module TypeScript {
                         return this.getNewErrorTypeSymbol(id);
 
                     }
-                }
-            }
-
-            var aliasSymbol: PullTypeAliasSymbol = null;
-
-            if (nameSymbol.isType() && nameSymbol.isAlias()) {
-                aliasSymbol = <PullTypeAliasSymbol>nameSymbol;
-                if (!this.inTypeQuery(nameAST)) {
-                    aliasSymbol.setIsUsedAsValue();
-                }
-
-                this.resolveDeclaredSymbol(nameSymbol, context);
-
-                this.resolveDeclaredSymbol(aliasSymbol.assignedValue(), context);
-                this.resolveDeclaredSymbol(aliasSymbol.assignedContainer(), context);
-
-                var exportAssignmentSymbol = (<PullTypeAliasSymbol>nameSymbol).getExportAssignedValueSymbol();
-
-                if (exportAssignmentSymbol) {
-                    nameSymbol = exportAssignmentSymbol;
-                }
-                else {
-                    aliasSymbol = null;
                 }
             }
 
@@ -6938,15 +6871,13 @@ module TypeScript {
             var specializedSymbol = this.createInstantiatedType(genericTypeSymbol, typeArgs);
 
             // check constraints, if appropriate
-            var typeConstraint: PullTypeSymbol = null;
             var upperBound: PullTypeSymbol = null;
 
             // Get the instantiated versions of the type parameters (in case their constraints were generic)
             typeParameters = specializedSymbol.getTypeParameters();
 
             var typeConstraintSubstitutionMap: PullTypeSymbol[] = [];
-            var typeArg: PullTypeSymbol = null;
-
+            
             var instantiatedSubstitutionMap = specializedSymbol.getTypeParameterArgumentMap();
 
 
@@ -6961,10 +6892,11 @@ module TypeScript {
             }
 
             for (var iArg = 0; (iArg < typeArgs.length) && (iArg < typeParameters.length); iArg++) {
-                typeArg = typeArgs[iArg];
-                typeConstraint = typeParameters[iArg].getConstraint();
+                var typeArg = typeArgs[iArg];
+                var typeParameter = typeParameters[iArg];
+                var typeConstraint = typeParameter.getConstraint();
 
-                typeConstraintSubstitutionMap[typeParameters[iArg].pullSymbolID] = typeArg;
+                typeConstraintSubstitutionMap[typeParameter.pullSymbolID] = typeArg;
 
                 // test specialization type for assignment compatibility with the constraint
                 if (typeConstraint) {
@@ -6994,12 +6926,16 @@ module TypeScript {
                         return specializedSymbol;
                     }
 
-                    // Section 3.4.2 (November 18, 2013): 
-                    // A type argument satisfies a type parameter constraint if the type argument is assignable
-                    // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
-                    if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
-                        var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
-                        context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameters[iArg].toString(enclosingSymbol, /*useConstraintInName*/ true)]));
+                    if (context.canTypeCheckAST(genericTypeAST)) {
+                        this.typeCheckCallBacks.push(context => {
+                            // Section 3.4.2 (November 18, 2013): 
+                            // A type argument satisfies a type parameter constraint if the type argument is assignable
+                            // to(section 3.8.4) the constraint type once type arguments are substituted for type parameters.
+                            if (!this.sourceIsAssignableToTarget(typeArg, typeConstraint, genericTypeAST, context)) {
+                                var enclosingSymbol = this.getEnclosingSymbolForAST(genericTypeAST);
+                                context.postDiagnostic(this.semanticInfoChain.diagnosticFromAST(genericTypeAST, DiagnosticCode.Type_0_does_not_satisfy_the_constraint_1_for_type_parameter_2, [typeArg.toString(enclosingSymbol, /*useConstraintInName*/ true), typeConstraint.toString(enclosingSymbol, /*useConstraintInName*/ true), typeParameter.toString(enclosingSymbol, /*useConstraintInName*/ true)]));
+                            }
+                        });
                     }
                 }
             }

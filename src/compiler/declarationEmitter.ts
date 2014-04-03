@@ -128,7 +128,7 @@ module TypeScript {
         }
 
         private canEmitDeclarations(declAST: AST): boolean {
-            var container = this.getEnclosingContainer(declAST);
+            var container = DeclarationEmitter.getEnclosingContainer(declAST);
             if (container.kind() === SyntaxKind.ModuleDeclaration || container.kind() === SyntaxKind.SourceUnit) {
                 var pullDecl = this.semanticInfoChain.getDeclForAST(declAST);
                 if (!hasFlag(pullDecl.flags, PullElementFlags.Exported)) {
@@ -166,15 +166,7 @@ module TypeScript {
                     var emitDeclare = !hasFlag(pullFlags, PullElementFlags.Exported);
 
                     var declAST = this.semanticInfoChain.getASTForDecl(pullDecl);
-                    var container = this.getEnclosingContainer(declAST);
-
-                    // We may have been in the 'name' portion of an module declaration.  If so, we want the actual 
-                    // container of *that* module declaration.  
-                    if (container.kind() === SyntaxKind.ModuleDeclaration &&
-                        ASTHelpers.isAnyNameOfModule(<ModuleDeclaration>container, declAST)) {
-
-                        container = this.getEnclosingContainer(container);
-                    }
+                    var container = DeclarationEmitter.getEnclosingContainer(declAST);
 
                     var isExternalModule = container.kind() === SyntaxKind.SourceUnit && this.document.isExternalModule();
 
@@ -251,7 +243,7 @@ module TypeScript {
         }
 
         private emitTypeSignature(ast: AST, type: PullTypeSymbol) {
-            var declarationContainerAst = this.getEnclosingContainer(ast);
+            var declarationContainerAst = DeclarationEmitter.getEnclosingContainer(ast);
 
             var start = new Date().getTime();
             var declarationContainerDecl = this.semanticInfoChain.getDeclForAST(declarationContainerAst);
@@ -874,7 +866,14 @@ module TypeScript {
             this.emitBaseList(clause.typeNames, clause.kind() === SyntaxKind.ExtendsHeritageClause);
         }
 
-        private getEnclosingContainer(ast: AST): AST {
+        static getEnclosingContainer(ast: AST): AST {
+            // If the passed in as is the 'name' portion of an module declaration.  
+            // If so, we want the actual container of *that* module declaration.  
+            var enclosingModule = ASTHelpers.getEnclosingModuleDeclaration(ast);
+            if (ASTHelpers.isAnyNameOfModule(enclosingModule, ast)) {
+                ast = enclosingModule;
+            }
+
             ast = ast.parent;
             while (ast) {
                 if (ast.kind() === SyntaxKind.ClassDeclaration ||
@@ -897,7 +896,7 @@ module TypeScript {
             }
 
             this.declFile.Write("<");
-            var containerAst = this.getEnclosingContainer(typeParams);
+            var containerAst = DeclarationEmitter.getEnclosingContainer(typeParams);
 
             var start = new Date().getTime();
             var containerDecl = this.semanticInfoChain.getDeclForAST(containerAst);
@@ -1002,14 +1001,19 @@ module TypeScript {
         }
 
         private emitDeclarationsForModuleDeclaration(moduleDecl: ModuleDeclaration) {
-            if (!this.canEmitDeclarations(moduleDecl)) {
+            // If module is defined as A.B.C 
+            // The whole moduleDecl will have the pullDecl corresponding to innermost
+            // Which would always be exported and hence would need to be emitted
+            // But we really want to check if module A needs to be emitted and hence use
+            // the leftmost name to determine if this needs to be emitted
+            // Since the module name will have the correct decl, it is always used to determine
+            // if this ast needs to be emitted or not
+            var name: AST = moduleDecl.stringLiteral || ArrayUtilities.first(ASTHelpers.getModuleNames(moduleDecl.name));
+            if (!this.canEmitDeclarations(name)) {
                 return;
             }
 
-            var modulePullDecl = this.semanticInfoChain.getDeclForAST(moduleDecl);
             this.emitDeclarationComments(moduleDecl);
-
-            var name: AST = moduleDecl.stringLiteral || ArrayUtilities.first(getModuleNames(moduleDecl.name));
             this.emitDeclFlags(name, "module");
 
             if (moduleDecl.stringLiteral) {

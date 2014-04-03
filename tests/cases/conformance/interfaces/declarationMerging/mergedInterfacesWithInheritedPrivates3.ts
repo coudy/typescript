@@ -6,11 +6,11 @@ class C2 {
     private x: number;
 }
 
-interface A extends C {
+interface A extends C { // error
     y: string;
 }
 
-interface A extends C2 { // should be error
+interface A extends C2 { 
     z: string;
 }
 

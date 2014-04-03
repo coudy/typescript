@@ -18,16 +18,20 @@ module TypeScript {
         public popParent() { this.parentChain.length--; }
     }
 
+    function moduleElementsHasExportAssignment(moduleElements: ISyntaxList2): boolean {
+        return moduleElements.any(m => m.kind() === SyntaxKind.ExportAssignment);
+    }
+
     function containingModuleHasExportAssignment(ast: AST): boolean {
         ast = ast.parent;
         while (ast) {
             if (ast.kind() === SyntaxKind.ModuleDeclaration) {
                 var moduleDecl = <ModuleDeclaration>ast;
-                return moduleDecl.moduleElements.any(m => m.kind() === SyntaxKind.ExportAssignment);
+                return moduleElementsHasExportAssignment(moduleDecl.moduleElements);
             }
             else if (ast.kind() === SyntaxKind.SourceUnit) {
                 var sourceUnit = <SourceUnit>ast;
-                return sourceUnit.moduleElements.any(m => m.kind() === SyntaxKind.ExportAssignment);
+                return moduleElementsHasExportAssignment(sourceUnit.moduleElements);
             }
 
             ast = ast.parent;
@@ -104,7 +108,7 @@ module TypeScript {
             // the script node will point at the external module declaration.
             context.semanticInfoChain.setDeclForAST(sourceUnit, decl);
 
-            if (moduleContainsExecutableCode) {
+            if (!moduleElementsHasExportAssignment(sourceUnit.moduleElements) || moduleContainsExecutableCode) {
                 createModuleVariableDecl(decl, sourceUnit, context);
             }
 
@@ -179,7 +183,7 @@ module TypeScript {
             context.semanticInfoChain.setDeclForAST(moduleDecl.stringLiteral, decl);
             context.semanticInfoChain.setASTForDecl(decl, moduleDecl.stringLiteral);
 
-            if (moduleContainsExecutableCode) {
+            if (!moduleElementsHasExportAssignment(moduleDecl.moduleElements) || moduleContainsExecutableCode) {
                 createModuleVariableDecl(decl, moduleDecl.stringLiteral, context);
             }
 
@@ -187,7 +191,7 @@ module TypeScript {
         }
         else {
             // Module has a name or dotted name.
-            var moduleNames = getModuleNames(moduleDecl.name);
+            var moduleNames = ASTHelpers.getModuleNames(moduleDecl.name);
             for (var i = 0, n = moduleNames.length; i < n; i++) {
                 var moduleName = moduleNames[i];
 
@@ -218,20 +222,6 @@ module TypeScript {
                 context.pushParent(decl);
             }
         }
-    }
-
-    export function getModuleNames(name: AST, result?: Identifier[]): Identifier[] {
-        result = result || [];
-
-        if (name.kind() === SyntaxKind.QualifiedName) {
-            getModuleNames((<QualifiedName>name).left, result);
-            result.push((<QualifiedName>name).right);
-        }
-        else {
-            result.push(<Identifier>name);
-        }
-
-        return result;
     }
 
     function createModuleVariableDecl(decl: PullDecl, moduleNameAST: AST, context: DeclCollectionContext): void {
@@ -272,7 +262,8 @@ module TypeScript {
                     return true;
                 }
             }
-            else if (member.kind() !== SyntaxKind.InterfaceDeclaration) {
+            else if (member.kind() !== SyntaxKind.InterfaceDeclaration && member.kind() !== SyntaxKind.ExportAssignment) {
+                // In case of export assignment we should be really checking meaning of Export assignment identifier, but thats TODO for later
                 // If we contain anything that's not an interface declaration, then we contain
                 // executable code.
                 return true;
@@ -1067,7 +1058,7 @@ module TypeScript {
                 context.popParent();
             }
             else {
-                var moduleNames = getModuleNames(moduleDeclaration.name);
+                var moduleNames = ASTHelpers.getModuleNames(moduleDeclaration.name);
                 for (var i = moduleNames.length - 1; i >= 0; i--) {
                     var moduleName = moduleNames[i];
                     Debug.assert(currentDecl.ast() === moduleName);

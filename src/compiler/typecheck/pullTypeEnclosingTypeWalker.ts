@@ -88,11 +88,9 @@ module TypeScript {
                     // Update the current decl in the 
                     var symbol = decl.getSymbol();
                     if (symbol) {
-                        if (symbol.kind == PullElementKind.Parameter ||
-                            symbol.kind == PullElementKind.Property ||
-                            symbol.kind == PullElementKind.Method ||
-                            symbol.kind == PullElementKind.ConstructorMethod ||
-                            symbol.kind == PullElementKind.FunctionExpression) {
+                        // If symbol is raw PullSymbol (not a type or a signature, but
+                        // rather a variable, function, etc), use its type instead
+                        if (!symbol.isType() && !symbol.isSignature()) {
                             symbol = symbol.type;
                         }
 
